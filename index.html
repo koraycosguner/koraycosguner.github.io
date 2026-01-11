@@ -8,11 +8,10 @@
     <style>
         :root {
             --primary: #990000; /* IU Crimson */
-            --primary-dark: #7a0000;
             --text-main: #111827; /* Near Black */
             --text-light: #4b5563; /* Grey */
             --bg: #ffffff;
-            --surface: #f8fafc; /* Very subtle cool grey */
+            --surface: #f9fafb;
             --border: #e2e8f0;
         }
 
@@ -26,19 +25,18 @@
             -webkit-font-smoothing: antialiased;
         }
 
-        /* Navigation - Glassmorphism effect */
+        /* Navigation */
         nav {
-            background: rgba(255, 255, 255, 0.9);
+            background: rgba(255, 255, 255, 0.95);
             border-bottom: 1px solid var(--border);
             padding: 16px 0;
             position: sticky;
             top: 0;
             z-index: 100;
             backdrop-filter: blur(12px);
-            box-shadow: 0 1px 2px rgba(0,0,0,0.02);
         }
         .nav-container {
-            max-width: 1000px;
+            max-width: 1200px;
             margin: 0 auto;
             padding: 0 24px;
             display: flex;
@@ -62,103 +60,48 @@
         }
         .nav-links a:hover, .nav-links a.active { color: var(--primary); }
 
-        /* Hero Section */
+        /* Hero */
         .hero {
-            padding: 100px 24px 80px;
+            padding: 80px 24px 60px;
             text-align: center;
             max-width: 800px;
             margin: 0 auto;
             background: radial-gradient(circle at center, #ffffff 0%, #f9fafb 100%);
         }
-        
         .profile-wrapper {
-            width: 180px;
-            height: 180px;
-            margin: 0 auto 32px;
-            padding: 4px;
-            background: white;
-            border-radius: 50%;
-            border: 1px solid var(--border);
+            width: 180px; height: 180px; margin: 0 auto 32px; padding: 4px;
+            background: white; border-radius: 50%; border: 1px solid var(--border);
             box-shadow: 0 10px 25px rgba(0,0,0,0.06);
         }
-        .profile-img {
-            width: 100%;
-            height: 100%;
-            border-radius: 50%;
-            object-fit: cover;
-            display: block;
-        }
-
-        h1 { 
-            margin: 0; 
-            font-size: 3rem; 
-            font-weight: 800; 
-            letter-spacing: -0.03em; 
-            color: var(--text-main); 
-            line-height: 1.1;
-        }
-        .role { 
-            color: var(--primary); 
-            font-weight: 600; 
-            margin-top: 12px; 
-            font-size: 1.25rem; 
-            letter-spacing: -0.01em;
-        }
-        .affiliation { 
-            color: var(--text-light); 
-            margin-top: 6px; 
-            font-size: 1.1rem; 
-        }
+        .profile-img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; display: block; }
         
-        .bio-summary { 
-            margin-top: 40px; 
-            font-size: 1.15rem; 
-            color: var(--text-light); 
-            line-height: 1.8; 
-            text-align: left; 
-        }
+        h1 { margin: 0; font-size: 3rem; font-weight: 800; letter-spacing: -0.03em; color: var(--text-main); line-height: 1.1; }
+        .role { color: var(--primary); font-weight: 600; margin-top: 12px; font-size: 1.25rem; letter-spacing: -0.01em; }
+        .affiliation { color: var(--text-light); margin-top: 6px; font-size: 1.1rem; }
+        
+        .bio-summary { margin-top: 40px; font-size: 1.15rem; color: var(--text-light); line-height: 1.8; text-align: left; }
         .bio-summary p { margin-bottom: 24px; }
 
-        /* Buttons */
         .cta-container { margin-top: 40px; display: flex; gap: 16px; justify-content: center; }
-        .btn {
-            padding: 14px 32px;
-            border-radius: 8px;
-            text-decoration: none;
-            font-weight: 600;
-            transition: all 0.2s ease;
-            font-size: 1rem;
-            letter-spacing: 0.01em;
-        }
-        .btn-primary { 
-            background: var(--text-main); 
-            color: white; 
-            border: 1px solid var(--text-main); 
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        }
+        .btn { padding: 14px 32px; border-radius: 8px; text-decoration: none; font-weight: 600; transition: all 0.2s ease; font-size: 1rem; }
+        .btn-primary { background: var(--text-main); color: white; border: 1px solid var(--text-main); box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
         .btn-primary:hover { background: black; transform: translateY(-1px); box-shadow: 0 6px 12px rgba(0,0,0,0.15); }
-        
-        .btn-outline { 
-            background: white; 
-            color: var(--text-main); 
-            border: 1px solid var(--border); 
-            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
-        }
-        .btn-outline:hover { 
-            border-color: var(--text-light); 
-            background: var(--surface); 
-            transform: translateY(-1px); 
-            box-shadow: 0 4px 8px rgba(0,0,0,0.05);
-        }
 
-        /* Layout Sections */
-        .section {
-            padding: 80px 24px;
-            border-top: 1px solid var(--border);
+        /* Main Content Grid */
+        .section { padding: 80px 24px; border-top: 1px solid var(--border); }
+        .container { max-width: 1200px; margin: 0 auto; }
+
+        .grid-4 {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 40px;
+            align-items: start;
         }
-        .container { max-width: 1000px; margin: 0 auto; }
-        
-        .section-title {
+        @media (max-width: 1024px) { .grid-4 { grid-template-columns: 1fr 1fr; gap: 60px; } }
+        @media (max-width: 640px) { .grid-4 { grid-template-columns: 1fr; gap: 40px; } }
+
+        /* Typography */
+        .column-title {
             font-size: 1.1rem;
             font-weight: 700;
             color: var(--primary);
@@ -170,76 +113,25 @@
             padding-bottom: 6px;
         }
 
-        /* Grids */
-        .grid-2 {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 80px; /* Increased gap for better separation */
-        }
-        @media (max-width: 768px) { .grid-2 { grid-template-columns: 1fr; gap: 40px; } }
-
-        /* Typography for Content */
-        .institution-header {
-            font-size: 1.25rem;
-            font-weight: 700;
-            color: var(--text-main);
-            margin-bottom: 12px;
-            display: block;
-        }
-
-        .list-clean {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-        }
-        .list-clean li {
-            margin-bottom: 16px;
+        /* Unified Sub-header Style for ALL columns */
+        .sub-header {
             font-size: 1rem;
-            color: var(--text-light);
-            padding-left: 0;
-        }
-        .list-clean li strong { color: var(--text-main); font-weight: 600; display: block; margin-bottom: 2px; }
-        .sub-text { display: block; font-size: 0.9rem; color: #6b7280; }
-
-        /* Research Tags */
-        .tag-cloud { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 15px; }
-        .tag {
-            background: white;
-            padding: 8px 16px;
-            border-radius: 6px;
-            font-size: 0.9rem;
-            font-weight: 500;
-            color: var(--text-main);
-            border: 1px solid var(--border);
-            box-shadow: 0 1px 2px rgba(0,0,0,0.03);
-            transition: border-color 0.2s;
-        }
-        .tag:hover { border-color: var(--primary); }
-
-        /* Reviewer List */
-        .reviewer-list {
-            font-size: 0.95rem;
-            color: var(--text-light);
-            line-height: 1.6;
-        }
-        
-        .subsection-header {
-            font-size: 1.1rem;
             font-weight: 700;
             color: var(--text-main);
-            margin-top: 40px; /* Spacing between Topics and Methods */
-            margin-bottom: 15px;
+            margin-bottom: 4px;
             display: block;
         }
 
-        footer {
-            text-align: center;
-            padding: 80px 24px;
-            background: var(--surface);
-            color: var(--text-light);
-            font-size: 0.9rem;
-            border-top: 1px solid var(--border);
-        }
+        .list-clean { list-style: none; padding: 0; margin: 0; }
+        .list-clean li { margin-bottom: 24px; font-size: 0.95rem; color: var(--text-light); }
+        .list-clean li:last-child { margin-bottom: 0; }
+        
+        .meta-text { display: block; font-size: 0.95rem; color: var(--text-light); margin-top: 2px; }
+
+        /* Unified Research Text Style */
+        .content-block { font-size: 0.95rem; color: var(--text-light); line-height: 1.6; margin-bottom: 24px; }
+
+        footer { text-align: center; padding: 60px 24px; background: var(--surface); color: var(--text-light); font-size: 0.9rem; border-top: 1px solid var(--border); margin-top: 0; }
     </style>
 </head>
 <body>
@@ -250,7 +142,6 @@
             <div class="nav-links">
                 <a href="index.html" class="active">Home</a>
                 <a href="tools.html">Pricing Tools</a>
-                <a href="https://kelley.iu.edu/faculty-research/faculty-directory/profile.html?id=kcosgun" target="_blank">Kelley Directory</a>
             </div>
         </div>
     </nav>
@@ -264,110 +155,89 @@
         <div class="affiliation">John Rau Kelley School of Business Faculty Fellow</div>
         
         <div class="bio-summary">
-            <p>Koray Cosguner constitutes a bridge between marketing, economics, and psychology, employing rigorous quantitative methods to decode complex consumer decision-making processes. His research translates behavioral insights into actionable firm strategies, optimizing pricing architectures and non-pricing instruments across product, promotion, and placement.</p> 
+            <p>Koray Cosguner stands at the intersection of marketing, economics, and psychology, leveraging rigorous quantitative methods to decode the complexities of consumer decision-making. His research transforms deep behavioral insights into high-impact firm strategies, optimizing pricing architectures and strategic levers across product, promotion, and placement.</p> 
             
-            <p>Specializing in structural modeling, reduced form estimation, and causal inference, his scholarship addresses critical business challenges—from dynamic pricing algorithms to consumer switching costs. His work appears in the discipline's premier outlets, including <i>Marketing Science</i>, <i>Journal of Marketing Research</i>, <i>Management Science</i>, and <i>Journal of Retailing</i>.</p>
+            <p>An expert in structural modeling, reduced form estimation, and causal inference, he addresses critical business challenges ranging from dynamic pricing algorithms to developing advanced decision support systems for firm's email marketing decisions. His scholarship is consistently published in the field's premier outlets, including <i>Marketing Science</i>, <i>Journal of Marketing Research</i>, <i>Management Science</i>, and <i>Journal of Retailing</i>.</p>
         </div>
 
         <div class="cta-container">
             <a href="cv.pdf" class="btn btn-primary" target="_blank">Download CV</a>
-            <a href="tools.html" class="btn btn-outline">Access Pricing Tools</a>
         </div>
     </div>
 
-    <div class="section" style="background: var(--surface);">
-        <div class="container grid-2">
+    <div class="section">
+        <div class="container grid-4">
             
             <div>
-                <div class="section-title">Education</div>
-                
+                <div class="column-title">Education</div>
                 <ul class="list-clean">
                     <li>
-                        <div class="institution-header">Washington University in St. Louis</div>
-                        <div>PhD, Marketing</div>
+                        <span class="sub-header">Ph.D. in Marketing</span>
+                        <div class="meta-text">Washington University in St. Louis, 2013</div>
                     </li>
-                    <li style="margin-top: 24px;">
-                        <div class="institution-header">Koç University</div>
-                        <div>MA, Economics</div>
+                    <li>
+                        <span class="sub-header">M.A. in Economics</span>
+                        <div class="meta-text">Koç University, 2008</div>
                     </li>
-                    <li style="margin-top: 24px;">
-                        <div class="institution-header">Bilkent University</div>
-                        <div>BS, Industrial Engineering</div>
+                    <li>
+                        <span class="sub-header">B.S. in Industrial Engineering</span>
+                        <div class="meta-text">Bilkent University, 2004</div>
                     </li>
                 </ul>
             </div>
 
             <div>
-                <div class="section-title">Teaching</div>
+                <div class="column-title">Teaching</div>
                 
-                <div style="margin-bottom: 32px;">
-                    <div class="institution-header">Indiana University</div>
-                    <ul class="list-clean">
-                        <li>Pricing Management</li>
-                        <li>Performance Driven Pricing</li>
-                        <li>Marketing Analytics</li>
-                        <li>Empirical Modeling of Consumer and Firm Decisions</li>
+                <div style="margin-bottom: 24px;">
+                    <span class="sub-header">Indiana University</span>
+                    <ul class="list-clean" style="margin-top: 4px;">
+                        <li style="margin-bottom: 4px;">Pricing Management</li>
+                        <li style="margin-bottom: 4px;">Performance Driven Pricing</li>
+                        <li style="margin-bottom: 4px;">Marketing Analytics</li>
+                        <li style="margin-bottom: 0;">Empirical Modeling Seminar</li>
                     </ul>
                 </div>
 
                 <div>
-                    <div class="institution-header">Georgia State University</div>
-                    <ul class="list-clean">
-                        <li>Marketing Research</li>
-                        <li>Direct Marketing</li>
-                        <li>Structural Modeling Seminar</li>
+                    <span class="sub-header">Georgia State Univ.</span>
+                    <ul class="list-clean" style="margin-top: 4px;">
+                        <li style="margin-bottom: 4px;">Marketing Research</li>
+                        <li style="margin-bottom: 4px;">Direct Marketing</li>
+                        <li style="margin-bottom: 0;">Structural Modeling Seminar</li>
                     </ul>
                 </div>
             </div>
 
-        </div>
-    </div>
-
-    <div class="section">
-        <div class="container grid-2">
-            
             <div>
-                <div class="section-title">Research Expertise</div>
+                <div class="column-title">Research</div>
                 
-                <div>
-                    <span class="institution-header" style="font-size: 1.1rem; margin-bottom: 10px;">Substantive Topics</span>
-                    <div class="tag-cloud">
-                        <span class="tag">Pricing Strategy</span>
-                        <span class="tag">Sales Force Compensation</span>
-                        <span class="tag">Channel Management</span>
-                        <span class="tag">Dynamic Pricing</span>
-                        <span class="tag">Decoy Effects</span>
-                        <span class="tag">Product Packaging</span>
-                    </div>
+                <div class="content-block">
+                    <span class="sub-header">Topics Studied</span>
+                    Empirical Industrial Organization, Switching and Staying Costs, Decoy Effect, Static and Dynamic Pricing, Retail Distribution, Firm Competition, New Product Diffusion, E-mail Marketing, Emerging Markets, Product Packaging, Local Economy.
                 </div>
 
-                <div style="margin-top: 40px;">
-                    <span class="institution-header" style="font-size: 1.1rem; margin-bottom: 10px;">Methodologies</span>
-                    <div class="tag-cloud">
-                        <span class="tag">Structural Modeling</span>
-                        <span class="tag">Reduced Form Models</span>
-                        <span class="tag">Causal Inference</span>
-                        <span class="tag">Experimental Design</span>
-                        <span class="tag">Optimization</span>
-                    </div>
+                <div class="content-block">
+                    <span class="sub-header">Methods Used</span>
+                    Causal Inference Models, Static and Dynamic Structural Models, Choice Models, Count Models, Hazard Models, Diffusion Models, Hidden Markov Models, Copula Models, Game Theory.
                 </div>
             </div>
 
             <div>
-                <div class="section-title">Service & Awards</div>
+                <div class="column-title">Service & Awards</div>
                 <ul class="list-clean">
                     <li>
-                        <strong>IU Trustee's Teaching Award</strong>
-                        <div class="sub-text">Indiana University (2024)</div>
+                        <span class="sub-header">IU Trustee's Teaching Award</span>
+                        <div class="meta-text">Indiana University (2024)</div>
                     </li>
                     <li>
-                        <strong>Track Chair</strong>
-                        <div class="sub-text">Winter AMA (2023, 2024) - AI & Big Data</div>
+                        <span class="sub-header">Track Chair</span>
+                        <div class="meta-text">Winter AMA (2023, 2024) - AI & Big Data</div>
                     </li>
-                    <li style="margin-top: 20px;">
-                        <strong>Ad-Hoc Reviewer</strong>
-                        <div class="reviewer-list" style="margin-top: 6px;">
-                            Marketing Science, Management Science, Journal of Marketing Research, Journal of Marketing, IJRM, POM, Information Systems Research, JASA, Journal of Business Research
+                    <li>
+                        <span class="sub-header">Ad-Hoc Reviewer</span>
+                        <div class="meta-text" style="line-height: 1.5; margin-top: 6px;">
+                            Marketing Science, Management Science, Journal of Marketing Research, Journal of Marketing, International Journal of Research in Marketing, Production and Operations Management, Information Systems Research, Journal of the American Statistical Association, Journal of Business Research.
                         </div>
                     </li>
                 </ul>
@@ -378,7 +248,6 @@
 
     <footer>
         <p>&copy; 2026 Koray Cosguner. All Rights Reserved.</p>
-        <p>Kelley School of Business, Indiana University Bloomington</p>
     </footer>
 
 </body>
