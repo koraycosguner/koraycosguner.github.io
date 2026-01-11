@@ -92,7 +92,10 @@
 
         .card h3 { margin: 0 0 10px 0; font-size: 1.25rem; font-weight: 700; }
         .card p { margin: 0 0 25px 0; color: var(--text-light); line-height: 1.5; font-size: 0.95rem; }
-        .link-text { margin-top: auto; color: var(--primary); font-weight: 600; font-size: 0.95rem; }
+        .citation {
+            font-size: 0.8rem; color: #9ca3af; margin-top: auto; border-top: 1px solid #f3f4f6; padding-top: 15px; width: 100%;
+        }
+        .link-text { margin-top: 15px; color: var(--primary); font-weight: 600; font-size: 0.95rem; display: inline-block;}
 
         footer { text-align: center; padding: 60px 20px; color: var(--text-light); font-size: 0.9rem; border-top: 1px solid var(--border); margin-top: 80px; }
     </style>
@@ -111,24 +114,46 @@
     </nav>
 
     <div class="header">
-        <h1>Pricing Management Tools</h1>
+        <h1>Pricing Tools</h1>
         <div class="subtitle">Interactive applications for strategic analysis and decision support in pricing management.</div>
     </div>
 
     <div class="container">
         <div class="grid">
-            <a href="assessment.html" class="card">
+            <a href="PEM.html" class="card">
                 <div class="icon-box">📊</div>
-                <h3>Pricing Capability Assessment</h3>
-                <p>A diagnostic scorecard to evaluate organizational pricing maturity across strategy, execution, and analytics dimensions.</p>
-                <span class="link-text">Launch Assessment &rarr;</span>
+                <h3>Pricing Effectiveness Matrix</h3>
+                <p>A diagnostic scorecard to evaluate organizational pricing effectiveness across strategy, execution, and analytics dimensions.</p>
+                <div class="citation">
+                    Adapted from the tool developed by Rockney Walters, Emeritus Professor of Marketing, Stephen Brown, MBA, and Will Charron, MBA.
+                </div>
+                <div class="citation">
+                    Prepared by Professor Cosguner with the help of Gemini 3.0.
+                </div>
+                <span class="link-text">Launch Tool &rarr;</span>
             </a>
 
-            <a href="elasticity.html" class="card">
+            <a href="QEAT.html" class="card">
                 <div class="icon-box">🧮</div>
-                <h3>Price Elasticity Calculator</h3>
-                <p>Calculate Price Elasticity of Demand (PED) using changes in price and quantity. Includes automatic interpretation.</p>
-                <span class="link-text">Launch Calculator &rarr;</span>
+                <h3>Qualitative Elasticity Assessment</h3>
+                <p>Assess price sensitivity based on qualitative market factors (e.g., uniqueness, switching costs).</p>
+<div class="citation">
+Based on The Strategy and Tactics of Pricing (Nagle & Muller, 2018)
+                </div>  
+<div class="citation">
+                    Prepared by Professor Cosguner with the help of Gemini 3.0.
+                </div>
+                <span class="link-text">Launch Tool &rarr;</span>
+            </a>
+
+            <a href="PED_Calculation.html" class="card">
+                <div class="icon-box">📉</div>
+                <h3>PED Calculator</h3>
+                <p>Calculate Price Elasticity of Demand (PED) using direct price/quantity changes.</p>
+                <div class="citation">
+                    Prepared by Professor Cosguner with the help of Gemini 3.0.
+                </div>
+                <span class="link-text">Launch Tool &rarr;</span>
             </a>
         </div>
     </div>
