@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pricing Tools | Koray Cosguner</title>
+    <style>
+        :root {
+            --primary: #990000;
+            --text-main: #111827;
+            --text-light: #4b5563;
+            --bg: #ffffff;
+            --surface: #f9fafb;
+            --border: #e5e7eb;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: var(--bg);
+            color: var(--text-main);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        nav {
+            background: rgba(255, 255, 255, 0.9);
+            border-bottom: 1px solid var(--border);
+            padding: 16px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(12px);
+        }
+        .nav-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 0 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .brand { font-weight: 700; font-size: 1.3rem; color: var(--text-main); text-decoration: none; letter-spacing: -0.02em; }
+        .nav-links a { margin-left: 30px; text-decoration: none; color: var(--text-light); font-weight: 500; font-size: 0.95rem; transition: color 0.2s; }
+        .nav-links a:hover, .nav-links a.active { color: var(--primary); }
+
+        .header {
+            padding: 100px 24px 60px;
+            text-align: center;
+            border-bottom: 1px solid var(--border);
+            background: radial-gradient(circle at center, #ffffff 0%, #f9fafb 100%);
+        }
+        h1 { margin: 0; font-size: 2.5rem; font-weight: 800; color: var(--text-main); letter-spacing: -0.02em; }
+        .subtitle { margin-top: 15px; font-size: 1.1rem; color: var(--text-light); max-width: 600px; margin-left: auto; margin-right: auto; }
+
+        .container { max-width: 1000px; margin: 60px auto; padding: 0 24px; }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 40px;
+        }
+
+        .card {
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 40px;
+            transition: all 0.2s;
+            text-decoration: none;
+            color: inherit;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+        }
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 20px rgba(0,0,0,0.06);
+            border-color: var(--primary);
+        }
+        
+        .icon-box {
+            width: 50px; height: 50px;
+            background: var(--surface);
+            border-radius: 8px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            border: 1px solid var(--border);
+        }
+
+        .card h3 { margin: 0 0 10px 0; font-size: 1.25rem; font-weight: 700; }
+        .card p { margin: 0 0 25px 0; color: var(--text-light); line-height: 1.5; font-size: 0.95rem; }
+        .link-text { margin-top: auto; color: var(--primary); font-weight: 600; font-size: 0.95rem; }
+
+        footer { text-align: center; padding: 60px 20px; color: var(--text-light); font-size: 0.9rem; border-top: 1px solid var(--border); margin-top: 80px; }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <div class="nav-container">
+            <a href="index.html" class="brand">Koray Cosguner</a>
+            <div class="nav-links">
+                <a href="index.html">Home</a>
+                <a href="tools.html" class="active">Pricing Tools</a>
+                <a href="https://kelley.iu.edu/faculty-research/faculty-directory/profile.html?id=kcosgun" target="_blank">Kelley Directory</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="header">
+        <h1>Pricing Management Tools</h1>
+        <div class="subtitle">Interactive applications for strategic analysis and decision support in pricing management.</div>
+    </div>
+
+    <div class="container">
+        <div class="grid">
+            <a href="assessment.html" class="card">
+                <div class="icon-box">📊</div>
+                <h3>Pricing Capability Assessment</h3>
+                <p>A diagnostic scorecard to evaluate organizational pricing maturity across strategy, execution, and analytics dimensions.</p>
+                <span class="link-text">Launch Assessment &rarr;</span>
+            </a>
+
+            <a href="elasticity.html" class="card">
+                <div class="icon-box">🧮</div>
+                <h3>Price Elasticity Calculator</h3>
+                <p>Calculate Price Elasticity of Demand (PED) using changes in price and quantity. Includes automatic interpretation.</p>
+                <span class="link-text">Launch Calculator &rarr;</span>
+            </a>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2026 Koray Cosguner. All Rights Reserved.</p>
+        <p>Kelley School of Business, Indiana University Bloomington</p>
+    </footer>
+
+</body>
+</html>
