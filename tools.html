@@ -34,7 +34,7 @@
             backdrop-filter: blur(12px);
         }
         .nav-container {
-            max-width: 1200px; /* Matched to index.html width */
+            max-width: 1200px;
             margin: 0 auto;
             padding: 0 24px;
             display: flex;
@@ -73,11 +73,26 @@
             flex-direction: column;
             align-items: flex-start;
             box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+            position: relative;
         }
         .card:hover {
             transform: translateY(-4px);
             box-shadow: 0 12px 20px rgba(0,0,0,0.06);
             border-color: var(--primary);
+        }
+
+        /* Tool Label Style (Tool 1, Tool 2, etc.) */
+        .tool-label {
+            font-size: 0.75rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--primary);
+            background: #fdf2f2;
+            padding: 4px 8px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+            display: inline-block;
         }
         
         .icon-box {
@@ -119,7 +134,9 @@
 
     <div class="container">
         <div class="grid">
+            
             <a href="PEM.html" class="card">
+                <span class="tool-label">Tool 1</span>
                 <div class="icon-box">📊</div>
                 <h3>Pricing Effectiveness Matrix</h3>
                 <p>A diagnostic scorecard to evaluate organizational pricing maturity across strategy, execution, and analytics dimensions.</p>
@@ -130,6 +147,7 @@
             </a>
 
             <a href="QEAT.html" class="card">
+                <span class="tool-label">Tool 2</span>
                 <div class="icon-box">🧮</div>
                 <h3>Qualitative Elasticity Assessment</h3>
                 <p>Assess price sensitivity based on qualitative market factors (e.g., uniqueness, switching costs).</p>
@@ -140,6 +158,7 @@
             </a>
 
             <a href="PED_Calculation.html" class="card">
+                <span class="tool-label">Tool 3</span>
                 <div class="icon-box">📉</div>
                 <h3>Price Elasticity Calculator</h3>
                 <p>Calculate Price Elasticities using direct price/quantity changes.</p>
@@ -148,6 +167,18 @@
                 </div>
                 <span class="link-text">Launch Tool &rarr;</span>
             </a>
+
+            <a href="optimizer.html" class="card">
+                <span class="tool-label">Tool 4</span>
+                <div class="icon-box">🎯</div>
+                <h3>Price Optimizer</h3>
+                <p>Solver for Linear Demand Functions: Calculate optimal price and quantity to maximize revenue or profit.</p>
+                <div class="citation">
+                    Prepared by Professor Koray Cosguner with the help of Gemini 3.0.
+                </div>
+                <span class="link-text">Launch Tool &rarr;</span>
+            </a>
+
         </div>
     </div>
 
