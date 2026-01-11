@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Price Elasticity Calculator</title>
+    <style>
+        :root {
+            --primary: #2563eb; /* Royal Blue */
+            --bg: #f8fafc;
+            --surface: #ffffff;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+            --success: #10b981;
+            --warning: #f59e0b;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background-color: var(--bg);
+            color: var(--text-main);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .card {
+            background: var(--surface);
+            padding: 40px;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 500px;
+        }
+
+        h1 { margin: 0 0 10px 0; font-size: 1.5rem; color: var(--text-main); text-align: center; }
+        .subtitle { text-align: center; color: var(--text-muted); font-size: 0.9rem; margin-bottom: 30px; }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        .label {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .row {
+            display: flex;
+            gap: 20px;
+        }
+
+        .col { flex: 1; }
+
+        input[type="number"] {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.2s;
+            box-sizing: border-box; /* Fixes padding width issues */
+        }
+        input[type="number"]:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        button {
+            width: 100%;
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 15px;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+            margin-top: 10px;
+        }
+        button:hover { background: #1d4ed8; }
+
+        /* Results Area */
+        .result-container {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px dashed var(--border);
+            text-align: center;
+            display: none; /* Hidden by default */
+        }
+
+        .result-value {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--text-main);
+            line-height: 1;
+        }
+
+        .result-tag {
+            display: inline-block;
+            margin-top: 10px;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .tag-elastic { background: #fee2e2; color: #991b1b; } /* Red for Elastic */
+        .tag-inelastic { background: #dcfce7; color: #166534; } /* Green for Inelastic */
+
+        .formula-display {
+            background: #f1f5f9;
+            padding: 10px;
+            border-radius: 6px;
+            font-family: monospace;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            text-align: center;
+            margin-top: 20px;
+        }
+
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <h1>Elasticity Calculator</h1>
+    <div class="subtitle">Calculate Price Elasticity of Demand (PED)</div>
+
+    <div class="row">
+        <div class="col">
+            <div class="input-group">
+                <label class="label">Original Price (P1)</label>
+                <input type="number" id="p1" placeholder="$100" step="0.01">
+            </div>
+        </div>
+        <div class="col">
+            <div class="input-group">
+                <label class="label">New Price (P2)</label>
+                <input type="number" id="p2" placeholder="$110" step="0.01">
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col">
+            <div class="input-group">
+                <label class="label">Original Sales (Q1)</label>
+                <input type="number" id="q1" placeholder="500 units" step="1">
+            </div>
+        </div>
+        <div class="col">
+            <div class="input-group">
+                <label class="label">New Sales (Q2)</label>
+                <input type="number" id="q2" placeholder="400 units" step="1">
+            </div>
+        </div>
+    </div>
+
+    <button onclick="calculateElasticity()">Calculate Elasticity</button>
+
+    <div id="resultArea" class="result-container">
+        <div class="label">Calculated Elasticity</div>
+        <div id="pedValue" class="result-value">--</div>
+        <div id="pedTag" class="result-tag">--</div>
+        <p id="explanation" style="font-size: 0.9rem; color: var(--text-muted); margin-top: 15px; line-height: 1.4;">
+            --
+        </p>
+    </div>
+
+    <div class="formula-display">
+        Formula: ((Q2 - Q1) / Q1) / ((P2 - P1) / P1)
+    </div>
+</div>
+
+<script>
+    function calculateElasticity() {
+        // 1. Get Values
+        const p1 = parseFloat(document.getElementById('p1').value);
+        const p2 = parseFloat(document.getElementById('p2').value);
+        const q1 = parseFloat(document.getElementById('q1').value);
+        const q2 = parseFloat(document.getElementById('q2').value);
+
+        // 2. Validation
+        if (isNaN(p1) || isNaN(p2) || isNaN(q1) || isNaN(q2)) {
+            alert("Please fill in all fields with valid numbers.");
+            return;
+        }
+        if (p1 === 0 || q1 === 0) {
+            alert("Original Price and Sales cannot be zero (cannot divide by zero).");
+            return;
+        }
+
+        // 3. Calculate % Changes
+        const pctChangePrice = (p2 - p1) / p1;
+        const pctChangeQuantity = (q2 - q1) / q1;
+
+        // 4. Calculate PED
+        // Avoid division by zero if price didn't change
+        let ped = 0;
+        if (pctChangePrice === 0) {
+            ped = 0; // Technically undefined/infinite, but treated as 0 for UI safety or handle separately
+        } else {
+            ped = pctChangeQuantity / pctChangePrice;
+        }
+
+        // 5. Display Results
+        const resultArea = document.getElementById('resultArea');
+        const valueDisplay = document.getElementById('pedValue');
+        const tagDisplay = document.getElementById('pedTag');
+        const textDisplay = document.getElementById('explanation');
+
+        resultArea.style.display = 'block';
+        valueDisplay.innerText = ped.toFixed(2);
+
+        // 6. Interpretation Logic
+        const absPed = Math.abs(ped);
+        
+        if (absPed > 1) {
+            tagDisplay.className = "result-tag tag-elastic";
+            tagDisplay.innerText = "ELASTIC";
+            textDisplay.innerText = `Demand is sensitive to price. A ${(pctChangePrice*100).toFixed(0)}% price change led to a larger ${(pctChangeQuantity*100).toFixed(0)}% change in sales.`;
+        } else if (absPed < 1) {
+            tagDisplay.className = "result-tag tag-inelastic";
+            tagDisplay.innerText = "INELASTIC";
+            textDisplay.innerText = `Demand is not very sensitive. A ${(pctChangePrice*100).toFixed(0)}% price change led to a smaller ${(pctChangeQuantity*100).toFixed(0)}% change in sales.`;
+        } else {
+            tagDisplay.className = "result-tag";
+            tagDisplay.style.background = "#e2e8f0";
+            tagDisplay.style.color = "#475569";
+            tagDisplay.innerText = "UNIT ELASTIC";
+            textDisplay.innerText = "The percentage change in quantity is exactly equal to the percentage change in price.";
+        }
+    }
+</script>
+
+</body>
+</html>
