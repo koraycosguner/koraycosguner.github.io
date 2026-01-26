@@ -388,8 +388,9 @@ ui = fluidPage(
         padding: 20px;
       }
       .container-fluid {
-        max-width: 100%;
-        padding: 0 30px;
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 0 20px;
       }
       h1 {
         text-align: center;
@@ -512,6 +513,45 @@ ui = fluidPage(
         font-size: 0.85rem;
         overflow-x: auto;
       }
+      .form-group {
+        max-width: 500px;
+        margin-left: auto;
+        margin-right: auto;
+      }
+      .shiny-input-container {
+        width: 100% !important;
+      }
+      .center-content {
+        max-width: 500px;
+        margin-left: auto;
+        margin-right: auto;
+      }
+      .data-preview {
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        padding: 15px;
+        margin-top: 15px;
+        overflow-x: auto;
+      }
+      .data-preview h5 {
+        margin-bottom: 10px;
+        color: #1e293b;
+      }
+      .data-preview table {
+        font-size: 0.85rem;
+        width: 100%;
+      }
+      .btn-secondary {
+        background: #64748b;
+        border: none;
+        padding: 8px 16px;
+        border-radius: 8px;
+        color: white;
+      }
+      .btn-secondary:hover {
+        background: #475569;
+      }
     "))
   ),
 
@@ -529,30 +569,28 @@ ui = fluidPage(
     )
   ),
 
-  fluidRow(
-    # Left panel - Data & Model Setup
-    column(4,
-      # Data Upload
-      div(class = "card",
-        div(class = "card-title", "1. Upload Data"),
-        fileInput("file", "Choose CSV File",
-          accept = c("text/csv", "text/comma-separated-values", ".csv")
-        ),
-        p(class = "help-text", "Upload a CSV file with headers in the first row.")
+  # Top-to-bottom layout
+  # Step 1: Data Upload
+  div(class = "card",
+    div(class = "card-title", "1. Upload Data"),
+    div(class = "center-content",
+      fileInput("file", "Choose CSV File",
+        accept = c("text/csv", "text/comma-separated-values", ".csv")
       ),
-
-      # Model Setup (conditional)
-      uiOutput("model_setup_card"),
-
-      # Run button (conditional)
-      uiOutput("run_card")
+      p(class = "help-text", "Upload a CSV file with headers in the first row.")
     ),
+    # Data preview
+    uiOutput("data_preview")
+  ),
 
-    # Right panel - Results
-    column(8,
-      uiOutput("results_card")
-    )
-  )
+  # Model Setup (conditional)
+  uiOutput("model_setup_card"),
+
+  # Run button (conditional)
+  uiOutput("run_card"),
+
+  # Results
+  uiOutput("results_card")
 )
 
 server = function(input, output, session) {
@@ -574,6 +612,24 @@ server = function(input, output, session) {
     })
   })
 
+  # Data preview
+  output$data_preview = renderUI({
+    df = data()
+    if (is.null(df)) return(NULL)
+
+    div(class = "data-preview",
+      h5(paste0("Data Preview (", nrow(df), " rows, ", ncol(df), " columns)")),
+      tableOutput("preview_table")
+    )
+  })
+
+  # Preview table (first 10 rows)
+  output$preview_table = renderTable({
+    df = data()
+    if (is.null(df)) return(NULL)
+    head(df, 10)
+  }, rownames = FALSE)
+
   # Model setup card
   output$model_setup_card = renderUI({
     df = data()
@@ -583,37 +639,38 @@ server = function(input, output, session) {
 
     div(class = "card",
       div(class = "card-title", "2. Model Specification"),
+      div(class = "center-content",
+        selectInput("dv", "Dependent Variable (Y)", choices = cols),
 
-      selectInput("dv", "Dependent Variable (Y)", choices = cols),
+        selectInput("ivs", "Independent Variables (X)",
+          choices = cols,
+          multiple = TRUE
+        ),
 
-      selectInput("ivs", "Independent Variables (X)",
-        choices = cols,
-        multiple = TRUE
-      ),
+        selectInput("consumer_id", "Consumer/HH ID (for clustering)",
+          choices = c("(None)" = "", cols),
+          selected = ""
+        ),
+        p(class = "help-text", "Select a variable that identifies consumers or households. Leave empty if each row is independent."),
 
-      selectInput("consumer_id", "Consumer/HH ID (for clustering)",
-        choices = c("(None)" = "", cols),
-        selected = ""
-      ),
-      p(class = "help-text", "Select a variable that identifies consumers or households. Leave empty if each row is independent."),
+        selectInput("model_type", "Regression Type",
+          choices = c(
+            "Linear Regression" = "gaussian",
+            "Poisson Regression" = "poisson",
+            "Binary Logistic Regression" = "binomial"
+          )
+        ),
 
-      selectInput("model_type", "Regression Type",
-        choices = c(
-          "Linear Regression" = "gaussian",
-          "Poisson Regression" = "poisson",
-          "Binary Logistic Regression" = "binomial"
-        )
-      ),
+        numericInput("num_segments", "Number of Segments (k)",
+          value = 2, min = 1, max = 10, step = 1
+        ),
+        p(class = "help-text", "Set k=1 for a standard (non-segmented) model."),
 
-      numericInput("num_segments", "Number of Segments (k)",
-        value = 2, min = 1, max = 10, step = 1
-      ),
-      p(class = "help-text", "Set k=1 for a standard (non-segmented) model."),
-
-      numericInput("seed", "Seed Selection",
-        value = 123, min = 1, step = 1
-      ),
-      p(class = "help-text", "For reproducibility, choose the same seed next time you run.")
+        numericInput("seed", "Seed Selection",
+          value = 123, min = 1, step = 1
+        ),
+        p(class = "help-text", "For reproducibility, choose the same seed next time you run.")
+      )
     )
   })
 
@@ -624,7 +681,9 @@ server = function(input, output, session) {
 
     div(class = "card",
       div(class = "card-title", "3. Run Model"),
-      actionButton("run_model", "Run Latent Class Model", class = "btn-success", style = "width: 100%;")
+      div(class = "center-content",
+        actionButton("run_model", "Run Latent Class Model", class = "btn-success", style = "width: 100%;")
+      )
     )
   })
 
