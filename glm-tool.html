@@ -1332,21 +1332,24 @@
                 };
 
                 const dvPart = applyTransform(depVar, dvTransform);
-                const ivParts = indepVarsData.map(v => applyTransform(v.name, v.transform)).join(' + ');
+                const ivTerms = indepVarsData.map(v => applyTransform(v.name, v.transform));
 
                 // Get interaction terms
                 const interactions = getInteractionTerms();
-                let interactionParts = '';
-                if (interactions.length > 0) {
-                    const interactionTerms = interactions.map(int => {
-                        const term1 = applyTransform(int.var1, int.transform1);
-                        const term2 = applyTransform(int.var2, int.transform2);
-                        return `I(${term1} * ${term2})`;
-                    });
-                    interactionParts = ' + ' + interactionTerms.join(' + ');
-                }
+                const interactionTerms = interactions.map(int => {
+                    const term1 = applyTransform(int.var1, int.transform1);
+                    const term2 = applyTransform(int.var2, int.transform2);
+                    return `I(${term1} * ${term2})`;
+                });
 
-                const formula = `${dvPart} ~ ${ivParts}${interactionParts}`;
+                // Combine all terms
+                const allTerms = [...ivTerms, ...interactionTerms];
+
+                // Single-line formula for internal use
+                const formula = `${dvPart} ~ ${allTerms.join(' + ')}`;
+
+                // Multi-line formula for R script display
+                const formulaMultiLine = `${dvPart} ~ ${allTerms.join(' + \n')}`;
 
                 // Clean formula for display
                 const formulaDisplay = formula.replace(/`/g, '');
@@ -1367,9 +1370,15 @@
 
                 // Build R code - use lm() for linear, glm() for others
                 const isLinear = family === 'linear';
-                const modelCall = isLinear
-                    ? `lm(${formula}, data = data)`
-                    : `glm(${formula}, data = data, family = ${family})`;
+                let modelCall, modelCallMultiLine;
+
+                if (isLinear) {
+                    modelCall = `lm(${formula}, data = data)`;
+                    modelCallMultiLine = `lm(${formulaMultiLine}, \ndata = data)`;
+                } else {
+                    modelCall = `glm(${formula}, data = data, family = ${family})`;
+                    modelCallMultiLine = `glm(${formulaMultiLine}, \ndata = data, family = ${family})`;
+                }
 
                 // Generate clean R script for download
                 const additionalStats = isLinear
@@ -1385,50 +1394,58 @@ cat("Residual Deviance:", model$deviance, "on", model$df.residual, "df\\n")`;
                 lastRScript = `# Save this R script and your data file in the same folder before running.
 
 # Load data
-data <- read.csv("${fileName}")
+data = read.csv("${fileName}")
 
 # Fit model
-model <- ${modelCall}
+model = ${modelCallMultiLine}
 
 # Summary
 summary(model)
 `;
 
+                // Additional stats R code based on model type
+                const additionalStatsR = isLinear
+                    ? `cat("R-squared:", summary(model)$r.squared, "\\n")
+                        cat("Adjusted R-squared:", summary(model)$adj.r.squared, "\\n")
+                        cat("F-statistic:", summary(model)$fstatistic[1], "on", summary(model)$fstatistic[2], "and", summary(model)$fstatistic[3], "DF\\n")`
+                    : `cat("Null Deviance:", model$null.deviance, "on", model$df.null, "df\\n")
+                        cat("Residual Deviance:", model$deviance, "on", model$df.residual, "df\\n")`;
+
                 const rCode = `
                     # Read data
-                    csv_text <- "${csvEscaped}"
-                    data <- read.csv(text = csv_text, stringsAsFactors = FALSE)
+                    csv_text = "${csvEscaped}"
+                    data = read.csv(text = csv_text, stringsAsFactors = FALSE)
 
                     # Convert columns to appropriate types
                     for (col in names(data)) {
-                        num_val <- suppressWarnings(as.numeric(data[[col]]))
+                        num_val = suppressWarnings(as.numeric(data[[col]]))
                         if (!all(is.na(num_val)) && sum(is.na(num_val)) <= sum(is.na(data[[col]]))) {
-                            data[[col]] <- num_val
+                            data[[col]] = num_val
                         }
                     }
 
                     # Fit model
-                    model <- ${modelCall}
+                    model = ${modelCall}
 
                     # Get coefficients table - manual JSON generation
-                    coef_summary <- summary(model)$coefficients
-                    coef_rows <- c()
-                    col_names <- colnames(coef_summary)
+                    coef_summary = summary(model)$coefficients
+                    coef_rows = c()
+                    col_names = colnames(coef_summary)
                     for (i in 1:nrow(coef_summary)) {
-                        var_name <- gsub('"', '\\\\"', rownames(coef_summary)[i])
-                        vals <- coef_summary[i, ]
-                        row_json <- paste0('{"Variable":"', var_name, '"')
+                        var_name = gsub('"', '\\\\"', rownames(coef_summary)[i])
+                        vals = coef_summary[i, ]
+                        row_json = paste0('{"Variable":"', var_name, '"')
                         for (j in 1:length(col_names)) {
-                            col_name <- gsub('\\\\|', '|', col_names[j])
-                            row_json <- paste0(row_json, ',"', col_name, '":', vals[j])
+                            col_name = gsub('\\\\|', '|', col_names[j])
+                            row_json = paste0(row_json, ',"', col_name, '":', vals[j])
                         }
-                        row_json <- paste0(row_json, '}')
-                        coef_rows <- c(coef_rows, row_json)
+                        row_json = paste0(row_json, '}')
+                        coef_rows = c(coef_rows, row_json)
                     }
-                    coef_json <- paste0('COEF_JSON:[', paste(coef_rows, collapse = ','), ']:END_COEF_JSON')
+                    coef_json = paste0('COEF_JSON:[', paste(coef_rows, collapse = ','), ']:END_COEF_JSON')
 
                     # Capture summary output
-                    output <- capture.output({
+                    output = capture.output({
                         cat("============================================\\n")
                         cat("REGRESSION RESULTS\\n")
                         cat("============================================\\n\\n")
@@ -1444,14 +1461,7 @@ summary(model)
                         cat("--------------------------------------------\\n\\n")
                         cat("AIC:", AIC(model), "\\n")
                         cat("BIC:", BIC(model), "\\n")
-                        ${isLinear ? `
-                        cat("R-squared:", summary(model)$r.squared, "\\n")
-                        cat("Adjusted R-squared:", summary(model)$adj.r.squared, "\\n")
-                        cat("F-statistic:", summary(model)$fstatistic[1], "on", summary(model)$fstatistic[2], "and", summary(model)$fstatistic[3], "DF\\n")
-                        ` : `
-                        cat("Null Deviance:", model$null.deviance, "on", model$df.null, "df\\n")
-                        cat("Residual Deviance:", model$deviance, "on", model$df.residual, "df\\n")
-                        `}
+                        ${additionalStatsR}
                         cat("\\n--------------------------------------------\\n")
                         cat("COEFFICIENTS WITH CONFIDENCE INTERVALS\\n")
                         cat("--------------------------------------------\\n\\n")
@@ -1873,15 +1883,14 @@ summary(model)
             let predictCall;
             if (lastModelType === 'linear') {
                 predictCall = `predict(model, newdata = newdata)`;
-            } else if (lastModelType === 'poisson') {
-                predictCall = `predict(model, newdata = newdata, type = "response")`;
             } else {
+                // Poisson, Negative Binomial, and Binomial all use type = "response"
                 predictCall = `predict(model, newdata = newdata, type = "response")`;
             }
 
             const scriptWithPrediction = lastRScript + `
 # Make a prediction
-newdata <- data.frame(
+newdata = data.frame(
 ${newdataArgs}
 )
 
