@@ -533,6 +533,52 @@
             margin-top: 0.5rem;
         }
 
+        /* Interaction Terms */
+        .interaction-row {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 0.75rem;
+            padding: 0.75rem 1rem;
+            background: var(--bg-light);
+            border-radius: 6px;
+            border: 1px solid var(--border);
+        }
+
+        .interaction-row .interaction-label {
+            font-size: 0.8rem;
+            color: var(--text-light);
+            min-width: 70px;
+        }
+
+        .interaction-row select {
+            padding: 0.4rem 0.5rem;
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            font-size: 0.85rem;
+        }
+
+        .interaction-row .interaction-symbol {
+            font-weight: 700;
+            color: var(--iu-crimson);
+            font-size: 1.1rem;
+        }
+
+        .interaction-row .remove-interaction {
+            background: none;
+            border: none;
+            color: #dc2626;
+            cursor: pointer;
+            font-size: 1.2rem;
+            padding: 0 0.3rem;
+            line-height: 1;
+            margin-left: auto;
+        }
+
+        .interaction-row .remove-interaction:hover {
+            color: #991b1b;
+        }
+
         /* Prediction Section */
         .prediction-section {
             margin-top: 2rem;
@@ -642,12 +688,13 @@
             <h2>Terms of Use</h2>
             <p>This regression analysis tool is provided for <strong>educational purposes only</strong>. By proceeding, you acknowledge and accept the following terms:</p>
             <ul>
-                <li>All output is intended for preliminary analysis and should be independently verified before use in any decision-making process.</li>
-                <li>The creator disclaims all liability for the accuracy, completeness, or fitness of results for any particular purpose.</li>
-                <li>Users assume full responsibility for the interpretation and application of any results obtained.</li>
+                <li><strong>Results may contain errors.</strong> The output from this tool may be inaccurate, incomplete, or incorrect. It is the user's sole responsibility to verify all results independently before relying on them for any purpose.</li>
+                <li><strong>No warranty.</strong> This tool is provided "as is" without any warranty of any kind, express or implied, including but not limited to warranties of accuracy, reliability, or fitness for a particular purpose.</li>
+                <li><strong>User assumes all risk.</strong> Users assume full and complete responsibility for any decisions, actions, or consequences arising from the use of this tool and its output.</li>
+                <li><strong>Limitation of liability.</strong> The creator shall not be held responsible for any errors, omissions, or any outcomes resulting from the use of this tool.</li>
                 <li>This tool does not constitute professional statistical consulting services.</li>
             </ul>
-            <p style="font-size: 0.9rem; color: var(--text-light);">By selecting "I Accept" below, you confirm that you have read, understood, and agree to these terms of use.</p>
+            <p style="font-size: 0.9rem; color: var(--text-light);"><strong>By selecting "I Accept" below, you confirm that you have read, understood, and agree to these terms, and you accept full responsibility for any use of this tool and its results.</strong></p>
             <button class="btn-accept" id="acceptDisclaimer">I Accept</button>
         </div>
     </div>
@@ -731,6 +778,16 @@
                     <div class="checkbox-group" id="independentVars"></div>
                 </div>
 
+                <!-- Interaction Terms -->
+                <div class="form-group">
+                    <label>Interaction Terms (Optional)</label>
+                    <p style="font-size: 0.85rem; color: var(--text-light); margin-bottom: 0.5rem;">Add interaction effects between two variables. Only numeric variables can be interacted.</p>
+                    <div id="interactionTerms"></div>
+                    <button type="button" class="btn btn-secondary" id="addInteraction" style="margin-top: 0.5rem; padding: 0.4rem 0.8rem; font-size: 0.85rem;">
+                        + Add Interaction
+                    </button>
+                </div>
+
                 <div class="button-group">
                     <button class="btn btn-primary" id="runButton" disabled>Run Regression</button>
                     <button class="btn btn-secondary" id="clearButton">Clear All</button>
@@ -802,6 +859,8 @@
         let lastIndepVarsData = null; // Store IV info for prediction
         let lastDepVar = null; // Store DV name for prediction label
         let lastPredictionValues = null; // Store prediction input values for R script
+        let lastInteractions = null; // Store interaction terms for prediction
+        let lastDvTransform = null; // Store DV transform for back-transformation in prediction
 
         // DOM Elements
         const loadingOverlay = document.getElementById('loadingOverlay');
@@ -1040,6 +1099,105 @@
 
             // Display descriptive statistics
             displayDescriptiveStats(headers);
+
+            // Initialize interaction terms
+            initInteractionUI(headers, columnTypes);
+        }
+
+        // Initialize interaction terms UI
+        function initInteractionUI(headers, columnTypes) {
+            const interactionTerms = document.getElementById('interactionTerms');
+            const addInteractionBtn = document.getElementById('addInteraction');
+
+            // Clear existing interactions
+            interactionTerms.innerHTML = '';
+
+            // Get only numeric variables for interactions
+            const numericVars = headers.filter(h => columnTypes[h] === 'numeric');
+
+            // Store numeric vars for later use
+            window.numericVarsForInteraction = numericVars;
+
+            // Add interaction button handler
+            addInteractionBtn.onclick = () => {
+                if (numericVars.length < 2) {
+                    showStatus('Need at least 2 numeric variables for interactions.', 'error');
+                    return;
+                }
+                addInteractionRow(numericVars);
+            };
+        }
+
+        // Add a new interaction row
+        function addInteractionRow(numericVars) {
+            const interactionTerms = document.getElementById('interactionTerms');
+            const rowId = 'interaction_' + Date.now();
+            const interactionNum = interactionTerms.querySelectorAll('.interaction-row').length + 1;
+
+            const row = document.createElement('div');
+            row.className = 'interaction-row';
+            row.id = rowId;
+
+            // Variable options
+            let var1Options = numericVars.map(v => `<option value="${v}">${v}</option>`).join('');
+            let var2Options = numericVars.map((v, i) =>
+                `<option value="${v}" ${i === 1 ? 'selected' : ''}>${v}</option>`
+            ).join('');
+
+            row.innerHTML = `
+                <span class="interaction-label">Interaction ${interactionNum}:</span>
+                <select class="interaction-var1">${var1Options}</select>
+                <select class="interaction-transform1">
+                    <option value="linear">Linear</option>
+                    <option value="log">ln(X)</option>
+                    <option value="log1p">ln(X+1)</option>
+                </select>
+                <span class="interaction-symbol">×</span>
+                <select class="interaction-var2">${var2Options}</select>
+                <select class="interaction-transform2">
+                    <option value="linear">Linear</option>
+                    <option value="log">ln(X)</option>
+                    <option value="log1p">ln(X+1)</option>
+                </select>
+                <button type="button" class="remove-interaction" title="Remove this interaction">×</button>
+            `;
+
+            // Add remove handler
+            row.querySelector('.remove-interaction').onclick = () => {
+                row.remove();
+                // Renumber remaining interactions
+                renumberInteractions();
+            };
+
+            interactionTerms.appendChild(row);
+        }
+
+        // Renumber interaction labels after removal
+        function renumberInteractions() {
+            const rows = document.querySelectorAll('.interaction-row');
+            rows.forEach((row, index) => {
+                const label = row.querySelector('.interaction-label');
+                if (label) {
+                    label.textContent = `Interaction ${index + 1}:`;
+                }
+            });
+        }
+
+        // Get interaction terms from UI
+        function getInteractionTerms() {
+            const interactions = [];
+            const rows = document.querySelectorAll('.interaction-row');
+
+            rows.forEach(row => {
+                const var1 = row.querySelector('.interaction-var1').value;
+                const transform1 = row.querySelector('.interaction-transform1').value;
+                const var2 = row.querySelector('.interaction-var2').value;
+                const transform2 = row.querySelector('.interaction-transform2').value;
+
+                interactions.push({ var1, transform1, var2, transform2 });
+            });
+
+            return interactions;
         }
 
         // Handle file upload
@@ -1155,9 +1313,17 @@
             showStatus('Running regression analysis...', 'info');
 
             try {
+                // Helper: only add backticks if variable name needs them (has spaces, special chars, or starts with number)
+                const wrapVar = (varName) => {
+                    if (/^[a-zA-Z_][a-zA-Z0-9_]*$/.test(varName)) {
+                        return varName; // Simple name, no backticks needed
+                    }
+                    return `\`${varName}\``; // Needs backticks
+                };
+
                 // Build formula with transformations
                 const applyTransform = (varName, transform) => {
-                    const v = `\`${varName}\``;
+                    const v = wrapVar(varName);
                     if (transform === 'log') return `log(${v})`;
                     if (transform === 'log1p') return `log(${v} + 1)`;
                     if (transform === 'quadratic') return `${v} + I(${v}^2)`;
@@ -1167,7 +1333,20 @@
 
                 const dvPart = applyTransform(depVar, dvTransform);
                 const ivParts = indepVarsData.map(v => applyTransform(v.name, v.transform)).join(' + ');
-                const formula = `${dvPart} ~ ${ivParts}`;
+
+                // Get interaction terms
+                const interactions = getInteractionTerms();
+                let interactionParts = '';
+                if (interactions.length > 0) {
+                    const interactionTerms = interactions.map(int => {
+                        const term1 = applyTransform(int.var1, int.transform1);
+                        const term2 = applyTransform(int.var2, int.transform2);
+                        return `I(${term1} * ${term2})`;
+                    });
+                    interactionParts = ' + ' + interactionTerms.join(' + ');
+                }
+
+                const formula = `${dvPart} ~ ${ivParts}${interactionParts}`;
 
                 // Clean formula for display
                 const formulaDisplay = formula.replace(/`/g, '');
@@ -1307,6 +1486,8 @@ summary(model)
                         lastModelType = family;
                         lastIndepVarsData = indepVarsData;
                         lastDepVar = depVar;
+                        lastInteractions = interactions;
+                        lastDvTransform = dvTransform;
                         // Setup prediction UI
                         setupPredictionUI(indepVarsData, family);
                     } catch (e) {
@@ -1342,6 +1523,8 @@ summary(model)
             resultsContainer.classList.remove('visible');
             dependentVar.innerHTML = '<option value="">-- Select dependent variable --</option>';
             independentVars.innerHTML = '';
+            document.getElementById('interactionTerms').innerHTML = '';
+            document.getElementById('descStatsContainer').classList.remove('visible');
             statusMessage.classList.remove('visible');
         });
 
@@ -1590,13 +1773,68 @@ summary(model)
                 }
             });
 
+            // Add interaction terms to prediction
+            if (lastInteractions && lastInteractions.length > 0) {
+                lastInteractions.forEach(int => {
+                    // Get values for both variables
+                    const val1 = lastPredictionValues[int.var1];
+                    const val2 = lastPredictionValues[int.var2];
+
+                    if (val1 === undefined || val2 === undefined) return;
+
+                    // Apply transformations
+                    let transformedVal1, transformedVal2;
+
+                    if (int.transform1 === 'log') {
+                        transformedVal1 = Math.log(val1);
+                    } else if (int.transform1 === 'log1p') {
+                        transformedVal1 = Math.log(val1 + 1);
+                    } else {
+                        transformedVal1 = val1;
+                    }
+
+                    if (int.transform2 === 'log') {
+                        transformedVal2 = Math.log(val2);
+                    } else if (int.transform2 === 'log1p') {
+                        transformedVal2 = Math.log(val2 + 1);
+                    } else {
+                        transformedVal2 = val2;
+                    }
+
+                    // Build coefficient name to match R output for I(X * Y) format
+                    const term1 = int.transform1 === 'log' ? `log(${int.var1})` :
+                                  int.transform1 === 'log1p' ? `log(${int.var1} + 1)` :
+                                  int.var1;
+                    const term2 = int.transform2 === 'log' ? `log(${int.var2})` :
+                                  int.transform2 === 'log1p' ? `log(${int.var2} + 1)` :
+                                  int.var2;
+
+                    // Try different coefficient name formats for I(X * Y)
+                    const coefName1 = `I(${term1} * ${term2})`;
+                    const coefName2 = `I(${term2} * ${term1})`; // R might swap order
+
+                    const coef = coefLookup[coefName1] || coefLookup[coefName2] || 0;
+
+                    xBeta += coef * transformedVal1 * transformedVal2;
+                });
+            }
+
             // Calculate final prediction based on model type
             let prediction;
             let label;
 
             if (lastModelType === 'linear') {
-                prediction = xBeta;
-                label = `Predicted ${lastDepVar}`;
+                // Apply back-transformation if DV was log-transformed
+                if (lastDvTransform === 'log') {
+                    prediction = Math.exp(xBeta);
+                    label = `Predicted ${lastDepVar} (back-transformed from ln)`;
+                } else if (lastDvTransform === 'log1p') {
+                    prediction = Math.exp(xBeta) - 1;
+                    label = `Predicted ${lastDepVar} (back-transformed from ln+1)`;
+                } else {
+                    prediction = xBeta;
+                    label = `Predicted ${lastDepVar}`;
+                }
             } else if (lastModelType === 'poisson') {
                 prediction = Math.exp(xBeta);
                 label = `Predicted Mean ${lastDepVar}`;
@@ -1618,9 +1856,17 @@ summary(model)
                 return;
             }
 
+            // Helper: only add backticks if variable name needs them
+            const wrapVarName = (varName) => {
+                if (/^[a-zA-Z_][a-zA-Z0-9_]*$/.test(varName)) {
+                    return varName;
+                }
+                return `\`${varName}\``;
+            };
+
             // Build newdata argument for predict()
             const newdataArgs = Object.entries(lastPredictionValues)
-                .map(([name, val]) => `    \`${name}\` = ${val}`)
+                .map(([name, val]) => `    ${wrapVarName(name)} = ${val}`)
                 .join(',\n');
 
             // Determine predict type based on model
