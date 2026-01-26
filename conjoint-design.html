@@ -43,15 +43,19 @@
                 padding: 0.75rem;
             }
             h1 {
-                font-size: 1.5rem;
+                font-size: 1.4rem;
             }
             .subtitle {
-                font-size: 0.9rem;
+                font-size: 0.85rem;
                 margin-bottom: 1rem;
             }
             .card {
-                padding: 1rem;
+                padding: 0.875rem;
                 margin-bottom: 1rem;
+                overflow: hidden;
+            }
+            .card-title {
+                font-size: 1rem;
             }
             .disclaimer {
                 padding: 0.75rem;
@@ -76,21 +80,42 @@
                 height: 28px;
                 font-size: 0.9rem;
             }
+            .step-title {
+                font-size: 0.95rem;
+            }
+            .step-description {
+                font-size: 0.85rem;
+                word-wrap: break-word;
+                overflow-wrap: break-word;
+            }
+            .step-description code {
+                word-break: break-all;
+                font-size: 0.75rem;
+            }
             .btn {
                 width: 100%;
                 text-align: center;
                 padding: 0.6rem 1rem;
-                font-size: 0.9rem;
+                font-size: 0.85rem;
+                word-break: break-word;
             }
             .code-block {
-                font-size: 0.8rem;
+                font-size: 0.75rem;
                 padding: 0.75rem;
+                word-break: break-all;
+                overflow-x: auto;
             }
             .features {
                 grid-template-columns: 1fr;
             }
             .feature {
                 padding: 0.75rem;
+            }
+            .feature-title {
+                font-size: 0.9rem;
+            }
+            .feature-desc {
+                font-size: 0.8rem;
             }
         }
 
@@ -112,6 +137,7 @@
             padding: 1.5rem;
             margin-bottom: 1.5rem;
             box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            overflow: hidden;
         }
 
         .card-title {
@@ -207,6 +233,12 @@
         .step-description {
             color: var(--text-light);
             font-size: 0.95rem;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+        }
+
+        .step-description code {
+            word-break: break-all;
         }
 
         /* Code block */
@@ -333,9 +365,9 @@
                     <div class="step-description">
                         Download the app file and open it in RStudio:
                     </div>
-                    <button class="btn" id="downloadBtn">Download Conjoint_Fractional_Factorial_Design.R</button>
+                    <button class="btn" id="downloadBtn">Download R App File</button>
                     <div class="step-description" style="margin-top: 0.75rem;">
-                        In RStudio: File → Open File → Select the downloaded <code>Conjoint_Fractional_Factorial_Design.R</code>
+                        In RStudio: File → Open File → Select the downloaded file
                     </div>
                 </div>
             </div>
@@ -345,7 +377,7 @@
                 <div class="step-content">
                     <div class="step-title">Run the App</div>
                     <div class="step-description">
-                        With <code>Conjoint_Fractional_Factorial_Design.R</code> open in RStudio, click the <strong>"Run App"</strong> button in the top-right corner of the editor panel. The app will open in a new window or your web browser.
+                        With the file open in RStudio, click the <strong>"Run App"</strong> button in the top-right corner. The app will open in a new window or your browser.
                     </div>
                     <div class="step-description" style="margin-top: 0.5rem;">
                         <strong>Note:</strong> On first run, the app will automatically install the required R packages (<code>shiny</code> and <code>conjoint</code>). This may take a minute.
@@ -391,7 +423,7 @@
 
             <div style="margin-bottom: 1rem;">
                 <strong>App doesn't open</strong>
-                <div class="step-description">Make sure you have the <code>Conjoint_Fractional_Factorial_Design.R</code> file open in RStudio's editor (not just in the file browser), then click "Run App".</div>
+                <div class="step-description">Make sure the R file is open in RStudio's editor (not just the file browser), then click "Run App".</div>
             </div>
 
             <div style="margin-bottom: 1rem;">
