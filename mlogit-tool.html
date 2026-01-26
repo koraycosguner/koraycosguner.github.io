@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Multinomial and Conditional Logistic Regressions - Setup</title>
+    <title>Logistic Regressions - Setup</title>
     <style>
         :root {
             --primary: #2563eb;
@@ -226,7 +226,7 @@
 </head>
 <body>
     <div class="container">
-        <h1>Multinomial and Conditional Logistic Regressions</h1>
+        <h1>Logistic Regressions</h1>
         <p class="subtitle">Estimate discrete choice models using the "mlogit" package in R.</p>
 
         <!-- Disclaimer -->
@@ -295,17 +295,28 @@
 
         <!-- Data Format -->
         <div class="card">
-            <div class="card-title">Data Format Requirements</div>
+            <div class="card-title">Data Format</div>
             <div class="step-description">
-                Your CSV data should be in <strong>"long" format</strong> where each row represents one alternative within a choice occasion:
+                The app supports both <strong>long format</strong> and <strong>wide format</strong> data. You can select your format when using the app.
             </div>
-            <ul style="margin: 1rem 0 1rem 1.5rem; color: var(--text-light);">
-                <li><strong>ID Variable</strong> - Identifies individuals/households (e.g., HH_ID)</li>
-                <li><strong>Choice ID</strong> - Identifies each choice occasion (e.g., ChoiceID, Month)</li>
-                <li><strong>Alternative Variable</strong> - Names the alternatives (e.g., Product)</li>
+
+            <div style="margin-top: 1rem;">
+                <strong>Long Format</strong> (one row per alternative per choice occasion):
+            </div>
+            <ul style="margin: 0.5rem 0 1rem 1.5rem; color: var(--text-light);">
+                <li><strong>Choice ID</strong> - Identifies each choice occasion</li>
+                <li><strong>Alternative Variable</strong> - Names the alternatives (e.g., Coke, Pepsi)</li>
                 <li><strong>Choice Variable</strong> - Binary (1/0) indicating which alternative was chosen</li>
-                <li><strong>Alternative-specific variables</strong> - Attributes that vary by alternative (e.g., Price)</li>
-                <li><strong>Case-specific variables</strong> - Attributes that vary by individual/occasion (e.g., Channel)</li>
+                <li><strong>Choice-specific variables</strong> - Attributes that vary by alternative (e.g., Price)</li>
+            </ul>
+
+            <div>
+                <strong>Wide Format</strong> (one row per choice occasion):
+            </div>
+            <ul style="margin: 0.5rem 0 0 1.5rem; color: var(--text-light);">
+                <li><strong>Choice ID</strong> - Identifies each choice occasion</li>
+                <li><strong>Choice columns</strong> - Separate 0/1 columns for each alternative (e.g., ChoiceCoke, ChoicePepsi)</li>
+                <li><strong>Attribute columns</strong> - Separate columns for each alternative's attributes (e.g., PriceCoke, PricePepsi)</li>
             </ul>
         </div>
 
@@ -314,28 +325,28 @@
             <div class="card-title">Features</div>
             <div class="features">
                 <div class="feature">
-                    <div class="feature-title">CSV Data Upload</div>
-                    <div class="feature-desc">Upload your dataset in long format CSV</div>
+                    <div class="feature-title">Long & Wide Format</div>
+                    <div class="feature-desc">Upload data in either format; wide format auto-converts to long</div>
                 </div>
                 <div class="feature">
-                    <div class="feature-title">Data Structure Setup</div>
-                    <div class="feature-desc">Specify choice, alternative, choice ID, and individual ID variables</div>
-                </div>
-                <div class="feature">
-                    <div class="feature-title">Flexible Formula Builder</div>
-                    <div class="feature-desc">Build mlogit formulas with alternative-specific and case-specific variables</div>
+                    <div class="feature-title">Dynamic Variable Builder</div>
+                    <div class="feature-desc">Add variables one at a time with choice-invariant or choice-specific coefficients</div>
                 </div>
                 <div class="feature">
                     <div class="feature-title">Reference Level</div>
-                    <div class="feature-desc">Select the reference alternative (e.g., No_Purchase)</div>
+                    <div class="feature-desc">Select the reference alternative (e.g., NoPurchase)</div>
+                </div>
+                <div class="feature">
+                    <div class="feature-title">Intercept Options</div>
+                    <div class="feature-desc">Alternative-specific, single, or no intercept</div>
                 </div>
                 <div class="feature">
                     <div class="feature-title">Model Estimates</div>
-                    <div class="feature-desc">View coefficients, std. errors, z-values, and p-values</div>
+                    <div class="feature-desc">View coefficients, std. errors, and p-values</div>
                 </div>
                 <div class="feature">
                     <div class="feature-title">Model Fit Statistics</div>
-                    <div class="feature-desc">AIC, BIC, Log-Likelihood, McFadden R-squared</div>
+                    <div class="feature-desc">AIC and Log-Likelihood</div>
                 </div>
             </div>
         </div>
@@ -360,7 +371,7 @@
 
             <div style="margin-bottom: 1rem;">
                 <strong>Model fails to estimate</strong>
-                <div class="step-description">Check that your data is in the correct long format, with one row per alternative per choice occasion. Ensure the choice variable is binary (0/1) and sums to 1 within each choice occasion.</div>
+                <div class="step-description">Ensure the choice variable is binary (0/1) and exactly one alternative is chosen per choice occasion. For wide format, make sure alternative names match the suffixes in your column names.</div>
             </div>
 
             <div>
