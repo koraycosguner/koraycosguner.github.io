@@ -107,6 +107,32 @@
             border-bottom: 2px solid var(--iu-crimson);
         }
 
+        /* Disclaimer */
+        .disclaimer {
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+            border-radius: 8px;
+            padding: 1rem 1.25rem;
+            margin-bottom: 2rem;
+        }
+        .disclaimer-title {
+            font-weight: 700;
+            color: var(--iu-crimson);
+            margin-bottom: 0.5rem;
+        }
+        .disclaimer ul {
+            margin: 0;
+            padding-left: 1.25rem;
+            color: var(--text-light);
+            font-size: 0.9rem;
+        }
+        .disclaimer li {
+            margin-bottom: 0.25rem;
+        }
+        .disclaimer li:last-child {
+            margin-bottom: 0;
+        }
+
         /* Loading Overlay */
         .loading-overlay {
             position: fixed;
@@ -423,71 +449,6 @@
             }
         }
 
-        /* Disclaimer Modal */
-        .disclaimer-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.7);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 10000;
-        }
-
-        .disclaimer-overlay.hidden {
-            display: none;
-        }
-
-        .disclaimer-modal {
-            background: var(--white);
-            border-radius: 12px;
-            max-width: 550px;
-            width: 90%;
-            padding: 2rem;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-        }
-
-        .disclaimer-modal h2 {
-            color: var(--iu-crimson);
-            margin-bottom: 1rem;
-            font-size: 1.5rem;
-        }
-
-        .disclaimer-modal p {
-            color: var(--text-dark);
-            margin-bottom: 1rem;
-            line-height: 1.7;
-        }
-
-        .disclaimer-modal ul {
-            margin: 1rem 0 1.5rem 1.5rem;
-            color: var(--text-light);
-        }
-
-        .disclaimer-modal li {
-            margin-bottom: 0.5rem;
-        }
-
-        .disclaimer-modal .btn-accept {
-            width: 100%;
-            background: var(--iu-crimson);
-            color: var(--white);
-            border: none;
-            padding: 1rem;
-            font-size: 1rem;
-            font-weight: 600;
-            border-radius: 6px;
-            cursor: pointer;
-            transition: background 0.3s;
-        }
-
-        .disclaimer-modal .btn-accept:hover {
-            background: var(--iu-crimson-dark);
-        }
-
         /* Coefficients Table */
         .coef-table-container {
             margin-top: 1.5rem;
@@ -682,23 +643,6 @@
     </style>
 </head>
 <body>
-    <!-- Disclaimer Modal -->
-    <div class="disclaimer-overlay" id="disclaimerOverlay">
-        <div class="disclaimer-modal">
-            <h2>Terms of Use</h2>
-            <p>This regression analysis tool is provided for <strong>educational purposes only</strong>. By proceeding, you acknowledge and accept the following terms:</p>
-            <ul>
-                <li><strong>Results may contain errors.</strong> The output from this tool may be inaccurate, incomplete, or incorrect. It is the user's sole responsibility to verify all results independently before relying on them for any purpose.</li>
-                <li><strong>No warranty.</strong> This tool is provided "as is" without any warranty of any kind, express or implied, including but not limited to warranties of accuracy, reliability, or fitness for a particular purpose.</li>
-                <li><strong>User assumes all risk.</strong> Users assume full and complete responsibility for any decisions, actions, or consequences arising from the use of this tool and its output.</li>
-                <li><strong>Limitation of liability.</strong> The creator shall not be held responsible for any errors, omissions, or any outcomes resulting from the use of this tool.</li>
-                <li>This tool does not constitute professional statistical consulting services.</li>
-            </ul>
-            <p style="font-size: 0.9rem; color: var(--text-light);"><strong>By selecting "I Accept" below, you confirm that you have read, understood, and agree to these terms, and you accept full responsibility for any use of this tool and its results.</strong></p>
-            <button class="btn-accept" id="acceptDisclaimer">I Accept</button>
-        </div>
-    </div>
-
     <!-- Loading Overlay -->
     <div class="loading-overlay" id="loadingOverlay">
         <div class="spinner"></div>
@@ -713,6 +657,16 @@
             <h1>Web Tool for Running Regression Models</h1>
             <p>Run regression models directly in your browser using R. Upload a CSV file and perform Linear, Poisson, or Binary Logistic regression analysis.</p>
         </section>
+
+        <!-- Disclaimer -->
+        <div class="disclaimer">
+            <div class="disclaimer-title">Disclaimer</div>
+            <ul>
+                <li><strong>Results may contain errors.</strong> The output from this tool may be inaccurate, incomplete, or incorrect. Users should independently verify all results.</li>
+                <li><strong>No warranty.</strong> This tool is provided "as is" without any warranty of any kind.</li>
+                <li><strong>User assumes all risk.</strong> Users assume full responsibility for reviewing and validating any output.</li>
+            </ul>
+        </div>
 
         <div class="tool-container">
             <!-- Status Messages -->
@@ -1536,14 +1490,6 @@ summary(model)
             document.getElementById('interactionTerms').innerHTML = '';
             document.getElementById('descStatsContainer').classList.remove('visible');
             statusMessage.classList.remove('visible');
-        });
-
-        // Disclaimer acceptance (shown every time the tool is used)
-        const disclaimerOverlay = document.getElementById('disclaimerOverlay');
-        const acceptButton = document.getElementById('acceptDisclaimer');
-
-        acceptButton.addEventListener('click', () => {
-            disclaimerOverlay.classList.add('hidden');
         });
 
         // Download R script
