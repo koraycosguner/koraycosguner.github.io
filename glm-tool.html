@@ -1,0 +1,1097 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Web Tool for Running Regression Models | Koray Cosguner</title>
+    <style>
+        :root {
+            --iu-crimson: #990000;
+            --iu-crimson-dark: #7a0000;
+            --text-dark: #333;
+            --text-light: #666;
+            --bg-light: #f5f5f5;
+            --white: #fff;
+            --border: #ddd;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            line-height: 1.6;
+            color: var(--text-dark);
+            background-color: var(--bg-light);
+        }
+
+        /* Navigation */
+        nav {
+            position: sticky;
+            top: 0;
+            background: var(--white);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            z-index: 1000;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-brand {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--iu-crimson);
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text-dark);
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        .nav-links a:hover {
+            color: var(--iu-crimson);
+        }
+
+        /* Main Content */
+        main {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .hero {
+            text-align: center;
+            padding: 3rem 0;
+        }
+
+        .hero h1 {
+            font-size: 2.5rem;
+            color: var(--iu-crimson);
+            margin-bottom: 0.5rem;
+        }
+
+        .hero p {
+            font-size: 1.1rem;
+            color: var(--text-light);
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        /* Tool Container */
+        .tool-container {
+            background: var(--white);
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            padding: 2rem;
+            margin-top: 2rem;
+        }
+
+        .section-title {
+            font-size: 1.3rem;
+            color: var(--iu-crimson);
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--iu-crimson);
+        }
+
+        /* Loading Overlay */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255,255,255,0.95);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+
+        .loading-overlay.hidden {
+            display: none;
+        }
+
+        .spinner {
+            width: 60px;
+            height: 60px;
+            border: 4px solid var(--border);
+            border-top-color: var(--iu-crimson);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .loading-text {
+            margin-top: 1rem;
+            font-size: 1.1rem;
+            color: var(--text-light);
+        }
+
+        /* File Upload */
+        .upload-area {
+            border: 2px dashed var(--border);
+            border-radius: 8px;
+            padding: 3rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-bottom: 1.5rem;
+        }
+
+        .upload-area:hover, .upload-area.dragover {
+            border-color: var(--iu-crimson);
+            background: rgba(153, 0, 0, 0.05);
+        }
+
+        .upload-area input[type="file"] {
+            display: none;
+        }
+
+        .upload-icon {
+            font-size: 3rem;
+            color: var(--iu-crimson);
+            margin-bottom: 1rem;
+        }
+
+        .upload-text {
+            font-size: 1.1rem;
+            color: var(--text-dark);
+        }
+
+        .upload-hint {
+            font-size: 0.9rem;
+            color: var(--text-light);
+            margin-top: 0.5rem;
+        }
+
+        /* Form Controls */
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--text-dark);
+        }
+
+        .form-group select,
+        .form-group input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+
+        .form-group select:focus,
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--iu-crimson);
+        }
+
+        .checkbox-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+            max-height: 250px;
+            overflow-y: auto;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 1rem;
+        }
+
+        .var-row {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.35rem 0.5rem;
+            border-radius: 4px;
+            transition: background 0.2s;
+        }
+
+        .var-row:hover {
+            background: rgba(153, 0, 0, 0.05);
+        }
+
+        .indep-var-log:disabled {
+            opacity: 0.4;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .checkbox-item input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            accent-color: var(--iu-crimson);
+        }
+
+        /* Buttons */
+        .btn {
+            display: inline-block;
+            padding: 0.75rem 2rem;
+            font-size: 1rem;
+            font-weight: 600;
+            text-align: center;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: var(--iu-crimson);
+            color: var(--white);
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            background: var(--iu-crimson-dark);
+        }
+
+        .btn-primary:disabled {
+            background: var(--text-light);
+            cursor: not-allowed;
+        }
+
+        .btn-secondary {
+            background: var(--white);
+            color: var(--iu-crimson);
+            border: 2px solid var(--iu-crimson);
+        }
+
+        .btn-secondary:hover {
+            background: var(--iu-crimson);
+            color: var(--white);
+        }
+
+        .button-group {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        /* Results */
+        .results-container {
+            margin-top: 2rem;
+            display: none;
+        }
+
+        .results-container.visible {
+            display: block;
+        }
+
+        .results-output {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            font-family: 'Monaco', 'Menlo', 'Courier New', monospace;
+            font-size: 0.9rem;
+            padding: 1.5rem;
+            border-radius: 8px;
+            overflow-x: auto;
+            white-space: pre-wrap;
+            line-height: 1.5;
+        }
+
+        /* Data Preview */
+        .data-preview {
+            margin-top: 1.5rem;
+            display: none;
+        }
+
+        .data-preview.visible {
+            display: block;
+        }
+
+        .preview-table-container {
+            overflow-x: auto;
+            max-height: 300px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+        }
+
+        .preview-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+        }
+
+        .preview-table th,
+        .preview-table td {
+            padding: 0.5rem 1rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .preview-table th {
+            background: var(--iu-crimson);
+            color: var(--white);
+            position: sticky;
+            top: 0;
+        }
+
+        .preview-table tr:hover {
+            background: rgba(153, 0, 0, 0.05);
+        }
+
+        /* Status Messages */
+        .status-message {
+            padding: 1rem;
+            border-radius: 6px;
+            margin-bottom: 1rem;
+            display: none;
+        }
+
+        .status-message.visible {
+            display: block;
+        }
+
+        .status-message.error {
+            background: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #fecaca;
+        }
+
+        .status-message.success {
+            background: #d1fae5;
+            color: #065f46;
+            border: 1px solid #a7f3d0;
+        }
+
+        .status-message.info {
+            background: #dbeafe;
+            color: #1e40af;
+            border: 1px solid #bfdbfe;
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 2rem;
+            color: var(--text-light);
+            font-size: 0.9rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            nav {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .nav-links {
+                gap: 1rem;
+            }
+
+            .hero h1 {
+                font-size: 1.8rem;
+            }
+
+            .tool-container {
+                padding: 1rem;
+            }
+
+            .checkbox-group {
+                grid-template-columns: 1fr;
+            }
+
+            .button-group {
+                flex-direction: column;
+            }
+        }
+
+        /* Disclaimer Modal */
+        .disclaimer-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 10000;
+        }
+
+        .disclaimer-overlay.hidden {
+            display: none;
+        }
+
+        .disclaimer-modal {
+            background: var(--white);
+            border-radius: 12px;
+            max-width: 550px;
+            width: 90%;
+            padding: 2rem;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        .disclaimer-modal h2 {
+            color: var(--iu-crimson);
+            margin-bottom: 1rem;
+            font-size: 1.5rem;
+        }
+
+        .disclaimer-modal p {
+            color: var(--text-dark);
+            margin-bottom: 1rem;
+            line-height: 1.7;
+        }
+
+        .disclaimer-modal ul {
+            margin: 1rem 0 1.5rem 1.5rem;
+            color: var(--text-light);
+        }
+
+        .disclaimer-modal li {
+            margin-bottom: 0.5rem;
+        }
+
+        .disclaimer-modal .btn-accept {
+            width: 100%;
+            background: var(--iu-crimson);
+            color: var(--white);
+            border: none;
+            padding: 1rem;
+            font-size: 1rem;
+            font-weight: 600;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .disclaimer-modal .btn-accept:hover {
+            background: var(--iu-crimson-dark);
+        }
+    </style>
+</head>
+<body>
+    <!-- Disclaimer Modal -->
+    <div class="disclaimer-overlay" id="disclaimerOverlay">
+        <div class="disclaimer-modal">
+            <h2>Terms of Use</h2>
+            <p>This regression analysis tool is provided for <strong>educational purposes only</strong>. By proceeding, you acknowledge and accept the following terms:</p>
+            <ul>
+                <li>All output is intended for preliminary analysis and should be independently verified before use in any decision-making process.</li>
+                <li>The creator disclaims all liability for the accuracy, completeness, or fitness of results for any particular purpose.</li>
+                <li>Users assume full responsibility for the interpretation and application of any results obtained.</li>
+                <li>This tool does not constitute professional statistical consulting services.</li>
+            </ul>
+            <p style="font-size: 0.9rem; color: var(--text-light);">By selecting "I Accept" below, you confirm that you have read, understood, and agree to these terms of use.</p>
+            <button class="btn-accept" id="acceptDisclaimer">I Accept</button>
+        </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="spinner"></div>
+        <p class="loading-text">Loading WebR (R in your browser)...</p>
+        <p class="loading-hint" style="font-size: 0.9rem; color: #999; margin-top: 0.5rem;">This may take a moment on first load</p>
+    </div>
+
+    <!-- Navigation -->
+    <nav>
+        <a href="index.html" class="nav-brand">Koray Cosguner</a>
+        <ul class="nav-links">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="tools.html">Pricing Tools</a></li>
+        </ul>
+    </nav>
+
+    <!-- Main Content -->
+    <main>
+        <section class="hero">
+            <h1>Web Tool for Running Regression Models</h1>
+            <p>Run regression models directly in your browser using R. Upload a CSV file and perform Linear, Poisson, or Binary Logistic regression analysis.</p>
+        </section>
+
+        <div class="tool-container">
+            <!-- Status Messages -->
+            <div class="status-message" id="statusMessage"></div>
+
+            <!-- Step 1: Upload -->
+            <h2 class="section-title">1. Upload Your Data</h2>
+            <div class="upload-area" id="uploadArea">
+                <input type="file" id="fileInput" accept=".csv">
+                <div class="upload-icon">📊</div>
+                <p class="upload-text">Click to upload or drag and drop</p>
+                <p class="upload-hint">CSV files only</p>
+            </div>
+
+            <!-- Data Preview -->
+            <div class="data-preview" id="dataPreview">
+                <h3 style="margin-bottom: 1rem; color: var(--text-dark);">Data Preview (first 10 rows)</h3>
+                <div class="preview-table-container">
+                    <table class="preview-table" id="previewTable"></table>
+                </div>
+            </div>
+
+            <!-- Step 2: Model Configuration -->
+            <div id="modelConfig" style="display: none;">
+                <h2 class="section-title" style="margin-top: 2rem;">2. Configure Your Model</h2>
+
+                <div class="form-group">
+                    <label for="modelType">Model Type</label>
+                    <select id="modelType">
+                        <option value="linear">Linear Regression</option>
+                        <option value="poisson">Poisson Regression</option>
+                        <option value="binomial">Binary Logistic Regression</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="dependentVar">Dependent Variable (Y)</label>
+                    <div style="display: flex; gap: 1rem; align-items: center;">
+                        <select id="dependentVar" style="flex: 1;">
+                            <option value="">-- Select dependent variable --</option>
+                        </select>
+                        <select id="dvTransform" style="width: 120px;">
+                            <option value="linear">Linear</option>
+                            <option value="log">ln(Y)</option>
+                            <option value="log1p">ln(Y + 1)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Independent Variables (X)</label>
+                    <p style="font-size: 0.85rem; color: var(--text-light); margin-bottom: 0.5rem;">Select variables and choose transformation: Linear, ln(X), ln(X + 1), or X + X² (quadratic)</p>
+                    <div class="checkbox-group" id="independentVars"></div>
+                </div>
+
+                <div class="button-group">
+                    <button class="btn btn-primary" id="runButton" disabled>Run Regression</button>
+                    <button class="btn btn-secondary" id="clearButton">Clear All</button>
+                </div>
+            </div>
+
+            <!-- Step 3: Results -->
+            <div class="results-container" id="resultsContainer">
+                <h2 class="section-title" style="margin-top: 2rem;">3. Results</h2>
+                <pre class="results-output" id="resultsOutput"></pre>
+                <div style="margin-top: 1rem; display: flex; gap: 1rem;">
+                    <button class="btn btn-secondary" id="downloadScript" style="flex: 1;">
+                        Download R Script
+                    </button>
+                </div>
+                <p style="font-size: 0.85rem; color: var(--text-light); margin-top: 0.5rem;">
+                    Download the R script to run or verify the analysis locally in R/RStudio.
+                </p>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2026 Koray Cosguner. All Rights Reserved.</p>
+    </footer>
+
+    <!-- WebR -->
+    <script type="module">
+        import { WebR } from 'https://webr.r-wasm.org/latest/webr.mjs';
+
+        // Global state
+        let webR = null;
+        let csvData = null;
+        let columnNames = [];
+        let lastRScript = ''; // Store the last generated R script for download
+
+        // DOM Elements
+        const loadingOverlay = document.getElementById('loadingOverlay');
+        const uploadArea = document.getElementById('uploadArea');
+        const fileInput = document.getElementById('fileInput');
+        const dataPreview = document.getElementById('dataPreview');
+        const previewTable = document.getElementById('previewTable');
+        const modelConfig = document.getElementById('modelConfig');
+        const modelType = document.getElementById('modelType');
+        const dependentVar = document.getElementById('dependentVar');
+        const independentVars = document.getElementById('independentVars');
+        const runButton = document.getElementById('runButton');
+        const clearButton = document.getElementById('clearButton');
+        const resultsContainer = document.getElementById('resultsContainer');
+        const resultsOutput = document.getElementById('resultsOutput');
+        const statusMessage = document.getElementById('statusMessage');
+
+        // Initialize WebR
+        async function initWebR() {
+            try {
+                webR = new WebR();
+                await webR.init();
+                loadingOverlay.classList.add('hidden');
+                showStatus('WebR loaded successfully. Ready to analyze data.', 'success');
+            } catch (error) {
+                loadingOverlay.innerHTML = `
+                    <div style="text-align: center; padding: 2rem;">
+                        <p style="color: #991b1b; font-size: 1.2rem;">Failed to load WebR</p>
+                        <p style="color: #666; margin-top: 1rem;">${error.message}</p>
+                        <p style="color: #666; margin-top: 0.5rem;">Please refresh the page to try again.</p>
+                    </div>
+                `;
+            }
+        }
+
+        // Show status message
+        function showStatus(message, type = 'info') {
+            statusMessage.textContent = message;
+            statusMessage.className = `status-message visible ${type}`;
+            if (type === 'success') {
+                setTimeout(() => {
+                    statusMessage.classList.remove('visible');
+                }, 3000);
+            }
+        }
+
+        // Parse CSV
+        function parseCSV(text) {
+            const lines = text.trim().split('\n');
+            const headers = lines[0].split(',').map(h => h.trim().replace(/^"|"$/g, ''));
+            const data = [];
+
+            for (let i = 1; i < lines.length; i++) {
+                const values = lines[i].split(',').map(v => v.trim().replace(/^"|"$/g, ''));
+                if (values.length === headers.length) {
+                    const row = {};
+                    headers.forEach((h, j) => {
+                        row[h] = values[j];
+                    });
+                    data.push(row);
+                }
+            }
+
+            return { headers, data };
+        }
+
+        // Check if a column is numeric
+        function isNumericColumn(data, colName) {
+            // Check first 100 rows (or all if less)
+            const sampleSize = Math.min(data.length, 100);
+            let numericCount = 0;
+
+            for (let i = 0; i < sampleSize; i++) {
+                const val = data[i][colName];
+                if (val === '' || val === null || val === undefined) continue;
+                if (!isNaN(parseFloat(val)) && isFinite(val)) {
+                    numericCount++;
+                }
+            }
+
+            // Consider numeric if at least 80% of non-empty values are numeric
+            return numericCount >= sampleSize * 0.8;
+        }
+
+        // Display data preview
+        function displayPreview(headers, data) {
+            const previewData = data.slice(0, 10);
+
+            // Add note if many columns
+            let headerNote = '';
+            if (headers.length > 10) {
+                headerNote = `<p style="font-size: 0.85rem; color: var(--text-light); margin-bottom: 0.5rem;">Showing all ${headers.length} columns. Scroll horizontally to see more.</p>`;
+            }
+
+            let html = '<thead><tr>';
+            headers.forEach(h => {
+                html += `<th>${h}</th>`;
+            });
+            html += '</tr></thead><tbody>';
+
+            previewData.forEach(row => {
+                html += '<tr>';
+                headers.forEach(h => {
+                    html += `<td>${row[h]}</td>`;
+                });
+                html += '</tr>';
+            });
+            html += '</tbody>';
+
+            // Update the preview section
+            const previewContainer = dataPreview.querySelector('.preview-table-container');
+            previewContainer.insertAdjacentHTML('beforebegin', headerNote);
+            previewTable.innerHTML = html;
+            dataPreview.classList.add('visible');
+        }
+
+        // Populate variable selectors
+        function populateVariables(headers) {
+            columnNames = headers;
+
+            // Detect numeric vs categorical columns
+            const columnTypes = {};
+            headers.forEach(h => {
+                columnTypes[h] = isNumericColumn(csvData.data, h) ? 'numeric' : 'categorical';
+            });
+
+            // Store column types globally
+            csvData.columnTypes = columnTypes;
+
+            // Dependent variable dropdown (with type indicator)
+            dependentVar.innerHTML = '<option value="">-- Select dependent variable --</option>';
+            headers.forEach(h => {
+                const typeLabel = columnTypes[h] === 'numeric' ? '' : ' (categorical)';
+                dependentVar.innerHTML += `<option value="${h}">${h}${typeLabel}</option>`;
+            });
+
+            // Independent variables checkboxes with transformation dropdown
+            independentVars.innerHTML = '';
+            headers.forEach(h => {
+                const isNumeric = columnTypes[h] === 'numeric';
+                const typeIndicator = isNumeric
+                    ? '<span style="font-size: 0.7rem; color: #2563eb; margin-left: 4px;">(num)</span>'
+                    : '<span style="font-size: 0.7rem; color: #9333ea; margin-left: 4px;">(cat)</span>';
+
+                // Different options for numeric vs categorical
+                const transformOptions = isNumeric
+                    ? `<option value="linear">Linear</option>
+                       <option value="log">ln(X)</option>
+                       <option value="log1p">ln(X+1)</option>
+                       <option value="quadratic">X + X²</option>`
+                    : `<option value="factor">Factor</option>`;
+
+                independentVars.innerHTML += `
+                    <div class="var-row" data-type="${columnTypes[h]}">
+                        <label class="checkbox-item" style="flex: 1;">
+                            <input type="checkbox" value="${h}" class="indep-var">
+                            ${h} ${typeIndicator}
+                        </label>
+                        <select class="iv-transform" data-var="${h}" style="width: 110px; padding: 0.25rem; font-size: 0.85rem; border-radius: 4px; border: 1px solid var(--border);" disabled>
+                            ${transformOptions}
+                        </select>
+                    </div>
+                `;
+            });
+
+            // Enable/disable transform dropdown based on variable selection
+            independentVars.querySelectorAll('.indep-var').forEach(cb => {
+                cb.addEventListener('change', (e) => {
+                    const transformSelect = e.target.closest('.var-row').querySelector('.iv-transform');
+                    transformSelect.disabled = !e.target.checked;
+                    if (!e.target.checked) {
+                        const varRow = e.target.closest('.var-row');
+                        transformSelect.value = varRow.dataset.type === 'numeric' ? 'linear' : 'factor';
+                    }
+                });
+            });
+
+            modelConfig.style.display = 'block';
+        }
+
+        // Handle file upload
+        function handleFile(file) {
+            if (!file || !file.name.endsWith('.csv')) {
+                showStatus('Please upload a CSV file.', 'error');
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                try {
+                    const { headers, data } = parseCSV(e.target.result);
+                    csvData = { headers, data, raw: e.target.result };
+                    displayPreview(headers, data);
+                    populateVariables(headers);
+                    showStatus(`Loaded ${data.length} rows with ${headers.length} columns.`, 'success');
+                } catch (error) {
+                    showStatus('Error parsing CSV file: ' + error.message, 'error');
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        // Upload area events
+        uploadArea.addEventListener('click', () => fileInput.click());
+
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                handleFile(e.target.files[0]);
+            }
+        });
+
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.classList.add('dragover');
+        });
+
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.classList.remove('dragover');
+        });
+
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.classList.remove('dragover');
+            if (e.dataTransfer.files.length > 0) {
+                handleFile(e.dataTransfer.files[0]);
+            }
+        });
+
+        // Update run button state
+        function updateRunButton() {
+            const depVar = dependentVar.value;
+            const indepVars = Array.from(document.querySelectorAll('.indep-var:checked')).map(cb => cb.value);
+            runButton.disabled = !depVar || indepVars.length === 0;
+        }
+
+        // Update IV list when DV changes (disable/enable based on DV selection)
+        function updateIVList() {
+            const selectedDV = dependentVar.value;
+
+            independentVars.querySelectorAll('.var-row').forEach(row => {
+                const checkbox = row.querySelector('.indep-var');
+                const transformSelect = row.querySelector('.iv-transform');
+                const varName = checkbox.value;
+
+                if (varName === selectedDV) {
+                    // Disable and uncheck the variable that's selected as DV
+                    checkbox.checked = false;
+                    checkbox.disabled = true;
+                    transformSelect.disabled = true;
+                    transformSelect.value = row.dataset.type === 'numeric' ? 'linear' : 'factor';
+                    row.style.opacity = '0.4';
+                } else {
+                    // Re-enable variables that are not the DV
+                    checkbox.disabled = false;
+                    row.style.opacity = '1';
+                }
+            });
+
+            updateRunButton();
+        }
+
+        dependentVar.addEventListener('change', updateIVList);
+        independentVars.addEventListener('change', updateRunButton);
+
+        // Run GLM analysis
+        runButton.addEventListener('click', async () => {
+            const depVar = dependentVar.value;
+            const dvTransform = document.getElementById('dvTransform').value;
+
+            // Get selected IVs and their transformation status
+            const indepVarsData = Array.from(document.querySelectorAll('.indep-var:checked'))
+                .map(cb => {
+                    const varRow = cb.closest('.var-row');
+                    const transformSelect = varRow.querySelector('.iv-transform');
+                    return {
+                        name: cb.value,
+                        transform: transformSelect ? transformSelect.value : 'linear'
+                    };
+                })
+                .filter(v => v.name !== depVar);
+
+            if (!depVar || indepVarsData.length === 0) {
+                showStatus('Please select dependent and independent variables.', 'error');
+                return;
+            }
+
+            const family = modelType.value;
+
+            runButton.disabled = true;
+            runButton.textContent = 'Running...';
+            showStatus('Running regression analysis...', 'info');
+
+            try {
+                // Build formula with transformations
+                const applyTransform = (varName, transform) => {
+                    const v = `\`${varName}\``;
+                    if (transform === 'log') return `log(${v})`;
+                    if (transform === 'log1p') return `log(${v} + 1)`;
+                    if (transform === 'quadratic') return `${v} + I(${v}^2)`;
+                    if (transform === 'factor') return `factor(${v})`;
+                    return v;
+                };
+
+                const dvPart = applyTransform(depVar, dvTransform);
+                const ivParts = indepVarsData.map(v => applyTransform(v.name, v.transform)).join(' + ');
+                const formula = `${dvPart} ~ ${ivParts}`;
+
+                // Clean formula for display
+                const formulaDisplay = formula.replace(/`/g, '');
+
+                // Model type labels
+                const modelLabels = {
+                    'linear': 'Linear Regression',
+                    'poisson': 'Poisson Regression',
+                    'binomial': 'Binary Logistic Regression'
+                };
+
+                // Escape CSV for R string (handle quotes and newlines)
+                const csvEscaped = csvData.raw
+                    .replace(/\\/g, '\\\\')
+                    .replace(/"/g, '\\"')
+                    .replace(/\n/g, '\\n')
+                    .replace(/\r/g, '');
+
+                // Build R code - use lm() for linear, glm() for others
+                const isLinear = family === 'linear';
+                const modelCall = isLinear
+                    ? `lm(${formula}, data = data)`
+                    : `glm(${formula}, data = data, family = ${family})`;
+
+                // Generate clean R script for download
+                const additionalStats = isLinear
+                    ? `cat("R-squared:", summary(model)$r.squared, "\\n")
+cat("Adjusted R-squared:", summary(model)$adj.r.squared, "\\n")
+cat("F-statistic:", summary(model)$fstatistic[1], "on", summary(model)$fstatistic[2], "and", summary(model)$fstatistic[3], "DF\\n")`
+                    : `cat("Null Deviance:", model$null.deviance, "on", model$df.null, "df\\n")
+cat("Residual Deviance:", model$deviance, "on", model$df.residual, "df\\n")`;
+
+                // Get the uploaded filename
+                const fileName = fileInput.files[0] ? fileInput.files[0].name : 'your_data.csv';
+
+                lastRScript = `# Save this R script and your data file in the same folder before running.
+
+# Load data
+data <- read.csv("${fileName}")
+
+# Fit model
+model <- ${modelCall}
+
+# Summary
+summary(model)
+`;
+
+                const rCode = `
+                    # Read data
+                    csv_text <- "${csvEscaped}"
+                    data <- read.csv(text = csv_text, stringsAsFactors = FALSE)
+
+                    # Convert columns to appropriate types
+                    for (col in names(data)) {
+                        num_val <- suppressWarnings(as.numeric(data[[col]]))
+                        if (!all(is.na(num_val)) && sum(is.na(num_val)) <= sum(is.na(data[[col]]))) {
+                            data[[col]] <- num_val
+                        }
+                    }
+
+                    # Fit model
+                    model <- ${modelCall}
+
+                    # Capture summary output
+                    output <- capture.output({
+                        cat("============================================\\n")
+                        cat("REGRESSION RESULTS\\n")
+                        cat("============================================\\n\\n")
+                        cat("Model Type: ${modelLabels[family]}\\n")
+                        cat("Formula: ${formulaDisplay}\\n")
+                        cat("Observations:", nrow(data), "\\n\\n")
+                        cat("--------------------------------------------\\n")
+                        cat("MODEL SUMMARY\\n")
+                        cat("--------------------------------------------\\n\\n")
+                        print(summary(model))
+                        cat("\\n--------------------------------------------\\n")
+                        cat("ADDITIONAL STATISTICS\\n")
+                        cat("--------------------------------------------\\n\\n")
+                        cat("AIC:", AIC(model), "\\n")
+                        cat("BIC:", BIC(model), "\\n")
+                        ${isLinear ? `
+                        cat("R-squared:", summary(model)$r.squared, "\\n")
+                        cat("Adjusted R-squared:", summary(model)$adj.r.squared, "\\n")
+                        cat("F-statistic:", summary(model)$fstatistic[1], "on", summary(model)$fstatistic[2], "and", summary(model)$fstatistic[3], "DF\\n")
+                        ` : `
+                        cat("Null Deviance:", model$null.deviance, "on", model$df.null, "df\\n")
+                        cat("Residual Deviance:", model$deviance, "on", model$df.residual, "df\\n")
+                        `}
+                        cat("\\n--------------------------------------------\\n")
+                        cat("COEFFICIENTS WITH CONFIDENCE INTERVALS\\n")
+                        cat("--------------------------------------------\\n\\n")
+                        print(confint(model))
+                    })
+                    paste(output, collapse = "\\n")
+                `;
+
+                const result = await webR.evalR(rCode);
+                const outputObj = await result.toJs();
+
+                // Extract the string value from WebR result
+                let output;
+                if (typeof outputObj === 'string') {
+                    output = outputObj;
+                } else if (outputObj && outputObj.values) {
+                    output = Array.isArray(outputObj.values) ? outputObj.values.join('\n') : outputObj.values;
+                } else if (Array.isArray(outputObj)) {
+                    output = outputObj.join('\n');
+                } else {
+                    output = String(outputObj);
+                }
+
+                resultsOutput.textContent = output;
+                resultsContainer.classList.add('visible');
+                showStatus('Analysis completed successfully!', 'success');
+
+                // Scroll to results
+                resultsContainer.scrollIntoView({ behavior: 'smooth' });
+
+            } catch (error) {
+                showStatus('Error running analysis: ' + error.message, 'error');
+                console.error(error);
+            } finally {
+                runButton.disabled = false;
+                runButton.textContent = 'Run Regression';
+            }
+        });
+
+        // Clear all
+        clearButton.addEventListener('click', () => {
+            csvData = null;
+            columnNames = [];
+            fileInput.value = '';
+            dataPreview.classList.remove('visible');
+            modelConfig.style.display = 'none';
+            resultsContainer.classList.remove('visible');
+            dependentVar.innerHTML = '<option value="">-- Select dependent variable --</option>';
+            independentVars.innerHTML = '';
+            statusMessage.classList.remove('visible');
+        });
+
+        // Disclaimer acceptance (shown every time the tool is used)
+        const disclaimerOverlay = document.getElementById('disclaimerOverlay');
+        const acceptButton = document.getElementById('acceptDisclaimer');
+
+        acceptButton.addEventListener('click', () => {
+            disclaimerOverlay.classList.add('hidden');
+        });
+
+        // Download R script
+        document.getElementById('downloadScript').addEventListener('click', () => {
+            if (!lastRScript) {
+                showStatus('No analysis to download. Run a regression first.', 'error');
+                return;
+            }
+            const blob = new Blob([lastRScript], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'regression_analysis.R';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        });
+
+        // Initialize
+        initWebR();
+    </script>
+</body>
+</html>
