@@ -112,6 +112,53 @@
         .link-text { margin-top: 15px; color: var(--primary); font-weight: 600; font-size: 0.95rem; display: inline-block;}
 
         footer { text-align: center; padding: 60px 20px; color: var(--text-light); font-size: 0.9rem; border-top: 1px solid var(--border); margin-top: 80px; }
+
+        /* Mobile Navigation */
+        .nav-toggle {
+            display: none;
+            flex-direction: column;
+            cursor: pointer;
+            padding: 4px;
+        }
+        .nav-toggle span {
+            width: 24px;
+            height: 2px;
+            background: var(--text-main);
+            margin: 3px 0;
+            transition: 0.3s;
+        }
+        @media (max-width: 640px) {
+            .nav-toggle {
+                display: flex;
+            }
+            .nav-links {
+                display: none;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                right: 0;
+                background: white;
+                flex-direction: column;
+                padding: 16px 24px;
+                border-bottom: 1px solid var(--border);
+                box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            }
+            .nav-links.active {
+                display: flex;
+            }
+            .nav-links a {
+                margin-left: 0;
+                padding: 12px 0;
+                font-size: 1rem;
+                border-bottom: 1px solid var(--border);
+            }
+            .nav-links a:last-child {
+                border-bottom: none;
+            }
+            .nav-container {
+                position: relative;
+            }
+        }
     </style>
 </head>
 <body>
@@ -119,6 +166,11 @@
     <nav>
         <div class="nav-container">
             <a href="index.html" class="brand">Koray Cosguner</a>
+            <div class="nav-toggle" onclick="document.querySelector('.nav-links').classList.toggle('active')">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
             <div class="nav-links">
                 <a href="index.html">Home</a>
                 <a href="research.html">Research</a>
