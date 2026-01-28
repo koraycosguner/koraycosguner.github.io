@@ -1,0 +1,1155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>General Purpose Optimizer | Koray Cosguner</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/11.11.0/math.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <style>
+        :root {
+            --iu-crimson: #990000;
+            --iu-crimson-dark: #7a0000;
+            --text-dark: #333;
+            --text-light: #666;
+            --bg-light: #f5f5f5;
+            --white: #fff;
+            --border: #ddd;
+            --success: #059669;
+            --success-light: #ecfdf5;
+            --error: #dc2626;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            line-height: 1.6;
+            color: var(--text-dark);
+            background-color: var(--bg-light);
+        }
+
+        /* Main Content */
+        main {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .hero {
+            text-align: center;
+            padding: 2rem 0;
+        }
+
+        .hero h1 {
+            font-size: 1.8rem;
+            color: var(--text-dark);
+            margin-bottom: 0.5rem;
+        }
+
+        .hero p {
+            font-size: 0.95rem;
+            color: var(--text-light);
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        /* Tool Container */
+        .tool-container {
+            background: var(--white);
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            padding: 2rem;
+            margin-top: 1.5rem;
+        }
+
+        .section-title {
+            font-size: 1.2rem;
+            color: var(--iu-crimson);
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--iu-crimson);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .step-number {
+            background: var(--iu-crimson);
+            color: white;
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        /* Equation Rows */
+        .equation-row {
+            display: flex;
+            gap: 0.75rem;
+            align-items: center;
+            margin-bottom: 0.75rem;
+            background: var(--bg-light);
+            padding: 0.75rem;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+        }
+
+        .var-input {
+            width: 120px;
+            padding: 0.5rem 0.75rem;
+            font-size: 0.95rem;
+            font-family: 'Monaco', 'Consolas', monospace;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            background: white;
+        }
+
+        .formula-input {
+            flex: 1;
+            padding: 0.5rem 0.75rem;
+            font-size: 0.95rem;
+            font-family: 'Monaco', 'Consolas', monospace;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            background: white;
+        }
+
+        .var-input:focus, .formula-input:focus, select:focus, input:focus {
+            outline: none;
+            border-color: var(--iu-crimson);
+            box-shadow: 0 0 0 2px rgba(153, 0, 0, 0.1);
+        }
+
+        .remove-btn {
+            padding: 0.4rem 0.6rem;
+            background: #fee2e2;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            color: var(--error);
+            font-size: 0.9rem;
+        }
+
+        .remove-btn:hover {
+            background: #fecaca;
+        }
+
+        .add-btn {
+            display: block;
+            width: 100%;
+            padding: 0.6rem;
+            background: white;
+            border: 2px dashed var(--border);
+            border-radius: 8px;
+            cursor: pointer;
+            color: var(--text-light);
+            font-size: 0.9rem;
+            margin-top: 0.75rem;
+            transition: all 0.2s;
+        }
+
+        .add-btn:hover {
+            border-color: var(--iu-crimson);
+            color: var(--iu-crimson);
+        }
+
+        /* Setup Grid */
+        .setup-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+        }
+
+        .setup-group {
+            background: var(--bg-light);
+            padding: 1rem;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+        }
+
+        .setup-group.full-width {
+            grid-column: 1 / -1;
+        }
+
+        .setup-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            font-size: 0.85rem;
+            color: var(--text-light);
+        }
+
+        .setup-group select, .setup-group input {
+            width: 100%;
+            padding: 0.5rem 0.75rem;
+            font-size: 0.95rem;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            background: white;
+        }
+
+        /* Decision Variable Row */
+        .decision-var-row {
+            display: flex;
+            gap: 0.6rem;
+            align-items: center;
+            margin-bottom: 0.6rem;
+            padding: 0.6rem;
+            background: #fef2f2;
+            border-radius: 8px;
+            border: 1px solid #fecaca;
+        }
+
+        .decision-var-row select {
+            flex: 1;
+            padding: 0.4rem;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+        }
+
+        .decision-var-row input {
+            width: 70px;
+            padding: 0.4rem;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            text-align: center;
+        }
+
+        /* Optimize Button */
+        .optimize-btn {
+            width: 100%;
+            padding: 0.9rem;
+            font-size: 1rem;
+            font-weight: 600;
+            color: white;
+            background: var(--iu-crimson);
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-top: 1rem;
+            transition: background 0.2s;
+        }
+
+        .optimize-btn:hover {
+            background: var(--iu-crimson-dark);
+        }
+
+        /* Error Message */
+        .error-message {
+            color: var(--error);
+            font-size: 0.85rem;
+            margin-top: 0.75rem;
+            padding: 0.75rem 1rem;
+            background: #fef2f2;
+            border-radius: 8px;
+            border: 1px solid #fecaca;
+            display: none;
+        }
+
+        .error-message.visible { display: block; }
+
+        /* Solution Box */
+        .solution-box {
+            background: var(--success-light);
+            border: 2px solid var(--success);
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .solution-box h3 {
+            color: var(--success);
+            margin-bottom: 1rem;
+            font-size: 1.15rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .solution-box h3::before {
+            content: "✓";
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 22px;
+            height: 22px;
+            background: var(--success);
+            color: white;
+            border-radius: 50%;
+            font-size: 0.8rem;
+        }
+
+        .solution-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+        }
+
+        .solution-item {
+            text-align: center;
+            background: white;
+            padding: 1rem 1.25rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+        }
+
+        .solution-item .label {
+            font-size: 0.75rem;
+            color: var(--text-light);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 0.25rem;
+        }
+
+        .solution-item .value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            font-family: 'Monaco', monospace;
+            color: var(--success);
+        }
+
+        .all-values {
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid #a7f3d0;
+        }
+
+        .value-chip {
+            display: inline-block;
+            background: white;
+            padding: 0.35rem 0.6rem;
+            border-radius: 6px;
+            margin: 0.2rem;
+            font-family: monospace;
+            font-size: 0.85rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+        }
+
+        /* Chart Container */
+        .chart-container {
+            height: 280px;
+            margin-bottom: 1rem;
+            padding: 1rem;
+            background: var(--bg-light);
+            border-radius: 8px;
+        }
+
+        /* R Code Section */
+        .r-code-section {
+            margin-top: 1rem;
+        }
+
+        .r-code-section h4 {
+            font-size: 1rem;
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .r-code-box {
+            background: #1e293b;
+            color: #e2e8f0;
+            padding: 1.25rem;
+            border-radius: 8px;
+            font-family: 'Monaco', 'Consolas', monospace;
+            font-size: 0.8rem;
+            overflow-x: auto;
+            white-space: pre;
+            line-height: 1.6;
+        }
+
+        .copy-btn {
+            padding: 0.35rem 0.75rem;
+            font-size: 0.8rem;
+            background: var(--iu-crimson);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .copy-btn:hover {
+            background: var(--iu-crimson-dark);
+        }
+
+        /* Help Text */
+        .help-text {
+            font-size: 0.85rem;
+            color: var(--text-light);
+            margin-top: 0.75rem;
+            padding: 0.5rem 0;
+        }
+
+        .help-text code {
+            background: #e5e7eb;
+            padding: 0.15rem 0.35rem;
+            border-radius: 4px;
+            font-weight: 500;
+        }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            border-bottom: 2px solid var(--border);
+            margin-bottom: 1rem;
+            gap: 0.25rem;
+        }
+
+        .tab {
+            padding: 0.6rem 1rem;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            margin-bottom: -2px;
+            color: var(--text-light);
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .tab:hover {
+            color: var(--iu-crimson);
+        }
+
+        .tab.active {
+            border-bottom-color: var(--iu-crimson);
+            color: var(--iu-crimson);
+            font-weight: 600;
+        }
+
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+
+        /* Excel Section */
+        .excel-section {
+            padding: 1rem 0;
+        }
+
+        .excel-preview {
+            background: var(--bg-light);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            font-size: 0.85rem;
+        }
+
+        .excel-preview h5 {
+            color: var(--iu-crimson);
+            margin-bottom: 0.75rem;
+            font-size: 0.9rem;
+        }
+
+        .excel-preview ul {
+            margin: 0;
+            padding-left: 1.25rem;
+            color: var(--text-light);
+        }
+
+        .excel-preview li {
+            margin-bottom: 0.35rem;
+        }
+
+        .export-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            font-size: 1rem;
+            font-weight: 600;
+            color: white;
+            background: #217346;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .export-btn:hover {
+            background: #1a5c38;
+        }
+
+        .export-btn span {
+            font-size: 1.1rem;
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 2rem;
+            color: var(--text-light);
+            font-size: 0.85rem;
+            margin-top: 2rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .setup-grid {
+                grid-template-columns: 1fr;
+            }
+            .equation-row {
+                flex-wrap: wrap;
+            }
+            .var-input {
+                width: 100%;
+            }
+            .decision-var-row {
+                flex-wrap: wrap;
+            }
+            .decision-var-row select {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <main>
+        <div class="hero">
+            <h1>General Purpose Optimizer</h1>
+            <p>Define equations, set constraints, and find optimal values. Supports single and multi-variable optimization with R code generation.</p>
+        </div>
+
+        <!-- Step 1: Equations -->
+        <div class="tool-container">
+            <h2 class="section-title"><span class="step-number">1</span> Define Equations</h2>
+            <div id="equationsContainer"></div>
+            <button class="add-btn" onclick="addEquation()">+ Add Equation</button>
+            <p class="help-text">
+                Use: <code>+</code> <code>-</code> <code>*</code> <code>/</code> <code>^</code> <code>exp()</code> <code>log()</code> <code>sqrt()</code>
+            </p>
+        </div>
+
+        <!-- Step 2: Setup -->
+        <div class="tool-container">
+            <h2 class="section-title"><span class="step-number">2</span> Optimization Setup</h2>
+            <div class="setup-grid">
+                <div class="setup-group">
+                    <label>Goal</label>
+                    <select id="goalType">
+                        <option value="maximize">Maximize</option>
+                        <option value="minimize">Minimize</option>
+                    </select>
+                </div>
+                <div class="setup-group">
+                    <label>Objective Variable</label>
+                    <select id="objectiveVar"></select>
+                </div>
+                <div class="setup-group full-width">
+                    <label>Decision Variables (to find optimal values)</label>
+                    <div id="decisionVarsContainer"></div>
+                    <button class="add-btn" onclick="addDecisionVar()" style="margin-top: 0.5rem;">+ Add Decision Variable</button>
+                </div>
+            </div>
+            <div id="errorMessage" class="error-message"></div>
+            <button class="optimize-btn" onclick="optimize()">Find Optimal Solution</button>
+        </div>
+
+        <!-- Results -->
+        <div id="resultsSection" style="display: none;">
+            <div class="solution-box">
+                <h3 id="solutionTitle">Optimal Solution</h3>
+                <div class="solution-grid" id="solutionGrid"></div>
+                <div class="all-values">
+                    <div style="font-size: 0.8rem; color: var(--text-light); margin-bottom: 0.4rem;">All values at optimum:</div>
+                    <div id="allValues"></div>
+                </div>
+            </div>
+
+            <div class="tool-container">
+                <div class="tabs">
+                    <div class="tab active" onclick="switchTab('chart')">Chart</div>
+                    <div class="tab" onclick="switchTab('rcode')">R Code</div>
+                    <div class="tab" onclick="switchTab('excel')">Excel</div>
+                </div>
+                <div id="chartTab" class="tab-content active">
+                    <div class="chart-container">
+                        <canvas id="mainChart"></canvas>
+                    </div>
+                    <p class="help-text" id="chartNote"></p>
+                </div>
+                <div id="rcodeTab" class="tab-content">
+                    <div class="r-code-section">
+                        <h4>
+                            <span>Generated R Code</span>
+                            <button class="copy-btn" onclick="copyRCode()">Copy</button>
+                        </h4>
+                        <div class="r-code-box" id="rCodeOutput"></div>
+                    </div>
+                </div>
+                <div id="excelTab" class="tab-content">
+                    <div class="excel-section">
+                        <p style="margin-bottom: 1rem; color: var(--text-light);">
+                            Export your equations as Excel formulas.
+                        </p>
+                        <div class="excel-preview" id="excelPreview"></div>
+                        <button class="export-btn" onclick="exportToExcel()">
+                            <span>📥</span> Download Excel File
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <p>&copy; 2026 Koray Cosguner. All Rights Reserved.</p>
+    </footer>
+
+    <script>
+        let equations = [];
+        let equationId = 0;
+        let decisionVars = [];
+        let decisionVarId = 0;
+        let mainChart = null;
+        let lastResult = null;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            initChart();
+            addEquation('', '');
+            addEquation('', '');
+            addDecisionVar('', '', '');
+        });
+
+        function initChart() {
+            mainChart = new Chart(document.getElementById('mainChart').getContext('2d'), {
+                type: 'line',
+                data: { labels: [], datasets: [] },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: '',
+                            font: { size: 14, weight: '600' },
+                            color: '#333'
+                        },
+                        legend: {
+                            labels: { usePointStyle: true, padding: 15 }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            title: { display: true, text: '', font: { weight: '500' } },
+                            grid: { color: 'rgba(0,0,0,0.05)' }
+                        },
+                        y: {
+                            title: { display: true, text: '', font: { weight: '500' } },
+                            grid: { color: 'rgba(0,0,0,0.05)' }
+                        }
+                    }
+                }
+            });
+        }
+
+        function addEquation(varName = '', formula = '') {
+            equations.push({ id: equationId++, varName, formula });
+            renderEquations();
+            updateDropdowns();
+        }
+
+        function removeEquation(id) {
+            equations = equations.filter(eq => eq.id !== id);
+            renderEquations();
+            updateDropdowns();
+        }
+
+        function updateEquation(id, field, value) {
+            const eq = equations.find(e => e.id === id);
+            if (eq) {
+                eq[field] = value;
+                updateDropdowns();
+            }
+        }
+
+        function renderEquations() {
+            document.getElementById('equationsContainer').innerHTML = equations.map(eq => `
+                <div class="equation-row">
+                    <input type="text" class="var-input" value="${eq.varName}" placeholder="Name"
+                           oninput="updateEquation(${eq.id}, 'varName', this.value)">
+                    <span style="color: var(--text-light);">=</span>
+                    <input type="text" class="formula-input" value="${eq.formula}" placeholder="Formula"
+                           oninput="updateEquation(${eq.id}, 'formula', this.value)">
+                    ${equations.length > 1 ? `<button class="remove-btn" onclick="removeEquation(${eq.id})">✕</button>` : ''}
+                </div>
+            `).join('');
+        }
+
+        function addDecisionVar(name = '', min = '', max = '') {
+            decisionVars.push({ id: decisionVarId++, name, min, max });
+            renderDecisionVars();
+        }
+
+        function removeDecisionVar(id) {
+            decisionVars = decisionVars.filter(d => d.id !== id);
+            renderDecisionVars();
+        }
+
+        function updateDecisionVar(id, field, value) {
+            const dv = decisionVars.find(d => d.id === id);
+            if (dv) dv[field] = value;
+        }
+
+        function renderDecisionVars() {
+            const availableVars = getUndefinedVars();
+            document.getElementById('decisionVarsContainer').innerHTML = decisionVars.map(dv => `
+                <div class="decision-var-row">
+                    <select onchange="updateDecisionVar(${dv.id}, 'name', this.value)">
+                        <option value="">-- Select --</option>
+                        ${availableVars.map(v => `<option value="${v}" ${dv.name === v ? 'selected' : ''}>${v}</option>`).join('')}
+                    </select>
+                    <span style="font-size: 0.85rem; color: var(--text-light);">from</span>
+                    <input type="number" value="${dv.min}" placeholder="min" onchange="updateDecisionVar(${dv.id}, 'min', this.value)">
+                    <span style="font-size: 0.85rem; color: var(--text-light);">to</span>
+                    <input type="number" value="${dv.max}" placeholder="max" onchange="updateDecisionVar(${dv.id}, 'max', this.value)">
+                    ${decisionVars.length > 1 ? `<button class="remove-btn" onclick="removeDecisionVar(${dv.id})">✕</button>` : ''}
+                </div>
+            `).join('');
+        }
+
+        function getDefinedVars() {
+            return equations.map(eq => eq.varName).filter(v => v.trim());
+        }
+
+        function getUndefinedVars() {
+            const defined = new Set(getDefinedVars());
+            const used = new Set();
+            const mathFuncs = ['exp', 'log', 'ln', 'sqrt', 'abs', 'sin', 'cos', 'tan', 'pow', 'min', 'max'];
+            equations.forEach(eq => {
+                (eq.formula.match(/[a-zA-Z_][a-zA-Z0-9_]*/g) || []).forEach(m => {
+                    if (!mathFuncs.includes(m.toLowerCase())) used.add(m);
+                });
+            });
+            return [...used].filter(v => !defined.has(v));
+        }
+
+        function updateDropdowns() {
+            const defined = getDefinedVars();
+            const objSelect = document.getElementById('objectiveVar');
+            const current = objSelect.value;
+            objSelect.innerHTML = '<option value="">-- Select --</option>' +
+                defined.map(v => `<option value="${v}">${v}</option>`).join('');
+            if (defined.includes(current)) objSelect.value = current;
+            renderDecisionVars();
+        }
+
+        function normalizeFormula(f) {
+            return f.replace(/\bEXP\b/gi, 'exp').replace(/\bLOG\b/gi, 'log')
+                .replace(/\bLN\b/gi, 'log').replace(/\bSQRT\b/gi, 'sqrt')
+                .replace(/\bABS\b/gi, 'abs').replace(/\bPOW\b/gi, 'pow');
+        }
+
+        function evalFormula(formula, scope) {
+            try {
+                return math.evaluate(normalizeFormula(formula), scope);
+            } catch (e) {
+                console.error('Eval error:', e.message, formula, scope);
+                return NaN;
+            }
+        }
+
+        function getEvalOrder() {
+            const defined = {};
+            equations.forEach(eq => { if (eq.varName) defined[eq.varName] = eq; });
+            const order = [], visited = new Set(), visiting = new Set();
+            function visit(name) {
+                if (visited.has(name)) return true;
+                if (visiting.has(name)) return false;
+                const eq = defined[name];
+                if (!eq) return true;
+                visiting.add(name);
+                const deps = (eq.formula.match(/[a-zA-Z_][a-zA-Z0-9_]*/g) || [])
+                    .filter(d => defined[d] && d !== name);
+                for (const dep of deps) if (!visit(dep)) return false;
+                visiting.delete(name);
+                visited.add(name);
+                order.push(eq);
+                return true;
+            }
+            for (const name of Object.keys(defined)) if (!visit(name)) return null;
+            return order;
+        }
+
+        function evalModel(decisionValues) {
+            const scope = { ...decisionValues };
+            const order = getEvalOrder();
+            if (!order) return { error: 'Circular dependency', scope: null };
+            for (const eq of order) {
+                const val = evalFormula(eq.formula, scope);
+                if (isNaN(val)) return { error: `Error in ${eq.varName} = ${eq.formula}`, scope: null };
+                scope[eq.varName] = val;
+            }
+            return { error: null, scope };
+        }
+
+        // Grid search for multi-variable optimization
+        function gridSearch(objVar, decVars, goal, resolution = 20) {
+            const ranges = decVars.map(dv => {
+                const min = parseFloat(dv.min), max = parseFloat(dv.max);
+                const step = (max - min) / resolution;
+                return { name: dv.name, min, max, step };
+            });
+
+            let best = null, bestVal = goal === 'maximize' ? -Infinity : Infinity;
+
+            function search(idx, current) {
+                if (idx === ranges.length) {
+                    const result = evalModel(current);
+                    if (result.error) return;
+                    const val = result.scope[objVar];
+                    if ((goal === 'maximize' && val > bestVal) || (goal === 'minimize' && val < bestVal)) {
+                        bestVal = val;
+                        best = { ...current, __objective: val, __scope: result.scope };
+                    }
+                    return;
+                }
+                const r = ranges[idx];
+                for (let v = r.min; v <= r.max; v += r.step) {
+                    current[r.name] = v;
+                    search(idx + 1, current);
+                }
+            }
+
+            search(0, {});
+
+            // Refine with finer grid around best
+            if (best && decVars.length <= 2) {
+                const refinedRanges = ranges.map(r => ({
+                    ...r,
+                    min: Math.max(r.min, best[r.name] - r.step * 2),
+                    max: Math.min(r.max, best[r.name] + r.step * 2),
+                    step: r.step / 10
+                }));
+
+                function refine(idx, current) {
+                    if (idx === refinedRanges.length) {
+                        const result = evalModel(current);
+                        if (result.error) return;
+                        const val = result.scope[objVar];
+                        if ((goal === 'maximize' && val > bestVal) || (goal === 'minimize' && val < bestVal)) {
+                            bestVal = val;
+                            best = { ...current, __objective: val, __scope: result.scope };
+                        }
+                        return;
+                    }
+                    const r = refinedRanges[idx];
+                    for (let v = r.min; v <= r.max; v += r.step) {
+                        current[r.name] = v;
+                        refine(idx + 1, current);
+                    }
+                }
+                refine(0, {});
+            }
+
+            return best;
+        }
+
+        function optimize() {
+            const errorEl = document.getElementById('errorMessage');
+            errorEl.classList.remove('visible');
+
+            const goal = document.getElementById('goalType').value;
+            const objVar = document.getElementById('objectiveVar').value;
+            const activeDecVars = decisionVars.filter(dv => dv.name && dv.min !== '' && dv.max !== '');
+
+            if (!objVar) {
+                errorEl.textContent = 'Select an objective variable.';
+                errorEl.classList.add('visible');
+                return;
+            }
+            if (activeDecVars.length === 0) {
+                errorEl.textContent = 'Add at least one decision variable with range.';
+                errorEl.classList.add('visible');
+                return;
+            }
+
+            // Test evaluation
+            const testVals = {};
+            activeDecVars.forEach(dv => testVals[dv.name] = (parseFloat(dv.min) + parseFloat(dv.max)) / 2);
+            const testResult = evalModel(testVals);
+            if (testResult.error) {
+                errorEl.textContent = testResult.error;
+                errorEl.classList.add('visible');
+                return;
+            }
+
+            const best = gridSearch(objVar, activeDecVars, goal);
+            if (!best) {
+                errorEl.textContent = 'Optimization failed.';
+                errorEl.classList.add('visible');
+                return;
+            }
+
+            lastResult = { goal, objVar, decVars: activeDecVars, best };
+            displayResults(goal, objVar, activeDecVars, best);
+            updateChart(objVar, activeDecVars, best, goal);
+            generateRCode(goal, objVar, activeDecVars);
+            generateExcelPreview();
+        }
+
+        function displayResults(goal, objVar, decVars, best) {
+            document.getElementById('resultsSection').style.display = 'block';
+            document.getElementById('solutionTitle').textContent =
+                `${goal === 'maximize' ? 'Maximum' : 'Minimum'} Found`;
+
+            let html = '';
+            decVars.forEach(dv => {
+                html += `<div class="solution-item">
+                    <div class="label">Optimal ${dv.name}</div>
+                    <div class="value">${best[dv.name].toFixed(4)}</div>
+                </div>`;
+            });
+            html += `<div class="solution-item">
+                <div class="label">${goal === 'maximize' ? 'Max' : 'Min'} ${objVar}</div>
+                <div class="value">${best.__objective.toFixed(4)}</div>
+            </div>`;
+            document.getElementById('solutionGrid').innerHTML = html;
+
+            document.getElementById('allValues').innerHTML = Object.entries(best.__scope)
+                .map(([k, v]) => `<span class="value-chip"><b>${k}</b>=${v.toFixed(4)}</span>`).join('');
+        }
+
+        function updateChart(objVar, decVars, best, goal) {
+            // Only show chart for single variable optimization
+            if (decVars.length !== 1) {
+                document.getElementById('chartTab').style.display = 'none';
+                document.querySelector('.tab[onclick="switchTab(\'chart\')"]').style.display = 'none';
+                // Switch to R code tab
+                switchTab('rcode');
+                return;
+            }
+
+            // Show chart tab for single variable
+            document.getElementById('chartTab').style.display = 'block';
+            document.querySelector('.tab[onclick="switchTab(\'chart\')"]').style.display = 'block';
+
+            const dv = decVars[0];
+            const optVal = best[dv.name];
+            const range = optVal * 0.25; // 25% of optimal value
+            const minBound = parseFloat(dv.min), maxBound = parseFloat(dv.max);
+            const plotMin = Math.max(minBound, optVal - range);
+            const plotMax = Math.min(maxBound, optVal + range);
+
+            const labels = [], data = [];
+            const step = (plotMax - plotMin) / 100;
+            for (let x = plotMin; x <= plotMax; x += step) {
+                labels.push(x.toFixed(2));
+                const r = evalModel({ [dv.name]: x });
+                data.push(r.scope ? r.scope[objVar] : null);
+            }
+            mainChart.data.labels = labels;
+            mainChart.data.datasets = [{
+                label: objVar,
+                data: data,
+                borderColor: '#990000',
+                backgroundColor: 'rgba(153, 0, 0, 0.1)',
+                fill: true,
+                tension: 0.4,
+                pointRadius: 0,
+                borderWidth: 2
+            }, {
+                label: 'Optimum',
+                data: [{ x: best[dv.name].toFixed(2), y: best.__objective }],
+                borderColor: '#059669',
+                backgroundColor: '#059669',
+                pointRadius: 8,
+                pointHoverRadius: 10,
+                showLine: false
+            }];
+            mainChart.options.plugins.title.text = `${objVar} vs ${dv.name}`;
+            mainChart.options.scales.x.title.text = dv.name;
+            mainChart.options.scales.y.title.text = objVar;
+            document.getElementById('chartNote').textContent = `Showing ±25% around optimal ${dv.name} = ${optVal.toFixed(2)}`;
+            mainChart.update();
+        }
+
+        function generateRCode(goal, objVar, decVars) {
+            let code = `# General Purpose Optimizer - R Code\n`;
+            code += `# Generated from web tool\n\n`;
+
+            const order = getEvalOrder();
+
+            if (decVars.length === 1) {
+                // Single variable: use optimize()
+                const dv = decVars[0];
+                code += `# Objective function (single variable)\n`;
+                code += `objective_fn = function(${dv.name}) {\n`;
+
+                order.forEach(eq => {
+                    const rFormula = eq.formula.replace(/\^/g, '^');
+                    code += `  ${eq.varName} = ${rFormula}\n`;
+                });
+
+                code += `  return(${objVar})\n`;
+                code += `}\n\n`;
+
+                code += `# Run optimization using optimize()\n`;
+                code += `result = optimize(\n`;
+                code += `  f = objective_fn,\n`;
+                code += `  interval = c(${dv.min}, ${dv.max}),\n`;
+                code += `  maximum = ${goal === 'maximize' ? 'TRUE' : 'FALSE'}\n`;
+                code += `)\n\n`;
+
+                code += `# Results\n`;
+                code += `cat("Optimal ${dv.name} =", result$${goal === 'maximize' ? 'maximum' : 'minimum'}, "\\n")\n`;
+                code += `cat("${goal === 'maximize' ? 'Maximum' : 'Minimum'} ${objVar} =", result$objective, "\\n")\n`;
+            } else {
+                // Multiple variables: use optim()
+                const fnScale = goal === 'maximize' ? 'fnscale = -1' : 'fnscale = 1';
+
+                code += `# Objective function (multiple variables)\n`;
+                code += `objective_fn = function(x) {\n`;
+                decVars.forEach((dv, i) => {
+                    code += `  ${dv.name} = x[${i + 1}]\n`;
+                });
+                code += `\n`;
+
+                order.forEach(eq => {
+                    const rFormula = eq.formula.replace(/\^/g, '^');
+                    code += `  ${eq.varName} = ${rFormula}\n`;
+                });
+
+                code += `\n  return(${objVar})\n`;
+                code += `}\n\n`;
+
+                code += `# Starting values\n`;
+                code += `start_vals = c(${decVars.map(dv => ((parseFloat(dv.min) + parseFloat(dv.max)) / 2).toFixed(2)).join(', ')})\n\n`;
+
+                code += `# Bounds\n`;
+                code += `lower_bounds = c(${decVars.map(dv => dv.min).join(', ')})\n`;
+                code += `upper_bounds = c(${decVars.map(dv => dv.max).join(', ')})\n\n`;
+
+                code += `# Run optimization using optim()\n`;
+                code += `result = optim(\n`;
+                code += `  par = start_vals,\n`;
+                code += `  fn = objective_fn,\n`;
+                code += `  method = "L-BFGS-B",\n`;
+                code += `  lower = lower_bounds,\n`;
+                code += `  upper = upper_bounds,\n`;
+                code += `  control = list(${fnScale})\n`;
+                code += `)\n\n`;
+
+                code += `# Results\n`;
+                code += `cat("Optimal values:\\n")\n`;
+                decVars.forEach((dv, i) => {
+                    code += `cat("  ${dv.name} =", result$par[${i + 1}], "\\n")\n`;
+                });
+                code += `cat("${goal === 'maximize' ? 'Maximum' : 'Minimum'} ${objVar} =", ${goal === 'maximize' ? '-' : ''}result$value, "\\n")\n`;
+            }
+
+            document.getElementById('rCodeOutput').textContent = code;
+        }
+
+        function copyRCode() {
+            const code = document.getElementById('rCodeOutput').textContent;
+            navigator.clipboard.writeText(code);
+            const btn = document.querySelector('.copy-btn');
+            btn.textContent = 'Copied!';
+            setTimeout(() => btn.textContent = 'Copy', 1500);
+        }
+
+        function switchTab(tab) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+            document.querySelector(`.tab[onclick="switchTab('${tab}')"]`).classList.add('active');
+            document.getElementById(tab + 'Tab').classList.add('active');
+        }
+
+        function generateExcelPreview() {
+            if (!lastResult) return;
+
+            let html = '<h5>Excel File Contents:</h5><ul>';
+            html += '<li><b>Variable:</b> Name of each variable</li>';
+            html += '<li><b>Formula:</b> Excel formula syntax</li>';
+            html += '<li><b>Value at Optimum:</b> Calculated value at optimal solution</li>';
+            html += '</ul>';
+
+            document.getElementById('excelPreview').innerHTML = html;
+        }
+
+        function convertFormulaToExcel(formula, varCellMap) {
+            // Convert math.js formula to Excel formula
+            let excelFormula = formula;
+
+            // Replace variable names with cell references
+            // Sort by length descending to replace longer names first
+            const sortedVars = Object.keys(varCellMap).sort((a, b) => b.length - a.length);
+            for (const varName of sortedVars) {
+                const regex = new RegExp('\\b' + varName + '\\b', 'g');
+                excelFormula = excelFormula.replace(regex, varCellMap[varName]);
+            }
+
+            // Convert function names to Excel equivalents
+            excelFormula = excelFormula.replace(/\bexp\b/gi, 'EXP');
+            excelFormula = excelFormula.replace(/\blog\b/gi, 'LN');
+            excelFormula = excelFormula.replace(/\bsqrt\b/gi, 'SQRT');
+            excelFormula = excelFormula.replace(/\babs\b/gi, 'ABS');
+            excelFormula = excelFormula.replace(/\bpow\b/gi, 'POWER');
+
+            return '=' + excelFormula;
+        }
+
+        function exportToExcel() {
+            if (!lastResult) return;
+            const { decVars, best } = lastResult;
+            const order = getEvalOrder();
+
+            // Create workbook
+            const wb = XLSX.utils.book_new();
+
+            // ========== FORMULAS SHEET ==========
+            const formulaData = [];
+            formulaData.push(['FORMULAS', '', '']);
+            formulaData.push(['', '', '']);
+            formulaData.push(['Variable', 'Formula', 'Value at Optimum']);
+
+            // Build cell reference map for column C (values column)
+            const varCellMap = {};
+            let currentRow = 4; // Starting row (1-indexed in Excel)
+
+            // First, map decision variables (inputs) - they come first
+            decVars.forEach(dv => {
+                varCellMap[dv.name] = 'C' + currentRow;
+                currentRow++;
+            });
+
+            // Then map computed variables
+            order.forEach(eq => {
+                varCellMap[eq.varName] = 'C' + currentRow;
+                currentRow++;
+            });
+
+            // Add decision variables first (with their optimal values)
+            decVars.forEach(dv => {
+                formulaData.push([dv.name, '(Decision Variable)', best[dv.name]]);
+            });
+
+            // Add equations with Excel formulas and computed values
+            order.forEach(eq => {
+                const excelFormula = convertFormulaToExcel(eq.formula, varCellMap);
+                const computedValue = best.__scope[eq.varName];
+                formulaData.push([eq.varName, excelFormula, computedValue]);
+            });
+
+            const formulaWs = XLSX.utils.aoa_to_sheet(formulaData);
+            formulaWs['!cols'] = [{ wch: 20 }, { wch: 50 }, { wch: 18 }];
+            XLSX.utils.book_append_sheet(wb, formulaWs, 'Formulas');
+
+            // Download
+            XLSX.writeFile(wb, 'optimization_formulas.xlsx');
+        }
+
+    </script>
+</body>
+</html>
