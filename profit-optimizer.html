@@ -258,6 +258,32 @@
 
         .error-message.visible { display: block; }
 
+        /* Disclaimer */
+        .disclaimer {
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+            border-radius: 8px;
+            padding: 1rem 1.25rem;
+            margin-bottom: 1.5rem;
+        }
+        .disclaimer-title {
+            font-weight: 700;
+            color: var(--iu-crimson);
+            margin-bottom: 0.5rem;
+        }
+        .disclaimer ul {
+            margin: 0;
+            padding-left: 1.25rem;
+            color: var(--text-light);
+            font-size: 0.9rem;
+        }
+        .disclaimer li {
+            margin-bottom: 0.25rem;
+        }
+        .disclaimer li:last-child {
+            margin-bottom: 0;
+        }
+
         /* Solution Box */
         .solution-box {
             background: var(--success-light);
@@ -518,6 +544,16 @@
         <div class="hero">
             <h1>General Purpose Optimizer</h1>
             <p>Define equations, set constraints, and find optimal values. Supports single and multi-variable optimization with R code generation.</p>
+        </div>
+
+        <!-- Disclaimer -->
+        <div class="disclaimer">
+            <div class="disclaimer-title">Disclaimer</div>
+            <ul>
+                <li><strong>Results may contain errors.</strong> The output from this tool may be inaccurate, incomplete, or incorrect. Users should independently verify all results.</li>
+                <li><strong>No warranty.</strong> This tool is provided "as is" without any warranty of any kind.</li>
+                <li><strong>User assumes all risk.</strong> Users assume full responsibility for reviewing and validating any output.</li>
+            </ul>
         </div>
 
         <!-- Step 1: Equations -->
