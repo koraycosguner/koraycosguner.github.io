@@ -225,6 +225,139 @@
             text-align: center;
         }
 
+        /* Prediction Section */
+        .prediction-section {
+            background: #f0f9ff;
+            border: 1px solid #bae6fd;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-top: 1rem;
+        }
+
+        .prediction-section h4 {
+            color: #0369a1;
+            font-size: 0.95rem;
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .prediction-inputs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .prediction-input-group {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            background: white;
+            padding: 0.4rem 0.6rem;
+            border-radius: 6px;
+            border: 1px solid #bae6fd;
+        }
+
+        .prediction-input-group label {
+            font-weight: 600;
+            font-size: 0.85rem;
+            color: #0369a1;
+        }
+
+        .prediction-input-group input {
+            width: 80px;
+            padding: 0.35rem 0.5rem;
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            text-align: center;
+            font-family: monospace;
+        }
+
+        .predict-btn {
+            padding: 0.5rem 1rem;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: white;
+            background: #0369a1;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .predict-btn:hover {
+            background: #075985;
+        }
+
+        /* Prediction Results Table */
+        .prediction-results {
+            margin-top: 1rem;
+            display: none;
+        }
+
+        .prediction-results.visible {
+            display: block;
+        }
+
+        .prediction-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .prediction-table th {
+            background: #0369a1;
+            color: white;
+            padding: 0.6rem 1rem;
+            text-align: left;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .prediction-table td {
+            padding: 0.5rem 1rem;
+            border-bottom: 1px solid var(--border);
+            font-size: 0.9rem;
+        }
+
+        .prediction-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .prediction-table tr:hover {
+            background: #f0f9ff;
+        }
+
+        .prediction-table .var-name {
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+
+        .prediction-table .formula {
+            color: var(--text-light);
+            font-family: monospace;
+            font-size: 0.8rem;
+        }
+
+        .prediction-table .value {
+            font-family: monospace;
+            font-weight: 600;
+            color: #0369a1;
+        }
+
+        .prediction-table .input-var {
+            background: #ecfdf5;
+        }
+
+        .prediction-table .input-var .value {
+            color: var(--success);
+        }
+
         /* Optimize Button */
         .optimize-btn {
             width: 100%;
@@ -589,6 +722,31 @@
             </div>
             <div id="errorMessage" class="error-message"></div>
             <button class="optimize-btn" onclick="optimize()">Find Optimal Solution</button>
+
+            <!-- Prediction Section -->
+            <div class="prediction-section">
+                <h4>
+                    <span>📊</span>
+                    Predict Values at Specific Input
+                </h4>
+                <div class="prediction-inputs" id="predictionInputs">
+                    <!-- Populated dynamically -->
+                </div>
+                <button class="predict-btn" onclick="predict()">Calculate Values</button>
+                <div class="prediction-results" id="predictionResults">
+                    <table class="prediction-table">
+                        <thead>
+                            <tr>
+                                <th>Variable</th>
+                                <th>Formula</th>
+                                <th>Value</th>
+                            </tr>
+                        </thead>
+                        <tbody id="predictionTableBody">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
 
         <!-- Results -->
@@ -655,6 +813,7 @@
             addEquation('', '');
             addEquation('', '');
             addDecisionVar('', '', '');
+            renderPredictionInputs();
         });
 
         function initChart() {
@@ -693,12 +852,14 @@
             equations.push({ id: equationId++, varName, formula });
             renderEquations();
             updateDropdowns();
+            hidePredictionResults();
         }
 
         function removeEquation(id) {
             equations = equations.filter(eq => eq.id !== id);
             renderEquations();
             updateDropdowns();
+            hidePredictionResults();
         }
 
         function updateEquation(id, field, value) {
@@ -706,6 +867,14 @@
             if (eq) {
                 eq[field] = value;
                 updateDropdowns();
+                hidePredictionResults();
+            }
+        }
+
+        function hidePredictionResults() {
+            const resultsDiv = document.getElementById('predictionResults');
+            if (resultsDiv) {
+                resultsDiv.classList.remove('visible');
             }
         }
 
@@ -778,6 +947,106 @@
                 defined.map(v => `<option value="${v}">${v}</option>`).join('');
             if (defined.includes(current)) objSelect.value = current;
             renderDecisionVars();
+            renderPredictionInputs();
+        }
+
+        function renderPredictionInputs() {
+            const undefinedVars = getUndefinedVars();
+            const container = document.getElementById('predictionInputs');
+
+            if (undefinedVars.length === 0) {
+                container.innerHTML = '<p style="color: var(--text-light); font-size: 0.85rem;">Define equations with input variables to enable predictions.</p>';
+                return;
+            }
+
+            container.innerHTML = undefinedVars.map(v => `
+                <div class="prediction-input-group">
+                    <label>${v} =</label>
+                    <input type="number" id="predict_${v}" step="any" placeholder="value">
+                </div>
+            `).join('');
+        }
+
+        function predict() {
+            const undefinedVars = getUndefinedVars();
+            const errorEl = document.getElementById('errorMessage');
+            errorEl.classList.remove('visible');
+
+            // Gather input values
+            const inputValues = {};
+            let hasEmptyInputs = false;
+
+            for (const v of undefinedVars) {
+                const input = document.getElementById(`predict_${v}`);
+                if (!input || input.value === '') {
+                    hasEmptyInputs = true;
+                    break;
+                }
+                inputValues[v] = parseFloat(input.value);
+                if (isNaN(inputValues[v])) {
+                    errorEl.textContent = `Invalid value for ${v}`;
+                    errorEl.classList.add('visible');
+                    return;
+                }
+            }
+
+            if (hasEmptyInputs) {
+                errorEl.textContent = 'Enter values for all input variables.';
+                errorEl.classList.add('visible');
+                return;
+            }
+
+            // Evaluate the model
+            const result = evalModel(inputValues);
+            if (result.error) {
+                errorEl.textContent = result.error;
+                errorEl.classList.add('visible');
+                return;
+            }
+
+            // Display results
+            displayPredictionResults(inputValues, result.scope);
+        }
+
+        function displayPredictionResults(inputs, scope) {
+            const resultsDiv = document.getElementById('predictionResults');
+            const tbody = document.getElementById('predictionTableBody');
+            const order = getEvalOrder();
+
+            let html = '';
+
+            // First show input variables
+            for (const [varName, value] of Object.entries(inputs)) {
+                html += `<tr class="input-var">
+                    <td class="var-name">${varName}</td>
+                    <td class="formula">(Input)</td>
+                    <td class="value">${formatNumber(value)}</td>
+                </tr>`;
+            }
+
+            // Then show computed variables in order
+            if (order) {
+                for (const eq of order) {
+                    html += `<tr>
+                        <td class="var-name">${eq.varName}</td>
+                        <td class="formula">${eq.formula}</td>
+                        <td class="value">${formatNumber(scope[eq.varName])}</td>
+                    </tr>`;
+                }
+            }
+
+            tbody.innerHTML = html;
+            resultsDiv.classList.add('visible');
+        }
+
+        function formatNumber(num) {
+            if (Math.abs(num) >= 1000000 || (Math.abs(num) < 0.001 && num !== 0)) {
+                return num.toExponential(4);
+            }
+            return num.toLocaleString('en-US', {
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 4
+            });
         }
 
         function normalizeFormula(f) {
@@ -829,12 +1098,81 @@
             return { error: null, scope };
         }
 
-        // Grid search for multi-variable optimization
-        function gridSearch(objVar, decVars, goal, resolution = 20) {
+        // Try to find analytical solution for single-variable quadratic (linear demand case)
+        // Fits objective = a*x^2 + b*x + c and solves for vertex
+        function tryAnalyticalSolution(objVar, dv, goal) {
+            const min = parseFloat(dv.min), max = parseFloat(dv.max);
+            const varName = dv.name;
+
+            // Sample 3 points to fit quadratic: at min, mid, max
+            const x1 = min, x2 = (min + max) / 2, x3 = max;
+            const r1 = evalModel({ [varName]: x1 });
+            const r2 = evalModel({ [varName]: x2 });
+            const r3 = evalModel({ [varName]: x3 });
+
+            if (r1.error || r2.error || r3.error) return null;
+
+            const y1 = r1.scope[objVar];
+            const y2 = r2.scope[objVar];
+            const y3 = r3.scope[objVar];
+
+            // Fit quadratic: y = a*x^2 + b*x + c
+            // Using Lagrange interpolation or solving system
+            const denom = (x1 - x2) * (x1 - x3) * (x2 - x3);
+            if (Math.abs(denom) < 1e-10) return null;
+
+            const a = (x3 * (y2 - y1) + x2 * (y1 - y3) + x1 * (y3 - y2)) / denom;
+            const b = (x3*x3 * (y1 - y2) + x2*x2 * (y3 - y1) + x1*x1 * (y2 - y3)) / denom;
+            const c = (x2 * x3 * (x2 - x3) * y1 + x3 * x1 * (x3 - x1) * y2 + x1 * x2 * (x1 - x2) * y3) / denom;
+
+            // Check if it's actually quadratic (a != 0) and concave/convex as expected
+            if (Math.abs(a) < 1e-10) return null; // Linear, no unique optimum
+
+            // For maximize, need a < 0 (concave); for minimize, need a > 0 (convex)
+            if ((goal === 'maximize' && a > 0) || (goal === 'minimize' && a < 0)) {
+                return null; // Wrong curvature, optimum is at boundary
+            }
+
+            // Vertex at x = -b / (2a)
+            let xOpt = -b / (2 * a);
+
+            // Clamp to bounds
+            xOpt = Math.max(min, Math.min(max, xOpt));
+
+            // Round to 2 decimal places
+            xOpt = Math.round(xOpt * 100) / 100;
+
+            // Verify the fit is good by checking a 4th point
+            const x4 = (x1 + x2) / 2;
+            const r4 = evalModel({ [varName]: x4 });
+            if (r4.error) return null;
+            const y4_actual = r4.scope[objVar];
+            const y4_predicted = a * x4 * x4 + b * x4 + c;
+            const relError = Math.abs(y4_actual - y4_predicted) / (Math.abs(y4_actual) + 1e-10);
+
+            if (relError > 0.001) {
+                // Not a good quadratic fit, fall back to grid search
+                return null;
+            }
+
+            // Evaluate at optimal point
+            const result = evalModel({ [varName]: xOpt });
+            if (result.error) return null;
+
+            return {
+                [varName]: xOpt,
+                __objective: result.scope[objVar],
+                __scope: result.scope,
+                __method: 'analytical'
+            };
+        }
+
+        // Grid search for optimization with multiple refinement rounds
+        function gridSearch(objVar, decVars, goal, resolution = 50) {
             const ranges = decVars.map(dv => {
                 const min = parseFloat(dv.min), max = parseFloat(dv.max);
                 const step = (max - min) / resolution;
-                return { name: dv.name, min, max, step };
+                return { name: dv.name, min, max, step, origMin: min, origMax: max };
             });
 
             let best = null, bestVal = goal === 'maximize' ? -Infinity : Infinity;
@@ -851,44 +1189,76 @@
                     return;
                 }
                 const r = ranges[idx];
-                for (let v = r.min; v <= r.max; v += r.step) {
-                    current[r.name] = v;
+                for (let v = r.min; v <= r.max + r.step * 0.1; v += r.step) {
+                    current[r.name] = Math.min(v, r.origMax);
                     search(idx + 1, current);
                 }
             }
 
             search(0, {});
 
-            // Refine with finer grid around best
-            if (best && decVars.length <= 2) {
-                const refinedRanges = ranges.map(r => ({
-                    ...r,
-                    min: Math.max(r.min, best[r.name] - r.step * 2),
-                    max: Math.min(r.max, best[r.name] + r.step * 2),
-                    step: r.step / 10
-                }));
+            // Multiple refinement rounds for higher precision
+            if (best) {
+                for (let round = 0; round < 4; round++) {
+                    const refinedRanges = ranges.map(r => {
+                        const currentStep = r.step / Math.pow(10, round);
+                        const newStep = currentStep / 10;
+                        return {
+                            ...r,
+                            min: Math.max(r.origMin, best[r.name] - currentStep * 2),
+                            max: Math.min(r.origMax, best[r.name] + currentStep * 2),
+                            step: newStep
+                        };
+                    });
 
-                function refine(idx, current) {
-                    if (idx === refinedRanges.length) {
-                        const result = evalModel(current);
-                        if (result.error) return;
-                        const val = result.scope[objVar];
-                        if ((goal === 'maximize' && val > bestVal) || (goal === 'minimize' && val < bestVal)) {
-                            bestVal = val;
-                            best = { ...current, __objective: val, __scope: result.scope };
+                    function refine(idx, current) {
+                        if (idx === refinedRanges.length) {
+                            const result = evalModel(current);
+                            if (result.error) return;
+                            const val = result.scope[objVar];
+                            if ((goal === 'maximize' && val > bestVal) || (goal === 'minimize' && val < bestVal)) {
+                                bestVal = val;
+                                best = { ...current, __objective: val, __scope: result.scope };
+                            }
+                            return;
                         }
-                        return;
+                        const r = refinedRanges[idx];
+                        for (let v = r.min; v <= r.max + r.step * 0.1; v += r.step) {
+                            current[r.name] = Math.min(v, r.origMax);
+                            refine(idx + 1, current);
+                        }
                     }
-                    const r = refinedRanges[idx];
-                    for (let v = r.min; v <= r.max; v += r.step) {
-                        current[r.name] = v;
-                        refine(idx + 1, current);
-                    }
+                    refine(0, {});
                 }
-                refine(0, {});
+            }
+
+            // Round decision variables to 2 decimal places and re-evaluate
+            if (best) {
+                const rounded = {};
+                decVars.forEach(dv => {
+                    rounded[dv.name] = Math.round(best[dv.name] * 100) / 100;
+                });
+                const result = evalModel(rounded);
+                if (!result.error) {
+                    best = { ...rounded, __objective: result.scope[objVar], __scope: result.scope, __method: 'grid' };
+                }
             }
 
             return best;
+        }
+
+        // Main optimization function - tries analytical first, then grid search
+        function findOptimum(objVar, decVars, goal) {
+            // For single variable, try analytical solution first
+            if (decVars.length === 1) {
+                const analytical = tryAnalyticalSolution(objVar, decVars[0], goal);
+                if (analytical) {
+                    return analytical;
+                }
+            }
+
+            // Fall back to grid search
+            return gridSearch(objVar, decVars, goal);
         }
 
         function optimize() {
@@ -920,7 +1290,7 @@
                 return;
             }
 
-            const best = gridSearch(objVar, activeDecVars, goal);
+            const best = findOptimum(objVar, activeDecVars, goal);
             if (!best) {
                 errorEl.textContent = 'Optimization failed.';
                 errorEl.classList.add('visible');
@@ -928,32 +1298,35 @@
             }
 
             lastResult = { goal, objVar, decVars: activeDecVars, best };
-            displayResults(goal, objVar, activeDecVars, best);
+            displayResults(goal, objVar, activeDecVars, best, best.__method);
             updateChart(objVar, activeDecVars, best, goal);
             generateRCode(goal, objVar, activeDecVars);
             generateExcelPreview();
         }
 
-        function displayResults(goal, objVar, decVars, best) {
+        function displayResults(goal, objVar, decVars, best, method) {
             document.getElementById('resultsSection').style.display = 'block';
+
+            // Show method used
+            const methodLabel = method === 'analytical' ? ' (Exact Solution)' : ' (Grid Search)';
             document.getElementById('solutionTitle').textContent =
-                `${goal === 'maximize' ? 'Maximum' : 'Minimum'} Found`;
+                `${goal === 'maximize' ? 'Maximum' : 'Minimum'} Found${methodLabel}`;
 
             let html = '';
             decVars.forEach(dv => {
                 html += `<div class="solution-item">
                     <div class="label">Optimal ${dv.name}</div>
-                    <div class="value">${best[dv.name].toFixed(4)}</div>
+                    <div class="value">${best[dv.name].toFixed(2)}</div>
                 </div>`;
             });
             html += `<div class="solution-item">
                 <div class="label">${goal === 'maximize' ? 'Max' : 'Min'} ${objVar}</div>
-                <div class="value">${best.__objective.toFixed(4)}</div>
+                <div class="value">${formatNumber(best.__objective)}</div>
             </div>`;
             document.getElementById('solutionGrid').innerHTML = html;
 
             document.getElementById('allValues').innerHTML = Object.entries(best.__scope)
-                .map(([k, v]) => `<span class="value-chip"><b>${k}</b>=${v.toFixed(4)}</span>`).join('');
+                .map(([k, v]) => `<span class="value-chip"><b>${k}</b>=${formatNumber(v)}</span>`).join('');
         }
 
         function updateChart(objVar, decVars, best, goal) {
@@ -1104,12 +1477,39 @@
 
         function generateExcelPreview() {
             if (!lastResult) return;
+            const { decVars, best } = lastResult;
+            const order = getEvalOrder();
 
-            let html = '<h5>Excel File Contents:</h5><ul>';
-            html += '<li><b>Variable:</b> Name of each variable</li>';
-            html += '<li><b>Formula:</b> Excel formula syntax</li>';
-            html += '<li><b>Value at Optimum:</b> Calculated value at optimal solution</li>';
-            html += '</ul>';
+            let html = '<h5>Excel File Layout:</h5>';
+            html += '<table style="width: 100%; border-collapse: collapse; font-size: 0.85rem; margin-top: 0.5rem;">';
+
+            // Header row
+            html += '<tr style="background: #e5e7eb;">';
+            html += '<td style="padding: 0.4rem; border: 1px solid #ccc; font-weight: 600;">Variable</td>';
+            html += '<td style="padding: 0.4rem; border: 1px solid #ccc; font-weight: 600;">Value</td>';
+            html += '<td style="padding: 0.4rem; border: 1px solid #ccc; font-weight: 600;">Formula</td>';
+            html += '</tr>';
+
+            // Decision variables (inputs)
+            decVars.forEach(dv => {
+                html += '<tr style="background: #ecfdf5;">';
+                html += `<td style="padding: 0.4rem; border: 1px solid #ccc; font-weight: 500;">${dv.name}</td>`;
+                html += `<td style="padding: 0.4rem; border: 1px solid #ccc; font-family: monospace;">${best[dv.name]}</td>`;
+                html += `<td style="padding: 0.4rem; border: 1px solid #ccc; color: #666; font-style: italic;">(input)</td>`;
+                html += '</tr>';
+            });
+
+            // Computed variables
+            order.forEach(eq => {
+                html += '<tr>';
+                html += `<td style="padding: 0.4rem; border: 1px solid #ccc; font-weight: 500;">${eq.varName}</td>`;
+                html += `<td style="padding: 0.4rem; border: 1px solid #ccc; font-family: monospace;">${formatNumber(best.__scope[eq.varName])}</td>`;
+                html += `<td style="padding: 0.4rem; border: 1px solid #ccc; font-family: monospace; font-size: 0.8rem;">${eq.formula}</td>`;
+                html += '</tr>';
+            });
+
+            html += '</table>';
+            html += '<p style="margin-top: 0.75rem; font-size: 0.8rem; color: var(--text-light);">Column B contains Excel formulas that calculate values. Column C shows the formula text.</p>';
 
             document.getElementById('excelPreview').innerHTML = html;
         }
@@ -1144,46 +1544,62 @@
             // Create workbook
             const wb = XLSX.utils.book_new();
 
-            // ========== FORMULAS SHEET ==========
-            const formulaData = [];
-            formulaData.push(['FORMULAS', '', '']);
-            formulaData.push(['', '', '']);
-            formulaData.push(['Variable', 'Formula', 'Value at Optimum']);
+            // Build vertical (top-down) layout
+            // Column A: Variable names
+            // Column B: Values (inputs as numbers, computed as formulas)
+            // Column C: Formula text (input) or FORMULATEXT()
 
-            // Build cell reference map for column C (values column)
+            const wsData = [];
+
+            // Header row
+            wsData.push(['Variable', 'Value', 'Formula']);
+
+            // Build cell reference map (all in column B)
             const varCellMap = {};
-            let currentRow = 4; // Starting row (1-indexed in Excel)
+            let row = 2; // Start at row 2 (after header)
 
-            // First, map decision variables (inputs) - they come first
+            // First pass: map all variables to their cells
             decVars.forEach(dv => {
-                varCellMap[dv.name] = 'C' + currentRow;
-                currentRow++;
+                varCellMap[dv.name] = 'B' + row;
+                row++;
             });
-
-            // Then map computed variables
             order.forEach(eq => {
-                varCellMap[eq.varName] = 'C' + currentRow;
-                currentRow++;
+                varCellMap[eq.varName] = 'B' + row;
+                row++;
             });
 
-            // Add decision variables first (with their optimal values)
+            // Second pass: build the data rows
+            row = 2;
+
+            // Decision variables (inputs) - numeric values, show "(input)" in formula column
             decVars.forEach(dv => {
-                formulaData.push([dv.name, '(Decision Variable)', best[dv.name]]);
+                wsData.push([dv.name, best[dv.name], '(input)']);
+                row++;
             });
 
-            // Add equations with Excel formulas and computed values
+            // Computed variables - Excel formulas in Value column, FORMULATEXT in Formula column
             order.forEach(eq => {
                 const excelFormula = convertFormulaToExcel(eq.formula, varCellMap);
-                const computedValue = best.__scope[eq.varName];
-                formulaData.push([eq.varName, excelFormula, computedValue]);
+                wsData.push([
+                    eq.varName,
+                    { f: excelFormula.substring(1) }, // Remove leading '=' for XLSX format
+                    { f: '_xlfn.FORMULATEXT(B' + row + ')' } // Use _xlfn. prefix for newer Excel functions
+                ]);
+                row++;
             });
+            const ws = XLSX.utils.aoa_to_sheet(wsData);
 
-            const formulaWs = XLSX.utils.aoa_to_sheet(formulaData);
-            formulaWs['!cols'] = [{ wch: 20 }, { wch: 50 }, { wch: 18 }];
-            XLSX.utils.book_append_sheet(wb, formulaWs, 'Formulas');
+            // Set column widths
+            ws['!cols'] = [
+                { wch: 15 },  // Variable name
+                { wch: 18 },  // Value
+                { wch: 35 }   // Formula
+            ];
+
+            XLSX.utils.book_append_sheet(wb, ws, 'Optimization');
 
             // Download
-            XLSX.writeFile(wb, 'optimization_formulas.xlsx');
+            XLSX.writeFile(wb, 'optimization_model.xlsx');
         }
 
     </script>
