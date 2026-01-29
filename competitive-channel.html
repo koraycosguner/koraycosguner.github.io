@@ -1109,9 +1109,9 @@
             const W2_upper = (a2 + b2 * C2) / (2 * b2);
 
             let bestW1 = C1, bestW2 = C2, bestProfit = -Infinity;
-            const initialSteps = 50;
+            const initialSteps = 100;
 
-            // Initial coarse grid search
+            // Initial grid search
             for (let i = 0; i <= initialSteps; i++) {
                 for (let j = 0; j <= initialSteps; j++) {
                     const W1 = C1 + (W1_upper - C1) * i / initialSteps;
@@ -1125,13 +1125,13 @@
                 }
             }
 
-            // 5 refinement iterations for higher precision
+            // 8 refinement iterations for very high precision
             const initialDelta1 = (W1_upper - C1) / initialSteps;
             const initialDelta2 = (W2_upper - C2) / initialSteps;
 
-            for (let round = 0; round < 5; round++) {
-                const refineSteps = 20;
-                const shrinkFactor = Math.pow(10, round);
+            for (let round = 0; round < 8; round++) {
+                const refineSteps = 30;
+                const shrinkFactor = Math.pow(5, round);
                 const range1 = initialDelta1 / shrinkFactor;
                 const range2 = initialDelta2 / shrinkFactor;
                 const startW1 = bestW1, startW2 = bestW2;
@@ -1244,18 +1244,18 @@
                 return (W2 - C2) * Q2;
             }
 
-            // Best response using golden section search with high precision
+            // Best response using golden section search with very high precision
             function br1(W2) {
                 let lo = C1, hi = Math.max(a1 / b1, a2 / b2) + C1;
                 const gr = (Math.sqrt(5) - 1) / 2;
                 let c_lo = hi - gr * (hi - lo), c_hi = lo + gr * (hi - lo);
-                for (let i = 0; i < 200; i++) {
+                for (let i = 0; i < 500; i++) {
                     if (producer1Profit(c_lo, W2) < producer1Profit(c_hi, W2)) {
                         lo = c_lo; c_lo = c_hi; c_hi = lo + gr * (hi - lo);
                     } else {
                         hi = c_hi; c_hi = c_lo; c_lo = hi - gr * (hi - lo);
                     }
-                    if (Math.abs(hi - lo) < 1e-12) break;
+                    if (Math.abs(hi - lo) < 1e-14) break;
                 }
                 return (lo + hi) / 2;
             }
@@ -1264,25 +1264,25 @@
                 let lo = C2, hi = Math.max(a1 / b1, a2 / b2) + C2;
                 const gr = (Math.sqrt(5) - 1) / 2;
                 let c_lo = hi - gr * (hi - lo), c_hi = lo + gr * (hi - lo);
-                for (let i = 0; i < 200; i++) {
+                for (let i = 0; i < 500; i++) {
                     if (producer2Profit(W1, c_lo) < producer2Profit(W1, c_hi)) {
                         lo = c_lo; c_lo = c_hi; c_hi = lo + gr * (hi - lo);
                     } else {
                         hi = c_hi; c_hi = c_lo; c_lo = hi - gr * (hi - lo);
                     }
-                    if (Math.abs(hi - lo) < 1e-12) break;
+                    if (Math.abs(hi - lo) < 1e-14) break;
                 }
                 return (lo + hi) / 2;
             }
 
-            // Iterate to find Nash equilibrium with high precision
+            // Iterate to find Nash equilibrium with very high precision
             let W1 = (a1 + b1 * C1) / (2 * b1);
             let W2 = (a2 + b2 * C2) / (2 * b2);
 
-            for (let i = 0; i < 200; i++) {
+            for (let i = 0; i < 500; i++) {
                 const newW1 = br1(W2);
                 const newW2 = br2(W1);
-                if (Math.abs(newW1 - W1) < 1e-10 && Math.abs(newW2 - W2) < 1e-10) break;
+                if (Math.abs(newW1 - W1) < 1e-14 && Math.abs(newW2 - W2) < 1e-14) break;
                 W1 = newW1;
                 W2 = newW2;
             }
