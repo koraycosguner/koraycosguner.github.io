@@ -1349,7 +1349,7 @@
                 const isNumeric = columnTypes[h] === 'numeric';
                 const typeIndicator = isNumeric
                     ? '<span style="font-size: 0.7rem; color: #2563eb; margin-left: 4px;">(Numerical)</span>'
-                    : '<span style="font-size: 0.7rem; color: #9333ea; margin-left: 4px;">(String)</span>';
+                    : '<span style="font-size: 0.7rem; color: #9333ea; margin-left: 4px;">(Non-numerical)</span>';
 
                 // Different options for numeric vs categorical
                 const transformOptions = isNumeric
@@ -2008,8 +2008,8 @@ summary(model)
                 } else {
                     html += `<tr>
                         <td>${h}</td>
-                        <td>String</td>
-                        <td colspan="4" style="text-align: center; font-style: italic; color: var(--text-light);">Descriptive statistics cannot be calculated for String variables.</td>
+                        <td>Non-numerical</td>
+                        <td colspan="4" style="text-align: center; font-style: italic; color: var(--text-light);">Descriptive statistics cannot be calculated for non-numerical variables.</td>
                     </tr>`;
                 }
             });
@@ -2294,7 +2294,7 @@ summary(model)
 
             // Variable options
             const varOptions = headers.map(h => {
-                const typeLabel = columnTypes[h] === 'numeric' ? '(Num)' : '(Str)';
+                const typeLabel = columnTypes[h] === 'numeric' ? '(Num)' : '(Non-num)';
                 return `<option value="${h}" data-type="${columnTypes[h]}">${h} ${typeLabel}</option>`;
             }).join('');
 
