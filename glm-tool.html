@@ -2298,8 +2298,18 @@ summary(model)
                 return `<option value="${h}" data-type="${columnTypes[h]}">${h} ${typeLabel}</option>`;
             }).join('');
 
+            // Check if first variable is categorical to set initial value input
+            const firstVarType = columnTypes[headers[0]];
+            let valueInputHtml;
+            if (firstVarType === 'categorical') {
+                const uniqueVals = getUniqueValues(headers[0]);
+                valueInputHtml = `<select class="filter-value-input">${uniqueVals.map(v => `<option value="${v}">${v}</option>`).join('')}</select>`;
+            } else {
+                valueInputHtml = `<input type="text" class="filter-value-input" placeholder="Value">`;
+            }
+
             row.innerHTML = `
-                <select class="filter-var-select" onchange="updateFilterOperators(this)">${varOptions}</select>
+                <select class="filter-var-select">${varOptions}</select>
                 <select class="filter-operator-select">
                     <option value="=">=</option>
                     <option value="!=">≠</option>
@@ -2309,7 +2319,7 @@ summary(model)
                     <option value="<=">&lt;=</option>
                     <option value="between">Between</option>
                 </select>
-                <input type="text" class="filter-value-input" placeholder="Value">
+                ${valueInputHtml}
                 <span class="between-label" style="display: none;">and</span>
                 <input type="text" class="filter-value-input-2" placeholder="Value 2" style="display: none;">
                 <button type="button" class="remove-filter" title="Remove filter">×</button>
@@ -2318,33 +2328,43 @@ summary(model)
             // Add event listeners
             const varSelect = row.querySelector('.filter-var-select');
             const operatorSelect = row.querySelector('.filter-operator-select');
-            const valueInput = row.querySelector('.filter-value-input');
             const valueInput2 = row.querySelector('.filter-value-input-2');
             const betweenLabel = row.querySelector('.between-label');
 
             // Update operators based on variable type
-            updateFilterOperatorsForRow(row, columnTypes[headers[0]]);
+            updateFilterOperatorsForRow(row, firstVarType);
 
-            // Variable change - update operators
-            varSelect.addEventListener('change', () => {
-                const selectedVar = varSelect.value;
-                const varType = columnTypes[selectedVar];
-                updateFilterOperatorsForRow(row, varType);
+            // Helper to update value input based on variable type
+            function updateValueInput(selectedVar, varType) {
+                const oldInput = row.querySelector('.filter-value-input');
 
-                // If categorical, show dropdown for values
                 if (varType === 'categorical') {
+                    // Replace with dropdown of unique values
                     const uniqueVals = getUniqueValues(selectedVar);
-                    valueInput.outerHTML = `<select class="filter-value-input">${uniqueVals.map(v => `<option value="${v}">${v}</option>`).join('')}</select>`;
+                    const newSelect = document.createElement('select');
+                    newSelect.className = 'filter-value-input';
+                    newSelect.innerHTML = uniqueVals.map(v => `<option value="${v}">${v}</option>`).join('');
+                    newSelect.addEventListener('change', applyFilters);
+                    oldInput.replaceWith(newSelect);
                 } else {
-                    // Replace with text input if it was a select
-                    if (valueInput.tagName === 'SELECT') {
+                    // Replace with text input
+                    if (oldInput.tagName === 'SELECT') {
                         const newInput = document.createElement('input');
                         newInput.type = 'text';
                         newInput.className = 'filter-value-input';
                         newInput.placeholder = 'Value';
-                        valueInput.replaceWith(newInput);
+                        newInput.addEventListener('input', applyFilters);
+                        oldInput.replaceWith(newInput);
                     }
                 }
+            }
+
+            // Variable change - update operators and value input
+            varSelect.addEventListener('change', () => {
+                const selectedVar = varSelect.value;
+                const varType = columnTypes[selectedVar];
+                updateFilterOperatorsForRow(row, varType);
+                updateValueInput(selectedVar, varType);
                 applyFilters();
             });
 
@@ -2360,8 +2380,13 @@ summary(model)
                 applyFilters();
             });
 
-            // Value change - reapply filters
-            valueInput.addEventListener('input', applyFilters);
+            // Value change - reapply filters (for initial input)
+            const initialValueInput = row.querySelector('.filter-value-input');
+            if (initialValueInput.tagName === 'SELECT') {
+                initialValueInput.addEventListener('change', applyFilters);
+            } else {
+                initialValueInput.addEventListener('input', applyFilters);
+            }
             valueInput2.addEventListener('input', applyFilters);
 
             // Remove button
@@ -2371,9 +2396,6 @@ summary(model)
             };
 
             filterRows.appendChild(row);
-
-            // Set initial operators based on first variable's type
-            updateFilterOperatorsForRow(row, columnTypes[headers[0]]);
 
             // Apply filters after adding
             applyFilters();
