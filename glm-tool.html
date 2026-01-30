@@ -602,6 +602,119 @@
             color: var(--iu-crimson);
         }
 
+        /* Estimated Equation Section */
+        .equation-section {
+            margin-top: 1.5rem;
+            padding: 1.25rem;
+            background: #fefce8;
+            border: 1px solid #fde047;
+            border-radius: 8px;
+            display: none;
+        }
+
+        .equation-section.visible {
+            display: block;
+        }
+
+        .equation-section h4 {
+            margin-bottom: 0.75rem;
+            color: #854d0e;
+            font-size: 1rem;
+        }
+
+        .equation-box-container {
+            position: relative;
+        }
+
+        .equation-box {
+            background: var(--white);
+            padding: 1rem 1.25rem;
+            padding-right: 3.5rem;
+            border-radius: 6px;
+            border: 1px solid #fde047;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 0.95rem;
+            line-height: 1.6;
+            overflow-x: auto;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+
+        .copy-equation-btn {
+            position: absolute;
+            top: 0.5rem;
+            right: 0.5rem;
+            background: #fef3c7;
+            border: 1px solid #fde047;
+            border-radius: 4px;
+            padding: 0.35rem 0.6rem;
+            cursor: pointer;
+            font-size: 0.75rem;
+            color: #854d0e;
+            transition: all 0.2s;
+        }
+
+        .copy-equation-btn:hover {
+            background: #fde047;
+        }
+
+        .copy-equation-btn.copied {
+            background: #86efac;
+            border-color: #22c55e;
+            color: #166534;
+        }
+
+        .equation-note {
+            margin-top: 0.75rem;
+            font-size: 0.8rem;
+            color: #a16207;
+            font-style: italic;
+        }
+
+        .significance-selector {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .significance-selector label {
+            font-size: 0.85rem;
+            color: var(--text-dark);
+            font-weight: 500;
+        }
+
+        .significance-options {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .significance-options input[type="radio"] {
+            display: none;
+        }
+
+        .significance-options label {
+            padding: 0.4rem 0.75rem;
+            border: 1px solid #fde047;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            background: var(--white);
+            color: #854d0e;
+            transition: all 0.2s;
+        }
+
+        .significance-options label:hover {
+            background: #fef3c7;
+        }
+
+        .significance-options input[type="radio"]:checked + label {
+            background: #fde047;
+            border-color: #eab308;
+            font-weight: 600;
+        }
+
         /* Descriptive Statistics Table */
         .desc-stats-container {
             margin-top: 1.5rem;
@@ -640,6 +753,160 @@
         .desc-stats-table tr:nth-child(even) {
             background: #f9f9f9;
         }
+
+        /* Data Filter Section */
+        .data-filter-section {
+            margin-top: 1.5rem;
+            padding: 1.25rem;
+            background: #f0f9ff;
+            border: 1px solid #bae6fd;
+            border-radius: 8px;
+            display: none;
+        }
+
+        .data-filter-section.visible {
+            display: block;
+        }
+
+        .data-choice {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .data-choice label {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.25rem;
+            border: 2px solid var(--border);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+            background: var(--white);
+        }
+
+        .data-choice label:hover {
+            border-color: var(--iu-crimson);
+        }
+
+        .data-choice input[type="radio"] {
+            accent-color: var(--iu-crimson);
+            width: 18px;
+            height: 18px;
+        }
+
+        .data-choice input[type="radio"]:checked + span {
+            color: var(--iu-crimson);
+            font-weight: 600;
+        }
+
+        .data-choice label:has(input:checked) {
+            border-color: var(--iu-crimson);
+            background: rgba(153, 0, 0, 0.05);
+        }
+
+        .filter-conditions {
+            display: none;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid #bae6fd;
+        }
+
+        .filter-conditions.visible {
+            display: block;
+        }
+
+        .filter-row {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.75rem;
+            padding: 0.75rem;
+            background: var(--white);
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            flex-wrap: wrap;
+        }
+
+        .filter-row select,
+        .filter-row input {
+            padding: 0.4rem 0.5rem;
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            font-size: 0.9rem;
+        }
+
+        .filter-row select:focus,
+        .filter-row input:focus {
+            outline: none;
+            border-color: var(--iu-crimson);
+        }
+
+        .filter-var-select {
+            min-width: 150px;
+        }
+
+        .filter-operator-select {
+            min-width: 120px;
+        }
+
+        .filter-value-input {
+            min-width: 120px;
+        }
+
+        .filter-value-input-2 {
+            min-width: 100px;
+        }
+
+        .filter-row .remove-filter {
+            background: none;
+            border: none;
+            color: #dc2626;
+            cursor: pointer;
+            font-size: 1.2rem;
+            padding: 0 0.5rem;
+            line-height: 1;
+        }
+
+        .filter-row .remove-filter:hover {
+            color: #991b1b;
+        }
+
+        .filter-summary {
+            margin-top: 1rem;
+            padding: 0.75rem 1rem;
+            background: var(--white);
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            font-size: 0.9rem;
+        }
+
+        .filter-summary .count {
+            font-weight: 700;
+            color: var(--iu-crimson);
+        }
+
+        .add-filter-btn {
+            padding: 0.4rem 0.8rem;
+            font-size: 0.85rem;
+            background: var(--white);
+            color: var(--iu-crimson);
+            border: 1px solid var(--iu-crimson);
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .add-filter-btn:hover {
+            background: var(--iu-crimson);
+            color: var(--white);
+        }
+
+        .between-label {
+            font-size: 0.85rem;
+            color: var(--text-light);
+        }
     </style>
 </head>
 <body>
@@ -655,7 +922,13 @@
     <main>
         <section class="hero">
             <h1>Web Tool for Running Regression Models</h1>
-            <p>Run regression models directly in your browser using R. Upload a CSV file and perform Linear, Poisson, or Binary Logistic regression analysis.</p>
+            <ul style="text-align: left; display: inline-block; margin: 0 auto; padding-left: 1.5rem; color: var(--text-light); font-size: 1rem; line-height: 1.8;">
+                <li>Upload CSV data to preview and explore descriptive statistics</li>
+                <li>Filter to create subsets</li>
+                <li>Run Linear, Poisson, or Binary Logistic regression with variable transformations (log, quadratic)</li>
+                <li>Set insignificant coefficients to zero at 5% or 10% levels</li>
+                <li>View the estimated regression equation and make predictions</li>
+            </ul>
         </section>
 
         <!-- Disclaimer -->
@@ -666,6 +939,9 @@
                 <li><strong>No warranty.</strong> This tool is provided "as is" without any warranty of any kind.</li>
                 <li><strong>User assumes all risk.</strong> Users assume full responsibility for reviewing and validating any output.</li>
             </ul>
+            <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid rgba(153, 0, 0, 0.2);">
+                <strong>📧 Report issues:</strong> If you encounter any issues, problems, or errors while using this tool, please contact Dr. Cosguner at <a href="mailto:kcosgun@iu.edu" style="color: var(--iu-crimson); font-weight: 600;">kcosgun@iu.edu</a> so they can be resolved promptly.
+            </div>
         </div>
 
         <div class="tool-container">
@@ -697,6 +973,38 @@
                 </div>
                 <p class="copy-hint">Select the table and copy (Ctrl+C / Cmd+C) to paste into Excel.</p>
                 <p style="font-size: 0.8rem; color: var(--text-light); font-style: italic; margin-top: 0.25rem;">Note: For each variable, missing values are excluded from the calculations of descriptive statistics.</p>
+            </div>
+
+            <!-- Data Filter Section -->
+            <div class="data-filter-section" id="dataFilterSection">
+                <h3 style="margin-bottom: 0.75rem; color: #0369a1;">Data Selection</h3>
+                <p style="font-size: 0.9rem; color: var(--text-light); margin-bottom: 1rem;">
+                    Choose whether to use the full dataset or filter to a subset based on specific conditions.
+                </p>
+
+                <div class="data-choice">
+                    <label>
+                        <input type="radio" name="dataChoice" value="full" checked>
+                        <span>Use Full Data</span>
+                    </label>
+                    <label>
+                        <input type="radio" name="dataChoice" value="filtered">
+                        <span>Filter Data (Create a Subset)</span>
+                    </label>
+                </div>
+
+                <div class="filter-conditions" id="filterConditions">
+                    <p style="font-size: 0.85rem; color: var(--text-light); margin-bottom: 0.75rem;">
+                        Add filter conditions below. Multiple conditions are combined with AND logic.
+                    </p>
+                    <div id="filterRows"></div>
+                    <button type="button" class="add-filter-btn" id="addFilterBtn">+ Add Filter Condition</button>
+
+                    <div class="filter-summary" id="filterSummary" style="display: none;">
+                        <span>Filtered data: <span class="count" id="filteredCount">0</span> rows</span>
+                        <span style="margin-left: 1rem; color: var(--text-light);">(Original: <span id="originalCount">0</span> rows)</span>
+                    </div>
+                </div>
             </div>
 
             <!-- Step 2: Model Configuration -->
@@ -759,6 +1067,27 @@
                 </div>
                 <p class="copy-hint">Select the table and copy (Ctrl+C / Cmd+C) to paste into Excel.</p>
 
+                <!-- Estimated Equation -->
+                <div class="equation-section" id="equationSection">
+                    <h4>Estimated Regression Equation</h4>
+                    <div class="significance-selector">
+                        <label>Include coefficients with:</label>
+                        <div class="significance-options">
+                            <input type="radio" name="sigLevel" id="sigAll" value="all" checked>
+                            <label for="sigAll">Any p-value</label>
+                            <input type="radio" name="sigLevel" id="sig05" value="0.05">
+                            <label for="sig05">p-value &lt; 0.05</label>
+                            <input type="radio" name="sigLevel" id="sig10" value="0.10">
+                            <label for="sig10">p-value &lt; 0.10</label>
+                        </div>
+                    </div>
+                    <div class="equation-box-container">
+                        <div class="equation-box" id="equationBox"></div>
+                        <button class="copy-equation-btn" id="copyEquationBtn" title="Copy equation">Copy</button>
+                    </div>
+                    <p class="equation-note" id="equationNote"></p>
+                </div>
+
                 <!-- Full R Output -->
                 <h3 style="margin-top: 1.5rem; margin-bottom: 0.75rem; color: var(--text-dark);">Full R Output</h3>
                 <pre class="results-output" id="resultsOutput"></pre>
@@ -780,6 +1109,7 @@
                     <div class="prediction-result" id="predictionResult" style="display: none;">
                         <div class="prediction-result-label" id="predictionLabel"></div>
                         <div class="prediction-result-value" id="predictionValue"></div>
+                        <p class="prediction-note" id="predictionNote" style="display: none; margin-top: 0.5rem; font-size: 0.8rem; color: var(--text-light); font-style: italic;"></p>
                     </div>
                     <div style="margin-top: 1rem;">
                         <button class="btn btn-secondary" id="downloadPredictionScript">
@@ -1054,6 +1384,9 @@
             // Display descriptive statistics
             displayDescriptiveStats(headers);
 
+            // Initialize data filter UI
+            initDataFilterUI(headers, columnTypes);
+
             // Initialize interaction terms
             initInteractionUI(headers, columnTypes);
         }
@@ -1315,8 +1648,17 @@
                     'binomial': 'Binary Logistic Regression'
                 };
 
+                // Get the data to use (filtered or full)
+                const analysisData = getDataForAnalysis();
+                const analysisDataCSV = dataToCSV(analysisData, csvData.headers);
+
+                // Show data info in status
+                const dataInfo = useFilteredData && filteredData
+                    ? `Using filtered data: ${filteredData.length} of ${csvData.data.length} rows`
+                    : `Using full data: ${csvData.data.length} rows`;
+
                 // Escape CSV for R string (handle quotes and newlines)
-                const csvEscaped = csvData.raw
+                const csvEscaped = analysisDataCSV
                     .replace(/\\/g, '\\\\')
                     .replace(/"/g, '\\"')
                     .replace(/\n/g, '\\n')
@@ -1345,11 +1687,53 @@ cat("Residual Deviance:", model$deviance, "on", model$df.residual, "df\\n")`;
                 // Get the uploaded filename
                 const fileName = fileInput.files[0] ? fileInput.files[0].name : 'your_data.csv';
 
+                // Build filter R code for script
+                let filterRCode = '';
+                if (useFilteredData && filteredData) {
+                    const filterRows = document.querySelectorAll('.filter-row');
+                    const filterConditions = [];
+
+                    filterRows.forEach(row => {
+                        const varName = row.querySelector('.filter-var-select').value;
+                        const operator = row.querySelector('.filter-operator-select').value;
+                        const value1 = row.querySelector('.filter-value-input').value;
+                        const value2 = row.querySelector('.filter-value-input-2')?.value || '';
+                        const varType = csvData.columnTypes[varName];
+
+                        // Wrap variable name for R if it has special characters
+                        const rVarName = /^[a-zA-Z_][a-zA-Z0-9_]*$/.test(varName)
+                            ? `data$${varName}`
+                            : `data[["${varName}"]]`;
+
+                        if (varType === 'numeric') {
+                            if (operator === 'between') {
+                                const minVal = Math.min(parseFloat(value1), parseFloat(value2));
+                                const maxVal = Math.max(parseFloat(value1), parseFloat(value2));
+                                filterConditions.push(`!is.na(${rVarName}) & ${rVarName} >= ${minVal} & ${rVarName} <= ${maxVal}`);
+                            } else {
+                                const rOp = operator === '!=' ? '!=' : operator;
+                                filterConditions.push(`!is.na(${rVarName}) & ${rVarName} ${rOp} ${value1}`);
+                            }
+                        } else {
+                            // Categorical/string - need quotes around value
+                            const rOp = operator === '!=' ? '!=' : '==';
+                            filterConditions.push(`!is.na(${rVarName}) & ${rVarName} ${rOp} "${value1}"`);
+                        }
+                    });
+
+                    if (filterConditions.length > 0) {
+                        filterRCode = `
+# Filter data (${filteredData.length} of ${csvData.data.length} rows)
+data = data[${filterConditions.join(' & ')}, ]
+`;
+                    }
+                }
+
                 lastRScript = `# Save this R script and your data file in the same folder before running.
 
 # Load data
 data = read.csv("${fileName}")
-
+${filterRCode}
 # Fit model
 model = ${modelCallMultiLine}
 
@@ -1454,6 +1838,8 @@ summary(model)
                         lastDvTransform = dvTransform;
                         // Setup prediction UI
                         setupPredictionUI(indepVarsData, family);
+                        // Generate and display estimated equation
+                        displayEstimatedEquation(coefData, depVar, dvTransform, family);
                     } catch (e) {
                         console.error('Failed to parse coefficients:', e);
                     }
@@ -1463,7 +1849,7 @@ summary(model)
 
                 resultsOutput.textContent = output;
                 resultsContainer.classList.add('visible');
-                showStatus('Analysis completed successfully!', 'success');
+                showStatus(`Analysis completed successfully! ${dataInfo}`, 'success');
 
                 // Scroll to results
                 resultsContainer.scrollIntoView({ behavior: 'smooth' });
@@ -1490,6 +1876,21 @@ summary(model)
             document.getElementById('interactionTerms').innerHTML = '';
             document.getElementById('descStatsContainer').classList.remove('visible');
             statusMessage.classList.remove('visible');
+
+            // Reset filter state
+            document.getElementById('dataFilterSection').classList.remove('visible');
+            document.getElementById('filterConditions').classList.remove('visible');
+            document.getElementById('filterRows').innerHTML = '';
+            document.getElementById('filterSummary').style.display = 'none';
+            document.querySelector('input[name="dataChoice"][value="full"]').checked = true;
+            filteredData = null;
+            useFilteredData = false;
+
+            // Reset equation section
+            document.getElementById('equationSection').classList.remove('visible');
+            document.getElementById('sigAll').checked = true;
+            lastEquationParams = null;
+            currentSignificanceLevel = 'all';
         });
 
         // Download R script
@@ -1583,6 +1984,514 @@ summary(model)
             descStatsContainer.classList.add('visible');
         }
 
+        // Store equation params for regeneration when significance level changes
+        let lastEquationParams = null;
+        let currentSignificanceLevel = 'all';
+
+        // Clean up variable name for display (remove I(), backticks, factor(), simplify)
+        function cleanVarName(varName) {
+            let clean = varName;
+            // Remove I() wrapper
+            if (clean.startsWith('I(') && clean.endsWith(')')) {
+                clean = clean.slice(2, -1);
+            }
+            // Remove factor() wrapper but keep level - e.g., "factor(Gender)Male" becomes "GenderMale"
+            // Need to keep level for multi-level categorical variables (e.g., RegionNorth, RegionSouth)
+            const factorMatch = clean.match(/^factor\((`?[^)`]+`?)\)(.*)$/);
+            if (factorMatch) {
+                const baseVar = factorMatch[1].replace(/`/g, '');
+                const level = factorMatch[2];
+                clean = baseVar + level;
+            }
+            // Remove backticks
+            clean = clean.replace(/`/g, '');
+            // Replace log() with ln() for clearer notation
+            clean = clean.replace(/\blog\(/g, 'ln(');
+            return clean;
+        }
+
+        // Get the p-value column name from coefficient data
+        function getPValueColumnName(coefData) {
+            if (coefData.length === 0) return null;
+            const firstRow = coefData[0];
+            // Common p-value column names in R output
+            const possibleNames = ['Pr(>|t|)', 'Pr(>|z|)', 'p-value', 'pvalue', 'P(>|t|)', 'P(>|z|)'];
+            for (const name of possibleNames) {
+                if (name in firstRow) return name;
+            }
+            return null;
+        }
+
+        // Get adjusted coefficients based on significance level
+        function getAdjustedCoefficients(coefData, sigLevel) {
+            if (sigLevel === 'all') {
+                return coefData.map(coef => ({
+                    ...coef,
+                    adjustedEstimate: parseFloat(coef.Estimate)
+                }));
+            }
+
+            const pValueCol = getPValueColumnName(coefData);
+            const threshold = parseFloat(sigLevel);
+
+            return coefData.map(coef => {
+                const pValue = pValueCol ? parseFloat(coef[pValueCol]) : 0;
+                // Set non-significant coefficients to 0 (including intercept)
+                const isSignificant = pValueCol && pValue < threshold;
+
+                return {
+                    ...coef,
+                    adjustedEstimate: isSignificant ? parseFloat(coef.Estimate) : 0
+                };
+            });
+        }
+
+        // Format number with appropriate precision (avoid 0.0000 for small numbers)
+        function formatCoefficient(num) {
+            const absNum = Math.abs(num);
+            if (absNum === 0) return '0';
+            if (absNum >= 0.0001) {
+                // For numbers >= 0.0001, use 4 decimal places but trim trailing zeros
+                return parseFloat(num.toFixed(4)).toString();
+            }
+            // For very small numbers, use enough decimals to show significant digits
+            // Find first significant digit and show 4 significant figures
+            const str = num.toExponential(4);
+            return str;
+        }
+
+        // Build equation from coefficients
+        function buildEquation(adjustedCoefs, depVar, dvTransform, modelType) {
+            // Build the linear predictor (right-hand side)
+            let terms = [];
+            adjustedCoefs.forEach(coef => {
+                const varName = coef.Variable;
+                const estimate = coef.adjustedEstimate;
+
+                if (varName === '(Intercept)') {
+                    // Format the intercept
+                    terms.push(formatCoefficient(estimate));
+                } else if (estimate !== 0) {
+                    // Only include non-zero coefficients
+                    const cleanName = cleanVarName(varName);
+                    const sign = estimate >= 0 ? ' + ' : ' - ';
+                    const absVal = formatCoefficient(Math.abs(estimate));
+                    terms.push(`${sign}${absVal} * ${cleanName}`);
+                }
+            });
+
+            const linearPredictor = terms.join('');
+
+            // Build the full equation based on model type and DV transform
+            let equation = '';
+            let note = '';
+
+            if (modelType === 'linear') {
+                if (dvTransform === 'log') {
+                    equation = `${depVar} = EXP(${linearPredictor})`;
+                    note = 'Note: Since the dependent variable was log-transformed, the equation is back-transformed using EXP().';
+                } else if (dvTransform === 'log1p') {
+                    equation = `${depVar} = EXP(${linearPredictor}) - 1`;
+                    note = 'Note: Since the dependent variable was log(Y+1) transformed, the equation uses EXP() - 1 for back-transformation.';
+                } else {
+                    equation = `${depVar} = ${linearPredictor}`;
+                    note = '';
+                }
+            } else if (modelType === 'poisson') {
+                equation = `Mean_${depVar} = EXP(${linearPredictor})`;
+                note = 'Note: Poisson regression uses a log link, so the mean is obtained by exponentiating the linear predictor.';
+            } else if (modelType === 'binomial') {
+                equation = `Prob_${depVar} = EXP(${linearPredictor}) / (1 + EXP(${linearPredictor}))`;
+                note = `Note: Prob_${depVar} = Pr(${depVar} = 1). If you are interested in Pr(${depVar} = 0), calculate 1 - Prob_${depVar}.`;
+            }
+
+            return { equation, note };
+        }
+
+        // Display estimated regression equation
+        function displayEstimatedEquation(coefData, depVar, dvTransform, modelType) {
+            const equationSection = document.getElementById('equationSection');
+            const equationBox = document.getElementById('equationBox');
+            const equationNote = document.getElementById('equationNote');
+
+            // Store params for regeneration
+            lastEquationParams = { coefData, depVar, dvTransform, modelType };
+
+            // Reset significance level to 'all'
+            currentSignificanceLevel = 'all';
+            document.getElementById('sigAll').checked = true;
+
+            // Build and display equation
+            const adjustedCoefs = getAdjustedCoefficients(coefData, currentSignificanceLevel);
+            const { equation, note } = buildEquation(adjustedCoefs, depVar, dvTransform, modelType);
+
+            equationBox.textContent = equation;
+            equationNote.textContent = note;
+            equationSection.classList.add('visible');
+
+            // Setup significance level radio button listeners
+            document.querySelectorAll('input[name="sigLevel"]').forEach(radio => {
+                radio.onchange = () => {
+                    currentSignificanceLevel = radio.value;
+                    updateEquationDisplay();
+                    // Also update prediction if result is visible
+                    if (document.getElementById('predictionResult').style.display !== 'none') {
+                        document.getElementById('predictButton').click();
+                    }
+                };
+            });
+
+            // Setup copy button
+            setupCopyButton();
+        }
+
+        // Update equation display when significance level changes
+        function updateEquationDisplay() {
+            if (!lastEquationParams) return;
+
+            const { coefData, depVar, dvTransform, modelType } = lastEquationParams;
+            const equationBox = document.getElementById('equationBox');
+            const equationNote = document.getElementById('equationNote');
+
+            const adjustedCoefs = getAdjustedCoefficients(coefData, currentSignificanceLevel);
+            const { equation, note } = buildEquation(adjustedCoefs, depVar, dvTransform, modelType);
+
+            equationBox.textContent = equation;
+            equationNote.textContent = note;
+
+            // Re-setup copy button with new equation
+            setupCopyButton();
+        }
+
+        // Setup copy button
+        function setupCopyButton() {
+            const copyBtn = document.getElementById('copyEquationBtn');
+            const equationBox = document.getElementById('equationBox');
+
+            copyBtn.onclick = () => {
+                navigator.clipboard.writeText(equationBox.textContent).then(() => {
+                    copyBtn.textContent = 'Copied!';
+                    copyBtn.classList.add('copied');
+                    setTimeout(() => {
+                        copyBtn.textContent = 'Copy';
+                        copyBtn.classList.remove('copied');
+                    }, 2000);
+                }).catch(err => {
+                    console.error('Failed to copy:', err);
+                });
+            };
+        }
+
+        // =====================================================
+        // DATA FILTER FUNCTIONALITY
+        // =====================================================
+
+        let filteredData = null; // Store the filtered data subset
+        let useFilteredData = false; // Flag to track if using filtered data
+
+        // Initialize data filter UI
+        function initDataFilterUI(headers, columnTypes) {
+            const dataFilterSection = document.getElementById('dataFilterSection');
+            const filterConditions = document.getElementById('filterConditions');
+            const filterRows = document.getElementById('filterRows');
+            const addFilterBtn = document.getElementById('addFilterBtn');
+            const filterSummary = document.getElementById('filterSummary');
+
+            // Show the filter section
+            dataFilterSection.classList.add('visible');
+
+            // Reset state
+            filterRows.innerHTML = '';
+            filteredData = null;
+            useFilteredData = false;
+            filterSummary.style.display = 'none';
+
+            // Set original count
+            document.getElementById('originalCount').textContent = csvData.data.length;
+
+            // Handle radio button changes
+            document.querySelectorAll('input[name="dataChoice"]').forEach(radio => {
+                radio.addEventListener('change', (e) => {
+                    if (e.target.value === 'filtered') {
+                        filterConditions.classList.add('visible');
+                        useFilteredData = true;
+                        // Add initial filter row if none exist
+                        if (filterRows.children.length === 0) {
+                            addFilterRow(headers, columnTypes);
+                        }
+                        applyFilters();
+                    } else {
+                        filterConditions.classList.remove('visible');
+                        useFilteredData = false;
+                        filteredData = null;
+                    }
+                });
+            });
+
+            // Add filter button handler
+            addFilterBtn.onclick = () => {
+                addFilterRow(headers, columnTypes);
+            };
+
+            // Store for later use
+            window.filterHeaders = headers;
+            window.filterColumnTypes = columnTypes;
+        }
+
+        // Add a filter row
+        function addFilterRow(headers, columnTypes) {
+            const filterRows = document.getElementById('filterRows');
+            const rowId = 'filter_' + Date.now();
+
+            const row = document.createElement('div');
+            row.className = 'filter-row';
+            row.id = rowId;
+
+            // Variable options
+            const varOptions = headers.map(h => {
+                const typeLabel = columnTypes[h] === 'numeric' ? '(Num)' : '(Str)';
+                return `<option value="${h}" data-type="${columnTypes[h]}">${h} ${typeLabel}</option>`;
+            }).join('');
+
+            row.innerHTML = `
+                <select class="filter-var-select" onchange="updateFilterOperators(this)">${varOptions}</select>
+                <select class="filter-operator-select">
+                    <option value="=">=</option>
+                    <option value="!=">≠</option>
+                    <option value=">">&gt;</option>
+                    <option value=">=">&gt;=</option>
+                    <option value="<">&lt;</option>
+                    <option value="<=">&lt;=</option>
+                    <option value="between">Between</option>
+                </select>
+                <input type="text" class="filter-value-input" placeholder="Value">
+                <span class="between-label" style="display: none;">and</span>
+                <input type="text" class="filter-value-input-2" placeholder="Value 2" style="display: none;">
+                <button type="button" class="remove-filter" title="Remove filter">×</button>
+            `;
+
+            // Add event listeners
+            const varSelect = row.querySelector('.filter-var-select');
+            const operatorSelect = row.querySelector('.filter-operator-select');
+            const valueInput = row.querySelector('.filter-value-input');
+            const valueInput2 = row.querySelector('.filter-value-input-2');
+            const betweenLabel = row.querySelector('.between-label');
+
+            // Update operators based on variable type
+            updateFilterOperatorsForRow(row, columnTypes[headers[0]]);
+
+            // Variable change - update operators
+            varSelect.addEventListener('change', () => {
+                const selectedVar = varSelect.value;
+                const varType = columnTypes[selectedVar];
+                updateFilterOperatorsForRow(row, varType);
+
+                // If categorical, show dropdown for values
+                if (varType === 'categorical') {
+                    const uniqueVals = getUniqueValues(selectedVar);
+                    valueInput.outerHTML = `<select class="filter-value-input">${uniqueVals.map(v => `<option value="${v}">${v}</option>`).join('')}</select>`;
+                } else {
+                    // Replace with text input if it was a select
+                    if (valueInput.tagName === 'SELECT') {
+                        const newInput = document.createElement('input');
+                        newInput.type = 'text';
+                        newInput.className = 'filter-value-input';
+                        newInput.placeholder = 'Value';
+                        valueInput.replaceWith(newInput);
+                    }
+                }
+                applyFilters();
+            });
+
+            // Operator change - show/hide between inputs
+            operatorSelect.addEventListener('change', () => {
+                if (operatorSelect.value === 'between') {
+                    betweenLabel.style.display = '';
+                    valueInput2.style.display = '';
+                } else {
+                    betweenLabel.style.display = 'none';
+                    valueInput2.style.display = 'none';
+                }
+                applyFilters();
+            });
+
+            // Value change - reapply filters
+            valueInput.addEventListener('input', applyFilters);
+            valueInput2.addEventListener('input', applyFilters);
+
+            // Remove button
+            row.querySelector('.remove-filter').onclick = () => {
+                row.remove();
+                applyFilters();
+            };
+
+            filterRows.appendChild(row);
+
+            // Set initial operators based on first variable's type
+            updateFilterOperatorsForRow(row, columnTypes[headers[0]]);
+
+            // Apply filters after adding
+            applyFilters();
+        }
+
+        // Update operators for a specific row based on variable type
+        function updateFilterOperatorsForRow(row, varType) {
+            const operatorSelect = row.querySelector('.filter-operator-select');
+            const currentValue = operatorSelect.value;
+
+            if (varType === 'numeric') {
+                operatorSelect.innerHTML = `
+                    <option value="=">=</option>
+                    <option value="!=">≠</option>
+                    <option value=">">&gt;</option>
+                    <option value=">=">&gt;=</option>
+                    <option value="<">&lt;</option>
+                    <option value="<=">&lt;=</option>
+                    <option value="between">Between</option>
+                `;
+            } else {
+                operatorSelect.innerHTML = `
+                    <option value="=">=</option>
+                    <option value="!=">≠</option>
+                `;
+            }
+
+            // Try to restore previous value if still valid
+            const options = Array.from(operatorSelect.options).map(o => o.value);
+            if (options.includes(currentValue)) {
+                operatorSelect.value = currentValue;
+            }
+        }
+
+        // Get unique values for a categorical column
+        function getUniqueValues(colName) {
+            const values = new Set();
+            csvData.data.forEach(row => {
+                const val = row[colName];
+                if (val !== '' && val !== null && val !== undefined) {
+                    values.add(val);
+                }
+            });
+            return Array.from(values).sort();
+        }
+
+        // Apply all filter conditions
+        function applyFilters() {
+            if (!useFilteredData) {
+                filteredData = null;
+                return;
+            }
+
+            const filterRows = document.querySelectorAll('.filter-row');
+            const filterSummary = document.getElementById('filterSummary');
+
+            if (filterRows.length === 0) {
+                filteredData = csvData.data;
+                document.getElementById('filteredCount').textContent = filteredData.length;
+                filterSummary.style.display = 'block';
+                return;
+            }
+
+            // Collect all filter conditions
+            const conditions = [];
+            filterRows.forEach(row => {
+                const varSelect = row.querySelector('.filter-var-select');
+                const operatorSelect = row.querySelector('.filter-operator-select');
+                const valueInput = row.querySelector('.filter-value-input');
+                const valueInput2 = row.querySelector('.filter-value-input-2');
+
+                const varName = varSelect.value;
+                const operator = operatorSelect.value;
+                const value1 = valueInput.value;
+                const value2 = valueInput2 ? valueInput2.value : '';
+
+                if (value1 !== '' || operator === 'between') {
+                    conditions.push({
+                        variable: varName,
+                        operator: operator,
+                        value1: value1,
+                        value2: value2,
+                        type: csvData.columnTypes[varName]
+                    });
+                }
+            });
+
+            // Apply filters
+            filteredData = csvData.data.filter(row => {
+                return conditions.every(cond => {
+                    const rowValue = row[cond.variable];
+
+                    if (rowValue === '' || rowValue === null || rowValue === undefined) {
+                        return false; // Exclude rows with missing values for filtered variables
+                    }
+
+                    if (cond.type === 'numeric') {
+                        const numVal = parseFloat(rowValue);
+                        const condVal1 = parseFloat(cond.value1);
+                        const condVal2 = parseFloat(cond.value2);
+
+                        if (isNaN(numVal)) return false;
+
+                        switch (cond.operator) {
+                            case '=': return numVal === condVal1;
+                            case '!=': return numVal !== condVal1;
+                            case '>': return numVal > condVal1;
+                            case '>=': return numVal >= condVal1;
+                            case '<': return numVal < condVal1;
+                            case '<=': return numVal <= condVal1;
+                            case 'between':
+                                if (isNaN(condVal1) || isNaN(condVal2)) return true;
+                                return numVal >= Math.min(condVal1, condVal2) && numVal <= Math.max(condVal1, condVal2);
+                            default: return true;
+                        }
+                    } else {
+                        // Categorical comparison (string)
+                        const strVal = String(rowValue);
+                        const condStr = String(cond.value1);
+
+                        switch (cond.operator) {
+                            case '=': return strVal === condStr;
+                            case '!=': return strVal !== condStr;
+                            default: return true;
+                        }
+                    }
+                });
+            });
+
+            // Update summary
+            document.getElementById('filteredCount').textContent = filteredData.length;
+            filterSummary.style.display = 'block';
+        }
+
+        // Get the data to use for analysis (filtered or full)
+        function getDataForAnalysis() {
+            if (useFilteredData && filteredData) {
+                return filteredData;
+            }
+            return csvData.data;
+        }
+
+        // Convert data array to CSV string
+        function dataToCSV(data, headers) {
+            const lines = [headers.join(',')];
+            data.forEach(row => {
+                const values = headers.map(h => {
+                    const val = row[h];
+                    // Quote values that contain commas or quotes
+                    if (typeof val === 'string' && (val.includes(',') || val.includes('"'))) {
+                        return '"' + val.replace(/"/g, '""') + '"';
+                    }
+                    return val;
+                });
+                lines.push(values.join(','));
+            });
+            return lines.join('\n');
+        }
+
+        // =====================================================
+        // END DATA FILTER FUNCTIONALITY
+        // =====================================================
+
         // Get mode (most frequent value) for categorical column
         function calculateMode(colName) {
             const counts = {};
@@ -1668,14 +2577,17 @@ summary(model)
                 return;
             }
 
-            // Get intercept
-            const interceptRow = lastModelCoefs.find(r => r.Variable === '(Intercept)');
-            let xBeta = interceptRow ? interceptRow.Estimate : 0;
+            // Get adjusted coefficients based on current significance level
+            const adjustedCoefs = getAdjustedCoefficients(lastModelCoefs, currentSignificanceLevel);
 
-            // Build coefficient lookup (handle factor variables)
+            // Get intercept
+            const interceptRow = adjustedCoefs.find(r => r.Variable === '(Intercept)');
+            let xBeta = interceptRow ? interceptRow.adjustedEstimate : 0;
+
+            // Build coefficient lookup with adjusted estimates
             const coefLookup = {};
-            lastModelCoefs.forEach(row => {
-                coefLookup[row.Variable] = row.Estimate;
+            adjustedCoefs.forEach(row => {
+                coefLookup[row.Variable] = row.adjustedEstimate;
             });
 
             // Store prediction values for R script
@@ -1803,6 +2715,15 @@ summary(model)
             document.getElementById('predictionLabel').textContent = label;
             document.getElementById('predictionValue').textContent = prediction.toFixed(4);
             document.getElementById('predictionResult').style.display = 'block';
+
+            // Update prediction note based on significance level
+            const predictionNote = document.getElementById('predictionNote');
+            if (currentSignificanceLevel === 'all') {
+                predictionNote.textContent = 'Prediction uses coefficients with any p-value.';
+            } else {
+                predictionNote.textContent = `Prediction uses only coefficients with p-value < ${currentSignificanceLevel}. Other coefficients are set to zero.`;
+            }
+            predictionNote.style.display = 'block';
         });
 
         // Download R script with prediction
