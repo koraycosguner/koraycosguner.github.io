@@ -237,6 +237,9 @@
                 <li><strong>No warranty.</strong> This tool is provided "as is" without any warranty of any kind.</li>
                 <li><strong>User assumes all risk.</strong> Users assume full and complete responsibility for reviewing, validating, and determining suitability of any output.</li>
             </ul>
+            <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid rgba(245, 158, 11, 0.3);">
+                <strong>📧 Report issues:</strong> If you encounter any issues, problems, or errors while using this tool, please contact Dr. Cosguner at <a href="mailto:kcosgun@iu.edu" style="color: #92400e; font-weight: 600;">kcosgun@iu.edu</a> so they can be resolved promptly.
+            </div>
         </div>
 
         <!-- Requirements -->
@@ -307,7 +310,7 @@
                 <li><strong>Choice ID</strong> - Identifies each choice occasion</li>
                 <li><strong>Alternative Variable</strong> - Names the alternatives (e.g., Coke, Pepsi)</li>
                 <li><strong>Choice Variable</strong> - Binary (1/0) indicating which alternative was chosen</li>
-                <li><strong>Choice-specific variables</strong> - Attributes that vary by alternative (e.g., Price)</li>
+                <li><strong>Alternative-specific variables</strong> - Attributes that vary by alternative (e.g., Price)</li>
             </ul>
 
             <div>
@@ -330,7 +333,7 @@
                 </div>
                 <div class="feature">
                     <div class="feature-title">Dynamic Variable Builder</div>
-                    <div class="feature-desc">Add variables one at a time with choice-invariant or choice-specific coefficients</div>
+                    <div class="feature-desc">Add variables one at a time with alternative-invariant or alternative-specific coefficients</div>
                 </div>
                 <div class="feature">
                     <div class="feature-title">Reference Level</div>
@@ -338,7 +341,7 @@
                 </div>
                 <div class="feature">
                     <div class="feature-title">Intercept Options</div>
-                    <div class="feature-desc">Alternative-specific, single, or no intercept</div>
+                    <div class="feature-desc">Alternative-specific or no intercept</div>
                 </div>
                 <div class="feature">
                     <div class="feature-title">Model Estimates</div>
@@ -647,8 +650,16 @@ ui = fluidPage(
       tags$li(tags$strong("Results may contain errors."), " The output from this tool may be inaccurate, incomplete, or incorrect. Users should independently verify all results."),
       tags$li(tags$strong("No warranty."), " This tool is provided \\"as is\\" without any warranty of any kind."),
       tags$li(tags$strong("User assumes all risk."), " Users assume full responsibility for reviewing and validating any output.")
+    ),
+    div(style = "margin-top: 1rem; padding-top: 1rem; border-top: 1px solid rgba(245, 158, 11, 0.3);",
+      tags$strong("📧 Report issues:"), " If you encounter any issues, problems, or errors while using this tool, please contact Dr. Cosguner at ",
+      tags$a(href = "mailto:kcosgun@iu.edu", style = "color: #92400e; font-weight: 600;", "kcosgun@iu.edu"),
+      " so they can be resolved promptly."
     )
   ),
+
+  # Process Summary
+  uiOutput("process_summary"),
 
   # Top-to-bottom layout
   # Step 1: Data Format Selection
@@ -689,6 +700,9 @@ ui = fluidPage(
   # Step 2: Data Upload (conditional)
   uiOutput("upload_card"),
 
+  # Data Filter (conditional - after upload)
+  uiOutput("filter_card"),
+
   # Wide format structure (conditional)
   uiOutput("wide_structure_card"),
 
@@ -707,6 +721,30 @@ ui = fluidPage(
 
 server = function(input, output, session) {
 
+  # Process Summary
+  output$process_summary = renderUI({
+    req(input$data_format)
+
+    if (input$data_format == "long") {
+      div(class = "info-box",
+        tags$strong("Process Summary"),
+        tags$ul(style = "margin-top: 8px; margin-bottom: 0;",
+          tags$li("Your data will be transformed into an estimable format by the ", tags$code("mlogit"), " package in R."),
+          tags$li("Once the data transformation is complete, the model will be estimated based on your choice of slope specifications (choice-invariant vs. choice-specific) for each independent variable.")
+        )
+      )
+    } else {
+      div(class = "info-box",
+        tags$strong("Process Summary"),
+        tags$ul(style = "margin-top: 8px; margin-bottom: 0;",
+          tags$li("Your wide-format data will first be transformed into long format (one row per alternative per choice occasion)."),
+          tags$li("The long-format data will then be transformed into an estimable format by the ", tags$code("mlogit"), " package in R."),
+          tags$li("Once the data transformation is complete, the model will be estimated based on your choice of slope specifications (choice-invariant vs. choice-specific) for each independent variable.")
+        )
+      )
+    }
+  })
+
   # Reactive values
   data = reactiveVal(NULL)
   mlogit_data = reactiveVal(NULL)
@@ -715,12 +753,20 @@ server = function(input, output, session) {
   # Reactive for wide format raw data
   wide_data = reactiveVal(NULL)
 
+  # Reactive for filtering
+  use_filtered_data = reactiveVal(FALSE)
+  filtered_data = reactiveVal(NULL)
+  filter_conditions = reactiveVal(list())
+
   # Clear data when format changes
   observeEvent(input$data_format, {
     data(NULL)
     wide_data(NULL)
     mlogit_data(NULL)
     model_result(NULL)
+    use_filtered_data(FALSE)
+    filtered_data(NULL)
+    filter_conditions(list())
   }, ignoreInit = TRUE)
 
   # Upload card (for both formats)
@@ -787,22 +833,280 @@ server = function(input, output, session) {
 
       mlogit_data(NULL)
       model_result(NULL)
+      use_filtered_data(FALSE)
+      filtered_data(NULL)
+      filter_conditions(list())
       showNotification(paste("Loaded", nrow(df), "rows and", ncol(df), "columns."), type = "message")
     }, error = function(e) {
       showNotification(paste("Error loading file:", e$message), type = "error")
     })
   })
 
+  # Filter card
+  output$filter_card = renderUI({
+    req(input$data_format)
+
+    # Get the appropriate data based on format
+    df = if (input$data_format == "long") data() else wide_data()
+    if (is.null(df)) return(NULL)
+
+    cols = names(df)
+    n_total = nrow(df)
+
+    # Determine column types
+    col_types = sapply(df, function(x) {
+      if (is.numeric(x)) "numeric" else "categorical"
+    })
+
+    # Build unique values for categorical columns (for dropdowns)
+    cat_values = lapply(cols, function(col) {
+      if (col_types[col] == "categorical") {
+        sort(unique(as.character(df[[col]])))
+      } else {
+        NULL
+      }
+    })
+    names(cat_values) = cols
+
+    div(class = "card",
+      div(class = "card-title", "Data Filter (Optional)"),
+      div(class = "center-content",
+        radioButtons("use_filter", "Which data to use?",
+          choices = c(
+            "Use full data" = "full",
+            "Filter data" = "filtered"
+          ),
+          selected = "full",
+          inline = TRUE
+        ),
+        p(style = "font-size: 0.85rem; color: #64748b;",
+          paste0("Full data: ", n_total, " rows")
+        ),
+
+        # Filter conditions (shown only when "Filter data" selected)
+        conditionalPanel(
+          condition = "input.use_filter == 'filtered'",
+          div(id = "filter_rows",
+            uiOutput("filter_rows_ui")
+          ),
+          div(style = "margin-top: 10px;",
+            actionButton("add_filter", "+ Add Filter Condition", class = "btn-secondary", style = "font-size: 0.85rem;")
+          ),
+          div(id = "filter_summary", style = "margin-top: 10px; padding: 8px; background: #e0f2fe; border-radius: 6px;",
+            textOutput("filter_summary_text")
+          )
+        )
+      )
+    )
+  })
+
+  # Dynamic filter rows
+  output$filter_rows_ui = renderUI({
+    req(input$data_format)
+    df = if (input$data_format == "long") data() else wide_data()
+    if (is.null(df)) return(NULL)
+
+    conditions = filter_conditions()
+    if (length(conditions) == 0) return(NULL)
+
+    cols = names(df)
+    col_types = sapply(df, function(x) if (is.numeric(x)) "numeric" else "categorical")
+
+    lapply(seq_along(conditions), function(i) {
+      cond = conditions[[i]]
+      selected_col = cond$column
+      selected_type = col_types[selected_col]
+
+      # Get unique values for categorical
+      unique_vals = if (selected_type == "categorical") {
+        sort(unique(as.character(df[[selected_col]])))
+      } else NULL
+
+      div(class = "filter-row", style = "display: flex; gap: 8px; align-items: center; margin-bottom: 8px; flex-wrap: wrap;",
+        selectInput(paste0("filter_col_", i), NULL,
+          choices = cols,
+          selected = selected_col,
+          width = "150px"
+        ),
+        selectInput(paste0("filter_op_", i), NULL,
+          choices = if (selected_type == "numeric") {
+            c("=" = "eq", "≠" = "neq", ">" = "gt", ">=" = "gte", "<" = "lt", "<=" = "lte")
+          } else {
+            c("=" = "eq", "≠" = "neq")
+          },
+          selected = cond$operator,
+          width = "80px"
+        ),
+        if (selected_type == "categorical") {
+          selectInput(paste0("filter_val_", i), NULL,
+            choices = unique_vals,
+            selected = cond$value,
+            width = "150px"
+          )
+        } else {
+          textInput(paste0("filter_val_", i), NULL,
+            value = cond$value,
+            width = "150px",
+            placeholder = "Value"
+          )
+        },
+        actionButton(paste0("remove_filter_", i), "×",
+          class = "btn-danger",
+          style = "padding: 4px 10px; font-size: 1rem; min-width: 35px;"
+        )
+      )
+    })
+  })
+
+  # Add filter condition
+  observeEvent(input$add_filter, {
+    req(input$data_format)
+    df = if (input$data_format == "long") data() else wide_data()
+    if (is.null(df)) return()
+
+    cols = names(df)
+    conditions = filter_conditions()
+    conditions[[length(conditions) + 1]] = list(
+      column = cols[1],
+      operator = "eq",
+      value = ""
+    )
+    filter_conditions(conditions)
+  })
+
+  # Observe filter column changes to update operator and value
+
+  observe({
+    req(input$data_format)
+    df = if (input$data_format == "long") data() else wide_data()
+    if (is.null(df)) return()
+
+    conditions = filter_conditions()
+    if (length(conditions) == 0) return()
+
+    for (i in seq_along(conditions)) {
+      local({
+        idx = i
+        col_input = paste0("filter_col_", idx)
+        op_input = paste0("filter_op_", idx)
+        val_input = paste0("filter_val_", idx)
+        remove_input = paste0("remove_filter_", idx)
+
+        # Update condition when inputs change
+        observeEvent(input[[col_input]], {
+          conditions = filter_conditions()
+          if (idx <= length(conditions)) {
+            conditions[[idx]]$column = input[[col_input]]
+            conditions[[idx]]$value = ""  # Reset value when column changes
+            filter_conditions(conditions)
+          }
+        }, ignoreInit = TRUE)
+
+        observeEvent(input[[op_input]], {
+          conditions = filter_conditions()
+          if (idx <= length(conditions)) {
+            conditions[[idx]]$operator = input[[op_input]]
+            filter_conditions(conditions)
+          }
+        }, ignoreInit = TRUE)
+
+        observeEvent(input[[val_input]], {
+          conditions = filter_conditions()
+          if (idx <= length(conditions)) {
+            conditions[[idx]]$value = input[[val_input]]
+            filter_conditions(conditions)
+          }
+        }, ignoreInit = TRUE)
+
+        # Remove filter
+        observeEvent(input[[remove_input]], {
+          conditions = filter_conditions()
+          if (idx <= length(conditions)) {
+            conditions[[idx]] = NULL
+            filter_conditions(conditions)
+          }
+        }, ignoreInit = TRUE)
+      })
+    }
+  })
+
+  # Apply filters and update filtered_data
+  observe({
+    req(input$data_format)
+    df = if (input$data_format == "long") data() else wide_data()
+    if (is.null(df)) return()
+
+    if (!isTRUE(input$use_filter == "filtered")) {
+      use_filtered_data(FALSE)
+      filtered_data(NULL)
+      return()
+    }
+
+    use_filtered_data(TRUE)
+    conditions = filter_conditions()
+
+    if (length(conditions) == 0) {
+      filtered_data(df)
+      return()
+    }
+
+    result = df
+    for (cond in conditions) {
+      if (is.null(cond) || cond$value == "") next
+
+      col = cond$column
+      op = cond$operator
+      val = cond$value
+
+      col_is_numeric = is.numeric(df[[col]])
+      if (col_is_numeric) val = as.numeric(val)
+
+      result = switch(op,
+        "eq" = result[result[[col]] == val, , drop = FALSE],
+        "neq" = result[result[[col]] != val, , drop = FALSE],
+        "gt" = result[result[[col]] > val, , drop = FALSE],
+        "gte" = result[result[[col]] >= val, , drop = FALSE],
+        "lt" = result[result[[col]] < val, , drop = FALSE],
+        "lte" = result[result[[col]] <= val, , drop = FALSE],
+        result
+      )
+    }
+
+    filtered_data(result)
+  })
+
+  # Filter summary text
+  output$filter_summary_text = renderText({
+    if (!isTRUE(input$use_filter == "filtered")) return("")
+
+    df = if (input$data_format == "long") data() else wide_data()
+    fdf = filtered_data()
+
+    if (is.null(df)) return("")
+    if (is.null(fdf)) return(paste0("Filtered: ", nrow(df), " of ", nrow(df), " rows"))
+
+    paste0("Filtered: ", nrow(fdf), " of ", nrow(df), " rows")
+  })
+
+  # Helper function to get the working data (filtered or full)
+  working_data = reactive({
+    if (isTRUE(use_filtered_data())) {
+      fdf = filtered_data()
+      if (!is.null(fdf)) return(fdf)
+    }
+    if (input$data_format == "long") data() else wide_data()
+  })
+
   # Wide format structure card
   output$wide_structure_card = renderUI({
     if (input$data_format != "wide") return(NULL)
-    df = wide_data()
+    df = working_data()
     if (is.null(df)) return(NULL)
 
     cols = names(df)
 
     div(class = "card",
-      div(class = "card-title", "3. Wide Format Structure"),
+      div(class = "card-title", "4. Wide Format Structure"),
       div(class = "center-content",
         selectInput("wide_chid_var", "Choice ID Variable",
           choices = cols,
@@ -927,7 +1231,9 @@ server = function(input, output, session) {
 
   # Data structure card (shows for long format OR after wide conversion)
   output$data_structure_card = renderUI({
-    df = data()
+    # For long format, use working_data (which respects filtering)
+    # For wide format, use data() which is set after conversion
+    df = if (input$data_format == "long") working_data() else data()
     if (is.null(df)) return(NULL)
 
     # For wide format, only show after conversion
@@ -936,8 +1242,8 @@ server = function(input, output, session) {
     cols = names(df)
 
     # Determine step number based on format
-    step_num = if (input$data_format == "long") "3" else "4"
-    step_title = if (input$data_format == "long") "3. Data Structure" else "4. Verify Converted Data"
+    step_num = if (input$data_format == "long") "4" else "5"
+    step_title = if (input$data_format == "long") "4. Data Structure" else "5. Verify Converted Data"
 
     div(class = "card",
       div(class = "card-title", step_title),
@@ -983,7 +1289,8 @@ server = function(input, output, session) {
 
   # Create mlogit data
   observeEvent(input$create_mlogit_data, {
-    df = data()
+    # Use working_data for long format, data() for wide (after conversion)
+    df = if (input$data_format == "long") working_data() else data()
     req(df, input$choice_var, input$alt_var, input$chid_var)
 
     # Store input values in local variables to avoid reactive issues
@@ -1037,7 +1344,7 @@ server = function(input, output, session) {
     session$userData$iv_choices = iv_choices
 
     # Dynamic step number
-    step_num = if (input$data_format == "long") "4" else "5"
+    step_num = if (input$data_format == "long") "5" else "6"
 
     div(class = "card",
       div(class = "card-title", paste0(step_num, ". Model Specification")),
@@ -1055,7 +1362,6 @@ server = function(input, output, session) {
         selectInput("intercept_type", "Intercept",
           choices = c(
             "Alternative-Specific Intercepts" = "alt_specific",
-            "Single Intercept" = "single",
             "No Intercept" = "none"
           ),
           selected = "alt_specific"
@@ -1145,7 +1451,7 @@ server = function(input, output, session) {
     if (is.null(mdata)) return(NULL)
 
     # Dynamic step number
-    step_num = if (input$data_format == "long") "5" else "6"
+    step_num = if (input$data_format == "long") "6" else "7"
 
     div(class = "card",
       div(class = "card-title", paste0(step_num, ". Run Model")),
@@ -1161,8 +1467,8 @@ server = function(input, output, session) {
     req(mdata, input$reflevel)
 
     # Collect variables and their types dynamically
-    vars_single = c()  # Variables with choice-invariant coefficient
-    vars_alt = c()     # Variables with choice-specific coefficients
+    vars_single = c()  # Variables with alternative-invariant coefficient
+    vars_alt = c()     # Variables with alternative-specific coefficients
 
     n = num_vars()
     for (i in 1:n) {
@@ -1206,17 +1512,6 @@ server = function(input, output, session) {
           } else {
             "1"
           }
-        } else if (intercept_type == "single") {
-          # Single intercept - suppress ASCs
-          part2 = if (length(vars_alt) > 0) {
-            paste("0 +", paste(vars_alt, collapse = " + "))
-          } else {
-            "0"
-          }
-          # Add intercept to part 1 if it was 0
-          if (part1 == "0") {
-            part1 = "1"
-          }
         } else {
           # No intercept
           part2 = if (length(vars_alt) > 0) {
@@ -1241,6 +1536,15 @@ server = function(input, output, session) {
           reflevel = input$reflevel
         )
 
+        # Get alternatives from the mlogit data
+        alts = levels(index(mdata)$alt)
+
+        # Store filter info for R script
+        filter_info = list(
+          use_filter = isTRUE(input$use_filter == "filtered"),
+          conditions = filter_conditions()
+        )
+
         # Store result
         model_result(list(
           fit = fit,
@@ -1251,7 +1555,9 @@ server = function(input, output, session) {
           chid_var = input$chid_var,
           vars_single = vars_single,
           vars_alt = vars_alt,
-          intercept_type = intercept_type
+          intercept_type = intercept_type,
+          alternatives = alts,
+          filter_info = filter_info
         ))
 
         showNotification("Model estimated successfully!", type = "message")
@@ -1282,6 +1588,11 @@ server = function(input, output, session) {
         tabPanel("Model Estimates",
           div(style = "margin-top: 15px;",
             uiOutput("model_estimates")
+          )
+        ),
+        tabPanel("Prediction Equations",
+          div(style = "margin-top: 15px;",
+            uiOutput("prediction_equations")
           )
         ),
         tabPanel("Model Summary",
@@ -1355,6 +1666,302 @@ server = function(input, output, session) {
     )
   }, rownames = FALSE)
 
+  # Prediction equations
+  output$prediction_equations = renderUI({
+    result = model_result()
+    if (is.null(result)) return(NULL)
+
+    # Get alternatives (excluding baseline)
+    reflevel = result$reflevel
+    all_alts = result$alternatives
+    non_base_alts = setdiff(all_alts, reflevel)
+
+    tagList(
+      div(style = "margin-bottom: 15px;",
+        p(style = "color: #64748b; font-size: 0.9rem;",
+          "Utility and probability equations for use in optimization tools.",
+          br(),
+          "Copy the text below to use in other applications."
+        )
+      ),
+
+      # Significance filter
+      div(style = "margin-bottom: 15px; padding: 10px; background: #f1f5f9; border-radius: 8px;",
+        radioButtons("sig_level", "Include coefficients with:",
+          choices = c(
+            "Any p-value" = "all",
+            "p-value < 0.05" = "0.05",
+            "p-value < 0.10" = "0.10"
+          ),
+          selected = "all",
+          inline = TRUE
+        )
+      ),
+
+      div(style = "background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 15px;",
+        tags$pre(id = "equations_text", style = "color: #1e293b; font-family: 'Courier New', monospace; font-size: 0.9rem; margin: 0; white-space: pre-wrap; word-wrap: break-word;",
+          textOutput("equations_output", inline = TRUE)
+        )
+      ),
+      div(style = "margin-top: 10px;",
+        downloadButton("download_equations", "Download as TXT", class = "btn-secondary")
+      )
+    )
+  })
+
+  # Generate equations text based on significance level
+  output$equations_output = renderText({
+    result = model_result()
+    if (is.null(result)) return("")
+
+    fit = result$fit
+    summ = summary(fit)
+    coefs = summ$CoefTable
+    coef_names = rownames(coefs)
+    coef_estimates = coefs[, 1]  # Estimates
+    coef_pvals = coefs[, 4]      # P-values
+
+    # Get significance threshold
+    sig_level = input$sig_level
+    if (is.null(sig_level)) sig_level = "all"
+
+    sig_threshold = if (sig_level == "all") 1 else as.numeric(sig_level)
+
+    # Apply significance filter - set insignificant to 0
+    coef_vals = ifelse(coef_pvals < sig_threshold, coef_estimates, 0)
+    names(coef_vals) = coef_names
+
+    # Get alternatives (excluding baseline)
+    reflevel = result$reflevel
+    all_alts = result$alternatives
+    non_base_alts = setdiff(all_alts, reflevel)
+
+    # Build utility equations text for each non-baseline alternative
+    utility_lines = c()
+    utility_lines = c(utility_lines, "# Utility Equations")
+    utility_lines = c(utility_lines, paste0("# Baseline: U_", gsub(" ", "_", reflevel), " = 0"))
+    utility_lines = c(utility_lines, "")
+
+    # First, identify generic (alternative-invariant) coefficients that apply to ALL alternatives
+    generic_terms = list()
+    generic_intercept = NULL
+
+    for (i in seq_along(coef_names)) {
+      name = coef_names[i]
+      val = round(coef_vals[i], 4)
+
+      # Skip if zero (insignificant)
+      if (val == 0) next
+
+      # Check for generic intercept (no colon, is intercept)
+      if (!grepl(":", name) && grepl("intercept", name, ignore.case = TRUE)) {
+        generic_intercept = val
+      }
+      # Generic coefficients have no colon and are not intercepts
+      else if (!grepl(":", name)) {
+        generic_terms[[name]] = val
+      }
+    }
+
+    for (alt in non_base_alts) {
+      alt_clean = gsub(" ", "_", alt)
+      terms = c()
+
+      # Check for alternative-specific intercept first
+      alt_intercept_found = FALSE
+      for (i in seq_along(coef_names)) {
+        name = coef_names[i]
+        val = round(coef_vals[i], 4)
+
+        # Skip if zero (insignificant)
+        if (val == 0) next
+
+        # Check if this is an intercept for this alternative
+        if (grepl("intercept", name, ignore.case = TRUE) && grepl(alt, name, fixed = TRUE)) {
+          terms = c(terms, as.character(val))
+          alt_intercept_found = TRUE
+          break
+        }
+      }
+
+      # If no alternative-specific intercept, use generic intercept if available
+      if (!alt_intercept_found && !is.null(generic_intercept)) {
+        terms = c(terms, as.character(generic_intercept))
+      }
+
+      # Go through all coefficients and find alternative-specific ones
+      for (i in seq_along(coef_names)) {
+        name = coef_names[i]
+        val = round(coef_vals[i], 4)
+
+        # Skip if zero (insignificant)
+        if (val == 0) next
+
+        # Check if this is an alternative-specific coefficient (alt:var format)
+        if (grepl(":", name) && grepl(alt, name, fixed = TRUE)) {
+          # Extract variable name (remove alternative prefix/suffix)
+          var_name = gsub(paste0("^", alt, ":"), "", name)
+          var_name = gsub(paste0(":", alt, "$"), "", var_name)
+          if (!grepl("intercept", var_name, ignore.case = TRUE)) {
+            sign = if (val >= 0 && length(terms) > 0) " + " else if (val < 0) " - " else ""
+            terms = c(terms, paste0(sign, abs(val), " * ", var_name))
+          }
+        }
+      }
+
+      # Add generic (alternative-invariant) coefficients - these apply to all alternatives
+      for (var_name in names(generic_terms)) {
+        val = generic_terms[[var_name]]
+        sign = if (val >= 0 && length(terms) > 0) " + " else if (val < 0) " - " else ""
+        terms = c(terms, paste0(sign, abs(val), " * ", var_name))
+      }
+
+      # Build equation
+      eq_str = paste(terms, collapse = "")
+      if (eq_str == "") eq_str = "0"
+      # Clean up leading " + " or " - " at start
+      eq_str = sub("^\\\\s*\\\\+\\\\s*", "", eq_str)
+      utility_lines = c(utility_lines, paste0("U_", alt_clean, " = ", eq_str))
+    }
+
+    # Build probability equations
+    utility_lines = c(utility_lines, "")
+    utility_lines = c(utility_lines, "# Choice Probabilities")
+
+    # Denominator: 1 + exp(U_1) + exp(U_2) + ...
+    denom_terms = c("1")  # baseline exp(0) = 1
+    for (alt in non_base_alts) {
+      alt_clean = gsub(" ", "_", alt)
+      denom_terms = c(denom_terms, paste0("exp(U_", alt_clean, ")"))
+    }
+    denom_str = paste(denom_terms, collapse = " + ")
+
+    # Baseline probability
+    utility_lines = c(utility_lines, paste0("Pr_", gsub(" ", "_", reflevel), " = 1 / (", denom_str, ")"))
+
+    # Other probabilities
+    for (alt in non_base_alts) {
+      alt_clean = gsub(" ", "_", alt)
+      utility_lines = c(utility_lines, paste0("Pr_", alt_clean, " = exp(U_", alt_clean, ") / (", denom_str, ")"))
+    }
+
+    # Combine all lines
+    paste(utility_lines, collapse = "\\n")
+  })
+
+  # Download equations as TXT
+  output$download_equations = downloadHandler(
+    filename = function() {
+      "prediction_equations.txt"
+    },
+    content = function(file) {
+      result = model_result()
+      if (is.null(result)) return()
+
+      fit = result$fit
+      summ = summary(fit)
+      coefs = summ$CoefTable
+      coef_names = rownames(coefs)
+      coef_estimates = coefs[, 1]
+      coef_pvals = coefs[, 4]
+
+      sig_level = input$sig_level
+      if (is.null(sig_level)) sig_level = "all"
+      sig_threshold = if (sig_level == "all") 1 else as.numeric(sig_level)
+
+      coef_vals = ifelse(coef_pvals < sig_threshold, coef_estimates, 0)
+      names(coef_vals) = coef_names
+
+      reflevel = result$reflevel
+      all_alts = result$alternatives
+      non_base_alts = setdiff(all_alts, reflevel)
+
+      utility_lines = c()
+      utility_lines = c(utility_lines, "# Utility Equations")
+      utility_lines = c(utility_lines, paste0("# Baseline: U_", gsub(" ", "_", reflevel), " = 0"))
+      utility_lines = c(utility_lines, "")
+
+      generic_terms = list()
+      generic_intercept = NULL
+
+      for (i in seq_along(coef_names)) {
+        name = coef_names[i]
+        val = round(coef_vals[i], 4)
+        if (val == 0) next
+        if (!grepl(":", name) && grepl("intercept", name, ignore.case = TRUE)) {
+          generic_intercept = val
+        } else if (!grepl(":", name)) {
+          generic_terms[[name]] = val
+        }
+      }
+
+      for (alt in non_base_alts) {
+        alt_clean = gsub(" ", "_", alt)
+        terms = c()
+
+        alt_intercept_found = FALSE
+        for (i in seq_along(coef_names)) {
+          name = coef_names[i]
+          val = round(coef_vals[i], 4)
+          if (val == 0) next
+          if (grepl("intercept", name, ignore.case = TRUE) && grepl(alt, name, fixed = TRUE)) {
+            terms = c(terms, as.character(val))
+            alt_intercept_found = TRUE
+            break
+          }
+        }
+
+        if (!alt_intercept_found && !is.null(generic_intercept)) {
+          terms = c(terms, as.character(generic_intercept))
+        }
+
+        for (i in seq_along(coef_names)) {
+          name = coef_names[i]
+          val = round(coef_vals[i], 4)
+          if (val == 0) next
+          if (grepl(":", name) && grepl(alt, name, fixed = TRUE)) {
+            var_name = gsub(paste0("^", alt, ":"), "", name)
+            var_name = gsub(paste0(":", alt, "$"), "", var_name)
+            if (!grepl("intercept", var_name, ignore.case = TRUE)) {
+              sign = if (val >= 0 && length(terms) > 0) " + " else if (val < 0) " - " else ""
+              terms = c(terms, paste0(sign, abs(val), " * ", var_name))
+            }
+          }
+        }
+
+        for (var_name in names(generic_terms)) {
+          val = generic_terms[[var_name]]
+          sign = if (val >= 0 && length(terms) > 0) " + " else if (val < 0) " - " else ""
+          terms = c(terms, paste0(sign, abs(val), " * ", var_name))
+        }
+
+        eq_str = paste(terms, collapse = "")
+        if (eq_str == "") eq_str = "0"
+        eq_str = sub("^\\\\s*\\\\+\\\\s*", "", eq_str)
+        utility_lines = c(utility_lines, paste0("U_", alt_clean, " = ", eq_str))
+      }
+
+      utility_lines = c(utility_lines, "")
+      utility_lines = c(utility_lines, "# Choice Probabilities")
+
+      denom_terms = c("1")
+      for (alt in non_base_alts) {
+        alt_clean = gsub(" ", "_", alt)
+        denom_terms = c(denom_terms, paste0("exp(U_", alt_clean, ")"))
+      }
+      denom_str = paste(denom_terms, collapse = " + ")
+
+      utility_lines = c(utility_lines, paste0("Pr_", gsub(" ", "_", reflevel), " = 1 / (", denom_str, ")"))
+
+      for (alt in non_base_alts) {
+        alt_clean = gsub(" ", "_", alt)
+        utility_lines = c(utility_lines, paste0("Pr_", alt_clean, " = exp(U_", alt_clean, ") / (", denom_str, ")"))
+      }
+
+      writeLines(utility_lines, file)
+    }
+  )
+
   # Model summary (raw output)
   output$model_summary = renderPrint({
     result = model_result()
@@ -1368,6 +1975,40 @@ server = function(input, output, session) {
     result = model_result()
     if (is.null(result)) return("")
 
+    # Build filter code if filtering was used
+    filter_code = ""
+    if (!is.null(result$filter_info) && result$filter_info$use_filter) {
+      conditions = result$filter_info$conditions
+      if (length(conditions) > 0) {
+        filter_lines = c("# Apply data filters")
+        for (cond in conditions) {
+          if (is.null(cond) || cond$value == "") next
+
+          col = cond$column
+          op = cond$operator
+          val = cond$value
+
+          # Build R filter expression
+          op_r = switch(op,
+            "eq" = "==",
+            "neq" = "!=",
+            "gt" = ">",
+            "gte" = ">=",
+            "lt" = "<",
+            "lte" = "<=",
+            "=="
+          )
+
+          # Check if value is numeric or string
+          val_r = if (suppressWarnings(!is.na(as.numeric(val)))) val else paste0('\\"', val, '\\"')
+
+          filter_lines = c(filter_lines, paste0('data = data[data$', col, ' ', op_r, ' ', val_r, ', ]'))
+        }
+        filter_lines = c(filter_lines, "")
+        filter_code = paste(filter_lines, collapse = "\\n")
+      }
+    }
+
     script = paste0(
       "# Shiny App for Estimating Logistic Regressions\\n",
       "# Generated by Shiny App\\n\\n",
@@ -1376,6 +2017,7 @@ server = function(input, output, session) {
       "library(mlogit)\\n\\n",
       "# Load data\\n",
       "data = read.csv(\\"your_data.csv\\")\\n\\n",
+      filter_code,
       "# Create mlogit data\\n",
       "choice_data = mlogit.data(\\n",
       "  data = data,\\n",
