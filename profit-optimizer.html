@@ -92,75 +92,71 @@
             font-weight: 600;
         }
 
-        /* Equation Rows */
-        .equation-row {
-            display: flex;
-            gap: 0.75rem;
-            align-items: center;
-            margin-bottom: 0.75rem;
-            background: var(--bg-light);
-            padding: 0.75rem;
+        /* Equations Text Area */
+        .equations-textarea {
+            width: 100%;
+            min-height: 180px;
+            padding: 1rem;
+            font-size: 0.95rem;
+            font-family: 'Monaco', 'Consolas', monospace;
+            border: 1px solid var(--border);
             border-radius: 8px;
-            border: 1px solid var(--border);
-        }
-
-        .var-input {
-            width: 120px;
-            padding: 0.5rem 0.75rem;
-            font-size: 0.95rem;
-            font-family: 'Monaco', 'Consolas', monospace;
-            border: 1px solid var(--border);
-            border-radius: 6px;
             background: white;
+            line-height: 1.8;
+            resize: vertical;
         }
 
-        .formula-input {
-            flex: 1;
-            padding: 0.5rem 0.75rem;
-            font-size: 0.95rem;
-            font-family: 'Monaco', 'Consolas', monospace;
-            border: 1px solid var(--border);
-            border-radius: 6px;
-            background: white;
-        }
-
-        .var-input:focus, .formula-input:focus, select:focus, input:focus {
+        .equations-textarea:focus {
             outline: none;
             border-color: var(--iu-crimson);
             box-shadow: 0 0 0 2px rgba(153, 0, 0, 0.1);
         }
 
-        .remove-btn {
-            padding: 0.4rem 0.6rem;
-            background: #fee2e2;
-            border: none;
+        .equations-textarea::placeholder {
+            color: #9ca3af;
+        }
+
+        .equation-buttons {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 0.75rem;
+        }
+
+        .equation-btn {
+            padding: 0.5rem 1rem;
+            font-size: 0.85rem;
+            font-weight: 500;
+            border: 1px solid var(--border);
             border-radius: 6px;
             cursor: pointer;
-            color: var(--error);
-            font-size: 0.9rem;
-        }
-
-        .remove-btn:hover {
-            background: #fecaca;
-        }
-
-        .add-btn {
-            display: block;
-            width: 100%;
-            padding: 0.6rem;
-            background: white;
-            border: 2px dashed var(--border);
-            border-radius: 8px;
-            cursor: pointer;
-            color: var(--text-light);
-            font-size: 0.9rem;
-            margin-top: 0.75rem;
             transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
         }
 
-        .add-btn:hover {
-            border-color: var(--iu-crimson);
-            color: var(--iu-crimson);
+        .equation-btn.download {
+            background: #ecfdf5;
+            color: var(--success);
+            border-color: #a7f3d0;
+        }
+
+        .equation-btn.download:hover {
+            background: #d1fae5;
+        }
+
+        .equation-btn.upload {
+            background: #eff6ff;
+            color: #2563eb;
+            border-color: #bfdbfe;
+        }
+
+        .equation-btn.upload:hover {
+            background: #dbeafe;
+        }
+
+        .hidden-file-input {
+            display: none;
         }
 
         /* Setup Grid */
@@ -692,8 +688,21 @@
         <!-- Step 1: Equations -->
         <div class="tool-container">
             <h2 class="section-title"><span class="step-number">1</span> Define Equations</h2>
-            <div id="equationsContainer"></div>
-            <button class="add-btn" onclick="addEquation()">+ Add Equation</button>
+            <textarea class="equations-textarea" id="equationsTextarea" placeholder="Enter equations, one per line:
+
+Cost = 10
+Sales = 1000 - 30 * Price
+Revenue = Sales * Price
+Profit = Revenue - Cost * Sales" oninput="parseEquations()"></textarea>
+            <div class="equation-buttons">
+                <button class="equation-btn download" onclick="downloadEquations()">
+                    <span>📥</span> Save Equations
+                </button>
+                <button class="equation-btn upload" onclick="document.getElementById('equationFileInput').click()">
+                    <span>📤</span> Load Equations
+                </button>
+                <input type="file" id="equationFileInput" class="hidden-file-input" accept=".txt" onchange="uploadEquations(event)">
+            </div>
             <p class="help-text">
                 Use: <code>+</code> <code>-</code> <code>*</code> <code>/</code> <code>^</code> <code>exp()</code> <code>log()</code> <code>sqrt()</code>
             </p>
@@ -802,7 +811,6 @@
 
     <script>
         let equations = [];
-        let equationId = 0;
         let decisionVars = [];
         let decisionVarId = 0;
         let mainChart = null;
@@ -810,8 +818,6 @@
 
         document.addEventListener('DOMContentLoaded', () => {
             initChart();
-            addEquation('', '');
-            addEquation('', '');
             addDecisionVar('', '', '');
             renderPredictionInputs();
         });
@@ -848,27 +854,64 @@
             });
         }
 
-        function addEquation(varName = '', formula = '') {
-            equations.push({ id: equationId++, varName, formula });
-            renderEquations();
-            updateDropdowns();
-            hidePredictionResults();
-        }
+        function parseEquations() {
+            const textarea = document.getElementById('equationsTextarea');
+            const text = textarea.value;
+            equations = [];
 
-        function removeEquation(id) {
-            equations = equations.filter(eq => eq.id !== id);
-            renderEquations();
-            updateDropdowns();
-            hidePredictionResults();
-        }
+            const lines = text.split('\n');
+            for (const line of lines) {
+                const trimmed = line.trim();
+                if (!trimmed || trimmed.startsWith('#') || trimmed.startsWith('//')) continue;
 
-        function updateEquation(id, field, value) {
-            const eq = equations.find(e => e.id === id);
-            if (eq) {
-                eq[field] = value;
-                updateDropdowns();
-                hidePredictionResults();
+                const eqIndex = trimmed.indexOf('=');
+                if (eqIndex > 0) {
+                    const varName = trimmed.substring(0, eqIndex).trim();
+                    const formula = trimmed.substring(eqIndex + 1).trim();
+                    if (varName && formula) {
+                        equations.push({ varName, formula });
+                    }
+                }
             }
+
+            updateDropdowns();
+            hidePredictionResults();
+        }
+
+        function downloadEquations() {
+            const textarea = document.getElementById('equationsTextarea');
+            const text = textarea.value.trim();
+
+            if (!text) {
+                alert('No equations to save.');
+                return;
+            }
+
+            const blob = new Blob([text], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'equations.txt';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        function uploadEquations(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const text = e.target.result;
+                document.getElementById('equationsTextarea').value = text;
+                parseEquations();
+            };
+            reader.readAsText(file);
+
+            // Reset file input so the same file can be loaded again
+            event.target.value = '';
         }
 
         function hidePredictionResults() {
@@ -876,19 +919,6 @@
             if (resultsDiv) {
                 resultsDiv.classList.remove('visible');
             }
-        }
-
-        function renderEquations() {
-            document.getElementById('equationsContainer').innerHTML = equations.map(eq => `
-                <div class="equation-row">
-                    <input type="text" class="var-input" value="${eq.varName}" placeholder="Name"
-                           oninput="updateEquation(${eq.id}, 'varName', this.value)">
-                    <span style="color: var(--text-light);">=</span>
-                    <input type="text" class="formula-input" value="${eq.formula}" placeholder="Formula"
-                           oninput="updateEquation(${eq.id}, 'formula', this.value)">
-                    ${equations.length > 1 ? `<button class="remove-btn" onclick="removeEquation(${eq.id})">✕</button>` : ''}
-                </div>
-            `).join('');
         }
 
         function addDecisionVar(name = '', min = '', max = '') {
