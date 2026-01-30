@@ -221,6 +221,66 @@
             text-align: center;
         }
 
+        /* Control Variable Row */
+        .control-var-row {
+            display: flex;
+            gap: 0.6rem;
+            align-items: center;
+            margin-bottom: 0.6rem;
+            padding: 0.6rem;
+            background: #f0fdf4;
+            border-radius: 8px;
+            border: 1px solid #bbf7d0;
+        }
+
+        .control-var-row select {
+            flex: 1;
+            padding: 0.4rem;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+        }
+
+        .control-var-row input {
+            width: 100px;
+            padding: 0.4rem;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            text-align: center;
+        }
+
+        /* Objective Row */
+        .objective-row {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+            margin-bottom: 1rem;
+            padding: 1rem;
+            background: #fefce8;
+            border-radius: 8px;
+            border: 1px solid #fef08a;
+        }
+
+        .objective-row select {
+            padding: 0.5rem;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-size: 0.95rem;
+        }
+
+        .section-label {
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: var(--text-dark);
+            margin-bottom: 0.5rem;
+        }
+
+        .section-hint {
+            font-size: 0.8rem;
+            color: var(--text-light);
+            margin-bottom: 0.75rem;
+            font-style: italic;
+        }
+
         /* Prediction Section */
         .prediction-section {
             background: #f0f9ff;
@@ -672,7 +732,14 @@
     <main>
         <div class="hero">
             <h1>General Purpose Optimizer</h1>
-            <p>Define equations, set constraints, and find optimal values. Supports single and multi-variable optimization with R code generation, visualization of the objective function as the decision variable changes, and Excel file creation.</p>
+            <ul style="text-align: left; display: inline-block; margin: 0 auto; padding-left: 1.5rem; color: var(--text-light); font-size: 1rem; line-height: 1.8;">
+                <li>Define equations in a text editor with save/load for replicability</li>
+                <li>Set objective (maximize/minimize), decision variables (with bounds), and control variables (fixed values)</li>
+                <li>Single and multi-variable optimization</li>
+                <li>Visualize objective function vs. decision variable</li>
+                <li>Generate equivalent R code and export to Excel</li>
+                <li>Make predictions at specific input values</li>
+            </ul>
         </div>
 
         <!-- Disclaimer -->
@@ -683,6 +750,9 @@
                 <li><strong>No warranty.</strong> This tool is provided "as is" without any warranty of any kind.</li>
                 <li><strong>User assumes all risk.</strong> Users assume full responsibility for reviewing and validating any output.</li>
             </ul>
+            <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid rgba(153, 0, 0, 0.2);">
+                <strong>📧 Report issues:</strong> If you encounter any issues, problems, or errors while using this tool, please contact Dr. Cosguner at <a href="mailto:kcosgun@iu.edu" style="color: var(--iu-crimson); font-weight: 600;">kcosgun@iu.edu</a> so they can be resolved promptly.
+            </div>
         </div>
 
         <!-- Step 1: Equations -->
@@ -704,31 +774,41 @@ Profit = Revenue - Cost * Sales" oninput="parseEquations()"></textarea>
                 <input type="file" id="equationFileInput" class="hidden-file-input" accept=".txt" onchange="uploadEquations(event)">
             </div>
             <p class="help-text">
-                Use: <code>+</code> <code>-</code> <code>*</code> <code>/</code> <code>^</code> <code>exp()</code> <code>log()</code> <code>sqrt()</code>
+                You can use the following operators in your equations: <code>+</code> <code>-</code> <code>*</code> <code>/</code> <code>^</code> <code>exp()</code> <code>ln()</code> <code>sqrt()</code>
+            </p>
+            <p class="help-text" style="margin-top: 0.25rem;">
+                <strong>Tip:</strong> Save your equations to a text file for replicability. You can reload them later using the Load Equations button.
             </p>
         </div>
 
         <!-- Step 2: Setup -->
         <div class="tool-container">
             <h2 class="section-title"><span class="step-number">2</span> Optimization Setup</h2>
-            <div class="setup-grid">
-                <div class="setup-group">
-                    <label>Goal</label>
-                    <select id="goalType">
-                        <option value="maximize">Maximize</option>
-                        <option value="minimize">Minimize</option>
-                    </select>
-                </div>
-                <div class="setup-group">
-                    <label>Objective Variable</label>
-                    <select id="objectiveVar"></select>
-                </div>
-                <div class="setup-group full-width">
-                    <label>Decision Variables (to find optimal values)</label>
-                    <div id="decisionVarsContainer"></div>
-                    <button class="add-btn" onclick="addDecisionVar()" style="margin-top: 0.5rem;">+ Add Decision Variable</button>
-                </div>
+
+            <!-- Objective -->
+            <div class="section-label">Objective</div>
+            <p class="section-hint">Select the variable to optimize (e.g., Profit, Revenue)</p>
+            <div class="objective-row">
+                <select id="goalType">
+                    <option value="maximize">Maximize</option>
+                    <option value="minimize">Minimize</option>
+                </select>
+                <select id="objectiveVar">
+                    <option value="">-- Select Objective --</option>
+                </select>
             </div>
+
+            <!-- Decision Variables -->
+            <div class="section-label">Decision Variables</div>
+            <p class="section-hint">Variables to optimize (e.g., Price, Discount) - specify search bounds</p>
+            <div id="decisionVarsContainer"></div>
+            <button class="add-btn" onclick="addDecisionVar()" style="margin-top: 0.5rem; margin-bottom: 1.5rem;">+ Add Decision Variable</button>
+
+            <!-- Control Variables -->
+            <div class="section-label">Control Variables</div>
+            <p class="section-hint">Fixed inputs for the model (e.g., Temperature, Income, HH_Size)</p>
+            <div id="controlVarsContainer"></div>
+            <button class="add-btn" onclick="addControlVar()" style="margin-top: 0.5rem;">+ Add Control Variable</button>
             <div id="errorMessage" class="error-message"></div>
             <button class="optimize-btn" onclick="optimize()">Find Optimal Solution</button>
 
@@ -813,12 +893,15 @@ Profit = Revenue - Cost * Sales" oninput="parseEquations()"></textarea>
         let equations = [];
         let decisionVars = [];
         let decisionVarId = 0;
+        let controlVars = [];
+        let controlVarId = 0;
         let mainChart = null;
         let lastResult = null;
 
         document.addEventListener('DOMContentLoaded', () => {
             initChart();
             addDecisionVar('', '', '');
+            addControlVar('', '');
             renderPredictionInputs();
         });
 
@@ -940,7 +1023,7 @@ Profit = Revenue - Cost * Sales" oninput="parseEquations()"></textarea>
             const availableVars = getUndefinedVars();
             document.getElementById('decisionVarsContainer').innerHTML = decisionVars.map(dv => `
                 <div class="decision-var-row">
-                    <select onchange="updateDecisionVar(${dv.id}, 'name', this.value)">
+                    <select onchange="updateDecisionVar(${dv.id}, 'name', this.value); renderControlVars();">
                         <option value="">-- Select --</option>
                         ${availableVars.map(v => `<option value="${v}" ${dv.name === v ? 'selected' : ''}>${v}</option>`).join('')}
                     </select>
@@ -949,6 +1032,37 @@ Profit = Revenue - Cost * Sales" oninput="parseEquations()"></textarea>
                     <span style="font-size: 0.85rem; color: var(--text-light);">to</span>
                     <input type="number" value="${dv.max}" placeholder="max" onchange="updateDecisionVar(${dv.id}, 'max', this.value)">
                     ${decisionVars.length > 1 ? `<button class="remove-btn" onclick="removeDecisionVar(${dv.id})">✕</button>` : ''}
+                </div>
+            `).join('');
+        }
+
+        // Control Variables
+        function addControlVar(name = '', value = '') {
+            controlVars.push({ id: controlVarId++, name, value });
+            renderControlVars();
+        }
+
+        function removeControlVar(id) {
+            controlVars = controlVars.filter(c => c.id !== id);
+            renderControlVars();
+        }
+
+        function updateControlVar(id, field, val) {
+            const cv = controlVars.find(c => c.id === id);
+            if (cv) cv[field] = val;
+        }
+
+        function renderControlVars() {
+            const availableVars = getControlVarOptions();
+            document.getElementById('controlVarsContainer').innerHTML = controlVars.map(cv => `
+                <div class="control-var-row">
+                    <select onchange="updateControlVar(${cv.id}, 'name', this.value)">
+                        <option value="">-- Select --</option>
+                        ${availableVars.map(v => `<option value="${v}" ${cv.name === v ? 'selected' : ''}>${v}</option>`).join('')}
+                    </select>
+                    <span style="font-size: 0.85rem; color: var(--text-light);">=</span>
+                    <input type="number" value="${cv.value}" placeholder="value" step="any" onchange="updateControlVar(${cv.id}, 'value', this.value)">
+                    ${controlVars.length > 1 ? `<button class="remove-btn" onclick="removeControlVar(${cv.id})">✕</button>` : ''}
                 </div>
             `).join('');
         }
@@ -969,14 +1083,22 @@ Profit = Revenue - Cost * Sales" oninput="parseEquations()"></textarea>
             return [...used].filter(v => !defined.has(v));
         }
 
+        function getControlVarOptions() {
+            // Control vars are undefined vars that are NOT selected as decision vars
+            const undefinedVars = getUndefinedVars();
+            const selectedDecisionVars = new Set(decisionVars.map(dv => dv.name).filter(n => n));
+            return undefinedVars.filter(v => !selectedDecisionVars.has(v));
+        }
+
         function updateDropdowns() {
             const defined = getDefinedVars();
             const objSelect = document.getElementById('objectiveVar');
             const current = objSelect.value;
-            objSelect.innerHTML = '<option value="">-- Select --</option>' +
+            objSelect.innerHTML = '<option value="">-- Select Objective --</option>' +
                 defined.map(v => `<option value="${v}">${v}</option>`).join('');
             if (defined.includes(current)) objSelect.value = current;
             renderDecisionVars();
+            renderControlVars();
             renderPredictionInputs();
         }
 
@@ -989,6 +1111,7 @@ Profit = Revenue - Cost * Sales" oninput="parseEquations()"></textarea>
                 return;
             }
 
+            // Show which variables need values from decision/control sections
             container.innerHTML = undefinedVars.map(v => `
                 <div class="prediction-input-group">
                     <label>${v} =</label>
@@ -998,32 +1121,42 @@ Profit = Revenue - Cost * Sales" oninput="parseEquations()"></textarea>
         }
 
         function predict() {
-            const undefinedVars = getUndefinedVars();
             const errorEl = document.getElementById('errorMessage');
             errorEl.classList.remove('visible');
 
-            // Gather input values
+            // Gather input values from decision vars and control vars
             const inputValues = {};
-            let hasEmptyInputs = false;
 
-            for (const v of undefinedVars) {
-                const input = document.getElementById(`predict_${v}`);
+            // Get decision variable values from prediction inputs
+            const activeDecVars = decisionVars.filter(dv => dv.name);
+            for (const dv of activeDecVars) {
+                const input = document.getElementById(`predict_${dv.name}`);
                 if (!input || input.value === '') {
-                    hasEmptyInputs = true;
-                    break;
-                }
-                inputValues[v] = parseFloat(input.value);
-                if (isNaN(inputValues[v])) {
-                    errorEl.textContent = `Invalid value for ${v}`;
+                    errorEl.textContent = `Enter a value for ${dv.name}.`;
                     errorEl.classList.add('visible');
                     return;
                 }
+                inputValues[dv.name] = parseFloat(input.value);
             }
 
-            if (hasEmptyInputs) {
-                errorEl.textContent = 'Enter values for all input variables.';
-                errorEl.classList.add('visible');
-                return;
+            // Get control variable values
+            const activeControlVars = controlVars.filter(cv => cv.name && cv.value !== '');
+            for (const cv of activeControlVars) {
+                inputValues[cv.name] = parseFloat(cv.value);
+            }
+
+            // Check for any remaining undefined vars that need values
+            const undefinedVars = getUndefinedVars();
+            for (const v of undefinedVars) {
+                if (!(v in inputValues)) {
+                    const input = document.getElementById(`predict_${v}`);
+                    if (!input || input.value === '') {
+                        errorEl.textContent = `Enter a value for ${v} or add it as a control variable.`;
+                        errorEl.classList.add('visible');
+                        return;
+                    }
+                    inputValues[v] = parseFloat(input.value);
+                }
             }
 
             // Evaluate the model
@@ -1116,8 +1249,20 @@ Profit = Revenue - Cost * Sales" oninput="parseEquations()"></textarea>
             return order;
         }
 
+        function getControlVarValues() {
+            const values = {};
+            controlVars.forEach(cv => {
+                if (cv.name && cv.value !== '') {
+                    values[cv.name] = parseFloat(cv.value);
+                }
+            });
+            return values;
+        }
+
         function evalModel(decisionValues) {
-            const scope = { ...decisionValues };
+            // Merge decision values with control variable values
+            const controlValues = getControlVarValues();
+            const scope = { ...controlValues, ...decisionValues };
             const order = getEvalOrder();
             if (!order) return { error: 'Circular dependency', scope: null };
             for (const eq of order) {
@@ -1298,6 +1443,7 @@ Profit = Revenue - Cost * Sales" oninput="parseEquations()"></textarea>
             const goal = document.getElementById('goalType').value;
             const objVar = document.getElementById('objectiveVar').value;
             const activeDecVars = decisionVars.filter(dv => dv.name && dv.min !== '' && dv.max !== '');
+            const activeControlVars = controlVars.filter(cv => cv.name && cv.value !== '');
 
             if (!objVar) {
                 errorEl.textContent = 'Select an objective variable.';
@@ -1306,6 +1452,19 @@ Profit = Revenue - Cost * Sales" oninput="parseEquations()"></textarea>
             }
             if (activeDecVars.length === 0) {
                 errorEl.textContent = 'Add at least one decision variable with range.';
+                errorEl.classList.add('visible');
+                return;
+            }
+
+            // Check if there are undefined variables that are not assigned
+            const undefinedVars = getUndefinedVars();
+            const assignedVars = new Set([
+                ...activeDecVars.map(dv => dv.name),
+                ...activeControlVars.map(cv => cv.name)
+            ]);
+            const unassignedVars = undefinedVars.filter(v => !assignedVars.has(v));
+            if (unassignedVars.length > 0) {
+                errorEl.textContent = `Missing values for: ${unassignedVars.join(', ')}. Add them as decision or control variables.`;
                 errorEl.classList.add('visible');
                 return;
             }
@@ -1414,16 +1573,28 @@ Profit = Revenue - Cost * Sales" oninput="parseEquations()"></textarea>
         }
 
         function generateRCode(goal, objVar, decVars) {
+            const fnName = `${objVar}_fn`;
             let code = `# General Purpose Optimizer - R Code\n`;
-            code += `# Generated from web tool\n\n`;
+            code += `# Generated from General Purpose Optimizer Tool (by Professor Cosguner)\n`;
+            code += `# Built with the help of Claude AI\n\n`;
 
             const order = getEvalOrder();
+            const activeControlVars = controlVars.filter(cv => cv.name && cv.value !== '');
+
+            // Add control variables as fixed values
+            if (activeControlVars.length > 0) {
+                code += `# Control variables (fixed values)\n`;
+                activeControlVars.forEach(cv => {
+                    code += `${cv.name} = ${cv.value}\n`;
+                });
+                code += `\n`;
+            }
 
             if (decVars.length === 1) {
                 // Single variable: use optimize()
                 const dv = decVars[0];
                 code += `# Objective function (single variable)\n`;
-                code += `objective_fn = function(${dv.name}) {\n`;
+                code += `${fnName} = function(${dv.name}) {\n`;
 
                 order.forEach(eq => {
                     const rFormula = eq.formula.replace(/\^/g, '^');
@@ -1435,7 +1606,7 @@ Profit = Revenue - Cost * Sales" oninput="parseEquations()"></textarea>
 
                 code += `# Run optimization using optimize()\n`;
                 code += `result = optimize(\n`;
-                code += `  f = objective_fn,\n`;
+                code += `  f = ${fnName},\n`;
                 code += `  interval = c(${dv.min}, ${dv.max}),\n`;
                 code += `  maximum = ${goal === 'maximize' ? 'TRUE' : 'FALSE'}\n`;
                 code += `)\n\n`;
@@ -1448,7 +1619,7 @@ Profit = Revenue - Cost * Sales" oninput="parseEquations()"></textarea>
                 const fnScale = goal === 'maximize' ? 'fnscale = -1' : 'fnscale = 1';
 
                 code += `# Objective function (multiple variables)\n`;
-                code += `objective_fn = function(x) {\n`;
+                code += `${fnName} = function(x) {\n`;
                 decVars.forEach((dv, i) => {
                     code += `  ${dv.name} = x[${i + 1}]\n`;
                 });
@@ -1472,7 +1643,7 @@ Profit = Revenue - Cost * Sales" oninput="parseEquations()"></textarea>
                 code += `# Run optimization using optim()\n`;
                 code += `result = optim(\n`;
                 code += `  par = start_vals,\n`;
-                code += `  fn = objective_fn,\n`;
+                code += `  fn = ${fnName},\n`;
                 code += `  method = "L-BFGS-B",\n`;
                 code += `  lower = lower_bounds,\n`;
                 code += `  upper = upper_bounds,\n`;
