@@ -1290,10 +1290,18 @@
         function displayPreview(headers, data) {
             const previewData = data.slice(0, 10);
 
+            // Remove any existing header notes first
+            const existingNotes = dataPreview.querySelectorAll('.column-count-note');
+            existingNotes.forEach(note => note.remove());
+
             // Add note if many columns
-            let headerNote = '';
             if (headers.length > 10) {
-                headerNote = `<p style="font-size: 0.85rem; color: var(--text-light); margin-bottom: 0.5rem;">Showing all ${headers.length} columns. Scroll horizontally to see more.</p>`;
+                const headerNote = document.createElement('p');
+                headerNote.className = 'column-count-note';
+                headerNote.style.cssText = 'font-size: 0.85rem; color: var(--text-light); margin-bottom: 0.5rem;';
+                headerNote.textContent = `Showing all ${headers.length} columns. Scroll horizontally to see more.`;
+                const previewContainer = dataPreview.querySelector('.preview-table-container');
+                previewContainer.parentNode.insertBefore(headerNote, previewContainer);
             }
 
             let html = '<thead><tr>';
@@ -1311,9 +1319,6 @@
             });
             html += '</tbody>';
 
-            // Update the preview section
-            const previewContainer = dataPreview.querySelector('.preview-table-container');
-            previewContainer.insertAdjacentHTML('beforebegin', headerNote);
             previewTable.innerHTML = html;
             dataPreview.classList.add('visible');
         }
@@ -1487,12 +1492,52 @@
             return interactions;
         }
 
+        // Reset state when loading new data
+        function resetStateForNewData() {
+            // Clear previous results
+            resultsContainer.classList.remove('visible');
+
+            // Reset equation section
+            document.getElementById('equationSection').classList.remove('visible');
+            document.getElementById('sigAll').checked = true;
+            lastEquationParams = null;
+            currentSignificanceLevel = 'all';
+
+            // Reset filter state
+            document.getElementById('dataFilterSection').classList.remove('visible');
+            document.getElementById('filterConditions').classList.remove('visible');
+            document.getElementById('filterRows').innerHTML = '';
+            document.getElementById('filterSummary').style.display = 'none';
+            document.querySelector('input[name="dataChoice"][value="full"]').checked = true;
+            filteredData = null;
+            useFilteredData = false;
+
+            // Reset prediction state
+            lastModelCoefs = null;
+            lastModelType = null;
+            lastIndepVarsData = null;
+            lastDepVar = null;
+            lastPredictionValues = null;
+            lastInteractions = null;
+            lastDvTransform = null;
+            lastRScript = '';
+
+            // Clear interaction terms
+            document.getElementById('interactionTerms').innerHTML = '';
+
+            // Hide status message
+            statusMessage.classList.remove('visible');
+        }
+
         // Handle file upload
         function handleFile(file) {
             if (!file || !file.name.endsWith('.csv')) {
                 showStatus('Please upload a CSV file.', 'error');
                 return;
             }
+
+            // Reset state before loading new data
+            resetStateForNewData();
 
             const reader = new FileReader();
             reader.onload = (e) => {
@@ -1865,32 +1910,22 @@ summary(model)
 
         // Clear all
         clearButton.addEventListener('click', () => {
+            // Reset shared state
+            resetStateForNewData();
+
+            // Additional resets specific to full clear
             csvData = null;
             columnNames = [];
             fileInput.value = '';
             dataPreview.classList.remove('visible');
             modelConfig.style.display = 'none';
-            resultsContainer.classList.remove('visible');
             dependentVar.innerHTML = '<option value="">-- Select dependent variable --</option>';
             independentVars.innerHTML = '';
-            document.getElementById('interactionTerms').innerHTML = '';
             document.getElementById('descStatsContainer').classList.remove('visible');
-            statusMessage.classList.remove('visible');
 
-            // Reset filter state
-            document.getElementById('dataFilterSection').classList.remove('visible');
-            document.getElementById('filterConditions').classList.remove('visible');
-            document.getElementById('filterRows').innerHTML = '';
-            document.getElementById('filterSummary').style.display = 'none';
-            document.querySelector('input[name="dataChoice"][value="full"]').checked = true;
-            filteredData = null;
-            useFilteredData = false;
-
-            // Reset equation section
-            document.getElementById('equationSection').classList.remove('visible');
-            document.getElementById('sigAll').checked = true;
-            lastEquationParams = null;
-            currentSignificanceLevel = 'all';
+            // Remove any column count notes
+            const existingNotes = dataPreview.querySelectorAll('.column-count-note');
+            existingNotes.forEach(note => note.remove());
         });
 
         // Download R script
