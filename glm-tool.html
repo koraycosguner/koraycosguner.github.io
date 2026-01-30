@@ -2232,6 +2232,10 @@ summary(model)
             const addFilterBtn = document.getElementById('addFilterBtn');
             const filterSummary = document.getElementById('filterSummary');
 
+            // Store for later use (MUST be set before event handlers)
+            window.filterHeaders = headers;
+            window.filterColumnTypes = columnTypes;
+
             // Show the filter section
             dataFilterSection.classList.add('visible');
 
@@ -2241,10 +2245,20 @@ summary(model)
             useFilteredData = false;
             filterSummary.style.display = 'none';
 
+            // Reset radio to "Use full data"
+            document.querySelector('input[name="dataChoice"][value="full"]').checked = true;
+            filterConditions.classList.remove('visible');
+
             // Set original count
             document.getElementById('originalCount').textContent = csvData.data.length;
 
-            // Handle radio button changes
+            // Remove old event listeners by cloning and replacing elements
+            document.querySelectorAll('input[name="dataChoice"]').forEach(radio => {
+                const newRadio = radio.cloneNode(true);
+                radio.parentNode.replaceChild(newRadio, radio);
+            });
+
+            // Handle radio button changes (use window variables to get current data)
             document.querySelectorAll('input[name="dataChoice"]').forEach(radio => {
                 radio.addEventListener('change', (e) => {
                     if (e.target.value === 'filtered') {
@@ -2252,7 +2266,7 @@ summary(model)
                         useFilteredData = true;
                         // Add initial filter row if none exist
                         if (filterRows.children.length === 0) {
-                            addFilterRow(headers, columnTypes);
+                            addFilterRow(window.filterHeaders, window.filterColumnTypes);
                         }
                         applyFilters();
                     } else {
@@ -2263,14 +2277,10 @@ summary(model)
                 });
             });
 
-            // Add filter button handler
+            // Add filter button handler (use window variables)
             addFilterBtn.onclick = () => {
-                addFilterRow(headers, columnTypes);
+                addFilterRow(window.filterHeaders, window.filterColumnTypes);
             };
-
-            // Store for later use
-            window.filterHeaders = headers;
-            window.filterColumnTypes = columnTypes;
         }
 
         // Add a filter row
