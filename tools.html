@@ -26,6 +26,7 @@
 
         .header {
             padding: 100px 24px 60px;
+            position: relative;
             text-align: center;
             border-bottom: 1px solid var(--border);
             background: radial-gradient(circle at center, #ffffff 0%, #f9fafb 100%);
@@ -153,11 +154,22 @@
     </style>
 </head>
 <body>
+    <!-- Auth check - redirect to login if not signed in -->
+    <div id="loading-screen" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: white; display: flex; align-items: center; justify-content: center; z-index: 9999;">
+        <p style="color: var(--text-light);">Loading...</p>
+    </div>
+
+    <div id="main-content" style="display: none;">
 
     <div class="header">
         <div style="display: flex; align-items: center; justify-content: center; gap: 14px; margin-bottom: 30px;">
             <img src="iu-logo.png" alt="Indiana University" style="height: 42px;">
             <span style="color: var(--text-light); font-size: 1rem; font-weight: 500;">Kelley School of Business, Indiana University</span>
+        </div>
+        <!-- User info and sign out button -->
+        <div id="user-info" style="position: absolute; top: 20px; right: 24px; display: flex; align-items: center; gap: 12px;">
+            <span id="user-email" style="color: var(--text-light); font-size: 0.85rem;"></span>
+            <button onclick="signOut()" style="background: none; border: 1px solid var(--border); padding: 6px 14px; border-radius: 6px; font-size: 0.85rem; color: var(--text-light); cursor: pointer;">Sign Out</button>
         </div>
         <h1>Pricing & Analytics Tools</h1>
         <p style="margin-top: 16px; color: var(--text-light); font-size: 1.15rem; max-width: 650px; margin-left: auto; margin-right: auto; line-height: 1.7;">
@@ -334,6 +346,47 @@
         <p>Created by <a href="https://koraycosguner.github.io" style="color: var(--primary); text-decoration: none;">Dr. Koray Cosguner</a>, Indiana University</p>
         <p style="margin-top: 8px; font-size: 0.85rem;">&copy; 2026 All Rights Reserved.</p>
     </footer>
+
+    </div> <!-- end main-content -->
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+
+    <script>
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyBg3LJDwVIRGWtFZb_mM_CSRJMNCJUta20",
+            authDomain: "iu-pricing-tools.firebaseapp.com",
+            projectId: "iu-pricing-tools",
+            storageBucket: "iu-pricing-tools.firebasestorage.app",
+            messagingSenderId: "659335573790",
+            appId: "1:659335573790:web:00013a166787efecb3d90f",
+            measurementId: "G-NGKNY08XWP"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+
+        // Check authentication state
+        firebase.auth().onAuthStateChanged(function(user) {
+            if (user) {
+                // User is signed in - show main content
+                document.getElementById('loading-screen').style.display = 'none';
+                document.getElementById('main-content').style.display = 'block';
+                document.getElementById('user-email').textContent = user.email;
+            } else {
+                // User is not signed in - redirect to login
+                window.location.href = 'login.html';
+            }
+        });
+
+        function signOut() {
+            firebase.auth().signOut().then(function() {
+                window.location.href = 'login.html';
+            });
+        }
+    </script>
 
 </body>
 </html>
