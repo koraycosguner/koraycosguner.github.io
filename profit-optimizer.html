@@ -1691,6 +1691,7 @@ Profit = Revenue - Cost * Sales" oninput="parseEquations()"></textarea>
             if (!lastResult) return;
             const { decVars, best } = lastResult;
             const order = getEvalOrder();
+            const activeControlVars = controlVars.filter(cv => cv.name && cv.value !== '');
 
             let html = '<h5>Excel File Layout:</h5>';
             html += '<table style="width: 100%; border-collapse: collapse; font-size: 0.85rem; margin-top: 0.5rem;">';
@@ -1707,6 +1708,15 @@ Profit = Revenue - Cost * Sales" oninput="parseEquations()"></textarea>
                 html += '<tr style="background: #ecfdf5;">';
                 html += `<td style="padding: 0.4rem; border: 1px solid #ccc; font-weight: 500;">${dv.name}</td>`;
                 html += `<td style="padding: 0.4rem; border: 1px solid #ccc; font-family: monospace;">${best[dv.name]}</td>`;
+                html += `<td style="padding: 0.4rem; border: 1px solid #ccc; color: #666; font-style: italic;">(input)</td>`;
+                html += '</tr>';
+            });
+
+            // Control variables (inputs)
+            activeControlVars.forEach(cv => {
+                html += '<tr style="background: #f0fdf4;">';
+                html += `<td style="padding: 0.4rem; border: 1px solid #ccc; font-weight: 500;">${cv.name}</td>`;
+                html += `<td style="padding: 0.4rem; border: 1px solid #ccc; font-family: monospace;">${cv.value}</td>`;
                 html += `<td style="padding: 0.4rem; border: 1px solid #ccc; color: #666; font-style: italic;">(input)</td>`;
                 html += '</tr>';
             });
@@ -1752,6 +1762,7 @@ Profit = Revenue - Cost * Sales" oninput="parseEquations()"></textarea>
             if (!lastResult) return;
             const { decVars, best } = lastResult;
             const order = getEvalOrder();
+            const activeControlVars = controlVars.filter(cv => cv.name && cv.value !== '');
 
             // Create workbook
             const wb = XLSX.utils.book_new();
@@ -1771,10 +1782,17 @@ Profit = Revenue - Cost * Sales" oninput="parseEquations()"></textarea>
             let row = 2; // Start at row 2 (after header)
 
             // First pass: map all variables to their cells
+            // Decision variables first
             decVars.forEach(dv => {
                 varCellMap[dv.name] = 'B' + row;
                 row++;
             });
+            // Control variables next
+            activeControlVars.forEach(cv => {
+                varCellMap[cv.name] = 'B' + row;
+                row++;
+            });
+            // Computed variables
             order.forEach(eq => {
                 varCellMap[eq.varName] = 'B' + row;
                 row++;
@@ -1786,6 +1804,12 @@ Profit = Revenue - Cost * Sales" oninput="parseEquations()"></textarea>
             // Decision variables (inputs) - numeric values, show "(input)" in formula column
             decVars.forEach(dv => {
                 wsData.push([dv.name, best[dv.name], '(input)']);
+                row++;
+            });
+
+            // Control variables (inputs) - numeric values, show "(input)" in formula column
+            activeControlVars.forEach(cv => {
+                wsData.push([cv.name, parseFloat(cv.value), '(input)']);
                 row++;
             });
 
