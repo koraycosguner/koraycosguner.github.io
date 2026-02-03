@@ -1,0 +1,864 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Model-Based Price Elasticity Calculator</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/11.11.0/math.min.js"></script>
+    <style>
+        :root {
+            --primary: #990000;
+            --primary-dark: #7a0000;
+            --text-main: #111827;
+            --text-light: #4b5563;
+            --bg: #f9fafb;
+            --surface: #ffffff;
+            --border: #e5e7eb;
+            --accent-bg: #f3f4f6;
+            --success: #059669;
+            --error: #dc2626;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background: var(--bg);
+            color: var(--text-main);
+            margin: 0;
+            padding: 40px 20px;
+            line-height: 1.6;
+        }
+
+        .container { max-width: 1000px; margin: 0 auto; }
+
+        .header { text-align: center; margin-bottom: 40px; }
+        .header h1 { font-size: 2rem; font-weight: 800; margin: 0 0 10px 0; letter-spacing: -0.02em; }
+        .header p { color: var(--text-light); font-size: 1.1rem; }
+
+        .card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+            margin-bottom: 30px;
+        }
+
+        .section-title {
+            font-size: 1.1rem;
+            color: var(--primary);
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 700;
+        }
+
+        .step-number {
+            background: var(--primary);
+            color: white;
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        /* Equation Textarea */
+        .equation-textarea {
+            width: 100%;
+            min-height: 80px;
+            padding: 1rem;
+            font-size: 0.95rem;
+            font-family: 'Monaco', 'Consolas', monospace;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            background: white;
+            line-height: 1.8;
+            resize: vertical;
+            box-sizing: border-box;
+        }
+
+        .equation-textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px rgba(153, 0, 0, 0.1);
+        }
+
+        .equation-textarea::placeholder {
+            color: #9ca3af;
+        }
+
+        .help-text {
+            font-size: 0.85rem;
+            color: var(--text-light);
+            margin-top: 0.75rem;
+        }
+
+        .help-text code {
+            background: #e5e7eb;
+            padding: 0.15rem 0.35rem;
+            border-radius: 4px;
+            font-weight: 500;
+        }
+
+        /* Control Variables */
+        .control-var-container {
+            margin-top: 1rem;
+        }
+
+        .control-var-row {
+            display: flex;
+            gap: 0.6rem;
+            align-items: center;
+            margin-bottom: 0.6rem;
+            padding: 0.6rem;
+            background: #f0fdf4;
+            border-radius: 8px;
+            border: 1px solid #bbf7d0;
+        }
+
+        .control-var-row select {
+            flex: 1;
+            padding: 0.5rem;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-size: 0.95rem;
+        }
+
+        .control-var-row input {
+            width: 120px;
+            padding: 0.5rem;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            text-align: center;
+            font-size: 0.95rem;
+        }
+
+        .add-btn {
+            padding: 0.4rem 0.8rem;
+            font-size: 0.85rem;
+            background: #f0fdf4;
+            color: var(--success);
+            border: 1px solid #bbf7d0;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .add-btn:hover {
+            background: #dcfce7;
+        }
+
+        .remove-btn {
+            padding: 0.3rem 0.6rem;
+            font-size: 0.85rem;
+            background: #fef2f2;
+            color: var(--error);
+            border: 1px solid #fecaca;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        /* Input Grid */
+        .grid-3 {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .input-group { margin-bottom: 15px; }
+        .input-group label { display: block; font-size: 0.9rem; font-weight: 600; margin-bottom: 8px; color: var(--text-main); }
+        .input-group input {
+            width: 100%; padding: 10px 12px; border: 1px solid var(--border); border-radius: 6px; font-size: 1rem; box-sizing: border-box;
+        }
+        .input-group input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(153, 0, 0, 0.1); }
+
+        .section-label {
+            font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-light);
+            border-bottom: 1px solid var(--border); padding-bottom: 5px; margin-top: 10px; margin-bottom: 15px; font-weight: 700;
+        }
+
+        .btn-calc {
+            background: var(--primary); color: white; border: none; padding: 14px 28px; border-radius: 8px; font-size: 1rem; font-weight: 700;
+            cursor: pointer; width: 100%; transition: background 0.2s; margin-top: 20px;
+        }
+        .btn-calc:hover { background: var(--primary-dark); }
+
+        .error-message {
+            color: var(--error);
+            font-size: 0.85rem;
+            margin-top: 0.75rem;
+            padding: 0.75rem 1rem;
+            background: #fef2f2;
+            border-radius: 8px;
+            border: 1px solid #fecaca;
+            display: none;
+        }
+        .error-message.visible { display: block; }
+
+        /* Results Area */
+        #results { display: none; animation: fadeIn 0.4s ease-out; }
+
+        .metrics-grid {
+            display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-bottom: 30px;
+        }
+
+        .metric-card {
+            background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 20px; text-align: center;
+        }
+        .metric-title { font-size: 0.9rem; color: var(--text-light); font-weight: 600; margin-bottom: 10px; }
+        .metric-value { font-size: 2rem; font-weight: 800; color: var(--text-main); }
+
+        /* Levels Table */
+        .levels-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.95rem;
+            margin-bottom: 10px;
+        }
+        .levels-table th { text-align: left; padding: 10px; border-bottom: 2px solid var(--border); color: var(--text-light); font-weight: 700; }
+        .levels-table td { padding: 10px; border-bottom: 1px solid #f3f4f6; color: var(--text-main); }
+        .levels-table tr:last-child td { border-bottom: none; font-weight: 700; }
+        .diff-pos { color: #059669; font-weight: 600; }
+        .diff-neg { color: #dc2626; font-weight: 600; }
+
+        /* Analysis Box */
+        .analysis-box {
+            background: #ffffff; border: 1px solid var(--border); border-left: 4px solid var(--primary); padding: 25px; border-radius: 8px; margin-top: 30px;
+        }
+        .analysis-title { font-weight: 800; font-size: 1.2rem; margin-bottom: 20px; color: var(--text-main); }
+
+        .insight-item { margin-bottom: 25px; padding-bottom: 25px; border-bottom: 1px solid #f3f4f6; }
+        .insight-item:last-child { margin-bottom: 0; padding-bottom: 0; border-bottom: none; }
+
+        .insight-label { font-weight: 700; color: var(--primary); display: block; margin-bottom: 6px; font-size: 1rem; }
+        .insight-text { font-size: 0.95rem; color: var(--text-light); line-height: 1.6; }
+
+        /* Interpretation Guide */
+        .guide-section {
+            background: var(--accent-bg); border-radius: 8px; padding: 25px; margin-top: 40px; font-size: 0.95rem;
+        }
+        .guide-title { font-weight: 700; color: var(--text-main); margin-bottom: 15px; display: block; font-size: 1rem; }
+        .guide-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 25px; }
+        .guide-item strong { color: var(--primary); }
+        .guide-list { margin-top: 8px; padding-left: 18px; color: var(--text-light); margin-bottom: 0; }
+        .guide-list li { margin-bottom: 6px; }
+
+        .footer {
+            margin-top: 60px; text-align: center; font-size: 0.85rem; color: #9ca3af; border-top: 1px solid var(--border); padding-top: 20px;
+        }
+
+        /* Predicted Quantities Display */
+        .predicted-quantities {
+            background: #eff6ff;
+            border: 1px solid #bfdbfe;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-top: 1rem;
+        }
+
+        .predicted-quantities h4 {
+            margin: 0 0 0.75rem 0;
+            color: #1d4ed8;
+            font-size: 0.95rem;
+        }
+
+        .predicted-quantities .qty-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.4rem 0;
+            border-bottom: 1px solid #dbeafe;
+        }
+
+        .predicted-quantities .qty-row:last-child {
+            border-bottom: none;
+        }
+
+        .predicted-quantities .qty-label {
+            color: var(--text-light);
+        }
+
+        .predicted-quantities .qty-value {
+            font-weight: 700;
+            font-family: monospace;
+            color: #1d4ed8;
+        }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        @media (max-width: 768px) { .grid-3, .metrics-grid, .guide-grid { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+<!-- Auth check -->
+<div id="loading-screen" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: white; display: flex; align-items: center; justify-content: center; z-index: 9999;">
+    <p style="color: #64748b;">Loading...</p>
+</div>
+<div id="main-content" style="display: none;">
+
+<div style="max-width: 1000px; margin: 0 auto; padding: 20px 20px 20px;">
+    <a href="tools.html" style="display: inline-flex; align-items: center; gap: 6px; color: #64748b; text-decoration: none; font-size: 0.9rem; font-weight: 500;">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+        Back to Pricing & Analytics Tools
+    </a>
+</div>
+
+<div class="container">
+    <div class="header">
+        <h1>Model-Based Price Elasticity Calculator</h1>
+        <p>Calculate price elasticity using an estimated sales response model.</p>
+    </div>
+
+    <!-- Step 1: Define Demand Model -->
+    <div class="card">
+        <h2 class="section-title"><span class="step-number">1</span> Define Sales Response Model</h2>
+        <p style="color: var(--text-light); margin-bottom: 1rem;">Enter your estimated demand/sales equation. Use <code>Price</code> as the price variable.</p>
+        <textarea class="equation-textarea" id="demandEquation" placeholder="Example: Quantity = 97.6029 - 9.2465 * Price + 0.1744 * Temperature" oninput="parseEquation()"></textarea>
+        <p class="help-text">
+            Supported operators: <code>+</code> <code>-</code> <code>*</code> <code>/</code> <code>^</code> <code>exp()</code> <code>ln()</code> <code>sqrt()</code>
+        </p>
+
+        <!-- Control Variables -->
+        <div class="control-var-container">
+            <div style="font-weight: 600; margin-bottom: 0.5rem; color: var(--text-main);">Control Variables (fixed values)</div>
+            <p style="font-size: 0.85rem; color: var(--text-light); margin-bottom: 0.75rem;">Set the values for any variables in your equation other than Price.</p>
+            <div id="controlVarsContainer"></div>
+            <button class="add-btn" onclick="addControlVar()" style="margin-top: 0.5rem;">+ Add Control Variable</button>
+        </div>
+
+        <!-- Predicted Quantities -->
+        <div class="predicted-quantities" id="predictedQuantities" style="display: none;">
+            <h4>Predicted Quantities from Model</h4>
+            <div class="qty-row">
+                <span class="qty-label">Q at Initial Price:</span>
+                <span class="qty-value" id="predictedQ1">--</span>
+            </div>
+            <div class="qty-row">
+                <span class="qty-label">Q at New Price:</span>
+                <span class="qty-value" id="predictedQ2">--</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Step 2: Price and Cost Inputs -->
+    <div class="card">
+        <h2 class="section-title"><span class="step-number">2</span> Price Levels & Cost Structure</h2>
+        <div class="grid-3">
+            <div>
+                <div class="section-label">Initial Price</div>
+                <div class="input-group">
+                    <label>Initial Price ($)</label>
+                    <input type="number" id="p1" placeholder="e.g. 10.00" step="0.01" oninput="updatePredictions()">
+                </div>
+            </div>
+
+            <div>
+                <div class="section-label">New Price</div>
+                <div class="input-group">
+                    <label>New Price ($)</label>
+                    <input type="number" id="p2" placeholder="e.g. 11.00" step="0.01" oninput="updatePredictions()">
+                </div>
+            </div>
+
+            <div>
+                <div class="section-label">Cost Structure</div>
+                <div class="input-group">
+                    <label>Variable Cost per Unit ($)</label>
+                    <input type="number" id="vc" placeholder="e.g. 6.00" step="0.01">
+                </div>
+            </div>
+        </div>
+
+        <div id="errorMessage" class="error-message"></div>
+        <button class="btn-calc" onclick="calculate()">Calculate Price Elasticities</button>
+    </div>
+
+    <!-- Results -->
+    <div id="results">
+        <div class="metrics-grid">
+            <div class="metric-card">
+                <div class="metric-title">Price Elasticity of Demand</div>
+                <div class="metric-value" id="ped-value">--</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-title">Price Elasticity of Revenue</div>
+                <div class="metric-value" id="per-value">--</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-title">Price Elasticity of Profit</div>
+                <div class="metric-value" id="pep-value">--</div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="section-label">Financial Levels (Before & After)</div>
+            <table class="levels-table">
+                <thead>
+                    <tr>
+                        <th width="25%">Metric</th>
+                        <th width="20%">Initial</th>
+                        <th width="20%">New</th>
+                        <th width="20%">Difference</th>
+                        <th width="15%">% Change</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Price</td>
+                        <td id="lvl-p1">--</td>
+                        <td id="lvl-p2">--</td>
+                        <td id="lvl-pdiff">--</td>
+                        <td id="lvl-ppct">--</td>
+                    </tr>
+                    <tr>
+                        <td>Quantity</td>
+                        <td id="lvl-q1">--</td>
+                        <td id="lvl-q2">--</td>
+                        <td id="lvl-qdiff">--</td>
+                        <td id="lvl-qpct">--</td>
+                    </tr>
+                    <tr>
+                        <td>Revenue</td>
+                        <td id="lvl-r1">--</td>
+                        <td id="lvl-r2">--</td>
+                        <td id="lvl-rdiff">--</td>
+                        <td id="lvl-rpct">--</td>
+                    </tr>
+                    <tr>
+                        <td>Unit Margin</td>
+                        <td id="lvl-m1">--</td>
+                        <td id="lvl-m2">--</td>
+                        <td id="lvl-mdiff">--</td>
+                        <td id="lvl-mpct">--</td>
+                    </tr>
+                    <tr>
+                        <td>Total Profit</td>
+                        <td id="lvl-pi1">--</td>
+                        <td id="lvl-pi2">--</td>
+                        <td id="lvl-pidiff">--</td>
+                        <td id="lvl-pipct">--</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="analysis-box">
+            <div class="analysis-title">Strategic Insights & Tension Analysis</div>
+
+            <div class="insight-item">
+                <span class="insight-label">1. Demand Elasticity (Threshold: -1)</span>
+                <div class="insight-text" id="insight-ped">--</div>
+            </div>
+
+            <div class="insight-item">
+                <span class="insight-label">2. Revenue Tension (Price Effect vs. Volume Effect)</span>
+                <div class="insight-text" id="insight-per">--</div>
+            </div>
+
+            <div class="insight-item">
+                <span class="insight-label">3. Profit Tension (Margin vs. Volume)</span>
+                <div class="insight-text" id="insight-pep">--</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="guide-section">
+        <span class="guide-title">How to Interpret These Numbers</span>
+        <div class="guide-grid">
+
+            <div class="guide-item">
+                <strong>Demand Elasticity</strong>
+                <br>Measures customer sensitivity.
+                <ul class="guide-list">
+                    <li>|E| > 1: <strong>Elastic.</strong> Volume swings are larger than price swings.</li>
+                    <li>|E| < 1: <strong>Inelastic.</strong> Volume remains relatively stable.</li>
+                </ul>
+            </div>
+
+            <div class="guide-item">
+                <strong>Revenue Elasticity</strong>
+                <br>Measures top-line sales impact.
+                <ul class="guide-list">
+                    <li>E > 0: <strong>Positive.</strong> Revenue moves <em>with</em> price.</li>
+                    <li>E < 0: <strong>Negative.</strong> Revenue moves <em>against</em> price.</li>
+                </ul>
+            </div>
+
+            <div class="guide-item">
+                <strong>Profit Elasticity</strong>
+                <br>Measures bottom-line leverage.
+                <ul class="guide-list">
+                    <li>E > 1: <strong>High Leverage.</strong> A 1% price hike boosts profit by > 1%.</li>
+                    <li>E > 0: <strong>Positive.</strong> Profit moves with price.</li>
+                    <li>E < 0: <strong>Negative.</strong> Profit moves against price.</li>
+                </ul>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="footer">
+        Created by Dr. Koray Cosguner with the help of Claude.
+    </div>
+</div>
+
+<script>
+    let parsedEquation = null;
+    let quantityVarName = '';
+    let controlVars = [];
+    let controlVarId = 0;
+
+    document.addEventListener('DOMContentLoaded', () => {
+        addControlVar('', '');
+    });
+
+    function parseEquation() {
+        const textarea = document.getElementById('demandEquation');
+        const text = textarea.value.trim();
+
+        if (!text) {
+            parsedEquation = null;
+            updateControlVarDropdowns();
+            return;
+        }
+
+        const eqIndex = text.indexOf('=');
+        if (eqIndex > 0) {
+            quantityVarName = text.substring(0, eqIndex).trim();
+            const formula = text.substring(eqIndex + 1).trim();
+            parsedEquation = { varName: quantityVarName, formula };
+            updateControlVarDropdowns();
+            updatePredictions();
+        }
+    }
+
+    function getUndefinedVars() {
+        if (!parsedEquation) return [];
+
+        const mathFuncs = ['exp', 'log', 'ln', 'sqrt', 'abs', 'sin', 'cos', 'tan', 'pow', 'min', 'max'];
+        const used = new Set();
+
+        (parsedEquation.formula.match(/[a-zA-Z_][a-zA-Z0-9_]*/g) || []).forEach(m => {
+            if (!mathFuncs.includes(m.toLowerCase())) used.add(m);
+        });
+
+        // Exclude 'Price' as it's the decision variable
+        return [...used].filter(v => v.toLowerCase() !== 'price');
+    }
+
+    function addControlVar(name = '', value = '') {
+        controlVars.push({ id: controlVarId++, name, value });
+        renderControlVars();
+    }
+
+    function removeControlVar(id) {
+        controlVars = controlVars.filter(c => c.id !== id);
+        renderControlVars();
+    }
+
+    function updateControlVar(id, field, val) {
+        const cv = controlVars.find(c => c.id === id);
+        if (cv) cv[field] = val;
+        updatePredictions();
+    }
+
+    function updateControlVarDropdowns() {
+        renderControlVars();
+    }
+
+    function renderControlVars() {
+        const availableVars = getUndefinedVars();
+        const container = document.getElementById('controlVarsContainer');
+
+        if (availableVars.length === 0 && controlVars.length <= 1) {
+            container.innerHTML = '<p style="color: var(--text-light); font-size: 0.85rem; font-style: italic;">No control variables detected in equation.</p>';
+            return;
+        }
+
+        container.innerHTML = controlVars.map(cv => `
+            <div class="control-var-row">
+                <select onchange="updateControlVar(${cv.id}, 'name', this.value)">
+                    <option value="">-- Select Variable --</option>
+                    ${availableVars.map(v => `<option value="${v}" ${cv.name === v ? 'selected' : ''}>${v}</option>`).join('')}
+                </select>
+                <span style="font-size: 0.85rem; color: var(--text-light);">=</span>
+                <input type="number" value="${cv.value}" placeholder="value" step="any" onchange="updateControlVar(${cv.id}, 'value', this.value)">
+                ${controlVars.length > 1 ? `<button class="remove-btn" onclick="removeControlVar(${cv.id})">✕</button>` : ''}
+            </div>
+        `).join('');
+    }
+
+    function normalizeFormula(f) {
+        return f.replace(/\bEXP\b/gi, 'exp').replace(/\bLOG\b/gi, 'log')
+            .replace(/\bLN\b/gi, 'log').replace(/\bSQRT\b/gi, 'sqrt')
+            .replace(/\bABS\b/gi, 'abs').replace(/\bPOW\b/gi, 'pow');
+    }
+
+    function evaluateQuantity(price) {
+        if (!parsedEquation) return null;
+
+        const scope = { Price: price, price: price };
+
+        // Add control variables to scope
+        controlVars.forEach(cv => {
+            if (cv.name && cv.value !== '') {
+                scope[cv.name] = parseFloat(cv.value);
+            }
+        });
+
+        try {
+            const result = math.evaluate(normalizeFormula(parsedEquation.formula), scope);
+            return result;
+        } catch (e) {
+            console.error('Evaluation error:', e);
+            return null;
+        }
+    }
+
+    function updatePredictions() {
+        const p1 = parseFloat(document.getElementById('p1').value);
+        const p2 = parseFloat(document.getElementById('p2').value);
+        const predictedDiv = document.getElementById('predictedQuantities');
+
+        if (!parsedEquation) {
+            predictedDiv.style.display = 'none';
+            return;
+        }
+
+        const q1 = p1 ? evaluateQuantity(p1) : null;
+        const q2 = p2 ? evaluateQuantity(p2) : null;
+
+        if (q1 !== null || q2 !== null) {
+            predictedDiv.style.display = 'block';
+            document.getElementById('predictedQ1').textContent = q1 !== null ? q1.toFixed(4) : '--';
+            document.getElementById('predictedQ2').textContent = q2 !== null ? q2.toFixed(4) : '--';
+        } else {
+            predictedDiv.style.display = 'none';
+        }
+    }
+
+    function calculate() {
+        const errorEl = document.getElementById('errorMessage');
+        errorEl.classList.remove('visible');
+
+        // Validate equation
+        if (!parsedEquation) {
+            errorEl.textContent = 'Please enter a valid demand equation.';
+            errorEl.classList.add('visible');
+            return;
+        }
+
+        // Get inputs
+        const p1 = parseFloat(document.getElementById('p1').value);
+        const p2 = parseFloat(document.getElementById('p2').value);
+        const vc = parseFloat(document.getElementById('vc').value);
+
+        if (!p1 || !p2 || isNaN(vc)) {
+            errorEl.textContent = 'Please fill in all price and cost fields.';
+            errorEl.classList.add('visible');
+            return;
+        }
+
+        if (p1 === p2) {
+            errorEl.textContent = 'Initial and New Price must be different to calculate elasticity.';
+            errorEl.classList.add('visible');
+            return;
+        }
+
+        // Check for missing control variables
+        const undefinedVars = getUndefinedVars();
+        const assignedVars = new Set(controlVars.filter(cv => cv.name && cv.value !== '').map(cv => cv.name));
+        const unassigned = undefinedVars.filter(v => !assignedVars.has(v));
+
+        if (unassigned.length > 0) {
+            errorEl.textContent = `Please set values for: ${unassigned.join(', ')}`;
+            errorEl.classList.add('visible');
+            return;
+        }
+
+        // Calculate quantities from model
+        const q1 = evaluateQuantity(p1);
+        const q2 = evaluateQuantity(p2);
+
+        if (q1 === null || q2 === null) {
+            errorEl.textContent = 'Error evaluating the demand equation. Check your formula and control variable values.';
+            errorEl.classList.add('visible');
+            return;
+        }
+
+        // Calculate Financials
+        const r1 = p1 * q1;
+        const r2 = p2 * q2;
+
+        const m1 = p1 - vc;
+        const m2 = p2 - vc;
+
+        const profit1 = m1 * q1;
+        const profit2 = m2 * q2;
+
+        // Calculate % Changes
+        const pctP = (p2 - p1) / p1;
+        const pctQ = (q2 - q1) / q1;
+        const pctR = (r2 - r1) / r1;
+        const pctM = (m2 - m1) / m1;
+        const pctProfit = (profit2 - profit1) / Math.abs(profit1);
+
+        // Calculate Elasticities
+        const ped = pctQ / pctP;
+        const per = pctR / pctP;
+        const pep = pctProfit / pctP;
+
+        // Display Results
+        document.getElementById('results').style.display = 'block';
+
+        const fmt = (num) => num.toFixed(2);
+        const fmtCur = (num) => "$" + num.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
+        const fmtNum = (num) => num.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
+        const fmtPct = (num) => (num >= 0 ? "+" : "") + (num * 100).toFixed(2) + "%";
+
+        // Elasticity Cards
+        document.getElementById('ped-value').innerText = fmt(ped);
+        document.getElementById('per-value').innerText = fmt(per);
+        document.getElementById('pep-value').innerText = fmt(pep);
+
+        // Color Logic
+        document.getElementById('ped-value').style.color = Math.abs(ped) > 1 ? "#dc2626" : "#059669";
+        document.getElementById('per-value').style.color = per > 0 ? "#059669" : "#dc2626";
+        document.getElementById('pep-value').style.color = pep > 0 ? "#059669" : "#dc2626";
+
+        // Levels Table
+        document.getElementById('lvl-p1').innerText = fmtCur(p1);
+        document.getElementById('lvl-p2').innerText = fmtCur(p2);
+        document.getElementById('lvl-q1').innerText = fmtNum(q1);
+        document.getElementById('lvl-q2').innerText = fmtNum(q2);
+        document.getElementById('lvl-r1').innerText = fmtCur(r1);
+        document.getElementById('lvl-r2').innerText = fmtCur(r2);
+        document.getElementById('lvl-m1').innerText = fmtCur(m1);
+        document.getElementById('lvl-m2').innerText = fmtCur(m2);
+        document.getElementById('lvl-pi1').innerText = fmtCur(profit1);
+        document.getElementById('lvl-pi2').innerText = fmtCur(profit2);
+
+        // Diff and Pct columns
+        const setDiff = (id, val, isCurrency = true) => {
+            const el = document.getElementById(id);
+            el.innerText = (val >= 0 ? "+" : "") + (isCurrency ? fmtCur(val) : fmtNum(val));
+            el.className = val >= 0 ? "diff-pos" : "diff-neg";
+        };
+
+        const setPct = (id, val) => {
+            const el = document.getElementById(id);
+            el.innerText = fmtPct(val);
+            el.className = val >= 0 ? "diff-pos" : "diff-neg";
+        };
+
+        setDiff('lvl-pdiff', p2 - p1);
+        setDiff('lvl-qdiff', q2 - q1, false);
+        setDiff('lvl-rdiff', r2 - r1);
+        setDiff('lvl-mdiff', m2 - m1);
+        setDiff('lvl-pidiff', profit2 - profit1);
+
+        setPct('lvl-ppct', pctP);
+        setPct('lvl-qpct', pctQ);
+        setPct('lvl-rpct', pctR);
+        setPct('lvl-mpct', pctM);
+        setPct('lvl-pipct', pctProfit);
+
+        // Generate Insights
+        const isPriceIncrease = pctP > 0;
+
+        // Demand Insight
+        let pedText = "";
+        if (Math.abs(ped) > 1) {
+            pedText = `<strong>Elastic Demand (|E| > 1):</strong> Customers are highly sensitive. A 1% price change causes a <em>greater than</em> 1% change in volume.`;
+        } else {
+            pedText = `<strong>Inelastic Demand (|E| < 1):</strong> Customers are relatively insensitive. A 1% price change causes a <em>less than</em> 1% change in volume.`;
+        }
+        document.getElementById('insight-ped').innerHTML = pedText;
+
+        // Revenue Tension
+        let perText = "";
+        if (r2 > r1) {
+            perText = `<strong>Revenue Increased:</strong> `;
+            if (isPriceIncrease) {
+                perText += `The <strong>Price Effect</strong> (higher prices) dominated the Volume Effect (sales decline). You gained more from the higher price tag than you lost in volume.`;
+            } else {
+                perText += `The <strong>Volume Effect</strong> (sales surge) dominated the Price Effect (lower prices). The added volume outweighed the discount.`;
+            }
+        } else if (r2 < r1) {
+            perText = `<strong>Revenue Decreased:</strong> `;
+            if (isPriceIncrease) {
+                perText += `The <strong>Volume Effect</strong> (sales decline) dominated the Price Effect. Customers fled too fast to make the price hike worth it.`;
+            } else {
+                perText += `The <strong>Price Effect</strong> (discount) dominated the Volume Effect. You didn't generate enough sales to pay for the discount.`;
+            }
+        } else {
+            perText = `<strong>Revenue Unchanged:</strong> The Price Effect and Volume Effect perfectly cancelled each other out.`;
+        }
+        document.getElementById('insight-per').innerHTML = perText;
+
+        // Profit Tension
+        let pepText = "";
+
+        if (pep > 1) {
+            pepText += `<strong>High Leverage Situation:</strong> A 1% price increase boosted profit by more than 1%. <br><br>`;
+        } else if (pep < -1 && !isPriceIncrease) {
+            pepText += `<strong>High Downside Leverage:</strong> A 1% price cut crashed profit by more than 1%. <br><br>`;
+        }
+
+        if (profit2 > profit1) {
+            pepText += `<strong>Profit Improved:</strong> `;
+            if (isPriceIncrease) {
+                pepText += `The <strong>Higher Unit Margin</strong> ($${fmt(m2)} vs $${fmt(m1)}) successfully offset the lower sales volume. Even with fewer sales, each sale was significantly more profitable.`;
+            } else {
+                pepText += `The <strong>Higher Sales Volume</strong> successfully compensated for the thinner Unit Margin ($${fmt(m2)} vs $${fmt(m1)}). You made it up on volume.`;
+            }
+        } else if (profit2 < profit1) {
+            pepText += `<strong>Profit Declined:</strong> `;
+            if (isPriceIncrease) {
+                pepText += `The <strong>Loss of Volume</strong> was too severe. The extra margin per unit could not make up for the drop in total units sold.`;
+            } else {
+                pepText += `The <strong>Margin Squeeze</strong> ($${fmt(m2)} vs $${fmt(m1)}) was too deep. The increase in volume wasn't enough to cover the loss in profitability per unit.`;
+            }
+        } else {
+            pepText += `<strong>Profit Neutral:</strong> The trade-off between Margin and Volume perfectly balanced out.`;
+        }
+
+        document.getElementById('insight-pep').innerHTML = pepText;
+
+        // Scroll to results
+        document.getElementById('results').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+</script>
+
+</div> <!-- end main-content -->
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+<script>
+    const firebaseConfig = {
+        apiKey: "AIzaSyBg3LJDwVIRGWtFZb_mM_CSRJMNCJUta20",
+        authDomain: "iu-pricing-tools.firebaseapp.com",
+        projectId: "iu-pricing-tools",
+        storageBucket: "iu-pricing-tools.firebasestorage.app",
+        messagingSenderId: "659335573790",
+        appId: "1:659335573790:web:00013a166787efecb3d90f",
+        measurementId: "G-NGKNY08XWP"
+    };
+    firebase.initializeApp(firebaseConfig);
+    firebase.auth().onAuthStateChanged(function(user) {
+        if (user) {
+            document.getElementById('loading-screen').style.display = 'none';
+            document.getElementById('main-content').style.display = 'block';
+        } else {
+            window.location.href = 'login.html';
+        }
+    });
+</script>
+
+</body>
+</html>
