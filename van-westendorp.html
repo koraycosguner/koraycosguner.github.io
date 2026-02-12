@@ -521,6 +521,35 @@
                 padding: 1rem;
             }
         }
+
+        /* Disclaimer */
+        .disclaimer {
+            background: rgba(153, 0, 0, 0.05);
+            border: 1px solid rgba(153, 0, 0, 0.2);
+            border-radius: 8px;
+            padding: 1.25rem;
+            margin-bottom: 1.5rem;
+            font-size: 0.85rem;
+        }
+
+        .disclaimer-title {
+            font-weight: 700;
+            color: var(--iu-crimson);
+            margin-bottom: 0.5rem;
+        }
+
+        .disclaimer ul {
+            margin: 0;
+            padding-left: 1.25rem;
+        }
+
+        .disclaimer li {
+            margin-bottom: 0.35rem;
+        }
+
+        .disclaimer li:last-child {
+            margin-bottom: 0;
+        }
     </style>
 </head>
 <body>
@@ -551,6 +580,19 @@
         <div class="hero">
             <h1>Van Westendorp Price Sensitivity Meter</h1>
             <p>Discover your ideal pricing sweet spot and acceptable price range using proven customer survey techniques</p>
+        </div>
+
+        <!-- Disclaimer -->
+        <div class="disclaimer">
+            <div class="disclaimer-title">Disclaimer</div>
+            <ul>
+                <li><strong>Results may contain errors.</strong> The output from this tool may be inaccurate, incomplete, or incorrect. Users should independently verify all results.</li>
+                <li><strong>No warranty.</strong> This tool is provided "as is" without any warranty of any kind.</li>
+                <li><strong>User assumes all risk.</strong> Users assume full responsibility for reviewing and validating any output.</li>
+            </ul>
+            <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid rgba(153, 0, 0, 0.2);">
+                <strong>📧 Report issues:</strong> If you encounter any issues, problems, or errors while using this tool, please contact Dr. Cosguner at <a href="mailto:kcosgun@iu.edu" style="color: var(--iu-crimson); font-weight: 600;">kcosgun@iu.edu</a> so they can be resolved promptly.
+            </div>
         </div>
 
         <!-- Status Message -->

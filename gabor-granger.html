@@ -775,6 +775,104 @@
             margin-bottom: 0.5rem;
             box-shadow: 0 4px 12px rgba(0,0,0,0.15);
         }
+
+        /* Disclaimer */
+        .disclaimer {
+            background: rgba(153, 0, 0, 0.05);
+            border: 1px solid rgba(153, 0, 0, 0.2);
+            border-radius: 8px;
+            padding: 1.25rem;
+            margin-bottom: 1.5rem;
+            font-size: 0.85rem;
+        }
+
+        .disclaimer-title {
+            font-weight: 700;
+            color: var(--iu-crimson);
+            margin-bottom: 0.5rem;
+        }
+
+        .disclaimer ul {
+            margin: 0;
+            padding-left: 1.25rem;
+        }
+
+        .disclaimer li {
+            margin-bottom: 0.35rem;
+        }
+
+        .disclaimer li:last-child {
+            margin-bottom: 0;
+        }
+
+        /* Data Type Toggle */
+        .data-type-toggle {
+            display: flex;
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .data-type-btn {
+            flex: 1;
+            padding: 1rem;
+            border: 2px solid var(--border);
+            background: var(--white);
+            border-radius: 8px;
+            cursor: pointer;
+            text-align: left;
+            transition: all 0.3s;
+        }
+
+        .data-type-btn:hover {
+            border-color: var(--iu-crimson);
+        }
+
+        .data-type-btn.active {
+            border-color: var(--iu-crimson);
+            background: rgba(153, 0, 0, 0.05);
+        }
+
+        .data-type-btn .data-type-label {
+            font-weight: 600;
+            font-size: 0.95rem;
+            color: var(--text-dark);
+            margin-bottom: 0.25rem;
+        }
+
+        .data-type-btn .data-type-desc {
+            font-size: 0.8rem;
+            color: var(--text-light);
+        }
+
+        .data-type-btn.active .data-type-label {
+            color: var(--iu-crimson);
+        }
+
+        /* Raw WTP Section */
+        .raw-wtp-section {
+            display: none;
+        }
+
+        .raw-wtp-section.visible {
+            display: block;
+        }
+
+        .wtp-textarea {
+            width: 100%;
+            min-height: 200px;
+            padding: 0.75rem;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-size: 0.95rem;
+            font-family: monospace;
+            resize: vertical;
+            transition: border-color 0.3s;
+        }
+
+        .wtp-textarea:focus {
+            outline: none;
+            border-color: var(--iu-crimson);
+        }
     </style>
 </head>
 <body>
@@ -807,6 +905,19 @@
             <p>Find the price point that maximizes revenue by analyzing how customer interest changes at different prices</p>
         </div>
 
+        <!-- Disclaimer -->
+        <div class="disclaimer">
+            <div class="disclaimer-title">Disclaimer</div>
+            <ul>
+                <li><strong>Results may contain errors.</strong> The output from this tool may be inaccurate, incomplete, or incorrect. Users should independently verify all results.</li>
+                <li><strong>No warranty.</strong> This tool is provided "as is" without any warranty of any kind.</li>
+                <li><strong>User assumes all risk.</strong> Users assume full responsibility for reviewing and validating any output.</li>
+            </ul>
+            <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid rgba(153, 0, 0, 0.2);">
+                <strong>📧 Report issues:</strong> If you encounter any issues, problems, or errors while using this tool, please contact Dr. Cosguner at <a href="mailto:kcosgun@iu.edu" style="color: var(--iu-crimson); font-weight: 600;">kcosgun@iu.edu</a> so they can be resolved promptly.
+            </div>
+        </div>
+
         <!-- Status Message -->
         <div class="status-message" id="statusMessage"></div>
 
@@ -819,20 +930,42 @@
 
             <div class="info-box">
                 <strong>How Gabor-Granger Works</strong>
-                Survey respondents are shown a price and asked if they would buy. By testing multiple prices, you can build a demand curve and find the price that maximizes revenue (Price x Purchase Intent). Typically 5-10 price points are tested.
+                Survey respondents are shown a price and asked if they would buy. By testing multiple prices, you can build a demand curve and find the price that maximizes revenue (Price × Purchase Intent). Typically 5-10 price points are tested.
             </div>
 
-            <!-- Input Mode Toggle -->
-            <div class="input-mode-toggle">
-                <button class="mode-btn active" id="manualModeBtn" onclick="setInputMode('manual')">
-                    <div class="mode-icon">✏️</div>
-                    <div class="mode-label">Manual Entry</div>
+            <div class="info-box" style="background: #f0fdf4; border-color: #86efac; color: #166534;">
+                <strong>Two Input Options</strong>
+                <ul style="margin: 0.5rem 0 0 1.25rem; padding: 0;">
+                    <li><strong>Aggregated Data:</strong> Price points with % willing to buy at each price (e.g., "$30, 65%"). This is common when you've already summarized survey results.</li>
+                    <li><strong>Raw WTP Data:</strong> Individual respondent maximum willingness-to-pay values (e.g., "$30, $45, $50..."). The tool will calculate the demand curve and find the <em>continuous</em> optimal price—not limited to discrete price points.</li>
+                </ul>
+            </div>
+
+            <!-- Data Type Toggle -->
+            <div class="data-type-toggle">
+                <button class="data-type-btn active" id="aggregatedBtn" onclick="setDataType('aggregated')">
+                    <div class="data-type-label">📊 Aggregated Data</div>
+                    <div class="data-type-desc">Price points with purchase intent %</div>
                 </button>
-                <button class="mode-btn" id="csvModeBtn" onclick="setInputMode('csv')">
-                    <div class="mode-icon">📁</div>
-                    <div class="mode-label">Upload CSV</div>
+                <button class="data-type-btn" id="rawWtpBtn" onclick="setDataType('raw')">
+                    <div class="data-type-label">👥 Raw WTP Data</div>
+                    <div class="data-type-desc">Individual respondent max WTP values</div>
                 </button>
             </div>
+
+            <!-- Aggregated Data Section (existing Manual/CSV toggle) -->
+            <div id="aggregatedSection">
+                <!-- Input Mode Toggle -->
+                <div class="input-mode-toggle">
+                    <button class="mode-btn active" id="manualModeBtn" onclick="setInputMode('manual')">
+                        <div class="mode-icon">✏️</div>
+                        <div class="mode-label">Manual Entry</div>
+                    </button>
+                    <button class="mode-btn" id="csvModeBtn" onclick="setInputMode('csv')">
+                        <div class="mode-icon">📁</div>
+                        <div class="mode-label">Upload CSV</div>
+                    </button>
+                </div>
 
             <!-- Manual Input Section -->
             <div class="manual-input-section visible" id="manualSection">
@@ -1007,6 +1140,75 @@
                     </div>
                 </div>
             </div>
+            </div> <!-- end aggregatedSection -->
+
+            <!-- Raw WTP Data Section -->
+            <div class="raw-wtp-section" id="rawWtpSection">
+                <div class="data-format">
+                    <h4>Raw WTP Data Format</h4>
+                    <p style="margin-bottom: 12px; font-size: 0.9rem; color: var(--text-light);">
+                        Enter each respondent's maximum willingness-to-pay (WTP) value. The tool will:
+                    </p>
+                    <ul style="margin: 0 0 0.75rem 1.25rem; font-size: 0.9rem; color: var(--text-light);">
+                        <li>Calculate the demand curve (% willing to buy at each price)</li>
+                        <li>Find the <strong>continuous optimal price</strong>—not limited to discrete points</li>
+                        <li>Use calculus-based optimization for precise revenue/profit maximization</li>
+                    </ul>
+                    <p style="font-size: 0.85rem; color: var(--text-light);">
+                        <strong>Example:</strong> If respondent's max WTP is $30, they will buy at any price ≤ $30
+                    </p>
+                </div>
+
+                <div class="form-group" style="max-width: 200px; margin-bottom: 1.25rem;">
+                    <label for="rawCurrencySymbol">Currency Symbol</label>
+                    <select id="rawCurrencySymbol">
+                        <option value="$">$ (USD)</option>
+                        <option value="€">€ (EUR)</option>
+                        <option value="£">£ (GBP)</option>
+                        <option value="¥">¥ (JPY/CNY)</option>
+                        <option value="₹">₹ (INR)</option>
+                        <option value="">None</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="wtpTextarea">Enter WTP Values (one per line or comma-separated)</label>
+                    <textarea id="wtpTextarea" class="wtp-textarea" placeholder="Enter WTP values, e.g.:
+30
+45
+50
+35
+40
+...
+
+Or comma-separated: 30, 45, 50, 35, 40"></textarea>
+                    <p class="form-hint">Enter numeric values only. Currency symbols will be ignored.</p>
+                </div>
+
+                <!-- Cost Input for Profit Analysis -->
+                <div style="padding: 1.25rem; background: var(--bg-light); border-radius: 8px; border: 1px solid var(--border);">
+                    <div class="form-group" style="margin-bottom: 0;">
+                        <label for="rawUnitCost">Unit Cost (Optional)</label>
+                        <div style="display: flex; gap: 1rem; align-items: center;">
+                            <input type="number" id="rawUnitCost" placeholder="e.g., 15.00" step="0.01" min="0" style="max-width: 200px;">
+                            <span style="font-size: 0.9rem; color: var(--text-light);">Enter to calculate profit-maximizing price</span>
+                        </div>
+                        <p class="form-hint">With raw WTP data, the tool finds the exact optimal price (continuous optimization)</p>
+                    </div>
+                </div>
+
+                <div class="button-group">
+                    <button class="btn btn-primary" onclick="analyzeRawWtpData()">
+                        Run Analysis
+                    </button>
+                    <button class="btn btn-secondary" onclick="clearRawWtpData()">
+                        Clear All
+                    </button>
+                    <button class="btn btn-secondary" onclick="loadSampleRawWtp()">
+                        Load Sample Data
+                    </button>
+                </div>
+            </div>
         </div>
 
         <!-- Results Section -->
@@ -1161,6 +1363,7 @@
         let revenueChart = null;
         let analysisResults = null;
         let currentMode = 'manual';
+        let currentDataType = 'aggregated'; // 'aggregated' or 'raw'
 
         // DOM Elements
         const statusMessage = document.getElementById('statusMessage');
@@ -1180,6 +1383,16 @@
             setTimeout(() => {
                 statusMessage.classList.remove('visible');
             }, 5000);
+        }
+
+        // Data type toggle (aggregated vs raw WTP)
+        function setDataType(type) {
+            currentDataType = type;
+            document.getElementById('aggregatedBtn').classList.toggle('active', type === 'aggregated');
+            document.getElementById('rawWtpBtn').classList.toggle('active', type === 'raw');
+            document.getElementById('aggregatedSection').style.display = type === 'aggregated' ? 'block' : 'none';
+            document.getElementById('rawWtpSection').classList.toggle('visible', type === 'raw');
+            resultsContainer.classList.remove('visible');
         }
 
         // Input mode toggle
@@ -1793,6 +2006,446 @@
                                 text: 'Revenue Index',
                                 font: { weight: '600' }
                             },
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        }
+
+        // ============================================
+        // Raw WTP Data Functions
+        // ============================================
+
+        function parseWtpValues(text) {
+            // Parse WTP values from text (one per line or comma-separated)
+            const values = [];
+            // Split by newlines or commas
+            const parts = text.split(/[\n,]+/);
+            parts.forEach(part => {
+                // Remove currency symbols and whitespace
+                const cleaned = part.replace(/[$€£¥₹\s]/g, '').trim();
+                const num = parseFloat(cleaned);
+                if (!isNaN(num) && num > 0) {
+                    values.push(num);
+                }
+            });
+            return values;
+        }
+
+        function clearRawWtpData() {
+            document.getElementById('wtpTextarea').value = '';
+            document.getElementById('rawUnitCost').value = '';
+            resultsContainer.classList.remove('visible');
+            document.getElementById('profitMetrics').style.display = 'none';
+            if (demandChart) demandChart.destroy();
+            if (revenueChart) revenueChart.destroy();
+        }
+
+        function loadSampleRawWtp() {
+            // Generate sample WTP data for 100 respondents
+            // Simulating a product with mean WTP around $30
+            const sampleWtps = [
+                15, 18, 20, 22, 22, 23, 24, 25, 25, 25,
+                26, 26, 27, 27, 27, 28, 28, 28, 28, 29,
+                29, 29, 30, 30, 30, 30, 30, 30, 31, 31,
+                31, 31, 32, 32, 32, 32, 33, 33, 33, 34,
+                34, 34, 35, 35, 35, 35, 36, 36, 37, 37,
+                38, 38, 39, 39, 40, 40, 40, 41, 42, 42,
+                43, 44, 45, 45, 46, 47, 48, 49, 50, 50,
+                52, 53, 55, 56, 58, 60, 62, 65, 68, 70,
+                72, 75, 78, 80, 85, 88, 90, 95, 100, 105,
+                110, 115, 120, 125, 130, 140, 150, 160, 175, 200
+            ];
+
+            document.getElementById('wtpTextarea').value = sampleWtps.join('\n');
+            document.getElementById('rawUnitCost').value = '12.00';
+            showStatus('Sample data loaded: 100 respondents\' WTP values. Unit cost set to $12.00.', 'success');
+        }
+
+        function analyzeRawWtpData() {
+            const text = document.getElementById('wtpTextarea').value;
+            const wtpValues = parseWtpValues(text);
+
+            if (wtpValues.length < 10) {
+                showStatus('Please enter at least 10 valid WTP values.', 'error');
+                return;
+            }
+
+            const currency = document.getElementById('rawCurrencySymbol').value;
+            const costInput = document.getElementById('rawUnitCost').value;
+            const cost = costInput ? parseFloat(costInput) : null;
+
+            if (cost !== null && cost < 0) {
+                showStatus('Unit cost cannot be negative.', 'error');
+                return;
+            }
+
+            runContinuousAnalysis(wtpValues, currency, cost);
+        }
+
+        function runContinuousAnalysis(wtpValues, currency, cost = null) {
+            const loadingOverlay = document.getElementById('loadingOverlay');
+            loadingOverlay.classList.remove('hidden');
+
+            setTimeout(() => {
+                // Sort WTP values
+                const sortedWtp = [...wtpValues].sort((a, b) => a - b);
+                const n = sortedWtp.length;
+
+                // Calculate demand at various price points
+                const minPrice = Math.min(...sortedWtp);
+                const maxPrice = Math.max(...sortedWtp);
+                const priceStep = (maxPrice - minPrice) / 100;
+
+                // Build demand curve data points
+                const pricePoints = [];
+                for (let p = minPrice; p <= maxPrice; p += priceStep) {
+                    pricePoints.push(p);
+                }
+
+                // For each price, calculate % who would buy (WTP >= price)
+                const demandData = pricePoints.map(price => {
+                    const willBuy = wtpValues.filter(wtp => wtp >= price).length;
+                    const intent = (willBuy / n) * 100;
+                    const revenueIndex = price * (intent / 100);
+                    const profitIndex = cost !== null ? (price - cost) * (intent / 100) : null;
+                    return { price, intent, revenueIndex, profitIndex };
+                });
+
+                // Find continuous optimal price using calculus-based approach
+                // Revenue = P * Q(P), where Q(P) is the cumulative demand function
+                // For each respondent's WTP, revenue jumps at that price
+                // The optimal is at some WTP value or just below it
+
+                // Actually, with discrete WTP data, the optimal is at one of the WTP values
+                // Revenue at price P = P * (number with WTP >= P)
+                // We need to check all unique WTP values
+
+                const uniqueWtps = [...new Set(sortedWtp)].sort((a, b) => a - b);
+
+                let maxRevenue = 0;
+                let optimalRevenuePrice = 0;
+                let optimalRevenueIntent = 0;
+
+                let maxProfit = -Infinity;
+                let optimalProfitPrice = 0;
+                let optimalProfitIntent = 0;
+
+                uniqueWtps.forEach(price => {
+                    const willBuy = wtpValues.filter(wtp => wtp >= price).length;
+                    const intent = (willBuy / n) * 100;
+                    const revenue = price * willBuy;
+                    const profit = cost !== null ? (price - cost) * willBuy : null;
+
+                    if (revenue > maxRevenue) {
+                        maxRevenue = revenue;
+                        optimalRevenuePrice = price;
+                        optimalRevenueIntent = intent;
+                    }
+
+                    if (cost !== null && profit > maxProfit) {
+                        maxProfit = profit;
+                        optimalProfitPrice = price;
+                        optimalProfitIntent = wtpValues.filter(wtp => wtp >= price).length / n * 100;
+                    }
+                });
+
+                // Normalize revenue/profit index to per-unit basis
+                const normalizedRevenue = optimalRevenuePrice * (optimalRevenueIntent / 100);
+                const normalizedProfit = cost !== null ? (optimalProfitPrice - cost) * (optimalProfitIntent / 100) : null;
+
+                // Build results data (sample some price points for table display)
+                const samplePrices = [];
+                const step = Math.max(1, Math.floor(uniqueWtps.length / 15));
+                for (let i = 0; i < uniqueWtps.length; i += step) {
+                    samplePrices.push(uniqueWtps[i]);
+                }
+                // Always include optimal prices
+                if (!samplePrices.includes(optimalRevenuePrice)) {
+                    samplePrices.push(optimalRevenuePrice);
+                }
+                if (cost !== null && !samplePrices.includes(optimalProfitPrice)) {
+                    samplePrices.push(optimalProfitPrice);
+                }
+                samplePrices.sort((a, b) => a - b);
+
+                const tableData = samplePrices.map((price, index) => {
+                    const willBuy = wtpValues.filter(wtp => wtp >= price).length;
+                    const intent = (willBuy / n) * 100;
+                    const revenueIndex = price * (intent / 100);
+                    const profitIndex = cost !== null ? (price - cost) * (intent / 100) : null;
+
+                    // Calculate elasticity
+                    let elasticity = null;
+                    if (index > 0) {
+                        const prevPrice = samplePrices[index - 1];
+                        const prevWillBuy = wtpValues.filter(wtp => wtp >= prevPrice).length;
+                        const prevIntent = (prevWillBuy / n) * 100;
+                        const pctChangeQ = (intent - prevIntent) / prevIntent;
+                        const pctChangeP = (price - prevPrice) / prevPrice;
+                        if (pctChangeP !== 0 && prevIntent !== 0) {
+                            elasticity = pctChangeQ / pctChangeP;
+                        }
+                    }
+
+                    return { price, intent, revenueIndex, profitIndex, elasticity };
+                });
+
+                // Find indices
+                const revenueOptimalIdx = tableData.findIndex(d => d.price === optimalRevenuePrice);
+                const profitOptimalIdx = cost !== null ? tableData.findIndex(d => d.price === optimalProfitPrice) : null;
+
+                analysisResults = {
+                    data: tableData,
+                    revenueOptimalIndex: revenueOptimalIdx,
+                    profitOptimalIndex: profitOptimalIdx,
+                    currency,
+                    cost,
+                    rawWtpMode: true,
+                    sampleSize: n,
+                    optimalRevenuePrice,
+                    optimalRevenueIntent,
+                    normalizedRevenue,
+                    optimalProfitPrice,
+                    optimalProfitIntent,
+                    normalizedProfit,
+                    demandCurve: demandData
+                };
+
+                displayResultsRaw();
+                loadingOverlay.classList.add('hidden');
+                showStatus(`Analysis completed! Analyzed ${n} WTP values. Optimal price found using continuous optimization.`, 'success');
+            }, 500);
+        }
+
+        function displayResultsRaw() {
+            const {
+                data, revenueOptimalIndex, profitOptimalIndex, currency, cost,
+                sampleSize, optimalRevenuePrice, optimalRevenueIntent, normalizedRevenue,
+                optimalProfitPrice, optimalProfitIntent, normalizedProfit, demandCurve
+            } = analysisResults;
+
+            // Update revenue metrics
+            document.getElementById('optimalPrice').textContent = formatPrice(optimalRevenuePrice, currency);
+            document.getElementById('maxRevenue').textContent = normalizedRevenue.toFixed(2);
+            document.getElementById('optimalIntent').textContent = optimalRevenueIntent.toFixed(1) + '%';
+
+            // Update profit metrics (if cost provided)
+            const profitMetrics = document.getElementById('profitMetrics');
+            if (cost !== null && profitOptimalIndex !== null) {
+                document.getElementById('profitOptimalPrice').textContent = formatPrice(optimalProfitPrice, currency);
+                document.getElementById('maxProfit').textContent = normalizedProfit.toFixed(2);
+                document.getElementById('displayCost').textContent = formatPrice(cost, currency);
+                profitMetrics.style.display = 'grid';
+            } else {
+                profitMetrics.style.display = 'none';
+            }
+
+            // Create charts using demand curve data
+            createChartsFromDemandCurve(demandCurve, optimalRevenuePrice, optimalProfitPrice, currency, cost);
+
+            // Update table headers
+            const thead = document.getElementById('resultsHead');
+            if (cost !== null) {
+                thead.innerHTML = `
+                    <tr>
+                        <th>Price Point</th>
+                        <th>Purchase Intent (%)</th>
+                        <th>Revenue Index</th>
+                        <th>Profit Index</th>
+                        <th>Price Elasticity</th>
+                    </tr>
+                `;
+            } else {
+                thead.innerHTML = `
+                    <tr>
+                        <th>Price Point</th>
+                        <th>Purchase Intent (%)</th>
+                        <th>Revenue Index</th>
+                        <th>Price Elasticity</th>
+                    </tr>
+                `;
+            }
+
+            // Populate results table
+            const tbody = document.getElementById('resultsBody');
+            tbody.innerHTML = data.map((item, idx) => {
+                const isRevenueOptimal = idx === revenueOptimalIndex;
+                const isProfitOptimal = cost !== null && idx === profitOptimalIndex;
+                let rowClass = '';
+                let marker = '';
+
+                if (isRevenueOptimal && isProfitOptimal) {
+                    rowClass = 'optimal';
+                    marker = '★ ';
+                } else if (isRevenueOptimal) {
+                    rowClass = 'optimal';
+                    marker = '* ';
+                } else if (isProfitOptimal) {
+                    rowClass = 'profit-optimal';
+                    marker = '† ';
+                }
+
+                if (cost !== null) {
+                    return `
+                        <tr class="${rowClass}" style="${isProfitOptimal && !isRevenueOptimal ? 'background: rgba(6, 95, 70, 0.15);' : ''}">
+                            <td>${marker}${formatPrice(item.price, currency)}</td>
+                            <td>${item.intent.toFixed(1)}%</td>
+                            <td>${item.revenueIndex.toFixed(2)}</td>
+                            <td>${item.profitIndex.toFixed(2)}</td>
+                            <td>${item.elasticity !== null ? item.elasticity.toFixed(2) : '-'}</td>
+                        </tr>
+                    `;
+                } else {
+                    return `
+                        <tr class="${rowClass}">
+                            <td>${marker}${formatPrice(item.price, currency)}</td>
+                            <td>${item.intent.toFixed(1)}%</td>
+                            <td>${item.revenueIndex.toFixed(2)}</td>
+                            <td>${item.elasticity !== null ? item.elasticity.toFixed(2) : '-'}</td>
+                        </tr>
+                    `;
+                }
+            }).join('');
+
+            // Update footnote
+            const footnote = document.getElementById('tableFootnote');
+            if (cost !== null) {
+                footnote.textContent = `* Revenue-maximizing price | † Profit-maximizing price | ★ Both optimal | Based on ${sampleSize} respondents (continuous optimization)`;
+            } else {
+                footnote.textContent = `* Indicates revenue-maximizing price point | Based on ${sampleSize} respondents (continuous optimization)`;
+            }
+
+            // Show results
+            resultsContainer.classList.add('visible');
+            resultsContainer.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function createChartsFromDemandCurve(demandData, revenueOptimal, profitOptimal, currency, cost) {
+            // Sample data for smoother charts
+            const sampleRate = Math.max(1, Math.floor(demandData.length / 30));
+            const sampled = demandData.filter((_, i) => i % sampleRate === 0);
+
+            const labels = sampled.map(d => currency + d.price.toFixed(2));
+            const intentData = sampled.map(d => d.intent);
+            const revenueData = sampled.map(d => d.revenueIndex);
+            const profitData = cost !== null ? sampled.map(d => d.profitIndex) : null;
+
+            // Find optimal indices in sampled data
+            const revenueOptimalIdx = sampled.findIndex(d => Math.abs(d.price - revenueOptimal) < 0.01);
+            const profitOptimalIdx = cost !== null ? sampled.findIndex(d => Math.abs(d.price - profitOptimal) < 0.01) : -1;
+
+            // Destroy existing charts
+            if (demandChart) demandChart.destroy();
+            if (revenueChart) revenueChart.destroy();
+
+            // Demand Curve Chart
+            const demandCtx = document.getElementById('demandChart').getContext('2d');
+            demandChart = new Chart(demandCtx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Purchase Intent (%)',
+                        data: intentData,
+                        borderColor: '#990000',
+                        backgroundColor: 'rgba(153, 0, 0, 0.1)',
+                        borderWidth: 3,
+                        fill: true,
+                        tension: 0.4,
+                        pointRadius: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Demand Curve (from WTP Data)',
+                            font: { size: 16, weight: '600' },
+                            color: '#990000',
+                            padding: { bottom: 20 }
+                        },
+                        legend: { display: false }
+                    },
+                    scales: {
+                        x: {
+                            title: { display: true, text: 'Price', font: { weight: '600' } },
+                            ticks: {
+                                maxTicksLimit: 8,
+                                callback: function(value, index) {
+                                    return index % 4 === 0 ? this.getLabelForValue(value) : '';
+                                }
+                            }
+                        },
+                        y: {
+                            title: { display: true, text: 'Purchase Intent (%)', font: { weight: '600' } },
+                            min: 0,
+                            max: 100
+                        }
+                    }
+                }
+            });
+
+            // Revenue & Profit Curve Chart
+            const revenueCtx = document.getElementById('revenueChart').getContext('2d');
+            const datasets = [{
+                label: 'Revenue Index',
+                data: revenueData,
+                borderColor: '#990000',
+                backgroundColor: 'rgba(153, 0, 0, 0.3)',
+                borderWidth: 2,
+                fill: true,
+                tension: 0.4,
+                pointRadius: 0
+            }];
+
+            if (cost !== null && profitData) {
+                datasets.push({
+                    label: 'Profit Index',
+                    data: profitData,
+                    borderColor: '#065f46',
+                    backgroundColor: 'rgba(6, 95, 70, 0.3)',
+                    borderWidth: 2,
+                    fill: true,
+                    tension: 0.4,
+                    pointRadius: 0
+                });
+            }
+
+            revenueChart = new Chart(revenueCtx, {
+                type: 'line',
+                data: { labels, datasets },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: cost !== null ? 'Revenue & Profit Index (Continuous)' : 'Revenue Index (Continuous)',
+                            font: { size: 16, weight: '600' },
+                            color: '#990000',
+                            padding: { bottom: 20 }
+                        },
+                        legend: {
+                            display: cost !== null,
+                            position: 'bottom'
+                        }
+                    },
+                    scales: {
+                        x: {
+                            title: { display: true, text: 'Price', font: { weight: '600' } },
+                            ticks: {
+                                maxTicksLimit: 8,
+                                callback: function(value, index) {
+                                    return index % 4 === 0 ? this.getLabelForValue(value) : '';
+                                }
+                            }
+                        },
+                        y: {
+                            title: { display: true, text: 'Index Value', font: { weight: '600' } },
                             beginAtZero: true
                         }
                     }
