@@ -2202,37 +2202,55 @@ Or comma-separated: 30, 45, 50, 35, 40"></textarea>
                 const sortedWtp = [...wtpValues].sort((a, b) => a - b);
                 const n = sortedWtp.length;
 
-                // Calculate demand at various price points
-                const minPrice = Math.min(...sortedWtp);
-                const maxPrice = Math.max(...sortedWtp);
-                const priceStep = (maxPrice - minPrice) / 100;
-
-                // Build demand curve data points
-                const pricePoints = [];
-                for (let p = minPrice; p <= maxPrice; p += priceStep) {
-                    pricePoints.push(p);
-                }
-
-                // For each price, calculate % who would buy (WTP >= price)
-                const demandData = pricePoints.map(price => {
-                    const willBuy = wtpValues.filter(wtp => wtp >= price).length;
-                    const intent = (willBuy / n) * 100;
-                    const revenueIndex = price * (intent / 100);
-                    const profitIndex = cost !== null ? (price - cost) * (intent / 100) : null;
-                    return { price, intent, revenueIndex, profitIndex };
-                });
-
-                // Find continuous optimal price using calculus-based approach
-                // Revenue = P * Q(P), where Q(P) is the cumulative demand function
-                // For each respondent's WTP, revenue jumps at that price
-                // The optimal is at some WTP value or just below it
-
-                // Actually, with discrete WTP data, the optimal is at one of the WTP values
-                // Revenue at price P = P * (number with WTP >= P)
-                // We need to check all unique WTP values
-
+                // Get unique WTP values for the step function
                 const uniqueWtps = [...new Set(sortedWtp)].sort((a, b) => a - b);
 
+                // Calculate demand at various price points using LINEAR INTERPOLATION
+                // This allows finding optimal prices between observed WTP values
+                const minPrice = Math.min(...sortedWtp) * 0.9; // Start slightly below min
+                const maxPrice = Math.max(...sortedWtp) * 1.1; // End slightly above max
+
+                // Create many price points for smooth curve and optimization
+                const numPoints = 500;
+                const priceStep = (maxPrice - minPrice) / numPoints;
+
+                // Build interpolated demand curve
+                // At each price, interpolate between the step function values
+                const demandData = [];
+
+                for (let i = 0; i <= numPoints; i++) {
+                    const price = minPrice + i * priceStep;
+
+                    // Calculate interpolated demand
+                    // Find the two adjacent WTP values that bracket this price
+                    const exactDemand = wtpValues.filter(wtp => wtp >= price).length / n * 100;
+
+                    // For smoother curve, use linear interpolation between WTP points
+                    let intent = exactDemand;
+
+                    // Find neighboring WTP values for interpolation
+                    const lowerWtps = uniqueWtps.filter(w => w < price);
+                    const higherWtps = uniqueWtps.filter(w => w >= price);
+
+                    if (lowerWtps.length > 0 && higherWtps.length > 0) {
+                        const lowerWtp = lowerWtps[lowerWtps.length - 1];
+                        const higherWtp = higherWtps[0];
+                        const lowerDemand = wtpValues.filter(wtp => wtp >= lowerWtp).length / n * 100;
+                        const higherDemand = wtpValues.filter(wtp => wtp >= higherWtp).length / n * 100;
+
+                        // Linear interpolation
+                        if (higherWtp !== lowerWtp) {
+                            const t = (price - lowerWtp) / (higherWtp - lowerWtp);
+                            intent = lowerDemand + t * (higherDemand - lowerDemand);
+                        }
+                    }
+
+                    const revenueIndex = price * (intent / 100);
+                    const profitIndex = cost !== null ? (price - cost) * (intent / 100) : null;
+                    demandData.push({ price, intent, revenueIndex, profitIndex });
+                }
+
+                // Find optimal prices by searching through all points
                 let maxRevenue = 0;
                 let optimalRevenuePrice = 0;
                 let optimalRevenueIntent = 0;
@@ -2241,28 +2259,23 @@ Or comma-separated: 30, 45, 50, 35, 40"></textarea>
                 let optimalProfitPrice = 0;
                 let optimalProfitIntent = 0;
 
-                uniqueWtps.forEach(price => {
-                    const willBuy = wtpValues.filter(wtp => wtp >= price).length;
-                    const intent = (willBuy / n) * 100;
-                    const revenue = price * willBuy;
-                    const profit = cost !== null ? (price - cost) * willBuy : null;
-
-                    if (revenue > maxRevenue) {
-                        maxRevenue = revenue;
-                        optimalRevenuePrice = price;
-                        optimalRevenueIntent = intent;
+                demandData.forEach(point => {
+                    if (point.revenueIndex > maxRevenue) {
+                        maxRevenue = point.revenueIndex;
+                        optimalRevenuePrice = point.price;
+                        optimalRevenueIntent = point.intent;
                     }
 
-                    if (cost !== null && profit > maxProfit) {
-                        maxProfit = profit;
-                        optimalProfitPrice = price;
-                        optimalProfitIntent = wtpValues.filter(wtp => wtp >= price).length / n * 100;
+                    if (cost !== null && point.profitIndex !== null && point.profitIndex > maxProfit) {
+                        maxProfit = point.profitIndex;
+                        optimalProfitPrice = point.price;
+                        optimalProfitIntent = point.intent;
                     }
                 });
 
                 // Normalize revenue/profit index to per-unit basis
-                const normalizedRevenue = optimalRevenuePrice * (optimalRevenueIntent / 100);
-                const normalizedProfit = cost !== null ? (optimalProfitPrice - cost) * (optimalProfitIntent / 100) : null;
+                const normalizedRevenue = maxRevenue;
+                const normalizedProfit = cost !== null ? maxProfit : null;
 
                 // Build results data (sample some price points for table display)
                 const samplePrices = [];
