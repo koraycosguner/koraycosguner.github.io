@@ -965,6 +965,10 @@
                         <div class="mode-icon">📁</div>
                         <div class="mode-label">Upload CSV</div>
                     </button>
+                    <button class="mode-btn" id="wtpModeBtn" onclick="setInputMode('wtp')">
+                        <div class="mode-icon">📋</div>
+                        <div class="mode-label">WTP Survey Data</div>
+                    </button>
                 </div>
 
             <!-- Manual Input Section -->
@@ -1145,19 +1149,28 @@
             <!-- Raw WTP Data Section -->
             <div class="raw-wtp-section" id="rawWtpSection">
                 <div class="data-format">
-                    <h4>Raw WTP Data Format</h4>
+                    <h4>Raw WTP Survey Data</h4>
                     <p style="margin-bottom: 12px; font-size: 0.9rem; color: var(--text-light);">
-                        Enter each respondent's maximum willingness-to-pay (WTP) value. The tool will:
+                        Upload or enter individual willingness-to-pay (WTP) values from your survey. The tool will:
                     </p>
                     <ul style="margin: 0 0 0.75rem 1.25rem; font-size: 0.9rem; color: var(--text-light);">
                         <li>Calculate the demand curve (% willing to buy at each price)</li>
-                        <li>Find the <strong>continuous optimal price</strong>—not limited to discrete points</li>
-                        <li>Use calculus-based optimization for precise revenue/profit maximization</li>
+                        <li>Find the <strong>optimal price</strong> that maximizes revenue or profit</li>
                     </ul>
                     <p style="font-size: 0.85rem; color: var(--text-light);">
-                        <strong>Example:</strong> If respondent's max WTP is $30, they will buy at any price ≤ $30
+                        <strong>Tip:</strong> You can download WTP data from the Survey Admin and upload it here
                     </p>
                 </div>
+
+                <!-- File Upload for WTP CSV -->
+                <div class="upload-area" id="wtpUploadArea" style="margin-bottom: 1.5rem;">
+                    <div class="upload-icon">📁</div>
+                    <p class="upload-text">Drag & drop a CSV file here, or <span style="color: var(--iu-crimson); font-weight: 600;">click to browse</span></p>
+                    <p style="font-size: 0.85rem; color: var(--text-light); margin-top: 0.5rem;">CSV should have a column named "wtp" with numeric values</p>
+                    <input type="file" id="wtpFileInput" accept=".csv" style="display: none;">
+                </div>
+
+                <div style="text-align: center; margin-bottom: 1rem; color: var(--text-light); font-size: 0.9rem;">— or enter values manually —</div>
 
                 <div class="form-group" style="max-width: 200px; margin-bottom: 1.25rem;">
                     <label for="rawCurrencySymbol">Currency Symbol</label>
@@ -1400,8 +1413,10 @@ Or comma-separated: 30, 45, 50, 35, 40"></textarea>
             currentMode = mode;
             document.getElementById('manualModeBtn').classList.toggle('active', mode === 'manual');
             document.getElementById('csvModeBtn').classList.toggle('active', mode === 'csv');
+            document.getElementById('wtpModeBtn').classList.toggle('active', mode === 'wtp');
             document.getElementById('manualSection').classList.toggle('visible', mode === 'manual');
             document.getElementById('csvSection').classList.toggle('visible', mode === 'csv');
+            document.getElementById('rawWtpSection').classList.toggle('visible', mode === 'wtp');
         }
 
         // Manual input functions
@@ -1546,6 +1561,96 @@ Or comma-separated: 30, 45, 50, 35, 40"></textarea>
             const file = e.target.files[0];
             if (file) handleFile(file);
         });
+
+        // WTP CSV upload functions
+        const wtpUploadArea = document.getElementById('wtpUploadArea');
+        const wtpFileInput = document.getElementById('wtpFileInput');
+
+        wtpUploadArea.addEventListener('click', () => wtpFileInput.click());
+
+        wtpUploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            wtpUploadArea.classList.add('dragover');
+        });
+
+        wtpUploadArea.addEventListener('dragleave', () => {
+            wtpUploadArea.classList.remove('dragover');
+        });
+
+        wtpUploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            wtpUploadArea.classList.remove('dragover');
+            const file = e.dataTransfer.files[0];
+            if (file) handleWtpFile(file);
+        });
+
+        wtpFileInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) handleWtpFile(file);
+        });
+
+        function handleWtpFile(file) {
+            if (!file.name.endsWith('.csv')) {
+                showStatus('Please upload a CSV file.', 'error');
+                return;
+            }
+
+            Papa.parse(file, {
+                header: true,
+                skipEmptyLines: true,
+                complete: function(results) {
+                    if (results.errors.length > 0) {
+                        showStatus('Error parsing CSV: ' + results.errors[0].message, 'error');
+                        return;
+                    }
+
+                    // Find the WTP column (case-insensitive)
+                    const columns = results.meta.fields;
+                    let wtpColumn = columns.find(col => col.toLowerCase() === 'wtp');
+
+                    // Also try common alternatives
+                    if (!wtpColumn) {
+                        wtpColumn = columns.find(col =>
+                            col.toLowerCase().includes('wtp') ||
+                            col.toLowerCase().includes('willingness') ||
+                            col.toLowerCase() === 'maxwtp' ||
+                            col.toLowerCase() === 'max_wtp'
+                        );
+                    }
+
+                    // If still not found and there's only one column, use it
+                    if (!wtpColumn && columns.length === 1) {
+                        wtpColumn = columns[0];
+                    }
+
+                    if (!wtpColumn) {
+                        showStatus('Could not find a WTP column. Please ensure your CSV has a column named "wtp".', 'error');
+                        return;
+                    }
+
+                    // Extract WTP values
+                    const wtpValues = [];
+                    results.data.forEach(row => {
+                        const val = parseFloat(row[wtpColumn]);
+                        if (!isNaN(val) && val > 0) {
+                            wtpValues.push(val);
+                        }
+                    });
+
+                    if (wtpValues.length < 10) {
+                        showStatus('Need at least 10 valid WTP values. Found: ' + wtpValues.length, 'error');
+                        return;
+                    }
+
+                    // Put values in textarea
+                    document.getElementById('wtpTextarea').value = wtpValues.join('\n');
+                    showStatus(`Loaded ${wtpValues.length} WTP values from "${wtpColumn}" column. Click "Run Analysis" to proceed.`, 'success');
+                },
+                error: function(error) {
+                    showStatus('Error reading file: ' + error.message, 'error');
+                }
+            });
+        }
 
         function handleFile(file) {
             if (!file.name.endsWith('.csv')) {
