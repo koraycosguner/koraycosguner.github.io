@@ -81,12 +81,12 @@
         }
 
         .product-photo {
-            width: 100px;
-            height: 100px;
-            border-radius: 8px;
+            width: 250px;
+            height: 250px;
+            border-radius: 12px;
             object-fit: cover;
-            border: 2px solid var(--white);
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            border: 3px solid var(--white);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
         }
 
         .product-name {
@@ -99,6 +99,9 @@
         .product-description {
             font-size: 0.9rem;
             color: var(--text-light);
+            text-align: left;
+            white-space: pre-line;
+            line-height: 1.7;
         }
 
         /* Questions */
@@ -516,7 +519,13 @@
             // Set product info
             document.getElementById('product-name').textContent = surveyData.product;
             if (surveyData.description) {
-                document.getElementById('product-description').textContent = surveyData.description;
+                // Format description: convert newlines to <br> and preserve bullet points
+                let formattedDesc = surveyData.description
+                    .replace(/\n/g, '<br>')
+                    .replace(/•/g, '<br>•');
+                // Clean up any double line breaks at the start
+                formattedDesc = formattedDesc.replace(/^<br>/, '');
+                document.getElementById('product-description').innerHTML = formattedDesc;
             } else {
                 document.getElementById('product-description').style.display = 'none';
             }
