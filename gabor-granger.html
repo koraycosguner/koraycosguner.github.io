@@ -1148,78 +1148,93 @@
 
             <!-- Raw WTP Data Section -->
             <div class="raw-wtp-section" id="rawWtpSection">
+                <!-- Data Format Info -->
                 <div class="data-format">
-                    <h4>Raw WTP Survey Data</h4>
-                    <p style="margin-bottom: 12px; font-size: 0.9rem; color: var(--text-light);">
-                        Upload or enter individual willingness-to-pay (WTP) values from your survey. The tool will:
-                    </p>
-                    <ul style="margin: 0 0 0.75rem 1.25rem; font-size: 0.9rem; color: var(--text-light);">
-                        <li>Calculate the demand curve (% willing to buy at each price)</li>
-                        <li>Find the <strong>optimal price</strong> that maximizes revenue or profit</li>
-                    </ul>
-                    <p style="font-size: 0.85rem; color: var(--text-light);">
-                        <strong>Tip:</strong> You can download WTP data from the Survey Admin and upload it here
+                    <h4>Required Data Format</h4>
+                    <p style="margin-bottom: 12px; font-size: 0.9rem; color: var(--text-light);">Your CSV should contain a column with individual WTP (willingness-to-pay) values:</p>
+                    <table>
+                        <tr>
+                            <th>Column</th>
+                            <th>Description</th>
+                            <th>Example Values</th>
+                        </tr>
+                        <tr>
+                            <td class="column-name">wtp</td>
+                            <td>Each respondent's maximum willingness-to-pay</td>
+                            <td>30, 45, 50, 35, 40</td>
+                        </tr>
+                    </table>
+                    <p style="margin-top: 12px; font-size: 0.85rem; color: var(--text-light);">
+                        <strong>Tip:</strong> Download WTP data directly from the Survey Admin tool
                     </p>
                 </div>
 
-                <!-- File Upload for WTP CSV -->
-                <div class="upload-area" id="wtpUploadArea" style="margin-bottom: 1.5rem;">
-                    <div class="upload-icon">📁</div>
-                    <p class="upload-text">Drag & drop a CSV file here, or <span style="color: var(--iu-crimson); font-weight: 600;">click to browse</span></p>
-                    <p style="font-size: 0.85rem; color: var(--text-light); margin-top: 0.5rem;">CSV should have a column named "wtp" with numeric values</p>
+                <!-- Upload Area -->
+                <div class="upload-area" id="wtpUploadArea">
                     <input type="file" id="wtpFileInput" accept=".csv" style="display: none;">
+                    <div class="upload-icon">📁</div>
+                    <p class="upload-text">Click to upload or drag and drop</p>
+                    <p class="upload-hint">CSV files only (max 10MB)</p>
                 </div>
 
-                <div style="text-align: center; margin-bottom: 1rem; color: var(--text-light); font-size: 0.9rem;">— or enter values manually —</div>
-
-                <div class="form-group" style="max-width: 200px; margin-bottom: 1.25rem;">
-                    <label for="rawCurrencySymbol">Currency Symbol</label>
-                    <select id="rawCurrencySymbol">
-                        <option value="$">$ (USD)</option>
-                        <option value="€">€ (EUR)</option>
-                        <option value="£">£ (GBP)</option>
-                        <option value="¥">¥ (JPY/CNY)</option>
-                        <option value="₹">₹ (INR)</option>
-                        <option value="">None</option>
-                    </select>
+                <!-- Data Preview for WTP -->
+                <div class="data-preview" id="wtpDataPreview">
+                    <h4 style="margin-bottom: 12px; color: var(--iu-crimson);">Data Preview</h4>
+                    <div class="preview-table-container">
+                        <table class="preview-table" id="wtpPreviewTable">
+                            <thead></thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                    <p id="wtpLoadedCount" style="margin-top: 0.75rem; font-size: 0.9rem; color: var(--text-light);"></p>
                 </div>
 
-                <div class="form-group">
-                    <label for="wtpTextarea">Enter WTP Values (one per line or comma-separated)</label>
-                    <textarea id="wtpTextarea" class="wtp-textarea" placeholder="Enter WTP values, e.g.:
+                <!-- Settings after upload or for manual entry -->
+                <div id="wtpSettingsSection">
+                    <div style="display: flex; gap: 1.5rem; flex-wrap: wrap; margin-bottom: 1.5rem;">
+                        <div class="form-group" style="margin-bottom: 0;">
+                            <label for="rawCurrencySymbol">Currency Symbol</label>
+                            <select id="rawCurrencySymbol">
+                                <option value="$">$ (USD)</option>
+                                <option value="€">€ (EUR)</option>
+                                <option value="£">£ (GBP)</option>
+                                <option value="¥">¥ (JPY/CNY)</option>
+                                <option value="₹">₹ (INR)</option>
+                                <option value="">None</option>
+                            </select>
+                        </div>
+                        <div class="form-group" style="margin-bottom: 0;">
+                            <label for="rawUnitCost">Unit Cost (Optional)</label>
+                            <input type="number" id="rawUnitCost" placeholder="e.g., 15.00" step="0.01" min="0" style="max-width: 150px;">
+                            <p class="form-hint">For profit optimization</p>
+                        </div>
+                    </div>
+
+                    <div class="button-group">
+                        <button class="btn btn-primary" id="analyzeWtpBtn" onclick="analyzeRawWtpData()">
+                            Run Analysis
+                        </button>
+                        <button class="btn btn-secondary" onclick="clearRawWtpData()">
+                            Clear & Start Over
+                        </button>
+                        <button class="btn btn-secondary" onclick="loadSampleRawWtp()">
+                            Load Sample Data
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Manual Entry (shown as alternative) -->
+                <div style="margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid var(--border);">
+                    <h4 style="margin-bottom: 1rem; color: var(--text-light); font-size: 0.95rem;">Or enter values manually:</h4>
+                    <div class="form-group">
+                        <textarea id="wtpTextarea" class="wtp-textarea" placeholder="Enter WTP values (one per line or comma-separated):
 30
 45
 50
 35
-40
-...
-
-Or comma-separated: 30, 45, 50, 35, 40"></textarea>
-                    <p class="form-hint">Enter numeric values only. Currency symbols will be ignored.</p>
-                </div>
-
-                <!-- Cost Input for Profit Analysis -->
-                <div style="padding: 1.25rem; background: var(--bg-light); border-radius: 8px; border: 1px solid var(--border);">
-                    <div class="form-group" style="margin-bottom: 0;">
-                        <label for="rawUnitCost">Unit Cost (Optional)</label>
-                        <div style="display: flex; gap: 1rem; align-items: center;">
-                            <input type="number" id="rawUnitCost" placeholder="e.g., 15.00" step="0.01" min="0" style="max-width: 200px;">
-                            <span style="font-size: 0.9rem; color: var(--text-light);">Enter to calculate profit-maximizing price</span>
-                        </div>
-                        <p class="form-hint">With raw WTP data, the tool finds the exact optimal price (continuous optimization)</p>
+40"></textarea>
+                        <p class="form-hint">Enter numeric values only. Currency symbols will be ignored.</p>
                     </div>
-                </div>
-
-                <div class="button-group">
-                    <button class="btn btn-primary" onclick="analyzeRawWtpData()">
-                        Run Analysis
-                    </button>
-                    <button class="btn btn-secondary" onclick="clearRawWtpData()">
-                        Clear All
-                    </button>
-                    <button class="btn btn-secondary" onclick="loadSampleRawWtp()">
-                        Load Sample Data
-                    </button>
                 </div>
             </div>
         </div>
@@ -1642,6 +1657,9 @@ Or comma-separated: 30, 45, 50, 35, 40"></textarea>
                         return;
                     }
 
+                    // Show data preview
+                    showWtpDataPreview(wtpValues, wtpColumn);
+
                     // Put values in textarea
                     document.getElementById('wtpTextarea').value = wtpValues.join('\n');
                     showStatus(`Loaded ${wtpValues.length} WTP values from "${wtpColumn}" column. Click "Run Analysis" to proceed.`, 'success');
@@ -1698,6 +1716,27 @@ Or comma-separated: 30, 45, 50, 35, 40"></textarea>
             ).join('');
 
             dataPreview.classList.add('visible');
+        }
+
+        function showWtpDataPreview(wtpValues, columnName) {
+            const previewContainer = document.getElementById('wtpDataPreview');
+            const previewTable = document.getElementById('wtpPreviewTable');
+            const thead = previewTable.querySelector('thead');
+            const tbody = previewTable.querySelector('tbody');
+            const countEl = document.getElementById('wtpLoadedCount');
+
+            // Show header
+            thead.innerHTML = `<tr><th>${columnName}</th></tr>`;
+
+            // Show first 10 values
+            const previewValues = wtpValues.slice(0, 10);
+            tbody.innerHTML = previewValues.map(val => `<tr><td>${val}</td></tr>`).join('');
+
+            // Show count
+            countEl.textContent = `Showing ${previewValues.length} of ${wtpValues.length} values`;
+
+            // Show the preview
+            previewContainer.classList.add('visible');
         }
 
         function populateColumnSelectors() {
@@ -2141,6 +2180,8 @@ Or comma-separated: 30, 45, 50, 35, 40"></textarea>
         function clearRawWtpData() {
             document.getElementById('wtpTextarea').value = '';
             document.getElementById('rawUnitCost').value = '';
+            document.getElementById('wtpFileInput').value = '';
+            document.getElementById('wtpDataPreview').classList.remove('visible');
             resultsContainer.classList.remove('visible');
             document.getElementById('profitMetrics').style.display = 'none';
             if (demandChart) demandChart.destroy();
