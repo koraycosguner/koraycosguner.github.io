@@ -28,43 +28,6 @@
             background-color: var(--bg-light);
         }
 
-        /* Navigation */
-        nav {
-            position: sticky;
-            top: 0;
-            background: var(--white);
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            z-index: 1000;
-            padding: 1rem 2rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .nav-brand {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--iu-crimson);
-            text-decoration: none;
-        }
-
-        .nav-links {
-            display: flex;
-            gap: 2rem;
-            list-style: none;
-        }
-
-        .nav-links a {
-            text-decoration: none;
-            color: var(--text-dark);
-            font-weight: 500;
-            transition: color 0.3s;
-        }
-
-        .nav-links a:hover {
-            color: var(--iu-crimson);
-        }
-
         /* Main Content */
         main {
             max-width: 1200px;
@@ -763,15 +726,6 @@
         }
 
         @media (max-width: 600px) {
-            nav {
-                flex-direction: column;
-                gap: 1rem;
-            }
-
-            .nav-links {
-                gap: 1rem;
-            }
-
             .hero h1 {
                 font-size: 1.5rem;
             }
@@ -837,22 +791,13 @@
         <p class="loading-text">Analyzing price-demand relationship...</p>
     </div>
 
-    <!-- Navigation -->
-    <nav>
-        <a href="index.html" class="nav-brand">Koray Cosguner</a>
-        <ul class="nav-links">
-            <li><a href="index.html">Home</a></li>
-            <li><a href="tools.html">Tools</a></li>
-        </ul>
-    </nav>
-
     <!-- Main Content -->
     <main>
         <!-- Back Link -->
         <div class="back-link">
             <a href="tools.html">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
-                Back to Pricing & Analytics Tools
+                Back to Tools
             </a>
         </div>
 
@@ -944,6 +889,18 @@
                     <span>+</span> Add Price Point
                 </button>
 
+                <!-- Cost Input for Profit Analysis -->
+                <div style="margin-top: 1.5rem; padding: 1.25rem; background: var(--bg-light); border-radius: 8px; border: 1px solid var(--border);">
+                    <div class="form-group" style="margin-bottom: 0;">
+                        <label for="unitCost">Unit Cost (Optional)</label>
+                        <div style="display: flex; gap: 1rem; align-items: center;">
+                            <input type="number" id="unitCost" placeholder="e.g., 15.00" step="0.01" min="0" style="max-width: 200px;">
+                            <span style="font-size: 0.9rem; color: var(--text-light);">Enter to calculate profit-maximizing price</span>
+                        </div>
+                        <p class="form-hint">If provided, the tool will find both revenue-maximizing and profit-maximizing prices</p>
+                    </div>
+                </div>
+
                 <div class="button-group">
                     <button class="btn btn-primary" id="analyzeManualBtn" onclick="analyzeManualData()">
                         Run Analysis
@@ -1021,16 +978,23 @@
                         </div>
                     </div>
 
-                    <div class="form-group" style="max-width: 200px;">
-                        <label for="csvCurrencySymbol">Currency Symbol</label>
-                        <select id="csvCurrencySymbol">
-                            <option value="$">$ (USD)</option>
-                            <option value="€">€ (EUR)</option>
-                            <option value="£">£ (GBP)</option>
-                            <option value="¥">¥ (JPY/CNY)</option>
-                            <option value="₹">₹ (INR)</option>
-                            <option value="">None</option>
-                        </select>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem;">
+                        <div class="form-group">
+                            <label for="csvCurrencySymbol">Currency Symbol</label>
+                            <select id="csvCurrencySymbol">
+                                <option value="$">$ (USD)</option>
+                                <option value="€">€ (EUR)</option>
+                                <option value="£">£ (GBP)</option>
+                                <option value="¥">¥ (JPY/CNY)</option>
+                                <option value="₹">₹ (INR)</option>
+                                <option value="">None</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="csvUnitCost">Unit Cost (Optional)</label>
+                            <input type="number" id="csvUnitCost" placeholder="e.g., 15.00" step="0.01" min="0">
+                            <p class="form-hint">Enter to calculate profit-maximizing price</p>
+                        </div>
                     </div>
 
                     <div class="button-group">
@@ -1051,22 +1015,41 @@
                 <h2 class="section-title">Analysis Results</h2>
                 <p class="section-subtitle">Your best price point based on the balance between price and customer demand</p>
 
-                <!-- Key Metrics -->
+                <!-- Key Metrics - Revenue -->
                 <div class="metrics-grid">
                     <div class="metric-card highlight">
-                        <div class="metric-label">Optimal Price</div>
+                        <div class="metric-label">Revenue-Maximizing Price</div>
                         <div class="metric-value" id="optimalPrice">-</div>
                         <div class="metric-desc">Best price for revenue</div>
                     </div>
                     <div class="metric-card highlight">
                         <div class="metric-label">Maximum Revenue Index</div>
                         <div class="metric-value" id="maxRevenue">-</div>
-                        <div class="metric-desc">Price x Intent</div>
+                        <div class="metric-desc">Price × Intent</div>
                     </div>
                     <div class="metric-card">
-                        <div class="metric-label">Purchase Intent at Optimal</div>
+                        <div class="metric-label">Purchase Intent</div>
                         <div class="metric-value" id="optimalIntent">-</div>
-                        <div class="metric-desc">Customers willing to buy</div>
+                        <div class="metric-desc">At revenue-max price</div>
+                    </div>
+                </div>
+
+                <!-- Key Metrics - Profit (shown only when cost is provided) -->
+                <div class="metrics-grid" id="profitMetrics" style="display: none; margin-top: 1rem;">
+                    <div class="metric-card" style="background: #065f46; color: white; border: none;">
+                        <div class="metric-label">Profit-Maximizing Price</div>
+                        <div class="metric-value" id="profitOptimalPrice">-</div>
+                        <div class="metric-desc">Best price for profit</div>
+                    </div>
+                    <div class="metric-card" style="background: #065f46; color: white; border: none;">
+                        <div class="metric-label">Maximum Profit Index</div>
+                        <div class="metric-value" id="maxProfit">-</div>
+                        <div class="metric-desc">(Price - Cost) × Intent</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-label">Unit Cost</div>
+                        <div class="metric-value" id="displayCost">-</div>
+                        <div class="metric-desc">Your input cost</div>
                     </div>
                 </div>
 
@@ -1084,7 +1067,7 @@
                 <h3 style="margin-top: 2rem; margin-bottom: 1rem; color: var(--iu-crimson);">Detailed Results by Price Point</h3>
                 <div class="results-table-container">
                     <table class="results-table" id="resultsTable">
-                        <thead>
+                        <thead id="resultsHead">
                             <tr>
                                 <th>Price Point</th>
                                 <th>Purchase Intent (%)</th>
@@ -1096,7 +1079,7 @@
                         </tbody>
                     </table>
                 </div>
-                <p style="font-size: 0.85rem; color: var(--text-light); margin-top: 0.5rem;">* Indicates optimal price point</p>
+                <p style="font-size: 0.85rem; color: var(--text-light); margin-top: 0.5rem;" id="tableFootnote">* Indicates revenue-maximizing price point</p>
 
                 <!-- Interpretation -->
                 <div class="interpretation">
@@ -1243,7 +1226,9 @@
                     <td><button class="remove-row" onclick="removeRow(this)" title="Remove row">x</button></td>
                 </tr>
             `;
+            document.getElementById('unitCost').value = '';
             resultsContainer.classList.remove('visible');
+            document.getElementById('profitMetrics').style.display = 'none';
             if (demandChart) demandChart.destroy();
             if (revenueChart) revenueChart.destroy();
         }
@@ -1282,7 +1267,10 @@
                 tbody.appendChild(row);
             });
 
-            showStatus('Sample data loaded: 15 price points from a SaaS pricing study (500 respondents).', 'success');
+            // Also set a sample cost
+            document.getElementById('unitCost').value = '8.00';
+
+            showStatus('Sample data loaded: 15 price points from a SaaS pricing study (500 respondents). Unit cost set to $8.00.', 'success');
         }
 
         function getManualData() {
@@ -1311,7 +1299,15 @@
             }
 
             const currency = document.getElementById('currencySymbol').value;
-            runAnalysis(data, currency);
+            const costInput = document.getElementById('unitCost').value;
+            const cost = costInput ? parseFloat(costInput) : null;
+
+            if (cost !== null && cost < 0) {
+                showStatus('Unit cost cannot be negative.', 'error');
+                return;
+            }
+
+            runAnalysis(data, currency, cost);
         }
 
         // CSV upload functions
@@ -1435,6 +1431,8 @@
             dataPreview.classList.remove('visible');
             mappingSection.classList.remove('visible');
             resultsContainer.classList.remove('visible');
+            document.getElementById('csvUnitCost').value = '';
+            document.getElementById('profitMetrics').style.display = 'none';
             [colPrice, colIntent].forEach(sel => {
                 sel.innerHTML = '<option value="">-- Select column --</option>';
             });
@@ -1462,18 +1460,27 @@
             data.sort((a, b) => a.price - b.price);
 
             const currency = document.getElementById('csvCurrencySymbol').value;
-            runAnalysis(data, currency);
+            const costInput = document.getElementById('csvUnitCost').value;
+            const cost = costInput ? parseFloat(costInput) : null;
+
+            if (cost !== null && cost < 0) {
+                showStatus('Unit cost cannot be negative.', 'error');
+                return;
+            }
+
+            runAnalysis(data, currency, cost);
         }
 
         // Analysis functions
-        function runAnalysis(data, currency) {
+        function runAnalysis(data, currency, cost = null) {
             const loadingOverlay = document.getElementById('loadingOverlay');
             loadingOverlay.classList.remove('hidden');
 
             setTimeout(() => {
-            // Calculate revenue index for each price point
+            // Calculate revenue and profit index for each price point
             const results = data.map((item, index) => {
                 const revenueIndex = item.price * (item.intent / 100);
+                const profitIndex = cost !== null ? (item.price - cost) * (item.intent / 100) : null;
 
                 // Calculate price elasticity (between adjacent points)
                 let elasticity = null;
@@ -1490,24 +1497,39 @@
                     price: item.price,
                     intent: item.intent,
                     revenueIndex,
+                    profitIndex,
                     elasticity
                 };
             });
 
-            // Find optimal price (maximum revenue index)
+            // Find optimal price for revenue (maximum revenue index)
             let maxRevIdx = 0;
-            let optimalIdx = 0;
+            let revenueOptimalIdx = 0;
             results.forEach((r, idx) => {
                 if (r.revenueIndex > maxRevIdx) {
                     maxRevIdx = r.revenueIndex;
-                    optimalIdx = idx;
+                    revenueOptimalIdx = idx;
                 }
             });
 
+            // Find optimal price for profit (maximum profit index)
+            let maxProfitIdx = -Infinity;
+            let profitOptimalIdx = 0;
+            if (cost !== null) {
+                results.forEach((r, idx) => {
+                    if (r.profitIndex > maxProfitIdx) {
+                        maxProfitIdx = r.profitIndex;
+                        profitOptimalIdx = idx;
+                    }
+                });
+            }
+
             analysisResults = {
                 data: results,
-                optimalIndex: optimalIdx,
-                currency
+                revenueOptimalIndex: revenueOptimalIdx,
+                profitOptimalIndex: cost !== null ? profitOptimalIdx : null,
+                currency,
+                cost
             };
 
             displayResults();
@@ -1522,37 +1544,111 @@
         }
 
         function displayResults() {
-            const { data, optimalIndex, currency } = analysisResults;
-            const optimal = data[optimalIndex];
+            const { data, revenueOptimalIndex, profitOptimalIndex, currency, cost } = analysisResults;
+            const revenueOptimal = data[revenueOptimalIndex];
 
-            // Update key metrics
-            document.getElementById('optimalPrice').textContent = formatPrice(optimal.price, currency);
-            document.getElementById('maxRevenue').textContent = optimal.revenueIndex.toFixed(2);
-            document.getElementById('optimalIntent').textContent = optimal.intent.toFixed(1) + '%';
+            // Update revenue metrics
+            document.getElementById('optimalPrice').textContent = formatPrice(revenueOptimal.price, currency);
+            document.getElementById('maxRevenue').textContent = revenueOptimal.revenueIndex.toFixed(2);
+            document.getElementById('optimalIntent').textContent = revenueOptimal.intent.toFixed(1) + '%';
+
+            // Update profit metrics (if cost provided)
+            const profitMetrics = document.getElementById('profitMetrics');
+            if (cost !== null && profitOptimalIndex !== null) {
+                const profitOptimal = data[profitOptimalIndex];
+                document.getElementById('profitOptimalPrice').textContent = formatPrice(profitOptimal.price, currency);
+                document.getElementById('maxProfit').textContent = profitOptimal.profitIndex.toFixed(2);
+                document.getElementById('displayCost').textContent = formatPrice(cost, currency);
+                profitMetrics.style.display = 'grid';
+            } else {
+                profitMetrics.style.display = 'none';
+            }
 
             // Create charts
-            createCharts(data, optimalIndex, currency);
+            createCharts(data, revenueOptimalIndex, profitOptimalIndex, currency, cost);
+
+            // Update table headers based on whether cost is provided
+            const thead = document.getElementById('resultsHead');
+            if (cost !== null) {
+                thead.innerHTML = `
+                    <tr>
+                        <th>Price Point</th>
+                        <th>Purchase Intent (%)</th>
+                        <th>Revenue Index</th>
+                        <th>Profit Index</th>
+                        <th>Price Elasticity</th>
+                    </tr>
+                `;
+            } else {
+                thead.innerHTML = `
+                    <tr>
+                        <th>Price Point</th>
+                        <th>Purchase Intent (%)</th>
+                        <th>Revenue Index</th>
+                        <th>Price Elasticity</th>
+                    </tr>
+                `;
+            }
 
             // Populate results table
             const tbody = document.getElementById('resultsBody');
-            tbody.innerHTML = data.map((item, idx) => `
-                <tr class="${idx === optimalIndex ? 'optimal' : ''}">
-                    <td>${formatPrice(item.price, currency)}</td>
-                    <td>${item.intent.toFixed(1)}%</td>
-                    <td>${item.revenueIndex.toFixed(2)}</td>
-                    <td>${item.elasticity !== null ? item.elasticity.toFixed(2) : '-'}</td>
-                </tr>
-            `).join('');
+            tbody.innerHTML = data.map((item, idx) => {
+                const isRevenueOptimal = idx === revenueOptimalIndex;
+                const isProfitOptimal = cost !== null && idx === profitOptimalIndex;
+                let rowClass = '';
+                let marker = '';
+
+                if (isRevenueOptimal && isProfitOptimal) {
+                    rowClass = 'optimal';
+                    marker = '★ ';
+                } else if (isRevenueOptimal) {
+                    rowClass = 'optimal';
+                    marker = '* ';
+                } else if (isProfitOptimal) {
+                    rowClass = 'profit-optimal';
+                    marker = '† ';
+                }
+
+                if (cost !== null) {
+                    return `
+                        <tr class="${rowClass}" style="${isProfitOptimal && !isRevenueOptimal ? 'background: rgba(6, 95, 70, 0.15);' : ''}">
+                            <td>${marker}${formatPrice(item.price, currency)}</td>
+                            <td>${item.intent.toFixed(1)}%</td>
+                            <td>${item.revenueIndex.toFixed(2)}</td>
+                            <td>${item.profitIndex.toFixed(2)}</td>
+                            <td>${item.elasticity !== null ? item.elasticity.toFixed(2) : '-'}</td>
+                        </tr>
+                    `;
+                } else {
+                    return `
+                        <tr class="${rowClass}">
+                            <td>${marker}${formatPrice(item.price, currency)}</td>
+                            <td>${item.intent.toFixed(1)}%</td>
+                            <td>${item.revenueIndex.toFixed(2)}</td>
+                            <td>${item.elasticity !== null ? item.elasticity.toFixed(2) : '-'}</td>
+                        </tr>
+                    `;
+                }
+            }).join('');
+
+            // Update footnote
+            const footnote = document.getElementById('tableFootnote');
+            if (cost !== null) {
+                footnote.textContent = '* Revenue-maximizing price | † Profit-maximizing price | ★ Both optimal';
+            } else {
+                footnote.textContent = '* Indicates revenue-maximizing price point';
+            }
 
             // Show results
             resultsContainer.classList.add('visible');
             resultsContainer.scrollIntoView({ behavior: 'smooth' });
         }
 
-        function createCharts(data, optimalIndex, currency) {
+        function createCharts(data, revenueOptimalIndex, profitOptimalIndex, currency, cost) {
             const labels = data.map(d => currency + d.price.toFixed(2));
             const intentData = data.map(d => d.intent);
             const revenueData = data.map(d => d.revenueIndex);
+            const profitData = cost !== null ? data.map(d => d.profitIndex) : null;
 
             // Destroy existing charts
             if (demandChart) demandChart.destroy();
@@ -1573,9 +1669,7 @@
                         fill: true,
                         tension: 0.4,
                         pointRadius: 6,
-                        pointBackgroundColor: labels.map((_, i) =>
-                            i === optimalIndex ? '#990000' : '#990000'
-                        ),
+                        pointBackgroundColor: '#990000',
                         pointBorderColor: '#ffffff',
                         pointBorderWidth: 2
                     }]
@@ -1623,24 +1717,44 @@
                 }
             });
 
-            // Revenue Curve Chart
+            // Revenue & Profit Chart
             const revenueCtx = document.getElementById('revenueChart').getContext('2d');
+
+            // Build datasets
+            const datasets = [{
+                label: 'Revenue Index',
+                data: revenueData,
+                backgroundColor: labels.map((_, i) =>
+                    i === revenueOptimalIndex ? '#990000' : 'rgba(153, 0, 0, 0.5)'
+                ),
+                borderColor: labels.map((_, i) =>
+                    i === revenueOptimalIndex ? '#7a0000' : '#990000'
+                ),
+                borderWidth: 2,
+                borderRadius: 6
+            }];
+
+            // Add profit dataset if cost is provided
+            if (cost !== null && profitData) {
+                datasets.push({
+                    label: 'Profit Index',
+                    data: profitData,
+                    backgroundColor: labels.map((_, i) =>
+                        i === profitOptimalIndex ? '#065f46' : 'rgba(6, 95, 70, 0.5)'
+                    ),
+                    borderColor: labels.map((_, i) =>
+                        i === profitOptimalIndex ? '#064e3b' : '#065f46'
+                    ),
+                    borderWidth: 2,
+                    borderRadius: 6
+                });
+            }
+
             revenueChart = new Chart(revenueCtx, {
                 type: 'bar',
                 data: {
                     labels: labels,
-                    datasets: [{
-                        label: 'Revenue Index',
-                        data: revenueData,
-                        backgroundColor: labels.map((_, i) =>
-                            i === optimalIndex ? '#990000' : 'rgba(153, 0, 0, 0.5)'
-                        ),
-                        borderColor: labels.map((_, i) =>
-                            i === optimalIndex ? '#7a0000' : '#990000'
-                        ),
-                        borderWidth: 2,
-                        borderRadius: 6
-                    }]
+                    datasets: datasets
                 },
                 options: {
                     responsive: true,
@@ -1648,13 +1762,14 @@
                     plugins: {
                         title: {
                             display: true,
-                            text: 'Revenue Index by Price Point',
+                            text: cost !== null ? 'Revenue & Profit Index by Price Point' : 'Revenue Index by Price Point',
                             font: { size: 16, weight: '600' },
                             color: '#990000',
                             padding: { bottom: 20 }
                         },
                         legend: {
-                            display: false
+                            display: cost !== null,
+                            position: 'bottom'
                         },
                         tooltip: {
                             callbacks: {
