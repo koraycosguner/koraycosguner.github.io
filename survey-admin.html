@@ -572,17 +572,17 @@
                     <label>Survey Type(s)</label>
                     <p class="form-hint" style="margin-bottom: 0.75rem;">Select one or both survey types. If both are selected, students can complete either or both surveys for this product.</p>
                     <div class="survey-type-selector">
-                        <label class="survey-type-option" id="opt-gg">
-                            <input type="checkbox" id="type-gg" onchange="updateSurveyTypes()">
-                            <div class="survey-type-icon">📊</div>
-                            <div class="survey-type-name">Gabor-Granger</div>
-                            <div class="survey-type-desc">Price ladder to find max WTP</div>
-                        </label>
                         <label class="survey-type-option" id="opt-vw">
                             <input type="checkbox" id="type-vw" onchange="updateSurveyTypes()">
                             <div class="survey-type-icon">📈</div>
                             <div class="survey-type-name">Van Westendorp</div>
-                            <div class="survey-type-desc">4 questions for price sensitivity</div>
+                            <div class="survey-type-desc">Find acceptable price range</div>
+                        </label>
+                        <label class="survey-type-option" id="opt-gg">
+                            <input type="checkbox" id="type-gg" onchange="updateSurveyTypes()">
+                            <div class="survey-type-icon">📊</div>
+                            <div class="survey-type-name">Gabor-Granger</div>
+                            <div class="survey-type-desc">Find optimal price point</div>
                         </label>
                     </div>
                 </div>
@@ -686,10 +686,10 @@
 
                 <!-- Download & Action Buttons -->
                 <div id="action-buttons" style="margin-top: 1rem; display: flex; gap: 0.75rem; flex-wrap: wrap;">
-                    <button class="btn btn-primary btn-small" id="btn-download-gg" onclick="downloadGGData()" style="display: none;">📥 Download GG Data (CSV)</button>
                     <button class="btn btn-primary btn-small" id="btn-download-vw" onclick="downloadVWData()" style="display: none;">📥 Download VW Data (CSV)</button>
-                    <button class="btn btn-secondary btn-small" id="btn-load-gg" onclick="loadGGIntoAnalysis()" style="display: none;">📊 Load GG into Tool</button>
+                    <button class="btn btn-primary btn-small" id="btn-download-gg" onclick="downloadGGData()" style="display: none;">📥 Download GG Data (CSV)</button>
                     <button class="btn btn-secondary btn-small" id="btn-load-vw" onclick="loadVWIntoAnalysis()" style="display: none;">📊 Load VW into Tool</button>
+                    <button class="btn btn-secondary btn-small" id="btn-load-gg" onclick="loadGGIntoAnalysis()" style="display: none;">📊 Load GG into Tool</button>
                     <button class="btn btn-danger btn-small" onclick="deleteAllResponses()">🗑️ Delete All Responses</button>
                 </div>
 
@@ -1047,26 +1047,26 @@
             const types = currentSurveyData.types || [];
 
             let linksHtml = '';
-            if (types.includes('gabor-granger')) {
-                linksHtml += `
-                    <div style="margin-bottom: 1rem;">
-                        <label style="font-weight: 600; display: block; margin-bottom: 0.5rem;">Gabor-Granger Survey Link:</label>
-                        <div class="link-box">
-                            <input type="text" id="link-gg" value="${baseUrl}gg-survey.html?id=${id}" readonly>
-                            <button class="btn btn-secondary btn-small" onclick="copyLink('link-gg')">Copy</button>
-                            <button class="btn btn-primary btn-small" onclick="openLink('link-gg')">Open</button>
-                        </div>
-                    </div>
-                `;
-            }
             if (types.includes('van-westendorp')) {
                 linksHtml += `
-                    <div>
+                    <div style="margin-bottom: 1rem;">
                         <label style="font-weight: 600; display: block; margin-bottom: 0.5rem;">Van Westendorp Survey Link:</label>
                         <div class="link-box">
                             <input type="text" id="link-vw" value="${baseUrl}vw-survey.html?id=${id}" readonly>
                             <button class="btn btn-secondary btn-small" onclick="copyLink('link-vw')">Copy</button>
                             <button class="btn btn-primary btn-small" onclick="openLink('link-vw')">Open</button>
+                        </div>
+                    </div>
+                `;
+            }
+            if (types.includes('gabor-granger')) {
+                linksHtml += `
+                    <div>
+                        <label style="font-weight: 600; display: block; margin-bottom: 0.5rem;">Gabor-Granger Survey Link:</label>
+                        <div class="link-box">
+                            <input type="text" id="link-gg" value="${baseUrl}gg-survey.html?id=${id}" readonly>
+                            <button class="btn btn-secondary btn-small" onclick="copyLink('link-gg')">Copy</button>
+                            <button class="btn btn-primary btn-small" onclick="openLink('link-gg')">Open</button>
                         </div>
                     </div>
                 `;
