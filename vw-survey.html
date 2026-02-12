@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Price Sensitivity Survey</title>
+    <style>
+        :root {
+            --iu-crimson: #990000;
+            --iu-crimson-dark: #7a0000;
+            --text-dark: #333;
+            --text-light: #666;
+            --bg-light: #f5f5f5;
+            --white: #fff;
+            --border: #ddd;
+            --success: #22c55e;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            line-height: 1.6;
+            color: var(--text-dark);
+            background: linear-gradient(135deg, #f5f5f5 0%, #e8e8e8 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+
+        .survey-container {
+            background: var(--white);
+            border-radius: 16px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            max-width: 650px;
+            width: 100%;
+            overflow: hidden;
+        }
+
+        .survey-header {
+            background: var(--iu-crimson);
+            color: var(--white);
+            padding: 2rem;
+            text-align: center;
+        }
+
+        .survey-header h1 {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .survey-header p {
+            opacity: 0.9;
+            font-size: 0.95rem;
+        }
+
+        .survey-body {
+            padding: 2rem;
+        }
+
+        /* Product Info */
+        .product-info {
+            background: var(--bg-light);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .product-name {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--iu-crimson);
+            margin-bottom: 0.5rem;
+        }
+
+        .product-description {
+            font-size: 0.9rem;
+            color: var(--text-light);
+        }
+
+        /* Questions */
+        .questions-container {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .question-card {
+            background: var(--bg-light);
+            border-radius: 12px;
+            padding: 1.25rem;
+            border-left: 4px solid var(--iu-crimson);
+        }
+
+        .question-card.q1 { border-left-color: #ef4444; }
+        .question-card.q2 { border-left-color: #f97316; }
+        .question-card.q3 { border-left-color: #3b82f6; }
+        .question-card.q4 { border-left-color: #8b5cf6; }
+
+        .question-label {
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 0.5rem;
+        }
+
+        .q1 .question-label { color: #ef4444; }
+        .q2 .question-label { color: #f97316; }
+        .q3 .question-label { color: #3b82f6; }
+        .q4 .question-label { color: #8b5cf6; }
+
+        .question-text {
+            font-size: 0.95rem;
+            color: var(--text-dark);
+            margin-bottom: 0.75rem;
+        }
+
+        .price-input-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .currency-symbol {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--iu-crimson);
+        }
+
+        .price-input {
+            flex: 1;
+            padding: 0.75rem 1rem;
+            font-size: 1.1rem;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            transition: border-color 0.3s;
+        }
+
+        .price-input:focus {
+            outline: none;
+            border-color: var(--iu-crimson);
+        }
+
+        .price-input::placeholder {
+            color: #aaa;
+        }
+
+        /* Submit Button */
+        .submit-section {
+            margin-top: 2rem;
+            text-align: center;
+        }
+
+        .submit-btn {
+            background: var(--iu-crimson);
+            color: var(--white);
+            padding: 1rem 3rem;
+            font-size: 1.1rem;
+            font-weight: 700;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+            width: 100%;
+            max-width: 300px;
+        }
+
+        .submit-btn:hover:not(:disabled) {
+            background: var(--iu-crimson-dark);
+            transform: scale(1.02);
+        }
+
+        .submit-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        .validation-error {
+            color: #dc2626;
+            font-size: 0.85rem;
+            margin-top: 0.5rem;
+            display: none;
+        }
+
+        .validation-error.visible {
+            display: block;
+        }
+
+        /* Thank You Screen */
+        .thank-you {
+            text-align: center;
+            padding: 3rem 2rem;
+        }
+
+        .thank-you-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+        }
+
+        .thank-you h2 {
+            color: var(--success);
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+        }
+
+        .thank-you p {
+            color: var(--text-light);
+            font-size: 1rem;
+        }
+
+        .responses-summary {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .response-item {
+            background: var(--bg-light);
+            border-radius: 8px;
+            padding: 1rem;
+            text-align: center;
+        }
+
+        .response-label {
+            font-size: 0.75rem;
+            color: var(--text-light);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .response-value {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--iu-crimson);
+        }
+
+        /* Error/Loading States */
+        .loading, .error {
+            text-align: center;
+            padding: 3rem;
+        }
+
+        .error {
+            color: #dc2626;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid var(--border);
+            border-top-color: var(--iu-crimson);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Survey Closed */
+        .survey-closed {
+            text-align: center;
+            padding: 3rem;
+        }
+
+        .survey-closed h2 {
+            color: var(--text-dark);
+            margin-bottom: 1rem;
+        }
+
+        /* Footer */
+        .survey-footer {
+            text-align: center;
+            padding: 1rem 2rem 2rem;
+            font-size: 0.8rem;
+            color: var(--text-light);
+        }
+
+        .survey-footer a {
+            color: var(--iu-crimson);
+            text-decoration: none;
+        }
+
+        /* Responsive */
+        @media (max-width: 500px) {
+            .responses-summary {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Hidden */
+        .hidden {
+            display: none !important;
+        }
+    </style>
+</head>
+<body>
+    <div class="survey-container">
+        <!-- Loading State -->
+        <div id="loading" class="loading">
+            <div class="spinner"></div>
+            <p>Loading survey...</p>
+        </div>
+
+        <!-- Error State -->
+        <div id="error" class="error hidden">
+            <h2>Survey Not Found</h2>
+            <p>This survey link is invalid or has expired.</p>
+        </div>
+
+        <!-- Survey Closed State -->
+        <div id="closed" class="survey-closed hidden">
+            <h2>Survey Closed</h2>
+            <p>This survey is no longer accepting responses.</p>
+            <p style="margin-top: 1rem;">Thank you for your interest!</p>
+        </div>
+
+        <!-- Survey Content -->
+        <div id="survey-content" class="hidden">
+            <div class="survey-header">
+                <h1>Price Sensitivity Survey</h1>
+                <p>Help us understand your price expectations</p>
+            </div>
+
+            <div class="survey-body">
+                <div class="product-info">
+                    <div class="product-name" id="product-name">Product Name</div>
+                    <div class="product-description" id="product-description"></div>
+                </div>
+
+                <div id="questions-section">
+                    <p style="margin-bottom: 1.5rem; color: var(--text-light); text-align: center;">
+                        Please answer all four questions about your price expectations for this product.
+                    </p>
+
+                    <div class="questions-container">
+                        <div class="question-card q1">
+                            <div class="question-label">Question 1: Too Cheap</div>
+                            <p class="question-text">At what price would you consider this product to be <strong>so cheap</strong> that you would question its quality?</p>
+                            <div class="price-input-wrapper">
+                                <span class="currency-symbol" id="currency1">$</span>
+                                <input type="number" class="price-input" id="too-cheap" placeholder="Enter price" min="0" step="0.01">
+                            </div>
+                        </div>
+
+                        <div class="question-card q2">
+                            <div class="question-label">Question 2: Bargain</div>
+                            <p class="question-text">At what price would you consider this product to be a <strong>bargain</strong> — a great buy for the money?</p>
+                            <div class="price-input-wrapper">
+                                <span class="currency-symbol" id="currency2">$</span>
+                                <input type="number" class="price-input" id="cheap" placeholder="Enter price" min="0" step="0.01">
+                            </div>
+                        </div>
+
+                        <div class="question-card q3">
+                            <div class="question-label">Question 3: Getting Expensive</div>
+                            <p class="question-text">At what price would you consider this product to be <strong>getting expensive</strong>, but still worth considering?</p>
+                            <div class="price-input-wrapper">
+                                <span class="currency-symbol" id="currency3">$</span>
+                                <input type="number" class="price-input" id="expensive" placeholder="Enter price" min="0" step="0.01">
+                            </div>
+                        </div>
+
+                        <div class="question-card q4">
+                            <div class="question-label">Question 4: Too Expensive</div>
+                            <p class="question-text">At what price would you consider this product to be <strong>too expensive</strong> to consider buying?</p>
+                            <div class="price-input-wrapper">
+                                <span class="currency-symbol" id="currency4">$</span>
+                                <input type="number" class="price-input" id="too-expensive" placeholder="Enter price" min="0" step="0.01">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="submit-section">
+                        <p class="validation-error" id="validation-error"></p>
+                        <button class="submit-btn" onclick="submitSurvey()">Submit Response</button>
+                    </div>
+                </div>
+
+                <!-- Thank You Screen -->
+                <div id="thank-you" class="thank-you hidden">
+                    <div class="thank-you-icon">✓</div>
+                    <h2>Thank You!</h2>
+                    <p>Your response has been recorded.</p>
+
+                    <div class="responses-summary">
+                        <div class="response-item">
+                            <div class="response-label">Too Cheap</div>
+                            <div class="response-value" id="summary-too-cheap">$0</div>
+                        </div>
+                        <div class="response-item">
+                            <div class="response-label">Bargain</div>
+                            <div class="response-value" id="summary-cheap">$0</div>
+                        </div>
+                        <div class="response-item">
+                            <div class="response-label">Expensive</div>
+                            <div class="response-value" id="summary-expensive">$0</div>
+                        </div>
+                        <div class="response-item">
+                            <div class="response-label">Too Expensive</div>
+                            <div class="response-value" id="summary-too-expensive">$0</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="survey-footer">
+                Powered by <a href="https://koraycosguner.github.io" target="_blank">IU Pricing Tools</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+
+    <script>
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyBg3LJDwVIRGWtFZb_mM_CSRJMNCJUta20",
+            authDomain: "iu-pricing-tools.firebaseapp.com",
+            projectId: "iu-pricing-tools",
+            storageBucket: "iu-pricing-tools.firebasestorage.app",
+            messagingSenderId: "659335573790",
+            appId: "1:659335573790:web:00013a166787efecb3d90f",
+            measurementId: "G-NGKNY08XWP"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
+        // Survey state
+        let surveyId = null;
+        let surveyData = null;
+        let currency = '$';
+
+        // Initialize
+        async function init() {
+            // Get survey ID from URL
+            const params = new URLSearchParams(window.location.search);
+            surveyId = params.get('id');
+
+            if (!surveyId) {
+                showError();
+                return;
+            }
+
+            try {
+                // Load survey data
+                const doc = await db.collection('surveys').doc(surveyId).get();
+
+                if (!doc.exists) {
+                    showError();
+                    return;
+                }
+
+                surveyData = doc.data();
+
+                // Check if survey is active
+                if (surveyData.active === false) {
+                    showClosed();
+                    return;
+                }
+
+                // Set up the survey
+                setupSurvey();
+            } catch (error) {
+                console.error('Error loading survey:', error);
+                showError();
+            }
+        }
+
+        function setupSurvey() {
+            // Hide loading, show survey
+            document.getElementById('loading').classList.add('hidden');
+            document.getElementById('survey-content').classList.remove('hidden');
+
+            // Set product info
+            document.getElementById('product-name').textContent = surveyData.product;
+            if (surveyData.description) {
+                document.getElementById('product-description').textContent = surveyData.description;
+            } else {
+                document.getElementById('product-description').style.display = 'none';
+            }
+
+            // Set currency symbols
+            currency = surveyData.currency || '$';
+            document.getElementById('currency1').textContent = currency;
+            document.getElementById('currency2').textContent = currency;
+            document.getElementById('currency3').textContent = currency;
+            document.getElementById('currency4').textContent = currency;
+        }
+
+        function validateInputs() {
+            const tooCheap = parseFloat(document.getElementById('too-cheap').value);
+            const cheap = parseFloat(document.getElementById('cheap').value);
+            const expensive = parseFloat(document.getElementById('expensive').value);
+            const tooExpensive = parseFloat(document.getElementById('too-expensive').value);
+
+            const errorEl = document.getElementById('validation-error');
+
+            // Check all fields are filled
+            if (isNaN(tooCheap) || isNaN(cheap) || isNaN(expensive) || isNaN(tooExpensive)) {
+                errorEl.textContent = 'Please fill in all four price fields.';
+                errorEl.classList.add('visible');
+                return null;
+            }
+
+            // Check all are positive
+            if (tooCheap < 0 || cheap < 0 || expensive < 0 || tooExpensive < 0) {
+                errorEl.textContent = 'All prices must be positive.';
+                errorEl.classList.add('visible');
+                return null;
+            }
+
+            // Check logical order: too cheap < cheap < expensive < too expensive
+            if (!(tooCheap <= cheap && cheap <= expensive && expensive <= tooExpensive)) {
+                errorEl.textContent = 'Please check your answers. Prices should generally increase from "Too Cheap" to "Too Expensive".';
+                errorEl.classList.add('visible');
+                return null;
+            }
+
+            errorEl.classList.remove('visible');
+            return { tooCheap, cheap, expensive, tooExpensive };
+        }
+
+        async function submitSurvey() {
+            const values = validateInputs();
+            if (!values) return;
+
+            const { tooCheap, cheap, expensive, tooExpensive } = values;
+
+            // Disable button
+            const btn = document.querySelector('.submit-btn');
+            btn.disabled = true;
+            btn.textContent = 'Submitting...';
+
+            try {
+                // Save to Firebase
+                await db.collection('surveys').doc(surveyId).collection('responses').add({
+                    tooCheap,
+                    cheap,
+                    expensive,
+                    tooExpensive,
+                    submittedAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+
+                // Update response count
+                await db.collection('surveys').doc(surveyId).update({
+                    responseCount: firebase.firestore.FieldValue.increment(1)
+                });
+
+                // Show thank you
+                document.getElementById('questions-section').classList.add('hidden');
+                document.getElementById('thank-you').classList.remove('hidden');
+
+                // Show summary
+                document.getElementById('summary-too-cheap').textContent = currency + tooCheap.toFixed(2);
+                document.getElementById('summary-cheap').textContent = currency + cheap.toFixed(2);
+                document.getElementById('summary-expensive').textContent = currency + expensive.toFixed(2);
+                document.getElementById('summary-too-expensive').textContent = currency + tooExpensive.toFixed(2);
+
+            } catch (error) {
+                console.error('Error saving response:', error);
+                btn.disabled = false;
+                btn.textContent = 'Submit Response';
+                const errorEl = document.getElementById('validation-error');
+                errorEl.textContent = 'Error submitting response. Please try again.';
+                errorEl.classList.add('visible');
+            }
+        }
+
+        function showError() {
+            document.getElementById('loading').classList.add('hidden');
+            document.getElementById('error').classList.remove('hidden');
+        }
+
+        function showClosed() {
+            document.getElementById('loading').classList.add('hidden');
+            document.getElementById('closed').classList.remove('hidden');
+        }
+
+        // Start
+        init();
+    </script>
+</body>
+</html>
