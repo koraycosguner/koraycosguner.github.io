@@ -1128,7 +1128,7 @@
                 }
 
                 // Combined view
-                header.innerHTML = '<th>#</th><th>Name</th><th>Type</th><th>Response</th><th>Submitted</th>';
+                header.innerHTML = '<th>#</th><th>Type</th><th>Response</th><th>Submitted</th>';
 
                 tbody.innerHTML = '';
                 let index = 1;
@@ -1138,11 +1138,9 @@
                     const r = doc.data();
                     const time = r.submittedAt?.toDate().toLocaleString() || 'Unknown';
                     const wtpText = r.maxWtp > 0 ? `Max WTP: $${r.maxWtp.toFixed(2)}` : 'Below minimum';
-                    const name = r.name || 'Anonymous';
                     tbody.innerHTML += `
                         <tr>
                             <td>${index++}</td>
-                            <td><strong>${name}</strong></td>
                             <td><span style="background: var(--iu-crimson); color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.75rem;">GG</span></td>
                             <td>${wtpText} (started at $${r.startingPrice?.toFixed(2)}, ${r.steps} steps)</td>
                             <td>${time}</td>
@@ -1154,11 +1152,9 @@
                 vwSnapshot.forEach(doc => {
                     const r = doc.data();
                     const time = r.submittedAt?.toDate().toLocaleString() || 'Unknown';
-                    const name = r.name || 'Anonymous';
                     tbody.innerHTML += `
                         <tr>
                             <td>${index++}</td>
-                            <td><strong>${name}</strong></td>
                             <td><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.75rem;">VW</span></td>
                             <td>TC: $${r.tooCheap?.toFixed(2)} | B: $${r.cheap?.toFixed(2)} | E: $${r.expensive?.toFixed(2)} | TE: $${r.tooExpensive?.toFixed(2)}</td>
                             <td>${time}</td>
