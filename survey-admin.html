@@ -972,6 +972,7 @@
                         <button class="btn btn-small ${isActive ? 'btn-danger' : 'btn-primary'}" onclick="toggleSurvey('${id}', ${isActive})">
                             ${isActive ? 'Close' : 'Reopen'}
                         </button>
+                        <button class="btn btn-danger btn-small" onclick="deleteSurvey('${id}', '${survey.name.replace(/'/g, "\\'")}')">🗑️</button>
                     </div>
                 </div>
             `;
@@ -988,6 +989,46 @@
             } catch (error) {
                 console.error('Error toggling survey:', error);
                 showStatus('Error updating survey.', 'error');
+            }
+        }
+
+        // Delete entire survey
+        async function deleteSurvey(id, name) {
+            const confirmed = confirm(`⚠️ Delete survey "${name}"?\n\nThis will permanently delete the survey AND all its responses.\n\nThis action cannot be undone!`);
+            if (!confirmed) return;
+
+            const doubleConfirm = confirm(`Type OK to permanently delete "${name}" and all responses.`);
+            if (!doubleConfirm) return;
+
+            try {
+                showStatus('Deleting survey...', 'success');
+
+                // Delete GG responses subcollection
+                const ggSnapshot = await db.collection('surveys').doc(id).collection('gg_responses').get();
+                const ggBatch = db.batch();
+                ggSnapshot.forEach(doc => ggBatch.delete(doc.ref));
+                if (!ggSnapshot.empty) await ggBatch.commit();
+
+                // Delete VW responses subcollection
+                const vwSnapshot = await db.collection('surveys').doc(id).collection('vw_responses').get();
+                const vwBatch = db.batch();
+                vwSnapshot.forEach(doc => vwBatch.delete(doc.ref));
+                if (!vwSnapshot.empty) await vwBatch.commit();
+
+                // Delete the survey document itself
+                await db.collection('surveys').doc(id).delete();
+
+                showStatus('Survey deleted successfully!', 'success');
+                loadSurveys();
+
+                // If viewing this survey, close the details
+                if (currentSurvey === id) {
+                    closeSurveyDetails();
+                }
+
+            } catch (error) {
+                console.error('Error deleting survey:', error);
+                showStatus('Error deleting survey. Please try again.', 'error');
             }
         }
 
