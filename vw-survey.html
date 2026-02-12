@@ -73,6 +73,22 @@
             text-align: center;
         }
 
+        .product-photos {
+            display: flex;
+            justify-content: center;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+        }
+
+        .product-photo {
+            width: 100px;
+            height: 100px;
+            border-radius: 8px;
+            object-fit: cover;
+            border: 2px solid var(--white);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
         .product-name {
             font-size: 1.25rem;
             font-weight: 700;
@@ -334,6 +350,7 @@
 
             <div class="survey-body">
                 <div class="product-info">
+                    <div class="product-photos" id="product-photos"></div>
                     <div class="product-name" id="product-name">Product Name</div>
                     <div class="product-description" id="product-description"></div>
                 </div>
@@ -486,6 +503,16 @@
             document.getElementById('loading').classList.add('hidden');
             document.getElementById('survey-content').classList.remove('hidden');
 
+            // Set product photos
+            const photosContainer = document.getElementById('product-photos');
+            if (surveyData.photos && surveyData.photos.length > 0) {
+                photosContainer.innerHTML = surveyData.photos.map(photo =>
+                    `<img src="${photo}" alt="Product" class="product-photo">`
+                ).join('');
+            } else {
+                photosContainer.style.display = 'none';
+            }
+
             // Set product info
             document.getElementById('product-name').textContent = surveyData.product;
             if (surveyData.description) {
@@ -548,7 +575,7 @@
 
             try {
                 // Save to Firebase
-                await db.collection('surveys').doc(surveyId).collection('responses').add({
+                await db.collection('surveys').doc(surveyId).collection('vw_responses').add({
                     tooCheap,
                     cheap,
                     expensive,
@@ -558,7 +585,7 @@
 
                 // Update response count
                 await db.collection('surveys').doc(surveyId).update({
-                    responseCount: firebase.firestore.FieldValue.increment(1)
+                    vwResponseCount: firebase.firestore.FieldValue.increment(1)
                 });
 
                 // Show thank you

@@ -92,44 +92,6 @@
             margin-bottom: 1.5rem;
         }
 
-        /* Tabs */
-        .tabs {
-            display: flex;
-            gap: 0;
-            margin-bottom: 2rem;
-            border-bottom: 2px solid var(--border);
-        }
-
-        .tab {
-            padding: 1rem 2rem;
-            border: none;
-            background: none;
-            font-size: 1rem;
-            font-weight: 600;
-            color: var(--text-light);
-            cursor: pointer;
-            border-bottom: 3px solid transparent;
-            margin-bottom: -2px;
-            transition: all 0.3s;
-        }
-
-        .tab:hover {
-            color: var(--iu-crimson);
-        }
-
-        .tab.active {
-            color: var(--iu-crimson);
-            border-bottom-color: var(--iu-crimson);
-        }
-
-        .tab-content {
-            display: none;
-        }
-
-        .tab-content.active {
-            display: block;
-        }
-
         /* Form Controls */
         .form-group {
             margin-bottom: 1.5rem;
@@ -170,6 +132,150 @@
             display: grid;
             grid-template-columns: repeat(3, 1fr);
             gap: 1rem;
+        }
+
+        .form-row-2 {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+        }
+
+        /* Survey Type Selection */
+        .survey-type-selector {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .survey-type-option {
+            flex: 1;
+            padding: 1.25rem;
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+        }
+
+        .survey-type-option:hover {
+            border-color: var(--iu-crimson);
+        }
+
+        .survey-type-option.selected {
+            border-color: var(--iu-crimson);
+            background: rgba(153, 0, 0, 0.05);
+        }
+
+        .survey-type-option input {
+            display: none;
+        }
+
+        .survey-type-icon {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .survey-type-name {
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 0.25rem;
+        }
+
+        .survey-type-desc {
+            font-size: 0.8rem;
+            color: var(--text-light);
+        }
+
+        /* Photo Upload */
+        .photo-upload-area {
+            border: 2px dashed var(--border);
+            border-radius: 12px;
+            padding: 2rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+        }
+
+        .photo-upload-area:hover {
+            border-color: var(--iu-crimson);
+            background: rgba(153, 0, 0, 0.02);
+        }
+
+        .photo-upload-area input {
+            display: none;
+        }
+
+        .photo-upload-icon {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .photo-upload-text {
+            color: var(--text-light);
+            font-size: 0.95rem;
+        }
+
+        .photo-preview {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .photo-preview-item {
+            position: relative;
+            width: 120px;
+            height: 120px;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid var(--border);
+        }
+
+        .photo-preview-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .photo-remove {
+            position: absolute;
+            top: 4px;
+            right: 4px;
+            width: 24px;
+            height: 24px;
+            background: rgba(0,0,0,0.7);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .photo-remove:hover {
+            background: #dc2626;
+        }
+
+        /* Conditional Options */
+        .gg-options {
+            display: none;
+            background: var(--bg-light);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-top: 1rem;
+        }
+
+        .gg-options.visible {
+            display: block;
+        }
+
+        .gg-options h4 {
+            color: var(--iu-crimson);
+            margin-bottom: 1rem;
+            font-size: 1rem;
         }
 
         /* Buttons */
@@ -249,32 +355,62 @@
             background: rgba(34, 197, 94, 0.05);
         }
 
-        .survey-info h4 {
+        .survey-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .survey-thumb {
+            width: 60px;
+            height: 60px;
+            border-radius: 8px;
+            background: var(--white);
+            border: 1px solid var(--border);
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        .survey-thumb img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .survey-details h4 {
             color: var(--text-dark);
             margin-bottom: 0.25rem;
         }
 
-        .survey-info p {
+        .survey-details p {
             font-size: 0.85rem;
             color: var(--text-light);
         }
 
         .survey-meta {
             display: flex;
-            gap: 1rem;
+            gap: 0.75rem;
             margin-top: 0.5rem;
         }
 
         .survey-meta span {
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             color: var(--text-light);
             background: var(--white);
-            padding: 0.25rem 0.75rem;
-            border-radius: 12px;
+            padding: 0.2rem 0.6rem;
+            border-radius: 10px;
         }
 
         .survey-meta span.active-badge {
             background: #22c55e;
+            color: white;
+        }
+
+        .survey-meta span.type-badge {
+            background: var(--iu-crimson);
             color: white;
         }
 
@@ -367,8 +503,12 @@
 
         /* Responsive */
         @media (max-width: 768px) {
-            .form-row {
+            .form-row, .form-row-2 {
                 grid-template-columns: 1fr;
+            }
+
+            .survey-type-selector {
+                flex-direction: column;
             }
 
             .survey-card {
@@ -377,14 +517,9 @@
                 gap: 1rem;
             }
 
-            .tabs {
-                flex-wrap: wrap;
-            }
-
-            .tab {
-                flex: 1;
-                text-align: center;
-                padding: 0.75rem 1rem;
+            .survey-info {
+                flex-direction: column;
+                align-items: flex-start;
             }
         }
 
@@ -398,6 +533,10 @@
         footer a {
             color: var(--iu-crimson);
             text-decoration: none;
+        }
+
+        .hidden {
+            display: none !important;
         }
     </style>
 </head>
@@ -423,140 +562,124 @@
 
             <div class="status-message" id="statusMessage"></div>
 
-            <!-- Tabs -->
-            <div class="tabs">
-                <button class="tab active" onclick="switchTab('gabor-granger')">Gabor-Granger Surveys</button>
-                <button class="tab" onclick="switchTab('van-westendorp')">Van Westendorp Surveys</button>
-            </div>
+            <!-- Create New Survey -->
+            <div class="tool-container" id="create-section">
+                <h2 class="section-title">Create New Survey</h2>
+                <p class="section-subtitle">Set up a pricing survey to share with your students</p>
 
-            <!-- Gabor-Granger Tab -->
-            <div class="tab-content active" id="tab-gabor-granger">
-                <!-- Create New Survey -->
-                <div class="tool-container">
-                    <h2 class="section-title">Create New Gabor-Granger Survey</h2>
-                    <p class="section-subtitle">Set up a price ladder survey with randomized starting points</p>
-
-                    <div class="form-group">
-                        <label for="gg-name">Survey Name</label>
-                        <input type="text" id="gg-name" placeholder="e.g., M450 Pricing Exercise - Spring 2025">
+                <!-- Survey Type Selection -->
+                <div class="form-group">
+                    <label>Survey Type(s)</label>
+                    <p class="form-hint" style="margin-bottom: 0.75rem;">Select one or both survey types. If both are selected, students can complete either or both surveys for this product.</p>
+                    <div class="survey-type-selector">
+                        <label class="survey-type-option" id="opt-gg">
+                            <input type="checkbox" id="type-gg" onchange="updateSurveyTypes()">
+                            <div class="survey-type-icon">📊</div>
+                            <div class="survey-type-name">Gabor-Granger</div>
+                            <div class="survey-type-desc">Price ladder to find max WTP</div>
+                        </label>
+                        <label class="survey-type-option" id="opt-vw">
+                            <input type="checkbox" id="type-vw" onchange="updateSurveyTypes()">
+                            <div class="survey-type-icon">📈</div>
+                            <div class="survey-type-name">Van Westendorp</div>
+                            <div class="survey-type-desc">4 questions for price sensitivity</div>
+                        </label>
                     </div>
+                </div>
 
+                <!-- Survey Name -->
+                <div class="form-group">
+                    <label for="survey-name">Survey Name</label>
+                    <input type="text" id="survey-name" placeholder="e.g., M450 Pricing Exercise - Spring 2025">
+                    <p class="form-hint">Internal name to identify this survey session</p>
+                </div>
+
+                <!-- Product Info -->
+                <div class="form-row-2">
                     <div class="form-group">
-                        <label for="gg-product">Product Name</label>
-                        <input type="text" id="gg-product" placeholder="e.g., Premium Wireless Headphones">
-                        <p class="form-hint">Students will see: "Would you buy [Product Name] at $X?"</p>
+                        <label for="product-name">Product Name</label>
+                        <input type="text" id="product-name" placeholder="e.g., Premium Wireless Headphones">
+                        <p class="form-hint">Students will see this product name in the survey</p>
                     </div>
-
                     <div class="form-group">
-                        <label for="gg-description">Product Description (Optional)</label>
-                        <textarea id="gg-description" rows="3" placeholder="Describe the product so students understand what they're evaluating..."></textarea>
+                        <label for="currency">Currency</label>
+                        <select id="currency">
+                            <option value="$">$ (USD)</option>
+                            <option value="€">€ (EUR)</option>
+                            <option value="£">£ (GBP)</option>
+                            <option value="¥">¥ (JPY/CNY)</option>
+                        </select>
                     </div>
+                </div>
 
+                <div class="form-group">
+                    <label for="product-description">Product Description</label>
+                    <textarea id="product-description" rows="3" placeholder="Describe the product features so students understand what they're evaluating..."></textarea>
+                    <p class="form-hint">Optional but recommended for realistic responses</p>
+                </div>
+
+                <!-- Product Photos -->
+                <div class="form-group">
+                    <label>Product Photos (Optional)</label>
+                    <p class="form-hint" style="margin-bottom: 0.75rem;">Add up to 3 photos to help students visualize the product</p>
+                    <div class="photo-upload-area" id="photo-upload-area" onclick="document.getElementById('photo-input').click()">
+                        <input type="file" id="photo-input" accept="image/*" multiple onchange="handlePhotoUpload(event)">
+                        <div class="photo-upload-icon">📷</div>
+                        <div class="photo-upload-text">Click to upload photos or drag and drop</div>
+                        <div class="photo-upload-text" style="font-size: 0.8rem; margin-top: 0.25rem;">Max 3 photos, 2MB each</div>
+                    </div>
+                    <div class="photo-preview" id="photo-preview"></div>
+                </div>
+
+                <!-- Gabor-Granger Specific Options -->
+                <div class="gg-options" id="gg-options">
+                    <h4>Gabor-Granger Price Ladder Settings</h4>
                     <div class="form-row">
                         <div class="form-group">
-                            <label for="gg-min-price">Minimum Price ($)</label>
-                            <input type="number" id="gg-min-price" value="10" min="0" step="1">
+                            <label for="min-price">Minimum Price</label>
+                            <input type="number" id="min-price" value="10" min="0" step="1">
                         </div>
                         <div class="form-group">
-                            <label for="gg-max-price">Maximum Price ($)</label>
-                            <input type="number" id="gg-max-price" value="100" min="0" step="1">
+                            <label for="max-price">Maximum Price</label>
+                            <input type="number" id="max-price" value="100" min="0" step="1">
                         </div>
                         <div class="form-group">
-                            <label for="gg-step">Price Step ($)</label>
-                            <input type="number" id="gg-step" value="5" min="1" step="1">
-                            <p class="form-hint">Creates ladder: $10, $15, $20...</p>
+                            <label for="price-step">Price Step</label>
+                            <input type="number" id="price-step" value="5" min="1" step="1">
+                            <p class="form-hint">Creates: $10, $15, $20...</p>
                         </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="gg-currency">Currency Symbol</label>
-                        <select id="gg-currency" style="width: 150px;">
-                            <option value="$">$ (USD)</option>
-                            <option value="€">€ (EUR)</option>
-                            <option value="£">£ (GBP)</option>
-                            <option value="¥">¥ (JPY/CNY)</option>
-                        </select>
-                    </div>
-
-                    <div class="button-group">
-                        <button class="btn btn-primary" onclick="createGGSurvey()">Create Survey</button>
                     </div>
                 </div>
 
-                <!-- Existing Surveys -->
-                <div class="tool-container">
-                    <h2 class="section-title">Your Gabor-Granger Surveys</h2>
-                    <div id="gg-survey-list" class="survey-list">
-                        <div class="empty-state">
-                            <h3>No surveys yet</h3>
-                            <p>Create your first Gabor-Granger survey above.</p>
-                        </div>
+                <div class="button-group">
+                    <button class="btn btn-primary" onclick="createSurvey()">Create Survey</button>
+                    <button class="btn btn-secondary" onclick="resetForm()">Clear Form</button>
+                </div>
+            </div>
+
+            <!-- Existing Surveys -->
+            <div class="tool-container">
+                <h2 class="section-title">Your Surveys</h2>
+                <div id="survey-list" class="survey-list">
+                    <div class="empty-state">
+                        <h3>No surveys yet</h3>
+                        <p>Create your first survey above.</p>
                     </div>
                 </div>
             </div>
 
-            <!-- Van Westendorp Tab -->
-            <div class="tab-content" id="tab-van-westendorp">
-                <!-- Create New Survey -->
-                <div class="tool-container">
-                    <h2 class="section-title">Create New Van Westendorp Survey</h2>
-                    <p class="section-subtitle">Collect responses to the four price sensitivity questions</p>
-
-                    <div class="form-group">
-                        <label for="vw-name">Survey Name</label>
-                        <input type="text" id="vw-name" placeholder="e.g., M450 PSM Exercise - Spring 2025">
-                    </div>
-
-                    <div class="form-group">
-                        <label for="vw-product">Product Name</label>
-                        <input type="text" id="vw-product" placeholder="e.g., Streaming Music Subscription">
-                    </div>
-
-                    <div class="form-group">
-                        <label for="vw-description">Product Description (Optional)</label>
-                        <textarea id="vw-description" rows="3" placeholder="Describe the product so students understand what they're evaluating..."></textarea>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="vw-currency">Currency Symbol</label>
-                        <select id="vw-currency" style="width: 150px;">
-                            <option value="$">$ (USD)</option>
-                            <option value="€">€ (EUR)</option>
-                            <option value="£">£ (GBP)</option>
-                            <option value="¥">¥ (JPY/CNY)</option>
-                        </select>
-                    </div>
-
-                    <div class="button-group">
-                        <button class="btn btn-primary" onclick="createVWSurvey()">Create Survey</button>
-                    </div>
-                </div>
-
-                <!-- Existing Surveys -->
-                <div class="tool-container">
-                    <h2 class="section-title">Your Van Westendorp Surveys</h2>
-                    <div id="vw-survey-list" class="survey-list">
-                        <div class="empty-state">
-                            <h3>No surveys yet</h3>
-                            <p>Create your first Van Westendorp survey above.</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Survey Details Modal (hidden by default) -->
-            <div class="tool-container" id="survey-details" style="display: none;">
+            <!-- Survey Details (hidden by default) -->
+            <div class="tool-container hidden" id="survey-details">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
                     <h2 class="section-title" style="border: none; margin: 0; padding: 0;" id="detail-title">Survey Details</h2>
                     <button class="btn btn-secondary btn-small" onclick="closeSurveyDetails()">← Back to List</button>
                 </div>
 
-                <div class="link-box">
-                    <input type="text" id="survey-link" readonly>
-                    <button class="btn btn-secondary btn-small" onclick="copyLink()">Copy Link</button>
+                <div id="survey-links-section">
+                    <!-- Links will be populated here -->
                 </div>
 
-                <div style="margin-top: 1.5rem; display: flex; gap: 1rem; align-items: center;">
+                <div style="margin-top: 1.5rem; display: flex; gap: 1rem; align-items: center; flex-wrap: wrap;">
                     <span id="response-count" style="font-size: 1.1rem; font-weight: 600;">0 responses</span>
                     <button class="btn btn-secondary btn-small" onclick="refreshResponses()">↻ Refresh</button>
                     <button class="btn btn-primary btn-small" onclick="loadIntoAnalysis()">Load into Analysis Tool</button>
@@ -584,6 +707,7 @@
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-storage-compat.js"></script>
 
     <script>
         // Firebase configuration
@@ -600,9 +724,11 @@
         // Initialize Firebase
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
+        const storage = firebase.storage();
         let currentUser = null;
         let currentSurvey = null;
-        let currentSurveyType = null;
+        let currentSurveyData = null;
+        let uploadedPhotos = []; // Store base64 encoded photos
 
         // Check authentication state
         firebase.auth().onAuthStateChanged(function(user) {
@@ -624,29 +750,158 @@
             setTimeout(() => el.classList.remove('visible'), 5000);
         }
 
-        // Tab switching
-        function switchTab(tab) {
-            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+        // Survey type selection
+        function updateSurveyTypes() {
+            const ggChecked = document.getElementById('type-gg').checked;
+            const vwChecked = document.getElementById('type-vw').checked;
 
-            event.target.classList.add('active');
-            document.getElementById(`tab-${tab}`).classList.add('active');
-
-            // Hide survey details when switching tabs
-            document.getElementById('survey-details').style.display = 'none';
+            document.getElementById('opt-gg').classList.toggle('selected', ggChecked);
+            document.getElementById('opt-vw').classList.toggle('selected', vwChecked);
+            document.getElementById('gg-options').classList.toggle('visible', ggChecked);
         }
 
-        // Load all surveys
+        // Photo upload handling
+        function handlePhotoUpload(event) {
+            const files = Array.from(event.target.files);
+            const maxPhotos = 3;
+            const maxSize = 2 * 1024 * 1024; // 2MB
+
+            if (uploadedPhotos.length + files.length > maxPhotos) {
+                showStatus(`Maximum ${maxPhotos} photos allowed.`, 'error');
+                return;
+            }
+
+            files.forEach(file => {
+                if (file.size > maxSize) {
+                    showStatus(`${file.name} is too large. Max 2MB per photo.`, 'error');
+                    return;
+                }
+
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    uploadedPhotos.push({
+                        name: file.name,
+                        data: e.target.result
+                    });
+                    renderPhotoPreview();
+                };
+                reader.readAsDataURL(file);
+            });
+
+            // Clear input so same file can be selected again
+            event.target.value = '';
+        }
+
+        function renderPhotoPreview() {
+            const container = document.getElementById('photo-preview');
+            container.innerHTML = uploadedPhotos.map((photo, idx) => `
+                <div class="photo-preview-item">
+                    <img src="${photo.data}" alt="Product photo">
+                    <button class="photo-remove" onclick="removePhoto(${idx})">×</button>
+                </div>
+            `).join('');
+        }
+
+        function removePhoto(index) {
+            uploadedPhotos.splice(index, 1);
+            renderPhotoPreview();
+        }
+
+        // Create survey
+        async function createSurvey() {
+            const ggChecked = document.getElementById('type-gg').checked;
+            const vwChecked = document.getElementById('type-vw').checked;
+            const surveyName = document.getElementById('survey-name').value.trim();
+            const productName = document.getElementById('product-name').value.trim();
+            const productDescription = document.getElementById('product-description').value.trim();
+            const currency = document.getElementById('currency').value;
+
+            // Validation
+            if (!ggChecked && !vwChecked) {
+                showStatus('Please select at least one survey type.', 'error');
+                return;
+            }
+
+            if (!surveyName || !productName) {
+                showStatus('Please fill in survey name and product name.', 'error');
+                return;
+            }
+
+            // GG-specific validation
+            let ggConfig = null;
+            if (ggChecked) {
+                const minPrice = parseFloat(document.getElementById('min-price').value);
+                const maxPrice = parseFloat(document.getElementById('max-price').value);
+                const step = parseFloat(document.getElementById('price-step').value);
+
+                if (minPrice >= maxPrice) {
+                    showStatus('Maximum price must be greater than minimum price.', 'error');
+                    return;
+                }
+
+                ggConfig = { minPrice, maxPrice, step };
+            }
+
+            try {
+                // Build survey types array
+                const types = [];
+                if (ggChecked) types.push('gabor-granger');
+                if (vwChecked) types.push('van-westendorp');
+
+                const surveyData = {
+                    name: surveyName,
+                    product: productName,
+                    description: productDescription,
+                    currency,
+                    types, // Array of survey types
+                    photos: uploadedPhotos.map(p => p.data), // Store base64 photos
+                    userId: currentUser.uid,
+                    active: true,
+                    ggResponseCount: 0,
+                    vwResponseCount: 0,
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                };
+
+                // Add GG config if applicable
+                if (ggConfig) {
+                    surveyData.minPrice = ggConfig.minPrice;
+                    surveyData.maxPrice = ggConfig.maxPrice;
+                    surveyData.step = ggConfig.step;
+                }
+
+                await db.collection('surveys').add(surveyData);
+
+                showStatus('Survey created successfully!', 'success');
+                resetForm();
+                loadSurveys();
+            } catch (error) {
+                console.error('Error creating survey:', error);
+                showStatus('Error creating survey. Please try again.', 'error');
+            }
+        }
+
+        function resetForm() {
+            document.getElementById('type-gg').checked = false;
+            document.getElementById('type-vw').checked = false;
+            document.getElementById('opt-gg').classList.remove('selected');
+            document.getElementById('opt-vw').classList.remove('selected');
+            document.getElementById('gg-options').classList.remove('visible');
+            document.getElementById('survey-name').value = '';
+            document.getElementById('product-name').value = '';
+            document.getElementById('product-description').value = '';
+            document.getElementById('min-price').value = '10';
+            document.getElementById('max-price').value = '100';
+            document.getElementById('price-step').value = '5';
+            uploadedPhotos = [];
+            renderPhotoPreview();
+        }
+
+        // Load surveys
         async function loadSurveys() {
-            await loadGGSurveys();
-            await loadVWSurveys();
-        }
+            const container = document.getElementById('survey-list');
 
-        async function loadGGSurveys() {
-            const container = document.getElementById('gg-survey-list');
             try {
                 const snapshot = await db.collection('surveys')
-                    .where('type', '==', 'gabor-granger')
                     .where('userId', '==', currentUser.uid)
                     .orderBy('createdAt', 'desc')
                     .get();
@@ -655,7 +910,7 @@
                     container.innerHTML = `
                         <div class="empty-state">
                             <h3>No surveys yet</h3>
-                            <p>Create your first Gabor-Granger survey above.</p>
+                            <p>Create your first survey above.</p>
                         </div>
                     `;
                     return;
@@ -664,149 +919,55 @@
                 container.innerHTML = '';
                 snapshot.forEach(doc => {
                     const survey = doc.data();
-                    container.innerHTML += createSurveyCard(doc.id, survey, 'gg');
+                    container.innerHTML += createSurveyCard(doc.id, survey);
                 });
             } catch (error) {
                 console.error('Error loading surveys:', error);
             }
         }
 
-        async function loadVWSurveys() {
-            const container = document.getElementById('vw-survey-list');
-            try {
-                const snapshot = await db.collection('surveys')
-                    .where('type', '==', 'van-westendorp')
-                    .where('userId', '==', currentUser.uid)
-                    .orderBy('createdAt', 'desc')
-                    .get();
-
-                if (snapshot.empty) {
-                    container.innerHTML = `
-                        <div class="empty-state">
-                            <h3>No surveys yet</h3>
-                            <p>Create your first Van Westendorp survey above.</p>
-                        </div>
-                    `;
-                    return;
-                }
-
-                container.innerHTML = '';
-                snapshot.forEach(doc => {
-                    const survey = doc.data();
-                    container.innerHTML += createSurveyCard(doc.id, survey, 'vw');
-                });
-            } catch (error) {
-                console.error('Error loading surveys:', error);
-            }
-        }
-
-        function createSurveyCard(id, survey, type) {
+        function createSurveyCard(id, survey) {
             const isActive = survey.active !== false;
             const createdDate = survey.createdAt?.toDate().toLocaleDateString() || 'Unknown';
-            const responseCount = survey.responseCount || 0;
+            const totalResponses = (survey.ggResponseCount || 0) + (survey.vwResponseCount || 0);
+
+            // Get thumbnail
+            let thumbHtml = '';
+            if (survey.photos && survey.photos.length > 0) {
+                thumbHtml = `<img src="${survey.photos[0]}" alt="${survey.product}">`;
+            } else {
+                thumbHtml = '📦';
+            }
+
+            // Type badges
+            const typeBadges = (survey.types || []).map(t => {
+                const label = t === 'gabor-granger' ? 'GG' : 'VW';
+                return `<span class="type-badge">${label}</span>`;
+            }).join('');
 
             return `
                 <div class="survey-card ${isActive ? 'active' : ''}">
                     <div class="survey-info">
-                        <h4>${survey.name}</h4>
-                        <p>Product: ${survey.product}</p>
-                        <div class="survey-meta">
-                            <span>${responseCount} responses</span>
-                            <span>Created: ${createdDate}</span>
-                            ${isActive ? '<span class="active-badge">Active</span>' : '<span>Closed</span>'}
+                        <div class="survey-thumb">${thumbHtml}</div>
+                        <div class="survey-details">
+                            <h4>${survey.name}</h4>
+                            <p>Product: ${survey.product}</p>
+                            <div class="survey-meta">
+                                ${typeBadges}
+                                <span>${totalResponses} responses</span>
+                                <span>Created: ${createdDate}</span>
+                                ${isActive ? '<span class="active-badge">Active</span>' : '<span>Closed</span>'}
+                            </div>
                         </div>
                     </div>
                     <div class="survey-actions">
-                        <button class="btn btn-secondary btn-small" onclick="viewSurvey('${id}', '${type}')">View</button>
+                        <button class="btn btn-secondary btn-small" onclick="viewSurvey('${id}')">View</button>
                         <button class="btn btn-small ${isActive ? 'btn-danger' : 'btn-primary'}" onclick="toggleSurvey('${id}', ${isActive})">
                             ${isActive ? 'Close' : 'Reopen'}
                         </button>
                     </div>
                 </div>
             `;
-        }
-
-        // Create Gabor-Granger Survey
-        async function createGGSurvey() {
-            const name = document.getElementById('gg-name').value.trim();
-            const product = document.getElementById('gg-product').value.trim();
-            const description = document.getElementById('gg-description').value.trim();
-            const minPrice = parseFloat(document.getElementById('gg-min-price').value);
-            const maxPrice = parseFloat(document.getElementById('gg-max-price').value);
-            const step = parseFloat(document.getElementById('gg-step').value);
-            const currency = document.getElementById('gg-currency').value;
-
-            if (!name || !product) {
-                showStatus('Please fill in survey name and product name.', 'error');
-                return;
-            }
-
-            if (minPrice >= maxPrice) {
-                showStatus('Maximum price must be greater than minimum price.', 'error');
-                return;
-            }
-
-            try {
-                await db.collection('surveys').add({
-                    type: 'gabor-granger',
-                    name,
-                    product,
-                    description,
-                    minPrice,
-                    maxPrice,
-                    step,
-                    currency,
-                    userId: currentUser.uid,
-                    active: true,
-                    responseCount: 0,
-                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
-                });
-
-                showStatus('Survey created successfully!', 'success');
-                document.getElementById('gg-name').value = '';
-                document.getElementById('gg-product').value = '';
-                document.getElementById('gg-description').value = '';
-                loadGGSurveys();
-            } catch (error) {
-                console.error('Error creating survey:', error);
-                showStatus('Error creating survey. Please try again.', 'error');
-            }
-        }
-
-        // Create Van Westendorp Survey
-        async function createVWSurvey() {
-            const name = document.getElementById('vw-name').value.trim();
-            const product = document.getElementById('vw-product').value.trim();
-            const description = document.getElementById('vw-description').value.trim();
-            const currency = document.getElementById('vw-currency').value;
-
-            if (!name || !product) {
-                showStatus('Please fill in survey name and product name.', 'error');
-                return;
-            }
-
-            try {
-                await db.collection('surveys').add({
-                    type: 'van-westendorp',
-                    name,
-                    product,
-                    description,
-                    currency,
-                    userId: currentUser.uid,
-                    active: true,
-                    responseCount: 0,
-                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
-                });
-
-                showStatus('Survey created successfully!', 'success');
-                document.getElementById('vw-name').value = '';
-                document.getElementById('vw-product').value = '';
-                document.getElementById('vw-description').value = '';
-                loadVWSurveys();
-            } catch (error) {
-                console.error('Error creating survey:', error);
-                showStatus('Error creating survey. Please try again.', 'error');
-            }
         }
 
         // Toggle survey active state
@@ -824,101 +985,136 @@
         }
 
         // View survey details
-        async function viewSurvey(id, type) {
+        async function viewSurvey(id) {
             currentSurvey = id;
-            currentSurveyType = type;
-
-            // Hide tab content, show details
-            document.querySelectorAll('.tab-content').forEach(c => c.style.display = 'none');
-            document.getElementById('survey-details').style.display = 'block';
 
             // Get survey info
             const doc = await db.collection('surveys').doc(id).get();
-            const survey = doc.data();
+            currentSurveyData = doc.data();
 
-            document.getElementById('detail-title').textContent = survey.name;
+            document.getElementById('detail-title').textContent = currentSurveyData.name;
 
-            // Set survey link
+            // Build links section
             const baseUrl = window.location.origin + window.location.pathname.replace('survey-admin.html', '');
-            const surveyPage = type === 'gg' ? 'gg-survey.html' : 'vw-survey.html';
-            document.getElementById('survey-link').value = `${baseUrl}${surveyPage}?id=${id}`;
+            const types = currentSurveyData.types || [];
 
-            // Set table headers based on type
-            const header = document.getElementById('responses-header');
-            if (type === 'gg') {
-                header.innerHTML = '<th>#</th><th>Max WTP</th><th>Starting Price</th><th>Steps Taken</th><th>Submitted</th>';
-            } else {
-                header.innerHTML = '<th>#</th><th>Too Cheap</th><th>Bargain</th><th>Expensive</th><th>Too Expensive</th><th>Submitted</th>';
+            let linksHtml = '';
+            if (types.includes('gabor-granger')) {
+                linksHtml += `
+                    <div style="margin-bottom: 1rem;">
+                        <label style="font-weight: 600; display: block; margin-bottom: 0.5rem;">Gabor-Granger Survey Link:</label>
+                        <div class="link-box">
+                            <input type="text" id="link-gg" value="${baseUrl}gg-survey.html?id=${id}" readonly>
+                            <button class="btn btn-secondary btn-small" onclick="copyLink('link-gg')">Copy</button>
+                        </div>
+                    </div>
+                `;
             }
+            if (types.includes('van-westendorp')) {
+                linksHtml += `
+                    <div>
+                        <label style="font-weight: 600; display: block; margin-bottom: 0.5rem;">Van Westendorp Survey Link:</label>
+                        <div class="link-box">
+                            <input type="text" id="link-vw" value="${baseUrl}vw-survey.html?id=${id}" readonly>
+                            <button class="btn btn-secondary btn-small" onclick="copyLink('link-vw')">Copy</button>
+                        </div>
+                    </div>
+                `;
+            }
+            document.getElementById('survey-links-section').innerHTML = linksHtml;
+
+            // Hide create section, show details
+            document.getElementById('create-section').classList.add('hidden');
+            document.getElementById('survey-details').classList.remove('hidden');
 
             // Load responses
             await refreshResponses();
         }
 
         function closeSurveyDetails() {
-            document.getElementById('survey-details').style.display = 'none';
-            document.querySelectorAll('.tab-content').forEach(c => c.style.display = '');
-            document.querySelector('.tab-content.active').style.display = 'block';
+            document.getElementById('survey-details').classList.add('hidden');
+            document.getElementById('create-section').classList.remove('hidden');
             currentSurvey = null;
-            currentSurveyType = null;
+            currentSurveyData = null;
         }
 
         async function refreshResponses() {
             if (!currentSurvey) return;
 
             const tbody = document.getElementById('responses-body');
+            const header = document.getElementById('responses-header');
             tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 2rem;">Loading...</td></tr>';
 
             try {
-                const snapshot = await db.collection('surveys').doc(currentSurvey)
-                    .collection('responses')
+                // Get GG responses
+                const ggSnapshot = await db.collection('surveys').doc(currentSurvey)
+                    .collection('gg_responses')
                     .orderBy('submittedAt', 'desc')
                     .get();
 
-                document.getElementById('response-count').textContent = `${snapshot.size} responses`;
+                // Get VW responses
+                const vwSnapshot = await db.collection('surveys').doc(currentSurvey)
+                    .collection('vw_responses')
+                    .orderBy('submittedAt', 'desc')
+                    .get();
 
-                if (snapshot.empty) {
-                    tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 2rem; color: #666;">No responses yet. Share the survey link with your students!</td></tr>';
+                const totalResponses = ggSnapshot.size + vwSnapshot.size;
+                document.getElementById('response-count').textContent = `${totalResponses} responses (${ggSnapshot.size} GG, ${vwSnapshot.size} VW)`;
+
+                if (totalResponses === 0) {
+                    header.innerHTML = '<th>No responses yet</th>';
+                    tbody.innerHTML = '<tr><td style="text-align: center; padding: 2rem; color: #666;">Share the survey links with your students!</td></tr>';
                     return;
                 }
 
+                // Determine which columns to show based on survey types
+                const types = currentSurveyData.types || [];
+                const hasGG = types.includes('gabor-granger');
+                const hasVW = types.includes('van-westendorp');
+
+                // Combined view
+                header.innerHTML = '<th>#</th><th>Type</th><th>Response</th><th>Submitted</th>';
+
                 tbody.innerHTML = '';
-                let index = snapshot.size;
-                snapshot.forEach(doc => {
+                let index = 1;
+
+                // Add GG responses
+                ggSnapshot.forEach(doc => {
                     const r = doc.data();
                     const time = r.submittedAt?.toDate().toLocaleString() || 'Unknown';
-
-                    if (currentSurveyType === 'gg') {
-                        tbody.innerHTML += `
-                            <tr>
-                                <td>${index--}</td>
-                                <td><strong>$${r.maxWtp?.toFixed(2) || 'N/A'}</strong></td>
-                                <td>$${r.startingPrice?.toFixed(2) || 'N/A'}</td>
-                                <td>${r.steps || 'N/A'}</td>
-                                <td>${time}</td>
-                            </tr>
-                        `;
-                    } else {
-                        tbody.innerHTML += `
-                            <tr>
-                                <td>${index--}</td>
-                                <td>$${r.tooCheap?.toFixed(2) || 'N/A'}</td>
-                                <td>$${r.cheap?.toFixed(2) || 'N/A'}</td>
-                                <td>$${r.expensive?.toFixed(2) || 'N/A'}</td>
-                                <td>$${r.tooExpensive?.toFixed(2) || 'N/A'}</td>
-                                <td>${time}</td>
-                            </tr>
-                        `;
-                    }
+                    const wtpText = r.maxWtp > 0 ? `Max WTP: $${r.maxWtp.toFixed(2)}` : 'Below minimum';
+                    tbody.innerHTML += `
+                        <tr>
+                            <td>${index++}</td>
+                            <td><span style="background: var(--iu-crimson); color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.75rem;">GG</span></td>
+                            <td><strong>${wtpText}</strong> (started at $${r.startingPrice?.toFixed(2)}, ${r.steps} steps)</td>
+                            <td>${time}</td>
+                        </tr>
+                    `;
                 });
+
+                // Add VW responses
+                vwSnapshot.forEach(doc => {
+                    const r = doc.data();
+                    const time = r.submittedAt?.toDate().toLocaleString() || 'Unknown';
+                    tbody.innerHTML += `
+                        <tr>
+                            <td>${index++}</td>
+                            <td><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.75rem;">VW</span></td>
+                            <td>TC: $${r.tooCheap?.toFixed(2)} | B: $${r.cheap?.toFixed(2)} | E: $${r.expensive?.toFixed(2)} | TE: $${r.tooExpensive?.toFixed(2)}</td>
+                            <td>${time}</td>
+                        </tr>
+                    `;
+                });
+
             } catch (error) {
                 console.error('Error loading responses:', error);
                 tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 2rem; color: #991b1b;">Error loading responses.</td></tr>';
             }
         }
 
-        function copyLink() {
-            const input = document.getElementById('survey-link');
+        function copyLink(inputId) {
+            const input = document.getElementById(inputId);
             input.select();
             document.execCommand('copy');
             showStatus('Link copied to clipboard!', 'success');
@@ -927,29 +1123,45 @@
         async function exportCSV() {
             if (!currentSurvey) return;
 
-            const snapshot = await db.collection('surveys').doc(currentSurvey)
-                .collection('responses')
-                .orderBy('submittedAt', 'asc')
-                .get();
+            const types = currentSurveyData.types || [];
+            let csv = '';
 
-            if (snapshot.empty) {
-                showStatus('No responses to export.', 'error');
-                return;
+            if (types.includes('gabor-granger')) {
+                const ggSnapshot = await db.collection('surveys').doc(currentSurvey)
+                    .collection('gg_responses')
+                    .orderBy('submittedAt', 'asc')
+                    .get();
+
+                if (!ggSnapshot.empty) {
+                    csv += 'GABOR-GRANGER RESPONSES\n';
+                    csv += 'max_wtp,starting_price,steps,submitted_at\n';
+                    ggSnapshot.forEach(doc => {
+                        const r = doc.data();
+                        csv += `${r.maxWtp || ''},${r.startingPrice || ''},${r.steps || ''},${r.submittedAt?.toDate().toISOString() || ''}\n`;
+                    });
+                    csv += '\n';
+                }
             }
 
-            let csv = '';
-            if (currentSurveyType === 'gg') {
-                csv = 'max_wtp,starting_price,steps,submitted_at\n';
-                snapshot.forEach(doc => {
-                    const r = doc.data();
-                    csv += `${r.maxWtp || ''},${r.startingPrice || ''},${r.steps || ''},${r.submittedAt?.toDate().toISOString() || ''}\n`;
-                });
-            } else {
-                csv = 'too_cheap,cheap,expensive,too_expensive,submitted_at\n';
-                snapshot.forEach(doc => {
-                    const r = doc.data();
-                    csv += `${r.tooCheap || ''},${r.cheap || ''},${r.expensive || ''},${r.tooExpensive || ''},${r.submittedAt?.toDate().toISOString() || ''}\n`;
-                });
+            if (types.includes('van-westendorp')) {
+                const vwSnapshot = await db.collection('surveys').doc(currentSurvey)
+                    .collection('vw_responses')
+                    .orderBy('submittedAt', 'asc')
+                    .get();
+
+                if (!vwSnapshot.empty) {
+                    csv += 'VAN WESTENDORP RESPONSES\n';
+                    csv += 'too_cheap,cheap,expensive,too_expensive,submitted_at\n';
+                    vwSnapshot.forEach(doc => {
+                        const r = doc.data();
+                        csv += `${r.tooCheap || ''},${r.cheap || ''},${r.expensive || ''},${r.tooExpensive || ''},${r.submittedAt?.toDate().toISOString() || ''}\n`;
+                    });
+                }
+            }
+
+            if (!csv) {
+                showStatus('No responses to export.', 'error');
+                return;
             }
 
             const blob = new Blob([csv], { type: 'text/csv' });
@@ -966,27 +1178,57 @@
         async function loadIntoAnalysis() {
             if (!currentSurvey) return;
 
+            const types = currentSurveyData.types || [];
+
+            // If both types, ask which one
+            if (types.length === 2) {
+                const choice = confirm('This survey has both Gabor-Granger and Van Westendorp responses.\n\nClick OK for Gabor-Granger analysis\nClick Cancel for Van Westendorp analysis');
+                if (choice) {
+                    await loadGGIntoAnalysis();
+                } else {
+                    await loadVWIntoAnalysis();
+                }
+            } else if (types.includes('gabor-granger')) {
+                await loadGGIntoAnalysis();
+            } else if (types.includes('van-westendorp')) {
+                await loadVWIntoAnalysis();
+            }
+        }
+
+        async function loadGGIntoAnalysis() {
             const snapshot = await db.collection('surveys').doc(currentSurvey)
-                .collection('responses')
+                .collection('gg_responses')
                 .get();
 
             if (snapshot.empty) {
-                showStatus('No responses to analyze.', 'error');
+                showStatus('No Gabor-Granger responses to analyze.', 'error');
                 return;
             }
 
-            // Store data in sessionStorage and redirect to analysis tool
             const responses = [];
             snapshot.forEach(doc => responses.push(doc.data()));
 
             sessionStorage.setItem('surveyData', JSON.stringify(responses));
-            sessionStorage.setItem('surveyType', currentSurveyType);
+            sessionStorage.setItem('surveyType', 'gg');
+            window.location.href = 'gabor-granger.html?fromSurvey=true';
+        }
 
-            if (currentSurveyType === 'gg') {
-                window.location.href = 'gabor-granger.html?fromSurvey=true';
-            } else {
-                window.location.href = 'van-westendorp.html?fromSurvey=true';
+        async function loadVWIntoAnalysis() {
+            const snapshot = await db.collection('surveys').doc(currentSurvey)
+                .collection('vw_responses')
+                .get();
+
+            if (snapshot.empty) {
+                showStatus('No Van Westendorp responses to analyze.', 'error');
+                return;
             }
+
+            const responses = [];
+            snapshot.forEach(doc => responses.push(doc.data()));
+
+            sessionStorage.setItem('surveyData', JSON.stringify(responses));
+            sessionStorage.setItem('surveyType', 'vw');
+            window.location.href = 'van-westendorp.html?fromSurvey=true';
         }
     </script>
 </body>
