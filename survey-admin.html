@@ -1054,6 +1054,7 @@
                         <div class="link-box">
                             <input type="text" id="link-gg" value="${baseUrl}gg-survey.html?id=${id}" readonly>
                             <button class="btn btn-secondary btn-small" onclick="copyLink('link-gg')">Copy</button>
+                            <button class="btn btn-primary btn-small" onclick="openLink('link-gg')">Open</button>
                         </div>
                     </div>
                 `;
@@ -1065,6 +1066,7 @@
                         <div class="link-box">
                             <input type="text" id="link-vw" value="${baseUrl}vw-survey.html?id=${id}" readonly>
                             <button class="btn btn-secondary btn-small" onclick="copyLink('link-vw')">Copy</button>
+                            <button class="btn btn-primary btn-small" onclick="openLink('link-vw')">Open</button>
                         </div>
                     </div>
                 `;
@@ -1175,6 +1177,11 @@
             input.select();
             document.execCommand('copy');
             showStatus('Link copied to clipboard!', 'success');
+        }
+
+        function openLink(inputId) {
+            const input = document.getElementById(inputId);
+            window.open(input.value, '_blank');
         }
 
         // Download Gabor-Granger data in the correct format (just WTP values)
