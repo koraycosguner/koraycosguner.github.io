@@ -398,6 +398,8 @@
         let priceLadder = [];
         let currentPriceIndex = 0;
         let startingPriceIndex = 0;
+        let startingPrice = 0; // The actual random starting price shown first
+        let isFirstQuestion = true; // Track if showing the random starting price
         let direction = null; // 'up' or 'down'
         let hasAnsweredYes = false;
         let lastYesPrice = null;
@@ -482,12 +484,18 @@
                 priceLadder.push(p);
             }
 
-            // Random starting point (middle 60% of the ladder)
-            const ladderLength = priceLadder.length;
-            const startRange = Math.floor(ladderLength * 0.2);
-            const endRange = Math.floor(ladderLength * 0.8);
-            startingPriceIndex = Math.floor(Math.random() * (endRange - startRange + 1)) + startRange;
-            currentPriceIndex = startingPriceIndex;
+            // Random starting price (any integer in middle 60% of range)
+            // e.g., if range is $10-$100, middle 60% is $28-$82, pick any integer like $47, $63, $71
+            const priceRange = maxPrice - minPrice;
+            const startMin = minPrice + (priceRange * 0.2);
+            const startMax = minPrice + (priceRange * 0.8);
+            // Random integer in that range
+            startingPrice = Math.floor(Math.random() * (startMax - startMin + 1)) + Math.floor(startMin);
+
+            // Find closest ladder index (for navigation purposes)
+            currentPriceIndex = priceLadder.findIndex(p => p >= startingPrice);
+            if (currentPriceIndex === -1) currentPriceIndex = priceLadder.length - 1;
+            startingPriceIndex = currentPriceIndex;
         }
 
         function startSurvey() {
@@ -510,7 +518,14 @@
         }
 
         function updateDisplay() {
-            const price = priceLadder[currentPriceIndex];
+            // First question shows the random starting price (e.g., $67)
+            // Subsequent questions use the ladder prices
+            let price;
+            if (isFirstQuestion) {
+                price = startingPrice;
+            } else {
+                price = priceLadder[currentPriceIndex];
+            }
             document.getElementById('current-price').textContent = currency + price.toFixed(2);
             document.getElementById('progress-info').textContent = `Question ${stepCount + 1}`;
         }
@@ -518,27 +533,53 @@
         function answer(isYes) {
             stepCount++;
 
+            // Get current price (random for first, ladder for rest)
+            const currentPrice = isFirstQuestion ? startingPrice : priceLadder[currentPriceIndex];
+
             if (isYes) {
                 hasAnsweredYes = true;
-                lastYesPrice = priceLadder[currentPriceIndex];
+                lastYesPrice = currentPrice;
 
-                // Try to go up
-                if (currentPriceIndex < priceLadder.length - 1) {
-                    if (direction === 'down') {
-                        // Was going down, now they said yes - we found their max WTP
+                // After first question, switch to ladder navigation
+                if (isFirstQuestion) {
+                    isFirstQuestion = false;
+                    direction = 'up';
+                    currentPriceIndex++; // Move up on the ladder
+                    if (currentPriceIndex >= priceLadder.length) {
+                        // Already at top
                         submitResponse(lastYesPrice);
                         return;
                     }
-                    direction = 'up';
-                    currentPriceIndex++;
                     updateDisplay();
                 } else {
-                    // At the top of the ladder
-                    submitResponse(priceLadder[currentPriceIndex]);
+                    // Try to go up
+                    if (currentPriceIndex < priceLadder.length - 1) {
+                        if (direction === 'down') {
+                            // Was going down, now they said yes - we found their max WTP
+                            submitResponse(lastYesPrice);
+                            return;
+                        }
+                        direction = 'up';
+                        currentPriceIndex++;
+                        updateDisplay();
+                    } else {
+                        // At the top of the ladder
+                        submitResponse(priceLadder[currentPriceIndex]);
+                    }
                 }
             } else {
                 // No
-                if (hasAnsweredYes) {
+                if (isFirstQuestion) {
+                    isFirstQuestion = false;
+                    direction = 'down';
+                    currentPriceIndex--; // Move down on the ladder
+                    if (currentPriceIndex < 0) {
+                        // Already at bottom
+                        submitResponse(0);
+                        return;
+                    }
+                    updateDisplay();
+                } else if (hasAnsweredYes) {
                     // They previously said yes, now no - we found their max WTP
                     submitResponse(lastYesPrice);
                 } else {
@@ -571,7 +612,7 @@
                 await db.collection('surveys').doc(surveyId).collection('gg_responses').add({
                     name: studentName,
                     maxWtp: maxWtp,
-                    startingPrice: priceLadder[startingPriceIndex],
+                    startingPrice: startingPrice, // The actual random starting price (e.g., $67)
                     steps: stepCount,
                     submittedAt: firebase.firestore.FieldValue.serverTimestamp()
                 });
