@@ -682,8 +682,15 @@
                 <div style="margin-top: 1.5rem; display: flex; gap: 1rem; align-items: center; flex-wrap: wrap;">
                     <span id="response-count" style="font-size: 1.1rem; font-weight: 600;">0 responses</span>
                     <button class="btn btn-secondary btn-small" onclick="refreshResponses()">↻ Refresh</button>
-                    <button class="btn btn-primary btn-small" onclick="loadIntoAnalysis()">Load into Analysis Tool</button>
-                    <button class="btn btn-secondary btn-small" onclick="exportCSV()">Export CSV</button>
+                </div>
+
+                <!-- Download & Action Buttons -->
+                <div id="action-buttons" style="margin-top: 1rem; display: flex; gap: 0.75rem; flex-wrap: wrap;">
+                    <button class="btn btn-primary btn-small" id="btn-download-gg" onclick="downloadGGData()" style="display: none;">📥 Download GG Data (CSV)</button>
+                    <button class="btn btn-primary btn-small" id="btn-download-vw" onclick="downloadVWData()" style="display: none;">📥 Download VW Data (CSV)</button>
+                    <button class="btn btn-secondary btn-small" id="btn-load-gg" onclick="loadGGIntoAnalysis()" style="display: none;">📊 Load GG into Tool</button>
+                    <button class="btn btn-secondary btn-small" id="btn-load-vw" onclick="loadVWIntoAnalysis()" style="display: none;">📊 Load VW into Tool</button>
+                    <button class="btn btn-danger btn-small" onclick="deleteAllResponses()">🗑️ Delete All Responses</button>
                 </div>
 
                 <div style="overflow-x: auto; margin-top: 1rem;">
@@ -1045,6 +1052,16 @@
             const header = document.getElementById('responses-header');
             tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 2rem;">Loading...</td></tr>';
 
+            // Show/hide buttons based on survey types
+            const types = currentSurveyData.types || [];
+            const hasGG = types.includes('gabor-granger');
+            const hasVW = types.includes('van-westendorp');
+
+            document.getElementById('btn-download-gg').style.display = hasGG ? 'inline-flex' : 'none';
+            document.getElementById('btn-download-vw').style.display = hasVW ? 'inline-flex' : 'none';
+            document.getElementById('btn-load-gg').style.display = hasGG ? 'inline-flex' : 'none';
+            document.getElementById('btn-load-vw').style.display = hasVW ? 'inline-flex' : 'none';
+
             try {
                 // Get GG responses
                 const ggSnapshot = await db.collection('surveys').doc(currentSurvey)
@@ -1066,11 +1083,6 @@
                     tbody.innerHTML = '<tr><td style="text-align: center; padding: 2rem; color: #666;">Share the survey links with your students!</td></tr>';
                     return;
                 }
-
-                // Determine which columns to show based on survey types
-                const types = currentSurveyData.types || [];
-                const hasGG = types.includes('gabor-granger');
-                const hasVW = types.includes('van-westendorp');
 
                 // Combined view
                 header.innerHTML = '<th>#</th><th>Type</th><th>Response</th><th>Submitted</th>';
@@ -1120,78 +1132,110 @@
             showStatus('Link copied to clipboard!', 'success');
         }
 
-        async function exportCSV() {
+        // Download Gabor-Granger data in the correct format (just WTP values)
+        async function downloadGGData() {
             if (!currentSurvey) return;
 
-            const types = currentSurveyData.types || [];
-            let csv = '';
+            const snapshot = await db.collection('surveys').doc(currentSurvey)
+                .collection('gg_responses')
+                .orderBy('submittedAt', 'asc')
+                .get();
 
-            if (types.includes('gabor-granger')) {
-                const ggSnapshot = await db.collection('surveys').doc(currentSurvey)
-                    .collection('gg_responses')
-                    .orderBy('submittedAt', 'asc')
-                    .get();
-
-                if (!ggSnapshot.empty) {
-                    csv += 'GABOR-GRANGER RESPONSES\n';
-                    csv += 'max_wtp,starting_price,steps,submitted_at\n';
-                    ggSnapshot.forEach(doc => {
-                        const r = doc.data();
-                        csv += `${r.maxWtp || ''},${r.startingPrice || ''},${r.steps || ''},${r.submittedAt?.toDate().toISOString() || ''}\n`;
-                    });
-                    csv += '\n';
-                }
-            }
-
-            if (types.includes('van-westendorp')) {
-                const vwSnapshot = await db.collection('surveys').doc(currentSurvey)
-                    .collection('vw_responses')
-                    .orderBy('submittedAt', 'asc')
-                    .get();
-
-                if (!vwSnapshot.empty) {
-                    csv += 'VAN WESTENDORP RESPONSES\n';
-                    csv += 'too_cheap,cheap,expensive,too_expensive,submitted_at\n';
-                    vwSnapshot.forEach(doc => {
-                        const r = doc.data();
-                        csv += `${r.tooCheap || ''},${r.cheap || ''},${r.expensive || ''},${r.tooExpensive || ''},${r.submittedAt?.toDate().toISOString() || ''}\n`;
-                    });
-                }
-            }
-
-            if (!csv) {
-                showStatus('No responses to export.', 'error');
+            if (snapshot.empty) {
+                showStatus('No Gabor-Granger responses to download.', 'error');
                 return;
             }
 
-            const blob = new Blob([csv], { type: 'text/csv' });
+            // Format for GG tool: just WTP values, one per line
+            let csv = 'wtp\n';
+            snapshot.forEach(doc => {
+                const r = doc.data();
+                if (r.maxWtp > 0) {
+                    csv += `${r.maxWtp}\n`;
+                }
+            });
+
+            downloadFile(csv, `gg_responses_${currentSurveyData.product.replace(/\s+/g, '_')}.csv`);
+            showStatus('Gabor-Granger data downloaded!', 'success');
+        }
+
+        // Download Van Westendorp data in the correct format
+        async function downloadVWData() {
+            if (!currentSurvey) return;
+
+            const snapshot = await db.collection('surveys').doc(currentSurvey)
+                .collection('vw_responses')
+                .orderBy('submittedAt', 'asc')
+                .get();
+
+            if (snapshot.empty) {
+                showStatus('No Van Westendorp responses to download.', 'error');
+                return;
+            }
+
+            // Format for VW tool: too_cheap, cheap, expensive, too_expensive
+            let csv = 'too_cheap,cheap,expensive,too_expensive\n';
+            snapshot.forEach(doc => {
+                const r = doc.data();
+                csv += `${r.tooCheap || ''},${r.cheap || ''},${r.expensive || ''},${r.tooExpensive || ''}\n`;
+            });
+
+            downloadFile(csv, `vw_responses_${currentSurveyData.product.replace(/\s+/g, '_')}.csv`);
+            showStatus('Van Westendorp data downloaded!', 'success');
+        }
+
+        function downloadFile(content, filename) {
+            const blob = new Blob([content], { type: 'text/csv' });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = `survey_responses_${currentSurvey}.csv`;
+            a.download = filename;
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
             URL.revokeObjectURL(url);
         }
 
-        async function loadIntoAnalysis() {
+        // Delete all responses for current survey
+        async function deleteAllResponses() {
             if (!currentSurvey) return;
 
-            const types = currentSurveyData.types || [];
+            const confirmed = confirm('⚠️ Are you sure you want to delete ALL responses for this survey?\n\nThis action cannot be undone!');
+            if (!confirmed) return;
 
-            // If both types, ask which one
-            if (types.length === 2) {
-                const choice = confirm('This survey has both Gabor-Granger and Van Westendorp responses.\n\nClick OK for Gabor-Granger analysis\nClick Cancel for Van Westendorp analysis');
-                if (choice) {
-                    await loadGGIntoAnalysis();
-                } else {
-                    await loadVWIntoAnalysis();
-                }
-            } else if (types.includes('gabor-granger')) {
-                await loadGGIntoAnalysis();
-            } else if (types.includes('van-westendorp')) {
-                await loadVWIntoAnalysis();
+            const doubleConfirm = confirm('This will permanently delete all student responses.\n\nType OK to confirm.');
+            if (!doubleConfirm) return;
+
+            try {
+                showStatus('Deleting responses...', 'success');
+
+                // Delete GG responses
+                const ggSnapshot = await db.collection('surveys').doc(currentSurvey)
+                    .collection('gg_responses').get();
+                const ggBatch = db.batch();
+                ggSnapshot.forEach(doc => ggBatch.delete(doc.ref));
+                if (!ggSnapshot.empty) await ggBatch.commit();
+
+                // Delete VW responses
+                const vwSnapshot = await db.collection('surveys').doc(currentSurvey)
+                    .collection('vw_responses').get();
+                const vwBatch = db.batch();
+                vwSnapshot.forEach(doc => vwBatch.delete(doc.ref));
+                if (!vwSnapshot.empty) await vwBatch.commit();
+
+                // Reset counts
+                await db.collection('surveys').doc(currentSurvey).update({
+                    ggResponseCount: 0,
+                    vwResponseCount: 0
+                });
+
+                showStatus('All responses deleted successfully!', 'success');
+                await refreshResponses();
+                loadSurveys(); // Refresh the survey list to update counts
+
+            } catch (error) {
+                console.error('Error deleting responses:', error);
+                showStatus('Error deleting responses. Please try again.', 'error');
             }
         }
 
