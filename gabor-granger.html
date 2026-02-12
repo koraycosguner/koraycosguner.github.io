@@ -857,6 +857,23 @@
             display: block;
         }
 
+        /* WTP Manual/CSV Sections */
+        .wtp-manual-section {
+            display: none;
+        }
+
+        .wtp-manual-section.visible {
+            display: block;
+        }
+
+        .wtp-csv-section {
+            display: none;
+        }
+
+        .wtp-csv-section.visible {
+            display: block;
+        }
+
         .wtp-textarea {
             width: 100%;
             min-height: 200px;
@@ -953,21 +970,17 @@
                 </button>
             </div>
 
-            <!-- Aggregated Data Section (existing Manual/CSV toggle) -->
+            <!-- Aggregated Data Section (Manual/CSV toggle) -->
             <div id="aggregatedSection">
                 <!-- Input Mode Toggle -->
                 <div class="input-mode-toggle">
-                    <button class="mode-btn active" id="manualModeBtn" onclick="setInputMode('manual')">
+                    <button class="mode-btn active" id="manualModeBtn" onclick="setAggregatedInputMode('manual')">
                         <div class="mode-icon">✏️</div>
                         <div class="mode-label">Manual Entry</div>
                     </button>
-                    <button class="mode-btn" id="csvModeBtn" onclick="setInputMode('csv')">
+                    <button class="mode-btn" id="csvModeBtn" onclick="setAggregatedInputMode('csv')">
                         <div class="mode-icon">📁</div>
                         <div class="mode-label">Upload CSV</div>
-                    </button>
-                    <button class="mode-btn" id="wtpModeBtn" onclick="setInputMode('wtp')">
-                        <div class="mode-icon">📋</div>
-                        <div class="mode-label">WTP Survey Data</div>
                     </button>
                 </div>
 
@@ -1148,50 +1161,31 @@
 
             <!-- Raw WTP Data Section -->
             <div class="raw-wtp-section" id="rawWtpSection">
-                <!-- Data Format Info -->
-                <div class="data-format">
-                    <h4>Required Data Format</h4>
-                    <p style="margin-bottom: 12px; font-size: 0.9rem; color: var(--text-light);">Your CSV should contain a column with individual WTP (willingness-to-pay) values:</p>
-                    <table>
-                        <tr>
-                            <th>Column</th>
-                            <th>Description</th>
-                            <th>Example Values</th>
-                        </tr>
-                        <tr>
-                            <td class="column-name">wtp</td>
-                            <td>Each respondent's maximum willingness-to-pay</td>
-                            <td>30, 45, 50, 35, 40</td>
-                        </tr>
-                    </table>
-                    <p style="margin-top: 12px; font-size: 0.85rem; color: var(--text-light);">
-                        <strong>Tip:</strong> Download WTP data directly from the Survey Admin tool
-                    </p>
+                <!-- Input Mode Toggle for WTP -->
+                <div class="input-mode-toggle">
+                    <button class="mode-btn active" id="wtpManualModeBtn" onclick="setWtpInputMode('manual')">
+                        <div class="mode-icon">✏️</div>
+                        <div class="mode-label">Manual Entry</div>
+                    </button>
+                    <button class="mode-btn" id="wtpCsvModeBtn" onclick="setWtpInputMode('csv')">
+                        <div class="mode-icon">📁</div>
+                        <div class="mode-label">Upload CSV</div>
+                    </button>
                 </div>
 
-                <!-- Upload Area -->
-                <div class="upload-area" id="wtpUploadArea">
-                    <input type="file" id="wtpFileInput" accept=".csv" style="display: none;">
-                    <div class="upload-icon">📁</div>
-                    <p class="upload-text">Click to upload or drag and drop</p>
-                    <p class="upload-hint">CSV files only (max 10MB)</p>
-                </div>
-
-                <!-- Data Preview for WTP -->
-                <div class="data-preview" id="wtpDataPreview">
-                    <h4 style="margin-bottom: 12px; color: var(--iu-crimson);">Data Preview</h4>
-                    <div class="preview-table-container">
-                        <table class="preview-table" id="wtpPreviewTable">
-                            <thead></thead>
-                            <tbody></tbody>
-                        </table>
+                <!-- WTP Manual Entry Section -->
+                <div class="wtp-manual-section visible" id="wtpManualSection">
+                    <div class="form-group">
+                        <textarea id="wtpTextarea" class="wtp-textarea" placeholder="Enter WTP values (one per line or comma-separated):
+30
+45
+50
+35
+40"></textarea>
+                        <p class="form-hint">Enter numeric values only. Currency symbols will be ignored.</p>
                     </div>
-                    <p id="wtpLoadedCount" style="margin-top: 0.75rem; font-size: 0.9rem; color: var(--text-light);"></p>
-                </div>
 
-                <!-- Settings after upload or for manual entry -->
-                <div id="wtpSettingsSection">
-                    <div style="display: flex; gap: 1.5rem; flex-wrap: wrap; margin-bottom: 1.5rem;">
+                    <div style="display: flex; gap: 1.5rem; flex-wrap: wrap; margin: 1.5rem 0;">
                         <div class="form-group" style="margin-bottom: 0;">
                             <label for="rawCurrencySymbol">Currency Symbol</label>
                             <select id="rawCurrencySymbol">
@@ -1215,7 +1209,7 @@
                             Run Analysis
                         </button>
                         <button class="btn btn-secondary" onclick="clearRawWtpData()">
-                            Clear & Start Over
+                            Clear All
                         </button>
                         <button class="btn btn-secondary" onclick="loadSampleRawWtp()">
                             Load Sample Data
@@ -1223,17 +1217,78 @@
                     </div>
                 </div>
 
-                <!-- Manual Entry (shown as alternative) -->
-                <div style="margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid var(--border);">
-                    <h4 style="margin-bottom: 1rem; color: var(--text-light); font-size: 0.95rem;">Or enter values manually:</h4>
-                    <div class="form-group">
-                        <textarea id="wtpTextarea" class="wtp-textarea" placeholder="Enter WTP values (one per line or comma-separated):
-30
-45
-50
-35
-40"></textarea>
-                        <p class="form-hint">Enter numeric values only. Currency symbols will be ignored.</p>
+                <!-- WTP CSV Upload Section -->
+                <div class="wtp-csv-section" id="wtpCsvSection">
+                    <!-- Data Format Info -->
+                    <div class="data-format">
+                        <h4>Required Data Format</h4>
+                        <p style="margin-bottom: 12px; font-size: 0.9rem; color: var(--text-light);">Your CSV should contain a column with individual WTP (willingness-to-pay) values:</p>
+                        <table>
+                            <tr>
+                                <th>Column</th>
+                                <th>Description</th>
+                                <th>Example Values</th>
+                            </tr>
+                            <tr>
+                                <td class="column-name">wtp</td>
+                                <td>Each respondent's maximum willingness-to-pay</td>
+                                <td>30, 45, 50, 35, 40</td>
+                            </tr>
+                        </table>
+                        <p style="margin-top: 12px; font-size: 0.85rem; color: var(--text-light);">
+                            <strong>Tip:</strong> Download WTP data directly from the Survey Admin tool
+                        </p>
+                    </div>
+
+                    <!-- Upload Area -->
+                    <div class="upload-area" id="wtpUploadArea">
+                        <input type="file" id="wtpFileInput" accept=".csv" style="display: none;">
+                        <div class="upload-icon">📁</div>
+                        <p class="upload-text">Click to upload or drag and drop</p>
+                        <p class="upload-hint">CSV files only (max 10MB)</p>
+                    </div>
+
+                    <!-- Data Preview for WTP -->
+                    <div class="data-preview" id="wtpDataPreview">
+                        <h4 style="margin-bottom: 12px; color: var(--iu-crimson);">Data Preview</h4>
+                        <div class="preview-table-container">
+                            <table class="preview-table" id="wtpPreviewTable">
+                                <thead></thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                        <p id="wtpLoadedCount" style="margin-top: 0.75rem; font-size: 0.9rem; color: var(--text-light);"></p>
+                    </div>
+
+                    <!-- Settings after upload -->
+                    <div id="wtpCsvSettingsSection" style="display: none;">
+                        <div style="display: flex; gap: 1.5rem; flex-wrap: wrap; margin: 1.5rem 0;">
+                            <div class="form-group" style="margin-bottom: 0;">
+                                <label for="rawCsvCurrencySymbol">Currency Symbol</label>
+                                <select id="rawCsvCurrencySymbol">
+                                    <option value="$">$ (USD)</option>
+                                    <option value="€">€ (EUR)</option>
+                                    <option value="£">£ (GBP)</option>
+                                    <option value="¥">¥ (JPY/CNY)</option>
+                                    <option value="₹">₹ (INR)</option>
+                                    <option value="">None</option>
+                                </select>
+                            </div>
+                            <div class="form-group" style="margin-bottom: 0;">
+                                <label for="rawCsvUnitCost">Unit Cost (Optional)</label>
+                                <input type="number" id="rawCsvUnitCost" placeholder="e.g., 15.00" step="0.01" min="0" style="max-width: 150px;">
+                                <p class="form-hint">For profit optimization</p>
+                            </div>
+                        </div>
+
+                        <div class="button-group">
+                            <button class="btn btn-primary" onclick="analyzeWtpCsvData()">
+                                Run Analysis
+                            </button>
+                            <button class="btn btn-secondary" onclick="clearWtpCsvData()">
+                                Clear & Start Over
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -1423,15 +1478,21 @@
             resultsContainer.classList.remove('visible');
         }
 
-        // Input mode toggle
-        function setInputMode(mode) {
+        // Aggregated data input mode toggle (manual vs csv)
+        function setAggregatedInputMode(mode) {
             currentMode = mode;
             document.getElementById('manualModeBtn').classList.toggle('active', mode === 'manual');
             document.getElementById('csvModeBtn').classList.toggle('active', mode === 'csv');
-            document.getElementById('wtpModeBtn').classList.toggle('active', mode === 'wtp');
             document.getElementById('manualSection').classList.toggle('visible', mode === 'manual');
             document.getElementById('csvSection').classList.toggle('visible', mode === 'csv');
-            document.getElementById('rawWtpSection').classList.toggle('visible', mode === 'wtp');
+        }
+
+        // WTP input mode toggle (manual vs csv)
+        function setWtpInputMode(mode) {
+            document.getElementById('wtpManualModeBtn').classList.toggle('active', mode === 'manual');
+            document.getElementById('wtpCsvModeBtn').classList.toggle('active', mode === 'csv');
+            document.getElementById('wtpManualSection').classList.toggle('visible', mode === 'manual');
+            document.getElementById('wtpCsvSection').classList.toggle('visible', mode === 'csv');
         }
 
         // Manual input functions
@@ -1660,8 +1721,12 @@
                     // Show data preview
                     showWtpDataPreview(wtpValues, wtpColumn);
 
-                    // Put values in textarea
-                    document.getElementById('wtpTextarea').value = wtpValues.join('\n');
+                    // Store WTP values for later analysis
+                    window.loadedWtpValues = wtpValues;
+
+                    // Show the settings section
+                    document.getElementById('wtpCsvSettingsSection').style.display = 'block';
+
                     showStatus(`Loaded ${wtpValues.length} WTP values from "${wtpColumn}" column. Click "Run Analysis" to proceed.`, 'success');
                 },
                 error: function(error) {
@@ -2211,6 +2276,38 @@
             document.getElementById('wtpTextarea').value = sampleWtps.join('\n');
             document.getElementById('rawUnitCost').value = '18.00';
             showStatus('Sample data loaded: 100 respondents\' WTP values. Unit cost set to $18.00 (try adjusting to see how optimal prices change).', 'success');
+        }
+
+        function clearWtpCsvData() {
+            document.getElementById('wtpFileInput').value = '';
+            document.getElementById('wtpDataPreview').classList.remove('visible');
+            document.getElementById('wtpCsvSettingsSection').style.display = 'none';
+            document.getElementById('rawCsvUnitCost').value = '';
+            window.loadedWtpValues = null;
+            resultsContainer.classList.remove('visible');
+            document.getElementById('profitMetrics').style.display = 'none';
+            if (demandChart) demandChart.destroy();
+            if (revenueChart) revenueChart.destroy();
+        }
+
+        function analyzeWtpCsvData() {
+            const wtpValues = window.loadedWtpValues;
+
+            if (!wtpValues || wtpValues.length < 10) {
+                showStatus('Please upload a CSV file with at least 10 valid WTP values.', 'error');
+                return;
+            }
+
+            const currency = document.getElementById('rawCsvCurrencySymbol').value;
+            const costInput = document.getElementById('rawCsvUnitCost').value;
+            const cost = costInput ? parseFloat(costInput) : null;
+
+            if (cost !== null && cost < 0) {
+                showStatus('Unit cost cannot be negative.', 'error');
+                return;
+            }
+
+            runContinuousAnalysis(wtpValues, currency, cost);
         }
 
         function analyzeRawWtpData() {
