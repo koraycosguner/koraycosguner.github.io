@@ -325,7 +325,17 @@
                     <div class="product-description" id="product-description"></div>
                 </div>
 
-                <div class="question-container" id="question-container">
+                <!-- Name Entry -->
+                <div id="name-entry" style="text-align: center; padding: 2rem 0;">
+                    <p style="margin-bottom: 1rem; color: var(--text-light);">Please enter your name to begin the survey.</p>
+                    <div style="max-width: 300px; margin: 0 auto;">
+                        <input type="text" id="student-name" placeholder="Enter your name" style="width: 100%; padding: 0.75rem 1rem; font-size: 1rem; border: 2px solid #ddd; border-radius: 8px; margin-bottom: 1rem;">
+                        <p id="name-error" style="color: #dc2626; font-size: 0.85rem; margin-bottom: 1rem; display: none;">Please enter your name.</p>
+                        <button class="survey-btn btn-yes" onclick="startSurvey()" style="width: 100%;">Start Survey</button>
+                    </div>
+                </div>
+
+                <div class="question-container hidden" id="question-container">
                     <p class="question-text">Would you buy this product at:</p>
                     <div class="price-display" id="current-price">$25</div>
                     <p class="question-prompt">Would you buy it at this price?</p>
@@ -389,6 +399,7 @@
         let lastYesPrice = null;
         let stepCount = 0;
         let currency = '$';
+        let studentName = '';
 
         // Initialize
         async function init() {
@@ -473,6 +484,22 @@
             const endRange = Math.floor(ladderLength * 0.8);
             startingPriceIndex = Math.floor(Math.random() * (endRange - startRange + 1)) + startRange;
             currentPriceIndex = startingPriceIndex;
+        }
+
+        function startSurvey() {
+            const nameInput = document.getElementById('student-name');
+            const nameError = document.getElementById('name-error');
+
+            studentName = nameInput.value.trim();
+
+            if (!studentName) {
+                nameError.style.display = 'block';
+                return;
+            }
+
+            nameError.style.display = 'none';
+            document.getElementById('name-entry').classList.add('hidden');
+            document.getElementById('question-container').classList.remove('hidden');
 
             // Show first question
             updateDisplay();
@@ -538,6 +565,7 @@
             // Save to Firebase
             try {
                 await db.collection('surveys').doc(surveyId).collection('gg_responses').add({
+                    name: studentName,
                     maxWtp: maxWtp,
                     startingPrice: priceLadder[startingPriceIndex],
                     steps: stepCount,
