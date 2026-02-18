@@ -670,56 +670,53 @@
                 font-size: 0.85rem;
             }
 
-            /* Content area */
+            /* Content area — unified 0.85rem base font */
             .cv-container { padding: 24px 16px 50px; }
             .cv-section { margin-bottom: 36px; }
             .cv-section-title {
-                font-size: 0.78rem;
+                font-size: 0.8rem;
                 margin-bottom: 14px;
             }
 
-            /* Timeline grids — stack vertically */
-            .timeline-item { grid-template-columns: 1fr; gap: 2px; }
-            .timeline-date { text-align: left; font-size: 0.8rem; }
-            .timeline-sub { grid-template-columns: 1fr; gap: 2px; }
-            .timeline-institution { font-size: 0.9rem; }
+            /* Timeline — keep dates on the right */
+            .timeline-item { grid-template-columns: 1fr auto; gap: 8px; }
+            .timeline-date { text-align: right; font-size: 0.85rem; }
+            .timeline-sub { grid-template-columns: 1fr auto; gap: 8px; }
+            .timeline-institution { font-size: 0.85rem; }
             .timeline-role { font-size: 0.85rem; padding-left: 12px; }
 
             /* Publications */
             .pub-item { font-size: 0.85rem; line-height: 1.6; padding: 12px 0; }
-            .pub-item .pub-award { font-size: 0.78rem; }
+            .pub-item .pub-award { font-size: 0.8rem; }
 
             /* Working papers */
             .wp-item { font-size: 0.85rem; line-height: 1.6; padding: 12px 0; }
-            .wp-item .wp-status { font-size: 0.72rem; padding: 2px 8px; }
+            .wp-item .wp-status { font-size: 0.75rem; padding: 2px 8px; }
 
-            /* Teaching */
-            .teaching-item { grid-template-columns: 1fr; gap: 2px; }
+            /* Teaching — keep dates on the right */
+            .teaching-item { grid-template-columns: 1fr auto; gap: 8px; }
             .teaching-course { font-size: 0.85rem; }
-            .teaching-rating { font-size: 0.72rem; padding: 1px 6px; margin-left: 4px; }
-            .teaching-award { font-size: 0.78rem; }
+            .teaching-rating { font-size: 0.75rem; padding: 1px 6px; margin-left: 4px; }
+            .teaching-award { font-size: 0.8rem; }
 
-            /* Seminars & conferences — single column */
+            /* Seminars & conferences — single column, dates on right */
             .seminar-grid { grid-template-columns: 1fr; }
-            .seminar-item { font-size: 0.82rem; }
-            .conf-item { grid-template-columns: 1fr; gap: 2px; font-size: 0.82rem; }
+            .seminar-item { font-size: 0.85rem; }
+            .conf-item { grid-template-columns: 1fr auto; gap: 8px; font-size: 0.85rem; }
 
-            /* Awards */
-            .award-item { grid-template-columns: 1fr; gap: 2px; font-size: 0.85rem; }
-            .award-year { text-align: left; }
+            /* Awards — keep dates on the right */
+            .award-item { grid-template-columns: 1fr auto; gap: 8px; font-size: 0.85rem; }
+            .award-year { text-align: right; }
 
             /* Skills tags */
-            .tag { font-size: 0.78rem; padding: 3px 12px; }
+            .tag { font-size: 0.8rem; padding: 3px 12px; }
 
             /* Mentees */
-            .mentee-item { font-size: 0.82rem; }
+            .mentee-item { font-size: 0.85rem; }
 
-            /* Research interests */
+            /* Research interests & refereeing */
             .interests-text { font-size: 0.85rem; }
-            .interests-label { font-size: 0.8rem; }
-
-            /* Journal refereeing */
-            .cv-section .interests-text { font-size: 0.82rem; }
+            .interests-label { font-size: 0.85rem; }
 
             /* Hover effects — remove on touch */
             .pub-item, .wp-item, .award-item, .mentee-item {
