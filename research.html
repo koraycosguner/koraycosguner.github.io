@@ -151,35 +151,190 @@
 
         .paper-link {
             margin-top: 12px;
+            display: flex;
+            gap: 20px;
+            align-items: center;
         }
         .paper-link a {
             font-size: 0.85rem;
             color: var(--primary);
             text-decoration: none;
             font-weight: 500;
+            cursor: pointer;
         }
         .paper-link a:hover {
             text-decoration: underline;
         }
+        .paper-link .separator {
+            color: var(--border);
+            font-size: 0.85rem;
+        }
 
-        /* Practitioner Summary */
-        .practitioner-summary {
-            margin-top: 16px;
-            padding: 16px 20px;
+        /* Modal Overlay */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 1000;
+            backdrop-filter: blur(4px);
+            overflow-y: auto;
+            padding: 40px 20px;
+        }
+        .modal-overlay.active {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+        }
+
+        .modal {
+            background: var(--bg);
+            border-radius: 16px;
+            max-width: 720px;
+            width: 100%;
+            padding: 48px 48px 40px;
+            position: relative;
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.3);
+            animation: modalIn 0.3s ease;
+        }
+        @keyframes modalIn {
+            from { opacity: 0; transform: translateY(20px) scale(0.97); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 36px;
+            height: 36px;
+            border: none;
+            background: var(--surface);
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            color: var(--text-light);
+            transition: all 0.2s;
+        }
+        .modal-close:hover {
+            background: var(--border);
+            color: var(--text-main);
+        }
+
+        .modal-label {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--primary);
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .modal-title {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--text-main);
+            line-height: 1.3;
+            margin-bottom: 6px;
+            letter-spacing: -0.02em;
+        }
+
+        .modal-authors {
+            font-size: 0.85rem;
+            color: var(--text-light);
+            margin-bottom: 28px;
+            padding-bottom: 24px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .modal-section {
+            margin-bottom: 24px;
+        }
+        .modal-section h3 {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin: 0 0 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+        }
+        .modal-section p {
+            font-size: 0.92rem;
+            color: var(--text-main);
+            line-height: 1.8;
+            margin: 0;
+        }
+
+        .modal-highlight {
             background: var(--surface);
             border-left: 3px solid var(--primary);
+            padding: 16px 20px;
             border-radius: 0 8px 8px 0;
+            margin: 16px 0;
+        }
+        .modal-highlight p {
             font-size: 0.88rem;
             color: var(--text-main);
             line-height: 1.7;
+            margin: 0;
         }
-        .practitioner-summary strong {
-            display: block;
-            font-size: 0.8rem;
-            text-transform: uppercase;
-            letter-spacing: 0.04em;
+
+        .modal-stat-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin: 16px 0;
+        }
+        .modal-stat {
+            background: var(--surface);
+            padding: 14px 16px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        .modal-stat .number {
+            font-size: 1.4rem;
+            font-weight: 800;
             color: var(--primary);
-            margin-bottom: 6px;
+            display: block;
+            line-height: 1.2;
+        }
+        .modal-stat .label {
+            font-size: 0.75rem;
+            color: var(--text-light);
+            margin-top: 4px;
+            display: block;
+        }
+
+        .modal-footer {
+            margin-top: 28px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .modal-footer a {
+            font-size: 0.85rem;
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 600;
+        }
+        .modal-footer a:hover {
+            text-decoration: underline;
+        }
+        .modal-footer .journal-tag {
+            font-size: 0.75rem;
+            color: var(--text-light);
+            background: var(--surface);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-weight: 500;
         }
 
         /* Scroll Animations */
@@ -285,6 +440,19 @@
             .paper-abstract {
                 font-size: 0.85rem;
             }
+            /* Modal mobile */
+            .modal-overlay {
+                padding: 20px 12px;
+            }
+            .modal {
+                padding: 32px 24px 28px;
+            }
+            .modal-title {
+                font-size: 1.2rem;
+            }
+            .modal-stat-grid {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
@@ -329,11 +497,11 @@
                     </div>
                 </div>
                 <div class="paper-abstract">The Bass Model (BM) has an excellent track record in the realm of new product sales forecasting. However, its use for optimal dynamic pricing or advertising is relatively limited because the Generalized Bass Model (GBM), which extends the BM to handle marketing variables, uses only percentage changes in marketing variables, rather than their actual values. This restricts the GBM's prescriptive use, for example, to derive the optimal price path for a new product, conditional on an assumed launch price, but not the launch price itself. In this paper, we employ a utility-based extension of the BM, which can yield normative prescriptions regarding both the introductory price and the price path after launch, for the new product. We offer two versions of this utility-based diffusion model, namely, the Bass-Gumbel Diffusion Model (BGDM) and the Bass-Logit Diffusion Model (BLDM), the latter of which has been previously used. We show that both the BGDM and BLDM handily outperform the GBM in forecasting new product sales using empirical data from four product categories. We discuss how to estimate the BGDM and BLDM in the absence of past sales data. We compare the optimal pricing policy of the BLDM with the GBM and derive optimal pricing policies that are implied by the BLDM under various ranges of model parameters. We illustrate a dynamic pricing approach that allows managers to derive optimal marketing policies in a computationally convenient manner and extend this approach to a competitive, multiproduct case.</div>
-                <div class="practitioner-summary">
-                    <strong>Practitioner Takeaway</strong>
-                    The widely used Generalized Bass Model (GBM) can forecast new product sales but cannot determine the optimal launch price — it only derives price paths conditional on an assumed starting price. This paper solves that problem with a utility-based diffusion model that optimizes both the introductory price and the entire price trajectory. Tested on four product categories (Color TV, Air Conditioners, Clothes Dryers, Freezers), the model outperforms the GBM in both in-sample and out-of-sample forecasting, predicts peak adoption timing more accurately, and yields 13.8% higher lifetime revenue than the GBM's optimal pricing policy. Notably, the optimal price path is often non-monotonic — rising initially before declining — which differs from the conventional wisdom of monotonically decreasing prices. The paper provides a computationally convenient algorithm (executable in seconds using R) that managers can use for real-time pricing decisions, and extends the approach to competitive, multi-product markets.
+                <div class="paper-link">
+                    <a href="https://doi.org/10.1287/mnsc.2021.4257" target="_blank">View Publication</a>
+                    <span class="separator">|</span>
+                    <a onclick="openModal('modal-paper1')">Practitioner Summary</a>
                 </div>
-                <div class="paper-link"><a href="https://doi.org/10.1287/mnsc.2021.4257" target="_blank">View Publication</a></div>
             </div>
 
             <!-- Paper 2 -->
@@ -348,11 +516,11 @@
                     </div>
                 </div>
                 <div class="paper-abstract">The decoy effect (DE) has been robustly documented across dozens of product categories and choice settings using laboratory experiments. However, it has never been verified in a real product market in the literature. In this paper, we empirically test and quantify the DE in the diamond sales of a leading online jewelry retailer. We develop a diamond-level proportional hazard framework by jointly modeling market-level decoy–dominant detection probabilities and the boost in sales upon detection of dominants. Results suggest that decoy–dominant detection probabilities are low (11%–25%) in the diamond market; however, upon detection, the DE increases dominant diamonds' sale hazards significantly (1.8–3.2 times). In terms of the managerial significance, we find that the DE substantially increases the diamond retailer's gross profit by 14.3%. We further conduct simulation studies to understand the DE's profit impact under various dominance scenarios.</div>
-                <div class="practitioner-summary">
-                    <strong>Practitioner Takeaway</strong>
-                    The decoy effect — where consumers favor a product when an inferior but similarly priced alternative is present — has been widely demonstrated in labs but never verified in a real market. This paper provides the first field evidence using data from a major U.S. online diamond retailer. While consumers only detect decoy-dominant relationships 11%–25% of the time (due to the complexity of real-world comparisons), once detected, dominant diamonds sell 1.8–3.2 times faster. The net profit impact is substantial: the decoy effect increases the retailer's gross profit by 14.3%. The paper also finds that profit impact grows with more decoys in the market and greater price variation within diamond grades. For retailers in markets with vertically comparable products (e-commerce platforms, used goods, product bundles), strategically positioning near-decoy alternatives — or making dominance relationships more visible through product page design — can meaningfully boost sales of target products.
+                <div class="paper-link">
+                    <a href="https://doi.org/10.1287/mksc.2020.1231" target="_blank">View Publication</a>
+                    <span class="separator">|</span>
+                    <a onclick="openModal('modal-paper2')">Practitioner Summary</a>
                 </div>
-                <div class="paper-link"><a href="https://doi.org/10.1287/mksc.2020.1231" target="_blank">View Publication</a></div>
             </div>
 
             <!-- Paper 3 -->
@@ -367,11 +535,11 @@
                     </div>
                 </div>
                 <div class="paper-abstract">In emerging markets, the effective implementation of distribution strategies is challenged by underdeveloped road infrastructure and a low penetration of retail stores that are insufficient in meeting customer needs. In addition, products are typically distributed in multiple forms through multiple retail channels. Given the competitive landscape, manufacturers' distribution strategies should be based on anticipation of competitor reactions. Accordingly, the authors develop a manufacturer-level competition model to study the distribution and price decisions of insecticide manufacturers competing across multiple product forms and retail channels. Their study shows that both consumer preferences and estimated production and distribution costs vary across brands, product forms, and retail channels; that ignoring distribution and solely focusing on price competition results in up to a 55% overestimation of manufacturer profit margins; and that observed pricing and distribution patterns support competition rather than collusion among manufacturers. Through counterfactual studies, the authors find that manufacturers respond to decreases in distribution costs and to the exclusive distribution of more preferred manufacturers by asymmetrically changing their price and distribution decisions across different retail channels.</div>
-                <div class="practitioner-summary">
-                    <strong>Practitioner Takeaway</strong>
-                    In emerging markets, manufacturers face unique distribution challenges: underdeveloped road infrastructure, insufficient retail store penetration, and products sold in multiple forms across different channel types. Using data from competing insecticide manufacturers in India distributing liquid and solid products through paan-plus and general stores, this paper shows that ignoring distribution decisions and focusing solely on price competition leads to overestimating profit margins by up to 55%. Observed pricing and distribution patterns support competition rather than collusion among manufacturers. When infrastructure improves (e.g., new roads reduce distribution costs), firms should respond by reallocating distribution resources asymmetrically — increasing presence in preferred channels — rather than changing prices. The more preferred brand benefits from exclusive distribution by charging higher prices, while both firms shift resources to less costly channels. The key lesson: distribution strategy is as important as pricing strategy, and emerging market managers should jointly optimize both across product forms and retail channels.
+                <div class="paper-link">
+                    <a href="https://doi.org/10.1177/0022243718823711" target="_blank">View Publication</a>
+                    <span class="separator">|</span>
+                    <a onclick="openModal('modal-paper3')">Practitioner Summary</a>
                 </div>
-                <div class="paper-link"><a href="https://doi.org/10.1177/0022243718823711" target="_blank">View Publication</a></div>
             </div>
 
             <!-- Paper 4 -->
@@ -386,11 +554,11 @@
                     </div>
                 </div>
                 <div class="paper-abstract">We advance the literature on dynamic oligopoly pricing models in the presence of switching costs by additionally modeling the strategic pricing role of the retailer within the distribution channel. In doing this, we study the relative dynamic pricing implications of how current retail and wholesale prices for a brand must optimally take into account past and future demand, respectively, for the brand. Using scanner data from the cola market, we find that while the retailer exploits the benefit of inertial demand by appropriately increasing the retail profit margin, the cost of investing is borne entirely by the manufacturers. We use simulation studies to show how the retailer will lose its ability to leverage the benefits of inertial demand as consumers become more price sensitive. We also show that when inertia of the more price-sensitive customer segment increases, the aggregate welfare of consumers, the retailer, and manufacturers may increase.</div>
-                <div class="practitioner-summary">
-                    <strong>Practitioner Takeaway</strong>
-                    When consumers habitually repurchase the same brand (switching costs/inertia), manufacturers face a trade-off: lower prices to "invest" in acquiring new loyal customers, or raise prices to "harvest" profits from already locked-in ones. This paper adds a critical missing piece — the retailer — to show how this dynamic plays out in the full distribution channel. Using cola market data, the study finds that retailers effectively free-ride on manufacturers' investment efforts: while manufacturers bear the cost of attracting customers through lower wholesale prices, the retailer captures the lion's share of inertia-generated profits by raising retail margins. The less preferred brand (Pepsi) is pressured to invest more heavily by cutting wholesale prices, shrinking its margins compared to a market without inertia. However, when inertia increases among price-sensitive consumers, all parties — consumers, retailer, and manufacturers — can benefit, because retailers lower prices to expand total market demand. For brand managers, this means that the strategic value of building brand loyalty depends heavily on how the retailer passes through (or absorbs) wholesale pricing decisions.
+                <div class="paper-link">
+                    <a href="https://doi.org/10.1287/mnsc.2016.2649" target="_blank">View Publication</a>
+                    <span class="separator">|</span>
+                    <a onclick="openModal('modal-paper4')">Practitioner Summary</a>
                 </div>
-                <div class="paper-link"><a href="https://doi.org/10.1287/mnsc.2016.2649" target="_blank">View Publication</a></div>
             </div>
 
             <!-- Paper 5 -->
@@ -405,11 +573,11 @@
                     </div>
                 </div>
                 <div class="paper-abstract">Although email marketing is highly profitable and widely used by marketers, it has received limited attention in the marketing literature. Extant research has focused on either customers' email responses or the "average" effect of emails on purchases. In this article, the authors use data from a U.S. home improvement retailer to study customers' email open and purchase behaviors by using a unified hidden Markov and copula framework. Contrary to conventional wisdom, the authors find that email-active customers are not necessarily active in purchases, and vice versa. Furthermore, the number of emails sent by the retailer has a nonlinear effect on both the retailer's short- and long-term profitability. Through a counterfactual study, the authors provide a decision support system to guide retailers in making optimal email contact decisions. This study shows that sending the right number of emails is vital for long-term profitability. For example, sending four (ten) emails instead of the optimal number of seven emails can cause the retailer to lose 32% (16%) of its lifetime profit per customer.</div>
-                <div class="practitioner-summary">
-                    <strong>Practitioner Takeaway</strong>
-                    How many marketing emails should a retailer send? This paper, using data from a U.S. home improvement retailer, shows that the answer is nuanced and dynamic. Customers who frequently open emails are not necessarily frequent buyers, and vice versa — the study identifies three distinct customer states: Low Open–Medium Purchase, High Open–Low Purchase, and High Open–High Purchase. Email volume has a non-linear (inverted U-shape) effect on purchases: too few emails underperform, but too many push high-value customers to lower purchase states. The optimal number is about 7 emails per month on average, but varies by customer state — high-purchase customers need only 5–7, while low-purchase customers may benefit from 12–14 to re-engage. Deviating from the optimum is costly: sending 4 instead of 7 emails loses 32% of lifetime profit per customer; sending 10 loses 16%. The key managerial insight: firms should move beyond uniform email blast strategies to state-dependent contact policies that dynamically adjust email frequency based on each customer's evolving engagement and purchase behavior.
+                <div class="paper-link">
+                    <a href="https://doi.org/10.1509/jmr.16.0210" target="_blank">View Publication</a>
+                    <span class="separator">|</span>
+                    <a onclick="openModal('modal-paper5')">Practitioner Summary</a>
                 </div>
-                <div class="paper-link"><a href="https://doi.org/10.1509/jmr.16.0210" target="_blank">View Publication</a></div>
             </div>
 
             <!-- Paper 6 -->
@@ -424,11 +592,11 @@
                     </div>
                 </div>
                 <div class="paper-abstract">We study the strategic impacts of behavioral price discrimination (BPD) on manufacturers and retailers in a distribution channel when there are switching costs in consumer demand. Unlike previous empirical studies of behavioral price discrimination, which rely only on differences in price elasticity across customers, our pricing model allows the firm strategies to additionally account for differences in price elasticity across time (due to switching costs). We estimate a dynamic pricing model using empirical data from the cola category and, through a series of counterfactuals, we find that the retailer should simply outsource the data analytics and customization of coupons to manufacturers and improve its profit beyond what it can achieve by proactively couponing on its own. We further find that serving as an information broker to sell its customer database to manufacturers can be a vital source of profit to the retailer. By contrast, manufacturers end up worse off, illustrating that customer information is a potent source of channel power to the retailer. Finally, we show that simply using customers' most recent purchase information can significantly impact firms' profits. BPD based on this information is easy to implement and of low cost to manufacturers and retailers.</div>
-                <div class="practitioner-summary">
-                    <strong>Practitioner Takeaway</strong>
-                    Can retailers profit from selling their customer purchase data to manufacturers? This paper studies behavioral price discrimination (BPD) — offering personalized coupons based on purchase histories — in the cola market with switching costs. Because switching costs make a customer's price elasticity change over time (lower for the brand they just bought), optimal couponing must target not just the right customers but also at the right time. Three key findings emerge from counterfactual simulations: First, when the retailer outsources couponing to manufacturers (rather than managing it), the retailer's profit increases by 3.7% using just most-recent-purchase data, and by 14.6% using full purchase histories. Second, by acting as an information broker — selling its customer database to manufacturers — the retailer achieves a 13.4% profit gain (partial data) or 27.8% gain (full data) over managing BPD itself; meanwhile, manufacturers end up worse off than with no price discrimination at all, demonstrating that customer data is a potent source of channel power. Third, even the simplest form of BPD — couponing based solely on what brand a customer just bought at checkout — generates significant profit impact, is essentially costless to implement, and captures much of the value of full-history targeting.
+                <div class="paper-link">
+                    <a href="https://doi.org/10.1287/mksc.2016.1024" target="_blank">View Publication</a>
+                    <span class="separator">|</span>
+                    <a onclick="openModal('modal-paper6')">Practitioner Summary</a>
                 </div>
-                <div class="paper-link"><a href="https://doi.org/10.1287/mksc.2016.1024" target="_blank">View Publication</a></div>
             </div>
 
             <!-- Paper 7 -->
@@ -443,13 +611,432 @@
                     </div>
                 </div>
                 <div class="paper-abstract">Channel intermediaries (hereafter, intermediaries) are among the most critical elements of any supply chain as the bulk of manufacturing output is transported through them. However, we have a limited understanding of the approach a manufacturer should take to achieve the dual goal of increasing profitability and intermediary satisfaction. To provide manufacturers with practical strategies to boost their performance and their intermediaries' satisfaction, we rely on three related studies. In Study 1, through interviews with managers and intermediaries, we find that distribution alignment across intermediary, market, and product types may be a practical strategy for both manufacturers and intermediaries. In Study 2, by using a robust empirical methodology with data from a construction product manufacturer operating in an emerging market, we find that various combinations of intermediary, market, and product types affect the manufacturer's performance differently. Accordingly, through a supply-side examination, we quantify the revenue impact of reallocating the studied manufacturer's retail distribution resources among different intermediary-, market-, and product-type combinations. In Study 3, through a field implementation, we find that our recommended intermediary alignment strategy from Study 2 substantially boosts both the manufacturer's performance (by fourteen percent in revenue and thirteen percent in profit) and intermediaries' satisfaction (by 7.71%). Thus, with our qualitative, empirical, and field studies, we contribute to the existing research in channel management, emerging market retailing, retail distribution, and marketing strategy.</div>
-                <div class="practitioner-summary">
-                    <strong>Practitioner Takeaway</strong>
-                    Most channel management research focuses on manufacturer-intermediary relationships in developed markets. This paper addresses a practical gap: how should an emerging market manufacturer manage multiple types of intermediaries (dealers, institutional buyers) across different markets (rural, semi-urban, urban) and product types (premium, non-premium)? Through a three-study approach — qualitative interviews, empirical analysis, and field implementation — the authors find that aligning intermediaries with specific product and market types significantly outperforms blanket distribution strategies. Using data from an Indian construction product manufacturer, the empirical study identifies that the manufacturer should increase distribution to dealers (not institutional buyers), in urban and semi-urban markets (not rural), and of premium products. A field implementation of these alignment recommendations boosted the manufacturer's revenue by 14%, profit by 13%, and intermediary satisfaction by 7.71%. The practical lesson: manufacturers should not require all intermediaries to carry all products in every market. Instead, a data-driven alignment strategy — matching the right intermediary type with the right product in the right market — is a sustainable path to improving both profitability and channel partner satisfaction.
+                <div class="paper-link">
+                    <a href="https://doi.org/10.1016/j.jretai.2020.09.005" target="_blank">View Publication</a>
+                    <span class="separator">|</span>
+                    <a onclick="openModal('modal-paper7')">Practitioner Summary</a>
                 </div>
-                <div class="paper-link"><a href="https://doi.org/10.1016/j.jretai.2020.09.005" target="_blank">View Publication</a></div>
             </div>
 
+        </div>
+    </div>
+
+    <!-- MODAL: Paper 1 — Dynamic Pricing for New Products -->
+    <div class="modal-overlay" id="modal-paper1">
+        <div class="modal">
+            <button class="modal-close" onclick="closeModal('modal-paper1')">&times;</button>
+            <div class="modal-label">Practitioner Summary</div>
+            <div class="modal-title">Why Most Companies Get New Product Pricing Wrong</div>
+            <div class="modal-authors">Cosguner & Seetharaman (2022) &mdash; Management Science</div>
+
+            <div class="modal-section">
+                <h3>The Business Problem</h3>
+                <p>Launching a new product is one of the highest-stakes decisions a firm makes, and pricing is at its center. Most companies rely on the Generalized Bass Model (GBM) to forecast adoption, yet GBM has a critical blind spot: it can suggest a price trajectory after launch, but only if a manager first guesses the launch price. It cannot tell you what to charge on day one. This forces companies to rely on intuition, surveys, or competitive benchmarking for the single most consequential pricing decision they will make. The result is systematic mispricing.</p>
+            </div>
+
+            <div class="modal-section">
+                <h3>What We Found</h3>
+                <p>We developed a utility-based diffusion model that solves both problems simultaneously: it determines the optimal launch price and the optimal price path for the full product lifecycle. Tested against real adoption data across four durable goods categories (Color TV, Air Conditioners, Clothes Dryers, Freezers), our model outperformed the GBM in forecasting accuracy and predicted the timing of peak adoption nearly perfectly in three out of four categories.</p>
+                <p>More importantly, GBM fails to detect statistically significant price effects in three of four categories, leading companies to mistakenly conclude that pricing does not meaningfully influence adoption. Our model identifies strong price effects in every category tested.</p>
+            </div>
+
+            <div class="modal-stat-grid">
+                <div class="modal-stat">
+                    <span class="number">13.8%</span>
+                    <span class="label">Higher lifetime revenue vs. GBM pricing</span>
+                </div>
+                <div class="modal-stat">
+                    <span class="number">3 of 4</span>
+                    <span class="label">Categories where peak timing predicted exactly</span>
+                </div>
+            </div>
+
+            <div class="modal-section">
+                <h3>The Counterintuitive Insight</h3>
+                <p>Conventional wisdom in new product management says to start with penetration pricing and reduce prices over time. Our findings challenge this. Across all four product categories, the optimal price path is non-monotonic: prices should rise after launch, reaching a peak during the growth phase, before gradually declining. In the Color TV category, the optimal strategy is to launch at $580, raise prices to $850 during peak adoption, and then taper to $745. The GBM, by contrast, recommends a steep and continuous decline from $610 to $200, leaving 13.8% of lifetime revenue on the table.</p>
+            </div>
+
+            <div class="modal-highlight">
+                <p><strong>Why prices should rise before falling:</strong> Early adopters are less price-sensitive and driven by innovation value. As word-of-mouth builds momentum during the growth phase, willingness to pay increases across the market. Cutting prices too early sacrifices margin during a period of rising demand. The decline should begin only as the market matures and price-sensitive late adopters become the marginal buyers.</p>
+            </div>
+
+            <div class="modal-section">
+                <h3>What This Means for Practitioners</h3>
+                <p><strong>For product managers:</strong> If you are using a Bass-type model for both forecasting and pricing, you are likely leaving significant revenue on the table. The standard GBM was designed for prediction, not optimization, and its pricing recommendations are systematically suboptimal.</p>
+                <p><strong>For pricing teams:</strong> The algorithm runs in seconds using standard statistical software (R), producing specific monthly or quarterly price recommendations. Managers can run scenario analyses by adjusting price sensitivity or innovation parameters and receive updated optimal pricing in real time. The approach extends naturally to competitive, multi-product settings using game-theoretic methods.</p>
+                <p><strong>For executives:</strong> Getting your price elasticity estimate right is the single most important input. When price sensitivity is low, optimal prices remain relatively stable for 10-15 periods. When it is high, optimal launch prices can vary by a factor of seven. Investing in accurate price sensitivity measurement before launch will pay for itself many times over.</p>
+            </div>
+
+            <div class="modal-footer">
+                <a href="https://doi.org/10.1287/mnsc.2021.4257" target="_blank">Read Full Paper &rarr;</a>
+                <span class="journal-tag">Management Science, 2022</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: Paper 2 — Decoy Pricing -->
+    <div class="modal-overlay" id="modal-paper2">
+        <div class="modal">
+            <button class="modal-close" onclick="closeModal('modal-paper2')">&times;</button>
+            <div class="modal-label">Practitioner Summary</div>
+            <div class="modal-title">The $9 Million Pricing Strategy That Most Customers Never Consciously Notice</div>
+            <div class="modal-authors">Wu & Cosguner (2020) &mdash; Marketing Science</div>
+
+            <div class="modal-section">
+                <h3>The Business Problem</h3>
+                <p>The decoy effect is one of the most celebrated findings in behavioral economics: when consumers choose between two products, introducing a third inferior option can shift preferences toward the more expensive one. For four decades, this effect has been demonstrated in laboratories. But does it actually work in a real marketplace, with real money, real products, and thousands of alternatives? Until this study, no one had verified it in the field. Skeptics argued the effect might be a laboratory artifact, too fragile to survive the complexity of actual consumer decision-making.</p>
+            </div>
+
+            <div class="modal-section">
+                <h3>What We Found</h3>
+                <p>Using transaction data from over 100,000 diamonds sold by a leading U.S. online jewelry retailer over eight months, we developed a model that separates two distinct mechanisms: how often consumers notice a decoy-dominant relationship (detection), and how much it influences their purchase once noticed (boost). The results reveal a striking pattern. Detection rates are low, just 11%-25% depending on the price segment, far below what laboratory experiments suggest. But when consumers do detect dominance, the effect is powerful: dominant diamonds sell 1.8 to 3.2 times faster.</p>
+            </div>
+
+            <div class="modal-stat-grid">
+                <div class="modal-stat">
+                    <span class="number">14.3%</span>
+                    <span class="label">Increase in retailer gross profit from decoy effect</span>
+                </div>
+                <div class="modal-stat">
+                    <span class="number">1.8-3.2x</span>
+                    <span class="label">Sales boost when dominance is detected</span>
+                </div>
+                <div class="modal-stat">
+                    <span class="number">11-25%</span>
+                    <span class="label">Consumer detection rate in real market</span>
+                </div>
+                <div class="modal-stat">
+                    <span class="number">~$9M</span>
+                    <span class="label">Annual profit attributable to decoy effect</span>
+                </div>
+            </div>
+
+            <div class="modal-section">
+                <h3>The Strategic Insight</h3>
+                <p>The decoy effect is not an all-or-nothing phenomenon. It operates along two levers that retailers can influence independently. Detection is shaped by how products are displayed: comparison tools, side-by-side layouts, and price-anchoring all increase the chance a consumer notices one product dominating another. The boost, once detection occurs, is shaped by the magnitude of dominance: the clearer the value difference, the stronger the pull.</p>
+                <p>We find that the effect varies by price segment. In the lower-price segment ($2K-$5K), detection rates are highest (25%) because budget-conscious shoppers search harder, driving a 25.4% profit increase. In the high-price segment ($10K-$20K), detection is rare (11%) but the boost is the strongest at 3.2x, generating a 13.9% profit increase. This creates different strategic playbooks by segment.</p>
+            </div>
+
+            <div class="modal-highlight">
+                <p><strong>A surprising asymmetry:</strong> The sales boost for dominant products (29% increase in purchase probability) is twice as large as the sales penalty for decoy products (14% decrease). This means the decoy effect is a positive-sum game for the retailer. The gains from dominants consistently outweigh the losses from decoys, a finding that contradicts the standard loss-aversion prediction from prospect theory.</p>
+            </div>
+
+            <div class="modal-section">
+                <h3>What This Means for Practitioners</h3>
+                <p><strong>For e-commerce and retail managers:</strong> Product page design is a pricing lever. Displaying comparable alternatives, showing savings relative to grade-level averages, and structuring sort orders can all increase detection rates and amplify the decoy effect. Our simulations show that increasing price dispersion by 50% within product grades yields an additional 0.5% in profit.</p>
+                <p><strong>For assortment planners:</strong> Each additional decoy in the market contributes roughly 0.37% incremental profit. But more importantly, the number and positioning of decoys should be segment-specific. Low-price segments benefit from making comparisons easy; high-price segments benefit from making dominant products discoverable among a complex assortment.</p>
+                <p><strong>For any market with vertically comparable products:</strong> This extends well beyond diamonds. Any category where products can be objectively ranked on multiple attributes (electronics, insurance plans, subscription tiers, used cars) is fertile ground for decoy strategies. The research provides a framework for quantifying your specific market's decoy profit contribution and optimizing around it.</p>
+            </div>
+
+            <div class="modal-footer">
+                <a href="https://doi.org/10.1287/mksc.2020.1231" target="_blank">Read Full Paper &rarr;</a>
+                <span class="journal-tag">Marketing Science, 2020</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: Paper 3 — Distribution Competition -->
+    <div class="modal-overlay" id="modal-paper3">
+        <div class="modal">
+            <button class="modal-close" onclick="closeModal('modal-paper3')">&times;</button>
+            <div class="modal-label">Practitioner Summary</div>
+            <div class="modal-title">The 55% Blind Spot: Why Emerging Market Firms Overestimate Their Margins</div>
+            <div class="modal-authors">Sharma, Kumar & Cosguner (2019) &mdash; Journal of Marketing Research</div>
+
+            <div class="modal-section">
+                <h3>The Business Problem</h3>
+                <p>When multinational or domestic firms enter emerging markets, they tend to apply a familiar playbook: compete on price, optimize margins, and let distribution take care of itself. But emerging markets are structurally different. Infrastructure is underdeveloped, retail networks are fragmented, and consumers access products through multiple channel types with vastly different characteristics. The standard approach of optimizing price while treating distribution as a fixed cost leads to dangerously incorrect profit estimates. Our research shows it can overstate margins by as much as 55%.</p>
+            </div>
+
+            <div class="modal-section">
+                <h3>What We Found</h3>
+                <p>Studying two competing insecticide manufacturers in India distributing liquid and solid products through two channel types (paan-plus stores and general stores), we built a competitive model that jointly accounts for price and distribution decisions. The model reveals that distribution is not just a cost line, it is a demand-shaping strategic variable. Increasing distribution in a channel directly raises demand by making products more accessible, but it simultaneously increases consumers' price sensitivity by giving them more options. This dual effect creates a complex strategic calculus that most firms ignore entirely.</p>
+                <p>When we strip distribution from the model, as most standard pricing analyses implicitly do, equilibrium profit margins are overestimated by 7% to 55% depending on the brand, product form, and year. Firms making investment, pricing, or market entry decisions based on these inflated margins are operating with fundamentally flawed information.</p>
+            </div>
+
+            <div class="modal-stat-grid">
+                <div class="modal-stat">
+                    <span class="number">Up to 55%</span>
+                    <span class="label">Margin overestimation when distribution is ignored</span>
+                </div>
+                <div class="modal-stat">
+                    <span class="number">Flat</span>
+                    <span class="label">Price response to infrastructure improvement</span>
+                </div>
+            </div>
+
+            <div class="modal-section">
+                <h3>The Counterintuitive Insight</h3>
+                <p>When governments invest in infrastructure (new roads, highways), distribution costs decline. Conventional economics predicts this will trigger price reductions and ultimately benefit consumers through lower prices. Our counterfactual simulations reveal something different: when distribution costs fall by up to 20%, neither firm meaningfully reduces its prices. Instead, both firms reallocate distribution resources across channels. The preferred brand expands in both channel types, leveraging its brand strength to capture newly accessible markets. The weaker brand retreats from channels where it is uncompetitive and concentrates resources where it can win.</p>
+                <p>In other words, in emerging markets, firms compete through distribution intensity, not price. Consumer welfare improves not because prices fall, but because products become more available. This is a fundamentally different competitive dynamic than what textbooks describe for developed markets.</p>
+            </div>
+
+            <div class="modal-highlight">
+                <p><strong>The asymmetric response:</strong> When the preferred brand achieves exclusive distribution in just 20% of the market, it raises prices and extracts premium profits. The challenger brand cannot respond with price cuts; it can only shift distribution resources to channels where it retains access. Brand strength and distribution access are mutually reinforcing advantages in emerging markets, creating widening competitive gaps that price competition alone cannot close.</p>
+            </div>
+
+            <div class="modal-section">
+                <h3>What This Means for Practitioners</h3>
+                <p><strong>For emerging market managers:</strong> Stop treating distribution as a back-office function. Distribution intensity is your primary competitive lever, and it should be optimized jointly with pricing across every channel and product form. Any strategic planning that models price competition without distribution will produce flawed margin estimates and misguided investment decisions.</p>
+                <p><strong>For market entry teams:</strong> When evaluating emerging market opportunities, standard margin analysis will systematically overstate the attractiveness of entry. Factor in the true cost of building distribution across fragmented retail networks, and recognize that your competitive position will be defined as much by where and how you distribute as by what you charge.</p>
+                <p><strong>For strong brands:</strong> Infrastructure improvements are your opportunity. When distribution costs fall, expand aggressively into all channels. Your brand preference advantage means you will generate positive returns even in less-preferred channels. For weaker brands, the prescription is the opposite: concentrate distribution in channels where you are most competitive and avoid spreading resources thin.</p>
+            </div>
+
+            <div class="modal-footer">
+                <a href="https://doi.org/10.1177/0022243718823711" target="_blank">Read Full Paper &rarr;</a>
+                <span class="journal-tag">Journal of Marketing Research, 2019</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: Paper 4 — Switching Costs in Distribution Channel -->
+    <div class="modal-overlay" id="modal-paper4">
+        <div class="modal">
+            <button class="modal-close" onclick="closeModal('modal-paper4')">&times;</button>
+            <div class="modal-label">Practitioner Summary</div>
+            <div class="modal-title">Who Really Profits from Brand Loyalty? The Hidden Vertical Conflict</div>
+            <div class="modal-authors">Cosguner, Chan & Seetharaman (2018) &mdash; Management Science</div>
+
+            <div class="modal-section">
+                <h3>The Business Problem</h3>
+                <p>Brand loyalty is one of the most valued assets in consumer markets. Companies invest billions to build switching costs, customer inertia, and habitual purchasing. But here is a question most brand managers never ask: once you have built that loyalty, who actually captures the profit from it? The answer, as this research reveals using data from the cola market, is often not the manufacturer. It is the retailer.</p>
+            </div>
+
+            <div class="modal-section">
+                <h3>What We Found</h3>
+                <p>We built the first dynamic pricing model that accounts for the strategic role of both manufacturers and the retailer in a market with consumer switching costs. Previous models assumed manufacturers sell directly to consumers, ignoring the retailer entirely. This omission is not merely incomplete; it fundamentally distorts the picture of who benefits from customer inertia and how firms should price over time.</p>
+                <p>Our model reveals a core tension. Manufacturers face a classic invest-or-harvest tradeoff: should they cut wholesale prices today to attract customers who will become loyal tomorrow ("invest"), or charge premium wholesale prices to extract margin from their existing base ("harvest")? The retailer, however, faces no such dilemma. The retailer carries both brands, so brand-specific loyalty does not shift its customer base. The retailer simply harvests. It raises retail margins on whichever brand a customer is loyal to, capturing the value that the manufacturer invested to create.</p>
+            </div>
+
+            <div class="modal-stat-grid">
+                <div class="modal-stat">
+                    <span class="number">22-23%</span>
+                    <span class="label">Retailer margin increase from consumer inertia</span>
+                </div>
+                <div class="modal-stat">
+                    <span class="number">22-23%</span>
+                    <span class="label">Manufacturer margin decrease from same inertia</span>
+                </div>
+                <div class="modal-stat">
+                    <span class="number">$0.28</span>
+                    <span class="label">Switching cost per unit (heavy users)</span>
+                </div>
+                <div class="modal-stat">
+                    <span class="number">2.7x</span>
+                    <span class="label">Full-channel margins vs. manufacturer-only model</span>
+                </div>
+            </div>
+
+            <div class="modal-section">
+                <h3>The Free-Rider Dynamic</h3>
+                <p>The mechanism is straightforward but its consequences are significant. Manufacturers cut wholesale prices to lock in customers. The retailer then raises retail prices on those locked-in customers, pocketing the margin. The retailer's harvesting incentive accounts for the majority of retail price increases, while its investing incentive is effectively zero. The retailer will never sacrifice its margin to help a manufacturer build future demand. This creates a vertical conflict where the manufacturer bears the cost of building loyalty, and the retailer captures the return.</p>
+                <p>The less preferred brand (Pepsi in our data) faces an especially difficult position. It must invest more aggressively by cutting wholesale prices deeper to compete for customers against the preferred brand, compressing its margins even further. Market leaders, by contrast, enjoy a margin advantage that is amplified through the invest-harvest mechanism.</p>
+            </div>
+
+            <div class="modal-highlight">
+                <p><strong>When does loyalty benefit everyone?</strong> There is one scenario where increasing switching costs raises welfare for all parties: consumers, retailers, and manufacturers alike. It occurs when loyalty increases among the more price-sensitive customer segment. In this case, the retailer lowers retail prices to capture higher volume from newly loyal but still price-conscious shoppers. Demand expansion outweighs margin compression, and all parties gain. When loyalty increases among premium buyers, however, the retailer harvests aggressively, prices rise, and consumers lose.</p>
+            </div>
+
+            <div class="modal-section">
+                <h3>What This Means for Practitioners</h3>
+                <p><strong>For brand managers:</strong> Your loyalty investment may be subsidizing retailer profits. Before investing in switching cost programs (subscriptions, loyalty rewards, habit-forming features), model how much of the value your retail partners will capture through margin expansion. The strategic value of loyalty depends critically on how the retailer passes through or absorbs your wholesale pricing.</p>
+                <p><strong>For retailers:</strong> Your ability to harvest loyalty-driven margins erodes as consumers become more price-sensitive. In categories where price comparison is easy and switching costs are low, the harvesting opportunity disappears. Invest in category management practices that maintain healthy switching costs in your highest-margin categories.</p>
+                <p><strong>For industry strategists:</strong> The conventional model of switching costs, which ignores the vertical channel, underestimates total channel margins by 2.7 times. Any analysis of loyalty programs, retention strategies, or competitive dynamics that omits the retailer's pricing response is missing most of the picture.</p>
+            </div>
+
+            <div class="modal-footer">
+                <a href="https://doi.org/10.1287/mnsc.2016.2649" target="_blank">Read Full Paper &rarr;</a>
+                <span class="journal-tag">Management Science, 2018</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: Paper 5 — Email Marketing -->
+    <div class="modal-overlay" id="modal-paper5">
+        <div class="modal">
+            <button class="modal-close" onclick="closeModal('modal-paper5')">&times;</button>
+            <div class="modal-label">Practitioner Summary</div>
+            <div class="modal-title">Your Best Customers Are the Most Vulnerable to Over-Emailing</div>
+            <div class="modal-authors">Zhang, Kumar & Cosguner (2017) &mdash; Journal of Marketing Research</div>
+
+            <div class="modal-section">
+                <h3>The Business Problem</h3>
+                <p>Email remains one of the most profitable marketing channels available, yet most companies manage it with a surprisingly blunt instrument: send the same number of emails to everyone and optimize based on open rates. The prevailing assumption is that customers who open more emails are your best customers. This assumption is wrong, and acting on it is costly.</p>
+            </div>
+
+            <div class="modal-section">
+                <h3>What We Found</h3>
+                <p>Using 39 months of transaction and email data from a U.S. home improvement retailer, we developed a model that uncovers three hidden customer states that govern both email engagement and purchasing behavior. The states are not what most marketers would expect:</p>
+                <p><strong>State 1 — Low Open, Medium Purchase:</strong> These customers rarely open emails (about 0.2 per month) but make regular purchases (0.34 per month). Most email-based segmentation systems would classify them as disengaged, yet they are quietly valuable.<br>
+                <strong>State 2 — High Open, Low Purchase:</strong> These customers are highly engaged with emails (2.7 opens per month) but buy very little (0.15 per month). They look like your best customers on email dashboards, but they are not.<br>
+                <strong>State 3 — High Open, High Purchase:</strong> The genuinely valuable segment — engaged and buying (2.8 opens, 1.2 purchases per month). But this segment is also the most fragile.</p>
+            </div>
+
+            <div class="modal-stat-grid">
+                <div class="modal-stat">
+                    <span class="number">32%</span>
+                    <span class="label">Lifetime profit lost by sending 4 vs. 7 emails/month</span>
+                </div>
+                <div class="modal-stat">
+                    <span class="number">16%</span>
+                    <span class="label">Lifetime profit lost by sending 10 vs. 7 emails/month</span>
+                </div>
+                <div class="modal-stat">
+                    <span class="number">7</span>
+                    <span class="label">Optimal emails per month (steady state)</span>
+                </div>
+                <div class="modal-stat">
+                    <span class="number">5-14</span>
+                    <span class="label">Optimal range by customer state</span>
+                </div>
+            </div>
+
+            <div class="modal-section">
+                <h3>The Counterintuitive Insight</h3>
+                <p>The most dangerous mistake in email marketing is over-emailing your best customers. Our model shows that when high-value customers (State 3) receive excessive emails, their probability of remaining in the high-purchase state drops from 47% to 26%. In other words, bombarding your best customers with emails actively pushes them toward disengagement. Meanwhile, dormant customers (State 1) can tolerate and even benefit from higher email frequency: sending 10 emails per month increases their probability of transitioning to a more active state from 5% to 21%.</p>
+                <p>This creates an ironic prescription: send fewer emails to the customers who open them most, and more emails to the customers who seem to ignore them.</p>
+            </div>
+
+            <div class="modal-highlight">
+                <p><strong>The cost of getting it wrong:</strong> Email volume has an inverted U-shaped effect on profitability. The optimal steady-state frequency is approximately 7 emails per month, but deviations in either direction are asymmetrically costly. Under-emailing (4 per month) destroys 32% of customer lifetime profit. Over-emailing (10 per month) destroys 16%. Under-emailing is twice as expensive as over-emailing because it fails to re-activate dormant customers, a compounding loss over time.</p>
+            </div>
+
+            <div class="modal-section">
+                <h3>What This Means for Practitioners</h3>
+                <p><strong>For email marketing managers:</strong> Stop using open rates as the primary success metric. Open rates measure engagement, not value. A customer who opens every email but never buys is draining attention, not driving revenue. Build segmentation models that jointly track email behavior and purchase behavior, and allocate contact frequency based on a customer's inferred purchase state, not their click behavior.</p>
+                <p><strong>For CRM teams:</strong> The same customer needs different email frequencies at different times. Our decision support system shows that optimal email counts for an individual customer can swing from 5 to 12 emails per month as their behavioral signals shift. Static contact strategies, even well-segmented ones, leave money on the table. Dynamic, state-dependent policies that adjust monthly based on recency of purchase and recency of email engagement will substantially outperform static rules.</p>
+                <p><strong>For executives evaluating email ROI:</strong> Email marketing profitability is non-linear. Doubling your email volume will not double your revenue; it may decrease it. The relationship between email frequency and profit follows a curve with a clear optimum. The business case for sophisticated email frequency management is strong: the difference between a naive policy and an optimized one is measured in tens of percentage points of customer lifetime value.</p>
+            </div>
+
+            <div class="modal-footer">
+                <a href="https://doi.org/10.1509/jmr.16.0210" target="_blank">Read Full Paper &rarr;</a>
+                <span class="journal-tag">Journal of Marketing Research, 2017</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: Paper 6 — Behavioral Price Discrimination -->
+    <div class="modal-overlay" id="modal-paper6">
+        <div class="modal">
+            <button class="modal-close" onclick="closeModal('modal-paper6')">&times;</button>
+            <div class="modal-label">Practitioner Summary</div>
+            <div class="modal-title">Customer Data as Channel Power: Why Retailers Win the Personalization Game</div>
+            <div class="modal-authors">Cosguner, Chan & Seetharaman (2017) &mdash; Marketing Science</div>
+
+            <div class="modal-section">
+                <h3>The Business Problem</h3>
+                <p>Retailers sit on vast troves of customer purchase data. Manufacturers want that data to personalize offers and target competitor's customers. The question is: what happens when you combine personalized pricing (behavioral price discrimination) with brand loyalty (switching costs)? Standard economic intuition suggests that better data leads to better targeting, which should benefit whoever holds it. Our research reveals a far more nuanced reality, where data ownership reshapes the balance of power in the entire distribution channel.</p>
+            </div>
+
+            <div class="modal-section">
+                <h3>What We Found</h3>
+                <p>Using data from the cola category, we modeled multiple scenarios for how retailers and manufacturers can deploy behavioral price discrimination (BPD) through targeted coupons. Because consumers exhibit switching costs, a customer's price sensitivity is not static: it changes based on what they bought last time. A Pepsi buyer is less price-sensitive to Pepsi and more sensitive to Coke. This time-varying elasticity creates a richer and more complex targeting opportunity than conventional BPD models recognize.</p>
+                <p>We compared three strategic arrangements: the retailer managing its own couponing, the retailer outsourcing couponing to manufacturers, and the retailer selling its customer database to manufacturers as an information broker. The results were striking and counterintuitive.</p>
+            </div>
+
+            <div class="modal-stat-grid">
+                <div class="modal-stat">
+                    <span class="number">+27.8%</span>
+                    <span class="label">Retailer profit gain as information broker (full data)</span>
+                </div>
+                <div class="modal-stat">
+                    <span class="number">+14.6%</span>
+                    <span class="label">Retailer profit gain from outsourcing BPD (full data)</span>
+                </div>
+                <div class="modal-stat">
+                    <span class="number">Worse off</span>
+                    <span class="label">Manufacturers' profit vs. no personalization at all</span>
+                </div>
+                <div class="modal-stat">
+                    <span class="number">~84%</span>
+                    <span class="label">Value captured using only most recent purchase</span>
+                </div>
+            </div>
+
+            <div class="modal-section">
+                <h3>The Paradox of Data Access</h3>
+                <p>Here is the central paradox: manufacturers willingly pay for access to customer data, yet end up earning less than they would in a world with no personalization at all. How is this possible? When both manufacturers have targeting data, they simultaneously intensify their efforts to poach each other's loyal customers. This coupon arms race escalates competitive spending while the retailer extracts fees for providing the data that fuels it. The retailer captures value from the destruction of manufacturer margins.</p>
+                <p>Customer data is not just a tool for better marketing. In a channel with switching costs, it is a structural source of power. The retailer's advantage does not come from better analysis or smarter targeting. It comes from the fact that sharing data with competing manufacturers triggers a competitive dynamic that systematically transfers profit from manufacturers to the retailer.</p>
+            </div>
+
+            <div class="modal-highlight">
+                <p><strong>The simplicity insight:</strong> The most practically important finding may be the simplest. Using only what brand a customer purchased on their most recent shopping trip captures nearly all the economic value of personalized pricing, approximately 84% of the profit gain achievable with full purchase histories. This means retailers can implement effective BPD at the checkout counter, in real time, with no complex data infrastructure. The marginal value of historical database analytics over simple last-purchase targeting is small relative to implementation costs.</p>
+            </div>
+
+            <div class="modal-section">
+                <h3>What This Means for Practitioners</h3>
+                <p><strong>For retailers:</strong> Your customer data is worth far more as a channel power instrument than as a direct marketing tool. The optimal strategy is to outsource coupon design and delivery to manufacturers while retaining data ownership and charging for access. This generates up to 27.8% higher profit than managing couponing in-house. Consider yourself an information broker, not just a distribution partner.</p>
+                <p><strong>For manufacturers:</strong> Proceed with caution when negotiating for retailer data access. While the data enables better targeting, it also triggers competitive escalation with rival brands that can erase the gains. The terms of data access agreements, particularly exclusivity provisions and pricing of data fees, are as strategically important as the data itself. In some cases, the rational strategy may be to decline data access entirely and avoid the value-destructive arms race.</p>
+                <p><strong>For anyone starting with personalization:</strong> Start with last-purchase targeting. It is trivially simple, costs almost nothing to implement (coupons at checkout based on the receipt), and captures the vast majority of personalization value. Do not over-invest in complex predictive analytics until you have exhausted the value of this low-hanging fruit.</p>
+            </div>
+
+            <div class="modal-footer">
+                <a href="https://doi.org/10.1287/mksc.2016.1024" target="_blank">Read Full Paper &rarr;</a>
+                <span class="journal-tag">Marketing Science, 2017</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: Paper 7 — Channel Intermediaries -->
+    <div class="modal-overlay" id="modal-paper7">
+        <div class="modal">
+            <button class="modal-close" onclick="closeModal('modal-paper7')">&times;</button>
+            <div class="modal-label">Practitioner Summary</div>
+            <div class="modal-title">The Hidden Profit in Your Distribution Network: Why Alignment Beats Incentives</div>
+            <div class="modal-authors">Sharma, Cosguner, Sharma & Motiani (2021) &mdash; Journal of Retailing</div>
+
+            <div class="modal-section">
+                <h3>The Business Problem</h3>
+                <p>Manufacturers in emerging markets face a common but under-examined challenge: how to manage a complex network of intermediaries (dealers, wholesalers, institutional buyers) across diverse markets (rural, semi-urban, urban) and product lines (premium vs. non-premium). The conventional approach relies on incentives: cash discounts, volume bonuses, sponsored trips. But these tools address the symptom, not the cause. Intermediaries underperform not because they lack motivation, but because they are often carrying the wrong products in the wrong markets. No amount of incentive can compensate for a structural misalignment between what an intermediary sells and what its market wants.</p>
+            </div>
+
+            <div class="modal-section">
+                <h3>What We Found</h3>
+                <p>We conducted three interconnected studies. First, through qualitative interviews with 24 managers and 29 intermediaries across four industries (construction, FMCG, heavy machinery, automobiles), we discovered that both sides recognize the problem but lack a framework to solve it. Intermediaries told us directly that manufacturers push products without understanding local market demand. The concept of "distribution alignment" — matching the right intermediary type with the right product type in the right market — emerged as the core strategic opportunity.</p>
+                <p>Second, we analyzed 24 months of sales data from an Indian construction product manufacturer. The empirical model achieved near-perfect predictive accuracy and revealed dramatically different revenue responses across the 12 possible combinations of intermediary type, market type, and product type. The disparities are large enough to be strategically actionable. For instance, moving distribution resources from rural to urban or semi-urban markets, and from institutional buyers to dealers for certain product types, can meaningfully shift revenue outcomes.</p>
+                <p>Third, and most importantly, we implemented the alignment recommendations in the field. Over six months, one region received targeted guidance on which products to emphasize through which intermediary types in which markets. A matched control region received no changes.</p>
+            </div>
+
+            <div class="modal-stat-grid">
+                <div class="modal-stat">
+                    <span class="number">+14%</span>
+                    <span class="label">Revenue increase in field implementation</span>
+                </div>
+                <div class="modal-stat">
+                    <span class="number">+13%</span>
+                    <span class="label">Profit increase in field implementation</span>
+                </div>
+                <div class="modal-stat">
+                    <span class="number">+7.71%</span>
+                    <span class="label">Intermediary satisfaction increase</span>
+                </div>
+                <div class="modal-stat">
+                    <span class="number">6 months</span>
+                    <span class="label">Time to achieve field results</span>
+                </div>
+            </div>
+
+            <div class="modal-section">
+                <h3>The Core Insight</h3>
+                <p>The central finding is that alignment creates shared value. When intermediaries focus on products that genuinely sell in their markets, they move more inventory, earn better returns, and feel more satisfied with the manufacturer relationship. The manufacturer gains because distribution resources flow to their highest-return combinations. This is not a zero-sum reallocation; it is a positive-sum restructuring.</p>
+                <p>Critically, this approach does not require new incentives, additional marketing spend, or expanded headcount. It requires only better information and the willingness to guide intermediaries toward more productive configurations. An automobile dealer in the study who received alignment advice sold 23% more cars in one month simply by focusing on what his market actually demanded instead of carrying the manufacturer's full product line indiscriminately.</p>
+            </div>
+
+            <div class="modal-highlight">
+                <p><strong>Why incentives alone fail:</strong> Conventional intermediary management treats all dealers as interchangeable and all markets as equivalent. A cash discount motivates effort but does not redirect it. If a dealer in a semi-urban market is pushing premium products that his customers do not want, a bigger discount on those products will not solve the problem. Alignment addresses the structural root: ensuring the dealer is selling what his market will buy, through a channel relationship configured for that specific context.</p>
+            </div>
+
+            <div class="modal-section">
+                <h3>What This Means for Practitioners</h3>
+                <p><strong>For distribution managers:</strong> Audit your current intermediary-product-market allocation. Ask whether you are distributing based on data or based on habit. The research shows that not all intermediaries should carry all products in all markets. A targeted, data-driven alignment strategy — telling each intermediary which products to emphasize in their specific market — can yield double-digit profit improvements within six months.</p>
+                <p><strong>For sales force leaders:</strong> Your sales team is the implementation mechanism for alignment. Rather than pushing uniform volume targets, equip your field representatives with market-specific guidance: which products to emphasize, which intermediary types to prioritize, and what the local demand data reveals. This shifts the sales conversation from pressure to partnership.</p>
+                <p><strong>For emerging market strategists:</strong> Distribution alignment is especially powerful in emerging markets where intermediary networks are fragmented and market heterogeneity is extreme. The gap between current practice (uniform distribution) and optimal practice (aligned distribution) is largest where infrastructure is weakest and markets are most diverse. This is a low-cost, high-return strategy that does not depend on technology platforms or large capital investments.</p>
+            </div>
+
+            <div class="modal-footer">
+                <a href="https://doi.org/10.1016/j.jretai.2020.09.005" target="_blank">Read Full Paper &rarr;</a>
+                <span class="journal-tag">Journal of Retailing, 2021</span>
+            </div>
         </div>
     </div>
 
@@ -458,6 +1045,7 @@
     </footer>
 
     <script>
+        // Scroll animations
         const observer = new IntersectionObserver((entries) => {
             entries.forEach((entry, i) => {
                 if (entry.isIntersecting) {
@@ -467,6 +1055,34 @@
             });
         }, { threshold: 0.15 });
         document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+        // Modal functions
+        function openModal(id) {
+            document.getElementById(id).classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+        function closeModal(id) {
+            document.getElementById(id).classList.remove('active');
+            document.body.style.overflow = '';
+        }
+        // Close on overlay click
+        document.querySelectorAll('.modal-overlay').forEach(overlay => {
+            overlay.addEventListener('click', (e) => {
+                if (e.target === overlay) {
+                    overlay.classList.remove('active');
+                    document.body.style.overflow = '';
+                }
+            });
+        });
+        // Close on Escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                document.querySelectorAll('.modal-overlay.active').forEach(overlay => {
+                    overlay.classList.remove('active');
+                });
+                document.body.style.overflow = '';
+            }
+        });
     </script>
 
 </body>
