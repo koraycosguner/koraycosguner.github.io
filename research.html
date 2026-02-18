@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Publications | Koray Cosguner</title>
+    <link rel="icon" type="image/jpeg" href="photo.jpg">
 
     <style>
         :root {
@@ -161,6 +162,45 @@
             text-decoration: underline;
         }
 
+        /* Practitioner Summary */
+        .practitioner-summary {
+            margin-top: 16px;
+            padding: 16px 20px;
+            background: var(--surface);
+            border-left: 3px solid var(--primary);
+            border-radius: 0 8px 8px 0;
+            font-size: 0.88rem;
+            color: var(--text-main);
+            line-height: 1.7;
+        }
+        .practitioner-summary strong {
+            display: block;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            color: var(--primary);
+            margin-bottom: 6px;
+        }
+
+        /* Scroll Animations */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .page-header h1 {
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeUp 0.6s ease 0.1s forwards;
+        }
+        @keyframes fadeUp {
+            to { opacity: 1; transform: translateY(0); }
+        }
+
         /* Footer */
         footer {
             text-align: center;
@@ -278,7 +318,7 @@
         <div class="container">
 
             <!-- Paper 1 -->
-            <div class="paper">
+            <div class="paper fade-in">
                 <div class="paper-header">
                     <div class="paper-cover">
                         <img src="mnsc.png" alt="Management Science">
@@ -289,11 +329,15 @@
                     </div>
                 </div>
                 <div class="paper-abstract">The Bass Model (BM) has an excellent track record in the realm of new product sales forecasting. However, its use for optimal dynamic pricing or advertising is relatively limited because the Generalized Bass Model (GBM), which extends the BM to handle marketing variables, uses only percentage changes in marketing variables, rather than their actual values. This restricts the GBM's prescriptive use, for example, to derive the optimal price path for a new product, conditional on an assumed launch price, but not the launch price itself. In this paper, we employ a utility-based extension of the BM, which can yield normative prescriptions regarding both the introductory price and the price path after launch, for the new product. We offer two versions of this utility-based diffusion model, namely, the Bass-Gumbel Diffusion Model (BGDM) and the Bass-Logit Diffusion Model (BLDM), the latter of which has been previously used. We show that both the BGDM and BLDM handily outperform the GBM in forecasting new product sales using empirical data from four product categories. We discuss how to estimate the BGDM and BLDM in the absence of past sales data. We compare the optimal pricing policy of the BLDM with the GBM and derive optimal pricing policies that are implied by the BLDM under various ranges of model parameters. We illustrate a dynamic pricing approach that allows managers to derive optimal marketing policies in a computationally convenient manner and extend this approach to a competitive, multiproduct case.</div>
+                <div class="practitioner-summary">
+                    <strong>Practitioner Takeaway</strong>
+                    The widely used Generalized Bass Model (GBM) can forecast new product sales but cannot determine the optimal launch price — it only derives price paths conditional on an assumed starting price. This paper solves that problem with a utility-based diffusion model that optimizes both the introductory price and the entire price trajectory. Tested on four product categories (Color TV, Air Conditioners, Clothes Dryers, Freezers), the model outperforms the GBM in both in-sample and out-of-sample forecasting, predicts peak adoption timing more accurately, and yields 13.8% higher lifetime revenue than the GBM's optimal pricing policy. Notably, the optimal price path is often non-monotonic — rising initially before declining — which differs from the conventional wisdom of monotonically decreasing prices. The paper provides a computationally convenient algorithm (executable in seconds using R) that managers can use for real-time pricing decisions, and extends the approach to competitive, multi-product markets.
+                </div>
                 <div class="paper-link"><a href="https://doi.org/10.1287/mnsc.2021.4257" target="_blank">View Publication</a></div>
             </div>
 
             <!-- Paper 2 -->
-            <div class="paper">
+            <div class="paper fade-in">
                 <div class="paper-header">
                     <div class="paper-cover">
                         <img src="mksc.png" alt="Marketing Science">
@@ -304,11 +348,15 @@
                     </div>
                 </div>
                 <div class="paper-abstract">The decoy effect (DE) has been robustly documented across dozens of product categories and choice settings using laboratory experiments. However, it has never been verified in a real product market in the literature. In this paper, we empirically test and quantify the DE in the diamond sales of a leading online jewelry retailer. We develop a diamond-level proportional hazard framework by jointly modeling market-level decoy–dominant detection probabilities and the boost in sales upon detection of dominants. Results suggest that decoy–dominant detection probabilities are low (11%–25%) in the diamond market; however, upon detection, the DE increases dominant diamonds' sale hazards significantly (1.8–3.2 times). In terms of the managerial significance, we find that the DE substantially increases the diamond retailer's gross profit by 14.3%. We further conduct simulation studies to understand the DE's profit impact under various dominance scenarios.</div>
+                <div class="practitioner-summary">
+                    <strong>Practitioner Takeaway</strong>
+                    The decoy effect — where consumers favor a product when an inferior but similarly priced alternative is present — has been widely demonstrated in labs but never verified in a real market. This paper provides the first field evidence using data from a major U.S. online diamond retailer. While consumers only detect decoy-dominant relationships 11%–25% of the time (due to the complexity of real-world comparisons), once detected, dominant diamonds sell 1.8–3.2 times faster. The net profit impact is substantial: the decoy effect increases the retailer's gross profit by 14.3%. The paper also finds that profit impact grows with more decoys in the market and greater price variation within diamond grades. For retailers in markets with vertically comparable products (e-commerce platforms, used goods, product bundles), strategically positioning near-decoy alternatives — or making dominance relationships more visible through product page design — can meaningfully boost sales of target products.
+                </div>
                 <div class="paper-link"><a href="https://doi.org/10.1287/mksc.2020.1231" target="_blank">View Publication</a></div>
             </div>
 
             <!-- Paper 3 -->
-            <div class="paper">
+            <div class="paper fade-in">
                 <div class="paper-header">
                     <div class="paper-cover">
                         <img src="jmr.png" alt="Journal of Marketing Research">
@@ -319,11 +367,15 @@
                     </div>
                 </div>
                 <div class="paper-abstract">In emerging markets, the effective implementation of distribution strategies is challenged by underdeveloped road infrastructure and a low penetration of retail stores that are insufficient in meeting customer needs. In addition, products are typically distributed in multiple forms through multiple retail channels. Given the competitive landscape, manufacturers' distribution strategies should be based on anticipation of competitor reactions. Accordingly, the authors develop a manufacturer-level competition model to study the distribution and price decisions of insecticide manufacturers competing across multiple product forms and retail channels. Their study shows that both consumer preferences and estimated production and distribution costs vary across brands, product forms, and retail channels; that ignoring distribution and solely focusing on price competition results in up to a 55% overestimation of manufacturer profit margins; and that observed pricing and distribution patterns support competition rather than collusion among manufacturers. Through counterfactual studies, the authors find that manufacturers respond to decreases in distribution costs and to the exclusive distribution of more preferred manufacturers by asymmetrically changing their price and distribution decisions across different retail channels.</div>
+                <div class="practitioner-summary">
+                    <strong>Practitioner Takeaway</strong>
+                    In emerging markets, manufacturers face unique distribution challenges: underdeveloped road infrastructure, insufficient retail store penetration, and products sold in multiple forms across different channel types. Using data from competing insecticide manufacturers in India distributing liquid and solid products through paan-plus and general stores, this paper shows that ignoring distribution decisions and focusing solely on price competition leads to overestimating profit margins by up to 55%. Observed pricing and distribution patterns support competition rather than collusion among manufacturers. When infrastructure improves (e.g., new roads reduce distribution costs), firms should respond by reallocating distribution resources asymmetrically — increasing presence in preferred channels — rather than changing prices. The more preferred brand benefits from exclusive distribution by charging higher prices, while both firms shift resources to less costly channels. The key lesson: distribution strategy is as important as pricing strategy, and emerging market managers should jointly optimize both across product forms and retail channels.
+                </div>
                 <div class="paper-link"><a href="https://doi.org/10.1177/0022243718823711" target="_blank">View Publication</a></div>
             </div>
 
             <!-- Paper 4 -->
-            <div class="paper">
+            <div class="paper fade-in">
                 <div class="paper-header">
                     <div class="paper-cover">
                         <img src="mnsc.png" alt="Management Science">
@@ -334,11 +386,15 @@
                     </div>
                 </div>
                 <div class="paper-abstract">We advance the literature on dynamic oligopoly pricing models in the presence of switching costs by additionally modeling the strategic pricing role of the retailer within the distribution channel. In doing this, we study the relative dynamic pricing implications of how current retail and wholesale prices for a brand must optimally take into account past and future demand, respectively, for the brand. Using scanner data from the cola market, we find that while the retailer exploits the benefit of inertial demand by appropriately increasing the retail profit margin, the cost of investing is borne entirely by the manufacturers. We use simulation studies to show how the retailer will lose its ability to leverage the benefits of inertial demand as consumers become more price sensitive. We also show that when inertia of the more price-sensitive customer segment increases, the aggregate welfare of consumers, the retailer, and manufacturers may increase.</div>
+                <div class="practitioner-summary">
+                    <strong>Practitioner Takeaway</strong>
+                    When consumers habitually repurchase the same brand (switching costs/inertia), manufacturers face a trade-off: lower prices to "invest" in acquiring new loyal customers, or raise prices to "harvest" profits from already locked-in ones. This paper adds a critical missing piece — the retailer — to show how this dynamic plays out in the full distribution channel. Using cola market data, the study finds that retailers effectively free-ride on manufacturers' investment efforts: while manufacturers bear the cost of attracting customers through lower wholesale prices, the retailer captures the lion's share of inertia-generated profits by raising retail margins. The less preferred brand (Pepsi) is pressured to invest more heavily by cutting wholesale prices, shrinking its margins compared to a market without inertia. However, when inertia increases among price-sensitive consumers, all parties — consumers, retailer, and manufacturers — can benefit, because retailers lower prices to expand total market demand. For brand managers, this means that the strategic value of building brand loyalty depends heavily on how the retailer passes through (or absorbs) wholesale pricing decisions.
+                </div>
                 <div class="paper-link"><a href="https://doi.org/10.1287/mnsc.2016.2649" target="_blank">View Publication</a></div>
             </div>
 
             <!-- Paper 5 -->
-            <div class="paper">
+            <div class="paper fade-in">
                 <div class="paper-header">
                     <div class="paper-cover">
                         <img src="jmr.png" alt="Journal of Marketing Research">
@@ -349,11 +405,15 @@
                     </div>
                 </div>
                 <div class="paper-abstract">Although email marketing is highly profitable and widely used by marketers, it has received limited attention in the marketing literature. Extant research has focused on either customers' email responses or the "average" effect of emails on purchases. In this article, the authors use data from a U.S. home improvement retailer to study customers' email open and purchase behaviors by using a unified hidden Markov and copula framework. Contrary to conventional wisdom, the authors find that email-active customers are not necessarily active in purchases, and vice versa. Furthermore, the number of emails sent by the retailer has a nonlinear effect on both the retailer's short- and long-term profitability. Through a counterfactual study, the authors provide a decision support system to guide retailers in making optimal email contact decisions. This study shows that sending the right number of emails is vital for long-term profitability. For example, sending four (ten) emails instead of the optimal number of seven emails can cause the retailer to lose 32% (16%) of its lifetime profit per customer.</div>
+                <div class="practitioner-summary">
+                    <strong>Practitioner Takeaway</strong>
+                    How many marketing emails should a retailer send? This paper, using data from a U.S. home improvement retailer, shows that the answer is nuanced and dynamic. Customers who frequently open emails are not necessarily frequent buyers, and vice versa — the study identifies three distinct customer states: Low Open–Medium Purchase, High Open–Low Purchase, and High Open–High Purchase. Email volume has a non-linear (inverted U-shape) effect on purchases: too few emails underperform, but too many push high-value customers to lower purchase states. The optimal number is about 7 emails per month on average, but varies by customer state — high-purchase customers need only 5–7, while low-purchase customers may benefit from 12–14 to re-engage. Deviating from the optimum is costly: sending 4 instead of 7 emails loses 32% of lifetime profit per customer; sending 10 loses 16%. The key managerial insight: firms should move beyond uniform email blast strategies to state-dependent contact policies that dynamically adjust email frequency based on each customer's evolving engagement and purchase behavior.
+                </div>
                 <div class="paper-link"><a href="https://doi.org/10.1509/jmr.16.0210" target="_blank">View Publication</a></div>
             </div>
 
             <!-- Paper 6 -->
-            <div class="paper">
+            <div class="paper fade-in">
                 <div class="paper-header">
                     <div class="paper-cover">
                         <img src="mksc.png" alt="Marketing Science">
@@ -364,11 +424,15 @@
                     </div>
                 </div>
                 <div class="paper-abstract">We study the strategic impacts of behavioral price discrimination (BPD) on manufacturers and retailers in a distribution channel when there are switching costs in consumer demand. Unlike previous empirical studies of behavioral price discrimination, which rely only on differences in price elasticity across customers, our pricing model allows the firm strategies to additionally account for differences in price elasticity across time (due to switching costs). We estimate a dynamic pricing model using empirical data from the cola category and, through a series of counterfactuals, we find that the retailer should simply outsource the data analytics and customization of coupons to manufacturers and improve its profit beyond what it can achieve by proactively couponing on its own. We further find that serving as an information broker to sell its customer database to manufacturers can be a vital source of profit to the retailer. By contrast, manufacturers end up worse off, illustrating that customer information is a potent source of channel power to the retailer. Finally, we show that simply using customers' most recent purchase information can significantly impact firms' profits. BPD based on this information is easy to implement and of low cost to manufacturers and retailers.</div>
+                <div class="practitioner-summary">
+                    <strong>Practitioner Takeaway</strong>
+                    Can retailers profit from selling their customer purchase data to manufacturers? This paper studies behavioral price discrimination (BPD) — offering personalized coupons based on customers' purchase histories — in the cola market with switching costs. Unlike prior work that only leverages differences in price sensitivity across customers, this model additionally accounts for price sensitivity differences over time due to switching costs (locked-in vs. new customers). The key finding: retailers are better off outsourcing coupon customization entirely to manufacturers rather than running their own couponing programs. Even more profitably, the retailer can act as an information broker, selling its customer database to manufacturers — a strategy that substantially boosts retailer profits while leaving manufacturers worse off, illustrating that customer data is a potent source of channel power. Importantly, even simple BPD based solely on customers' most recent purchase (easy and low-cost to implement) significantly impacts firm profits. For retailers considering data monetization or personalized pricing strategies, the takeaway is clear: the value lies in owning and brokering the customer information, not necessarily in executing the targeting yourself.
+                </div>
                 <div class="paper-link"><a href="https://doi.org/10.1287/mksc.2016.1024" target="_blank">View Publication</a></div>
             </div>
 
             <!-- Paper 7 -->
-            <div class="paper">
+            <div class="paper fade-in">
                 <div class="paper-header">
                     <div class="paper-cover">
                         <img src="jretail.png" alt="Journal of Retailing">
@@ -379,6 +443,10 @@
                     </div>
                 </div>
                 <div class="paper-abstract">Channel intermediaries (hereafter, intermediaries) are among the most critical elements of any supply chain as the bulk of manufacturing output is transported through them. However, we have a limited understanding of the approach a manufacturer should take to achieve the dual goal of increasing profitability and intermediary satisfaction. To provide manufacturers with practical strategies to boost their performance and their intermediaries' satisfaction, we rely on three related studies. In Study 1, through interviews with managers and intermediaries, we find that distribution alignment across intermediary, market, and product types may be a practical strategy for both manufacturers and intermediaries. In Study 2, by using a robust empirical methodology with data from a construction product manufacturer operating in an emerging market, we find that various combinations of intermediary, market, and product types affect the manufacturer's performance differently. Accordingly, through a supply-side examination, we quantify the revenue impact of reallocating the studied manufacturer's retail distribution resources among different intermediary-, market-, and product-type combinations. In Study 3, through a field implementation, we find that our recommended intermediary alignment strategy from Study 2 substantially boosts both the manufacturer's performance (by fourteen percent in revenue and thirteen percent in profit) and intermediaries' satisfaction (by 7.71%). Thus, with our qualitative, empirical, and field studies, we contribute to the existing research in channel management, emerging market retailing, retail distribution, and marketing strategy.</div>
+                <div class="practitioner-summary">
+                    <strong>Practitioner Takeaway</strong>
+                    Most channel management research focuses on manufacturer-intermediary relationships in developed markets. This paper addresses a practical gap: how should an emerging market manufacturer manage multiple types of intermediaries (dealers, institutional buyers) across different markets (rural, semi-urban, urban) and product types (premium, non-premium)? Through a three-study approach — qualitative interviews, empirical analysis, and field implementation — the authors find that aligning intermediaries with specific product and market types significantly outperforms blanket distribution strategies. Using data from an Indian construction product manufacturer, the empirical study identifies that the manufacturer should increase distribution to dealers (not institutional buyers), in urban and semi-urban markets (not rural), and of premium products. A field implementation of these alignment recommendations boosted the manufacturer's revenue by 14%, profit by 13%, and intermediary satisfaction by 7.71%. The practical lesson: manufacturers should not require all intermediaries to carry all products in every market. Instead, a data-driven alignment strategy — matching the right intermediary type with the right product in the right market — is a sustainable path to improving both profitability and channel partner satisfaction.
+                </div>
                 <div class="paper-link"><a href="https://doi.org/10.1016/j.jretai.2020.09.005" target="_blank">View Publication</a></div>
             </div>
 
@@ -388,6 +456,18 @@
     <footer>
         <p>&copy; 2026 Koray Cosguner. All Rights Reserved.</p>
     </footer>
+
+    <script>
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach((entry, i) => {
+                if (entry.isIntersecting) {
+                    setTimeout(() => entry.target.classList.add('visible'), i * 100);
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.15 });
+        document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+    </script>
 
 </body>
 </html>
