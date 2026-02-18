@@ -6,6 +6,15 @@
     <title>Koray Cosguner | Indiana University</title>
     <link rel="icon" type="image/jpeg" href="photo.jpg">
 
+    <!-- Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-CTZ8G4EYLR"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-CTZ8G4EYLR');
+    </script>
+
     <style>
         :root {
             --primary: #990000; /* IU Crimson */
@@ -229,6 +238,7 @@
             <div class="nav-links">
                 <a href="index.html" class="active">Home</a>
                 <a href="research.html">Research</a>
+                <a href="cv.html">CV</a>
                 <a href="https://koraycosguner.github.io/miaow-consulting/" target="_blank">Consulting</a>
                 <a href="tools.html">Pricing & Analytics Tools</a>
             </div>
@@ -250,7 +260,7 @@
         </div>
 
         <div class="cta-container">
-            <a href="cv.pdf" class="btn btn-primary" target="_blank">Download CV</a>
+            <a href="cv.html" class="btn btn-primary">View CV</a>
             <a href="mailto:kcosgun@iu.edu" class="icon-link" title="Email">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
             </a>
@@ -355,6 +365,7 @@
     </footer>
 
     <script>
+        // Scroll animations
         const observer = new IntersectionObserver((entries) => {
             entries.forEach((entry, i) => {
                 if (entry.isIntersecting) {
