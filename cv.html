@@ -570,6 +570,16 @@
             background: var(--surface);
         }
 
+        /* Touch devices — disable hover effects */
+        @media (hover: none) {
+            .pub-item:hover,
+            .wp-item:hover,
+            .award-item:hover,
+            .mentee-item:hover {
+                background: transparent;
+            }
+        }
+
         /* Print styles */
         @media print {
             nav, .cv-hero-actions { display: none; }
@@ -592,6 +602,18 @@
         .fade-in.visible {
             opacity: 1;
             transform: translateY(0);
+        }
+
+        /* Tablet */
+        @media (max-width: 768px) {
+            .cv-hero { padding: 40px 20px 30px; }
+            .cv-hero-inner { gap: 30px; }
+            .cv-photo-wrapper { width: 140px; height: 140px; }
+            .cv-hero-text h1 { font-size: 2rem; }
+            .cv-hero-text .role { font-size: 1rem; }
+            .cv-hero-text .affiliation { font-size: 0.88rem; }
+            .cv-container { padding: 30px 20px 60px; }
+            .seminar-grid { gap: 0 24px; }
         }
 
         /* Mobile */
@@ -618,23 +640,111 @@
             }
             .nav-links a:last-child { border-bottom: none; }
             .nav-container { position: relative; }
+
+            /* Hero mobile layout — photo on top, centered */
+            .cv-hero { padding: 32px 16px 28px; }
             .cv-hero-inner {
-                flex-direction: column;
+                flex-direction: column-reverse;
                 text-align: center;
+                gap: 20px;
             }
             .cv-photo-wrapper {
-                width: 130px;
-                height: 130px;
+                width: 110px;
+                height: 110px;
             }
-            .cv-hero-text h1 { font-size: 1.8rem; }
-            .cv-hero-actions { justify-content: center; flex-wrap: wrap; }
+            .cv-hero-text h1 { font-size: 1.6rem; }
+            .cv-hero-text .role { font-size: 0.95rem; }
+            .cv-hero-text .affiliation { font-size: 0.85rem; }
+            .cv-hero-text .contact-line { font-size: 0.82rem; }
+            .cv-hero-actions {
+                justify-content: center;
+                flex-wrap: wrap;
+                gap: 10px;
+            }
+            .download-btn {
+                padding: 10px 22px;
+                font-size: 0.88rem;
+            }
+            .hero-link {
+                padding: 10px 16px;
+                font-size: 0.85rem;
+            }
+
+            /* Content area */
+            .cv-container { padding: 24px 16px 50px; }
+            .cv-section { margin-bottom: 36px; }
+            .cv-section-title {
+                font-size: 0.78rem;
+                margin-bottom: 14px;
+            }
+
+            /* Timeline grids — stack vertically */
             .timeline-item { grid-template-columns: 1fr; gap: 2px; }
-            .timeline-date { text-align: left; }
+            .timeline-date { text-align: left; font-size: 0.8rem; }
             .timeline-sub { grid-template-columns: 1fr; gap: 2px; }
+            .timeline-institution { font-size: 0.9rem; }
+            .timeline-role { font-size: 0.85rem; padding-left: 12px; }
+
+            /* Publications */
+            .pub-item { font-size: 0.85rem; line-height: 1.6; padding: 12px 0; }
+            .pub-item .pub-award { font-size: 0.78rem; }
+
+            /* Working papers */
+            .wp-item { font-size: 0.85rem; line-height: 1.6; padding: 12px 0; }
+            .wp-item .wp-status { font-size: 0.72rem; padding: 2px 8px; }
+
+            /* Teaching */
             .teaching-item { grid-template-columns: 1fr; gap: 2px; }
-            .award-item { grid-template-columns: 1fr; gap: 2px; }
-            .conf-item { grid-template-columns: 1fr; gap: 2px; }
+            .teaching-course { font-size: 0.85rem; }
+            .teaching-rating { font-size: 0.72rem; padding: 1px 6px; margin-left: 4px; }
+            .teaching-award { font-size: 0.78rem; }
+
+            /* Seminars & conferences — single column */
             .seminar-grid { grid-template-columns: 1fr; }
+            .seminar-item { font-size: 0.82rem; }
+            .conf-item { grid-template-columns: 1fr; gap: 2px; font-size: 0.82rem; }
+
+            /* Awards */
+            .award-item { grid-template-columns: 1fr; gap: 2px; font-size: 0.85rem; }
+            .award-year { text-align: left; }
+
+            /* Skills tags */
+            .tag { font-size: 0.78rem; padding: 3px 12px; }
+
+            /* Mentees */
+            .mentee-item { font-size: 0.82rem; }
+
+            /* Research interests */
+            .interests-text { font-size: 0.85rem; }
+            .interests-label { font-size: 0.8rem; }
+
+            /* Journal refereeing */
+            .cv-section .interests-text { font-size: 0.82rem; }
+
+            /* Hover effects — remove on touch */
+            .pub-item, .wp-item, .award-item, .mentee-item {
+                margin-left: -8px;
+                margin-right: -8px;
+                padding-left: 8px;
+                padding-right: 8px;
+            }
+
+            /* Footer */
+            footer { padding: 40px 16px; font-size: 0.82rem; }
+        }
+
+        /* Small phones */
+        @media (max-width: 420px) {
+            .nav-container { padding: 0 16px; }
+            .brand { font-size: 1.1rem; }
+        }
+        @media (max-width: 380px) {
+            .cv-hero-text h1 { font-size: 1.4rem; }
+            .cv-hero-text .role { font-size: 0.88rem; }
+            .cv-hero-actions { flex-direction: column; align-items: center; }
+            .download-btn { width: 100%; justify-content: center; }
+            .hero-link { width: 100%; justify-content: center; }
+            .cv-photo-wrapper { width: 95px; height: 95px; }
         }
     </style>
 </head>
