@@ -673,16 +673,18 @@
 
             <div id="equationInputSection" style="display: none;">
                 <div style="background: #f8fafc; border: 1px solid var(--border); border-radius: 8px; padding: 1rem 1.25rem; margin-bottom: 1rem; font-size: 0.9rem;">
-                    <div style="font-weight: 600; margin-bottom: 0.5rem; color: var(--text-dark);">Flexible Equation Input</div>
+                    <div style="font-weight: 600; margin-bottom: 0.5rem; color: var(--text-dark);">Equation Input</div>
                     <div style="color: var(--text-light);">
-                        Enter two linear demand equations using <strong>any variable names</strong>. The parser auto-detects own-price (negative coefficient) and cross-price variables.
+                        Enter two linear demand equations. Own-price is matched by product name (e.g., <em>Sales_BR</em> &harr; <em>Price_BR</em>), or by negative coefficient as fallback.
                     </div>
                     <div style="font-family: 'Monaco', 'Consolas', monospace; margin-top: 0.5rem; color: var(--text-dark); font-size: 0.85rem; background: white; padding: 0.5rem 0.75rem; border-radius: 4px; border: 1px solid var(--border);">
                         Sales_BR = 737.71 &minus; 64.57*Price_BR + 31.87*Price_BC<br>
                         Sales_BC = 818.37 + 17.88*Price_BR &minus; 62.11*Price_BC
                     </div>
                     <div style="color: var(--text-light); font-size: 0.82rem; margin-top: 0.5rem;">
-                        First equation &rarr; Product 1, second &rarr; Product 2. Each RHS must use exactly two price variables.
+                        <strong>DV:</strong> Sales_X, Quantity_X, S1, Q1 &nbsp;&bull;&nbsp;
+                        <strong>Price:</strong> Price_X, P1 &nbsp;&bull;&nbsp;
+                        First equation &rarr; Product 1, second &rarr; Product 2.
                     </div>
                 </div>
 
@@ -1112,10 +1114,11 @@
             } else {
                 statusEl.className = 'parse-status success';
                 const v = result.varNames;
+                const r = (x) => +x.toFixed(4);
                 statusEl.innerHTML =
                     `<strong>Parsed successfully:</strong><br>` +
-                    `<span style="color:var(--producer1);">Product 1:</span> ${v.lhs1} &rarr; a₁=${result.a1}, b₁=${result.b1} (own: ${v.ownPrice1}), c₁=${result.c1} (cross: ${v.crossPrice1})<br>` +
-                    `<span style="color:var(--producer2);">Product 2:</span> ${v.lhs2} &rarr; a₂=${result.a2}, b₂=${result.b2} (own: ${v.ownPrice2}), c₂=${result.c2} (cross: ${v.crossPrice2})`;
+                    `<span style="color:var(--producer1);">Product 1 (${v.lhs1}):</span> a₁=${r(result.a1)}, b₁=${r(result.b1)} <small>(${v.ownPrice1})</small>, c₁=${r(result.c1)} <small>(${v.crossPrice1})</small><br>` +
+                    `<span style="color:var(--producer2);">Product 2 (${v.lhs2}):</span> a₂=${r(result.a2)}, b₂=${r(result.b2)} <small>(${v.ownPrice2})</small>, c₂=${r(result.c2)} <small>(${v.crossPrice2})</small>`;
             }
         }
 
@@ -1153,6 +1156,32 @@
             return { constant, varCoeffs, error: null };
         }
 
+        // Extract product identifier from a variable name.
+        // Recognized DV patterns: Sales_X, Quantity_X, SalesX, QuantityX, S1, Q1
+        // Recognized price patterns: Price_X, PriceX, P1
+        function extractProductId(varName) {
+            let m;
+            // Sales_ProductName or Quantity_ProductName (case-insensitive)
+            m = varName.match(/^(Sales|Quantity)_(.+)$/i);
+            if (m) return { type: 'dv', productId: m[2].toLowerCase() };
+            // Price_ProductName
+            m = varName.match(/^Price_(.+)$/i);
+            if (m) return { type: 'price', productId: m[1].toLowerCase() };
+            // SalesN, QuantityN (number suffix)
+            m = varName.match(/^(Sales|Quantity)(\d+)$/i);
+            if (m) return { type: 'dv', productId: m[2] };
+            // PriceN (number suffix)
+            m = varName.match(/^Price(\d+)$/i);
+            if (m) return { type: 'price', productId: m[1] };
+            // S1, Q1 (single letter + number)
+            m = varName.match(/^([SQ])(\d+)$/i);
+            if (m) return { type: 'dv', productId: m[2] };
+            // P1 (single letter + number)
+            m = varName.match(/^P(\d+)$/i);
+            if (m) return { type: 'price', productId: m[1] };
+            return null;
+        }
+
         function parseLinearDemandEquations(text) {
             const lines = text.split('\n').map(l => l.trim()).filter(l => l && !l.startsWith('#') && !l.startsWith('//'));
             if (lines.length < 2) return { error: 'Please enter two demand equations (one per line).' };
@@ -1187,28 +1216,45 @@
             const c2A = parsed2.varCoeffs[varA] || 0;
             const c2B = parsed2.varCoeffs[varB] || 0;
 
-            // Identify own-price vs cross-price for each equation.
-            // Own-price has a negative coefficient (demand decreases as own price rises).
-            // If both are negative (complements case), pick the one with larger absolute value as own-price.
-            function identifyOwnCross(coeffA, coeffB, vA, vB) {
-                const negA = coeffA < 0, negB = coeffB < 0;
-                if (negA && !negB) return { own: vA, ownCoeff: coeffA, cross: vB, crossCoeff: coeffB };
-                if (negB && !negA) return { own: vB, ownCoeff: coeffB, cross: vA, crossCoeff: coeffA };
-                if (negA && negB) {
-                    // Both negative: larger absolute value is own-price
-                    if (Math.abs(coeffA) >= Math.abs(coeffB))
+            // --- Strategy 1: Name-based matching using product identifiers ---
+            // Extract product IDs from LHS and price variables
+            const lhsId1 = extractProductId(equations[0].lhs);
+            const lhsId2 = extractProductId(equations[1].lhs);
+            const priceIdA = extractProductId(varA);
+            const priceIdB = extractProductId(varB);
+
+            let id1 = null, id2 = null;
+
+            if (lhsId1 && lhsId2 && priceIdA && priceIdB) {
+                // Try to match LHS product ID with price product ID
+                function matchByName(lhsInfo, coeffA, coeffB, vA, vB, pIdA, pIdB) {
+                    if (lhsInfo.productId === pIdA.productId)
                         return { own: vA, ownCoeff: coeffA, cross: vB, crossCoeff: coeffB };
-                    else
+                    if (lhsInfo.productId === pIdB.productId)
                         return { own: vB, ownCoeff: coeffB, cross: vA, crossCoeff: coeffA };
+                    return null;
                 }
-                // Both positive or zero — can't determine own-price
-                return null;
+                id1 = matchByName(lhsId1, c1A, c1B, varA, varB, priceIdA, priceIdB);
+                id2 = matchByName(lhsId2, c2A, c2B, varA, varB, priceIdA, priceIdB);
             }
 
-            const id1 = identifyOwnCross(c1A, c1B, varA, varB);
-            if (!id1) return { error: `Equation 1 (${equations[0].lhs}): Cannot identify own-price variable. At least one price coefficient should be negative.` };
-            const id2 = identifyOwnCross(c2A, c2B, varA, varB);
-            if (!id2) return { error: `Equation 2 (${equations[1].lhs}): Cannot identify own-price variable. At least one price coefficient should be negative.` };
+            // --- Strategy 2: Fallback to sign-based detection (substitutes only) ---
+            // Only works when exactly one coefficient is negative (clear own-price).
+            // For complements (both negative), sign detection is ambiguous — require matching names.
+            if (!id1 || !id2) {
+                function identifyOwnCrossBySign(coeffA, coeffB, vA, vB) {
+                    const negA = coeffA < 0, negB = coeffB < 0;
+                    if (negA && !negB) return { own: vA, ownCoeff: coeffA, cross: vB, crossCoeff: coeffB };
+                    if (negB && !negA) return { own: vB, ownCoeff: coeffB, cross: vA, crossCoeff: coeffA };
+                    // Both negative (complements) or both positive: ambiguous
+                    return null;
+                }
+                if (!id1) id1 = identifyOwnCrossBySign(c1A, c1B, varA, varB);
+                if (!id2) id2 = identifyOwnCrossBySign(c2A, c2B, varA, varB);
+            }
+
+            if (!id1) return { error: `Equation 1 (${equations[0].lhs}): Cannot determine own-price. Use matching names (e.g., Sales_BR ↔ Price_BR) so the parser can identify which price belongs to which product.` };
+            if (!id2) return { error: `Equation 2 (${equations[1].lhs}): Cannot determine own-price. Use matching names (e.g., Sales_BC ↔ Price_BC) so the parser can identify which price belongs to which product.` };
 
             // Verify: each equation's own-price should be the other's cross-price
             if (id1.own === id2.own) return { error: `Both equations have the same own-price variable (${id1.own}). Each product should have a different own-price.` };
