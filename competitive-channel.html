@@ -1903,67 +1903,128 @@
 
         function generateInterpretation(p) {
             let html = '';
-            // Use average of c1 and c2 for overall relationship classification
+            // Helper: percentage change
+            const pct = (newVal, oldVal) => ((newVal - oldVal) / Math.abs(oldVal) * 100).toFixed(1);
+            const fmt = (x) => x.toFixed(2);
+
+            // Product relationship classification
             const avgCross = (p.c1 + p.c2) / 2;
             const isComplement = avgCross < 0;
             const crossEffect = (Math.abs(p.c1) + Math.abs(p.c2)) / 2;
             const avgOwnEffect = (p.b1 + p.b2) / 2;
             const crossStrength = crossEffect / avgOwnEffect;
 
-            // Product relationship context
+            // Per-product profit decomposition for monopoly scenarios (S1, S2 store combined profit1)
+            const s1_prod1 = (results.s1.P1 - p.C1) * results.s1.Q1;
+            const s1_prod2 = (results.s1.P2 - p.C2) * results.s1.Q2;
+            const s2_prod1 = (results.s2.W1 - p.C1) * results.s2.Q1;
+            const s2_prod2 = (results.s2.W2 - p.C2) * results.s2.Q2;
+
+            // Manufacturer totals for S3, S4
+            const s3_mfr_total = results.s3.profit1 + results.s3.profit2;
+            const s4_mfr_total = results.s4.profit1 + results.s4.profit2;
+
+            // ────────────────────────────────────────
+            // Section 0: Product Relationship
+            // ────────────────────────────────────────
             const relationshipType = isComplement ? 'complementary products' : 'competing products';
             const strengthLabel = crossStrength > 0.5 ? 'strongly' : crossStrength > 0.2 ? 'moderately' : 'weakly';
-            html += `<p><strong>How These Products Relate:</strong> These are <em>${strengthLabel} ${relationshipType}</em>. `;
+            html += `<p><strong>Product Relationship:</strong> These are <em>${strengthLabel} ${relationshipType}</em>. `;
             if (isComplement) {
-                html += `When one product's price goes up, demand for the other <em>goes down</em>—they're bought together (like printers and ink, or video game consoles and games).</p>`;
+                html += `When one product's price goes up, demand for the other <em>decreases</em> — they are typically purchased together (e.g., printers and ink, consoles and games).</p>`;
             } else {
-                html += `When one product's price goes up, demand for the other <em>goes up</em>—customers switch to the alternative (like Coke vs Pepsi, or Nike vs Adidas).</p>`;
+                html += `When one product's price goes up, demand for the other <em>increases</em> — customers switch to the alternative (e.g., Coke vs Pepsi, Nike vs Adidas).</p>`;
             }
 
-            // Double marginalization effect (S1 vs S2)
-            const dmLoss = ((results.s1.totalProfit - results.s2.totalProfit) / results.s1.totalProfit * 100).toFixed(1);
-            const producerLoss = ((results.s1.profit1 - results.s2.profit1) / results.s1.profit1 * 100).toFixed(1);
-            const retailPriceIncreaseS2 = ((results.s2.P1 - results.s1.P1) / results.s1.P1 * 100).toFixed(1);
-            const wholesaleVsDirect = ((results.s2.W1 - results.s1.P1) / results.s1.P1 * 100).toFixed(1);
-            html += `<p><strong>Impact of Selling Through a Retailer (S1 vs S2):</strong> When you sell through a retailer instead of direct, consumer prices rise ${retailPriceIncreaseS2}% (from $${results.s1.P1.toFixed(4)} to $${results.s2.P1.toFixed(4)}). The manufacturer sets wholesale at $${results.s2.W1.toFixed(4)}, then the retailer adds their markup. This "stacking of markups" reduces total sales volume and overall profit by ${dmLoss}%. The manufacturer loses ${producerLoss}% of their profit, with $${results.s2.retailerProfit.toFixed(4)} going to the retailer.</p>`;
-
-            // Competition effect (S1 vs S3) - different interpretation for complements vs substitutes
-            const totalS3 = results.s3.profit1 + results.s3.profit2;
-            const competitionProfitChange = ((results.s1.profit1 - totalS3) / results.s1.profit1 * 100).toFixed(1);
-            const priceChangeS3 = ((results.s3.P1 - results.s1.P1) / results.s1.P1 * 100).toFixed(1);
-            const priceChangeAbs = Math.abs(parseFloat(priceChangeS3)).toFixed(1);
-
+            // ────────────────────────────────────────
+            // Section 1: Competition Effect — Direct Sales (S1 vs S3)
+            // ────────────────────────────────────────
+            html += `<p><strong>1. Competition Effect — Direct Sales (S1 vs S3):</strong> `;
+            html += `What changes when two products go from single ownership to separate competing firms, both selling directly?</p>`;
+            html += `<ul style="margin-top: 0.25rem;">`;
+            html += `<li>Price of Product 1: $${fmt(results.s1.P1)} → $${fmt(results.s3.P1)} (${pct(results.s3.P1, results.s1.P1)}%)</li>`;
+            html += `<li>Price of Product 2: $${fmt(results.s1.P2)} → $${fmt(results.s3.P2)} (${pct(results.s3.P2, results.s1.P2)}%)</li>`;
+            html += `<li>Product 1 profit: $${fmt(s1_prod1)} → $${fmt(results.s3.profit1)} (${pct(results.s3.profit1, s1_prod1)}%)</li>`;
+            html += `<li>Product 2 profit: $${fmt(s1_prod2)} → $${fmt(results.s3.profit2)} (${pct(results.s3.profit2, s1_prod2)}%)</li>`;
+            html += `<li>Total industry profit: $${fmt(results.s1.totalProfit)} → $${fmt(results.s3.totalProfit)} (${pct(results.s3.totalProfit, results.s1.totalProfit)}%)</li>`;
+            html += `</ul>`;
             if (isComplement) {
-                html += `<p><strong>Competition Effect (S1 vs S3):</strong> When complementary products are owned by separate companies, prices <em>rise</em> by ${priceChangeAbs}%. Why? Each company ignores that lowering its price would boost sales of the partner product. A single owner would coordinate pricing to grow the overall pie. Industry profit falls by ${competitionProfitChange}% due to this coordination failure.</p>`;
+                html += `<p style="margin-top: 0.25rem;">With complementary products, separate ownership leads to <em>higher</em> prices. Each firm ignores that lowering its own price would boost demand for the partner product. A single owner coordinates pricing to grow the overall pie.</p>`;
             } else {
-                html += `<p><strong>Competition Effect (S1 vs S3):</strong> When competing products are owned by separate companies, prices <em>fall</em> by ${priceChangeAbs}%. Each company tries to win customers from the rival by cutting prices—but when both cut, margins shrink for everyone. A single owner avoids this price war. Industry profit falls by ${competitionProfitChange}%.</p>`;
+                html += `<p style="margin-top: 0.25rem;">With substitute products, competition drives prices <em>down</em> as each firm tries to win customers from the rival. But when both cut prices, margins shrink for everyone.</p>`;
             }
 
-            // Combined effect (S3 vs S4)
-            const producerTotalS4 = results.s4.profit1 + results.s4.profit2;
-            const producerLossChannel = ((totalS3 - producerTotalS4) / totalS3 * 100).toFixed(1);
-            const priceChangeS4 = ((results.s4.P1 - results.s3.P1) / results.s3.P1 * 100).toFixed(1);
-
+            // ────────────────────────────────────────
+            // Section 2: Competition Effect — Retail Channel (S2 vs S4)
+            // ────────────────────────────────────────
+            html += `<p><strong>2. Competition Effect — Retail Channel (S2 vs S4):</strong> `;
+            html += `Same comparison (single owner vs separate firms), but now both sell through a common retailer.</p>`;
+            html += `<ul style="margin-top: 0.25rem;">`;
+            html += `<li>Price of Product 1: $${fmt(results.s2.P1)} → $${fmt(results.s4.P1)} (${pct(results.s4.P1, results.s2.P1)}%)</li>`;
+            html += `<li>Price of Product 2: $${fmt(results.s2.P2)} → $${fmt(results.s4.P2)} (${pct(results.s4.P2, results.s2.P2)}%)</li>`;
+            html += `<li>Product 1 mfr profit: $${fmt(s2_prod1)} → $${fmt(results.s4.profit1)} (${pct(results.s4.profit1, s2_prod1)}%)</li>`;
+            html += `<li>Product 2 mfr profit: $${fmt(s2_prod2)} → $${fmt(results.s4.profit2)} (${pct(results.s4.profit2, s2_prod2)}%)</li>`;
+            html += `<li>Retailer profit: $${fmt(results.s2.retailerProfit)} → $${fmt(results.s4.retailerProfit)} (${pct(results.s4.retailerProfit, results.s2.retailerProfit)}%)</li>`;
+            html += `<li>Total channel profit: $${fmt(results.s2.totalProfit)} → $${fmt(results.s4.totalProfit)} (${pct(results.s4.totalProfit, results.s2.totalProfit)}%)</li>`;
+            html += `</ul>`;
             if (isComplement) {
-                html += `<p><strong>Adding a Retailer to Competing Brands (S3 vs S4):</strong> When competitors sell through a common retailer, retail prices rise by ${priceChangeS4}%. The retailer, who sells both products, can partially coordinate pricing. Manufacturer profits fall by ${producerLossChannel}%, with $${results.s4.retailerProfit.toFixed(4)} going to the retailer.</p>`;
+                html += `<p style="margin-top: 0.25rem;">Even through a retailer, the coordination failure persists — separate ownership of complementary products still raises prices and reduces total profit.</p>`;
             } else {
-                html += `<p><strong>Adding a Retailer to Competing Brands (S3 vs S4):</strong> When competitors sell through a common retailer, retail prices rise by ${priceChangeS4}%. The retailer adds their markup on top of the wholesale prices. Manufacturer profits fall by ${producerLossChannel}%, with $${results.s4.retailerProfit.toFixed(4)} going to the retailer.</p>`;
+                html += `<p style="margin-top: 0.25rem;">The retailer partially absorbs the competition effect. Since the retailer sells both products, it softens the price war between upstream manufacturers.</p>`;
             }
 
-            // Price comparison - find highest and lowest
+            // ────────────────────────────────────────
+            // Section 3: Retailer Effect — Under Collusion (S1 vs S2)
+            // ────────────────────────────────────────
+            const retailerShareS2 = (results.s2.retailerProfit / results.s2.totalProfit * 100).toFixed(1);
+            html += `<p><strong>3. Retailer Effect — Under Collusion (S1 vs S2):</strong> `;
+            html += `What changes when a single owner adds a retailer instead of selling directly?</p>`;
+            html += `<ul style="margin-top: 0.25rem;">`;
+            html += `<li>Price of Product 1: $${fmt(results.s1.P1)} → $${fmt(results.s2.P1)} (${pct(results.s2.P1, results.s1.P1)}%)</li>`;
+            html += `<li>Price of Product 2: $${fmt(results.s1.P2)} → $${fmt(results.s2.P2)} (${pct(results.s2.P2, results.s1.P2)}%)</li>`;
+            html += `<li>Manufacturer profit: $${fmt(results.s1.profit1)} → $${fmt(results.s2.profit1)} (${pct(results.s2.profit1, results.s1.profit1)}%)</li>`;
+            html += `<li>Retailer captures: $${fmt(results.s2.retailerProfit)} (${retailerShareS2}% of total channel profit)</li>`;
+            html += `<li>Total channel profit: $${fmt(results.s1.totalProfit)} → $${fmt(results.s2.totalProfit)} (${pct(results.s2.totalProfit, results.s1.totalProfit)}%)</li>`;
+            html += `</ul>`;
+            html += `<p style="margin-top: 0.25rem;">This is <em>double marginalization</em>: the manufacturer marks up over cost, then the retailer marks up again. The stacking of markups raises consumer prices and shrinks the total pie — value is destroyed, not just redistributed.</p>`;
+
+            // ────────────────────────────────────────
+            // Section 4: Retailer Effect — Under Competition (S3 vs S4)
+            // ────────────────────────────────────────
+            const retailerShareS4 = (results.s4.retailerProfit / results.s4.totalProfit * 100).toFixed(1);
+            html += `<p><strong>4. Retailer Effect — Under Competition (S3 vs S4):</strong> `;
+            html += `What changes when competing firms add a common retailer?</p>`;
+            html += `<ul style="margin-top: 0.25rem;">`;
+            html += `<li>Price of Product 1: $${fmt(results.s3.P1)} → $${fmt(results.s4.P1)} (${pct(results.s4.P1, results.s3.P1)}%)</li>`;
+            html += `<li>Price of Product 2: $${fmt(results.s3.P2)} → $${fmt(results.s4.P2)} (${pct(results.s4.P2, results.s3.P2)}%)</li>`;
+            html += `<li>Brand 1 mfr profit: $${fmt(results.s3.profit1)} → $${fmt(results.s4.profit1)} (${pct(results.s4.profit1, results.s3.profit1)}%)</li>`;
+            html += `<li>Brand 2 mfr profit: $${fmt(results.s3.profit2)} → $${fmt(results.s4.profit2)} (${pct(results.s4.profit2, results.s3.profit2)}%)</li>`;
+            html += `<li>Retailer captures: $${fmt(results.s4.retailerProfit)} (${retailerShareS4}% of total channel profit)</li>`;
+            html += `<li>Total channel profit: $${fmt(results.s3.totalProfit)} → $${fmt(results.s4.totalProfit)} (${pct(results.s4.totalProfit, results.s3.totalProfit)}%)</li>`;
+            html += `</ul>`;
+            if (isComplement) {
+                html += `<p style="margin-top: 0.25rem;">For complementary products, the common retailer can partially coordinate pricing across the two brands — potentially offsetting some of the coordination failure from separate ownership.</p>`;
+            } else {
+                html += `<p style="margin-top: 0.25rem;">The retailer adds a markup layer, but because it sells both competing products, it may soften upstream competition — manufacturers lose profit both to the retailer's margin and to reduced competitive pressure.</p>`;
+            }
+
+            // ────────────────────────────────────────
+            // Section 5: Consumer Price Ranking
+            // ────────────────────────────────────────
             const prices = [
-                { label: 'S1 (Single Owner Direct)', p: results.s1.P1 },
-                { label: 'S2 (Single Owner+Retailer)', p: results.s2.P1 },
-                { label: 'S3 (Competitors Direct)', p: results.s3.P1 },
-                { label: 'S4 (Competitors+Retailer)', p: results.s4.P1 }
+                { label: 'S1 (Single Owner Direct)', p1: results.s1.P1, p2: results.s1.P2 },
+                { label: 'S2 (Single Owner+Retailer)', p1: results.s2.P1, p2: results.s2.P2 },
+                { label: 'S3 (Competitors Direct)', p1: results.s3.P1, p2: results.s3.P2 },
+                { label: 'S4 (Competitors+Retailer)', p1: results.s4.P1, p2: results.s4.P2 }
             ];
-            prices.sort((a, b) => b.p - a.p);
+            prices.sort((a, b) => (b.p1 + b.p2) - (a.p1 + a.p2));
 
-            html += `<p><strong>Consumer Price Ranking:</strong> ${prices[0].label} ($${prices[0].p.toFixed(4)}) > ${prices[1].label} ($${prices[1].p.toFixed(4)}) > ${prices[2].label} ($${prices[2].p.toFixed(4)}) > ${prices[3].label} ($${prices[3].p.toFixed(4)}). `;
+            html += `<p><strong>Consumer Price Ranking (by average price):</strong> `;
+            html += prices.map(s => `${s.label} ($${fmt(s.p1)}, $${fmt(s.p2)})`).join(' > ') + `. `;
             if (isComplement) {
-                html += `<strong>Key insight:</strong> For complementary products (like razors and blades), having separate owners leads to higher prices. A single owner or common retailer can coordinate to offer better deals and grow sales.</p>`;
+                html += `<strong>Key insight:</strong> For complementary products, separate ownership raises prices (coordination failure). Adding a retailer adds a markup layer but can partially restore coordination.</p>`;
             } else {
-                html += `<strong>Key insight:</strong> For competing products, head-to-head competition drives prices down—good for consumers, tough on margins. Adding a retailer raises prices because it adds another layer of markup.</p>`;
+                html += `<strong>Key insight:</strong> For competing products, competition drives prices down but erodes margins. Adding a retailer raises prices via double marginalization.</p>`;
             }
 
             document.getElementById('interpretationText').innerHTML = html;
