@@ -673,17 +673,20 @@
 
             <div id="equationInputSection" style="display: none;">
                 <div style="background: #f8fafc; border: 1px solid var(--border); border-radius: 8px; padding: 1rem 1.25rem; margin-bottom: 1rem; font-size: 0.9rem;">
-                    <div style="font-weight: 600; margin-bottom: 0.5rem; color: var(--text-dark);">Expected Format</div>
+                    <div style="font-weight: 600; margin-bottom: 0.5rem; color: var(--text-dark);">Flexible Equation Input</div>
                     <div style="color: var(--text-light);">
-                        Enter your estimated linear demand equations. Use <strong>P1</strong> and <strong>P2</strong> as price variables:
+                        Enter two linear demand equations using <strong>any variable names</strong>. The parser auto-detects own-price (negative coefficient) and cross-price variables.
                     </div>
-                    <div style="font-family: 'Monaco', 'Consolas', monospace; margin-top: 0.5rem; color: var(--text-dark); font-size: 0.88rem; background: white; padding: 0.5rem 0.75rem; border-radius: 4px; border: 1px solid var(--border);">
-                        Q1 = a<sub>1</sub> &minus; b<sub>1</sub>*P1 + c<sub>1</sub>*P2<br>
-                        Q2 = a<sub>2</sub> &minus; b<sub>2</sub>*P2 + c<sub>2</sub>*P1
+                    <div style="font-family: 'Monaco', 'Consolas', monospace; margin-top: 0.5rem; color: var(--text-dark); font-size: 0.85rem; background: white; padding: 0.5rem 0.75rem; border-radius: 4px; border: 1px solid var(--border);">
+                        Sales_BR = 737.71 &minus; 64.57*Price_BR + 31.87*Price_BC<br>
+                        Sales_BC = 818.37 + 17.88*Price_BR &minus; 62.11*Price_BC
+                    </div>
+                    <div style="color: var(--text-light); font-size: 0.82rem; margin-top: 0.5rem;">
+                        First equation &rarr; Product 1, second &rarr; Product 2. Each RHS must use exactly two price variables.
                     </div>
                 </div>
 
-                <textarea class="equations-textarea" id="equationsTextarea" placeholder="Q1 = 1000 - 50*P1 + 10*P2&#10;Q2 = 1000 - 50*P2 + 10*P1" oninput="parseEquationsLive()"></textarea>
+                <textarea class="equations-textarea" id="equationsTextarea" placeholder="Sales_BR = 737.7139 - 64.5741*Price_BR + 31.8652*Price_BC&#10;Sales_BC = 818.3717 + 17.8843*Price_BR - 62.1133*Price_BC" oninput="parseEquationsLive()"></textarea>
 
                 <div id="parseStatus" class="parse-status" style="display: none;"></div>
 
@@ -1108,75 +1111,126 @@
                 statusEl.textContent = result.error;
             } else {
                 statusEl.className = 'parse-status success';
+                const v = result.varNames;
                 statusEl.innerHTML =
                     `<strong>Parsed successfully:</strong><br>` +
-                    `Q<sub>1</sub> = ${result.a1} &minus; ${result.b1}&middot;P<sub>1</sub> + ${result.c1}&middot;P<sub>2</sub><br>` +
-                    `Q<sub>2</sub> = ${result.a2} &minus; ${result.b2}&middot;P<sub>2</sub> + ${result.c2}&middot;P<sub>1</sub>`;
+                    `<span style="color:var(--producer1);">Product 1:</span> ${v.lhs1} &rarr; a₁=${result.a1}, b₁=${result.b1} (own: ${v.ownPrice1}), c₁=${result.c1} (cross: ${v.crossPrice1})<br>` +
+                    `<span style="color:var(--producer2);">Product 2:</span> ${v.lhs2} &rarr; a₂=${result.a2}, b₂=${result.b2} (own: ${v.ownPrice2}), c₂=${result.c2} (cross: ${v.crossPrice2})`;
             }
         }
 
-        function parseLinearDemandEquations(text) {
-            const lines = text.split('\n').map(l => l.trim()).filter(l => l && !l.startsWith('#') && !l.startsWith('//'));
-            if (lines.length < 2) return { error: 'Please enter two demand equations (one for Q1, one for Q2).' };
-
-            let q1Eq = null, q2Eq = null;
-            for (const line of lines) {
-                const eqIdx = line.indexOf('=');
-                if (eqIdx < 0) continue;
-                const lhs = line.substring(0, eqIdx).trim().toUpperCase();
-                const rhs = line.substring(eqIdx + 1).trim();
-                if (lhs === 'Q1') q1Eq = rhs;
-                else if (lhs === 'Q2') q2Eq = rhs;
-            }
-            if (!q1Eq) return { error: 'Missing Q1 equation. Expected: Q1 = ...' };
-            if (!q2Eq) return { error: 'Missing Q2 equation. Expected: Q2 = ...' };
-
-            const q1c = extractLinearCoefficients(q1Eq, 'P1', 'P2');
-            if (q1c.error) return { error: 'Q1: ' + q1c.error };
-            const q2c = extractLinearCoefficients(q2Eq, 'P2', 'P1');
-            if (q2c.error) return { error: 'Q2: ' + q2c.error };
-
-            return {
-                a1: q1c.constant, b1: -q1c.ownCoeff, c1: q1c.crossCoeff,
-                a2: q2c.constant, b2: -q2c.ownCoeff, c2: q2c.crossCoeff,
-                error: null
-            };
-        }
-
-        function extractLinearCoefficients(expr, ownVar, crossVar) {
+        // Parse a single linear expression and discover all variables dynamically
+        function parseLinearExpression(expr) {
             let norm = expr.replace(/\s+/g, ' ').trim();
-            norm = norm.replace(/(\d)\s*([A-Za-z])/g, '$1*$2');
-
+            // Insert * between number and variable: "2P1" → "2*P1", "64.5741Price_BR" → "64.5741*Price_BR"
+            norm = norm.replace(/(\d)([A-Za-z_])/g, '$1*$2');
+            // Split into additive terms (handle subtraction by converting to +-negative)
             let termStr = norm.replace(/\s*-\s*/g, '+-');
             const terms = termStr.split('+').map(t => t.trim()).filter(t => t);
 
-            let constant = 0, ownCoeff = 0, crossCoeff = 0;
-            const ownRe = new RegExp(ownVar, 'i');
-            const crossRe = new RegExp(crossVar, 'i');
+            let constant = 0;
+            const varCoeffs = {}; // variable name → coefficient
 
             for (const term of terms) {
-                const hasOwn = ownRe.test(term);
-                const hasCross = crossRe.test(term);
-                if (hasOwn && hasCross) return { error: `Term "${term}" contains both price variables.` };
-                if (hasOwn) {
-                    ownCoeff += extractCoeff(term, ownVar);
-                } else if (hasCross) {
-                    crossCoeff += extractCoeff(term, crossVar);
+                // Check if this term contains a variable (letter or underscore)
+                const varMatch = term.match(/[A-Za-z_][A-Za-z0-9_]*/);
+                if (varMatch) {
+                    const varName = varMatch[0];
+                    // Extract coefficient by removing the variable and any * around it
+                    const re = new RegExp('\\*?' + varName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '\\*?', 'i');
+                    let c = term.replace(re, '').replace(/^\*|\*$/g, '').trim();
+                    if (c === '' || c === '+') c = 1;
+                    else if (c === '-') c = -1;
+                    else c = parseFloat(c);
+                    if (isNaN(c)) return { error: `Could not parse coefficient in term "${term}".` };
+                    varCoeffs[varName] = (varCoeffs[varName] || 0) + c;
                 } else {
                     const val = parseFloat(term);
                     if (isNaN(val)) return { error: `Could not parse term "${term}" as a number.` };
                     constant += val;
                 }
             }
-            return { constant, ownCoeff, crossCoeff, error: null };
+            return { constant, varCoeffs, error: null };
         }
 
-        function extractCoeff(term, varName) {
-            const re = new RegExp('\\*?' + varName + '\\*?', 'i');
-            let c = term.replace(re, '').replace(/^\*|\*$/g, '').trim();
-            if (c === '' || c === '+') return 1;
-            if (c === '-') return -1;
-            return parseFloat(c);
+        function parseLinearDemandEquations(text) {
+            const lines = text.split('\n').map(l => l.trim()).filter(l => l && !l.startsWith('#') && !l.startsWith('//'));
+            if (lines.length < 2) return { error: 'Please enter two demand equations (one per line).' };
+
+            // Parse each line: LHS = RHS
+            const equations = [];
+            for (const line of lines) {
+                const eqIdx = line.indexOf('=');
+                if (eqIdx < 0) continue;
+                const lhs = line.substring(0, eqIdx).trim();
+                const rhs = line.substring(eqIdx + 1).trim();
+                if (!lhs || !rhs) continue;
+                equations.push({ lhs, rhs });
+            }
+            if (equations.length < 2) return { error: 'Need at least two equations with "=" sign.' };
+            if (equations.length > 2) return { error: 'Please enter exactly two demand equations.' };
+
+            // Parse both RHS expressions
+            const parsed1 = parseLinearExpression(equations[0].rhs);
+            if (parsed1.error) return { error: `Equation 1: ${parsed1.error}` };
+            const parsed2 = parseLinearExpression(equations[1].rhs);
+            if (parsed2.error) return { error: `Equation 2: ${parsed2.error}` };
+
+            // Collect all RHS variables across both equations
+            const allVars = new Set([...Object.keys(parsed1.varCoeffs), ...Object.keys(parsed2.varCoeffs)]);
+            if (allVars.size < 2) return { error: 'Expected two distinct price variables across both equations.' };
+            if (allVars.size > 2) return { error: `Found ${allVars.size} variables (${[...allVars].join(', ')}). Expected exactly two price variables.` };
+
+            const [varA, varB] = [...allVars];
+            const c1A = parsed1.varCoeffs[varA] || 0;
+            const c1B = parsed1.varCoeffs[varB] || 0;
+            const c2A = parsed2.varCoeffs[varA] || 0;
+            const c2B = parsed2.varCoeffs[varB] || 0;
+
+            // Identify own-price vs cross-price for each equation.
+            // Own-price has a negative coefficient (demand decreases as own price rises).
+            // If both are negative (complements case), pick the one with larger absolute value as own-price.
+            function identifyOwnCross(coeffA, coeffB, vA, vB) {
+                const negA = coeffA < 0, negB = coeffB < 0;
+                if (negA && !negB) return { own: vA, ownCoeff: coeffA, cross: vB, crossCoeff: coeffB };
+                if (negB && !negA) return { own: vB, ownCoeff: coeffB, cross: vA, crossCoeff: coeffA };
+                if (negA && negB) {
+                    // Both negative: larger absolute value is own-price
+                    if (Math.abs(coeffA) >= Math.abs(coeffB))
+                        return { own: vA, ownCoeff: coeffA, cross: vB, crossCoeff: coeffB };
+                    else
+                        return { own: vB, ownCoeff: coeffB, cross: vA, crossCoeff: coeffA };
+                }
+                // Both positive or zero — can't determine own-price
+                return null;
+            }
+
+            const id1 = identifyOwnCross(c1A, c1B, varA, varB);
+            if (!id1) return { error: `Equation 1 (${equations[0].lhs}): Cannot identify own-price variable. At least one price coefficient should be negative.` };
+            const id2 = identifyOwnCross(c2A, c2B, varA, varB);
+            if (!id2) return { error: `Equation 2 (${equations[1].lhs}): Cannot identify own-price variable. At least one price coefficient should be negative.` };
+
+            // Verify: each equation's own-price should be the other's cross-price
+            if (id1.own === id2.own) return { error: `Both equations have the same own-price variable (${id1.own}). Each product should have a different own-price.` };
+
+            // Extract parameters: b = -ownCoeff (positive), c = crossCoeff
+            return {
+                a1: parsed1.constant,
+                b1: -id1.ownCoeff,  // negate to make positive
+                c1: id1.crossCoeff,
+                a2: parsed2.constant,
+                b2: -id2.ownCoeff,  // negate to make positive
+                c2: id2.crossCoeff,
+                varNames: {
+                    lhs1: equations[0].lhs,
+                    lhs2: equations[1].lhs,
+                    ownPrice1: id1.own,
+                    crossPrice1: id1.cross,
+                    ownPrice2: id2.own,
+                    crossPrice2: id2.cross
+                },
+                error: null
+            };
         }
 
         document.addEventListener('DOMContentLoaded', () => {
