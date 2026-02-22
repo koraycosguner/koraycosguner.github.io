@@ -471,48 +471,101 @@
             background: #e5e7eb;
         }
 
-        /* Equation Textarea */
-        .equations-textarea {
-            width: 100%;
-            min-height: 120px;
-            padding: 1rem;
-            font-size: 0.95rem;
-            font-family: 'Monaco', 'Consolas', monospace;
-            border: 1px solid var(--border);
+        /* WebR Regression UI */
+        .webr-status {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 1rem;
             border-radius: 8px;
-            background: white;
-            line-height: 1.8;
-            resize: vertical;
+            font-size: 0.9rem;
+            margin-bottom: 1.25rem;
         }
+        .webr-status.loading { background: #dbeafe; color: #1e40af; border: 1px solid #bfdbfe; }
+        .webr-status.ready { background: #ecfdf5; color: #065f46; border: 1px solid #a7f3d0; }
+        .webr-status.error { background: #fef2f2; color: #991b1b; border: 1px solid #fecaca; }
+        .webr-spinner {
+            width: 18px; height: 18px;
+            border: 2px solid #bfdbfe; border-top-color: #2563eb;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            flex-shrink: 0;
+        }
+        .webr-status.ready .webr-spinner,
+        .webr-status.error .webr-spinner { display: none; }
+        @keyframes spin { to { transform: rotate(360deg); } }
 
-        .equations-textarea:focus {
-            outline: none;
+        .reg-upload-area {
+            border: 2px dashed var(--border);
+            border-radius: 8px;
+            padding: 2rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .reg-upload-area:hover,
+        .reg-upload-area.dragover {
             border-color: var(--iu-crimson);
-            box-shadow: 0 0 0 2px rgba(153, 0, 0, 0.1);
+            background: rgba(153, 0, 0, 0.05);
         }
+        .reg-upload-area input[type="file"] { display: none; }
 
-        .equations-textarea::placeholder {
-            color: #9ca3af;
+        .reg-preview-container {
+            overflow-x: auto;
+            max-height: 250px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
         }
+        .reg-preview-container table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.82rem;
+        }
+        .reg-preview-container th {
+            background: var(--iu-crimson);
+            color: white;
+            padding: 0.4rem 0.6rem;
+            font-weight: 600;
+            position: sticky;
+            top: 0;
+            white-space: nowrap;
+        }
+        .reg-preview-container td {
+            padding: 0.35rem 0.6rem;
+            border-bottom: 1px solid #f0f0f0;
+            white-space: nowrap;
+        }
+        .reg-preview-container tr:nth-child(even) { background: #f9f9f9; }
 
-        .parse-status {
-            margin-top: 0.75rem;
+        .reg-coef-container {
+            overflow-x: auto;
+        }
+        .reg-coef-container table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+        }
+        .reg-coef-container th {
+            background: var(--iu-crimson);
+            color: white;
+            padding: 0.5rem 0.75rem;
+            font-weight: 600;
+            text-align: left;
+        }
+        .reg-coef-container td {
+            padding: 0.45rem 0.75rem;
+            border-bottom: 1px solid #eee;
+        }
+        .reg-coef-container tr:nth-child(even) { background: #f9f9f9; }
+
+        .reg-params-summary {
             padding: 0.75rem 1rem;
             border-radius: 8px;
             font-size: 0.85rem;
             line-height: 1.6;
-        }
-
-        .parse-status.success {
             background: #ecfdf5;
             border: 1px solid #a7f3d0;
             color: #065f46;
-        }
-
-        .parse-status.error {
-            background: #fef2f2;
-            border: 1px solid #fecaca;
-            color: #991b1b;
         }
 
         /* Responsive */
@@ -572,13 +625,13 @@
             <div class="model-display">
                 <div style="font-weight: 600; margin-bottom: 0.75rem; color: var(--text-dark);">Linear Demand System</div>
                 <div class="equation">
-                    <span class="producer1">Q<sub>1</sub></span> = a<sub>1</sub> − b<sub>1</sub>·<span class="producer1">P<sub>1</sub></span> + c<sub>1</sub>·<span class="producer2">P<sub>2</sub></span>
+                    <span class="producer1">Q<sub>1</sub></span> = a<sub>1</sub> + b<sub>1</sub>·<span class="producer1">P<sub>1</sub></span> + c<sub>1</sub>·<span class="producer2">P<sub>2</sub></span>
                 </div>
                 <div class="equation">
-                    <span class="producer2">Q<sub>2</sub></span> = a<sub>2</sub> − b<sub>2</sub>·<span class="producer2">P<sub>2</sub></span> + c<sub>2</sub>·<span class="producer1">P<sub>1</sub></span>
+                    <span class="producer2">Q<sub>2</sub></span> = a<sub>2</sub> + b<sub>2</sub>·<span class="producer2">P<sub>2</sub></span> + c<sub>2</sub>·<span class="producer1">P<sub>1</sub></span>
                 </div>
                 <div style="margin-top: 0.75rem; font-size: 0.9rem; color: var(--text-light);">
-                    Each product has its own base demand (a<sub>i</sub>), own-price sensitivity (b<sub>i</sub>), and cross-price effect (c<sub>i</sub>)
+                    b<sub>i</sub> &lt; 0 (own-price), c<sub>i</sub> &gt; 0 for substitutes, c<sub>i</sub> &lt; 0 for complements
                 </div>
             </div>
 
@@ -590,7 +643,7 @@
                     <div><strong>C<sub>i</sub></strong> = Producer i's marginal cost</div>
                     <div><strong>Q<sub>i</sub></strong> = Quantity demanded for product i</div>
                     <div><strong>a<sub>i</sub></strong> = Base demand for product i (intercept)</div>
-                    <div><strong>b<sub>i</sub></strong> = Own-price sensitivity for product i</div>
+                    <div><strong>b<sub>i</sub></strong> = Own-price sensitivity for product i (b<sub>i</sub> &lt; 0)</div>
                     <div><strong>c<sub>1</sub></strong> = Effect of P₂ on Q₁ (c₁ > 0: substitutes, c₁ < 0: complements)</div>
                     <div><strong>c<sub>2</sub></strong> = Effect of P₁ on Q₂ (c₂ > 0: substitutes, c₂ < 0: complements)</div>
                 </div>
@@ -598,7 +651,7 @@
 
             <div class="mode-toggle">
                 <button class="active" onclick="switchInputMode('manual', this)">Manual Parameters</button>
-                <button onclick="switchInputMode('equation', this)">Equation Input</button>
+                <button onclick="switchInputMode('regression', this)">Run Regression</button>
             </div>
 
             <div id="manualInputSection">
@@ -613,8 +666,8 @@
                         <input type="number" id="a1" value="1000" step="any">
                     </div>
                     <div class="input-row">
-                        <label>b<sub>1</sub> (own-price effect)</label>
-                        <input type="number" id="b1" value="50" step="any">
+                        <label>b<sub>1</sub> (own-price, &lt; 0)</label>
+                        <input type="number" id="b1" value="-50" step="any">
                     </div>
                     <div class="input-row">
                         <label>C<sub>1</sub> (marginal cost)</label>
@@ -632,8 +685,8 @@
                         <input type="number" id="a2" value="1000" step="any">
                     </div>
                     <div class="input-row">
-                        <label>b<sub>2</sub> (own-price effect)</label>
-                        <input type="number" id="b2" value="50" step="any">
+                        <label>b<sub>2</sub> (own-price, &lt; 0)</label>
+                        <input type="number" id="b2" value="-50" step="any">
                     </div>
                     <div class="input-row">
                         <label>C<sub>2</sub> (marginal cost)</label>
@@ -667,50 +720,128 @@
             </div>
 
             <div class="param-hint" style="margin-top: 1rem; text-align: center;">
-                Demand: Q₁ = a₁ - b₁·P₁ + c₁·P₂ &nbsp;&nbsp;|&nbsp;&nbsp; Q₂ = a₂ - b₂·P₂ + c₂·P₁
+                Demand: Q₁ = a₁ + b₁·P₁ + c₁·P₂ &nbsp;&nbsp;|&nbsp;&nbsp; Q₂ = a₂ + b₂·P₂ + c₂·P₁ &nbsp;&nbsp; (b₁, b₂ &lt; 0)
             </div>
             </div><!-- end manualInputSection -->
 
-            <div id="equationInputSection" style="display: none;">
-                <div style="background: #f8fafc; border: 1px solid var(--border); border-radius: 8px; padding: 1rem 1.25rem; margin-bottom: 1rem; font-size: 0.9rem;">
-                    <div style="font-weight: 600; margin-bottom: 0.5rem; color: var(--text-dark);">Equation Input</div>
-                    <div style="color: var(--text-light);">
-                        Enter two linear demand equations. Own-price is matched by product name (e.g., <em>Sales_BR</em> &harr; <em>Price_BR</em>), or by negative coefficient as fallback.
-                    </div>
-                    <div style="font-family: 'Monaco', 'Consolas', monospace; margin-top: 0.5rem; color: var(--text-dark); font-size: 0.85rem; background: white; padding: 0.5rem 0.75rem; border-radius: 4px; border: 1px solid var(--border);">
-                        Sales_BR = 737.71 &minus; 64.57*Price_BR + 31.87*Price_BC<br>
-                        Sales_BC = 818.37 + 17.88*Price_BR &minus; 62.11*Price_BC
-                    </div>
-                    <div style="color: var(--text-light); font-size: 0.82rem; margin-top: 0.5rem;">
-                        <strong>DV:</strong> Sales_X, Quantity_X, S1, Q1 &nbsp;&bull;&nbsp;
-                        <strong>Price:</strong> Price_X, P1 &nbsp;&bull;&nbsp;
-                        First equation &rarr; Product 1, second &rarr; Product 2.
-                    </div>
+            <div id="regressionInputSection" style="display: none;">
+                <!-- WebR Status -->
+                <div id="webr-status" class="webr-status loading">
+                    <div class="webr-spinner"></div>
+                    <span>Loading R engine...</span>
                 </div>
 
-                <textarea class="equations-textarea" id="equationsTextarea" placeholder="Sales_BR = 737.7139 - 64.5741*Price_BR + 31.8652*Price_BC&#10;Sales_BC = 818.3717 + 17.8843*Price_BR - 62.1133*Price_BC" oninput="parseEquationsLive()"></textarea>
+                <!-- File Upload -->
+                <div class="reg-upload-area" id="regUploadArea">
+                    <input type="file" id="regFileInput" accept=".csv">
+                    <div style="font-size: 2.5rem;">&#128202;</div>
+                    <p style="font-size: 1rem; color: var(--text-dark); margin-top: 0.5rem; font-weight: 500;">Click to upload or drag and drop</p>
+                    <p style="font-size: 0.85rem; color: var(--text-light); margin-top: 0.25rem;">CSV file with sales/quantity and price columns</p>
+                </div>
 
-                <div id="parseStatus" class="parse-status" style="display: none;"></div>
+                <!-- Data Preview -->
+                <div id="regDataPreview" style="display: none; margin-top: 1.25rem;">
+                    <div style="font-weight: 600; margin-bottom: 0.5rem; color: var(--text-dark);">Data Preview</div>
+                    <div class="reg-preview-container">
+                        <table id="regPreviewTable"></table>
+                    </div>
+                    <p id="regDataInfo" style="font-size: 0.82rem; color: var(--text-light); margin-top: 0.5rem;"></p>
+                </div>
 
-                <div class="params-grid" style="margin-top: 1.25rem;">
-                    <div class="producer-section producer1">
-                        <div class="producer-header producer1">
-                            <span class="producer-dot producer1"></span>
-                            Product 1 Cost
+                <!-- Column Mapping -->
+                <div id="regColumnMapping" style="display: none; margin-top: 1.5rem;">
+                    <div style="font-weight: 600; margin-bottom: 0.75rem; color: var(--text-dark);">Map Your Columns</div>
+                    <p style="font-size: 0.85rem; color: var(--text-light); margin-bottom: 1rem;">
+                        Select which columns correspond to quantities/sales and prices for each product.
+                    </p>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+                        <div class="producer-section producer1">
+                            <div class="producer-header producer1">
+                                <span class="producer-dot producer1"></span> Product 1
+                            </div>
+                            <div class="input-row">
+                                <label style="width: 140px;">Quantity (Q<sub>1</sub>)</label>
+                                <select id="reg_q1_col" style="flex:1; padding: 0.5rem; border: 1px solid var(--border); border-radius: 6px; font-size: 0.9rem;">
+                                    <option value="">-- Select --</option>
+                                </select>
+                            </div>
+                            <div class="input-row">
+                                <label style="width: 140px;">Price (P<sub>1</sub>)</label>
+                                <select id="reg_p1_col" style="flex:1; padding: 0.5rem; border: 1px solid var(--border); border-radius: 6px; font-size: 0.9rem;">
+                                    <option value="">-- Select --</option>
+                                </select>
+                            </div>
                         </div>
-                        <div class="input-row">
-                            <label>C<sub>1</sub> (marginal cost)</label>
-                            <input type="number" id="c1_eq" value="10" step="any">
+                        <div class="producer-section producer2">
+                            <div class="producer-header producer2">
+                                <span class="producer-dot producer2"></span> Product 2
+                            </div>
+                            <div class="input-row">
+                                <label style="width: 140px;">Quantity (Q<sub>2</sub>)</label>
+                                <select id="reg_q2_col" style="flex:1; padding: 0.5rem; border: 1px solid var(--border); border-radius: 6px; font-size: 0.9rem;">
+                                    <option value="">-- Select --</option>
+                                </select>
+                            </div>
+                            <div class="input-row">
+                                <label style="width: 140px;">Price (P<sub>2</sub>)</label>
+                                <select id="reg_p2_col" style="flex:1; padding: 0.5rem; border: 1px solid var(--border); border-radius: 6px; font-size: 0.9rem;">
+                                    <option value="">-- Select --</option>
+                                </select>
+                            </div>
                         </div>
                     </div>
-                    <div class="producer-section producer2">
-                        <div class="producer-header producer2">
-                            <span class="producer-dot producer2"></span>
-                            Product 2 Cost
+                    <button id="runRegressionsBtn" class="calculate-btn" style="margin-top: 1.25rem; width: 100%;" onclick="runDemandRegressions()" disabled>
+                        Run Regressions
+                    </button>
+                </div>
+
+                <!-- Regression Results -->
+                <div id="regressionResults" style="display: none; margin-top: 1.5rem;">
+                    <div style="font-weight: 700; margin-bottom: 1rem; color: var(--iu-crimson); font-size: 1.05rem;">Regression Results</div>
+
+                    <div style="margin-bottom: 1.25rem;">
+                        <div style="font-weight: 600; color: var(--producer1); margin-bottom: 0.5rem;">
+                            Demand Equation 1: Q<sub>1</sub> = a<sub>1</sub> + b<sub>1</sub>&middot;P<sub>1</sub> + c<sub>1</sub>&middot;P<sub>2</sub>
                         </div>
-                        <div class="input-row">
-                            <label>C<sub>2</sub> (marginal cost)</label>
-                            <input type="number" id="c2_eq" value="10" step="any">
+                        <div class="reg-coef-container">
+                            <table id="regCoefTable1"></table>
+                        </div>
+                        <div id="regR2_1" style="font-size: 0.85rem; color: var(--text-light); margin-top: 0.5rem;"></div>
+                    </div>
+
+                    <div style="margin-bottom: 1.25rem;">
+                        <div style="font-weight: 600; color: var(--producer2); margin-bottom: 0.5rem;">
+                            Demand Equation 2: Q<sub>2</sub> = a<sub>2</sub> + b<sub>2</sub>&middot;P<sub>2</sub> + c<sub>2</sub>&middot;P<sub>1</sub>
+                        </div>
+                        <div class="reg-coef-container">
+                            <table id="regCoefTable2"></table>
+                        </div>
+                        <div id="regR2_2" style="font-size: 0.85rem; color: var(--text-light); margin-top: 0.5rem;"></div>
+                    </div>
+
+                    <div id="regParamsSummary" class="reg-params-summary" style="display: none;"></div>
+                    <div id="regWarning" class="error-message" style="display: none;"></div>
+
+                    <div class="params-grid" style="margin-top: 1.25rem;">
+                        <div class="producer-section producer1">
+                            <div class="producer-header producer1">
+                                <span class="producer-dot producer1"></span>
+                                Product 1 Cost
+                            </div>
+                            <div class="input-row">
+                                <label>C<sub>1</sub> (marginal cost)</label>
+                                <input type="number" id="c1_reg" value="10" step="any">
+                            </div>
+                        </div>
+                        <div class="producer-section producer2">
+                            <div class="producer-header producer2">
+                                <span class="producer-dot producer2"></span>
+                                Product 2 Cost
+                            </div>
+                            <div class="input-row">
+                                <label>C<sub>2</sub> (marginal cost)</label>
+                                <input type="number" id="c2_reg" value="10" step="any">
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -1092,195 +1223,331 @@
         let results = {};
         let inputMode = 'manual';
 
+        // WebR state
+        let webR = null;
+        let webRReady = false;
+        let webRLoading = false;
+        let regCsvData = null;
+        let regCoefficients = null;
+
         function switchInputMode(mode, btn) {
             inputMode = mode;
             document.querySelectorAll('.mode-toggle button').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
             document.getElementById('manualInputSection').style.display = mode === 'manual' ? 'block' : 'none';
-            document.getElementById('equationInputSection').style.display = mode === 'equation' ? 'block' : 'none';
+            document.getElementById('regressionInputSection').style.display = mode === 'regression' ? 'block' : 'none';
             document.getElementById('errorMessage').classList.remove('visible');
-        }
 
-        function parseEquationsLive() {
-            const text = document.getElementById('equationsTextarea').value.trim();
-            const statusEl = document.getElementById('parseStatus');
-            if (!text) { statusEl.style.display = 'none'; return; }
-
-            const result = parseLinearDemandEquations(text);
-            statusEl.style.display = 'block';
-            if (result.error) {
-                statusEl.className = 'parse-status error';
-                statusEl.textContent = result.error;
-            } else {
-                statusEl.className = 'parse-status success';
-                const v = result.varNames;
-                const r = (x) => +x.toFixed(4);
-                statusEl.innerHTML =
-                    `<strong>Parsed successfully:</strong><br>` +
-                    `<span style="color:var(--producer1);">Product 1 (${v.lhs1}):</span> a₁=${r(result.a1)}, b₁=${r(result.b1)} <small>(${v.ownPrice1})</small>, c₁=${r(result.c1)} <small>(${v.crossPrice1})</small><br>` +
-                    `<span style="color:var(--producer2);">Product 2 (${v.lhs2}):</span> a₂=${r(result.a2)}, b₂=${r(result.b2)} <small>(${v.ownPrice2})</small>, c₂=${r(result.c2)} <small>(${v.crossPrice2})</small>`;
+            // Lazy-load WebR when regression mode is first selected
+            if (mode === 'regression' && !webR && !webRLoading) {
+                initWebR();
             }
         }
 
-        // Parse a single linear expression and discover all variables dynamically
-        function parseLinearExpression(expr) {
-            let norm = expr.replace(/\s+/g, ' ').trim();
-            // Insert * between number and variable: "2P1" → "2*P1", "64.5741Price_BR" → "64.5741*Price_BR"
-            norm = norm.replace(/(\d)([A-Za-z_])/g, '$1*$2');
-            // Split into additive terms (handle subtraction by converting to +-negative)
-            let termStr = norm.replace(/\s*-\s*/g, '+-');
-            const terms = termStr.split('+').map(t => t.trim()).filter(t => t);
+        // ---- WebR Initialization (lazy) ----
+        async function initWebR() {
+            if (webR || webRLoading) return;
+            webRLoading = true;
+            const statusEl = document.getElementById('webr-status');
+            statusEl.className = 'webr-status loading';
+            statusEl.innerHTML = '<div class="webr-spinner"></div><span>Loading R engine (this may take a moment)...</span>';
+            try {
+                const { WebR } = await import('https://webr.r-wasm.org/latest/webr.mjs');
+                webR = new WebR();
+                await webR.init();
+                webRReady = true;
+                webRLoading = false;
+                statusEl.className = 'webr-status ready';
+                statusEl.innerHTML = '<span>&#10003; R engine ready.</span>';
+                updateRunRegressionsBtn();
+            } catch (error) {
+                webRLoading = false;
+                statusEl.className = 'webr-status error';
+                statusEl.innerHTML = '<span>Failed to load R engine: ' + error.message + '. Please refresh.</span>';
+            }
+        }
 
-            let constant = 0;
-            const varCoeffs = {}; // variable name → coefficient
-
-            for (const term of terms) {
-                // Check if this term contains a variable (letter or underscore)
-                const varMatch = term.match(/[A-Za-z_][A-Za-z0-9_]*/);
-                if (varMatch) {
-                    const varName = varMatch[0];
-                    // Extract coefficient by removing the variable and any * around it
-                    const re = new RegExp('\\*?' + varName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '\\*?', 'i');
-                    let c = term.replace(re, '').replace(/^\*|\*$/g, '').trim();
-                    if (c === '' || c === '+') c = 1;
-                    else if (c === '-') c = -1;
-                    else c = parseFloat(c);
-                    if (isNaN(c)) return { error: `Could not parse coefficient in term "${term}".` };
-                    varCoeffs[varName] = (varCoeffs[varName] || 0) + c;
-                } else {
-                    const val = parseFloat(term);
-                    if (isNaN(val)) return { error: `Could not parse term "${term}" as a number.` };
-                    constant += val;
+        // ---- CSV Parsing ----
+        function parseRegCSV(text) {
+            const lines = text.trim().split('\n');
+            const headers = lines[0].split(',').map(h => h.trim().replace(/^"|"$/g, ''));
+            const data = [];
+            for (let i = 1; i < lines.length; i++) {
+                const values = lines[i].split(',').map(v => v.trim().replace(/^"|"$/g, ''));
+                if (values.length === headers.length) {
+                    const row = {};
+                    headers.forEach((h, j) => { row[h] = values[j]; });
+                    data.push(row);
                 }
             }
-            return { constant, varCoeffs, error: null };
+            return { headers, data };
         }
 
-        // Extract product identifier from a variable name.
-        // Recognized DV patterns: Sales_X, Quantity_X, SalesX, QuantityX, S1, Q1
-        // Recognized price patterns: Price_X, PriceX, P1
-        function extractProductId(varName) {
-            let m;
-            // Sales_ProductName or Quantity_ProductName (case-insensitive)
-            m = varName.match(/^(Sales|Quantity)_(.+)$/i);
-            if (m) return { type: 'dv', productId: m[2].toLowerCase() };
-            // Price_ProductName
-            m = varName.match(/^Price_(.+)$/i);
-            if (m) return { type: 'price', productId: m[1].toLowerCase() };
-            // SalesN, QuantityN (number suffix)
-            m = varName.match(/^(Sales|Quantity)(\d+)$/i);
-            if (m) return { type: 'dv', productId: m[2] };
-            // PriceN (number suffix)
-            m = varName.match(/^Price(\d+)$/i);
-            if (m) return { type: 'price', productId: m[1] };
-            // S1, Q1 (single letter + number)
-            m = varName.match(/^([SQ])(\d+)$/i);
-            if (m) return { type: 'dv', productId: m[2] };
-            // P1 (single letter + number)
-            m = varName.match(/^P(\d+)$/i);
-            if (m) return { type: 'price', productId: m[1] };
-            return null;
+        function isNumericColumnReg(data, colName) {
+            const sampleSize = Math.min(data.length, 100);
+            let numericCount = 0;
+            for (let i = 0; i < sampleSize; i++) {
+                const val = data[i][colName];
+                if (val === '' || val === null || val === undefined) continue;
+                if (!isNaN(parseFloat(val)) && isFinite(val)) numericCount++;
+            }
+            return numericCount >= sampleSize * 0.8;
         }
 
-        function parseLinearDemandEquations(text) {
-            const lines = text.split('\n').map(l => l.trim()).filter(l => l && !l.startsWith('#') && !l.startsWith('//'));
-            if (lines.length < 2) return { error: 'Please enter two demand equations (one per line).' };
-
-            // Parse each line: LHS = RHS
-            const equations = [];
-            for (const line of lines) {
-                const eqIdx = line.indexOf('=');
-                if (eqIdx < 0) continue;
-                const lhs = line.substring(0, eqIdx).trim();
-                const rhs = line.substring(eqIdx + 1).trim();
-                if (!lhs || !rhs) continue;
-                equations.push({ lhs, rhs });
+        // ---- File Upload Handling ----
+        function handleRegFile(file) {
+            if (!file || !file.name.toLowerCase().endsWith('.csv')) {
+                alert('Please upload a CSV file.');
+                return;
             }
-            if (equations.length < 2) return { error: 'Need at least two equations with "=" sign.' };
-            if (equations.length > 2) return { error: 'Please enter exactly two demand equations.' };
-
-            // Parse both RHS expressions
-            const parsed1 = parseLinearExpression(equations[0].rhs);
-            if (parsed1.error) return { error: `Equation 1: ${parsed1.error}` };
-            const parsed2 = parseLinearExpression(equations[1].rhs);
-            if (parsed2.error) return { error: `Equation 2: ${parsed2.error}` };
-
-            // Collect all RHS variables across both equations
-            const allVars = new Set([...Object.keys(parsed1.varCoeffs), ...Object.keys(parsed2.varCoeffs)]);
-            if (allVars.size < 2) return { error: 'Expected two distinct price variables across both equations.' };
-            if (allVars.size > 2) return { error: `Found ${allVars.size} variables (${[...allVars].join(', ')}). Expected exactly two price variables.` };
-
-            const [varA, varB] = [...allVars];
-            const c1A = parsed1.varCoeffs[varA] || 0;
-            const c1B = parsed1.varCoeffs[varB] || 0;
-            const c2A = parsed2.varCoeffs[varA] || 0;
-            const c2B = parsed2.varCoeffs[varB] || 0;
-
-            // --- Strategy 1: Name-based matching using product identifiers ---
-            // Extract product IDs from LHS and price variables
-            const lhsId1 = extractProductId(equations[0].lhs);
-            const lhsId2 = extractProductId(equations[1].lhs);
-            const priceIdA = extractProductId(varA);
-            const priceIdB = extractProductId(varB);
-
-            let id1 = null, id2 = null;
-
-            if (lhsId1 && lhsId2 && priceIdA && priceIdB) {
-                // Try to match LHS product ID with price product ID
-                function matchByName(lhsInfo, coeffA, coeffB, vA, vB, pIdA, pIdB) {
-                    if (lhsInfo.productId === pIdA.productId)
-                        return { own: vA, ownCoeff: coeffA, cross: vB, crossCoeff: coeffB };
-                    if (lhsInfo.productId === pIdB.productId)
-                        return { own: vB, ownCoeff: coeffB, cross: vA, crossCoeff: coeffA };
-                    return null;
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                try {
+                    regCsvData = parseRegCSV(e.target.result);
+                    regCsvData.raw = e.target.result;
+                    displayRegPreview(regCsvData.headers, regCsvData.data);
+                    populateRegDropdowns(regCsvData.headers, regCsvData.data);
+                    document.getElementById('regDataPreview').style.display = 'block';
+                    document.getElementById('regColumnMapping').style.display = 'block';
+                    document.getElementById('regDataInfo').textContent =
+                        `Loaded ${regCsvData.data.length} rows × ${regCsvData.headers.length} columns.`;
+                    // Reset previous results
+                    regCoefficients = null;
+                    document.getElementById('regressionResults').style.display = 'none';
+                } catch (error) {
+                    alert('Error parsing CSV: ' + error.message);
                 }
-                id1 = matchByName(lhsId1, c1A, c1B, varA, varB, priceIdA, priceIdB);
-                id2 = matchByName(lhsId2, c2A, c2B, varA, varB, priceIdA, priceIdB);
-            }
-
-            // --- Strategy 2: Fallback to sign-based detection (substitutes only) ---
-            // Only works when exactly one coefficient is negative (clear own-price).
-            // For complements (both negative), sign detection is ambiguous — require matching names.
-            if (!id1 || !id2) {
-                function identifyOwnCrossBySign(coeffA, coeffB, vA, vB) {
-                    const negA = coeffA < 0, negB = coeffB < 0;
-                    if (negA && !negB) return { own: vA, ownCoeff: coeffA, cross: vB, crossCoeff: coeffB };
-                    if (negB && !negA) return { own: vB, ownCoeff: coeffB, cross: vA, crossCoeff: coeffA };
-                    // Both negative (complements) or both positive: ambiguous
-                    return null;
-                }
-                if (!id1) id1 = identifyOwnCrossBySign(c1A, c1B, varA, varB);
-                if (!id2) id2 = identifyOwnCrossBySign(c2A, c2B, varA, varB);
-            }
-
-            if (!id1) return { error: `Equation 1 (${equations[0].lhs}): Cannot determine own-price. Use matching names (e.g., Sales_BR ↔ Price_BR) so the parser can identify which price belongs to which product.` };
-            if (!id2) return { error: `Equation 2 (${equations[1].lhs}): Cannot determine own-price. Use matching names (e.g., Sales_BC ↔ Price_BC) so the parser can identify which price belongs to which product.` };
-
-            // Verify: each equation's own-price should be the other's cross-price
-            if (id1.own === id2.own) return { error: `Both equations have the same own-price variable (${id1.own}). Each product should have a different own-price.` };
-
-            // Extract parameters: b = -ownCoeff (positive), c = crossCoeff
-            return {
-                a1: parsed1.constant,
-                b1: -id1.ownCoeff,  // negate to make positive
-                c1: id1.crossCoeff,
-                a2: parsed2.constant,
-                b2: -id2.ownCoeff,  // negate to make positive
-                c2: id2.crossCoeff,
-                varNames: {
-                    lhs1: equations[0].lhs,
-                    lhs2: equations[1].lhs,
-                    ownPrice1: id1.own,
-                    crossPrice1: id1.cross,
-                    ownPrice2: id2.own,
-                    crossPrice2: id2.cross
-                },
-                error: null
             };
+            reader.readAsText(file);
         }
 
+        function displayRegPreview(headers, data) {
+            const table = document.getElementById('regPreviewTable');
+            const preview = data.slice(0, 10);
+            let html = '<thead><tr>';
+            headers.forEach(h => { html += `<th>${h}</th>`; });
+            html += '</tr></thead><tbody>';
+            preview.forEach(row => {
+                html += '<tr>';
+                headers.forEach(h => { html += `<td>${row[h] || ''}</td>`; });
+                html += '</tr>';
+            });
+            html += '</tbody>';
+            table.innerHTML = html;
+        }
+
+        function populateRegDropdowns(headers, data) {
+            const numericCols = headers.filter(h => isNumericColumnReg(data, h));
+            const selects = ['reg_q1_col', 'reg_q2_col', 'reg_p1_col', 'reg_p2_col'];
+            selects.forEach(id => {
+                const sel = document.getElementById(id);
+                sel.innerHTML = '<option value="">-- Select --</option>';
+                numericCols.forEach(col => {
+                    sel.innerHTML += `<option value="${col}">${col}</option>`;
+                });
+                sel.onchange = updateRunRegressionsBtn;
+            });
+            updateRunRegressionsBtn();
+        }
+
+        function updateRunRegressionsBtn() {
+            const btn = document.getElementById('runRegressionsBtn');
+            const q1 = document.getElementById('reg_q1_col').value;
+            const q2 = document.getElementById('reg_q2_col').value;
+            const p1 = document.getElementById('reg_p1_col').value;
+            const p2 = document.getElementById('reg_p2_col').value;
+            const allSelected = q1 && q2 && p1 && p2;
+            const allDistinct = allSelected && new Set([q1, q2, p1, p2]).size === 4;
+            btn.disabled = !(webRReady && allDistinct);
+        }
+
+        // ---- Core: Run Two OLS Regressions via WebR ----
+        async function runDemandRegressions() {
+            if (!webRReady || !webR) return;
+
+            const q1Col = document.getElementById('reg_q1_col').value;
+            const q2Col = document.getElementById('reg_q2_col').value;
+            const p1Col = document.getElementById('reg_p1_col').value;
+            const p2Col = document.getElementById('reg_p2_col').value;
+
+            if (!q1Col || !q2Col || !p1Col || !p2Col) return;
+
+            const btn = document.getElementById('runRegressionsBtn');
+            btn.disabled = true;
+            btn.textContent = 'Running regressions...';
+
+            try {
+                // Build CSV with just the 4 columns
+                const cols = [q1Col, q2Col, p1Col, p2Col];
+                const csvLines = [cols.join(',')];
+                regCsvData.data.forEach(row => {
+                    csvLines.push(cols.map(c => {
+                        let val = row[c] || '';
+                        if (val.includes(',') || val.includes('"')) val = '"' + val.replace(/"/g, '""') + '"';
+                        return val;
+                    }).join(','));
+                });
+                const csvText = csvLines.join('\n');
+                const escapedCsv = csvText.replace(/\\/g, '\\\\').replace(/"/g, '\\"').replace(/\n/g, '\\n').replace(/\r/g, '');
+
+                const rCode = `
+                    csv_text <- "${escapedCsv}"
+                    data <- read.csv(text = csv_text, stringsAsFactors = FALSE)
+                    for (col in names(data)) { data[[col]] <- as.numeric(data[[col]]) }
+                    data <- na.omit(data)
+                    n_obs <- nrow(data)
+                    cn <- names(data)
+
+                    f1 <- paste0("\`", cn[1], "\` ~ \`", cn[3], "\` + \`", cn[4], "\`")
+                    m1 <- lm(as.formula(f1), data = data)
+                    s1 <- summary(m1)
+
+                    f2 <- paste0("\`", cn[2], "\` ~ \`", cn[3], "\` + \`", cn[4], "\`")
+                    m2 <- lm(as.formula(f2), data = data)
+                    s2 <- summary(m2)
+
+                    c1 <- s1$coefficients; c2 <- s2$coefficients
+
+                    mkjson <- function(ct) {
+                        rows <- c()
+                        for (i in 1:nrow(ct)) {
+                            vn <- gsub('"', '\\\\\\\\"', rownames(ct)[i])
+                            rows <- c(rows, paste0('{"var":"', vn, '","est":', ct[i,1], ',"se":', ct[i,2], ',"t":', ct[i,3], ',"p":', ct[i,4], '}'))
+                        }
+                        paste0('[', paste(rows, collapse=','), ']')
+                    }
+
+                    paste0('REG_RESULT:{"n":', n_obs,
+                        ',"r2_1":', s1$r.squared, ',"adj_r2_1":', s1$adj.r.squared,
+                        ',"r2_2":', s2$r.squared, ',"adj_r2_2":', s2$adj.r.squared,
+                        ',"coefs1":', mkjson(c1), ',"coefs2":', mkjson(c2),
+                        '}:END_REG_RESULT')
+                `;
+
+                const result = await webR.evalR(rCode);
+                const outputObj = await result.toJs();
+                let output = '';
+                if (typeof outputObj === 'string') {
+                    output = outputObj;
+                } else if (outputObj && outputObj.values) {
+                    output = Array.isArray(outputObj.values) ? outputObj.values.join('') : String(outputObj.values);
+                } else if (Array.isArray(outputObj)) {
+                    output = outputObj.join('');
+                } else {
+                    output = String(outputObj);
+                }
+
+                const match = output.match(/REG_RESULT:(.*?):END_REG_RESULT/);
+                if (!match) throw new Error('Could not parse regression output from R.');
+
+                const regResult = JSON.parse(match[1]);
+                displayRegressionResults(regResult, q1Col, q2Col, p1Col, p2Col);
+
+            } catch (error) {
+                alert('Regression error: ' + error.message);
+                console.error(error);
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'Run Regressions';
+            }
+        }
+
+        // ---- Display Regression Results ----
+        function renderRegCoefTable(tableId, coefs) {
+            const table = document.getElementById(tableId);
+            let html = '<thead><tr><th>Variable</th><th>Estimate</th><th>Std. Error</th><th>t-value</th><th>p-value</th></tr></thead><tbody>';
+            coefs.forEach(c => {
+                const pDisp = c.p < 0.0001 ? '< 0.0001' : c.p.toFixed(4);
+                const sig = c.p < 0.01 ? ' ***' : c.p < 0.05 ? ' **' : c.p < 0.1 ? ' *' : '';
+                html += `<tr>
+                    <td style="font-weight: 500;">${c.var}</td>
+                    <td>${c.est.toFixed(4)}</td>
+                    <td>${c.se.toFixed(4)}</td>
+                    <td>${c.t.toFixed(4)}</td>
+                    <td>${pDisp}${sig}</td>
+                </tr>`;
+            });
+            html += '</tbody>';
+            table.innerHTML = html;
+        }
+
+        function displayRegressionResults(regResult, q1Col, q2Col, p1Col, p2Col) {
+            renderRegCoefTable('regCoefTable1', regResult.coefs1);
+            document.getElementById('regR2_1').innerHTML =
+                `R&sup2; = ${regResult.r2_1.toFixed(4)} &nbsp;|&nbsp; Adj. R&sup2; = ${regResult.adj_r2_1.toFixed(4)} &nbsp;|&nbsp; n = ${regResult.n}`;
+
+            renderRegCoefTable('regCoefTable2', regResult.coefs2);
+            document.getElementById('regR2_2').innerHTML =
+                `R&sup2; = ${regResult.r2_2.toFixed(4)} &nbsp;|&nbsp; Adj. R&sup2; = ${regResult.adj_r2_2.toFixed(4)} &nbsp;|&nbsp; n = ${regResult.n}`;
+
+            // Extract demand parameters (raw regression coefficients)
+            // Model 1: Q1 = Intercept + coef_P1*P1 + coef_P2*P2 → a1 = Intercept, b1 = coef_P1 (expected < 0), c1 = coef_P2
+            // Model 2: Q2 = Intercept + coef_P1*P1 + coef_P2*P2 → a2 = Intercept, b2 = coef_P2 (expected < 0), c2 = coef_P1
+            const coefs1 = regResult.coefs1;
+            const coefs2 = regResult.coefs2;
+
+            const a1 = coefs1[0].est;
+            const b1 = coefs1[1].est;   // own-price for product 1 (expected negative)
+            const cc1 = coefs1[2].est;  // cross-price effect of P2 on Q1
+
+            const a2 = coefs2[0].est;
+            const cc2 = coefs2[1].est;  // cross-price effect of P1 on Q2
+            const b2 = coefs2[2].est;   // own-price for product 2 (expected negative)
+
+            regCoefficients = { a1, b1, c1: cc1, a2, b2, c2: cc2 };
+
+            // Show parameter summary
+            const summaryEl = document.getElementById('regParamsSummary');
+            summaryEl.style.display = 'block';
+            const r = (x) => +x.toFixed(4);
+            summaryEl.innerHTML =
+                `<strong>Extracted Demand Parameters:</strong><br>` +
+                `<span style="color:var(--producer1);">Product 1 (${q1Col}):</span> a<sub>1</sub>=${r(a1)}, b<sub>1</sub>=${r(b1)}, c<sub>1</sub>=${r(cc1)}<br>` +
+                `<span style="color:var(--producer2);">Product 2 (${q2Col}):</span> a<sub>2</sub>=${r(a2)}, b<sub>2</sub>=${r(b2)}, c<sub>2</sub>=${r(cc2)}`;
+
+            // Warnings: b should be negative
+            const warningEl = document.getElementById('regWarning');
+            let warnings = [];
+            if (b1 >= 0) warnings.push(`b₁ = ${r(b1)} (expected negative for own-price effect)`);
+            if (b2 >= 0) warnings.push(`b₂ = ${r(b2)} (expected negative for own-price effect)`);
+            if (warnings.length > 0) {
+                warningEl.style.display = 'block';
+                warningEl.classList.add('visible');
+                warningEl.innerHTML = '<strong>&#9888; Warning:</strong> ' + warnings.join('<br>') +
+                    '<br>Own-price coefficients should be negative. Results may not be economically meaningful.';
+            } else {
+                warningEl.style.display = 'none';
+                warningEl.classList.remove('visible');
+            }
+
+            document.getElementById('regressionResults').style.display = 'block';
+        }
+
+        // ---- Event Listeners ----
         document.addEventListener('DOMContentLoaded', () => {
             initChart();
+
+            // Regression upload area
+            const regUploadArea = document.getElementById('regUploadArea');
+            const regFileInput = document.getElementById('regFileInput');
+            if (regUploadArea && regFileInput) {
+                regUploadArea.addEventListener('click', () => regFileInput.click());
+                regFileInput.addEventListener('change', (e) => {
+                    if (e.target.files.length > 0) handleRegFile(e.target.files[0]);
+                });
+                regUploadArea.addEventListener('dragover', (e) => {
+                    e.preventDefault();
+                    regUploadArea.classList.add('dragover');
+                });
+                regUploadArea.addEventListener('dragleave', () => {
+                    regUploadArea.classList.remove('dragover');
+                });
+                regUploadArea.addEventListener('drop', (e) => {
+                    e.preventDefault();
+                    regUploadArea.classList.remove('dragover');
+                    if (e.dataTransfer.files.length > 0) handleRegFile(e.dataTransfer.files[0]);
+                });
+            }
         });
 
         function initChart() {
@@ -1321,27 +1588,30 @@
         }
 
         function getParams() {
+            // External convention: Q = a + b*P + c*P (b < 0)
+            // Internal convention: Q = a - b*P + c*P (b > 0)
+            // getParams negates b to convert external → internal
             if (inputMode === 'manual') {
                 return {
                     a1: parseFloat(document.getElementById('a1').value),
                     a2: parseFloat(document.getElementById('a2').value),
-                    b1: parseFloat(document.getElementById('b1').value),
-                    b2: parseFloat(document.getElementById('b2').value),
+                    b1: -parseFloat(document.getElementById('b1').value),
+                    b2: -parseFloat(document.getElementById('b2').value),
                     c1: parseFloat(document.getElementById('crossPrice1').value),
                     c2: parseFloat(document.getElementById('crossPrice2').value),
                     C1: parseFloat(document.getElementById('c1').value),
                     C2: parseFloat(document.getElementById('c2').value)
                 };
             }
-            // Equation mode
-            const text = document.getElementById('equationsTextarea').value.trim();
-            const parsed = parseLinearDemandEquations(text);
-            if (parsed.error) return { __parseError: parsed.error };
+            // Regression mode
+            if (!regCoefficients) {
+                return { __parseError: 'Please run the regressions first to extract demand parameters.' };
+            }
             return {
-                a1: parsed.a1, b1: parsed.b1, c1: parsed.c1,
-                a2: parsed.a2, b2: parsed.b2, c2: parsed.c2,
-                C1: parseFloat(document.getElementById('c1_eq').value),
-                C2: parseFloat(document.getElementById('c2_eq').value)
+                a1: regCoefficients.a1, b1: -regCoefficients.b1, c1: regCoefficients.c1,
+                a2: regCoefficients.a2, b2: -regCoefficients.b2, c2: regCoefficients.c2,
+                C1: parseFloat(document.getElementById('c1_reg').value),
+                C2: parseFloat(document.getElementById('c2_reg').value)
             };
         }
 
@@ -1784,7 +2054,7 @@
         }
 
         // Elasticity Calculator Functions
-        // Using the demand functions: Q1 = a1 - b1*P1 + c1*P2, Q2 = a2 - b2*P2 + c2*P1
+        // Using the demand functions (internal convention, b>0): Q1 = a1 - b1*P1 + c1*P2, Q2 = a2 - b2*P2 + c2*P1
         // Elasticity = ((Q_new - Q_old) / Q_old) / ((P_new - P_old) / P_old)
 
         function calculateElasticityBox1() {
@@ -1923,8 +2193,8 @@
 
             // Show detail with demand function substitution
             let detailHtml = `<strong>Calculation:</strong><br>`;
-            detailHtml += `Q₁ = ${p.a1} − ${p.b1}×${P1.toFixed(4)} + ${p.c1}×${P2.toFixed(4)} = <span style="color: var(--producer1); font-weight: 600;">${Q1.toFixed(4)}</span><br>`;
-            detailHtml += `Q₂ = ${p.a2} − ${p.b2}×${P2.toFixed(4)} + ${p.c2}×${P1.toFixed(4)} = <span style="color: var(--producer2); font-weight: 600;">${Q2.toFixed(4)}</span>`;
+            detailHtml += `Q₁ = ${p.a1} + (${(-p.b1).toFixed(4)})×${P1.toFixed(4)} + ${p.c1}×${P2.toFixed(4)} = <span style="color: var(--producer1); font-weight: 600;">${Q1.toFixed(4)}</span><br>`;
+            detailHtml += `Q₂ = ${p.a2} + (${(-p.b2).toFixed(4)})×${P2.toFixed(4)} + ${p.c2}×${P1.toFixed(4)} = <span style="color: var(--producer2); font-weight: 600;">${Q2.toFixed(4)}</span>`;
 
             // Add warnings if quantities are negative
             if (Q1 < 0 || Q2 < 0) {
