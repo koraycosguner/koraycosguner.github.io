@@ -1065,110 +1065,69 @@
             };
         }
 
+        // Helper: Compute retailer response coefficients analytically
+        // Given wholesale prices (W1, W2), the retailer optimally sets:
+        //   P_i = alpha_i + beta_i1*W1 + beta_i2*W2
+        //   Q_i = gamma_i + delta_i1*W1 + delta_i2*W2
+        // All downstream profits are then quadratic in W, so FOCs yield linear systems.
+        function retailerResponseCoefficients(p) {
+            const { a1, a2, b1, b2, c1, c2 } = p;
+            const cSum = c1 + c2;
+            const D = 4 * b1 * b2 - cSum * cSum;
+
+            // P(W) coefficients from retailer FOCs (Cramer's rule on retailer's 2x2 system)
+            const alpha1 = (2 * b2 * a1 + cSum * a2) / D;
+            const beta11 = (2 * b1 * b2 - c1 * cSum) / D;
+            const beta12 = b2 * (c1 - c2) / D;
+
+            const alpha2 = (cSum * a1 + 2 * b1 * a2) / D;
+            const beta21 = b1 * (c2 - c1) / D;
+            const beta22 = (2 * b1 * b2 - c2 * cSum) / D;
+
+            // Q(W) coefficients: Q1 = a1 - b1*P1 + c1*P2, Q2 = a2 - b2*P2 + c2*P1
+            const gamma1 = a1 - b1 * alpha1 + c1 * alpha2;
+            const delta11 = -b1 * beta11 + c1 * beta21;
+            const delta12 = -b1 * beta12 + c1 * beta22;
+
+            const gamma2 = a2 - b2 * alpha2 + c2 * alpha1;
+            const delta21 = -b2 * beta21 + c2 * beta11;
+            const delta22 = -b2 * beta22 + c2 * beta12;
+
+            return {
+                alpha1, alpha2, beta11, beta12, beta21, beta22,
+                gamma1, gamma2, delta11, delta12, delta21, delta22, D
+            };
+        }
+
         // Scenario 2: Monopoly + Strategic Retailer (two products, one owner)
         // One firm owns both products, sells through retailer
         // Producer sets W1, W2 to maximize joint profit, anticipating retailer's response
-        // Retailer sets P1, P2 to maximize (P1-W1)*Q1 + (P2-W2)*Q2
-        // where Q1 = a1 - b1*P1 + c1*P2, Q2 = a2 - b2*P2 + c2*P1
         //
-        // Retailer FOCs:
-        // ∂πR/∂P1: Q1 + (P1-W1)(-b1) + (P2-W2)(c2) = 0
-        //   => 2*b1*P1 - (c1+c2)*P2 = a1 + b1*W1 - c2*W2
-        // ∂πR/∂P2: (P1-W1)(c1) + Q2 + (P2-W2)(-b2) = 0
-        //   => -(c1+c2)*P1 + 2*b2*P2 = a2 - c1*W1 + b2*W2
-        //
-        // Solving this 2x2 system gives P1(W1,W2), P2(W1,W2)
-        // Then monopolist maximizes (W1-C1)*Q1 + (W2-C2)*Q2 over W1, W2
-
+        // Analytical solution: substitute P(W), Q(W) into producer profit,
+        // take FOCs w.r.t. W1, W2 => 2x2 linear system solved by Cramer's rule
         function solveMonopolyRetailer(p) {
-            const { a1, a2, b1, b2, c1, c2, C1, C2 } = p;
-            const cSum = c1 + c2;
-            const detR = 4 * b1 * b2 - cSum * cSum;
+            const { C1, C2 } = p;
+            const r = retailerResponseCoefficients(p);
 
-            // Retailer's optimal prices given W1, W2
-            function retailerOptimalPrices(W1, W2) {
-                const RHS1 = a1 + b1 * W1 - c2 * W2;
-                const RHS2 = a2 - c1 * W1 + b2 * W2;
-                const P1 = (2 * b2 * RHS1 + cSum * RHS2) / detR;
-                const P2 = (cSum * RHS1 + 2 * b1 * RHS2) / detR;
-                return { P1, P2 };
-            }
+            // FOC system (from d(profit)/dW1 = 0 and d(profit)/dW2 = 0):
+            //   2*delta11*W1 + (delta12+delta21)*W2 = C1*delta11 + C2*delta21 - gamma1
+            //   (delta12+delta21)*W1 + 2*delta22*W2 = C1*delta12 + C2*delta22 - gamma2
+            const A11 = 2 * r.delta11;
+            const A12 = r.delta12 + r.delta21;
+            const A21 = r.delta12 + r.delta21;
+            const A22 = 2 * r.delta22;
+            const rhs1 = C1 * r.delta11 + C2 * r.delta21 - r.gamma1;
+            const rhs2 = C1 * r.delta12 + C2 * r.delta22 - r.gamma2;
 
-            // Monopolist maximizes: (W1-C1)*Q1 + (W2-C2)*Q2
-            // where Q1, Q2 depend on W1, W2 through the retailer's response
+            const det = A11 * A22 - A12 * A21;
+            const W1 = (A22 * rhs1 - A12 * rhs2) / det;
+            const W2 = (A11 * rhs2 - A21 * rhs1) / det;
 
-            // For the analytical solution, we substitute P1(W), P2(W) into the profit
-            // and take FOCs with respect to W1, W2.
-            //
-            // P1 = (2*b2*(a1 + b1*W1 - c2*W2) + cSum*(a2 - c1*W1 + b2*W2)) / detR
-            //    = (2*b2*a1 + cSum*a2)/detR + W1*(2*b1*b2 - c1*cSum)/detR + W2*(-2*b2*c2 + b2*cSum)/detR
-            //    = (2*b2*a1 + cSum*a2)/detR + W1*(2*b1*b2 - c1*cSum)/detR + W2*(b2*(cSum - 2*c2))/detR
-            //    = (2*b2*a1 + cSum*a2)/detR + W1*(2*b1*b2 - c1*cSum)/detR + W2*(b2*(c1 - c2))/detR
-            //
-            // This is getting complex. Use numerical optimization with better starting point.
+            const P1 = r.alpha1 + r.beta11 * W1 + r.beta12 * W2;
+            const P2 = r.alpha2 + r.beta21 * W1 + r.beta22 * W2;
+            const Q1 = r.gamma1 + r.delta11 * W1 + r.delta12 * W2;
+            const Q2 = r.gamma2 + r.delta21 * W1 + r.delta22 * W2;
 
-            function producerJointProfit(W1, W2) {
-                const { P1, P2 } = retailerOptimalPrices(W1, W2);
-                const Q1 = a1 - b1 * P1 + c1 * P2;
-                const Q2 = a2 - b2 * P2 + c2 * P1;
-                return (W1 - C1) * Q1 + (W2 - C2) * Q2;
-            }
-
-            // Grid search with multiple refinement iterations for high precision
-            // Use simple monopoly price as upper bound for wholesale price
-            const W1_upper = (a1 + b1 * C1) / (2 * b1);
-            const W2_upper = (a2 + b2 * C2) / (2 * b2);
-
-            let bestW1 = C1, bestW2 = C2, bestProfit = -Infinity;
-            const initialSteps = 100;
-
-            // Initial grid search
-            for (let i = 0; i <= initialSteps; i++) {
-                for (let j = 0; j <= initialSteps; j++) {
-                    const W1 = C1 + (W1_upper - C1) * i / initialSteps;
-                    const W2 = C2 + (W2_upper - C2) * j / initialSteps;
-                    const profit = producerJointProfit(W1, W2);
-                    if (profit > bestProfit) {
-                        bestProfit = profit;
-                        bestW1 = W1;
-                        bestW2 = W2;
-                    }
-                }
-            }
-
-            // 8 refinement iterations for very high precision
-            const initialDelta1 = (W1_upper - C1) / initialSteps;
-            const initialDelta2 = (W2_upper - C2) / initialSteps;
-
-            for (let round = 0; round < 8; round++) {
-                const refineSteps = 30;
-                const shrinkFactor = Math.pow(5, round);
-                const range1 = initialDelta1 / shrinkFactor;
-                const range2 = initialDelta2 / shrinkFactor;
-                const startW1 = bestW1, startW2 = bestW2;
-
-                for (let i = -refineSteps; i <= refineSteps; i++) {
-                    for (let j = -refineSteps; j <= refineSteps; j++) {
-                        const W1 = Math.max(C1, startW1 + range1 * i / refineSteps);
-                        const W2 = Math.max(C2, startW2 + range2 * j / refineSteps);
-                        const profit = producerJointProfit(W1, W2);
-                        if (profit > bestProfit) {
-                            bestProfit = profit;
-                            bestW1 = W1;
-                            bestW2 = W2;
-                        }
-                    }
-                }
-            }
-
-            // Round to 2 decimal places and re-evaluate for final result
-            bestW1 = Math.round(bestW1 * 100) / 100;
-            bestW2 = Math.round(bestW2 * 100) / 100;
-
-            const W1 = bestW1, W2 = bestW2;
-            const { P1, P2 } = retailerOptimalPrices(W1, W2);
-            const Q1 = a1 - b1 * P1 + c1 * P2;
-            const Q2 = a2 - b2 * P2 + c2 * P1;
             const profit1 = (W1 - C1) * Q1 + (W2 - C2) * Q2;
             const retailerProfit = (P1 - W1) * Q1 + (P2 - W2) * Q2;
 
@@ -1220,93 +1179,38 @@
         // Scenario 4: Bertrand + Common Retailer
         // Two producers set wholesale prices W1, W2 (Nash)
         // Retailer sets retail prices P1, P2 to maximize total retailer profit
-        // Q1 = a1 - b1*P1 + c1*P2, Q2 = a2 - b2*P2 + c2*P1
         //
-        // For the asymmetric case, we use numerical optimization for the Nash equilibrium
-
+        // Analytical solution: each producer's FOC is linear in own Wi,
+        // giving a 2x2 Nash equilibrium system solved by Cramer's rule
         function solveBertrandRetailer(p) {
-            const { a1, a2, b1, b2, c1, c2, C1, C2 } = p;
+            const { C1, C2 } = p;
+            const r = retailerResponseCoefficients(p);
 
-            const cSum = c1 + c2;
-            const det = 4 * b1 * b2 - cSum * cSum;
-            if (Math.abs(det) < 1e-10) {
+            if (Math.abs(r.D) < 1e-10) {
                 return null; // Degenerate case
             }
 
-            // Retailer's optimal prices given W1, W2
-            function retailerOptimalPrices(W1, W2) {
-                const RHS1 = a1 + b1 * W1 - c2 * W2;
-                const RHS2 = a2 - c1 * W1 + b2 * W2;
-                const P1 = (2 * b2 * RHS1 + cSum * RHS2) / det;
-                const P2 = (cSum * RHS1 + 2 * b1 * RHS2) / det;
-                return { P1, P2 };
-            }
+            // Nash equilibrium FOCs:
+            //   Producer 1: 2*delta11*W1 + delta12*W2 = C1*delta11 - gamma1
+            //   Producer 2: delta21*W1 + 2*delta22*W2 = C2*delta22 - gamma2
+            const A11 = 2 * r.delta11;
+            const A12 = r.delta12;
+            const A21 = r.delta21;
+            const A22 = 2 * r.delta22;
+            const rhs1 = C1 * r.delta11 - r.gamma1;
+            const rhs2 = C2 * r.delta22 - r.gamma2;
 
-            // Producer profit functions
-            function producer1Profit(W1, W2) {
-                const { P1, P2 } = retailerOptimalPrices(W1, W2);
-                const Q1 = a1 - b1 * P1 + c1 * P2;
-                return (W1 - C1) * Q1;
-            }
+            const det = A11 * A22 - A12 * A21;
+            if (Math.abs(det) < 1e-10) return null;
 
-            function producer2Profit(W1, W2) {
-                const { P1, P2 } = retailerOptimalPrices(W1, W2);
-                const Q2 = a2 - b2 * P2 + c2 * P1;
-                return (W2 - C2) * Q2;
-            }
+            const W1 = (A22 * rhs1 - A12 * rhs2) / det;
+            const W2 = (A11 * rhs2 - A21 * rhs1) / det;
 
-            // Best response using golden section search with very high precision
-            function br1(W2) {
-                let lo = C1, hi = Math.max(a1 / b1, a2 / b2) + C1;
-                const gr = (Math.sqrt(5) - 1) / 2;
-                let c_lo = hi - gr * (hi - lo), c_hi = lo + gr * (hi - lo);
-                for (let i = 0; i < 500; i++) {
-                    if (producer1Profit(c_lo, W2) < producer1Profit(c_hi, W2)) {
-                        lo = c_lo; c_lo = c_hi; c_hi = lo + gr * (hi - lo);
-                    } else {
-                        hi = c_hi; c_hi = c_lo; c_lo = hi - gr * (hi - lo);
-                    }
-                    if (Math.abs(hi - lo) < 1e-14) break;
-                }
-                return (lo + hi) / 2;
-            }
+            const P1 = r.alpha1 + r.beta11 * W1 + r.beta12 * W2;
+            const P2 = r.alpha2 + r.beta21 * W1 + r.beta22 * W2;
+            const Q1 = r.gamma1 + r.delta11 * W1 + r.delta12 * W2;
+            const Q2 = r.gamma2 + r.delta21 * W1 + r.delta22 * W2;
 
-            function br2(W1) {
-                let lo = C2, hi = Math.max(a1 / b1, a2 / b2) + C2;
-                const gr = (Math.sqrt(5) - 1) / 2;
-                let c_lo = hi - gr * (hi - lo), c_hi = lo + gr * (hi - lo);
-                for (let i = 0; i < 500; i++) {
-                    if (producer2Profit(W1, c_lo) < producer2Profit(W1, c_hi)) {
-                        lo = c_lo; c_lo = c_hi; c_hi = lo + gr * (hi - lo);
-                    } else {
-                        hi = c_hi; c_hi = c_lo; c_lo = hi - gr * (hi - lo);
-                    }
-                    if (Math.abs(hi - lo) < 1e-14) break;
-                }
-                return (lo + hi) / 2;
-            }
-
-            // Iterate to find Nash equilibrium with very high precision
-            let W1 = (a1 + b1 * C1) / (2 * b1);
-            let W2 = (a2 + b2 * C2) / (2 * b2);
-
-            for (let i = 0; i < 500; i++) {
-                const newW1 = br1(W2);
-                const newW2 = br2(W1);
-                if (Math.abs(newW1 - W1) < 1e-14 && Math.abs(newW2 - W2) < 1e-14) break;
-                W1 = newW1;
-                W2 = newW2;
-            }
-
-            // Round wholesale prices to 2 decimal places
-            W1 = Math.round(W1 * 100) / 100;
-            W2 = Math.round(W2 * 100) / 100;
-
-            const { P1, P2 } = retailerOptimalPrices(W1, W2);
-            const Q1 = a1 - b1 * P1 + c1 * P2;
-            const Q2 = a2 - b2 * P2 + c2 * P1;
-
-            // Profits
             const profit1 = (W1 - C1) * Q1;
             const profit2 = (W2 - C2) * Q2;
             const retailerProfit = (P1 - W1) * Q1 + (P2 - W2) * Q2;
@@ -1353,42 +1257,42 @@
             document.getElementById('resultsSection').style.display = 'block';
 
             // Scenario 1 (now two products)
-            document.getElementById('s1_p1').textContent = results.s1.P1.toFixed(2);
-            document.getElementById('s1_p2').textContent = results.s1.P2.toFixed(2);
-            document.getElementById('s1_q1').textContent = results.s1.Q1.toFixed(2);
-            document.getElementById('s1_q2').textContent = results.s1.Q2.toFixed(2);
-            document.getElementById('s1_profit1').textContent = results.s1.profit1.toFixed(2);
-            document.getElementById('s1_total').textContent = results.s1.totalProfit.toFixed(2);
+            document.getElementById('s1_p1').textContent = results.s1.P1.toFixed(4);
+            document.getElementById('s1_p2').textContent = results.s1.P2.toFixed(4);
+            document.getElementById('s1_q1').textContent = results.s1.Q1.toFixed(4);
+            document.getElementById('s1_q2').textContent = results.s1.Q2.toFixed(4);
+            document.getElementById('s1_profit1').textContent = results.s1.profit1.toFixed(4);
+            document.getElementById('s1_total').textContent = results.s1.totalProfit.toFixed(4);
 
             // Scenario 2 (now two products)
-            document.getElementById('s2_w1').textContent = results.s2.W1.toFixed(2);
-            document.getElementById('s2_w2').textContent = results.s2.W2.toFixed(2);
-            document.getElementById('s2_p1').textContent = results.s2.P1.toFixed(2);
-            document.getElementById('s2_p2').textContent = results.s2.P2.toFixed(2);
-            document.getElementById('s2_q1').textContent = results.s2.Q1.toFixed(2);
-            document.getElementById('s2_q2').textContent = results.s2.Q2.toFixed(2);
-            document.getElementById('s2_profit1').textContent = results.s2.profit1.toFixed(2);
-            document.getElementById('s2_retailer').textContent = results.s2.retailerProfit.toFixed(2);
-            document.getElementById('s2_total').textContent = results.s2.totalProfit.toFixed(2);
+            document.getElementById('s2_w1').textContent = results.s2.W1.toFixed(4);
+            document.getElementById('s2_w2').textContent = results.s2.W2.toFixed(4);
+            document.getElementById('s2_p1').textContent = results.s2.P1.toFixed(4);
+            document.getElementById('s2_p2').textContent = results.s2.P2.toFixed(4);
+            document.getElementById('s2_q1').textContent = results.s2.Q1.toFixed(4);
+            document.getElementById('s2_q2').textContent = results.s2.Q2.toFixed(4);
+            document.getElementById('s2_profit1').textContent = results.s2.profit1.toFixed(4);
+            document.getElementById('s2_retailer').textContent = results.s2.retailerProfit.toFixed(4);
+            document.getElementById('s2_total').textContent = results.s2.totalProfit.toFixed(4);
 
             // Scenario 3
-            document.getElementById('s3_p1').textContent = results.s3.P1.toFixed(2);
-            document.getElementById('s3_p2').textContent = results.s3.P2.toFixed(2);
-            document.getElementById('s3_q1').textContent = results.s3.Q1.toFixed(2);
-            document.getElementById('s3_q2').textContent = results.s3.Q2.toFixed(2);
-            document.getElementById('s3_profit1').textContent = results.s3.profit1.toFixed(2);
-            document.getElementById('s3_profit2').textContent = results.s3.profit2.toFixed(2);
-            document.getElementById('s3_total').textContent = results.s3.totalProfit.toFixed(2);
+            document.getElementById('s3_p1').textContent = results.s3.P1.toFixed(4);
+            document.getElementById('s3_p2').textContent = results.s3.P2.toFixed(4);
+            document.getElementById('s3_q1').textContent = results.s3.Q1.toFixed(4);
+            document.getElementById('s3_q2').textContent = results.s3.Q2.toFixed(4);
+            document.getElementById('s3_profit1').textContent = results.s3.profit1.toFixed(4);
+            document.getElementById('s3_profit2').textContent = results.s3.profit2.toFixed(4);
+            document.getElementById('s3_total').textContent = results.s3.totalProfit.toFixed(4);
 
             // Scenario 4
-            document.getElementById('s4_w1').textContent = results.s4.W1.toFixed(2);
-            document.getElementById('s4_w2').textContent = results.s4.W2.toFixed(2);
-            document.getElementById('s4_p1').textContent = results.s4.P1.toFixed(2);
-            document.getElementById('s4_p2').textContent = results.s4.P2.toFixed(2);
-            document.getElementById('s4_profit1').textContent = results.s4.profit1.toFixed(2);
-            document.getElementById('s4_profit2').textContent = results.s4.profit2.toFixed(2);
-            document.getElementById('s4_retailer').textContent = results.s4.retailerProfit.toFixed(2);
-            document.getElementById('s4_total').textContent = results.s4.totalProfit.toFixed(2);
+            document.getElementById('s4_w1').textContent = results.s4.W1.toFixed(4);
+            document.getElementById('s4_w2').textContent = results.s4.W2.toFixed(4);
+            document.getElementById('s4_p1').textContent = results.s4.P1.toFixed(4);
+            document.getElementById('s4_p2').textContent = results.s4.P2.toFixed(4);
+            document.getElementById('s4_profit1').textContent = results.s4.profit1.toFixed(4);
+            document.getElementById('s4_profit2').textContent = results.s4.profit2.toFixed(4);
+            document.getElementById('s4_retailer').textContent = results.s4.retailerProfit.toFixed(4);
+            document.getElementById('s4_total').textContent = results.s4.totalProfit.toFixed(4);
 
             // Generate interpretation
             generateInterpretation(p);
@@ -1418,7 +1322,7 @@
             const producerLoss = ((results.s1.profit1 - results.s2.profit1) / results.s1.profit1 * 100).toFixed(1);
             const retailPriceIncreaseS2 = ((results.s2.P1 - results.s1.P1) / results.s1.P1 * 100).toFixed(1);
             const wholesaleVsDirect = ((results.s2.W1 - results.s1.P1) / results.s1.P1 * 100).toFixed(1);
-            html += `<p><strong>Impact of Selling Through a Retailer (S1 vs S2):</strong> When you sell through a retailer instead of direct, consumer prices rise ${retailPriceIncreaseS2}% (from $${results.s1.P1.toFixed(2)} to $${results.s2.P1.toFixed(2)}). The manufacturer sets wholesale at $${results.s2.W1.toFixed(2)}, then the retailer adds their markup. This "stacking of markups" reduces total sales volume and overall profit by ${dmLoss}%. The manufacturer loses ${producerLoss}% of their profit, with $${results.s2.retailerProfit.toFixed(2)} going to the retailer.</p>`;
+            html += `<p><strong>Impact of Selling Through a Retailer (S1 vs S2):</strong> When you sell through a retailer instead of direct, consumer prices rise ${retailPriceIncreaseS2}% (from $${results.s1.P1.toFixed(4)} to $${results.s2.P1.toFixed(4)}). The manufacturer sets wholesale at $${results.s2.W1.toFixed(4)}, then the retailer adds their markup. This "stacking of markups" reduces total sales volume and overall profit by ${dmLoss}%. The manufacturer loses ${producerLoss}% of their profit, with $${results.s2.retailerProfit.toFixed(4)} going to the retailer.</p>`;
 
             // Competition effect (S1 vs S3) - different interpretation for complements vs substitutes
             const totalS3 = results.s3.profit1 + results.s3.profit2;
@@ -1438,9 +1342,9 @@
             const priceChangeS4 = ((results.s4.P1 - results.s3.P1) / results.s3.P1 * 100).toFixed(1);
 
             if (isComplement) {
-                html += `<p><strong>Adding a Retailer to Competing Brands (S3 vs S4):</strong> When competitors sell through a common retailer, retail prices rise by ${priceChangeS4}%. The retailer, who sells both products, can partially coordinate pricing. Manufacturer profits fall by ${producerLossChannel}%, with $${results.s4.retailerProfit.toFixed(2)} going to the retailer.</p>`;
+                html += `<p><strong>Adding a Retailer to Competing Brands (S3 vs S4):</strong> When competitors sell through a common retailer, retail prices rise by ${priceChangeS4}%. The retailer, who sells both products, can partially coordinate pricing. Manufacturer profits fall by ${producerLossChannel}%, with $${results.s4.retailerProfit.toFixed(4)} going to the retailer.</p>`;
             } else {
-                html += `<p><strong>Adding a Retailer to Competing Brands (S3 vs S4):</strong> When competitors sell through a common retailer, retail prices rise by ${priceChangeS4}%. The retailer adds their markup on top of the wholesale prices. Manufacturer profits fall by ${producerLossChannel}%, with $${results.s4.retailerProfit.toFixed(2)} going to the retailer.</p>`;
+                html += `<p><strong>Adding a Retailer to Competing Brands (S3 vs S4):</strong> When competitors sell through a common retailer, retail prices rise by ${priceChangeS4}%. The retailer adds their markup on top of the wholesale prices. Manufacturer profits fall by ${producerLossChannel}%, with $${results.s4.retailerProfit.toFixed(4)} going to the retailer.</p>`;
             }
 
             // Price comparison - find highest and lowest
@@ -1452,7 +1356,7 @@
             ];
             prices.sort((a, b) => b.p - a.p);
 
-            html += `<p><strong>Consumer Price Ranking:</strong> ${prices[0].label} ($${prices[0].p.toFixed(2)}) > ${prices[1].label} ($${prices[1].p.toFixed(2)}) > ${prices[2].label} ($${prices[2].p.toFixed(2)}) > ${prices[3].label} ($${prices[3].p.toFixed(2)}). `;
+            html += `<p><strong>Consumer Price Ranking:</strong> ${prices[0].label} ($${prices[0].p.toFixed(4)}) > ${prices[1].label} ($${prices[1].p.toFixed(4)}) > ${prices[2].label} ($${prices[2].p.toFixed(4)}) > ${prices[3].label} ($${prices[3].p.toFixed(4)}). `;
             if (isComplement) {
                 html += `<strong>Key insight:</strong> For complementary products (like razors and blades), having separate owners leads to higher prices. A single owner or common retailer can coordinate to offer better deals and grow sales.</p>`;
             } else {
@@ -1531,10 +1435,10 @@
             document.getElementById('comparisonBody').innerHTML = rows.map(row => {
                 return `<tr>
                     <td style="font-family: inherit; font-weight: 500;">${row[0]}</td>
-                    <td>${typeof row[1] === 'number' ? row[1].toFixed(2) : row[1]}</td>
-                    <td>${typeof row[2] === 'number' ? row[2].toFixed(2) : row[2]}</td>
-                    <td>${typeof row[3] === 'number' ? row[3].toFixed(2) : row[3]}</td>
-                    <td>${typeof row[4] === 'number' ? row[4].toFixed(2) : row[4]}</td>
+                    <td>${typeof row[1] === 'number' ? row[1].toFixed(4) : row[1]}</td>
+                    <td>${typeof row[2] === 'number' ? row[2].toFixed(4) : row[2]}</td>
+                    <td>${typeof row[3] === 'number' ? row[3].toFixed(4) : row[3]}</td>
+                    <td>${typeof row[4] === 'number' ? row[4].toFixed(4) : row[4]}</td>
                 </tr>`;
             }).join('');
         }
@@ -1598,13 +1502,13 @@
             document.getElementById('elastBox1Results').style.display = 'block';
             document.getElementById('elast1_own').textContent = ownElast.toFixed(4);
             document.getElementById('elast1_own_detail').innerHTML =
-                `Q₁: ${Q1_old.toFixed(2)} → ${Q1_new.toFixed(2)} (${(pctChangeQ1*100).toFixed(2)}%)<br>` +
-                `P₁: ${P1_old.toFixed(2)} → ${P1_new.toFixed(2)} (${(pctChangeP1*100).toFixed(2)}%)`;
+                `Q₁: ${Q1_old.toFixed(4)} → ${Q1_new.toFixed(4)} (${(pctChangeQ1*100).toFixed(4)}%)<br>` +
+                `P₁: ${P1_old.toFixed(4)} → ${P1_new.toFixed(4)} (${(pctChangeP1*100).toFixed(4)}%)`;
 
             document.getElementById('elast1_cross').textContent = crossElast.toFixed(4);
             document.getElementById('elast1_cross_detail').innerHTML =
-                `Q₂: ${Q2_old.toFixed(2)} → ${Q2_new.toFixed(2)} (${(pctChangeQ2*100).toFixed(2)}%)<br>` +
-                `P₁: ${P1_old.toFixed(2)} → ${P1_new.toFixed(2)} (${(pctChangeP1*100).toFixed(2)}%)`;
+                `Q₂: ${Q2_old.toFixed(4)} → ${Q2_new.toFixed(4)} (${(pctChangeQ2*100).toFixed(4)}%)<br>` +
+                `P₁: ${P1_old.toFixed(4)} → ${P1_new.toFixed(4)} (${(pctChangeP1*100).toFixed(4)}%)`;
         }
 
         function calculateElasticityBox2() {
@@ -1655,13 +1559,13 @@
             document.getElementById('elastBox2Results').style.display = 'block';
             document.getElementById('elast2_own').textContent = ownElast.toFixed(4);
             document.getElementById('elast2_own_detail').innerHTML =
-                `Q₂: ${Q2_old.toFixed(2)} → ${Q2_new.toFixed(2)} (${(pctChangeQ2*100).toFixed(2)}%)<br>` +
-                `P₂: ${P2_old.toFixed(2)} → ${P2_new.toFixed(2)} (${(pctChangeP2*100).toFixed(2)}%)`;
+                `Q₂: ${Q2_old.toFixed(4)} → ${Q2_new.toFixed(4)} (${(pctChangeQ2*100).toFixed(4)}%)<br>` +
+                `P₂: ${P2_old.toFixed(4)} → ${P2_new.toFixed(4)} (${(pctChangeP2*100).toFixed(4)}%)`;
 
             document.getElementById('elast2_cross').textContent = crossElast.toFixed(4);
             document.getElementById('elast2_cross_detail').innerHTML =
-                `Q₁: ${Q1_old.toFixed(2)} → ${Q1_new.toFixed(2)} (${(pctChangeQ1*100).toFixed(2)}%)<br>` +
-                `P₂: ${P2_old.toFixed(2)} → ${P2_new.toFixed(2)} (${(pctChangeP2*100).toFixed(2)}%)`;
+                `Q₁: ${Q1_old.toFixed(4)} → ${Q1_new.toFixed(4)} (${(pctChangeQ1*100).toFixed(4)}%)<br>` +
+                `P₂: ${P2_old.toFixed(4)} → ${P2_new.toFixed(4)} (${(pctChangeP2*100).toFixed(4)}%)`;
         }
 
         // Demand Prediction Function
@@ -1681,13 +1585,13 @@
 
             // Display results
             document.getElementById('predictionResults').style.display = 'block';
-            document.getElementById('pred_q1').textContent = Q1.toFixed(2);
-            document.getElementById('pred_q2').textContent = Q2.toFixed(2);
+            document.getElementById('pred_q1').textContent = Q1.toFixed(4);
+            document.getElementById('pred_q2').textContent = Q2.toFixed(4);
 
             // Show detail with demand function substitution
             let detailHtml = `<strong>Calculation:</strong><br>`;
-            detailHtml += `Q₁ = ${p.a1} − ${p.b1}×${P1.toFixed(2)} + ${p.c1}×${P2.toFixed(2)} = <span style="color: var(--producer1); font-weight: 600;">${Q1.toFixed(2)}</span><br>`;
-            detailHtml += `Q₂ = ${p.a2} − ${p.b2}×${P2.toFixed(2)} + ${p.c2}×${P1.toFixed(2)} = <span style="color: var(--producer2); font-weight: 600;">${Q2.toFixed(2)}</span>`;
+            detailHtml += `Q₁ = ${p.a1} − ${p.b1}×${P1.toFixed(4)} + ${p.c1}×${P2.toFixed(4)} = <span style="color: var(--producer1); font-weight: 600;">${Q1.toFixed(4)}</span><br>`;
+            detailHtml += `Q₂ = ${p.a2} − ${p.b2}×${P2.toFixed(4)} + ${p.c2}×${P1.toFixed(4)} = <span style="color: var(--producer2); font-weight: 600;">${Q2.toFixed(4)}</span>`;
 
             // Add warnings if quantities are negative
             if (Q1 < 0 || Q2 < 0) {
