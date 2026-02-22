@@ -699,6 +699,10 @@
                         Product 1
                     </div>
                     <div class="input-row">
+                        <label>Name (optional)</label>
+                        <input type="text" id="manual_name1" placeholder="e.g., Coke" style="border: 1px solid var(--border); border-radius: 6px; font-size: 0.9rem;">
+                    </div>
+                    <div class="input-row">
                         <label>a<sub>1</sub> (base demand)</label>
                         <input type="number" id="a1" value="1000" step="any">
                     </div>
@@ -716,6 +720,10 @@
                     <div class="producer-header producer2">
                         <span class="producer-dot producer2"></span>
                         Product 2
+                    </div>
+                    <div class="input-row">
+                        <label>Name (optional)</label>
+                        <input type="text" id="manual_name2" placeholder="e.g., Pepsi" style="border: 1px solid var(--border); border-radius: 6px; font-size: 0.9rem;">
                     </div>
                     <div class="input-row">
                         <label>a<sub>2</sub> (base demand)</label>
@@ -797,6 +805,10 @@
                                 <span class="producer-dot producer1"></span> Product 1
                             </div>
                             <div class="input-row">
+                                <label style="width: 140px;">Name (optional)</label>
+                                <input type="text" id="reg_name1" placeholder="e.g., Coke" style="flex:1; padding: 0.5rem; border: 1px solid var(--border); border-radius: 6px; font-size: 0.9rem;">
+                            </div>
+                            <div class="input-row">
                                 <label style="width: 140px;">Quantity (Q<sub>1</sub>)</label>
                                 <select id="reg_q1_col" style="flex:1; padding: 0.5rem; border: 1px solid var(--border); border-radius: 6px; font-size: 0.9rem;">
                                     <option value="">-- Select --</option>
@@ -812,6 +824,10 @@
                         <div class="producer-section producer2">
                             <div class="producer-header producer2">
                                 <span class="producer-dot producer2"></span> Product 2
+                            </div>
+                            <div class="input-row">
+                                <label style="width: 140px;">Name (optional)</label>
+                                <input type="text" id="reg_name2" placeholder="e.g., Pepsi" style="flex:1; padding: 0.5rem; border: 1px solid var(--border); border-radius: 6px; font-size: 0.9rem;">
                             </div>
                             <div class="input-row">
                                 <label style="width: 140px;">Quantity (Q<sub>2</sub>)</label>
@@ -1889,8 +1905,6 @@
             }
 
             displayResults(p);
-            updateChart();
-            updateComparison();
         }
 
         function displayResults(p) {
@@ -1934,11 +1948,28 @@
             document.getElementById('s4_retailer').textContent = results.s4.retailerProfit.toFixed(4);
             document.getElementById('s4_total').textContent = results.s4.totalProfit.toFixed(4);
 
-            // Generate interpretation
-            generateInterpretation(p);
+            // Generate interpretation and update visuals
+            const names = getProductNames();
+            generateInterpretation(p, names);
+            updateChart(names);
+            updateComparison(names);
         }
 
-        function generateInterpretation(p) {
+        function getProductNames() {
+            let n1, n2;
+            if (inputMode === 'manual') {
+                n1 = document.getElementById('manual_name1').value.trim();
+                n2 = document.getElementById('manual_name2').value.trim();
+            } else {
+                n1 = document.getElementById('reg_name1').value.trim();
+                n2 = document.getElementById('reg_name2').value.trim();
+            }
+            return { p1: n1 || 'Product 1', p2: n2 || 'Product 2' };
+        }
+
+        function generateInterpretation(p, names) {
+            const N1 = names.p1;
+            const N2 = names.p2;
             let html = '';
             // Helpers
             const pctVal = (newVal, oldVal) => ((newVal - oldVal) / Math.abs(oldVal) * 100);
@@ -1989,10 +2020,10 @@
             html += `<p><strong>1. Competition Effect — Direct Sales (S1 vs S3):</strong> `;
             html += `What changes when two products go from single ownership to separate competing firms, both selling directly?</p>`;
             html += `<div class="insight-metrics">`;
-            html += metric('Price of Product 1', results.s1.P1, results.s3.P1);
-            html += metric('Price of Product 2', results.s1.P2, results.s3.P2);
-            html += metric('Product 1 Profit', s1_prod1, results.s3.profit1);
-            html += metric('Product 2 Profit', s1_prod2, results.s3.profit2);
+            html += metric(`${N1} Price`, results.s1.P1, results.s3.P1);
+            html += metric(`${N2} Price`, results.s1.P2, results.s3.P2);
+            html += metric(`${N1} Profit`, s1_prod1, results.s3.profit1);
+            html += metric(`${N2} Profit`, s1_prod2, results.s3.profit2);
             html += metric('Total Industry Profit', results.s1.totalProfit, results.s3.totalProfit, ' full-width');
             html += `</div>`;
             if (isComplement) {
@@ -2005,10 +2036,10 @@
             html += `<p><strong>2. Competition Effect — Retail Channel (S2 vs S4):</strong> `;
             html += `Same comparison (single owner vs separate firms), but now both sell through a common retailer.</p>`;
             html += `<div class="insight-metrics">`;
-            html += metric('Price of Product 1', results.s2.P1, results.s4.P1);
-            html += metric('Price of Product 2', results.s2.P2, results.s4.P2);
-            html += metric('Product 1 Mfr Profit', s2_prod1, results.s4.profit1);
-            html += metric('Product 2 Mfr Profit', s2_prod2, results.s4.profit2);
+            html += metric(`${N1} Price`, results.s2.P1, results.s4.P1);
+            html += metric(`${N2} Price`, results.s2.P2, results.s4.P2);
+            html += metric(`${N1} Mfr Profit`, s2_prod1, results.s4.profit1);
+            html += metric(`${N2} Mfr Profit`, s2_prod2, results.s4.profit2);
             html += metric('Retailer Profit', results.s2.retailerProfit, results.s4.retailerProfit);
             html += metric('Total Channel Profit', results.s2.totalProfit, results.s4.totalProfit, ' full-width');
             html += `</div>`;
@@ -2023,8 +2054,8 @@
             html += `<p><strong>3. Retailer Effect — Under Collusion (S1 vs S2):</strong> `;
             html += `What changes when a single owner adds a retailer instead of selling directly?</p>`;
             html += `<div class="insight-metrics">`;
-            html += metric('Price of Product 1', results.s1.P1, results.s2.P1);
-            html += metric('Price of Product 2', results.s1.P2, results.s2.P2);
+            html += metric(`${N1} Price`, results.s1.P1, results.s2.P1);
+            html += metric(`${N2} Price`, results.s1.P2, results.s2.P2);
             html += metric('Manufacturer Profit', results.s1.profit1, results.s2.profit1, ' full-width');
             html += metricSingle('Retailer Captures', results.s2.retailerProfit, `${retailerShareS2}% of channel`);
             html += metric('Total Channel Profit', results.s1.totalProfit, results.s2.totalProfit);
@@ -2036,10 +2067,10 @@
             html += `<p><strong>4. Retailer Effect — Under Competition (S3 vs S4):</strong> `;
             html += `What changes when competing firms add a common retailer?</p>`;
             html += `<div class="insight-metrics">`;
-            html += metric('Price of Product 1', results.s3.P1, results.s4.P1);
-            html += metric('Price of Product 2', results.s3.P2, results.s4.P2);
-            html += metric('Brand 1 Mfr Profit', results.s3.profit1, results.s4.profit1);
-            html += metric('Brand 2 Mfr Profit', results.s3.profit2, results.s4.profit2);
+            html += metric(`${N1} Price`, results.s3.P1, results.s4.P1);
+            html += metric(`${N2} Price`, results.s3.P2, results.s4.P2);
+            html += metric(`${N1} Mfr Profit`, results.s3.profit1, results.s4.profit1);
+            html += metric(`${N2} Mfr Profit`, results.s3.profit2, results.s4.profit2);
             html += metricSingle('Retailer Captures', results.s4.retailerProfit, `${retailerShareS4}% of channel`);
             html += metric('Total Channel Profit', results.s3.totalProfit, results.s4.totalProfit, ' full-width');
             html += `</div>`;
@@ -2069,7 +2100,7 @@
             document.getElementById('interpretationText').innerHTML = html;
         }
 
-        function updateChart() {
+        function updateChart(names) {
             profitChart.data.labels = [
                 '1. Single Owner Direct',
                 '2. Single Owner+Retailer',
@@ -2081,7 +2112,7 @@
             // For S3 and S4, products are owned by separate competing firms
             profitChart.data.datasets = [
                 {
-                    label: 'Owner / Brand 1',
+                    label: `Owner / ${names.p1}`,
                     data: [
                         results.s1.profit1,  // Monopolist owns both products
                         results.s2.profit1,  // Monopolist owns both products
@@ -2093,7 +2124,7 @@
                     borderWidth: 1
                 },
                 {
-                    label: 'Brand 2 (Competitor)',
+                    label: `${names.p2} (Competitor)`,
                     data: [
                         0,  // No separate producer 2 in monopoly
                         0,  // No separate producer 2 in monopoly
@@ -2121,16 +2152,16 @@
             profitChart.update();
         }
 
-        function updateComparison() {
+        function updateComparison(names) {
             const rows = [
-                ['Wholesale Price W₁', 'N/A', results.s2.W1, 'N/A', results.s4.W1],
-                ['Wholesale Price W₂', 'N/A', results.s2.W2, 'N/A', results.s4.W2],
-                ['Consumer Price P₁', results.s1.P1, results.s2.P1, results.s3.P1, results.s4.P1],
-                ['Consumer Price P₂', results.s1.P2, results.s2.P2, results.s3.P2, results.s4.P2],
-                ['Units Sold Q₁', results.s1.Q1, results.s2.Q1, results.s3.Q1, results.s4.Q1],
-                ['Units Sold Q₂', results.s1.Q2, results.s2.Q2, results.s3.Q2, results.s4.Q2],
-                ['Owner / Brand 1 Profit', results.s1.profit1, results.s2.profit1, results.s3.profit1, results.s4.profit1],
-                ['Brand 2 Profit', 'N/A (same owner)', 'N/A (same owner)', results.s3.profit2, results.s4.profit2],
+                [`${names.p1} Wholesale W₁`, 'N/A', results.s2.W1, 'N/A', results.s4.W1],
+                [`${names.p2} Wholesale W₂`, 'N/A', results.s2.W2, 'N/A', results.s4.W2],
+                [`${names.p1} Price P₁`, results.s1.P1, results.s2.P1, results.s3.P1, results.s4.P1],
+                [`${names.p2} Price P₂`, results.s1.P2, results.s2.P2, results.s3.P2, results.s4.P2],
+                [`${names.p1} Units Q₁`, results.s1.Q1, results.s2.Q1, results.s3.Q1, results.s4.Q1],
+                [`${names.p2} Units Q₂`, results.s1.Q2, results.s2.Q2, results.s3.Q2, results.s4.Q2],
+                [`Owner / ${names.p1} Profit`, results.s1.profit1, results.s2.profit1, results.s3.profit1, results.s4.profit1],
+                [`${names.p2} Profit`, 'N/A (same owner)', 'N/A (same owner)', results.s3.profit2, results.s4.profit2],
                 ['Retailer Profit', 0, results.s2.retailerProfit, 0, results.s4.retailerProfit],
                 ['Total Channel Profit', results.s1.totalProfit, results.s2.totalProfit, results.s3.totalProfit, results.s4.totalProfit]
             ];
