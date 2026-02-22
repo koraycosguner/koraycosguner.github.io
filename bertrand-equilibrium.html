@@ -186,6 +186,84 @@
             font-style: italic;
         }
 
+        /* Mode Toggle */
+        .mode-toggle {
+            display: flex;
+            background: var(--bg-light);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            overflow: hidden;
+            margin-bottom: 1.5rem;
+        }
+
+        .mode-toggle button {
+            flex: 1;
+            padding: 0.65rem 1rem;
+            font-size: 0.9rem;
+            font-weight: 500;
+            border: none;
+            background: transparent;
+            color: var(--text-light);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .mode-toggle button.active {
+            background: var(--iu-crimson);
+            color: white;
+            font-weight: 600;
+        }
+
+        .mode-toggle button:hover:not(.active) {
+            background: #e5e7eb;
+        }
+
+        /* Equation Input */
+        .equations-textarea {
+            width: 100%;
+            min-height: 120px;
+            padding: 1rem;
+            font-size: 0.95rem;
+            font-family: 'Monaco', 'Consolas', monospace;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            background: white;
+            line-height: 1.8;
+            resize: vertical;
+        }
+
+        .equations-textarea:focus {
+            outline: none;
+            border-color: var(--iu-crimson);
+            box-shadow: 0 0 0 2px rgba(153, 0, 0, 0.1);
+        }
+
+        .equations-textarea::placeholder {
+            color: #9ca3af;
+        }
+
+        .parse-status {
+            margin-top: 0.75rem;
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            display: none;
+        }
+
+        .parse-status.success {
+            display: block;
+            background: var(--success-light);
+            border: 1px solid #a7f3d0;
+            color: var(--success);
+        }
+
+        .parse-status.error {
+            display: block;
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+            color: #dc2626;
+        }
+
         /* Calculate Button */
         .calculate-btn {
             width: 100%;
@@ -508,56 +586,106 @@
                 </div>
             </div>
 
-            <div class="params-grid">
-                <div class="brand-section brand1">
-                    <div class="brand-header brand1">
-                        <span class="brand-dot brand1"></span>
-                        Brand 1
+            <!-- Mode Toggle -->
+            <div class="mode-toggle">
+                <button class="active" onclick="switchInputMode('manual', this)">Manual Parameters</button>
+                <button onclick="switchInputMode('equation', this)">Equation Input</button>
+            </div>
+
+            <!-- Manual Parameter Input (default) -->
+            <div id="manualInputSection">
+                <div class="params-grid">
+                    <div class="brand-section brand1">
+                        <div class="brand-header brand1">
+                            <span class="brand-dot brand1"></span>
+                            Brand 1
+                        </div>
+                        <div class="input-row">
+                            <label>a<sub>1</sub> (base demand)</label>
+                            <input type="number" id="a1" value="100" step="any">
+                        </div>
+                        <div class="input-row">
+                            <label>b<sub>1</sub> (own-price effect)</label>
+                            <input type="number" id="b1" value="2" step="any">
+                        </div>
+                        <div class="input-row">
+                            <label>c<sub>1</sub> (cross-price effect)</label>
+                            <input type="number" id="c1" value="1" step="any">
+                        </div>
+                        <div class="input-row">
+                            <label>MC<sub>1</sub> (marginal cost)</label>
+                            <input type="number" id="mc1" value="10" step="any">
+                        </div>
                     </div>
-                    <div class="input-row">
-                        <label>a<sub>1</sub> (base demand)</label>
-                        <input type="number" id="a1" value="100" step="any">
-                    </div>
-                    <div class="input-row">
-                        <label>b<sub>1</sub> (own-price effect)</label>
-                        <input type="number" id="b1" value="2" step="any">
-                    </div>
-                    <div class="input-row">
-                        <label>c<sub>1</sub> (cross-price effect)</label>
-                        <input type="number" id="c1" value="1" step="any">
-                    </div>
-                    <div class="input-row">
-                        <label>MC<sub>1</sub> (marginal cost)</label>
-                        <input type="number" id="mc1" value="10" step="any">
+
+                    <div class="brand-section brand2">
+                        <div class="brand-header brand2">
+                            <span class="brand-dot brand2"></span>
+                            Brand 2
+                        </div>
+                        <div class="input-row">
+                            <label>a<sub>2</sub> (base demand)</label>
+                            <input type="number" id="a2" value="100" step="any">
+                        </div>
+                        <div class="input-row">
+                            <label>b<sub>2</sub> (own-price effect)</label>
+                            <input type="number" id="b2" value="2" step="any">
+                        </div>
+                        <div class="input-row">
+                            <label>c<sub>2</sub> (cross-price effect)</label>
+                            <input type="number" id="c2" value="1" step="any">
+                        </div>
+                        <div class="input-row">
+                            <label>MC<sub>2</sub> (marginal cost)</label>
+                            <input type="number" id="mc2" value="10" step="any">
+                        </div>
                     </div>
                 </div>
 
-                <div class="brand-section brand2">
-                    <div class="brand-header brand2">
-                        <span class="brand-dot brand2"></span>
-                        Brand 2
-                    </div>
-                    <div class="input-row">
-                        <label>a<sub>2</sub> (base demand)</label>
-                        <input type="number" id="a2" value="100" step="any">
-                    </div>
-                    <div class="input-row">
-                        <label>b<sub>2</sub> (own-price effect)</label>
-                        <input type="number" id="b2" value="2" step="any">
-                    </div>
-                    <div class="input-row">
-                        <label>c<sub>2</sub> (cross-price effect)</label>
-                        <input type="number" id="c2" value="1" step="any">
-                    </div>
-                    <div class="input-row">
-                        <label>MC<sub>2</sub> (marginal cost)</label>
-                        <input type="number" id="mc2" value="10" step="any">
-                    </div>
+                <div class="param-hint" style="margin-top: 1rem; text-align: center;">
+                    Note: b<sub>i</sub> > 0 (higher own price reduces demand), c<sub>i</sub> > 0 (higher rival price increases demand)
                 </div>
             </div>
 
-            <div class="param-hint" style="margin-top: 1rem; text-align: center;">
-                Note: b<sub>i</sub> > 0 (higher own price reduces demand), c<sub>i</sub> > 0 (higher rival price increases demand)
+            <!-- Equation Input (hidden by default) -->
+            <div id="equationInputSection" style="display: none;">
+                <div style="background: #f8fafc; border: 1px solid var(--border); border-radius: 8px; padding: 1rem 1.25rem; margin-bottom: 1rem; font-size: 0.9rem;">
+                    <div style="font-weight: 600; margin-bottom: 0.5rem; color: var(--text-dark);">Expected Format</div>
+                    <div style="color: var(--text-light);">
+                        Enter your estimated linear demand equations. Use <strong>P1</strong> and <strong>P2</strong> as price variables:
+                    </div>
+                    <div style="font-family: 'Monaco', 'Consolas', monospace; margin-top: 0.5rem; color: var(--text-dark); font-size: 0.88rem; background: white; padding: 0.5rem 0.75rem; border-radius: 4px; border: 1px solid var(--border);">
+                        Q1 = a<sub>1</sub> &minus; b<sub>1</sub>*P1 + c<sub>1</sub>*P2<br>
+                        Q2 = a<sub>2</sub> &minus; b<sub>2</sub>*P2 + c<sub>2</sub>*P1
+                    </div>
+                </div>
+
+                <textarea class="equations-textarea" id="equationsTextarea" placeholder="Q1 = 100 - 2*P1 + 1*P2&#10;Q2 = 100 - 2*P2 + 1*P1" oninput="parseEquationsLive()"></textarea>
+
+                <div id="parseStatus" class="parse-status"></div>
+
+                <div class="params-grid" style="margin-top: 1.25rem;">
+                    <div class="brand-section brand1">
+                        <div class="brand-header brand1">
+                            <span class="brand-dot brand1"></span>
+                            Brand 1 Cost
+                        </div>
+                        <div class="input-row">
+                            <label>MC<sub>1</sub> (marginal cost)</label>
+                            <input type="number" id="mc1_eq" value="10" step="any">
+                        </div>
+                    </div>
+                    <div class="brand-section brand2">
+                        <div class="brand-header brand2">
+                            <span class="brand-dot brand2"></span>
+                            Brand 2 Cost
+                        </div>
+                        <div class="input-row">
+                            <label>MC<sub>2</sub> (marginal cost)</label>
+                            <input type="number" id="mc2_eq" value="10" step="any">
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <div id="errorMessage" class="error-message"></div>
@@ -662,6 +790,104 @@
     <script>
         let brChart = null;
         let lastResult = null;
+        let inputMode = 'manual';
+
+        function switchInputMode(mode, btn) {
+            inputMode = mode;
+            document.querySelectorAll('.mode-toggle button').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            document.getElementById('manualInputSection').style.display = mode === 'manual' ? 'block' : 'none';
+            document.getElementById('equationInputSection').style.display = mode === 'equation' ? 'block' : 'none';
+            document.getElementById('errorMessage').classList.remove('visible');
+        }
+
+        // --- Equation Parsing ---
+
+        function parseEquationsLive() {
+            const text = document.getElementById('equationsTextarea').value.trim();
+            const statusEl = document.getElementById('parseStatus');
+            if (!text) { statusEl.style.display = 'none'; return; }
+
+            const result = parseLinearDemandEquations(text);
+            if (result.error) {
+                statusEl.className = 'parse-status error';
+                statusEl.textContent = result.error;
+            } else {
+                statusEl.className = 'parse-status success';
+                statusEl.innerHTML =
+                    `<strong>Parsed successfully:</strong><br>` +
+                    `Q<sub>1</sub> = ${result.a1} &minus; ${result.b1}&middot;P<sub>1</sub> + ${result.c1}&middot;P<sub>2</sub><br>` +
+                    `Q<sub>2</sub> = ${result.a2} &minus; ${result.b2}&middot;P<sub>2</sub> + ${result.c2}&middot;P<sub>1</sub>`;
+            }
+        }
+
+        function parseLinearDemandEquations(text) {
+            const lines = text.split('\n').map(l => l.trim()).filter(l => l && !l.startsWith('#') && !l.startsWith('//'));
+            if (lines.length < 2) return { error: 'Please enter two demand equations (one for Q1, one for Q2).' };
+
+            let q1Eq = null, q2Eq = null;
+            for (const line of lines) {
+                const eqIdx = line.indexOf('=');
+                if (eqIdx < 0) continue;
+                const lhs = line.substring(0, eqIdx).trim().toUpperCase();
+                const rhs = line.substring(eqIdx + 1).trim();
+                if (lhs === 'Q1') q1Eq = rhs;
+                else if (lhs === 'Q2') q2Eq = rhs;
+            }
+            if (!q1Eq) return { error: 'Missing Q1 equation. Expected: Q1 = ...' };
+            if (!q2Eq) return { error: 'Missing Q2 equation. Expected: Q2 = ...' };
+
+            const q1c = extractLinearCoefficients(q1Eq, 'P1', 'P2');
+            if (q1c.error) return { error: 'Q1: ' + q1c.error };
+            const q2c = extractLinearCoefficients(q2Eq, 'P2', 'P1');
+            if (q2c.error) return { error: 'Q2: ' + q2c.error };
+
+            return {
+                a1: q1c.constant, b1: -q1c.ownCoeff, c1: q1c.crossCoeff,
+                a2: q2c.constant, b2: -q2c.ownCoeff, c2: q2c.crossCoeff,
+                error: null
+            };
+        }
+
+        function extractLinearCoefficients(expr, ownVar, crossVar) {
+            // Normalize: insert * between number and variable (e.g., "2P1" -> "2*P1")
+            let norm = expr.replace(/\s+/g, ' ').trim();
+            norm = norm.replace(/(\d)\s*([A-Za-z])/g, '$1*$2');
+
+            // Split into additive terms preserving signs
+            let termStr = norm.replace(/\s*-\s*/g, '+-');
+            const terms = termStr.split('+').map(t => t.trim()).filter(t => t);
+
+            let constant = 0, ownCoeff = 0, crossCoeff = 0;
+            const ownRe = new RegExp(ownVar, 'i');
+            const crossRe = new RegExp(crossVar, 'i');
+
+            for (const term of terms) {
+                const hasOwn = ownRe.test(term);
+                const hasCross = crossRe.test(term);
+
+                if (hasOwn && hasCross) return { error: `Term "${term}" contains both price variables.` };
+
+                if (hasOwn) {
+                    ownCoeff += extractCoeff(term, ownVar);
+                } else if (hasCross) {
+                    crossCoeff += extractCoeff(term, crossVar);
+                } else {
+                    const val = parseFloat(term);
+                    if (isNaN(val)) return { error: `Could not parse term "${term}" as a number.` };
+                    constant += val;
+                }
+            }
+            return { constant, ownCoeff, crossCoeff, error: null };
+        }
+
+        function extractCoeff(term, varName) {
+            const re = new RegExp('\\*?' + varName + '\\*?', 'i');
+            let c = term.replace(re, '').replace(/^\*|\*$/g, '').trim();
+            if (c === '' || c === '+') return 1;
+            if (c === '-') return -1;
+            return parseFloat(c);
+        }
 
         document.addEventListener('DOMContentLoaded', () => {
             initChart();
@@ -703,15 +929,27 @@
         }
 
         function getParams() {
+            if (inputMode === 'manual') {
+                return {
+                    a1: parseFloat(document.getElementById('a1').value),
+                    b1: parseFloat(document.getElementById('b1').value),
+                    c1: parseFloat(document.getElementById('c1').value),
+                    mc1: parseFloat(document.getElementById('mc1').value),
+                    a2: parseFloat(document.getElementById('a2').value),
+                    b2: parseFloat(document.getElementById('b2').value),
+                    c2: parseFloat(document.getElementById('c2').value),
+                    mc2: parseFloat(document.getElementById('mc2').value)
+                };
+            }
+            // Equation mode
+            const text = document.getElementById('equationsTextarea').value.trim();
+            const parsed = parseLinearDemandEquations(text);
+            if (parsed.error) return { __parseError: parsed.error };
             return {
-                a1: parseFloat(document.getElementById('a1').value),
-                b1: parseFloat(document.getElementById('b1').value),
-                c1: parseFloat(document.getElementById('c1').value),
-                mc1: parseFloat(document.getElementById('mc1').value),
-                a2: parseFloat(document.getElementById('a2').value),
-                b2: parseFloat(document.getElementById('b2').value),
-                c2: parseFloat(document.getElementById('c2').value),
-                mc2: parseFloat(document.getElementById('mc2').value)
+                a1: parsed.a1, b1: parsed.b1, c1: parsed.c1,
+                mc1: parseFloat(document.getElementById('mc1_eq').value),
+                a2: parsed.a2, b2: parsed.b2, c2: parsed.c2,
+                mc2: parseFloat(document.getElementById('mc2_eq').value)
             };
         }
 
@@ -733,6 +971,11 @@
             errorEl.classList.remove('visible');
 
             const p = getParams();
+            if (p.__parseError) {
+                errorEl.textContent = p.__parseError;
+                errorEl.classList.add('visible');
+                return;
+            }
             const error = validateParams(p);
             if (error) {
                 errorEl.textContent = error;
