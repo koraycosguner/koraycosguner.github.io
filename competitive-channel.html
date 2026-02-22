@@ -1620,7 +1620,7 @@
                 return 'All parameters must be valid numbers.';
             }
             if (p.b1 <= 0 || p.b2 <= 0) {
-                return 'Own-price effects (b₁, b₂) must be positive.';
+                return 'Own-price coefficients (b₁, b₂) must be negative — quantity decreases when own price increases.';
             }
             // For stability, need b1*b2 > c1*c2 (ensures positive definite Hessian)
             if (p.c1 * p.c2 >= p.b1 * p.b2) {
