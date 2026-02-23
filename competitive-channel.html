@@ -2232,7 +2232,7 @@
                 html += metricSingle('Retailer Captures', results.s2.retailerProfit, `${retailerShareS2}% of channel`);
                 html += metric('Total Channel Profit', results.s1.totalProfit, results.s2.totalProfit);
                 html += `</div>`;
-                html += `<div class="insight-takeaway">This is <em>double marginalization</em>: the manufacturer marks up over cost, then the retailer marks up again. The stacking of markups raises consumer prices and shrinks the total pie — value is destroyed, not just redistributed.</div>`;
+                html += `<div class="insight-takeaway">This is <em>double marginalization</em>: the manufacturer marks up over cost, then the retailer adds a second markup. The stacking of margins raises consumer prices, reduces sales volume, and lowers total channel profit compared to direct sales.</div>`;
 
             } else if (pairKey === 's3_s4') {
                 const retailerShareS4 = (results.s4.retailerProfit / results.s4.totalProfit * 100).toFixed(1);
