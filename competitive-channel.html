@@ -361,41 +361,73 @@
 
         /* Interpretation */
         .interpretation-box {
-            background: #f0f9ff;
-            border: 1px solid #bae6fd;
-            border-radius: 8px;
-            padding: 1rem 1.25rem;
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 1.25rem 1.5rem;
             margin-top: 1rem;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.04);
         }
 
         .interpretation-box h4 {
             font-weight: 600;
-            color: #0369a1;
+            color: var(--text-dark);
             margin-bottom: 0.75rem;
+            font-size: 0.95rem;
+        }
+
+        .insight-relationship {
+            display: inline-block;
+            padding: 0.2rem 0.6rem;
+            border-radius: 4px;
+            font-size: 0.78rem;
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+        }
+        .insight-relationship.substitutes {
+            background: #fef2f2;
+            color: #991b1b;
+        }
+        .insight-relationship.complements {
+            background: #f0fdf4;
+            color: #166534;
+        }
+        .insight-section-title {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 0.15rem;
+        }
+        .insight-question {
+            font-size: 0.83rem;
+            color: var(--text-light);
+            margin-bottom: 0.6rem;
         }
 
         .insight-metrics {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 0.4rem 0.5rem;
-            margin: 0.4rem 0 0.6rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+            margin: 0 0 0.6rem;
             font-size: 0.85rem;
+            border: 1px solid #e5e7eb;
+            border-radius: 6px;
+            overflow: hidden;
         }
         .insight-metric {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 0.4rem 0.7rem;
-            background: white;
-            border-radius: 6px;
-            border-left: 3px solid #93c5fd;
+            padding: 0.45rem 0.75rem;
+            border-bottom: 1px solid #f1f5f9;
             color: var(--text);
         }
+        .insight-metric:last-child { border-bottom: none; }
         .insight-metric .label {
             color: var(--text-light);
-            font-size: 0.8rem;
+            font-size: 0.82rem;
             flex-shrink: 0;
-            margin-right: 0.5rem;
+            margin-right: 0.75rem;
         }
         .insight-metric .values {
             font-weight: 600;
@@ -405,60 +437,27 @@
         }
         .insight-metric .change {
             font-weight: 700;
-            font-size: 0.82rem;
+            font-size: 0.8rem;
             margin-left: 0.35rem;
         }
         .insight-metric .change.negative { color: #dc2626; }
         .insight-metric .change.positive { color: #16a34a; }
         .insight-metric.full-width {
-            grid-column: 1 / -1;
-            border-left-color: #60a5fa;
             background: #f8fafc;
-        }
-
-        .insight-relationship {
-            display: inline-block;
-            padding: 0.3rem 0.75rem;
-            border-radius: 20px;
-            font-size: 0.82rem;
             font-weight: 600;
-            margin-bottom: 1rem;
         }
-        .insight-relationship.substitutes {
-            background: #fef2f2;
-            color: #991b1b;
-            border: 1px solid #fecaca;
-        }
-        .insight-relationship.complements {
-            background: #f0fdf4;
-            color: #166534;
-            border: 1px solid #bbf7d0;
-        }
-        .insight-section-title {
-            font-size: 1rem;
-            font-weight: 700;
-            color: var(--text-dark);
-            margin-bottom: 0.25rem;
-        }
-        .insight-question {
+        .insight-metric.full-width .label { color: var(--text-dark); }
+
+        .insight-takeaway {
             font-size: 0.85rem;
             color: var(--text-light);
-            margin-bottom: 0.75rem;
-            line-height: 1.5;
-        }
-        .insight-takeaway {
-            font-size: 0.88rem;
-            color: var(--text);
             line-height: 1.6;
-            padding: 0.6rem 0.85rem;
-            background: white;
-            border-left: 3px solid #3b82f6;
-            border-radius: 0 6px 6px 0;
-            margin-top: 0.5rem;
+            padding: 0;
+            margin-top: 0.1rem;
         }
+        .insight-takeaway em { color: var(--text-dark); font-style: italic; }
 
         @media (max-width: 768px) {
-            .insight-metrics { grid-template-columns: 1fr; }
             .pair-selector { flex-direction: column; }
             .pair-selector select { max-width: 100%; }
         }
