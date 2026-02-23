@@ -1139,12 +1139,16 @@
                                 <span class="label" id="s1_lbl_q2">Quantity Q₂</span>
                                 <span class="value" id="s1_q2">-</span>
                             </div>
-                            <div class="metric" style="grid-column: span 2;">
-                                <span class="label">Total Producer Profit (both products)</span>
-                                <span class="value" id="s1_profit1">-</span>
+                            <div class="metric">
+                                <span class="label" id="s1_lbl_profit1">Product 1 Profit</span>
+                                <span class="value producer1" id="s1_profit1">-</span>
+                            </div>
+                            <div class="metric">
+                                <span class="label" id="s1_lbl_profit2">Product 2 Profit</span>
+                                <span class="value producer2" id="s1_profit2">-</span>
                             </div>
                             <div class="metric" style="grid-column: span 2;">
-                                <span class="label">Total Channel Profit</span>
+                                <span class="label">Total Industry Profit</span>
                                 <span class="value" id="s1_total">-</span>
                             </div>
                         </div>
@@ -1970,6 +1974,8 @@
             document.getElementById('s1_lbl_p2').textContent = `${N2} Retail Price`;
             document.getElementById('s1_lbl_q1').textContent = `${N1} Sales`;
             document.getElementById('s1_lbl_q2').textContent = `${N2} Sales`;
+            document.getElementById('s1_lbl_profit1').textContent = `${N1} Profit`;
+            document.getElementById('s1_lbl_profit2').textContent = `${N2} Profit`;
             // S2 labels (through retailer — wholesale + retail)
             document.getElementById('s2_lbl_w1').textContent = `${N1} Wholesale Price`;
             document.getElementById('s2_lbl_w2').textContent = `${N2} Wholesale Price`;
@@ -1992,12 +1998,15 @@
             document.getElementById('s4_lbl_profit1').textContent = `${N1} Profit`;
             document.getElementById('s4_lbl_profit2').textContent = `${N2} Profit`;
 
-            // Scenario 1 (now two products)
+            // Scenario 1 (now two products — per-brand profits)
             document.getElementById('s1_p1').textContent = results.s1.P1.toFixed(4);
             document.getElementById('s1_p2').textContent = results.s1.P2.toFixed(4);
             document.getElementById('s1_q1').textContent = results.s1.Q1.toFixed(4);
             document.getElementById('s1_q2').textContent = results.s1.Q2.toFixed(4);
-            document.getElementById('s1_profit1').textContent = results.s1.profit1.toFixed(4);
+            const s1_brand1 = (results.s1.P1 - p.C1) * results.s1.Q1;
+            const s1_brand2 = (results.s1.P2 - p.C2) * results.s1.Q2;
+            document.getElementById('s1_profit1').textContent = s1_brand1.toFixed(4);
+            document.getElementById('s1_profit2').textContent = s1_brand2.toFixed(4);
             document.getElementById('s1_total').textContent = results.s1.totalProfit.toFixed(4);
 
             // Scenario 2 (now two products)
