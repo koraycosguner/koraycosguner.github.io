@@ -371,18 +371,7 @@
         .interpretation-box h4 {
             font-weight: 600;
             color: #0369a1;
-            margin-bottom: 0.5rem;
-        }
-
-        .interpretation-box p {
-            font-size: 0.9rem;
-            color: var(--text-light);
-            line-height: 1.6;
-            margin-bottom: 0.5rem;
-        }
-
-        .interpretation-box p:last-child {
-            margin-bottom: 0;
+            margin-bottom: 0.75rem;
         }
 
         .insight-metrics {
@@ -425,6 +414,47 @@
             grid-column: 1 / -1;
             border-left-color: #60a5fa;
             background: #f8fafc;
+        }
+
+        .insight-relationship {
+            display: inline-block;
+            padding: 0.3rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.82rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+        .insight-relationship.substitutes {
+            background: #fef2f2;
+            color: #991b1b;
+            border: 1px solid #fecaca;
+        }
+        .insight-relationship.complements {
+            background: #f0fdf4;
+            color: #166534;
+            border: 1px solid #bbf7d0;
+        }
+        .insight-section-title {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 0.25rem;
+        }
+        .insight-question {
+            font-size: 0.85rem;
+            color: var(--text-light);
+            margin-bottom: 0.75rem;
+            line-height: 1.5;
+        }
+        .insight-takeaway {
+            font-size: 0.88rem;
+            color: var(--text);
+            line-height: 1.6;
+            padding: 0.6rem 0.85rem;
+            background: white;
+            border-left: 3px solid #3b82f6;
+            border-radius: 0 6px 6px 0;
+            margin-top: 0.5rem;
         }
 
         @media (max-width: 768px) {
@@ -1090,6 +1120,35 @@
                     </div>
                 </div>
             </div>
+
+            <details style="margin-top: 1rem;">
+                <summary style="cursor: pointer; font-weight: 600; color: var(--iu-crimson); font-size: 0.95rem; padding: 0.5rem 0;">
+                    How Are Optimal Prices Calculated?
+                </summary>
+                <div class="notation-box" style="margin-top: 0.5rem; background: #fefce8; border-color: #fde68a;">
+                    <p style="font-size: 0.9rem; color: var(--text-light); line-height: 1.7; margin-bottom: 0.75rem;">
+                        All four scenarios are solved <strong>analytically</strong> (closed-form solutions) — no numerical optimization or simulation is needed. Because the demand functions are linear, every first-order condition (FOC) produces a linear equation. The resulting systems are solved exactly using <strong>Cramer's rule</strong>.
+                    </p>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; font-size: 0.85rem; color: var(--text-light); line-height: 1.6;">
+                        <div>
+                            <strong style="color: var(--text-dark);">S1: Single Owner, Direct Sales</strong><br>
+                            The monopolist maximizes joint profit &pi; = (P&#8321;&minus;C&#8321;)Q&#8321; + (P&#8322;&minus;C&#8322;)Q&#8322; over both prices simultaneously. The two FOCs (&part;&pi;/&part;P&#8321; = 0, &part;&pi;/&part;P&#8322; = 0) form a 2&times;2 linear system, solved by Cramer's rule.
+                        </div>
+                        <div>
+                            <strong style="color: var(--text-dark);">S2: Single Owner, Through Retailer</strong><br>
+                            Solved by <em>backward induction</em>. Stage 2: the retailer maximizes its profit over retail prices P&#8321;, P&#8322; given wholesale prices &mdash; yielding P(W) and Q(W) as linear functions of W. Stage 1: the manufacturer substitutes these into joint profit and optimizes over W&#8321;, W&#8322;. Both stages are 2&times;2 linear systems.
+                        </div>
+                        <div>
+                            <strong style="color: var(--text-dark);">S3: Competing Brands, Direct Sales</strong><br>
+                            Each firm maximizes its own profit. The FOCs give <em>best response functions</em>: P&#8321; = f(P&#8322;) and P&#8322; = g(P&#8321;). Solving simultaneously yields the <strong>Bertrand-Nash equilibrium</strong> prices.
+                        </div>
+                        <div>
+                            <strong style="color: var(--text-dark);">S4: Competing Brands, Through Retailer</strong><br>
+                            Backward induction again. The retailer's response P(W), Q(W) is derived first (same as S2). Then each manufacturer sets its own wholesale price to maximize its individual profit, anticipating the retailer's response &mdash; a <strong>Nash equilibrium in wholesale prices</strong>.
+                        </div>
+                    </div>
+                </div>
+            </details>
 
             <div id="errorMessage" class="error-message"></div>
             <button class="calculate-btn" onclick="calculateAll()">Solve For Optimal Prices</button>
@@ -2120,22 +2179,18 @@
             const s2_prod1 = (results.s2.W1 - p.C1) * results.s2.Q1;
             const s2_prod2 = (results.s2.W2 - p.C2) * results.s2.Q2;
 
-            // Product relationship intro (always show)
-            html += `<p><strong>Product Relationship:</strong> These are <em>${strengthLabel} ${relationshipType}</em>. `;
-            if (isComplement) {
-                html += `When one product's price goes up, demand for the other <em>decreases</em> — they are typically purchased together.</p>`;
-            } else {
-                html += `When one product's price goes up, demand for the other <em>increases</em> — customers switch to the alternative.</p>`;
-            }
+            // Product relationship badge
+            const relClass = isComplement ? 'complements' : 'substitutes';
+            const relIcon = isComplement ? '🔗' : '⚔️';
+            html += `<div class="insight-relationship ${relClass}">${relIcon} ${strengthLabel} ${relationshipType}</div>`;
 
             // Normalize pair order for consistent logic
             const pairKey = [leftKey, rightKey].sort().join('_');
 
             // Generate comparison based on the specific pair
             if (pairKey === 's1_s3') {
-                // Competition Effect — Direct Sales
-                html += `<p><strong>Competition Effect — Direct Sales:</strong> `;
-                html += `What changes when two products go from single ownership to separate competing firms, both selling directly?</p>`;
+                html += `<div class="insight-section-title">Competition Effect — Direct Sales</div>`;
+                html += `<div class="insight-question">What changes when two products go from single ownership to separate competing firms, both selling directly?</div>`;
                 html += `<div class="insight-metrics">`;
                 html += metric(`${N1} Retail Price`, results.s1.P1, results.s3.P1);
                 html += metric(`${N2} Retail Price`, results.s1.P2, results.s3.P2);
@@ -2144,15 +2199,14 @@
                 html += metric('Total Industry Profit', results.s1.totalProfit, results.s3.totalProfit, ' full-width');
                 html += `</div>`;
                 if (isComplement) {
-                    html += `<p>With complementary products, separate ownership leads to <em>higher</em> prices. Each firm ignores that lowering its own price would boost demand for the partner product. A single owner coordinates pricing to grow the overall pie.</p>`;
+                    html += `<div class="insight-takeaway">With complementary products, separate ownership leads to <em>higher</em> prices. Each firm ignores that lowering its own price would boost demand for the partner product. A single owner coordinates pricing to grow the overall pie.</div>`;
                 } else {
-                    html += `<p>With substitute products, competition drives prices <em>down</em> as each firm tries to win customers from the rival. But when both cut prices, margins shrink for everyone.</p>`;
+                    html += `<div class="insight-takeaway">With substitute products, competition drives prices <em>down</em> as each firm tries to win customers from the rival. But when both cut prices, margins shrink for everyone.</div>`;
                 }
 
             } else if (pairKey === 's2_s4') {
-                // Competition Effect — Retail Channel
-                html += `<p><strong>Competition Effect — Retail Channel:</strong> `;
-                html += `Same comparison (single owner vs separate firms), but now both sell through a common retailer.</p>`;
+                html += `<div class="insight-section-title">Competition Effect — Retail Channel</div>`;
+                html += `<div class="insight-question">Same comparison (single owner vs separate firms), but now both sell through a common retailer.</div>`;
                 html += `<div class="insight-metrics">`;
                 html += metric(`${N1} Retail Price`, results.s2.P1, results.s4.P1);
                 html += metric(`${N2} Retail Price`, results.s2.P2, results.s4.P2);
@@ -2162,16 +2216,15 @@
                 html += metric('Total Channel Profit', results.s2.totalProfit, results.s4.totalProfit, ' full-width');
                 html += `</div>`;
                 if (isComplement) {
-                    html += `<p>Even through a retailer, the coordination failure persists — separate ownership of complementary products still raises prices and reduces total profit.</p>`;
+                    html += `<div class="insight-takeaway">Even through a retailer, the coordination failure persists — separate ownership of complementary products still raises prices and reduces total profit.</div>`;
                 } else {
-                    html += `<p>The retailer partially absorbs the competition effect. Since the retailer sells both products, it softens the price war between upstream manufacturers.</p>`;
+                    html += `<div class="insight-takeaway">The retailer partially absorbs the competition effect. Since the retailer sells both products, it softens the price war between upstream manufacturers.</div>`;
                 }
 
             } else if (pairKey === 's1_s2') {
-                // Retailer Effect — Under Collusion
                 const retailerShareS2 = (results.s2.retailerProfit / results.s2.totalProfit * 100).toFixed(1);
-                html += `<p><strong>Retailer Effect — Under Single Ownership:</strong> `;
-                html += `What changes when a single owner adds a retailer instead of selling directly?</p>`;
+                html += `<div class="insight-section-title">Retailer Effect — Under Single Ownership</div>`;
+                html += `<div class="insight-question">What changes when a single owner adds a retailer instead of selling directly?</div>`;
                 html += `<div class="insight-metrics">`;
                 html += metric(`${N1} Retail Price`, results.s1.P1, results.s2.P1);
                 html += metric(`${N2} Retail Price`, results.s1.P2, results.s2.P2);
@@ -2179,13 +2232,12 @@
                 html += metricSingle('Retailer Captures', results.s2.retailerProfit, `${retailerShareS2}% of channel`);
                 html += metric('Total Channel Profit', results.s1.totalProfit, results.s2.totalProfit);
                 html += `</div>`;
-                html += `<p>This is <em>double marginalization</em>: the manufacturer marks up over cost, then the retailer marks up again. The stacking of markups raises consumer prices and shrinks the total pie — value is destroyed, not just redistributed.</p>`;
+                html += `<div class="insight-takeaway">This is <em>double marginalization</em>: the manufacturer marks up over cost, then the retailer marks up again. The stacking of markups raises consumer prices and shrinks the total pie — value is destroyed, not just redistributed.</div>`;
 
             } else if (pairKey === 's3_s4') {
-                // Retailer Effect — Under Competition
                 const retailerShareS4 = (results.s4.retailerProfit / results.s4.totalProfit * 100).toFixed(1);
-                html += `<p><strong>Retailer Effect — Under Competition:</strong> `;
-                html += `What changes when competing firms add a common retailer?</p>`;
+                html += `<div class="insight-section-title">Retailer Effect — Under Competition</div>`;
+                html += `<div class="insight-question">What changes when competing firms add a common retailer?</div>`;
                 html += `<div class="insight-metrics">`;
                 html += metric(`${N1} Retail Price`, results.s3.P1, results.s4.P1);
                 html += metric(`${N2} Retail Price`, results.s3.P2, results.s4.P2);
@@ -2195,17 +2247,15 @@
                 html += metric('Total Channel Profit', results.s3.totalProfit, results.s4.totalProfit, ' full-width');
                 html += `</div>`;
                 if (isComplement) {
-                    html += `<p>For complementary products, the common retailer can partially coordinate pricing across the two brands — potentially offsetting some of the coordination failure from separate ownership.</p>`;
+                    html += `<div class="insight-takeaway">For complementary products, the common retailer can partially coordinate pricing across the two brands — potentially offsetting some of the coordination failure from separate ownership.</div>`;
                 } else {
-                    html += `<p>The retailer adds a markup layer, but because it sells both competing products, it may soften upstream competition — manufacturers lose profit both to the retailer's margin and to reduced competitive pressure.</p>`;
+                    html += `<div class="insight-takeaway">The retailer adds a markup layer, but because it sells both competing products, it may soften upstream competition — manufacturers lose profit both to the retailer's margin and to reduced competitive pressure.</div>`;
                 }
 
             } else if (pairKey === 's1_s4') {
-                // Diagonal: Single Owner Direct vs Competing Through Retailer
-                // Both ownership AND channel change simultaneously
                 const retailerShareS4 = (results.s4.retailerProfit / results.s4.totalProfit * 100).toFixed(1);
-                html += `<p><strong>Combined Effect — Ownership + Channel:</strong> `;
-                html += `Comparing the most coordinated scenario (single owner, direct) with the least coordinated (separate firms, through retailer). Both ownership structure and channel change simultaneously.</p>`;
+                html += `<div class="insight-section-title">Combined Effect — Ownership + Channel</div>`;
+                html += `<div class="insight-question">Comparing the most coordinated scenario (single owner, direct) with the least coordinated (separate firms, through retailer). Both ownership structure and channel change simultaneously.</div>`;
                 html += `<div class="insight-metrics">`;
                 html += metric(`${N1} Retail Price`, results.s1.P1, results.s4.P1);
                 html += metric(`${N2} Retail Price`, results.s1.P2, results.s4.P2);
@@ -2215,15 +2265,14 @@
                 html += metric('Total Channel Profit', results.s1.totalProfit, results.s4.totalProfit, ' full-width');
                 html += `</div>`;
                 if (isComplement) {
-                    html += `<p>This compares the two extremes. The single owner sets coordinated prices for complementary products and sells directly. With separate ownership through a retailer, you get both the coordination failure of separate firms <em>and</em> the double marginalization from the retail layer. However, the retailer may partially offset the coordination failure by internalizing cross-product effects.</p>`;
+                    html += `<div class="insight-takeaway">This compares the two extremes. The single owner sets coordinated prices for complementary products and sells directly. With separate ownership through a retailer, you get both the coordination failure of separate firms <em>and</em> the double marginalization from the retail layer. However, the retailer may partially offset the coordination failure by internalizing cross-product effects.</div>`;
                 } else {
-                    html += `<p>This compares the two extremes. The single owner keeps prices high (collusion) with no retail markup. With separate firms through a retailer, competition pushes wholesale prices down but the retailer adds its own markup. The net effect on consumer prices depends on which force dominates — the competitive pressure or the double marginalization.</p>`;
+                    html += `<div class="insight-takeaway">This compares the two extremes. The single owner keeps prices high (collusion) with no retail markup. With separate firms through a retailer, competition pushes wholesale prices down but the retailer adds its own markup. The net effect on consumer prices depends on which force dominates — the competitive pressure or the double marginalization.</div>`;
                 }
 
             } else if (pairKey === 's2_s3') {
-                // Diagonal: Single Owner Through Retailer vs Competing Direct
-                html += `<p><strong>Crossed Effect — Ownership × Channel:</strong> `;
-                html += `Comparing single ownership through a retailer with competing brands selling directly. Ownership and channel effects move in opposite directions.</p>`;
+                html += `<div class="insight-section-title">Crossed Effect — Ownership × Channel</div>`;
+                html += `<div class="insight-question">Comparing single ownership through a retailer with competing brands selling directly. Ownership and channel effects move in opposite directions.</div>`;
                 html += `<div class="insight-metrics">`;
                 html += metric(`${N1} Retail Price`, results.s2.P1, results.s3.P1);
                 html += metric(`${N2} Retail Price`, results.s2.P2, results.s3.P2);
@@ -2234,14 +2283,13 @@
                 html += metric('Total Channel Profit', results.s2.totalProfit, results.s3.totalProfit, ' full-width');
                 html += `</div>`;
                 if (isComplement) {
-                    html += `<p>An interesting comparison: single ownership through a retailer vs separate firms selling directly. Single ownership coordinates complementary pricing but loses margin to the retailer. Separate direct sales avoid the retailer's markup but suffer from the coordination failure of independent pricing. Which scenario yields lower consumer prices depends on the relative strength of these two effects.</p>`;
+                    html += `<div class="insight-takeaway">Single ownership coordinates complementary pricing but loses margin to the retailer. Separate direct sales avoid the retailer's markup but suffer from the coordination failure of independent pricing. Which scenario yields lower consumer prices depends on the relative strength of these two effects.</div>`;
                 } else {
-                    html += `<p>An interesting comparison: single ownership through a retailer vs separate firms selling directly. The single owner can coordinate pricing (keep prices high) but the retailer adds a markup. Competing direct sellers face price pressure from rivalry. For substitutes, the competitive pressure often dominates, yielding lower prices under competition even without a retailer.</p>`;
+                    html += `<div class="insight-takeaway">The single owner can coordinate pricing (keep prices high) but the retailer adds a markup. Competing direct sellers face price pressure from rivalry. For substitutes, the competitive pressure often dominates, yielding lower prices under competition even without a retailer.</div>`;
                 }
 
             } else {
-                // Same scenario selected — show just a summary
-                html += `<p>Please select two different scenarios to compare.</p>`;
+                html += `<div class="insight-question">Please select two different scenarios to compare.</div>`;
             }
 
             document.getElementById('interpretationText').innerHTML = html;
