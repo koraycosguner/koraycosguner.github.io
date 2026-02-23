@@ -2236,7 +2236,7 @@
 
             } else if (pairKey === 's2_s4') {
                 html += `<div class="insight-section-title">Collusion vs. Competition — Through a Retailer</div>`;
-                html += `<div class="insight-question">Same as S1 vs S3 (collusion vs. competition), but now both sell through a common retailer.</div>`;
+                html += `<div class="insight-question">Same collusion vs. competition comparison, but now both sell through a common retailer.</div>`;
                 html += `<div class="insight-metrics">`;
                 html += metric(`${N1} Retail Price`, results.s2.P1, results.s4.P1);
                 html += metric(`${N2} Retail Price`, results.s2.P2, results.s4.P2);
@@ -2248,7 +2248,7 @@
                 if (isComplement) {
                     html += `<div class="insight-takeaway">Even through a retailer, the coordination failure persists — separate ownership of complementary products still raises prices and reduces total profit.</div>`;
                 } else {
-                    html += `<div class="insight-takeaway">The same competitive logic applies: separate firms undercut each other's wholesale prices, leading to lower retail prices and lower manufacturer profits. But notice the effect is <em>dampened</em> compared to the direct-sales case (S1 vs S3). The common retailer acts as a buffer — since it sells both products, it does not fully pass through wholesale price cuts to consumers. The retailer partially absorbs the competitive pressure, keeping retail prices higher than they would be if manufacturers sold directly.</div>`;
+                    html += `<div class="insight-takeaway">The same competitive logic applies: separate firms undercut each other's wholesale prices, leading to lower retail prices and lower manufacturer profits. But notice the effect is <em>dampened</em> compared to the direct-sales case. The common retailer acts as a buffer — since it sells both products, it does not fully pass through wholesale price cuts to consumers. The retailer partially absorbs the competitive pressure, keeping retail prices higher than they would be if manufacturers sold directly.</div>`;
                 }
 
             } else if (pairKey === 's1_s4') {
@@ -2266,7 +2266,7 @@
                 if (isComplement) {
                     html += `<div class="insight-takeaway">This compares the two extremes. The single owner coordinates prices for complementary products and sells directly. With separate ownership through a retailer, you get both the coordination failure <em>and</em> double marginalization. However, the common retailer may partially offset the coordination failure by internalizing cross-product effects.</div>`;
                 } else {
-                    html += `<div class="insight-takeaway">S1 is the most efficient: one firm coordinates prices and sells directly, no margin is lost to intermediaries. S4 combines <em>both</em> sources of inefficiency — upstream competition erodes manufacturer margins, and the retailer's markup layer further raises consumer prices. The total channel profit loss from S1 to S4 reflects the compounding of competition and double marginalization. For substitutes, competition pushes wholesale prices down, but the retailer does not fully pass those savings through — consumers get some benefit, but less than under direct competition (S3).</div>`;
+                    html += `<div class="insight-takeaway">Single ownership with direct sales is the most efficient: one firm coordinates prices and sells directly, no margin is lost to intermediaries. Competing brands through a retailer combines <em>both</em> sources of inefficiency — upstream competition erodes manufacturer margins, and the retailer's markup layer further raises consumer prices. The total channel profit loss reflects the compounding of competition and double marginalization. For substitutes, competition pushes wholesale prices down, but the retailer does not fully pass those savings through — consumers get some benefit, but less than under direct competition.</div>`;
                 }
 
             } else if (pairKey === 's2_s3') {
@@ -2278,13 +2278,13 @@
                 html += metric(`${N1} Profit`, s2_prod1, results.s3.profit1);
                 html += metric(`${N2} Profit`, s2_prod2, results.s3.profit2);
                 const retailerShareS2 = (results.s2.retailerProfit / results.s2.totalProfit * 100).toFixed(1);
-                html += metricSingle('S2 Retailer Profit', results.s2.retailerProfit, `${retailerShareS2}% of channel`);
+                html += metricSingle('Retailer Profit (Single Owner)', results.s2.retailerProfit, `${retailerShareS2}% of channel`);
                 html += metric('Total Channel Profit', results.s2.totalProfit, results.s3.totalProfit, ' full-width');
                 html += `</div>`;
                 if (isComplement) {
                     html += `<div class="insight-takeaway">Single ownership coordinates complementary pricing but loses margin to the retailer. Separate direct sales avoid the retailer's markup but suffer from the coordination failure of independent pricing. Which scenario yields lower consumer prices depends on the relative strength of these two effects.</div>`;
                 } else {
-                    html += `<div class="insight-takeaway">This is the most interesting comparison for substitutes. S2 has coordination (single owner) but suffers double marginalization from the retailer. S3 has no retailer markup but firms compete away their margins. The question is whether the retailer's markup or the competitive price cutting has a larger effect on consumer prices. Typically for substitutes, direct competition (S3) yields lower consumer prices — the Prisoner's Dilemma of price cutting is a stronger force than double marginalization.</div>`;
+                    html += `<div class="insight-takeaway">This is the most interesting comparison for substitutes. Single ownership through a retailer has coordination but suffers double marginalization. Competing brands selling directly have no retailer markup but firms compete away their margins. The question is whether the retailer's markup or the competitive price cutting has a larger effect on consumer prices. Typically for substitutes, direct competition yields lower consumer prices — the competitive pressure to undercut is a stronger force than double marginalization.</div>`;
                 }
 
             } else {
