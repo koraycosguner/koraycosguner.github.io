@@ -364,34 +364,43 @@
         .insight-metrics {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 0.35rem;
-            margin: 0.5rem 0 0.75rem;
+            gap: 0.4rem 0.5rem;
+            margin: 0.4rem 0 0.6rem;
             font-size: 0.85rem;
         }
         .insight-metric {
-            padding: 0.35rem 0.65rem;
-            background: rgba(255, 255, 255, 0.7);
-            border-radius: 5px;
-            border: 1px solid #e0effa;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.4rem 0.7rem;
+            background: white;
+            border-radius: 6px;
+            border-left: 3px solid #93c5fd;
             color: var(--text);
-            line-height: 1.4;
         }
         .insight-metric .label {
             color: var(--text-light);
             font-size: 0.8rem;
+            flex-shrink: 0;
+            margin-right: 0.5rem;
         }
         .insight-metric .values {
             font-weight: 600;
-            font-size: 0.88rem;
+            font-size: 0.85rem;
+            text-align: right;
+            white-space: nowrap;
         }
         .insight-metric .change {
-            font-weight: 600;
-            margin-left: 0.25rem;
+            font-weight: 700;
+            font-size: 0.82rem;
+            margin-left: 0.35rem;
         }
         .insight-metric .change.negative { color: #dc2626; }
         .insight-metric .change.positive { color: #16a34a; }
         .insight-metric.full-width {
             grid-column: 1 / -1;
+            border-left-color: #60a5fa;
+            background: #f8fafc;
         }
 
         @media (max-width: 768px) {
@@ -1913,30 +1922,30 @@
             // Update scenario card labels with product names
             const names = getProductNames();
             const N1 = names.p1, N2 = names.p2;
-            // S1 labels
-            document.getElementById('s1_lbl_p1').textContent = `${N1} Price`;
-            document.getElementById('s1_lbl_p2').textContent = `${N2} Price`;
-            document.getElementById('s1_lbl_q1').textContent = `${N1} Quantity`;
-            document.getElementById('s1_lbl_q2').textContent = `${N2} Quantity`;
-            // S2 labels
-            document.getElementById('s2_lbl_w1').textContent = `${N1} Wholesale`;
-            document.getElementById('s2_lbl_w2').textContent = `${N2} Wholesale`;
-            document.getElementById('s2_lbl_p1').textContent = `${N1} Retail`;
-            document.getElementById('s2_lbl_p2').textContent = `${N2} Retail`;
-            document.getElementById('s2_lbl_q1').textContent = `${N1} Quantity`;
-            document.getElementById('s2_lbl_q2').textContent = `${N2} Quantity`;
-            // S3 labels
-            document.getElementById('s3_lbl_p1').textContent = `${N1} Price`;
-            document.getElementById('s3_lbl_p2').textContent = `${N2} Price`;
-            document.getElementById('s3_lbl_q1').textContent = `${N1} Quantity`;
-            document.getElementById('s3_lbl_q2').textContent = `${N2} Quantity`;
+            // S1 labels (direct sales — retail price is the only price)
+            document.getElementById('s1_lbl_p1').textContent = `${N1} Retail Price`;
+            document.getElementById('s1_lbl_p2').textContent = `${N2} Retail Price`;
+            document.getElementById('s1_lbl_q1').textContent = `${N1} Sales`;
+            document.getElementById('s1_lbl_q2').textContent = `${N2} Sales`;
+            // S2 labels (through retailer — wholesale + retail)
+            document.getElementById('s2_lbl_w1').textContent = `${N1} Wholesale Price`;
+            document.getElementById('s2_lbl_w2').textContent = `${N2} Wholesale Price`;
+            document.getElementById('s2_lbl_p1').textContent = `${N1} Retail Price`;
+            document.getElementById('s2_lbl_p2').textContent = `${N2} Retail Price`;
+            document.getElementById('s2_lbl_q1').textContent = `${N1} Sales`;
+            document.getElementById('s2_lbl_q2').textContent = `${N2} Sales`;
+            // S3 labels (direct sales)
+            document.getElementById('s3_lbl_p1').textContent = `${N1} Retail Price`;
+            document.getElementById('s3_lbl_p2').textContent = `${N2} Retail Price`;
+            document.getElementById('s3_lbl_q1').textContent = `${N1} Sales`;
+            document.getElementById('s3_lbl_q2').textContent = `${N2} Sales`;
             document.getElementById('s3_lbl_profit1').textContent = `${N1} Profit`;
             document.getElementById('s3_lbl_profit2').textContent = `${N2} Profit`;
-            // S4 labels
-            document.getElementById('s4_lbl_w1').textContent = `${N1} Wholesale`;
-            document.getElementById('s4_lbl_w2').textContent = `${N2} Wholesale`;
-            document.getElementById('s4_lbl_p1').textContent = `${N1} Retail`;
-            document.getElementById('s4_lbl_p2').textContent = `${N2} Retail`;
+            // S4 labels (through retailer)
+            document.getElementById('s4_lbl_w1').textContent = `${N1} Wholesale Price`;
+            document.getElementById('s4_lbl_w2').textContent = `${N2} Wholesale Price`;
+            document.getElementById('s4_lbl_p1').textContent = `${N1} Retail Price`;
+            document.getElementById('s4_lbl_p2').textContent = `${N2} Retail Price`;
             document.getElementById('s4_lbl_profit1').textContent = `${N1} Profit`;
             document.getElementById('s4_lbl_profit2').textContent = `${N2} Profit`;
 
@@ -2049,8 +2058,8 @@
             html += `<p><strong>1. Competition Effect — Direct Sales (S1 vs S3):</strong> `;
             html += `What changes when two products go from single ownership to separate competing firms, both selling directly?</p>`;
             html += `<div class="insight-metrics">`;
-            html += metric(`${N1} Price`, results.s1.P1, results.s3.P1);
-            html += metric(`${N2} Price`, results.s1.P2, results.s3.P2);
+            html += metric(`${N1} Retail Price`, results.s1.P1, results.s3.P1);
+            html += metric(`${N2} Retail Price`, results.s1.P2, results.s3.P2);
             html += metric(`${N1} Profit`, s1_prod1, results.s3.profit1);
             html += metric(`${N2} Profit`, s1_prod2, results.s3.profit2);
             html += metric('Total Industry Profit', results.s1.totalProfit, results.s3.totalProfit, ' full-width');
@@ -2065,8 +2074,8 @@
             html += `<p><strong>2. Competition Effect — Retail Channel (S2 vs S4):</strong> `;
             html += `Same comparison (single owner vs separate firms), but now both sell through a common retailer.</p>`;
             html += `<div class="insight-metrics">`;
-            html += metric(`${N1} Price`, results.s2.P1, results.s4.P1);
-            html += metric(`${N2} Price`, results.s2.P2, results.s4.P2);
+            html += metric(`${N1} Retail Price`, results.s2.P1, results.s4.P1);
+            html += metric(`${N2} Retail Price`, results.s2.P2, results.s4.P2);
             html += metric(`${N1} Mfr Profit`, s2_prod1, results.s4.profit1);
             html += metric(`${N2} Mfr Profit`, s2_prod2, results.s4.profit2);
             html += metric('Retailer Profit', results.s2.retailerProfit, results.s4.retailerProfit);
@@ -2083,8 +2092,8 @@
             html += `<p><strong>3. Retailer Effect — Under Collusion (S1 vs S2):</strong> `;
             html += `What changes when a single owner adds a retailer instead of selling directly?</p>`;
             html += `<div class="insight-metrics">`;
-            html += metric(`${N1} Price`, results.s1.P1, results.s2.P1);
-            html += metric(`${N2} Price`, results.s1.P2, results.s2.P2);
+            html += metric(`${N1} Retail Price`, results.s1.P1, results.s2.P1);
+            html += metric(`${N2} Retail Price`, results.s1.P2, results.s2.P2);
             html += metric('Manufacturer Profit', results.s1.profit1, results.s2.profit1, ' full-width');
             html += metricSingle('Retailer Captures', results.s2.retailerProfit, `${retailerShareS2}% of channel`);
             html += metric('Total Channel Profit', results.s1.totalProfit, results.s2.totalProfit);
@@ -2096,8 +2105,8 @@
             html += `<p><strong>4. Retailer Effect — Under Competition (S3 vs S4):</strong> `;
             html += `What changes when competing firms add a common retailer?</p>`;
             html += `<div class="insight-metrics">`;
-            html += metric(`${N1} Price`, results.s3.P1, results.s4.P1);
-            html += metric(`${N2} Price`, results.s3.P2, results.s4.P2);
+            html += metric(`${N1} Retail Price`, results.s3.P1, results.s4.P1);
+            html += metric(`${N2} Retail Price`, results.s3.P2, results.s4.P2);
             html += metric(`${N1} Mfr Profit`, results.s3.profit1, results.s4.profit1);
             html += metric(`${N2} Mfr Profit`, results.s3.profit2, results.s4.profit2);
             html += metricSingle('Retailer Captures', results.s4.retailerProfit, `${retailerShareS4}% of channel`);
@@ -2185,10 +2194,10 @@
             const rows = [
                 [`${names.p1} Wholesale Price`, 'N/A', results.s2.W1, 'N/A', results.s4.W1],
                 [`${names.p2} Wholesale Price`, 'N/A', results.s2.W2, 'N/A', results.s4.W2],
-                [`${names.p1} Consumer Price`, results.s1.P1, results.s2.P1, results.s3.P1, results.s4.P1],
-                [`${names.p2} Consumer Price`, results.s1.P2, results.s2.P2, results.s3.P2, results.s4.P2],
-                [`${names.p1} Units Sold`, results.s1.Q1, results.s2.Q1, results.s3.Q1, results.s4.Q1],
-                [`${names.p2} Units Sold`, results.s1.Q2, results.s2.Q2, results.s3.Q2, results.s4.Q2],
+                [`${names.p1} Retail Price`, results.s1.P1, results.s2.P1, results.s3.P1, results.s4.P1],
+                [`${names.p2} Retail Price`, results.s1.P2, results.s2.P2, results.s3.P2, results.s4.P2],
+                [`${names.p1} Sales`, results.s1.Q1, results.s2.Q1, results.s3.Q1, results.s4.Q1],
+                [`${names.p2} Sales`, results.s1.Q2, results.s2.Q2, results.s3.Q2, results.s4.Q2],
                 [`Owner / ${names.p1} Profit`, results.s1.profit1, results.s2.profit1, results.s3.profit1, results.s4.profit1],
                 [`${names.p2} Profit`, 'N/A (same owner)', 'N/A (same owner)', results.s3.profit2, results.s4.profit2],
                 ['Retailer Profit', 0, results.s2.retailerProfit, 0, results.s4.retailerProfit],
