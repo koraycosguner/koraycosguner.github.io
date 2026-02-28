@@ -1,0 +1,1355 @@
+ 
+ 
+1 
+ Dynamically Managing a Profitable Email Marketing Program 
+ 
+Xi (Alan) Zhang 
+V Kumar 
+Koray Cosguner 
+ 
+  
+   
+ 
+Xi (Alan) Zhang is an Assistant Professor in Marketing at College of Business and Innovation, 
+University of Toledo. Toledo, OH 43606; Tel: 419.530.5516; Email: xi.zhang2@utoledo.edu . 
+ 
+V. Kumar is the Regents’ Professor, Richard and Susan Lenny Distinguished Chair & Professor 
+of Marketing, Executive Director of Center fo r Excellence in Brand & Customer Management, 
+and Director of the Ph.D. Program in Marketi ng at J. Mack Robinson College of Business, 
+Georgia State University. Atlanta, GA 30326; Chang Jiang Scholar, HUST, China, and Lee 
+Kong Chian Fellow, Singapore Management  University, Singapore.  Tel: 404.413.7590; 
+Email: vk@gsu.edu . 
+ 
+Koray Cosguner is an Assistant Professor in Marketing at J. Mack  Robinson College of 
+Business, Georgia State Universit y. Atlanta, GA 30303; Tel: 404.413.7697; Email: 
+kcosguner@gsu.edu . 
+ 
+ All authors contributed equally. 
+ 
+ 
+
+ 
+ 
+2 
+ Dynamically Managing a Profitable Email Marketing Program 
+ 
+ABSTRACT 
+Although email-marketing is highly profitable and widely used by marketers, it has received 
+limited attention in marketing literature. Extant  research either focuses on customers’ email 
+responses or studies the “average” ef fect of emails on purchases. In th is paper, we use data from a 
+U.S. home improvement retailer to study customers’ email open and purchase behaviors by using 
+a unified Hidden Markov and Copula framework. C ontrary to conventional wisdom, we find that 
+email active customers are not necessarily active in  purchases, and vice versa. Furthermore, we 
+find that the number of emails sent by the reta iler has a non-linear effect  on both the retailer’s 
+short- and long-term profitab ility. Through a counterfactual st udy, we provide a decision support 
+system to guide the retailer to make optimal email contact decisions. This study shows that sending the right number of emails is vi tal for long-term profitability. Fo r example, sending 4 (10) emails 
+instead of the optimal number of 7 emails can cause  the retailer to lose 32% (16%) of its lifetime 
+profit per customer.
+ 
+Keywords: Email marketing, Hidden Markov m odels, Dynamic programming, Copula models 
+
+ 
+ 
+3 
+ Introduction 
+Email marketing is a widely-used marketi ng tool by most B2B and B2C companies. A 
+survey study by Ascend2 (2015) shows that 82% of  B2B and B2C companies use email technology 
+as part of their marketing strate gies. In addition to its  widespread usage, email marketing can be 
+quite profitable. According to a recent study publis hed by the Direct Marketing Association (UK), 
+the average revenue-based return  on investment (ROI) of ema il marketing increased to £38 for 
+each £1 spent compared to the average ROI of £24.93 reported in 2013 (DMA 2015). Based on the same study, roughly 1 in every 5 companies re port an ROI of more than £70 which is three 
+times higher than the figures from 2013. Without a doubt, firms aim to generate higher ROI levels 
+from email technology by launching effective ema il marketing programs. Although the firm’s goal 
+is evident, firms may find it difficult to manage  effective email programs for multiple reasons.  
+First, customers who are active in opening a firm’s emails may not be active in purchasing 
+from the firm or vice versa. For example, so me heavy buyers may not open the firm’s emails 
+frequently since they already know the firm and its offerings quite well. This implies that the firm 
+may not need to target such customers aggressi vely through email marketing since this type of 
+buyer may pay little to no attenti on to emails received. On the ot her hand, some light buyers might 
+be quite responsive in opening the firm’s emails since they seek to get information through emails. Even though this type of customer opens emails more frequently, from the profit perspective, 
+targeting such customers might be suboptimal for the firm since the chances of converting such 
+customers to repeat-buye rs are likely low.  
+Second, sending the right number of emails is cr itical for the firm’s pr ofitability, especially 
+since most customers tend to complain about the large number of emails sent by firms. A survey 
+study by BlueHornet (2013), a marketing firm focusing on email solutions, finds that email 
+
+ 
+ 
+4 
+ frequency might overtake c ontent irrelevance as an important reason that drives customers away 
+from email marketing. Although sending the right nu mber of emails is paramount, finding that 
+magic number is very challenging for a firm since not only do its cu stomers have different intrinsic 
+preferences to emails (i.e., email open1 frequencies differ across customers), but customer 
+preferences might change dynamically over tim e (i.e., within same customer, email open 
+frequencies might differ over time). In other words,  the right number of em ails to send may differ 
+across customers and over time. Consistent with this argument, a study by Return Path (2015), an 
+industry expert company on email optimization, su ggests that email frequency optimization should 
+depend on the engagement level of customers. Ho wever, the study does not provide an actionable 
+tool for firms to adopt to launch e ffective email marketing programs.  
+Third, managers tend to treat each email marke ting campaign as an independent solicitation 
+process and fail to consider its long-term impa ct on the email open and purchase behaviors. In 
+addition to immediate impact, an em ail might also affect the future  profitability of the firm by 
+shifting the customer-firm rela tionship level (Luo and Kumar 2013). For example, customers 
+opening emails might become more interested with the firm and its offerings, and ultimately, they 
+might start to purchase more frequently. In this cas e, ignoring the long-term effects of emails might 
+cause the firm to make suboptim al email marketing decisions. 
+Due to all these challenges, firms need guidanc e in the form of a decision support system 
+(DSS, hereafter) to decide the right number of em ails to send to different customers over time. In 
+this study, our objective is to provide such a DSS to firms th rough 1) linking customers’ email 
+open behaviors with their purchase behaviors, 2) capturing heterogeneity in email open and 
+purchase behaviors across customers and over time, 3) incorporating the long-term effects of email 
+                                                            
+1 For this study, we define “email open” as the action of opening an email message.  
+
+ 
+ 
+5 
+ marketing on firm profitability. 
+Methodologically, we propose a unified fr amework combining hidden Markov (HMM) 
+(Netzer, Lattin and Srinivasan 2008) and Copula models (Danaher and Smith 2011). In the hidden 
+Markov component of our model, we capture th e dynamics in customers’ purchase and email 
+behaviors by allowing the latent relationship states to govern both behaviors. As later discussed, 
+modeling the evolution of purchase and email states jointly is important in the context of email 
+marketing since customers’ respons iveness in opening emails might also affect their relationship 
+with the firm. In this regard, our study differs from the other st udies in the HMM domain which 
+only focus on the customer’s purchase behavior and ignores the fact that other non-purchase 
+activities may also aff ect the customer-firm relationship (e xcept the study by Schweidel et al. 
+2014) level. In addition, customers’ email open and purchase behaviors might be correlated due to 
+time-invariant factors like cust omer unobserved heterogeneity and time-variant factors like the 
+unobserved customer-firm relationshi p states. In the Copula compone nt of our model, we use a 
+bivariate Frank Copula to capture  that correlation. We model th e email open behavior using a 
+binomial distribution (BD, hereafter) and the pur chase behavior using a zero-inflated negative 
+binomial distribution (ZINBD, hereaf ter). In this regard, the Copul a component of our model also 
+differs from most Copula applications in marketin g where Copulas are used to correlate variables 
+coming from continuous distribution families (e xcept the study by Stephen and Galak (2012), in 
+which double Poisson variables are first converted into continuous ones and treated as continuous 
+in the estimation).  Substantively, we seek to answer the following questions:  (1) How the latent Markov states  govern customers’ purchase and email open behaviors,  
+(2) Whether there is any correlation between cust omers’ email open and purchase behaviors,  
+
+ 
+ 
+6 
+ (3) How email contacts (i.e., number of emails sent  by a firm) affect customers’ purchase behavior 
+both in the short and long run, and  (4) What the optimal number of emails is to send  to different customers over time to maximize the 
+long-term firm profit? 
+The empirical study identifies three cust omer-firm relationshi p states governing 
+customers’ and email open and purchase behavior s: Low Open – Medium Purchase, High Open – 
+Low Purchase and High Open – High Purchase stat es. In other words, email active customers may 
+not be active in purchases; and email inactive customers may still be relatively active in their purchase behaviors. In addition, we find that the firm’s email c ontact policy has non-linear short- 
+and long-term effects on customers’ purchase and email open behaviors as we ll as on the retailer’s 
+profitability. Furthermore, from our Copula com ponent, we identify a positive correlation between 
+the two customer behaviors. We next derive a dynamic email marketing resource allocation policy 
+using the estimates from our proposed hidden Markov and Copula model of customer purchase 
+and email open behaviors. This way, we provide a DSS to the firm (about the optimal number of 
+emails to send) to maximize its lifetime profit. Based on our DSS, we find that the optimal number 
+of emails to send not only differs across customers,  but also differs within the same customer over 
+time significantly. In addition, we find that sending th e right number of emails is very critical from 
+the firm’s profit perspective. For instance, sendi ng 4 (10) rather than the optimal number of 7 
+emails per month causes the retailer to lose 32% (16%) of its lifetime profit. 
+To reiterate our contribution, to  the best of our knowledge, this  is the first empirical study 
+that jointly models cu stomers’ email open and purchase be haviors over time . Methodologically, 
+our paper is the first study that combines the HMM and Copula approaches together in a unified 
+framework. Therefore, this research provides not only important implications for firms to 
+
+ 
+ 
+7 
+ understand customers’ behavioral  attitudes towards email marketing, but also an easy-to-
+implement modeling framework to marketing resear chers in the field. The proposed framework is 
+flexible and marketing researchers in the fiel d can use it to study other non-purchase customer 
+behaviors (including but not limite d to customers’ responses to other electronic and potentially 
+interactive communications) that  are possibly correlated with purchase. The framework can 
+incorporate, across customers and over time, unobserved behavioral heterogeneity. Finally, 
+through our DSS, we provide substantive managerial  guidelines to firms to implement an effective 
+email-marketing program. Similarly, our suggested DSS is also versatile and firms can use it to 
+manage marketing decisions such as direct  mails, telephone and sa les person contacts. 
+In the following sections, we first review th e literature on email ma rketing and customer 
+relationship dynamics in email marketing. Second, we describe our data and present descriptive 
+statistics. Third, we discuss our modeling framew ork. Fourth, we present the empirical results. 
+Fifth, we derive the optimal email marketing c ontact policy for the firm. Sixth, we discuss the 
+robustness of our proposed model. Finally, we su mmarize our findings, and conclude with caveats 
+and directions for future research. 
+Literature Review 
+Email Marketing  
+There are several reasons for email marketing’ s popularity. First, emails enable marketers 
+to send messages to their cust omers at very low cost. Chittend en and Rettie (2003) demonstrate 
+that the total cost for acqui sition and retention campaigns of email to be $26,500 per 5,000 
+customers, as compared to that of direct mail at $69,600 per 5,000 customers. Second, email messaging requires less preparation and execution time. Industry practice shows that an email 
+marketing campaign targeting 50,000 customers needs only 6 hours to prepare and run; while a 
+
+ 
+ 
+8 
+ similar size direct mail campaign needs 17 days be fore it can reach a targeted customer’s mailbox. 
+Third, emails typically generate faster res ponse and create opportunity for interactive 
+communication with customers. For example, a customer can respond to a email the moment 
+he/she receives it by clicking the hyperlinks that direct him/her to the sender firm’s website via 
+his/her computer or mobile device.  
+In this study, we focus on permission-base d email marketing. Permission-based email 
+marketing requires marketers to seek the cust omers’ permission before sending them email 
+messages (Godin 1999; Kumar, Zhang and Luo 2014). This type of email marketing intends to 
+maintain a repeat purchase relationship with cust omers, rather than getting customers to buy one 
+time only. In line with this idea, previous research  shows that email marketing has a positive effect 
+on customer loyalty. Tezinde et al. (2002) discove r that email advertisements are useful to 
+customers by inducing them to visit the physical st ore. Merisavo and Raulas (2004) find that email 
+marketing can enhance customer attitudinal lo yalty towards the brand. Their study shows that 
+customers tend to recommend the email messages to their friends if they find the messages 
+interesting and useful. 
+Although the overall influence of email marketi ng is positive, we argue that researchers 
+and practitioners should examine the customers’  response to email-based marketing messages 
+based on two perspectives. First, customers open and read an email simply to keep track of the 
+firm’s products and offerings. This behavior does not necessarily indicate that they are actively 
+looking for information to assist  their purchase decisions. Bonfre r and Dreze (2009) study a series 
+of email marketing campaigns and propose a bivari ate hazard model to predict when customers 
+open or click an email. Kumar, Zhang and Luo (2014)  look at the total numb er of emails that are 
+opened and clicked and investigate their impact on the time the customers subscribe to the email 
+
+ 
+ 
+9 
+ program. Second and more importantly, customers make purchases because of email marketing 
+messages. Sahni, Zou and Chintagun ta (2016) analyze 70 randomized field-experiments and find 
+that email promotions not only increase customers’ average purchase spending during the promotion window, but also carry over to a week later after the promotion expires. Kumar, Zhang 
+and Luo (2014) find that the average email open-rate has a positive effect on average purchase spending while the effect of the average ema il click-rate is not significant.      
+ Although there are studies that consider each of these two perspectives separately—email 
+open and purchase, it is surprisi ng that there is no study investig ating both behaviors together. 
+Bonfrer and Dreze (2009) do not c onsider the possible link betw een email open/click rate and 
+purchase behavior due to the limitation of thei r data. Kumar, Zhang and Luo (2014) capture the 
+“average” effect of the customer’s  response to emails on purchase,  but they do not consider the 
+dynamics and heterogeneity in both email open and purchase behaviors. Sahni, Zou and Chintagunta (2016) conduct a post-hoc  analysis of the experiments to show the aggregate-level 
+effects of emails on customer expenditure. They  do not quantify how emai l open behavior affects 
+customer purchase nor do they consider the dynamic effects. 
+Customer Relationship in Email Marketing 
+Previous research shows that the customers’ relationship with the fi rm evolves over their 
+lifetime. Netzer et al. (2008) propose a hidden Ma rkov model to study the transitions of customers 
+among their latent relationship states with the firm. Following Netzer et al. (2008), hidden Markov 
+models were widely used by marketing researchers across a wide range of marketing settings (Montoya et al., 2010; Kumar et al ., 2011; Li et al., 2011; Luo and Kumar, 2013). This stream of 
+research primarily examines the evolution of customer-firm relationshi ps by only looking at the 
+purchase behavior, whereas we argu e that other customer activities along with the purchase, such 
+
+ 
+ 
+10 
+ as customers’ email open behavior, can also rev eal useful information. Conceptually, we claim 
+that studying customers’ email open and purchase behaviors jointly is necessary for multiple reasons. First, there is a possible correlation be tween the two behaviors. For example, customers 
+who are active in purchasing from a firm may also  actively search and examine information about 
+the firm and its offerings by openi ng and reading emails. In contra st, customers who are inactive 
+in purchasing from the firm may not be interested in reading emails related to the firm either. Second, the email open behavior might carry relevant  information related to the level of customer-
+firm relationship. In other words, for a customer , being active or passive in opening emails might 
+also affect her relationship level with the firm , and more importantly (t hrough this effect on the 
+relationship level) affect her pur chase behavior. For example, assume we have two customers at 
+the same relationship level with the firm and eac h make the same purchases in the current period. 
+If this was the case, the purchase only model w ould predict the same level for the customer-firm 
+relationship for the next period. Ho wever, if one of the customers is also active in opening emails, 
+due to her email activity, his/her customer-firm re lationship level might be different compared to 
+the other customer. A purchase only model cannot cap ture this difference in the relationship level 
+of the two customers. Due to this reasoning, we  characterize the customer-firm relationship by 
+jointly utilizing customer-level email open and purchase information. 
+To the best of our knowledge, Schweidel et al. (2014) is the only study that models the 
+customer-firm relationship by utilizing both custom er-level purchase and non-purchase behaviors. 
+They study the dependence of two customer behavi ors, i.e., digital purchase and digital posting, 
+and the evolution of the associated customer-fir m relationship. One of the important findings is 
+there is a correlation between the latent attribution processes of the two activities, meaning a customer’s involvement in one activity is informa tive of another. Methodologically, we differ from 
+
+ 
+ 
+11 
+ Schweidel et al. (2014) since 1)  in that we use a Hidden Mar kov model rather than a latent 
+changepoint framework; 2) we use a Copula mode l to capture the correlation between purchase 
+and email open behaviors rather than a multivariate choice framework. More importantly, our research differs from Schweidel et al. (2014) in that we additionally provide a DSS that allows 
+firms to allocate resources by utilizing informati on from two or more customer-based activities. 
+Due to this, ours is the first empirical study mode ling customer relationship over multiple customer 
+decisions and which provides a DSS to help the firm maximize its lifetime profit. We summarize 
+the characteristics of the aforementioned studies along with our study in Table 1.  
+Insert Table 1 
+To provide an effective DSS to guide a firm to make profitable email marketing decisions, 
+one needs a good predictive model (that will be an  input to the DSS) of customer purchase and 
+email open behaviors. A good predictive model must accommodate the following three critical 
+factors. First, across customers, the intensity  of purchase and email open behaviors might be 
+different. For example, some customers might regular ly check emails (possibly to keep themselves 
+updated with new product offering s or recent promotional offers) but may not be active in 
+purchasing. On the other hand, some customers mi ght be very active in purchases, but may not 
+open emails frequently (they possibly know the firm  and its offerings quite well). Due to these 
+inherent differences in behavior  across customers, capturing the heterogeneity in customers’ email 
+open and purchase behaviors is critical  in predicting their behaviors.  
+Second, customers’ email responsiveness and purchase activeness may evolve over time 
+since customers have varying inte rests and needs at different time s. For example, at the initial 
+period of joining the email program, customers c ould be extremely active in opening emails to 
+know more about the firm but thei r purchase activities may not ca tch up with their enthusiasm 
+
+ 
+ 
+12 
+ with the emails. After spending some time and effort getting to know the firm, customers may 
+become familiar and favorable to the firm. Havi ng that said, they might reduce the amount of 
+attention they pay to the emails but unsurprisingl y increase their purchase activities. Therefore, it 
+is also critical for firms to understand such dyna mics in both behaviors to predict the customer’s 
+email open and purchase levels. Fi nally, there is a possible correla tion between customers’ email 
+open and purchase behaviors, and firms need  to understand such dependence between the 
+behaviors to predict them accu rately. Consequently, a good predictive model (of customers’ 
+purchase and email behaviors) must incorporat e 1) customer heterogeneity, 2) customer-
+relationship dynamics; and 3) correl ation among customers’ behaviors. 
+ Our paper contributes to the cu stomer relationship literature, by jointly studying customers’ 
+email open and purchase behaviors in the sa me modeling framework. Methodologically, we 
+propose a unified Hidden Markov and Copula framew ork that can capture not only the correlation 
+between customer email open and pu rchase behaviors but also the evolution of the customer-firm 
+relationship states controlling these two behaviors.  Our model is flexible that purchase activeness 
+does not necessarily align with email responsivene ss. In other words, cust omers who are active in 
+purchases may not be active in opening emails , or vice versa. In addition, we account for 
+unobserved customer heterogeneity  in both customer activities through our random coefficient 
+specification. After estimation of  the proposed model, the estimat ed model becomes an input to 
+our dynamic programming model, in which we devel op a DSS to guide the firm to make profitable 
+email marketing decisions. In the following sections , we first describe our dataset, and next, we 
+discuss our modeling framework.  
+Data Description 
+Our database comprises information from a home  improvement retailer in the United States. 
+
+ 
+ 
+13 
+ The retailer sells products and services from multiple categories, such as Kitchen, Plumbing, 
+Electrical, Flooring, Paint, and Outdoors. The da taset consists of information on the purchase 
+transactions made by the customers2, the number of emails sent by the firm to these customers, 
+and the customer’s email open histories. The average inter-purchase time is approximately 6 
+months but typically ranges from a couple of w eeks to a few months. Because of the variety and 
+complexity of the products, the large number of cat egories, and the lack of  transactional data at 
+the category level, we study the ov erall purchase behavior instead of  the purchase behavior at the 
+category level. 
+To form a sample of data for model esti mation, we randomly select a cohort of 200 
+customers who opted-in to the retailer’s email program in February 2007. These customers have 
+remained in the email program throughout the obse rvation window and have received emails from 
+the firm continuously3. Thus, we have data comprising customers’ email open and purchase 
+activities over a period of 39 m onths. Although we do not have information on the content of the 
+emails, according to the management team of the fo cal firm, the type of content contained in these 
+emails varies significantly. The emails could be  informative of new products or sales events, 
+persuasive featuring key benefits of the products, or a combination of the two types. In any given 
+email, the firm generally features products from multiple categories such as Kitchen, Lumber and Flooring. 
+In Table 2, we report the descriptive statistics  and the correlation matrix of the customer 
+(purchase and email open) and firm (email contacts) level behaviors. On average, the retailer sent 
+6.90 emails to its customers per month. The customers open 1.64 emails and make 0.69 purchases 
+                                                            
+2 Although customers have the option to buy online and offline, 95% of the observed purchase transactions are 
+offline. 
+3 We observe that less than 1% of the customers in our data base opted-out from the firm’s email marketing program. 
+We only include the customers who have stayed in the email program during the observation window.  
+
+ 
+ 
+14 
+ on average per month. Note that we only count uni que email opens because most the emails are 
+only opened once, if opened. The correlation matrix  shows that the number of purchases has a 
+weak correlation with the num ber of emails sent and th e number of emails opened.  
+Insert Table 2 
+To demonstrate the complexity of customers’ purchase and email open behavior, we 
+randomly select three customers from our database , and plot their purchase count and email open 
+frequency over the observation period of 39 months (see Figure 1). Customer 1 is not active in 
+either purchase or opening emails. Customer 1 only makes purchases in three months and opens emails in two months. The time elapsed between  the first and second purchase is 21 months. 
+Customer 1 ceases to purchase or open emails after month 26. In comparison, Customer 2 has a more active purchase behavior over the course of 39 months. However, Cust omer 2 is not equally 
+active in opening emails as he/she only opens em ails in two months—month 10 and 11. In addition, 
+we find that Customer 2 decreases his/her purch ase behavior after month 19, demonstrating a time-
+variant purchase behavior. Customer 3 is modera tely active in both purchase and opening emails. 
+We observe that the average inter-purchase tim e of Customer 3 is approximately 4 months. 
+Insert Figure 1 here 
+Figure 1 shows that customers’ purchase and email open behaviors are both heterogeneous 
+and time-variant, and that purchas e and email open behaviors are not perfectly al igned with each 
+other. The observed pattern indicates that the tw o behaviors may possibly co rrelate with each other 
+as well. In the subsequent section of our m odeling framework, we discuss how we model the 
+heterogeneity, dynamics and the correlation in purchase and email open behaviors.  
+In addition, to understand the process of cu stomer purchase and email open frequency, we 
+plot the distributions of both behaviors (see Figu re 2). The distribution of purchase count shows 
+
+ 
+ 
+15 
+ that a discrete distribution such as a Poisson pr ocess may be able to capture the data generating 
+process. However, the mean (0.68) and the varian ce (2.64) of the purchase count variable suggest 
+over-dispersion, which violates the underlying a ssumption of Poisson distribution. Furthermore, 
+we observe an excess of zero purchases (71%) that can affect the estimation of the Poisson model. 
+To account for both the over-dispersion and excess of zeros, we use the zero-inflated negative binomial distribution (ZINBD) to mo del the purchase count variable. 
+ The distribution of email open count also suggests a discrete distribution. The (unique) 
+email open count is the number of unique emails that are opened conditional on the total number of emails received in each month. We observe that  the maximum number of the emails sent (per 
+customer and per month) in our data set is 20 emails. Therefore, the number of unique emails 
+available to a customer to open cannot exceed 20. To cap ture this process, we use the typical 
+binomial distribution (BD) which captures the number of success (email open) in a sequence of 
+events (receiving emails).        
+Insert Figure 2 here 
+Modeling Framework 
+In line with previous research, we use a hi dden Markov model to identify customer-firm 
+relationship states and the transitions among these states. An HMM describes a Markov process using discrete latent states. HMM is a stochastic model used to capture the transition between these 
+latent states and translate these states to obs erved behaviors. HMMs are widely used in the 
+marketing literature to study cust omer-firm relationships (e.g., Net zer el al. 2008; Montoya et al. 
+2010; Kumar et al. 2011; Luo and Kumar 2013). In th e context of email marketing, we use a HMM 
+
+ 
+ 
+16 
+ to study two observed customer behavi ors jointly: purchase and email open4. In our setting, the 
+latent states of the Markov process translate into  different levels of customer-firm relationships 
+that yield different purchase and email open activ eness for customers. In addition, since there is a 
+possible correlation between customers’ purchas e and email open behavi ors, we capture the 
+correlation between the two beha viors through a Frank Copula f unction (see Figure 3 for the 
+graphical illustration of our pr oposed hidden Markov and Copula m odel of customer purchase and 
+email open behaviors). 
+Insert Figure 3 here 
+In the following section, we first discuss th e primitives of our HMM. Second, we specify 
+our conditional (on latent states  of the Markov process) email open and purchase models. Third, 
+we illustrate how we capture the correlation be tween state-dependent email open and purchase 
+behaviors through our Frank Copul a component. Fourth, we discus s the model estimation. Finally, 
+we discuss the model identification.  
+Overview of the Model         
+Let ܱ௜௧ be the number of emails customer ݅ opens at time5 t. Let ܻ௜௧ be the number of 
+purchases customer ݅ makes at time t. For customer i, we model the sequen ce of observations 
+ሼሺܻ௜ଵൌݕ௜ଵ,ܱ௜ଵൌ݋௜ଵሻ,…,ሺሺܻ௜௧ൌݕ௜௧,ܱ௜௧ൌ݋௜௧ሻሽ using a HMM characterized by (1) the initial 
+state distribution ሺ࢏࣒ሻ, (2) a sequence of tr ansition probabilities ሺ࢚࢏ࡽሻ, and (3) a vector of 
+                                                            
+4 In addition to our earlier discussion (in the Customer Relationship in Email Marketing part of our literature review 
+section) related to the conceptual need of joint modeli ng, we provide two pieces of empirical evidence in our Web 
+Appendix showing that the joint model is indeed an empirical requirement. First, we conduct a simulation study in which the joint model (bivariate email open and purchase) is compared with the purchase only model (univariate 
+purchase). We find that the estimated (from a simulated dataset generated from the bivariate model) bivariate model 
+recovers the assumed parameters more closely and efficien tly compared to the estimated (from the same simulated 
+dataset) univariate model. Second, we show that based on  the actual data fit, the estimated (from the observed 
+empirical purchase data) univariate model predicts the purc hase behavior by 16% worse than the estimated (from the 
+observed empirical purchase and email open data) bivariate model. See our Web Appendix for further discussion.   
+5 The unit of time is a month in our study. Therefore, we use time t and month t interchangeably throughout the paper. 
+
+ 
+ 
+17 
+ probabilities that relate the latent states to  the observed purchase a nd email open behaviors ሺ࢚࢏ࡴሻ. 
+The Initial State Distribution 
+At any given month t, let s denote the level of customer i’s relationship. Let ߰௜௦ be the 
+probability that customer ݅ is initially in relationship state s, where ߰௜௦൒0 and ∑߰௜௦ൌ1ேௌ
+௦ୀଵ , 
+where NS is the number of the latent Markov states. In this study, we  assume that all customers 
+start at the lowest relationship st ate in the first month. Therefore, ࢏߰′ൌൣ ߰௜ଵ,߰௜ଶ,…,߰௜,ேௌ൧ൌ
+ሾ1,0,…,0ሿ. 
+The Markov Chain Transition Matrix  
+ In our proposed HMM framework, we allow customers to transit to any relationship 
+state	ݏ ൌ 1,2,…,ܵܰ . Following Kumar et al. (2011), we us e a multinomial logit specification to 
+formulate this transition process. We  define the transition matrix as 
+                                 State at t   
+(1)  State at t-1 1 2 … NS  
+ 1 ݍ௜௧,ଵ→ଵ  ݍ௜௧,ଵ→ଶ  … ݍ௜௧,ଵ→ேௌ   
+ۿ௜,௧ିଵ→௧ൌ 2 ݍ௜௧,ଶ→ଵ  ݍ௜௧,ଶ→ଶ  … ݍ௜௧,ଶ→ேௌ   
+ ⋮ ⋮ ⋮ ⋱ ⋮  
+ NS ݍ௜௧,ேௌ→ଵݍ௜௧,ேௌ→ଶ … ݍ௜௧,ேௌ→ேௌ   
+ݍ௜௧,௦→௦ᇲ is the probability that customer ݅ moves from state ݏ at time ݐെ1  to state ݏ′ at time ݐ ,
+where 0൑ݍ௜௧,௦→௦′൑1 ,∀ ݏ,ݏ ′ ,and ∑ݍ௜௧,௦→௦′ൌ1௦′ . We specify the indirect transition utility 
+of customer i for transitioning from the relationship state ݏ at period ݐെ1  to state ݏ′ at time ݐ 
+(ܷ௜௧,௦→௦′) as follows: 
+ܷ௜௧,௦→௦′ൌܸ௜௧,௦→௦′൅݁௜௧,௦→௦′ (2)  
+where ݁௜௧,௦→௦′ and ܸ௜௧,௦→௦′ denote the stochastic and determ inistic components of the above 
+
+ 
+ 
+18 
+ indirect utility, respec tively. We assume that ݁௜௧,௦→௦′for i=1,…,N , t=1,…,T , s, s’=1,…,NS  are 
+distributed i.i.d. Gumbel with location 0 and scale 1. We operationalize the deterministic 
+component, ܸ௜௧,௦→௦′, as follows:  
+ܸ௜௧,௦→௦′ൌߙ௦→௦′൅ߛ௦→௦′ܺ௜,௧ିଵ (3)  
+where ߙ௦→௦′ is the intrinsic utility of transitioning from relationship state ݏ to s’ at time  t. ܺ௜,௧ିଵ 
+contains the following variables: I[ ܱ௜,௧ିଵ൐0 ሿ , ܫሾܻ௜,௧ିଵ൐0 ሿ , ܯܧ௜,௧ିଵ, ܯܧ௜,௧ିଵଶ; where I[A] is the 
+indicator function that takes the value of 1 when event A occurs and the value of  0 otherwise, 
+ܱ௜,௧ିଵ is the lagged email open count, ܻ௜,௧ିଵ  is the lagged purchase count, ܯܧ௜,௧ିଵ is the number 
+of emails sent by the firm at time t-1. ߛ௦→௦′ൌሾ ߛଵ,௦→௦′, ߛଶ,௦→௦′, ߛଷ,௦→௦′, ߛସ,௦→௦′ሿ is the vector 
+of corresponding response coefficients. We nor malize the deterministic utility for customer ݅ at 
+time ݐ to transition to the lowest state ( ܸ௜௧,௦→ଵ ) to be zero for the iden tification purpose, i.e., 
+ܷ௜௧,௦→ଵൌ݁௜௧,௦→ଵ , where ݁௜௧,௦→ଵ  for i=1,…,N , t=1,…,T , s =1,…,NS  are distributed i.i.d. Gumbel 
+with location 0 and scale 1. Therefore, the transition probability for customer i, transitioning from 
+state ݏ to ݏ′ at time t (ݍ௜௧,௦→௦′) becomes the well-known multinomial Logit share function as seen 
+below. 
+ݍ௜௧,௦→௦′ൌexpሺܸ௜௧,௦→௦′ሻ
+1൅∑expሺܸ௜௧,௦→௞ሻேௌ
+௞ୀଶ (4)  
+Next, we discuss our conditional email count (C EOM, hereafter) and purchase count models 
+(CPM, hereafter). 
+Conditional Email Open Count Model (CEOM) 
+We assume that the number of emails customer ݅( in state s) opens at time ݐ follows a BD 
+with parameters ܯܧ௜௧ and ݌௜௧|௦, given by 
+
+ 
+ 
+19 
+  ܲሺܱ௜௧ൌ݋௜௧|ݏሻൌ൬ܯܧ௜௧
+݋௜௧൰݌௜௧|௦௢೔೟൫1െ݌ ௜௧|௦൯ாெ೔೟ି௢೔೟ (5)   
+where ݌௜௧|௦ is the conditional probability that customer ݅( in state s) opens an email in month ݐ .We 
+model ݌௜௧|௦ as a function of customers’ past  email open behavior as follows. 
+ ݌௜௧|௦ൌexp൫ߙ௜௢|௦൅ߚ௜௢lnሾܱܮ௜௧ሿ൯
+1൅exp൫ߙ ௜௢|௦൅ߚ௜௢lnሾܱܮ௜௧ሿ൯ (6)   
+where ߙ௜௢|௦ and ߚ௜௢  capture the intrinsic utility of openi ng an email and the effect of duration 
+dependence, given state ݏ ,respectively. We capture the dura tion dependence through time from 
+the last email open variable, i.e., ܱܮ௜௧. We use the natural logarithm of ܱܮ௜௧ to capture the 
+diminishing effect. For identification purpose,  we impose the following restrictions: 1) ߙ௜௢|௦ାଵൌ
+ߙ௜௢|௦൅exp൫∆ߙ ௜௢|௦ାଵ൯, where ∆ߙ௜௢|௦ାଵ  is a parameter to estimate from the data, 2) ߚ௜௢ is state-
+invariant. These two restrictions guarantee that customers in a higher relationship state, all else 
+being equal, have a higher probab ility to open emails than those in  a lower state. In addition, we 
+allow both ߙ௜௢|௦ and ߚ௜௢ to be customer-specific to control for the unobserved customer 
+heterogeneity. We assume that ߙ௜௢|௦ and ߚ௜௢ are distributed with the following normal 
+distributions.6 
+ ߙ௜௢|௦ൌߙ௢|௦൅ߙ׏௜௢ 
+ߚ௜௢ൌߚ௢൅ߚ׏௜௢ (7)  
+where ߙ׏௜௢~N൫0,ߪ ఈ೚ଶ൯	and ߚ׏௜௢~N൫0,ߪఉ೚ଶ൯. 
+ 
+Conditional Purchase Count Model (CPM) 
+                                                            
+6 We acknowledge that the random coef ficient specification we implemented here  might not fully capture all the cross-
+sectional heterogeneity that might exist. Using customer-level fixed effects might better tease out the unobserved 
+customer-level heterogeneity. However, we believe that th e use of random coefficient specification is a reasonable 
+compromise due its high parsimony over the customer fixed effect specification. 
+
+ 
+ 
+20 
+           Conditional on being in the relationship state ݏ at time ݐ ,we assume that the number of 
+purchases that customer ݅ makes follows a ZINBD with parameters ߮௜௧|௦, ߣ௜௧|௦ and ݎ .For each 
+observation ݕ௜௧, ZINBD assumes that there are two data  generating processes (based on whether 
+the outcome is equal to zero or is gr eater than zero) which are defined as: 
+ ܲሺܻ௜௧ൌݕ௜௧|ݏሻ
+ൌ
+ەۖ۔ۖۓ߮௜௧|௦൅൫1െ߮ ௜௧|௦൯ቆ1൅ߣ௜௧|௦
+ݎቇି௥
+																																					ݕ	݂݅ ௜௧ൌ0
+൫1െ߮ ௜௧|௦൯߁ሺݕ௜௧൅ݎሻ
+ݕ௜௧!߁ሺݎሻቆ1൅ߣ௜௧|௦
+ݎቇି௥
+ቆ1൅ݎ
+ߣ௜௧|௦ቇି௬೔೟
+ݕ݂݅ ௜௧൐0 (8)  
+where ݎ is a dispersion parameter that is assumed not to depend on covariates. The conditional 
+mean and variance of the ZINBD are given as ܧሺݕ௜௧|ݏሻൌ൫ 1െ߮ ௜௧|௦൯ߣ௜௧|௦ and ݎܸܽሺݕ௜௧|ݏሻൌ
+൫1െ߮ ௜௧|௦൯ߣ௜௧|௦൫1൅߮ ௜௧|௦ߣ௜௧|௦൅ߣ௜௧|௦⁄ݎ൯, respectively. ߮௜௧|௦ and ߣ௜௧|௦ capture the conditional 
+zero-inflated probability and conditional  expected purchase count for customer ݅( in state s) at time 
+ݐ ,respectively. 
+ To account for the excess of no purchases , we model the conditional zero-inflation 
+component of the ZINBD ሺ߮௜௧|௦ሻ as 
+ ߮௜௧|௦ൌ1
+1൅expሺߜ ଴௜|௦൅ߜଵ௜|௦lnሾܻܮ௜௧ሿሻ (9)  
+where ߜ଴௜|௦ and ߜଵ௜|௦ capture the intrinsic utility of making  a purchase and the effect of duration 
+dependence, given state ݏ ,respectively. We capture the dura tion dependence through time from 
+the last purchase variable, i.e., ܻܮ௜௧. We use the natural logarithm of ܻܮ௜௧ to capture the diminishing 
+effect. To account for the unobserved heterogeneity, we allow ߜ௞௜|௦ (for ݇ൌ0 , 1 ) to be customer-
+specific. We assume that ߜ௞௜|௦ (for ݇ൌ0 , 1 ) are normally distributed across customers as follows. 
+
+ 
+ 
+21 
+  ߜ௞௜|௦ൌߜ௞|௦൅ߜ׏௞௜,݇ൌ0,1  (10)  
+where ߜ׏௞௜~N൫0,ߪఋೖଶ൯	for ݇ൌ0 , 1 .   
+We model the second component of the c onditional purchase model, i.e., conditional 
+expected purchase count ( ߣ௜௧|௦), as a function of the number of emails sent by the firm ( ܯܧ௜௧), that 
+is given by 
+ ߣ௜௧|௦ൌe x p ൫ ߙ ௜௣|௦൅ߚଵ,௜௣|௦ܯܧ௜௧൅ߚଶ,௜௣|௦ܯܧ௜௧ଶ൯ (11)  
+Conditional on state ݏ ,ߙ௜௣|௦ is the intrinsic propensity to make purchases, ߚଵ,௜௣|௦  and ߚଶ,௜௣|௦  
+are the corresponding response parameters. Note that, unlike the CEOM, we do not impose any 
+identification restrictions on the parameters of the CPM. In other words, we do not make any 
+restrictions such as ߙ௜௣|ଵ൑ߙ௜௣|ଶ൑⋯൑ߙ ௜௣|ேௌ  and/or ߜ଴௜|ଵ൑ߜ଴௜|ଶ൑⋯൑ߜ ଴௜|ேௌ . This 
+restriction free specif ication (in the CPM) allows our model to  be flexible such that, for example, 
+customers in a more active email open state may be less likely to be active in purchases, or vice versa. In other words, instead of  pre-imposing restrictions such that email active customers must 
+be active on purchases, we let th e data to speak about whethe r this is really the case. 
+To account for the unobserved heterogeneity, we allow ߙ
+௜௣|௦, ߚଵ,௜௣|௦  and ߚଶ,௜௣|௦  to be 
+customer-specific. We assume that ߙ௜௣|௦ and ߚ௞,௜௣|௦  (for ݇ൌ1 , 2 ) are normally distributed across 
+customers as follows: 
+ ߙ௜௣|௦ൌߙ௣|௦൅∆ߙ௜௣ 
+ߚ௞,௜௣|௦ൌߚ௞,௣|௦൅∆ߚ௞,௜௣,݇ൌ1,2  (12)  
+where ∆ߙ௜௣~Nቀ0,ߪ ఈ೛ଶቁ	and ∆ߚ௞,௜௣~Nቀ0,ߪఉೖ,೛ଶቁ for k=1,2 .   
+The Correlation between Purchase and Email Open Behavior 
+In each month, both the number of emails opened and purchases made by a customer might 
+
+ 
+ 
+22 
+ possibly indicate the customer’s inte rest to and level of interactions  with the firm. Thus, we argue 
+that there is a possible correlation between purchas e and email open count di stributions. Note that 
+both the purchase count ܻ௜௧ and the email open count ܱ௜௧ follow a discrete di stribution. It is not 
+easy to find a bivariate distribut ion that can capture the correlation between the ZINBD and the 
+BD.    Danaher and Smith (2011) pioneer the use of Copula approach in marketing to link two 
+marginal distributions that are not from the same family. Copula models are used in various studies 
+to study multi-dimensional marketing problems (e .g., Park and Gupta 2012; Stephen and Galak 
+2012; Schweidel and Knox 2013; Kumar, Zha ng and Luo 2014; Glady, Lemmens, and Croux 
+2015). However, most studies focus on using Copul a models to correlate variables coming from 
+continuous distribution families.  Stephen and Galak (2012) mode l multivariate count variables 
+using a double Poisson model, but they convert thes e discrete variables into  continuous ones first 
+and use the Gaussian Copula to co rrelate these converted variables.  In the context of this study, 
+we are dealing with two discrete variables that  are characterized by two distinct distributions—
+ZINBD and BD. It is uncertain whether Stephen a nd Galak (2012)’s approach will work with such 
+distinct discrete distributions. In addition, for e fficiency, modeling the correlation between the two 
+discrete variables directly rather than convertin g them to continuous ones first and treating them 
+as continuous is more desirable.   
+To tackle the challenge of correlating discrete distributions, we turn to the literature of 
+mathematics and statistics. Based on Sklar’s theorem (1959), in a bi variate case as an example, the 
+cumulative distribution functions (cdfs) of any two va riables can be conne cted using a Copula 
+function, and such Copula function is unique if  the two variables are continuous. With two 
+continuous variables, the bivariate density can be derived from the pa rtial derivatives of the chosen 
+
+ 
+ 
+23 
+ Copula function. With two discrete  variables, such as the biva riate count data in this study, 
+although we cannot rely on partial derivatives, we can still obtain the bivariate probability mass 
+function (pmf) using finite differences of the c hosen Copula function. There are several statistical 
+applications of the idea to m odel bivariate count data. Lee ( 1999) develop a bivariate negative 
+binomial distribution to model r ugby league scores using Frank Copula. Song (2000) develops a 
+multivariate dispersion model ge nerated from Gaussian Copula.  Nikoloulopoulos and Karlis 
+(2010) capture the association between the purc hase counts of certa in product categories. 
+Following Nikoloulopoulos and Karl is (2010) and others, we us e a Copula to construct the 
+bivariate pmf of ܱ௜௧ and ܻ௜௧ as follows:  
+ ݄ሺ݋௜௧,ݕ௜௧ሻൌܥ൫ ܨଵሺ݋௜௧ሻ,ܨଶሺݕ௜௧ሻ൯െܥ൫ܨ ଵሺ݋௜௧െ1ሻ,ܨଶሺݕ௜௧ሻ൯
+െܥ൫ܨଵሺ݋௜௧ሻ,ܨଶሺݕ௜௧െ1ሻ൯൅ܥ൫ܨ ଵሺ݋௜௧െ1ሻ,ܨଶሺݕ௜௧െ1ሻ൯ (13)  
+where ܥሺ∙ሻ is the Copula function, ܨଵሺ݋௜௧ሻ and ܨଶሺݕ௜௧ሻ are the distribution function of ܱ௜௧ and ܻ௜௧, 
+respectively. We use Frank Copula (e.g., Frank 1979;  Genest 1987) in this context because of its 
+flexibility to capture the full range of co rrelation. The Frank Copul a function is given by 
+ ܥሺݑଵ,ݑଶ;ߠሻൌെ1
+ߠlogቊ1൅൫݁ିఏ௨భെ1൯൫݁ିఏ௨మെ1൯
+݁ିఏെ1ቋ (14)  
+where ݑଵ and ݑଶ are the distribution functions (Z INBD and BD in our case) and ߠ is the Frank 
+Copula correlation parameter. 
+Endogeneity Correction  
+There is a possibility that the firm is targ eting customers by sending different number of 
+emails based on their past purchas e activities and inhere nt characteristics (t hat are unobserved to 
+the researcher). In other words, the email contact variable (i.e., EM) might be endogenous. To 
+solve this potential endogeneity problem in EM, we use a control functi on approach (Petrin and 
+
+ 
+ 
+24 
+ Train 2010, the idea of which is like the approach  in Villas-Boas and Winer (1999). This involves 
+running a first-stage li near regression of EM on instruments7, which include customer-level 
+purchase recency, purchase freque ncy (to capture customers’ past purchase activeness) and 
+customer level fixed effects (to capture every other customer-level  characteristics that are possibly 
+observed by the firm (to do targeted emailing), but not the researcher). From the first-step regression, we obtain an R
+2 of 48.5%. In addition, we find the co efficients of purchase recency and 
+frequency to be positive and statistically signif icant. In the second step, we incorporate the 
+residuals from the first-stage regression as addi tional control variables into the HMM transition 
+(Equation 3) and CPM (Equation 11) components  of our proposed customer email open and 
+purchase model. 
+Model Estimation  
+          There are four sets of parameters to  be estimated from our model: 1) parameters of the the 
+transition matrix (Equation 3); 2) parameters of th e CEOM (Equations (6-7); 3) parameters of the 
+CPM (Equations 9-12); 4) the correlation parame ter of the Frank Copula function (Equation 14). 
+Following Netzer et al. (2008), we write the vector of the bivariat e probability mass function as a 
+diagonal matrix ܜܑ۶ .Given the proposed HMM structure, the likelihood function for a sequence 
+of observations ሼሺܻ௜ଵൌݕ௜ଵ,ܱ௜ଵൌ݋௜ଵሻ,…,ሺሺܻ௜௧ൌݕ௜௧,ܱ௜௧ൌ݋௜௧ሻሽ can be expressed as 
+ ܮ ൌ ෑܲሺሺܻ ௜ଵൌݕ௜ଵ,ܱ௜ଵൌ݋௜ଵሻ,…,ሺܻ௜௧ൌݕ௜௧,ܱ௜௧ൌ݋௜௧ሻሻே
+௜ୀଵ
+ൌෑૐܑ′ܑ۶૚ே
+௜ୀଵෑܜܑۿ்
+௧ୀଶܜܑ۶( 15)  
+                                                            
+7 Since the variation in EM variable is large, we treat it as a continuous variable rather than discrete in our 
+application. In addition, we run a Poisson regression and find that residuals from that count regression and the linear regression are highly correlated ( r=0.97). 
+
+ 
+ 
+25 
+ where ૚ is an ܵൈ1  vector of ones.  
+Model Identification 
+ Since all model components (transition matr ix, CEOM and CPM) always enter the 
+likelihood calculation (see Equation 15) as a bundle, it is not possible to se parately identify the 
+coefficients of a specific variable if that variab le is used repeatedly across different equations. 
+Consequently, we choose and use a distinct set of variables in different co mponents of our model. 
+The chosen variables represent customers’ past ac tivities and the firm’s past and current marketing 
+activities; and their choice  is in line with the CRM literature (e .g., Netzer et al. 2008; Kumar et al. 
+2011; Li et al. 2011). Specifi cally, we model customer i’s transition probability (from period t-1 
+to t) among the states of the Markov process as a function of interactions between customer i and 
+the firm at period t-1. We use ܱ௜,௧ିଵ, ܻ௜,௧ିଵ to capture the recent in teraction of the customer i with 
+the firm, and ܯܧ௜,௧ିଵ  to capture the firm’s recent interaction with customer i. We model the 
+CEOM component as a function of the customer i’s time from the last email open variable, i.e., 
+ܱܮ௜௧. We model the CPM component as a function of customer i’s time from the last purchase 
+variable ( ܻܮ௜௧) and the firm’s email marketing contact policy ( ܯܧ௜௧). Also, note that we use lagged 
+and contemporaneous levels of customer and firm level behavioral variable s in the transition and 
+conditional behavior (CEOM and CPM) components of  our model. Since we have sufficient within 
+variable variation (for these be havioral variables) over time, we  would be able to separately 
+identify all three components of our mode l, i.e., the transition, CEOM and CPM. 
+We identify the parameters of  each of the abovementioned component as follows. For the 
+transition component itself, we observe a signifi cant within customer behavior (email open and 
+purchase) variation over time. This implies that cu stomers’ relationship leve ls with the firm vary 
+significantly over time. This is the key for us to empirically identify parameters of the transition 
+
+ 
+ 
+26 
+ component (i.e., the parameters in Equation 3). Within relations hip levels, we also observe 
+customers behaving differently, and this helps us  identify the unobserved customer heterogeneity 
+parameters (i.e., the parameters of the heterogene ity distributions in Equations 7, 10 and 12).  For 
+the CEOM and CPM components, we observe a signi ficant within time variat ion across email open 
+and purchase behaviors of customers. For example, at a given time, some customers are active in 
+one, some active in both behaviors, and some passi ve in both. In addition, within customers, the 
+intensity of the two behaviors si gnificantly vary over time. These va riations help us identify the 
+parameters of CEOM and CPM components (i.e., th e parameters in Equati ons 6, 9 and 11). In the 
+next section, we discu ss our empirical results.  
+Empirical Results 
+We estimate our HMM model using the maximum likelihood estimation (MLE) method. 
+We maximize the simulated sample log-likelihood to estimate our model parameters. We decide 
+on the number of HMM states ba sed on the Bayesian informati on criterion (BIC). In our 
+application, we compare the performance of HMMs of up to 4 states (see Table 3). We find that 
+the HMM with 3 states provides the best fit to the data as it gives the lowest BIC value. Thus, we 
+choose the 3-state HMM for further analysis.  
+Insert Table 3 here 
+In the following section, we first discuss th e parameter estimates from our proposed hidden 
+Markov and Copula Model  of customer purchase and email open  behaviors. Second, we illustrate 
+how the firm’s email contact decision would a ffect the customer-firm relationship states. 
+Specifically, we discuss how the firm’s email c ontact decision affects customers’ transitions 
+among different relationship states. Third, we discuss the distributi on of customers across the three 
+customer-firm relationship states. Specifically, we  illustrate the proportion of customers that 
+
+ 
+ 
+27 
+ belong to different relationship states over time. 
+Parameter Estimates 
+Table 4 reports the parameter estimates for the 3-state HMM. In order to label the states in 
+terms of their purchase and email open behaviors,  we calculate the predicted purchase and email 
+open counts (at the average observed levels of cust omer and firm level behavioral variables such 
+as LY, LO, EM etc.).  We find those customers in the relationship states 1, 2 and 3 open 0.215, 
+2.745 and 2.764 emails (on average) per month, resp ectively. In terms of the purchase behavior, 
+we find those customers in the relationship states 1, 2 and 3 make 0.338, 0.148 and 1.219 purchases 
+(on average) per month, respecti vely. Based on that calculati on, we label the three latent 
+relationship states, which govern the frequency of customers’ email open and purchase in each 
+month as “Low Open – Medium Purchase”, “H igh Open – Low Purchase”, and “High Open – 
+High Purchase”8. The results suggest that in State 3, the conventional wisdom, i.e., the more 
+customers make purchases, the more they open em ails, holds. However, such conventional wisdom 
+does not hold in states 1 and 2. Specifically, ema il active customers might be inactive in purchases 
+(State 2), and email inactive customers may still be reasonably active in purchases (State 1). This result underlines the importance of  our assumption related to not re stricting the parameters of the 
+purchase model along with the email open model (i .e., imposing the following restriction: higher 
+the state, higher the email open and higher the purchase levels). 
+Insert Table 4 here 
+ Table 4 shows that customers in all relationshi p states show a negati ve purchase duration 
+dependence. The longer they have not made a purch ase, the less frequently they make purchases. 
+                                                            
+8 For ease of presentation, we use purchase only labels, i.e. , Low, Medium and High Purchase to refer states 2, 1 and 
+3, when we have a discussion related to purchases only . We use the full labels Low Open – Medium Purchase, High 
+Open – Low Purchase and High Open – High Purchase to refe r states 1, 2 and 3, when we have a discussion related 
+to both purchase and email open behaviors. 
+
+ 
+ 
+28 
+ The effect is strongest for the Low Purchase customers (-2.235), and it is the weakest for the High 
+Purchase customers (-1.294). Similarly, customers also show a negative duration dependence for 
+the email open behavior (-0.637), i.e. , the longer they have not opened an email, the less frequently 
+they open emails. The results suggest that cust omers making purchases (opening emails) in the 
+previous month increases (decreases) the transiti on probability to the High Open – High Purchase 
+state. The results also suggest th at, across all relationship states, the number of emails sent by the 
+firm initially increases, but then decreases (inver se U-shape) the short-term purchase count. In 
+other words, the email contact ha s a nonlinear effect on the purchase  count. In addition, the peak-
+point of the inverse U-shaped curve varies acro ss different relationship states, i.e., customers 
+respond in diverse ways to email contacts dependi ng on their relationship state. This implies that 
+there are different optimal numbers of emails to  send to maximize the short-term purchase count 
+across the three relationship states.  Results suggest that two out of the five e ndogeneity correction parame ters are significant. 
+In other words, it is important to control for th e endogeneity of EM to be able to recover the short- 
+and long-term eff ects correctly of EM in customers’ purchase beha viors and transitions among the 
+relationship states. We also find significant heterogeneity in both the estimates of intercepts and 
+the response coefficients of the CEOM a nd CPM components of our proposed model.  
+Transition Probability Matrix 
+The transition matrix from the HMM model s hows how customers evolve across different 
+relationship states. We calculate the transitio n probabilities of a “typical” customer using 
+Equations (1-4). We vary the number of emails rece ived in the previous pe riod and check the effect 
+of email contacts on the stat e transitions (see Table 5). 
+Insert Table 5 here 
+
+ 
+ 
+29 
+ When there is no email contact, the customer s from Medium Purchase and Low Purchase 
+states do not tend to move, while those from High Purchase state tend to move down to a Medium 
+Purchase state or stay within the High Purchase state. Table 5 shows that email contact has diverse 
+effects on the transition pr obabilities of the customers who are from different purchase states. For 
+example, ten email contacts per month increases  the likelihood that customers from the Low 
+Purchase State move up to the Medium Purcha se state (from 4.53% to 21.42%). However, one 
+email contact per month only marginally increas es such likelihood to 5.67%. For the customers 
+who are from the Medium Purchase state, email c ontact increases their proba bilities of staying in 
+the same state. In summary, email contact ha s a positive long-run eff ect on either making 
+customers be more engaged with the firm if they were not so or making them stay engaged if they 
+have already been so. However, email contact ha s a negative long-run effect on the customers who 
+have already been in a good relationship with th e firm. For the customers who are from the High 
+Purchase state, excessive email contacts move them down to lower purchase states. While the 
+likelihood of them staying in the High Purchase state is 46.62% in the no-email scenario, such 
+likelihood decreases significantly to 25.97% in the 10-em ails scenario. This  non-linear dependence 
+between the email contacts and the transition pr obabilities among the purchase states motivate us 
+for our policy simulation (in the next section) in which we determine the optimal number of emails 
+to send to maximize the firm’ lifetime profit per customer. 
+ In Figure 4, we plot the average probabilities  of customers residing in the three purchase 
+states over time. We calculate the state membership distribution of each customer using the 
+filtering approach (Montgomery et al. 2004; Netz er et al. 2008). Since we assume that each 
+customer starts from the lowest state, we drop th e first five periods as initialization periods and 
+plot the states evolution over the rest of the 33 periods. We find that, on average,  74%, 12% and 
+
+ 
+ 
+30 
+ 14% of customers started in the Medium-, Low- and High-Purc hase states, respectively. Over the 
+course of 33 months, the majority of the custom ers remained in the medium purchase state while 
+the rest moved up or down to different stat es. In addition to understanding the aggregate 
+distribution of customers across th e different relationship states (Figure 4), th e firm might use the 
+filtering approach to understand the state membersh ip distribution at the customer-level. Then, the 
+firm might rely on this information to make targ eted email contact decisions. We illustrate this 
+idea in our policy simulation section next.  
+Insert Figure 4 here 
+Optimal Email Marketing 
+ The optimal marketing contact strategy is th e focus of several earlier studies (e.g., Khan, 
+Lewis, and Singh 2009; Kumar et  al. 2011; Li, Sun and Montgom ery 2013). In this study, since 
+we find that sending more emails is not necessar ily good for the firm to encourage its customers 
+to make more purchases, determ ining the optimal number of ema ils might provide substantive 
+profit gains for the firm. Therefore,  our objective in this section is to provide a DSS that managers 
+can rely on to maximize the long-ru n firm profit by sending the right  number of emails to their 
+customers over time.  
+In this setting, at any given time t, the firm has to make the decision of how many emails 
+to send. Given our estimated customer response f unction, the email contact decision has both short- 
+and long-term implications on the customer behavi or. Short-term effect derives from the direct 
+effect of emails on customer purch ase and email open behaviors at time t (see Equations 5 and 11). 
+Long-term effect comes from two sources: (1) cu stomers’ purchase and email open behaviors at 
+time t affect the evolution of custom er relationship state from time t to t+1 (see Equation 3); (2) 
+the email contacts at time t influence the relationship state transition from time t to t+1 (see 
+
+ 
+ 
+31 
+ Equation 3). Due to these long-term effects, dete rmining the optimal number of emails to send by 
+the firm requires us to solve a dynamic programming problem.   From the retailer’s perspective, the variable of interest is the number of times a customer purchases per month from the store. Under the as sumptions of constant purchase amount per each 
+purchase transaction and fixed gross margin for the retailer
+9, the purchase count is directly 
+translated into the firm’s profit (per custom er and per transaction). For the firm’s dynamic 
+optimization problem, the payoff relevant state variab les are: (1) the probabilities that the customer 
+exists in each of the customer-firm relationship states ( ݌ଵ௧,݌ଶ௧,݌ଷ௧ൌ1െ݌ ଵ௧െ݌ଶ௧), (2) the time 
+since last purchase ( ܻܮ ,)and (3) the time since last email open ( ܱܮ .)Therefore, the state vector at 
+time t becomes ܵ௧ൌሺ݌ଵ௧,݌ଶ௧,ܻܮ௧,ܱܮ௧ሻ. Following Kumar et al. (2011) , we assume the timing of 
+the email contact decisions as follow s. At the beginning of each month t, the firm predicts the 
+probability that the customer exists in each of the three relationship states, ݌ଵ௧, ݌ଶ௧ and ݌ଷ௧ሺൌ 1െ
+݌ଵ௧െ݌ଶ௧ሻ. Next, based on the predicted ݌ଵ௧, ݌ଶ௧ and ݌ଷ௧,	as well as ܻܮ௧ and ܱܮ௧, the firm decides 
+how many emails to send to the customer. We us e a multinomial logit share function to capture 
+the state membership probabilities ሺ݌ଵ௧, ݌ଶ௧ and ݌ଷ௧ሻ	and relate them to two parameters ߱ଵ௧ and 
+߱ଶ௧ as follows: 
+ ݌ଵ௧ൌexpሺ߱ଵ௧ሻ
+1൅expሺ߱ଵ௧ሻ൅expሺ߱ଶ௧ሻ
+݌ଶ௧ൌexpሺ߱ଶ௧ሻ
+1൅expሺ߱ଵ௧ሻ൅expሺ߱ଶ௧ሻ
+݌ଷ௧ൌ1െ݌ ଵ௧െ݌ଶ௧ (16)   
+                                                            
+9 For confidentiality reasons, customer-level purchase amount is not observed in our dataset. However, based on our 
+communication with the managers of the firm, we are advi sed that the average purchase amount for each customer 
+transaction is around $80-$110. We are also advised that the average profit margin is around 18-22% across different 
+product categories. Thus, in our profit and lifetime value calculations, we assume an average purchase amount of $100 
+per customer, per transaction; and 20% profit margin for each customer purcha se occasion. This assumption yields 
+$20 net profit per customer at each purchase occasion. 
+
+ 
+ 
+32 
+  Let ܵ௧ൌሺ݌ଵ௧,݌ଶ௧,ܻܮ௧,ܱܮ௧ሻ denote the state vector at time t. Time from last purchase and 
+open states, ܻܮ௧ and ܱܮ௧, evolve based on whether the customer  makes purchases and opens emails 
+at time t. If the customer makes purchases at time t, the corresponding state ܻܮ௧ାଵ becomes 1, and 
+if he or she doesn’t make any purchases at time t, ܻܮ௧ାଵ becomes ܻܮ௧൅1. Similarly, if the 
+customer opens emails at time t, the corresponding state ܱܮ௧ାଵ becomes 1, and if he or she doesn’t 
+open any emails, ܱܮ௧ାଵ becomes ܱܮ௧൅1. Since the purchase and email open processes of 
+customers are modeled with ZINBD and BD, th e time from last purchase and open states, ܻܮ௧ and 
+ܱܮ௧, evolves in a stochast ic manner as follows 
+ܻܮ௧ାଵൌ൜1,				 ݎ݄ܲݐ݅ݓ ሺܻ௜௧൐0ሻ
+ܻܮ௧൅1, ݎ݄ܲݐ݅ݓ ሺܻ௜௧ൌ0ሻ 
+ܱܮ௧ାଵൌ൜1,																				ݎܲ	݄ݐ݅ݓ ሺܱ௜௧൐0ሻ
+ܱܮ௧൅1, ݎ݄ܲݐ݅ݓ ሺܱ௜௧ൌ0ሻ (17)  
+The evolution of the fi rst two state variables ݌ଵ,௧ାଵ and ݌ଶ,௧ାଵ conditional on the firm’s 
+email contact decision ܯܧ௧ are given as 
+݌௦,௧ାଵ|ܯܧ௧ൌݎܲ ሺܻ௜௧൐0 ,ܱ௜௧൐0ሻ෍݌௞௧ݍ௧ାଵ,௞→௦ௌ
+௞ୀଵሺ1,1,ܯܧ ௧ሻ
+൅ݎܲሺܻ௜௧ൌ0 ,ܱ௜௧൐0 	ሻ෍݌௞௧ݍ௧ାଵ,௞→௦ௌ
+௞ୀଵሺ0,1,ܯܧ ௧ሻ
+൅ݎܲሺܻ௜௧൐0 ,ܱ௜௧ൌ0 	ሻ෍݌௞௧ݍ௧ାଵ,௞→௦ௌ
+௞ୀଵሺ1,0,ܯܧ ௧ሻ
+൅ݎܲሺܻ௜௧ൌ0 ,ܱ௜௧ൌ0ሻ෍݌௞௧ݍ௧ାଵ,௞→௦ௌ
+௞ୀଵሺ0,0,ܯܧ ௧ሻ (18)
+ where ݍ௧ାଵ,௞→௦ሺܫሾܻ௧൐0 ሿ ,ܫሾ ܱ ௧൐0 ሿ ,ܯܧ ௧ሻ is the transition function from Equation 4 which is 
+used to calculate the probability of  transitioning customers from state ݇ at time t to s at time t+1 
+
+ 
+ 
+33 
+ conditional on email contacts, purchase and email open indicators at time t.  
+ At each time t conditional on the state vector ܵ௧, the objective of the firm is to determine 
+the optimal number of email contacts to maximize the discounted sum of expected future profits. 
+Under some regularity conditions this objective can be written in  the following Bellman equation. 
+ ܸሺܵ௧ሻൌሼߨሺܯܧ௧,ܵ௧ሻ൅ܸܧߩሺܵ ௧ାଵ|ܵ௧,ܯܧ௧ሻሽாெ೟௠௔௫ (19)  
+where ߩ is the discount factor, ߨሺ.ሻ is the per period profit and the ex pectation is over all the future 
+states and actions of the firm. 
+In order to solve this dynamic optimization problem, we discretize the state space with 10 
+levels for each state dimension 	݌ଵ௧,݌ଶ௧, ܻܮ௧ and ܱܮ௧ yielding 10,000 state co mbinations. We use 
+the value iteration algorithm (Rus t 1987) to find the optimal mappings of the firm’s email contacts 
+to our chosen state combinations. Due to the disc retization of the first two state dimensions, the 
+value functions for the other points in the stat e space are computed via interpolation (Keane and 
+Wolpin 1994). After we cal culate the vector of the optimal mapping of em ail contacts (through the 
+value iteration algorithm), we fit a multinomial logit model (MNL)10 to predict optimal email 
+contacts as a flexible function of the chosen state space. Next, we use this fitted MNL policy function to predict the optimal num ber of emails to send for any state combinations out of the 
+chosen state space.   
+Based on the optimal mapping of email contacts to  states from the valu e iteration algorithm, 
+we find that the optimal email contact number range s from 5 to 14. We see a lot of heterogeneity 
+in the ranges of optimal number of emails sent  based on customers’ re lationship states. For 
+instance, if the firm has a belief that with more than 30% probabil ity that the customer is in the 
+                                                            
+10 The choice of the MNL functional form for the policy function is because the optimal mapping of the email contacts 
+takes discrete and finite number of values (ranging between 5 and 14 emails to send as discussed in the next paragraph). 
+
+ 
+ 
+34 
+ High Purchase state, the optimal number of ema ils to send ranges between 5 and 7 (based on the 
+value of the remaining state combinations). If the firm’s belief becomes such that the customer is 
+in the Medium Purchase state with more than 30 % probability, then the optimal number of emails 
+to send ranges between 6 and 10. If the firm has a strong belie f (more than 90% probability) that 
+the customer is in Low Purchase state, the optim al number of emails to send ranges be tween 12 to 
+14 emails. Whereas, if the opposite is the case, i.e., the firm has a strong belief that the customer 
+is not in the Low Purchase state, the optimal nu mber of emails to send ranges between 5 and 7.  
+This heterogeneity in the optimal number of em ails to send suggests that the firm should 
+target different customers (by sending different  number of emails) based on their observed 
+behaviors ( LY and LO) and its belief about their relationshi p states. To illustrate how the firm 
+might use our DSS to target its customers through email marketing, we randomly pick two customers from our database. We then calculate  their HMM state membership probabilities over 
+time through the filtering approach, and use our optim al policy function to set the number of email 
+contacts (based on their observed LY and LO levels in the data). We plot the optimal number of 
+email contacts over time for these two customers in Figure 5. As can be seen in Figure 5, the 
+optimal number of emails to send varies significan tly not only across these two customers, but also 
+within the same customer over time. This exercise  suggests that our propos ed DSS can easily be 
+used as an actionable management tool by th e firm to dynamically manage its email contact 
+decisions in a profitable manner.  
+Insert Figure 5 here 
+Next, we use our optimal policy function to s imulate the firm’s email contact decisions 
+along with the customer purchase and email open  responses over a long-time horizon for three 
+representative customers in Low, Medium and High Purchase states, respectively. This forward-
+
+ 
+ 
+35 
+ simulation exercise helps us understand the CLV (customer lifetime value) of customers differ 
+across three purchase states. Base d on our assumptions (see Footnot e 9), we find that CLVs of 
+customers in Low, Medium and High Purcha se states as $1,333, $1,411, and $1,465, respectively. 
+This exercise also reveals that, in the steady-stat e, the optimal number of emails to send to each 
+customer becomes 7 emails per month. In addi tion, the discounted sum of  lifetime purchase and 
+email open counts become 73 and 118 per customer, respectively. 
+Lastly, we conduct a what-if si mulation study to measure how much profit the firm would 
+leave on the table if it deviates from the reco vered optimal email policy function (see Figure 6). 
+We use the steady-state distribution as the startin g state combinations and test the alternative 
+scenarios in which the firm deviates from sendi ng the optimal number of 7 emails. We test the 
+scenarios where the firm sends 4, 5, 6, 8, 9, and 10 emails instead of 7. Figure 6 shows that sending 
+sub-optimal number of emails might cause the fi rm to lose significant amount of profit. For 
+instance, sending 4 (10) emails instead of the optimal level of 7 emails causes the firm to lose 32% 
+(16%) of its lifetime profit per cu stomer. This result suggests that  sending the right number of 
+emails is highly critical for the profitabil ity of the firm’s email marketing program. 
+Insert Figure 6 here 
+Robustness Checks 
+ To check whether our model and findings are robust to alternative model specifications, 
+we conduct four sets of  robustness checks:  
+1) Using alternative distributions to model the conditional purchase counts, 
+2) Using different Copula functions to model th e correlation between customers’ purchase and 
+email open behaviors,  3) Imposing HMM identification restriction on the CPM, and 
+
+ 
+ 
+36 
+ 4) Including holiday dummies as additional control variables in the CPM model. 
+ As our first robustness check, we estimate th ree alternative model sp ecifications where the 
+conditional purchase count is assumed to be dist ributed as Poisson (PD), Zero-Inflated Poisson 
+(ZINPD), and Negative Binomial (NBD), respectivel y. We find that the estimates from these three 
+alternative specifications look qualitatively similar to our CPM with ZINBD specification. 
+However, based on the BIC criteria, we dete rmine that our proposed ZINBD specification 
+outperforms the alternative models ( BIC୞୍୒୆ୈൌ 30,658.11	,BIC ୔ୈൌ 33,440.23  ,BIC୞୍୒୔ୈൌ
+32,201.11	,BIC ୒୆ୈൌ 30,994.36	 ). Therefore, we assume th e conditional purch ase count is 
+distributed by ZINBD. 
+ As our second robustness check, we estimat e two alternative model specifications. 
+Specifically, we estimate the alternative models  with Clayton (1978) and Gumbel (1960) Copula 
+functions, which have been widely used in the statistics literatur e. Although, all three 
+specifications yield qualitatively very similar estimates, based on the BIC criteria, we find that the 
+Frank Copula (BIC = 30,658.11) sl ightly outperforms Clayt on (BIC = 30,676.25) and Gumbel 
+(BIC = 30,682.59) Copula specifications. Therefore,  we use Frank Copula as our proposed Copula 
+specification, and use the Frank Copula spec ification in the rest of our analysis.    
+ For identification purpose, we could have imposed HMM restrictions on the CPM instead 
+of the CEOM. However, the former restriction requires us to impose 6*( NS-1) restrictions, 
+including NS-1 intercepts and NS-1 response coefficients in the ߮௜௧ component, and NS-1 
+intercepts and 3*( NS-1) response coefficients in the ߣ௜௧ component, while the latter one only 
+requires 2*( NS-1) restrictions ( NS-1 intercepts and NS-1 response coefficients in the ݌௜௧ 
+component). Due to this, we prefer to impose rest rictions on the CEOM rather than the CPM. As 
+our third robustness check, we estimate the alternative specification in which the identification 
+
+ 
+ 
+37 
+ restriction is imposed on the c onditional purchase model. Based on the BIC criteria, our proposed 
+model (BIC = 30658.11) outperforms that alternative specificatio n (BIC = 31308.9). Therefore, 
+we use our proposed model with HMM restrictions on CEOM as our main model in the rest of the 
+analysis.  Finally, as our last robustness check, we in corporate the holiday dummies into our CPM 
+as additional control variables. Essentially, cust omers might be more ac tive in their purchase 
+activities during the holidays. Since our data is at the monthly level, we define the months 
+corresponding to Memorial Day, Fourth of Ju ly, Labor Day, Thanksgi ving and Christmas as 
+holiday months, and dummy coded this holiday variable. From the comparison of our proposed 
+model and the model with holiday dummies, we fi nd that 1) all parameters look qualitatively very 
+similar under both specifications; 2) coefficien ts for the holiday dummies are statistically 
+insignificant; and 3) based on the BIC criteria our proposed m odel slightly outperforms the 
+alternative model (30658.11 versus 30661.85). As a re sult, we use our proposed model without 
+holiday dummies as our main mode l in the rest of the analysis. We discuss our empirical findings 
+next. 
+Conclusions, Limitation s and Future Research 
+The email marketing programs are used extensively in various industries to engage with 
+customers. The general industry practice in meas uring the effectiveness of an email-marketing 
+program is to examine customer responsiveness to emails such as email open rate. However, we show that considering only the email open rate  could be misleading. Our empirical study shows 
+that some of the very high email openers are the least active ones in their purchase behaviors. In 
+addition, our findings show that some email in active customers are rela tively active in their 
+purchase behaviors. Thus, if firms solely focus on the email open rate to allocate its resources, they 
+
+ 
+ 
+38 
+ might potentially overlook a pool of customers w ho are inactive in responding to emails but are 
+relatively active in purchases. 
+To the best of our knowledge, substantively, this  is the first empirical study that models the 
+customer’s email open and purchase behaviors join tly. In addition, methodol ogically, this is the 
+first study that combines the hi dden Markov and Copula models in  a unified framework. In our 
+HMM specification, we model the latent customer-f irm relationship states that govern customers’ 
+both purchase activeness and email responsiveness. In our Copula specificat ion, we use a Frank 
+Copula to correlate the customer’s email open and purchase behaviors. 
+Note that, the purpose of this study is not dive rting firms’ attention from email open rate. 
+This study shows that, on average, there is a positive correlati on between email open and purchase 
+behaviors. Instead, we recommend firms to look at  customers’ purchase behaviors in addition to 
+customers’ response rates to emails. If the goal is to maximize the long-term profitability, firms 
+should be informed about the optimal level of ema il contacts they should make to their customers. 
+Along these lines, we calculate the optimal email marketing contact policy by solving the firm’s 
+dynamic optimization problem. Eventually, we propos e an implementable fr amework to study an 
+important substantive problem that can save firms millions of dollars. 
+In our specific application, although we use email open as the non-purchase customer 
+behavior, our framework is quite flexible that it is applicable to other customer-level non-purchase 
+behaviors. In addition, our DSS is designed to guide the firm about how many emails to send, 
+however, other firm-level marketing decisions mi ght also be guided with  the propose d structure 
+without significant issues. Furthermore, as more information that might affect the purchase and 
+non-purchase behaviors becomes available, one might incorporate that information through 
+constructing additional control variables entering purchase and non-purchase models. Among such 
+
+ 
+ 
+39 
+ variables, the ones, which are relevant for th e firm’s decision in the supply side, might be 
+incorporated into the operationa lization of the proposed DSS. This  will allow the firm to target 
+different customers at a given time, and the same customers over time differently based on 
+additionally observed customer  level characteristics. 
+One of the limitations of this study is that we do not observe the content of the emails. 
+Therefore, we do not focus on the emailing stra tegy that intends to match with customers’ 
+contemporary needs, such as cross- and up sell ing. Previous research has investigated this 
+important issue (e.g., Kumar, George and Panc ras 2008; Li, Sun and Wilcox 2005). If the email 
+content data is available, future research might not only consider the eff ect of emailing content on 
+customers’ response to emails and purchase behavior , but also provide guidan ce to the firm related 
+to targeted email marketing based on personali zed customization of the email content.  
+Another limitation of this study is that we do not observe the information from the 
+competitors. Customers’ lack of response to emails could simply be due to subscribing to many 
+email programs from different firms. Each email delivered to the customer’s inbox is a load of 
+information. Customers who are not capable of processing the information will be overwhelmed 
+and stop responding. If the firm is aware of it s customers’ inbox activit y, incorporat ing this 
+information into the study is imperative. However,  due to the sensitivity of such information the 
+likelihood that the retailer  can obtain this information is unlik ely. Future studies could consider 
+conducting field experiments to understand how compe ting emails affect customers’ reactions to 
+the firm’s emails.   
+
+ 
+ 
+40 
+ REFERENCES 
+Ascend2 (2015), “Marketing Technology Strategy Survey Summary Report,” [available at 
+http://ascend2.com/home/wp-content/uploads/Mar keting-Technology-Strategy-Survey-Summary-
+Report-150813.pdf].  
+ 
+BlueHornet (2013), “One More Time: Email Frequenc y Chief Culprit in Uns ubscribes,” [available 
+at http://www.marketingcharts.com/online/one-m ore-time-email-frequency-chief-culprit-in-
+unsubscribes-27944/]. 
+ 
+Bonfrer, André and Xavier Drèze (2009), “Real-Time Evaluation of E-mail Campaign 
+Performance,” Marketing Science , 28 (2), 251-263. 
+ Chittenden, Lisa and Ruth Rettie (2003), “An Ev aluation of E-mail Marketing and Factors 
+Affecting Response,” Journal of Targeting, Measuremen t and Analysis for Marketing , 11 (3), 
+203-217. 
+ Clayton, D. G. (1978), “A Model for Association in  Bivariate Life Tables and Its Application in 
+Epidemiological Studies of Familial Te ndency in Chronic Disease Incidence,” Biometrika , 
+65 (1), 141-151. 
+ Danaher, Peter J. and Michael S. Smith (201 1), “Modeling Multivariate Distributions Using 
+Copulas: Applications  in Marketing,” Marketing Science , 30 (1), 4-21. 
+ Direct Marketing Association ( UK) Ltd (2015), “National Clie nt Email 2015,” [available at 
+http://dma.org.uk/uploads/ckeditor/ National-client-email-2015.pdf]. 
+ 
+Frank, M. J. (1979), “On the Si multaneous Associativity of Fሺx,yሻ  and x൅yെ
+Fሺx,yሻ ,”Aequationes Mathematicae , 19, 194-226.  
+ 
+Genest, Christian (1987), “Frank’s Fa mily of Bivariate Distributions,” Biometrika , 74 (3), 549-
+555. 
+ Glady, Nicolas, Aurélie Lemmens, and Christ ophe Croux (2015), “Unveil ing the Relationship 
+between the Transaction Timing, Sp ending and Dropout Behavior of 
+Customers,” International Journal of Research in Marketing , 32 (1), 78-93. 
+ Godin, Seth (1999), Permission Marketing: Turning Strange rs into Friends and Friends into 
+Consumers.  New York: Simon & Schuster. 
+ Gumbel, E. J. (1960), “Distributions des Va leurs Extremes en Plusieurs Dimensions,” 
+Publications de l’In stitute de Statist´ ıque de l’Universit´e de Paris , 9, 171–173. 
+ Keane, Michael P. and Kenneth I. Wolpin (1 994), “The Solution and Estimation of Discrete 
+Choice Dynamic Programming Models by Simu lation and Interpolat ion: Monte Carlo 
+Evidence,” The Review of Economics and Statistics , 648-672. 
+
+ 
+ 
+41 
+ Khan, Romana, Michael Lewis, and Vishal Singh (2009), “Dynami c Consumer Management and 
+the Value of One-to-One Marketing,” Marketing Science , 28 (6), 1063-1079. 
+ Kumar, V., Morris George, and Joseph Pancras (2008), “Cross-buying in Re tailing: Drivers and 
+Consequences,” Journal of Retailing , 84 (1), 15-27. 
+ Kumar, V., Sriram S., Anita L uo, and Pradeep K. Chintaguta ( 2011), “Assessing the Effect of 
+Marketing Investments in a Bu siness Marketing Context,” Marketing Science , 30 (5), 924-
+940. 
+ Kumar, V., Xi (Alan) Zhang, and Anita Luo (20 14), “Modeling Consumer Op t-In and Opt-Out in 
+a Permission-Based Marketing Context,” Journal of Marketing Research , 51 (4), 403-419. 
+ Lee, Alan (1999), “Applications: Modelling Rugby League Data vi a Bivariate Nega tive Binomial 
+Regression,” Australian & New Zealand Journal of Statistics , 41 (2), 141-152. 
+ Li, Shibo, Baohong Sun, and Alan L. Montgomery (2011), “Cross-Selling the Right Product to the 
+Right Consumer at the Right Time,” Journal of Marketing Research , 48 (4), 683-770. 
+ Li, Shibo, Baohong Sun, and Ronald T. Wilcox (2005), “Cross-selling Sequentially Ordered 
+Products: An Application to Consumer Banking Services,” Journal of Marketing Research , 
+42 (2), 233-239. 
+ Luo, Anita and V. Kumar (2013), “Recovering Hidden Buyer-Seller Relationship States to 
+Measure the Return on Marketing Investme nt in Business-to-Business Markets,” Journal of 
+Marketing Research , 50 (1), 143-160. 
+ 
+Merisavo, Marko and Mika Raulas (2004), “The Impact of E-Mail  Marketing on Brand Loyalty,” 
+Journal of Product & Brand Management , 13 (7), 498-505. 
+ Montgomery, Alan, Shibo Li, Kannan Srinivasan, and John C. Liechty (2004), “Modeling Online 
+Browsing and Path Analysis using Clickstream Data,” Marketing Science , 23 (4), 579-595. 
+ Montoya, Ricardo, Oded Netzer, and Kamel Jedidi (2010), “Dynamic Allocation of 
+Pharmaceutical Detailing and Sampling for Long-Term Profitability,” Marketing Science , 29 
+(5), 909-924. 
+ Netzer, Oded, James M. Lattin, and V. Srinivas an (2008), “A Hidden Markov Model of Consumer 
+Relationship Dynamics,” Marketing Science , 27 (2), 185-204. 
+ Nikoloulopoulos, Aristidis K. and Dimitris Ka rlis (2010), “Regression in a Copula Model for 
+Bivariate Count Data,” Journal of Applied Statistics , 37 (9), 1555-1568.  
+ Park, Sungho and Sachin Gupta (2012), “Hand ling Endogenous Regressors by Joint Estimation 
+Using Copulas,” Marketing Science , 31 (4), 567-586. 
+ 
+
+ 
+ 
+42 
+ Petrin, A., & Train, K. ( 2010). A control function approach to endogeneity in Consumer  choice 
+models. Journal of marketing research , 47(1), 3-13. 
+ Return Path (2015), “Frequency Matters: The Keys to Optimizing Email Send Frequency,” 
+[available at http:// returnpath.com/wp-content/uploa ds/2015/06/RP-Frequency-Report-
+FINAL.pdf]. 
+ Rust, John (1987), “Optimal Replacement of GMC Bu s Engines: An Empirical Model of Harold 
+Zurcher,” Econometrica: Journal of  the Econometric Society , 999-1033. 
+ Sahni, Navdeep, Dan Zou, and Pradeep K. Chin tagunta (2016), “Do Targeted Discount Offers 
+Serve as Advertising? Evidence from 70 Field Experiments,” Management Science, 
+forthcoming. 
+ Schweidel, David A., Young-Hoon Park, and Zainab Jamal (2014) , “A Multiac tivity Latent 
+Attrition Model for Consumer Base Analysis,” Marketing Science , 33 (2), 273-286. 
+ Schweidel, David A., and Geor ge Knox (2013), “Incorporating Di rect Marketing Activity into 
+Latent Attrition Models,” Marketing Science , 32 (3), 471-487. 
+ Sklar, A. (1959), “Fonctions de répartition à n dimensions et leurs marges,” Publications de 
+l’Institut de Statistique de L’Université de Paris , 8, 229–231. 
+ Stephen, Andrew T., and Jeff Galak (2012), “The E ffects of Traditional and Social Earned Media 
+on Sales: A Study of a Micr olending Marketplace,” Journal of Marketing Research , 49 (5), 
+624-639. 
+ 
+Tezinde, Tito, Brett Smith, and Jamie Murphy ( 2002), “Getting Permission: Exploring Factors 
+Affecting Permission Marketing,” Journal of Intera ctive Marketing , 16 (4), 28-39. 
+ Trivedi, Pravin K. and David M. Zimmer  (2005), “Copula Modeling: An Introduction for 
+Practitioners,” Foundations Trends Econometrics , 1 (1), 1-111. 
+ 
+Villas-Boas, J. M., & Winer, R. S. (1999). Endogeneity in brand choice models. Management 
+Science , 45(10), 1324-1338. 
+ 
+Xue‐Kun Song, Peter (2000), “Multivariate Disper sion Models Generated from Gaussian 
+Copula,” Scandinavian Journal of Statistics , 27 (2): 305-320. 
+  
+
+ 
+ 
+43 
+ Figure 1: Purchase and Email Open Count of Three Selected Customers 
+ 
+ 
+ 
+ 
+ 
+ 
+  0246810
+13579 1 1 1 3 1 5 1 7 1 9 2 1 2 3 2 5 2 7 2 9 3 1 3 3 3 5 3 7 3 9Montly Count
+Monthspurchase count
+email‐open count
+0246810
+1 3 5 7 9 1 11 31 51 71 92 12 32 52 72 93 13 33 53 73 9Monthly Count
+Monthspurchase count
+email‐open count
+0246810
+1 3 5 7 9 1 11 31 51 71 92 12 32 52 72 93 13 33 53 73 9Monthly Count
+Monthspurchase count
+email‐open countCustome r1
+Customer 2
+Customer 3
+
+ 
+ 
+44 
+ Figure 2: Distributions of Pu rchase and Email Open Count Percentage Distribution of Purchase Count 
+ 
+Purchase Count 
+ Percentage Distribution of Email Open Count 
+Email Open Count 
+ 
+  
+
+
+ 
+ 
+45 
+ Figure 3: Hidden Markov and Copula Model of Customer Purchase and Email Open 
+Behaviors 
+ 
+Figure 4: Distribution of Custom ers’ State Membership over Time  
+ 
+Note: On average, Low, Medium and High Purchase customers make 0.148, 
+0.338 and 1.219 purchases per month, respectively. 
+ 
+ 
+ 
+  
+
+
+ 
+ 
+46 
+ Figure 5: Within Customer Opti mal Email Contacts Over Time 
+  
+ 
+ 
+ 
+Figure 6: Steady-State CLV versus Number of Email Contacts 
+ 5 1 01 52 02 53 03 56 8 10 12
+MonthsOptimal Number of Emails to SendCustomer 1
+Customer 2
+456789 1 01000 1100 1200 1300 1400
+Number of Email ContactsSteady-State Consumer Lifetime Value (in Dollars)
+
+ 
+ 
+47 
+ Table 1: Comparison of Existing Studies  
+Studies Type of 
+Data Type of Models Modeling Customer 
+Relationship over 
+Purchase Modeling Customer 
+Relationship over 
+Multiple Decisions Providing 
+a DSS Dynamics 
+Component Marginal Distribution 
+Component 
+Netzer et al. (2008) Donation HMM Logit Yes No No 
+Montoya et al. (2010) Prescription HMM Binomial Yes  No Yes 
+Kumar et al. (2011) B2B  HMM Multivariate Tobit Yes  No Yes 
+Li et al. (2011) Banking HMM Multivariate Probit Yes  No Yes 
+Luo and Kumar (2013) B2B  HMM Multivariate Tobit Yes No No 
+Schweidel et al. (2014) E-commerce Late nt Changepoint Bivariate Choice Yes  Yes No 
+This Study Retailing HMM Copula of Zero-Inflated 
+Negative Binomial and 
+Binomial Distributions Yes Yes Yes 
+ 
+Table 2: Descriptive Statistics & Correlation Matrix11 
+ Descriptive Statistics   Correlation Matrix  
+ Mean Std. Dev. Lower 5% Upper 95%  Number of 
+Purchases Number of 
+Emails Sent Number of 
+Emails Opened 
+Number of Purchases (per month, per customer) 0.69 1.63 0 4  1   
+Number of Emails Sent (per month, pe r customer) 6.90 4.91 0 15  0.013 1  
+Number of Emails Opened (per month, per customer)  1.64 3.16 0 10  0.050 0.425 1 
+Time from Last Purchase (in months) 6.33 7.16 1 22     Time from Last Email Open (in months) 5.45 7.23 1 22.05     
+Indicator of Open (per month, per customer) 0.40 0.49 0 1     
+Indicator of Purchase (per month, per customer) 0.29 0.45 0 1     
+ 
+Table 3: Selecting the Number of States  
+HMM States Log-Likelihood BIC 
+1 -17956.41 36064.73 
+2 -17152.83 34582.67 
+3 -15119.06 30658.11 4 -15098.16 30777.15 
+                                                            
+11 The monthly descriptive statistics are calculated from our data consisting N=200 randomly chosen customers (from the retailer’s  customer database) who are 
+observed for a period of T=39 months.  
+
+48 
+ Table 4: Estimation Results for the 3-State Hidden Markov Model  
+  Estimates Standard Error 
+Transition Matrix   
+Intercept for transition (State 1 to 2) -2.647*** 0.315 
+Intercept for transition (State 1 to 3) -1.432*** 0.248 
+Intercept for transition (State 2 to 2) 2.829*** 0.352 
+Intercept for transition (State 2 to 3) -3.815 4.554 Intercept for transition (State 3 to 2) -2.398
+* 0.953 
+Intercept for transition (State 3 to 3) 0.061 0.274 I[Lagged Purchase > 0] on transition to State 2 0.173 0.218 I[Lagged Purchase > 0] on transition to State 3 0.363
+* 0.150 
+I[Lagged Open > 0] on transition to State 2 0.422 0.376 I[Lagged Open > 0] on transition to State 3 -0.486
+* 0.216 
+Lag Email Sent on transition to State 2 -0.245** 0.088 
+Lag Email Sent on transition to State 3 -0.110 0.064 Lag Email Sent Square on transition to State 2 0.007 0.005 Lag Email Sent Square on transition to State 3 0.001 0.004 Lag Email Sent Residual on transition to State 2 0.144
+*** 0.038 
+Lag Email Sent Residual on transition to State 3 0.003 0.033 
+Email Open Frequency (Binomial)   
+Intercept State 1 -2.367*** 0.065 
+Intercept (additional State 2, exp) 1.105*** 0.016 
+Intercept (additional State 3, exp) -4.450*** 0.969 
+Time since last open (log) -0.637*** 0.067 
+Variance for the intercept 1.817*** 0.064 
+Variance for Time since last open 0.388*** 0.062 
+Conditional Purchase Frequency (ZINBD)   
+Purchase Count Equation   
+Intercept (State 1) -0.716*** 0.105 
+Intercept (State 2) -2.951*** 0.312 
+Intercept (State 3) -0.413 0.317 Email Sent (State 1) 0.196
+*** 0.031 
+Email Sent (State 2) 0.470*** 0.011 
+Email Sent (State 3) 0.321*** 0.091 
+Email Sent Square (State 1) -0.013*** 0.002 
+Email Sent Square (State 2) -0.020*** 0.001 
+Email Sent Square (State 3) -0.027*** 0.007 
+Email Sent Residual (State 1) -0.039* 0.016 
+Email Sent Residual (State 2) 0.049 0.037 Email Sent Residual (State 3) -0.002 0.036 Variance for the intercept 1.021
+*** 0.049 
+Variance for Email Sent 0.020* 0.009 
+
+ 
+ 
+49 
+ Variance for Email Sent Square 0.000 0.001 
+Dispersion, exp 0.655*** 0.071 
+Excess of Zeros Equation   
+Intercept (State 1) 2.135*** 0.066 
+Intercept (State 2) 3.203*** 0.710 
+Intercept (State 3) 3.447*** 0.761 
+Time since last purchase (State 1) (log) -1.528*** 0.073 
+Time since last purchase (State 2) (log) -2.235*** 0.391 
+Time since last purchase (State 3) (log) -1.294*** 0.338 
+Variance for the intercept 2.008*** 0.208 
+Variance for Time since last purchase 0.168 0.091 
+Correlation (Email Open and Purchase)   
+Frank Copula correlation coefficient  0.324*** 0.067 
+Likelihood -15119.06  
+BIC 30658.11  
+ 
+Legends: * p-value<0.05, ** p-value<0.01, *** p-value<0.001 
+ 
+Labels of the Markov states – State 1: Low Open - Medium Purchase, State 2: High Open - Low Purchase, State 3: High Open - High Purchase  
+ 
+  
+Table 5 Transition Probability Matrix of the HMM 
+  To Low Purchase To Medium Purchase To High Purchase 
+From Low Purchase 
+Without Email Contact 95.38% 4.53% 0.09% 
+With One Email Contact 94.22% 5.67% 0.10% 
+With Five Email Contacts 87.93% 11.92% 0.14% 
+With Ten Email Contacts 78.42% 21.42% 0.16% 
+From Medium Purchase 
+Without Email Contact 6.75% 76.53% 16.72% 
+With One Email Contact 5.49% 79.02% 15.48% 
+With Five Email Contacts 2.66% 86.20% 11.14% 
+With Ten Email Contacts 1.40% 91.27% 7.33% 
+From High Purchase 
+Without Email Contact 5.43% 47.95% 46.62% 
+With One Email Contact 4.55% 50.99% 44.46% 
+With Five Email Contacts 2.45% 61.93% 35.62% 
+With Ten Email Contacts 1.43% 72.60% 25.97% 
+ 
+

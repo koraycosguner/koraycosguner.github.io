@@ -1,0 +1,1376 @@
+ 
+Modeling Emerging Market Firms’ Competitive Retail Distribution Strategies  
+  
+ 
+   
+ 
+Amalesh Sharma  
+V. Kumar  
+Koray Cosguner  
+ 
+Forthcoming at Journal of Marketing Research  
+DOI: 10.1177/0022243718823711 
+ 
+ 
+ 
+ 
+  
+Amalesh Sharma is an Assistant Professor of Marketing, Mays College of Business, Texas A &M 
+University, College Station, TX ( asharma@mays.tamu.edu
+). V. Kumar (VK) is the Regents’ Professor, 
+Richard and Susan Lenny Distinguished Chair, & Professor of Marketing, and Executive Director, Center 
+for Excellence in Brand & Customer Management, J. Mack Robinson College of Business, Georgia State University, Atlanta, GA 30326 (email: 
+vk@gs u.edu ). VK has also been honored as the Chang Jiang Scholar, 
+HUST, China; Fellow, Hagler Institute for Advanced Study, TAMU, College Station, TX; and Senior 
+Fellow, Indian School of Business, India. Koray Cosguner is an Ass istant Professor of Marketing, Ke lley 
+School of Business, Indiana University, Bloomington, Indiana  (email:  kcosgun@iu.edu ). All authors 
+contr ibuted equally to this research, and the authors are listed in reverse alphabetical  order.  
+We thank the editor, the AE and the reviewers for their valuable guidance during the revision process.  We 
+thank Renu for copyediting the manuscript.  We thank several of our colleagues at Georgia State University, 
+Texas A&M University  and the participants of the 2017 Marketing Science Conference.  
+
+1 
+  
+Modeling Emerging Market Firms’ Competitive Retail Distribution Strategies  
+ 
+ 
+Abstract  
+In emerging markets, the effective implementation of distribution  strategies is challenged by the 
+underdeveloped infrastructure of roads, and a low penetration of retail  stores that are insufficient 
+in meeting customer needs. In addition, products are typically distribute d in multiple forms through 
+multiple retail channels. Further, due to the competitive landscape, manufacturers’  distribution 
+strategies should be based on anticipation of competitor reactions. Accordingly, we develop a 
+manufacturer -level competition  model to study  the distribution  and price decisions of insecticide 
+manufacturers competing across multiple product  forms and retail channels . Our study shows that 
+both consumer preferences and estimated production and distribution costs vary across brands, 
+product  forms, and retail channels ; that ignoring distribution and solely focusing on price 
+competition results in  up to a 55%  overestimation of manufacturer profit margins ; and that 
+observed pricing and distribution patterns support competition rather than collusion among manufacturers . Through counterfactual studies, we show that manufacturers respond to decreases 
+in distribution c osts and to the exclusive distribution of more preferred manufacturer  by 
+asymmetrically changing their price and distribution decisions across different retail channels.  
+Keywords:  retail distribution , emerging market s, manufacturer  competition, multi- product form 
+competition, multi- channel competition 
+ 
+ 
+ 
+ 
+   
+ 
+ 
+ 
+
+2 
+ Introduction  
+In most product markets, manufacturers rely heavily on independently owned retail 
+distribution channels  to reach their customers . For example, in the U.S. in 2016, the re were about 
+3.8 million retailers  whose  total retail  sales  were about $2.6 trillion 0F1. In India, there are currently 
+over 14 million retail stores , whose total  retail sales are expected to reach $0.95 trillion in 2018  
+(compared to $0.5 trillion in 2013) 1F2. Due to  the size and growth of retail sales , product 
+manufacturers consistently make significant  monetary  efforts  to manage the ir retail distribution  
+channels  to make their products accessible, and ultimately to achieve profitability 2F3. For example, 
+in India, manufacturers’ cost of retail distribution  can be as high as 18 to 25% of their total sales 3F4. 
+Given  the importance of retail distribution  for sales , the development of appropriate retail 
+distribution strategies has attained  significant importance in the marketing literature (Cao and Li 
+2015; Kumar et al. 2015; Padmanabhan and Png 1997; Sharma and Mehrotra 2007; Trivedi 1998).  
+Even though retail distribution is important for product manufacturers to satisfy their 
+customers’ needs and ultimately achieve profitability , it is challenging for manufacturers to 
+effectively manage the distribution of their products for a number of  reasons. First of all, 
+manufacturers typically manage multiple retail channels that differ in terms of their sizes, target 
+markets, and effectiveness in selling products ( Dawar and Frost 1999; Venkatesan et al. 2015 ). In 
+addition, customers differ in preference with respect to  distribution channels depending on the 
+availability of their preferred products in those channels , and on their proximity to those channels . 
+Second, manufacturers typically distribute their products in multiple forms (such as liquid, solid, 
+frozen , etc.) to meet various customer needs ( Bloch 1995; Porter and Heppelmann 2015).  Thus, 
+                                                           
+1 https://www.selectusa.gov/retail -services -industry -united -states  
+2 https://assets.kpmg.com/content/dam/kpmg/pdf/2014/11/BBG -Retail.pdf  
+3 https://www.warehousingandfulfillment.com/warehousing -and-fulfillment -resources/the- future -of-distribution -is-promising -for-emerging -
+markets/  
+4 https://www.atkearney.com/consumer -goods/article?/a/rethinking -consumer -product -distribution -in-developing -count ries 
+
+3 
+ manufacturers 4F5 need to decide which product forms to distribute through how many stores in each 
+utilized retail channel. This decision is complicated by the fact that  multiple competing 
+manufacturers distribut e similar products through common retail  channels. To be effective, a 
+manufacturer’s retail distribution decision s need to incorporate its competitors’ reactions. 
+Manufacturers’ retail distribution decisions can be more complicated  in emerging markets 
+for multiple reasons . First, emerging markets typically feature larger underdeveloped 
+infrastructure (such as  a lack of highways and roads to reach different regions), and extended 
+geographies with vastly different retail stores that are limited in number (i.e. , an insufficient retail 
+landscap e) 5F6. As a result, it can be difficult for manufacturers  to effectively access each of these 
+regions and sales territories through retail distribution ( Roberts et al. 2015; Sheth 2011) . Second, 
+customers’ price sensitivities and preferences toward products  have changed widely due to 
+economic liberalization , which has increased the b uying power of households  in these markets . As 
+a result,  even households  at the lowest income  levels  have started to afford a large variety of 
+products 6F7. As such, manufacturers have introduced several product forms to serve various 
+customer needs. However, due to the abovementioned challenges  (underdeveloped infrastructure 
+and insufficient retail landscape) , manufacturers have had difficulties in meeting customers’ needs. 
+Third, the penetration of retail distribution is quite low in emerging markets  (Mulky 2013).  For 
+example, India has the highest number of retail outlets  (with an average size of 50 to 100 square 
+feet) worldwide, even though the per capita retail space is the lowest in the world ( Pick and  Müller 
+2011). As such, the demand for retail distribution space in India is expected to increase at the rate 
+of 81% in 2018 7F8.  Similarly , China’s trade through retail distribution has increased by 9.7% in 
+                                                           
+5We use manufacturers , brands,  and firms interchangeably throughout the rest of the paper.  
+6http://www.mckinsey.com/business -functions/marketing -and-sales/our -insights/building -brands -in-emerging -markets  
+7 https://www.strategy -business.com/article/16583?gko=68e98  
+8 https://www.ibef.org/industry/retail -india.aspx  
+
+4 
+ 2018 over the previous year 8F9. Such growth trend s in emerging markets create opportunities  for 
+firms  to increase profitability  through appropriate penetration of  retail  channels.  Fourth, 
+manufacturers typically  consider retail distribution as a utilitarian task 9F10. This commonly results 
+in a retail distribution mechanism that is poorly aligned with c ustomer  and market needs  (Mulky 
+2013; Sheth 2011) . To overcome all  of these challenges specific to emerging markets, emerging 
+market manufacturers need to develop effective retail distribution s trategies. In addition, due to 
+the significant growth of emerging economies, multiple firms have ventured into these markets, 
+and therefore  the competitive intensity across product forms and retail channels  has changed 10 F11. 
+This leads to the need for understanding retail distribution from a competition  perspective in order  
+to maximize profits.   
+ Although analysis of firm competition in terms of price  has received considerable attention 
+in the marketing literature , especially in the developed market con text (Karray and Martín -Herrán 
+2009; Sudhir 2001b; Vilcassim et al. 1999 ), to the best of our knowledge, there is no study 
+model ing emerging market firms ’ competition in retail distribution . As discussed earlier, since 
+firms typically sell product s in multiple  forms (e.g., liquid versus solid soap)  through various  retail 
+channels (e.g., mom -and-pop stores versus  big-box stores such as “ Big Bazar”), firms’  retail 
+distribution strategies should be studied at the brand, product form , and retail channel levels . 
+Hence, in this study, we investigate firm competition in retail distribution  along wit h price in an 
+emerging market setting  by developing  a multi- product form  and multi- channel  competition 
+model. 
+                                                           
+9 https://www.businesswi re.com/news/home/20180411005801/en/Annual -In-depth -Analysis -Report -China -Wholesale -Retail  
+10 https://www.strategy -business.com/article/16583?gko=68e98  
+11 https://www.strategy -business.com/article/16583?gko=68e98  
+
+5 
+  To model emerging market firms’ competition in distribution and price, we  use data of 
+competing insecticide manufacturers in India. In the data, we observe: 1) prices at the firm and 
+product form level s (in our setting, liquid and solid product forms); 2) retail distribution levels –  
+or the total number of retail stores  through which  each firm sells their products – at the product 
+form and r etail channel levels (in our setting, paan -plus and general stores 11 F12); and 3) unit quantity 
+sales  (at the manufacturer shipment level)  at the brand , product form , and retail channel levels 1 2F13 
+for a period of 48 months . To estimate our supply -side competition model, w e use a two -step 
+approach . In our first step, we model the aggregate brand demand (i.e., sales) across different 
+product forms and retail channels  using a  nested logit (NL henceforth) specification 13 F14 by 
+incorporating unobserved heterogeneity across households in the market  and accounting for 
+endogeneity  (Petrin and Train 2010) . In our second step, we use the e stimated aggregate sales 
+model  as an input and estimate our  supply -side multi- product form, multi -channel manufacturer 
+competition model .  
+Our study highlights the following results. On the demand side, in terms of the intrinsic 
+preferences, we find that t he first manufacturer (Firm 1) in the study, the solid  product form, and 
+paan -plus stores are , on average, preferred to the second manufacturer (Firm 2), the liquid  product 
+form, and general stores, respectively. On the supply side , we find that  the estimated costs of 
+production (distribution) significantly differ not only across firms  and product forms (and retail  
+                                                           
+12 We n ote that both channels  in our context  are physical distribution channels. We did not consider online channels because th ey are not prevalent 
+in our setting . Furthermore, the product forms we study are not sold thro ugh online  channels . This is to note that online retailing has taken  off in  
+the Indian market since 2006 -2007 (http://www.ey.com/Publication/vwLUAssets/Rebirth_of_e -Commerce_in_India/$file/ey_re -
+birth_of_ecommerce.pdf; pg. 13). Further, the growth of eCommerce (including e -tailing) in  the Indian market was only 3.8%  by 2009  
+(https://www.pwc.in/assets/pdfs/publications/2015/ecommerce -in-india -accelerating -growth.pdf ; pg. 5).  
+13In addition , we acquire time- variant information about  the average expected target population served by each store in each channel. We use this 
+information to create the unique distribution measure that allows us to capture the effect of distribution at a more granular level. The details are 
+provided in the ‘ Empirical Context and Data Description’ section.  
+14 It is possible that customers may make a step -by-step decision on which channel to buy from, which product  form to choose, and which brand to 
+buy. A nested structure (such as an  NL) can help us understand the potential sequence of such household decision process es. We also test our 
+proposed NL specification against two different NLs, and a multinomial logit (MNL) specification based on the data fit. We fi nd that alternative 
+NLs a nd MNL specifications can be rejected using the Bayesian Information Criteria.  
+
+6 
+ channels) but also over time  (to a lesser extent) . Based on our robustness checks , we first find that 
+ignoring the effect of distribution on demand estimation significantly biases the household 
+preference parameters (intrinsic preferences, price disutility, etc.). Further, the use of the price-
+only demand model as an input in the supply -side equilibrium calculations leads to  significantly 
+larger profit margin inferences (up to 55%)  compared to equilibrium calculations using the 
+proposed demand model with retail distribution. Second, we find that the observed price and 
+distribution patterns in the data support competition rather than tacit collusion among the studied emerging market manufacturers . 
+Based on the estimation results, we use a counterfactual study to understand the effect of 
+decreasing distribution costs (for example, due to the construction of new highways and roads by the governme nt) on manufacturers’ distribution and price decisions. We find that, in equilibrium, 
+even though firms keep their prices roughly the same, they change their distribution levels significantly as the distribution costs decrease. Specifically, we find that, as distribution costs 
+decrease, 1) both firms increase their distribution levels in the paan- plus channel , and 2) Firm 1 
+(Firm 2) increases (decreases) its presence in the general stores channel. Further, we find that  the 
+aggregate welfares of all three parties – consumers, Firm 1, and Firm 2 – increase as the 
+distribution costs decrease.  
+In a second counterfactual study, we test the role of exclusive distribution on 
+manufacturers’ price and distribution decisions. In a s eries of simulation studies, we allow 0% 
+(current setting) to 20% of the market to be exclusively covered by the more preferred Firm 1 while allowing the remaining market to be served by both firms together. We find that, in 
+equilibrium, exclusive distribution enables Firm 1 to charge higher prices whereas Firm 2 charges 
+roughly the same prices for both solid and liquid product forms. Regarding the distribution 
+
+7 
+ decisions, we find that both firms decrease (increase) their presence in  the paan-plus (general) 
+store channel. Regarding the welfares, we find that Firm 1 (Firm 2 and the customers) benefits 
+(hurts) from its  (Firm 1’s) exclusive distribution. Our counterfactual studies illustrate that 
+asymmetric brand, product  form, and channel preferences along with asymmetries in the estimated 
+distribution costs  across channels  can lead to significant differences among firms in terms of their 
+resource allocation decisions as some characteristics of the marketplace change.  
+The rest of the paper  is organized in the following manner. In the next section, we review 
+the pertinent literature. In S ection 3, we discuss our empirical context and data. Section 4 presents 
+our modeling framework and  the associated estimation procedure. Section 5 provides our  
+estimation results. Section 6 discusses our managerial implications through our counterfactual 
+studies. Finally, we summarize our findings and contributions, and conclude with caveats and directions for future research.  
+Literature Review  
+This study falls in the intersection of two  major streams of marketing literature: distribution 
+strategy and marketing in emerging markets.  We proceed by discuss ing recent developments in 
+these t wo streams of literature along with the research gaps that a re filled by this study.  
+Distribution Strategy  
+The extant marketing literatur e has investigated distribution strategies  from two 
+perspectives . In the first stream of literature, studies investigate  the interactions among different 
+channel members (such as manufacturers, retailers, distribut ors, etc.). Specifically, these studies 
+have explored conflicts among different channel members ( Samaha et al. 2011; Rangan and 
+Jaikumar 1991) ; coordination and vertical integration of the distribution channel  to align the 
+incentives of different channel members  (McGuire and Staelin 1983;  Desiraju and Moorthy 1997; 
+
+8 
+ Gerstner and Hess 1995; Frazier 1999; Krafft et al. 2015; Anderson and Weitz 1992; Tsay and 
+Agrawal 2004) ; manufacturers’ delegation of power to other channel members  and its impact on 
+channel performance ( Coughlan and Wernerfelt 1989); negotiation s among channel members  (in 
+terms of sharing the channel profit)  and their impact on  channel players’  long-term relationships  
+(Srivast ava et al. 2000) ; and the effect of relational history on channel members’ performance 
+(Geyskens et al. 1999) . We note that our study does not fall into this stream of literature since we 
+do not model manufacturers’ relationships with the other channel me mbers (i.e., paan- plus and 
+general stores). This is because 1) the retailers in our setting are small and have limited power  
+compared to manufacturers , and 2) data regarding the interactions among manufacturers and the 
+retail  stores,  and sales at the retai l store  level are not available in our context.  
+The second stream of  the distribution strategy  literature has explored how manufacturers 
+distribute their products across multiple retail channels and the effectiveness of these channels for 
+manufacturer profitability  (for example, Balasubramanian 1998; Cai et al. 2009; Chiang et al. 
+2003; Neslin et al. 2006; Sharma and Mehrotra 2007; Wallace et al. 2004 ; Yan 2011) . Specifically,  
+studies have investigated the effectiveness of different retai l distribution channel s (Trivedi 1998 ; 
+Gonzalez -Benito et  al. 2005) ; their profitability impact  for the manufacturer ( Padmanabhan and 
+Png 1997) ; and the effect of product  alignment (i.e., which products to sell through) across retail 
+channel s (Kumar et al. 2015)  and markets ( Brynjolfsson et al. 2009) on firm performance .  
+In this second stream , there are also  a few studies  that link multi- channel distribution 
+intensity to demand and manufacturer profitability . Yan (2011) investigates the strategic role s of 
+a manufacturer  and its retailers  in differentiated branding and profit sharing in a multi -channel 
+supply chain contex t and identif ies optimal marketing strateg ies. Cai et al. (2009) evaluate the 
+impact of different pricing schemes  of a manufacturer  (selling through dual -channels) on its 
+
+9 
+ profitability . They find that consistent (i.e., not varying much over time) pricing schemes  can 
+reduce the channel conflict by increasing retailer profits . Sharma and Mehrotra ( 2007) , in the 
+context of a multi -channel environment, show how to choose the optimal channel mix and examine 
+its impact on profitability for a software firm. Pauwels and Neslin  (2015) assess the revenue impact 
+of adding brick- and-mortar stores to a firm's already existing repertoire of catalog and internet 
+channels. They show that by adding the physical store channel, the firm  in their study can increase 
+its revenue by 20%. Cao and Li  (2015)  find that cross -channel integration stimulates retailers’ 
+sales growth. Jill Avery et al.  (2012 ) investigate whether  there is cannibalization and synergy 
+among multiple channels operated by a given firm  and, if so, whether such presence affect s the  
+demand. They find that t he presence of a retail store channel decreases sales only in the catalog 
+channel in the short -run but increases sales in both the catalog and internet channels in the long -
+run. Our research fall s into this  second  stream of  the distribution strategy  literature , as we 
+investigate the effectiveness of multi- channel retail distribution strategies for manufacturers ; 
+however, we differ from the existing studies since we consider the competition among 
+manufacturers and its impact on t heir distribution decisions and profitability . 
+Marketing in Emerging Markets  
+As emerging markets rapidly grow, multinational companies (MNCs) are becoming more 
+visible in these markets. These MNCs face many challenges  (such as  an unorganized retail 
+landscape,  an insufficient number of stores , etc.) to be ing competitive in such markets ( Dawar and 
+Frost 1999 ). Although the marketing literature provides abundant guidance on competitive 
+marketing strategies, empirical understanding of  competitive strategies (especially in distribution  
+and pricing ) in emerging markets is rare.  
+
+10 
+ In terms of  distribution, most emerging market firms operate through multiple retail 
+channels, each of which ha s a different target audience, spread, size, and ownership. The literature 
+documents that retail distr ibution over multiple channels play s an important role in affecting firm 
+performance in emerging markets  (Homburg et al. 2014) . For example, Kumar et al. ( 2015 ) discuss  
+how an emerging market firm can improve its performance by leveraging its distribution  across 
+multiple retail channels . However, there is little research  modeling emerging market firms’ 
+comp etition in distribution even at the firm level. Because firms sell their products (in multiple 
+product forms) through different retail channels (with distinct characteristics such as cost structure 
+and attractiveness for customers), implementing competitiv e distribution strategies  at the brand, 
+product  form, and  retail channel  levels  can be quite beneficial for increas ing firm profitability in 
+emerging markets.  
+When it comes to  pricing, there are limited studies considering  the impact of pric e on sales 
+and firm performance  in emerging markets . Since, in most emerging markets, there exist  multiple 
+manufacturers selling products within a product category, the  effectiveness of their pricing (in 
+terms of profitability) depends on their competitors’ reactions . However, rather than considering 
+such competitive pricing, researchers typically rely on conceptual and anecdotal evidence to 
+understand the impact of pricing on firm performance ( Arnold and Quelch 1998 ). Furthermore, as 
+emerging economies  continue to grow, cust omers start to develop needs for a variety of product 
+forms (with similar functionalities). Thus, we extend  the existing literature by modeling the 
+emerging market firms’ oligopolistic competition in pricing at both the brand and product  form 
+level s. 
+To understand emerging market firms’ retail distribution competition along with price , and 
+to guide firms in developing  optimal distribution and price levels  as the market characteristics 
+
+11 
+ change, we build on the existing literature on distribution strategies  related to  manufacturers ’ 
+multi- channel distribution  and marketing in emerging markets , and also model  manufacturers’  
+competition  (at the brand, product  form , and retail channel levels) . See Table 1 for a snapshot of 
+the prior literature and our unique contributions to the marketing literature.  
+[Insert Table 1 about here]  
+Empirical Context and Data Description  
+Our emerging market context is India , where firms rely largely on retail distribution  and 
+pricing  not only to maximize profit and reach larger target markets  but also to respond to 
+competitors’ strategies 14F15. The Indian retail market is projected to reach $865 billion by 2023 
+(compared to $490 billion in 2017) 15 F16. Further, the customer packaged goods (CPG ) or fast -moving 
+customer goods (FMCG) market is predicted to grow by 10- 12% in the next 10 years. Moreover, 
+regarding retail distribution channels, there has been a significant retail distribution expansion in 
+the last decade. Specifically, the total numb er of distribution outlets in India is estimated at over 
+12 million across different  industries.  
+We study  the Indian insecticide market , in which manufacturers manage the distribution of 
+their products by managing multiple  retail channels. Manufacturers rely on retail audits and past 
+product shipments to evaluate the effectiveness of different retail channels . In this market, it is 
+common for manufacturers which give credits to their retailers to push their products  (i.e., 
+manufacturers suppl y products to retailer s with an understanding that the retailer s will pay them  
+back after a billing cycle ). Manufacturers  also incentivize retailers to push their products to end -
+consumers through recommendations by the retailers’ sales p ersonnel. Further, manufacturers 
+manage retailers by offering  incentives for generated sales (the cap of sales vary from retailer  to 
+                                                           
+15 https://www.export.gov/article?id=India -Distribution -and-Sales -Channels .  
+16 https://www.export.gov/article?id=India -Distribution -and-Sales -Channels  
+
+12 
+ retailer ). Manufacturers also use targeting strategies to reach consumers by targeting different 
+customers with different retail channels. For example, manufacturers target rural and urban 
+customers differently, e.g., paan plus stores are ty pically used to target both urban and rural  
+customers , whereas general stores are used to target largely urban and semi -urban customers.  
+Moreover, manufacturers use competitive strategies whereby  they not only distribute through 
+channels used by  competitors but also provide incentives for the retailers in specific competing 
+channels to  sell their products.  
+Our data is provided by one of the manufacturers  operating in the insecticide market. The 
+data is observed at the monthly level for a period of 4 years and aggregated to the national level by the data- providing firm
+16F17. In the data, brand sales at the manufactu rer shipping level (in number 
+of units) are observed for two product forms ( solid – labeled as Product Form 1,  and liquid  – 
+labeled as Product Form 2 17F18) across two different retail channels  (paan -plus – labeled as Channel 
+1, and general stores – labeled as Channel 2 18F19). The data do not provide any evidence of exclusivity 
+in the channel management by the manufacturers . However, such exclusivity is feasible. In the 
+insecticide market, the  two major manufacturers capture more than a 70% market share.  The rest 
+of the market is composed of many small firms . Because of this , we focus our attention on these 
+two manufacturers  and do not endogenize the price and distribution decisions of other small firms .  
+To understand marketing interactions among competing  firms, we obtain firms’ monthly 
+pricing information (at the product form level ; the unit of price is paisa 19F20) and the  number of retail 
+                                                           
+17 We observe two outlier observations in the data where marketing  mix variables differ significantly from the average observations. The data -
+providing firm is unable to provide any explanation for th ese observation s. To make sure that our results are not affected by these outliers, we 
+conducted  a robustness  check  by removing these two data points  and re -estima ting our demand model . The model without outliers yield estimates 
+that are very close in magnitude to the model with them. Therefore, we use the model with outliers as our  main model for the rest of the analysis 
+(see Table A in Web Appendix A for the details of this robustness check and the comparison of estimates from the two demand models).   
+18 The two observed product forms have the same functionality, but different physical forms, e.g. the solid and liquid form of i nsecticides. 
+19 The difference bet ween paan -plus and general stores is the following: paan -plus stores are similar to mom -and-pop stores, whereas general stores 
+are equivalent to small -size retail outlets in the US and Europe markets. 
+20 One paisa is equal to one -hundredth of the Indian rup ee that is the official currency of India.  
+
+13 
+ stores (at the product form level in each retail channel). Furthermore, we acquire information about 
+the time-variant expected average population size that is served by each channel . This measure is 
+used to weight the total number of stores in each channel over time  to construct the unique 
+distribution  variable that enables us to  capture the effect of distribution across different channels 
+at a more granular level. Further, given the lack of data at the regional level, our operationalization 
+enables us to capture some cross -sectional variation in the distribution measure. We obser ve that 
+on average, Firm 1 (Firm 2) distributes through 64,718 and 420,546 (57,152 and 405,927) 
+weighted paan -plus and general stores, respectively.  
+We provide descriptive statistics of the key variables in Table 2. As shown in Table 2, on 
+average, Firm 1 charges 4 and 19 paisa higher than Firm 2 in solid and liquid  product  form, 
+respectively. In terms of the distribution, on average, 1) Firm 1 has mor e stores than Firm 2 (901 
+versus 838) , and 2) Firm 1 (Firm 2) has 1.26 (1.34) times as many  stores in the general stores 
+channel as in the paan -plus stores channel . In terms of sales, on average, Firm 1 has almost the 
+same amount of sales across the two channels , whereas Firm 2 sells 27% more units in general 
+stores  than in paan -plus stores . Finally, the average expected population size served by general  
+store s is around 5 times larger than  their paan -plus counterpart s. All these observed asymmetries 
+across firms, product  forms , and retail channels in the key variables motivate us to develop our 
+supply -side competition model to guide firms toward better understanding the  existing dynamics 
+in the emerging marketplace.  
+[Insert Table 2 about here]  
+Modeling Framework  
+As discussed earlier, we employ a two -step estimation approach ( similar to Che et al.  2007, 
+Sudhir  2001a , and Cosguner et al. 2018 ). In the first  step, we develop (and estimate) : 1) an 
+
+14 
+ aggregate  market share  model at the brand, product form, and retail channel levels  (by accounting  
+for potential endogeneity in price and distribution variables  and controlling unobserved consumer  
+heterogeneity ); and 2) a potential market size model  as a function of macroeconomic factors in the  
+relevant  emerging marketplace. In the second step, we develop a multi- product form, multi -
+channel distribution  and price competition  model that take s the estimated aggregate market share 
+and potential market size models  (from  the first  step) as inputs 20 F21. We discuss our first - and second -
+step models along with their associated estimation procedures next.  
+An Aggregate Market Share Model at Brand, Product  Form , and Retail Channel Levels  
+To develop an econometric brand choice model (at the product form and retail channel 
+levels) with the no-purchase (i.e., outside) option for the typical household h (h=1,…, H) , we use 
+a nested logit (NL) specification . In our specification, k=1,  2 represents product forms (1 for solid 
+product form and 2 for liquid product form), c=1, 2 represents retail channels ( 1 for paan -plus 
+stores and 2 for general stores) , and j=1, 2 represents manufacturers (firms, products , and brands 
+are used interchangeably) under consideration. The NL tree for the household h’s choice at time t 
+is given as follows : at the top choice level (labeled channels), the household chooses which channel 
+to visit c=1, 2, or not to visit any channel (i.e., no purchase, c=0 ). At the middle choice level 
+(labeled product forms), the household chooses which product form to choose k=1, 2 (given the 
+channel choice from the top choice level). Finally, at the bottom choice level (labeled brands), the 
+household chooses which brand to purchase j=1, 2  (conditional on channel and product form 
+                                                           
+21 The advantage of the two -step approach is that demand -side estimates become unbiased by any potential misspecification of the game played in 
+the supply side (such as Bertrand, collusion, etc.) since the chosen s upply -side specification imposes restrictions in the demand -side estimation as 
+well. In addition, if one intends to test different supply -side games (such as competition versus collusion as we discuss later in  the ‘Estimation 
+Results’ section) to identify the game played in the observed data, the two -step estimation procedure becomes a natural choice, since one can fix 
+the demand -side model first, and then make the supply -side model comparison next.  
+
+15 
+ choices from  the top and middle choice levels) 21 F22. See Figure 1 for the visual representation of the 
+household h’s decision tree.  
+[Insert Figure 1 about here]  
+Note that, given the NL tree from Figure 1, the household h can either choose to buy brand 
+j in product form k  of channel c or the no- purchase option 22F23 in period t 23 F24. The choice probabilit y 
+for brand j  in product form k  of channel c  (𝑗𝑗|𝑘𝑘,𝑐𝑐) for household h at time t  is as follows : 
+𝑃𝑃𝑃𝑃ℎ𝑡𝑡(𝑗𝑗|𝑘𝑘,𝑐𝑐)=exp�𝑉𝑉𝑗𝑗|𝑘𝑘,𝑐𝑐ℎ𝑡𝑡�
+∑exp�𝑉𝑉𝑚𝑚|𝑘𝑘,𝑐𝑐ℎ𝑡𝑡�2𝑚𝑚=1,       (1) 
+where 𝑉𝑉𝑗𝑗|𝑘𝑘,𝑐𝑐ℎ𝑡𝑡 is the deterministic indirect utility of alternative 𝑗𝑗|𝑘𝑘,𝑐𝑐 for the household h at time t  
+that is defined as  
+𝑉𝑉𝑗𝑗|𝑘𝑘,𝑐𝑐ℎ𝑡𝑡=𝛼𝛼𝑗𝑗|𝑘𝑘,𝑐𝑐ℎ+𝜃𝜃𝑋𝑋𝑡𝑡′+𝛽𝛽𝑝𝑝𝑗𝑗ℎ𝑡𝑡𝑝𝑝𝑗𝑗𝑡𝑡|𝑘𝑘+𝛽𝛽𝑑𝑑ℎ𝑑𝑑𝑗𝑗𝑡𝑡|𝑘𝑘,𝑐𝑐+𝜉𝜉𝑗𝑗𝑡𝑡|𝑘𝑘,𝑐𝑐,    (2) 
+where 𝛼𝛼𝑗𝑗|𝑘𝑘,𝑐𝑐ℎ is the intrinsic preference of household h for brand alternative 𝑗𝑗 |𝑘𝑘,𝑐𝑐; 𝑋𝑋𝑡𝑡 is a 
+vector contain ing seasonality, monthly minimum/maximum temperatures , and monthly average 
+rainfall  amount ; 𝜃𝜃 is the cor responding vector of parameters 24 F25; 𝛽𝛽𝑝𝑝𝑗𝑗ℎ𝑡𝑡 is the disutility of the 
+household h for price of brand 𝑗𝑗|𝑘𝑘,𝑐𝑐 at time t (i.e., 𝑝𝑝𝑗𝑗𝑡𝑡|𝑘𝑘); 𝛽𝛽𝑑𝑑ℎ is the utility of the household h from 
+the eas e of transportation due to higher availability of the product (e.g., the higher the number of 
+                                                           
+22 Our selection of the proposed NL structure is based on b oth theoretical and empirical robustness. Theoretically, since emerging market consumers 
+suffer the most from accessibility to stores, the first step in a consumer’s decision process should be the retail channel ch oice. Given the channel 
+choice, next, the consumer should decide on the desired product form (solid vs. liquid) since different product forms require different usage n eeds 
+and infrastructure (for example, the liquid product form needs an electric outlet to be used), and the consumer should decide  on her usage need s 
+prior to her brand choice. Finally, given channel and product form choices, the consumer may select her preferred brand. We a lso communicate 
+with managers of the data -providing (insecticide) firm and confirm that this is indeed the typic al decision process for most consumers in the studied 
+insecticide market. To empirically check whether the proposed NL tree is superior, we further estimate two alternative NL demand models: a) 
+product form choice comes first, channel choice comes next, an d brand choice comes last; b) brand choice comes first, product form choice comes 
+next, and channel choice comes last. Empirically, the proposed NL model turns out to be superior (BIC= 40,090.2M ) to these alternatives 
+(BIC= 40,090.9M  M and BIC= 40,091.1M ) respectively, based on the Bayesian Information Criteria. The details are available upon request. 
+23 We model outside option as the market share of remaining small firms excluded from our specification.  
+24 Note that our specification here doesn’t allow hous eholds to choose multiple product forms at a time. This assumption is consistent with our 
+context since the product forms we study are closely substitutable with each other, i.e., the multiple- discreteness is not prominent in our setting.  
+25 Monthly tempera ture and rainfall information is acquired from the data -providing firm for our observation window. Note that since we study the 
+insecticide market, the number of insects , as well as customers’ demand for insecticides,  are highly correlated with rain and te mperature levels 
+(Wolda 1978). Generally, dry (e.g. low rainfall)  and cold weather (e.g., winter season) reduces the insect population; whereas rainy seasons with 
+high temperatures increase it (Porter et al. 1991). Thus, with our utility specification here , in addition to marketing  mix variables  (i.e., price and 
+distribution), we account for weather -related factors (i.e., seasonality, temperature, and rainfall) that might also impact the demand for insecticides.  
+
+16 
+ stores, the lower the transportation cost, i.e. the higher the utility from the distribution) ; 𝑑𝑑𝑗𝑗𝑡𝑡|𝑘𝑘,𝑐𝑐 is 
+the weighted number of stores (see our discussion in the ‘Empirical Context and Data Description’ 
+section of how we construct this variable) by which  brand alternative 𝑗𝑗|𝑘𝑘,𝑐𝑐26 is distributed at time 
+t; and finally , 𝜉𝜉𝑗𝑗𝑡𝑡|𝑘𝑘,𝑐𝑐 is the demand shock for the brand alternative 𝑗𝑗 |𝑘𝑘,𝑐𝑐 at time t 26F27.  
+We model the (brand, household, and time specific) price coefficient 𝛽𝛽𝑝𝑝𝑗𝑗ℎ𝑡𝑡 as follows:  
+𝛽𝛽𝑝𝑝𝑗𝑗ℎ𝑡𝑡=𝛽𝛽𝑝𝑝ℎ+𝛽𝛽𝑝𝑝𝑝𝑝𝑑𝑑ℎ𝑑𝑑𝑗𝑗𝑡𝑡|𝑘𝑘,𝑐𝑐,                                                                              (3)   
+where 𝑑𝑑𝑗𝑗𝑡𝑡|𝑘𝑘,𝑐𝑐 is the (weighted) number of stores in which  brand alternative j|k,c is 
+distributed ; 𝛽𝛽𝑝𝑝𝑝𝑝𝑑𝑑ℎ is the corresponding response parameter ; and 𝛽𝛽𝑝𝑝ℎ is the baseline price disutility 
+for household h. Note that this specification of the price coefficient allows  the households’ price 
+sensitivity for the brand alternative  j|k,c to depend on that brand’s  distribution level. We expect 
+that as the brand alternative j|k,c  is sold in more stores,  the likelihood of it s being sold together 
+with the competing brand increases. This implies the following: the higher the number of stores 
+selling the brand alternative  j|k,c, the higher the potential price competition for that brand. In other 
+words, we expect the price coefficient to be more  negative as 𝑑𝑑 𝑗𝑗𝑡𝑡|𝑘𝑘,𝑐𝑐 increases . To reiterate, our 
+proposed utility specification captures the effect of distribution in two ways: 1) through the direct 
+effect – a higher level of distribution may increase customers’ utility by lowering their 
+transport ation burden (i.e., through  𝛽𝛽𝑑𝑑ℎ from Equation 2) , and 2) through the  indirect effect – the 
+level of the focal product’s distribution may change the price sensitivity for the focal product (i.e., 
+through 𝛽𝛽𝑝𝑝𝑝𝑝𝑑𝑑ℎ) 27F28. 
+                                                           
+26 Inter-channel substitution is not prevalent  in our context as the customers’ decision to choose a channel is usually governed by their transportation 
+cost, loyalty, and self -selection. We confirm our understanding with managers of the focal firm as well as through customer interviews.   
+27 See our ‘ Price and Retail Distribution Endogeneity’ sub -section for how we operationalize the demand shock 𝜉𝜉𝑗𝑗𝑡𝑡|𝑘𝑘,𝑐𝑐. 
+28 It is worth discussing how the baseline price effect ( 𝛽𝛽𝑝𝑝ℎ), direct  distribution effect ( 𝛽𝛽𝑑𝑑ℎ), and the indirect distribution effect through the interaction 
+of distribution and price  (𝛽𝛽𝑝𝑝𝑝𝑝𝑑𝑑ℎ) are empirically identified. The key idea of identification comes from the observed variations in price and distribution  
+variables that yield variations in the observ ed market shares. We illustrate how the empirical identification is possible in our setting through a 
+stylized example in our Web Appendix B. In the same web appendix, we also provide a microsimulation  study to illustrate how we are able to 
+identify  the as sumed demand  parameters (including 𝛽𝛽𝑝𝑝ℎ, 𝛽𝛽𝑑𝑑ℎ , and  𝛽𝛽𝑝𝑝𝑝𝑝𝑑𝑑ℎ) from the simulated data (see our Web Appendix B for the details).  
+
+17 
+ Given the deterministic indirect brand  utilities from Equation (2), product form choice 
+probabilities k=1,2 for household h at time t  becomes:  
+ 𝑃𝑃𝑃𝑃ℎ𝑡𝑡(𝑘𝑘|𝑐𝑐)=𝑒𝑒𝑝𝑝𝑝𝑝�𝜆𝜆𝑘𝑘|𝑐𝑐𝐼𝐼𝑉𝑉𝑘𝑘|𝑐𝑐ℎ𝑡𝑡�
+∑𝑒𝑒𝑝𝑝𝑝𝑝�𝜆𝜆𝑚𝑚|𝑐𝑐𝐼𝐼𝑉𝑉𝑚𝑚|𝑐𝑐ℎ𝑡𝑡�2𝑚𝑚=1,        (4) 
+where k|c is product form k  of channel c , 𝐼𝐼𝑉𝑉𝑘𝑘|𝑐𝑐ℎ𝑡𝑡=ln(∑ exp�𝑉𝑉𝑗𝑗|𝑘𝑘,𝑐𝑐ℎ𝑡𝑡�2
+𝑗𝑗=1 ) is the inclusive value (IV) 
+for product form k|c for household h at time t , and 𝜆𝜆𝑘𝑘|𝑐𝑐 are the corresponding IV parameters . 
+Finally, the channel choice probabilities c=0,1,2 for household h at time t  becomes the following. 
+ 𝑃𝑃𝑃𝑃ℎ𝑡𝑡(𝑐𝑐)=exp  {𝑉𝑉𝑐𝑐ℎ𝑡𝑡}
+∑exp  {𝑉𝑉𝑚𝑚ℎ𝑡𝑡}2𝑚𝑚=0,        (5) 
+where 𝑉𝑉𝑐𝑐ℎ𝑡𝑡=𝑒𝑒𝑒𝑒𝑝𝑝{𝜆𝜆𝑐𝑐𝐼𝐼𝑉𝑉𝑐𝑐ℎ𝑡𝑡} for c=1,2 and 𝑉𝑉0ℎ𝑡𝑡=0 (i.e., the deterministic indirect utility for the 
+outside good is normalized to zero) , 𝐼𝐼𝑉𝑉𝑐𝑐ℎ𝑡𝑡=ln�∑𝑒𝑒𝑒𝑒𝑝𝑝�𝜆𝜆𝑘𝑘|𝑐𝑐𝐼𝐼𝑉𝑉𝑘𝑘|𝑐𝑐ℎ𝑡𝑡�2
+𝑘𝑘=1 � is the IV for channel c =1,2  
+for household h at time t , and 𝜆𝜆 𝑐𝑐 (c=1,2)  are the corresponding IV parameters.  
+Given the household- specific brand, product form , and channel choice probabilities from 
+Equations (1), ( 4), and ( 5), the probability of choosing brand j=1,2 in product form k=1,2 of 
+channel c=1,2 by household h at time t  becomes the following : 
+𝑃𝑃𝑃𝑃ℎ𝑡𝑡(𝑗𝑗,𝑘𝑘,𝑐𝑐)=𝑃𝑃𝑃𝑃ℎ𝑡𝑡(𝑐𝑐)𝑃𝑃𝑃𝑃ℎ𝑡𝑡(𝑘𝑘|𝑐𝑐)𝑃𝑃𝑃𝑃ℎ𝑡𝑡(𝑗𝑗|𝑘𝑘,𝑐𝑐).      (6) 
+Given the household- level choice probability from Equation ( 6), the aggregate market 
+share of brand j  in product form k  of channel c  at time t  (𝑀𝑀𝑆𝑆𝑗𝑗,𝑘𝑘,𝑐𝑐,𝑡𝑡) can be integrated over the 
+household heterogeneity distribution as follows : 
+𝑀𝑀𝑆𝑆𝑗𝑗,𝑘𝑘,𝑐𝑐,𝑡𝑡=∫𝑃𝑃𝑃𝑃ℎ𝑡𝑡(𝑗𝑗,𝑘𝑘,𝑐𝑐)ℎ𝜙𝜙(ℎ)𝑑𝑑ℎ,        (7) 
+where the 𝜙𝜙(ℎ) is the joint density of the unobserved household heterogeneity distribution (see 
+our ‘Unobserved Heterogeneity’ subsection for details).  
+Potential Market Size  
+
+18 
+ Since our context is an emerging market place, the potential market size ( 𝑀𝑀𝑡𝑡) is expected 
+to change over time. To capture such variation in 𝑀𝑀 𝑡𝑡, we model 𝑀𝑀𝑡𝑡 as a function of observed 
+macroeconomic factors of the relevant  emerging marketplace as follows : 
+𝑀𝑀𝑡𝑡=𝑊𝑊𝑡𝑡𝜁𝜁,             (8) 
+where, 𝑊𝑊𝑡𝑡 contains India ’s population, the unemployment rat e, and the GDP of India at time t , 
+and 𝜁𝜁  is the corresponding vector of parameters.  
+ Note that, given the aggregate market share of brand j  in product form k  of channel c  at 
+time t (i.e., 𝑀𝑀𝑆𝑆𝑗𝑗,𝑘𝑘,𝑐𝑐,𝑡𝑡) from Equation ( 7) and the potential market size at time t (i.e., 𝑀𝑀𝑡𝑡) from 
+Equation ( 8), the aggregate sales  of brand j  in product form k  of channel c  at time t (𝑆𝑆𝑗𝑗,𝑘𝑘,𝑐𝑐,𝑡𝑡) can be 
+calculated as follows : 
+𝑆𝑆𝑗𝑗,𝑘𝑘,𝑐𝑐,𝑡𝑡=𝑀𝑀𝑆𝑆𝑗𝑗,𝑘𝑘,𝑐𝑐,𝑡𝑡∗𝑀𝑀𝑡𝑡.         (9) 
+As discussed  earlier, Equation ( 9), i.e., aggregate sales, becomes an input into our supply -
+side distribution and price competition model.  
+Price and Retail Distribution Endogeneity  
+Firms’ other marketing decisions that are unobserved (by the researcher) might be set 
+together with their (pr oduct form -level) price and (product form - and channel -level) distribution 
+decisions. Thus, firms’ price and distribution decisions might be endogenous ( Pattabhiramaiah et 
+al. 2017).  To account  for the potential endogeneity of price and distribution variables, we use a 
+control function approach (Petrin and Train 2010, an  idea similar to the approach in Villas -Boas 
+and Winer 1999). This approach involves running first -stage linear regression models of price 
+(𝑝𝑝𝑗𝑗𝑡𝑡|𝑘𝑘) and distribution ( 𝑑𝑑𝑗𝑗𝑡𝑡|𝑘𝑘𝑐𝑐) on instruments.  
+Due to difficulties in finding valid (and strong) instruments to account  for the potential 
+endogeneity problem in the  price and distribution variables, we review existing marketing studies 
+
+19 
+ to identify instruments used in the literature  (Ataman et al. 2010; Kumar et al. 2015; Pancras and 
+Sudhir 2007 ). Based on this review, we find that the w idely  used instruments (in the literature)  to 
+account  for price (retail distribution) endogeneity are 1) the pricing (distribution) levels of firms 
+in similar markets; 2) the cost of raw materials ( diesel/gasoline ); and 3) past performance metrics 
+such as differences in lagged sales. Note that since our sett ing is the entire India n market, it is not 
+feasible for us to acquire marketing instruments from other similar markets (with similar retail 
+channels, customer/firm characteristics , and behaviors). Regarding  the other potential instruments 
+discussed, we use a combination of instruments to account for the potential price and distribution 
+endogeneity problem. First, we collect time -variant  prices  of raw material s – 𝐶𝐶𝐶𝐶𝐶𝐶𝐶𝐶 _𝑅𝑅𝑅𝑅𝑅𝑅𝑗𝑗,𝑡𝑡 for firm 
+j at time t  used in the production of insecticides  – and use these as instruments to account for price 
+endogeneity. The use of raw material costs to control price endogeneity is quite common in the literature ( see, for example, Cosguner et al. 2018; Pancras and Sudhir 2007).  Raw material costs 
+should impact the pric ing decision of a firm’s product . However, such costs are unlikely to impact 
+the specific sales of the  firm, at least directly.  Following similar logic, we use the cost of diesel – 
+Diesel
+t at time t  as an instrument to account for the retail distribution endogeneity problem. Second, 
+managers might look at their firm’s earlier performance and make their current marketing  mix 
+decisions accordingly. Along this line, we use changes in sales from time t -2 to t -1 (denoted by 
+∆𝑆𝑆𝑅𝑅𝑆𝑆𝑒𝑒𝐶𝐶𝑗𝑗𝑘𝑘,𝑡𝑡−2→𝑡𝑡−1) as an additional instrument to account for potential price and distribution 
+endogeneity problems. Changes in the sales should impact the efficacy of the marketing  mix at t ; 
+however, it should not impact the demand itself at t . The choice of the sales difference as an 
+instrument  is also consistent with the existing marketing studies ( Ataman et al. 2010). In the end, 
+our first st age regression equations become:  
+𝑝𝑝𝑗𝑗𝑡𝑡|𝑘𝑘=𝛿𝛿1𝐶𝐶𝐶𝐶𝐶𝐶𝐶𝐶 _𝑅𝑅𝑅𝑅𝑅𝑅𝑗𝑗,𝑡𝑡+𝛿𝛿2∆𝑆𝑆𝑅𝑅𝑆𝑆𝑒𝑒𝐶𝐶𝑗𝑗𝑘𝑘,𝑡𝑡−2→𝑡𝑡−1+𝑅𝑅𝑗𝑗𝑡𝑡|𝑘𝑘   (10a) 
+
+20 
+ 𝑑𝑑𝑗𝑗𝑡𝑡|𝑘𝑘,𝑐𝑐=𝛿𝛿3𝐷𝐷𝐷𝐷𝑒𝑒𝐶𝐶𝑒𝑒𝑆𝑆𝑡𝑡+𝛿𝛿4∆𝑆𝑆𝑅𝑅𝑆𝑆𝑒𝑒𝐶𝐶𝑗𝑗,𝑘𝑘,𝑐𝑐,𝑡𝑡−2→𝑡𝑡−1+𝑅𝑅𝑗𝑗𝑡𝑡|𝑘𝑘,𝑐𝑐.   (10b) 
+ First-stage regressions yield F -statistics that are significantly larger than 10. In addition, 
+we obtain R2 measures of 55.3% and 42.1% (on average) from Equations (10a) and (10b), 
+respectively. We check the validity of our instruments using a correlation analysis and conduct a 
+modified Sargan test. These analyses show that our instruments are both valid and strong 28F29. 
+We label 𝑅𝑅 𝚥𝚥𝑡𝑡|𝑘𝑘�  as the fitted firm-  and product form -specific price residual, and 𝑅𝑅 𝚥𝚥𝑡𝑡|𝑘𝑘,𝑐𝑐�  as 
+the fitted firm- , product  form -, and channel -specific distribution residua l for firm j  for each month. 
+We use linear functions of these residuals, 𝜑𝜑𝑗𝑗|𝑘𝑘𝑅𝑅𝚥𝚥𝑡𝑡|𝑘𝑘�  (for the price)  and 𝜑𝜑𝑗𝑗|𝑘𝑘,𝑐𝑐𝑅𝑅𝚥𝚥𝑡𝑡|𝑘𝑘,𝑐𝑐�  (for 
+distribution) , to approximate the demand shock 𝜉𝜉𝑗𝑗𝑡𝑡|𝑘𝑘,𝑐𝑐 in Equation (2) . The assumption of the 
+control function approach is that, conditional on  𝑅𝑅𝚥𝚥𝑡𝑡|𝑘𝑘�  𝑅𝑅𝚥𝚥𝑡𝑡|𝑘𝑘,𝑐𝑐� , the Type I Extreme Value error term 
+𝜀𝜀𝑗𝑗𝑡𝑡|𝑘𝑘,𝑐𝑐 (from the bottom choice level of the NL, i.e., brand choice) becomes independent from 𝑝𝑝𝑗𝑗𝑡𝑡|𝑘𝑘 
+and 𝑑𝑑𝑗𝑗𝑡𝑡|𝑘𝑘,𝑐𝑐. This approach has been used widely in the literature to control  for the potential 
+endogeneity problem in marketing variables ( see, for exampl e, Ma et al. 2005 ; Zhang et al. 2017).   
+Unobserved Heterogeneity  
+Different households may have different intrinsic preferences for the different  firm, 
+product form , and retail channel combinations, and further, they may respond to marketing mix 
+variables differently.  To control for such unobserved household- level  heterogeneity, we use the 
+random coefficient specification ( Keane and Wasi 2013; Park and Gupta 2009). The use of t he 
+random coefficient specification in the estimation of choice models with aggregate sales data (such 
+as ours) is very common in the literature (see, for example,  Chintagunta 2001; Sudhir 2001b).  
+                                                           
+29 The correlation between the dependent variable and exclusion restrictions ranges between 0.12 and 0.21 suggesting that our in struments are valid. 
+The modified Sargan test for over -identification of instruments further supports the validity of our instrume nts. In addition, t he correlation between 
+endogenous variables and instruments ranges between 0.38 and 0.79, suggesting that the instruments are strong.  We confirm our intuition regarding 
+the instruments with managers of the data -providing firm. Managers s tate that they consider both cost-related  instruments and lagged sales 
+difference s to decide on their price and distribution strategies at  time t. We have also tested for the potential serial correlation in demand and did 
+not find any evidence of the same. 
+ 
+
+21 
+ Specifically, we assume that the household- level preference parameters in Equations (2) 
+and (3) come from the following distributions : 𝛼𝛼𝑗𝑗|𝑘𝑘,𝑐𝑐ℎ~𝑁𝑁(𝜇𝜇𝛼𝛼𝑗𝑗|𝑘𝑘,𝑐𝑐ℎ ,𝜎𝜎𝛼𝛼𝑗𝑗|𝑘𝑘,𝑐𝑐ℎ2),𝛽𝛽𝑝𝑝ℎ~𝑁𝑁(𝜇𝜇𝛽𝛽𝑝𝑝ℎ,𝜎𝜎𝛽𝛽𝑝𝑝ℎ2) and 
+𝛽𝛽𝑑𝑑ℎ~𝑁𝑁(𝜇𝜇𝛽𝛽𝑑𝑑ℎ,𝜎𝜎𝛽𝛽𝑑𝑑ℎ2), where 𝜇𝜇𝛼𝛼𝑗𝑗|𝑘𝑘,𝑐𝑐ℎ, 𝜇𝜇𝛽𝛽𝑝𝑝ℎ and 𝜇𝜇𝛽𝛽𝑑𝑑ℎ (𝜎𝜎𝛼𝛼𝑗𝑗|𝑘𝑘,𝑐𝑐ℎ2, 𝜎𝜎𝛽𝛽𝑝𝑝ℎ2 and 𝜎𝜎𝛽𝛽𝑑𝑑ℎ2) are mean values (variances) of 
+households’ intrinsic preference for firm j  in product form  k of channel c, disutility for price, and 
+utility for distribution (for eas e of access to products), respectively.  
+Supply -Side Price and Distribution Competition Model  
+For our empirical application, as noted before, we focus on two major insecticide firms 
+(i.e., J=2 ), two major product forms  (liquid and solid, i.e., K=2 ), and two major retail channels 
+(paan -plus and general stores, i.e., C=2 ). We define the profit function for the jth (j=1,2)  firm at  
+time t  as follows : 
+𝜋𝜋𝑗𝑗𝑡𝑡=∑∑�𝑝𝑝𝑗𝑗𝑡𝑡|𝑘𝑘−𝑚𝑚𝑐𝑐𝑗𝑗𝑡𝑡|𝑘𝑘�𝑆𝑆𝑗𝑗,𝑘𝑘,𝑐𝑐,𝑡𝑡2
+𝑘𝑘=12
+𝑐𝑐=1 −∑∑𝑑𝑑𝑐𝑐𝑗𝑗𝑡𝑡|𝑘𝑘,𝑐𝑐∗2
+𝑐𝑐=1 𝑑𝑑𝑗𝑗𝑡𝑡|𝑘𝑘,𝑐𝑐2 2
+𝑘𝑘=1 ,  (11) 
+where 𝑚𝑚𝑐𝑐 𝑗𝑗𝑡𝑡|𝑘𝑘 is the time -variant (marginal) production cost for brand j  in product form  k at time t , 
+𝑑𝑑𝑐𝑐𝑗𝑗𝑡𝑡|𝑘𝑘,𝑐𝑐 is the time variant parameter of the convex 29F30 distribution cost function ( Gallego and Wang 
+2014; Ghosh and Shah 2015) of firm j  in product form  k of channel c at time t 30F31, and 𝑆𝑆𝑗𝑗,𝑘𝑘,𝑐𝑐,𝑡𝑡 is the 
+aggregate demand function from Equation ( 9).  
+                                                           
+30 We make the convex cost assumption for two reasons. First, the convexity assumption is needed to keep supply -side equilibrium calculations 
+(for the counterfactual studies) computationally tractable. Second, due to the abundance of underdeveloped rural markets in India, as confirmed by 
+the managers of the data -providing firm, increasing the number of stores creates sufficiently large costs for firms. For example, if a firm starts 
+distributing in various far -reach areas to fulfill the demand, the firm needs to buy new trucks, hire more drivers, and obviously pay more for the 
+diesel . Therefore , in the studied marketplace, i ncreasing distribution levels magnifies the cost of distribution exponentially. As a robustness check, 
+we estimate the distribution cost  under the linear cost assumption. Since magnitudes of convex and linear distribution costs are not directly 
+comparable, we only report the results with the convex cost here. However, the results with the linear distribution cost are also available upon 
+request. 
+31 We acknowledge that our retail distribution cost specification does not capture the fixed costs of initializing new retail distribution agreements 
+between a firm and its stores (such as the cost of initial negotiations between the firm and store managers) . Instead, our specification captures the 
+costs of maintaining retail distribution relationships between the firm and its stores that have already agreed to distribute  the firm’s products. 
+Modeling such fixed costs is not empirically possible with our curr ent dataset since we are not able to distinguish  between a firm’s new stores and 
+its repeat -distributing stores; instead, we just observe the total number of stores distributing the firm’s products. Even though modeli ng such fixed 
+costs is not possible in our current setting, we believe that such fixed costs are reasonably small in the studied marketplace due to  the small sizes 
+of stores compared to typical grocery chains in most developed markets. Thus, it is relatively easier (i.e., less costly) for  the s tudied firms to get 
+stores to agree to sell their products in our emerging market context. However, if such distribution information (previously versus recently acquired 
+stores) is available, we believe that modeling such fixed costs is an important, but c hallenging area of future research.  
+
+22 
+ Under the Bertrand pricing and distribution assumption for the game played among 
+manufacturers, and the profit function of firm j  at time t  from Equation ( 11), the first -order 
+conditions for the jth firm’s profit with respect to its product  form -level prices can be written as:  
+𝑑𝑑𝑑𝑑𝑗𝑗𝑡𝑡
+𝑑𝑑𝑝𝑝𝑗𝑗𝑡𝑡|𝑘𝑘=𝑆𝑆𝑗𝑗,𝑘𝑘,𝑡𝑡+∑�𝑝𝑝𝑗𝑗𝑡𝑡|𝑘𝑘−𝑚𝑚𝑐𝑐𝑗𝑗𝑡𝑡|𝑘𝑘�𝜕𝜕𝑆𝑆𝑗𝑗,𝑘𝑘,𝑡𝑡
+𝜕𝜕𝑝𝑝𝑗𝑗𝑡𝑡|𝑘𝑘2
+𝑘𝑘=1  , k=1, 2,      (12) 
+where 𝑆𝑆𝑗𝑗,𝑘𝑘,𝑡𝑡= ∑𝑆𝑆𝑗𝑗,𝑘𝑘,𝑐𝑐,𝑡𝑡2
+𝑐𝑐=1   and   𝜕𝜕𝑆𝑆𝑗𝑗,𝑘𝑘,𝑡𝑡
+𝜕𝜕𝑝𝑝𝑗𝑗𝑡𝑡|𝑘𝑘=∑𝜕𝜕𝑆𝑆𝑗𝑗,𝑘𝑘,𝑐𝑐,𝑡𝑡
+𝜕𝜕𝑝𝑝𝑗𝑗𝑡𝑡|𝑘𝑘2
+𝑐𝑐=1 . Note that this summation across  channels is 
+possible since firms have identical profit margins across different channels, i.e., pricing decisions 
+are not made at the channel level 31 F32. Setting these first- order conditions in Equation ( 12) to zero at 
+the firm and product form  level s, and solving them simultaneously, the time -variant cost of 
+production ( 𝑚𝑚𝑐𝑐𝑗𝑗𝑡𝑡|𝑘𝑘) can be inverted as follows 32 F33:  
+𝑚𝑚𝑐𝑐𝚥𝚥𝑡𝑡|𝑘𝑘� =𝑝𝑝𝑗𝑗𝑡𝑡|𝑘𝑘+�𝑆𝑆𝑗𝑗,−𝑘𝑘,𝑡𝑡∗𝜕𝜕𝑆𝑆𝑗𝑗,−𝑘𝑘,𝑡𝑡
+𝜕𝜕𝑝𝑝𝑗𝑗𝑡𝑡|𝑘𝑘 − 𝑆𝑆𝑗𝑗,𝑘𝑘,𝑡𝑡∗𝜕𝜕𝑆𝑆𝑗𝑗,−𝑘𝑘,𝑡𝑡
+𝜕𝜕𝑝𝑝𝑗𝑗𝑡𝑡|−𝑘𝑘�/�𝜕𝜕𝑆𝑆𝑗𝑗,1,𝑡𝑡
+𝜕𝜕𝑝𝑝𝑗𝑗𝑡𝑡|2∗𝜕𝜕𝑆𝑆𝑗𝑗,2,𝑡𝑡
+𝜕𝜕𝑝𝑝𝑗𝑗𝑡𝑡|1 − 𝜕𝜕𝑆𝑆𝑗𝑗,1,𝑡𝑡
+𝜕𝜕𝑝𝑝𝑗𝑗𝑡𝑡|1∗𝜕𝜕𝑆𝑆𝑗𝑗,2,𝑡𝑡
+𝜕𝜕𝑝𝑝𝑗𝑗𝑡𝑡|2� (13) 
+To invert time -variant distribution costs, we plug the inverted time -variant marginal costs 
+from Equation ( 13) into the profit function from Equation ( 11), and then calculate the first- order 
+conditions for firm  j’s profit with respect to product form k  of channel c distribution as follows:  
+𝜕𝜕𝑑𝑑𝑗𝑗,𝑡𝑡
+𝜕𝜕𝑑𝑑𝑗𝑗𝑡𝑡|𝑘𝑘,𝑐𝑐=∑∑ (𝑝𝑝𝑗𝑗𝑡𝑡|𝑚𝑚2
+𝑐𝑐=12𝑚𝑚=1−𝑚𝑚𝑐𝑐𝚥𝚥𝑡𝑡|𝑚𝑚� )𝜕𝜕𝑆𝑆𝑗𝑗,𝑚𝑚,𝑐𝑐,𝑡𝑡
+𝜕𝜕𝑑𝑑𝑗𝑗𝑡𝑡|𝑘𝑘,𝑐𝑐−2𝑑𝑑𝑐𝑐𝑗𝑗𝑡𝑡|𝑘𝑘,𝑐𝑐𝑑𝑑𝑗𝑗𝑡𝑡|𝑘𝑘,𝑐𝑐, c=1,2, k=1,2.  (14) 
+By setting the first- order conditions above to zero, we can invert the time -variant distribution cost 
+(𝑑𝑑𝑐𝑐𝑗𝑗𝑡𝑡|𝑘𝑘,𝑐𝑐) as the following : 
+𝑑𝑑𝑐𝑐𝚥𝚥𝑡𝑡|𝑘𝑘,𝑐𝑐� = ∑∑ (𝑝𝑝𝑗𝑗𝑡𝑡|𝑚𝑚2
+𝑙𝑙=12𝑚𝑚=1 −𝑚𝑚𝑐𝑐𝚥𝚥𝑡𝑡|𝑚𝑚� )𝜕𝜕𝑆𝑆𝑗𝑗,𝑚𝑚,𝑙𝑙,𝑡𝑡
+𝜕𝜕𝑑𝑑𝑗𝑗𝑡𝑡|𝑘𝑘,𝑐𝑐
+2𝑑𝑑𝑗𝑗𝑡𝑡|𝑘𝑘,𝑐𝑐.               (15) 
+                                                           
+32 The pricing decision at the retail channel level is computationally  feasible if firms charge different prices across different channels. However, 
+that is not the case in our study context  since  we don’t observe any pri ce variations across different channels for brands in the same product form.  
+33 Note that, based on Equation (13), 𝑚𝑚𝑐𝑐𝚥𝚥𝑡𝑡|𝑘𝑘�  gets smaller as i) the demand of the focal (i.e., k ) and the competing (i.e., -k) product forms ( 𝑆𝑆𝑗𝑗,𝑘𝑘,𝑡𝑡 and 
+ 𝑆𝑆𝑗𝑗,−𝑘𝑘,𝑡𝑡) get larger; ii) the cross price derivatives of the focal and the competing product form’s demands ( 𝜕𝜕𝑆𝑆𝑗𝑗,𝑘𝑘,𝑡𝑡/𝜕𝜕𝑝𝑝𝑗𝑗𝑡𝑡|−𝑘𝑘 and 𝜕𝜕𝑆𝑆𝑗𝑗,−𝑘𝑘,𝑡𝑡/𝜕𝜕𝑝𝑝𝑗𝑗𝑡𝑡|𝑘𝑘) gets 
+larger; iii) the (absolute value of the) own price derivative of the focal product form demand ( �𝜕𝜕𝑆𝑆𝑗𝑗,𝑘𝑘,𝑡𝑡/𝜕𝜕𝑝𝑝𝑗𝑗𝑡𝑡|𝑘𝑘�) gets smaller; iv) if  𝑆𝑆𝑗𝑗,𝑘𝑘,𝑡𝑡>
+�𝜕𝜕𝑆𝑆𝑗𝑗,𝑘𝑘,𝑡𝑡/𝜕𝜕𝑝𝑝𝑗𝑗𝑡𝑡|𝑘𝑘�, the (absolute value of the) own price derivative of the competing product form demand ( �𝜕𝜕𝑆𝑆𝑗𝑗,−𝑘𝑘,𝑡𝑡/𝜕𝜕𝑝𝑝𝑗𝑗𝑡𝑡|−𝑘𝑘�) gets larger.  
+
+23 
+ As seen in Equations  (13) and (15), we have closed -form expressions for the production 
+and distribution costs ( given the aggregate sales model from Equation (9) and the observed prices 
+and distribution levels in the data ). We acknowledge that the identification of the costs in Equation s 
+(13) and (15) relies on  our supply -side Bertrand competition assumption of the game played among 
+manufacturers . In other words, the inverted costs in Equations (13) and (15) would be different  
+(but still identif iable),  if a different game assumption was made in the supply  side. Accordingly , 
+we estimate an alternative game in which firms are assumed to be in tacit collusion to check 
+whether our Bertrand assumption is a reasonable one. See  the “Do Firms Collude in the Insecticide 
+Market? ” subsection under  the “Estimation Results” section for the details of that comparison.     
+Model Estimation  
+ As discussed earlier, we estimate our aggregate market share (at the brand, product form , 
+and retail channel levels) and potential market size models in our first- step estimation. Parameters 
+of the aggregate market share model are estimated by  maximizing the log  of the simulated sample 
+likelihood below 33F34: 
+𝐿𝐿=∏ {∏∏∏𝑀𝑀𝑆𝑆𝑗𝑗,𝑘𝑘,𝑐𝑐,𝑡𝑡𝐷𝐷𝑗𝑗,𝑘𝑘,𝑐𝑐,𝑡𝑡 𝐶𝐶
+𝑐𝑐=1𝐾𝐾
+𝑘𝑘=1𝐽𝐽
+𝑗𝑗=1𝑇𝑇
+𝑡𝑡=1 }∗𝑀𝑀𝑆𝑆0,𝑡𝑡𝐷𝐷0,𝑡𝑡,    (16) 
+where 𝐷𝐷𝑗𝑗,𝑘𝑘,𝑐𝑐,𝑡𝑡 is the sales of brand j  (in product form  k of channel c  at time t ); 𝐷𝐷0,𝑡𝑡 is the sales of 
+the outside good; and 𝑀𝑀𝑆𝑆 𝑗𝑗,𝑘𝑘,𝑐𝑐,𝑡𝑡 is the aggregate market share of brand j  (in product form  k of channel 
+c at time t ) defined in Equation ( 7). Parameters of the potential market size model ( i.e., 𝑀𝑀𝑡𝑡) in 
+Equation ( 9) are estimated via  the ordinary least squares (OLS)  method.  
+                                                           
+34 We acknowledge that it is more common to us e Berry’s (1994) formulation of logit (NL in our specification) to estimate demand with market -
+level sales data. Instead, we implement a simulated likelihood -based approach for the following reason. As discussed by Park and Gupta (2009), 
+Berry (1994) assum es that the observed market shares of alternatives (brands, product forms, and channels in our case) should have no sampling 
+error. In other words, the randomness in market shares only comes from unmeasured product characteristics. Thus, if the sampl ing er ror in shares 
+is small, Berry (1994) can provide consistent estimates of the demand -side parameters. Whereas, in our case, there might be sampling errors in 
+market shares since 1) the size of the households is evolving over time due to our emerging market setting; 2) the product category studied is 
+somewhat seasonal, as opposed to a typical repeat purchase category, i.e., the number of customers may be varying over time; and 3) the number 
+of stores carrying the products also evolve  over time, i.e., the size of the covered market may change over time. Park and Gupta (2009) show that 
+the simulated likelihood -based estimation method can allow such sampling errors in market shares and still yield unbiased and efficient demand 
+parameter estimates. Therefore, we i mplement a simulated likelihood -based approach to estimate our demand -side parameters.  
+
+24 
+ The aggregate sales model  (i.e., 𝑆𝑆𝑗𝑗,𝑘𝑘,𝑐𝑐,𝑡𝑡) defined in Equation ( 9) is used as input into our 
+second -step estimation that involves the inversion of time -variant production and distribution costs 
+defined in Equations  (13) and (15), respectively. Once production (distribution) costs are inverted, 
+we pool these production (distribution)  costs across firms and product forms (across firms, product 
+forms , and retail channels). Then, we estimate our production (distribution) cost function by 
+modeling these pooled production (distribution) costs as a function of the dumm y variables  of each 
+firm and product form  combination (each firm, product form , and channel combination) and years, 
+and the interaction of these dummy variables.  
+Before discussing our estimation results, we would like to note that, in this study, we have 
+not considered retailers’ pricing rules  (i.e., we assume that retailers are not strategic, acquiring  a 
+fixed and small percentage of the entire channel’s profit margin 34 F35) unlike some previous research 
+studying vertical  pricing interactions (e.g., Sudhir 2001a ; Villas -Boas 2007)  in distribution 
+channels . We make this assumption for the following reasons. First, as explained earlier, the retail 
+industry is unorganized in most emerging markets ( Jerath et al. 2016 ). For example, 85% of the 
+retail industry in BRIC countries is unorganized 35 F36. The retail industry in eme rging markets is 
+mostly dominated by small mom- and-pop and grocery channels, which are individually owned, 
+small in size, low in capital investment, but large in number ( Sarma 2005 ). Chain retailing or 
+organized retail businesses are not as prevalent in emerging mar kets as in developed markets, 
+although there is a slow transition to  the adoption of chain retailing (modern stores) ( Narayan et 
+al. 2015). Hence, the bargaining power of retailers is very limited in emerging markets . In addition, 
+since the size of emerging markets is large  and the retail infrastructure is not well- developed ( Sheth 
+                                                           
+35 In our application, since the retailers’ profit margin percentage is not observed, rather than assuming an arbitrary percenta ge (such as 5% or 10%) 
+for the retailer, w e assume that the entire channel margin goes to manufacturers. If the retailers’ percentage margins are observed, the profit function 
+in Equation (11) can easily be modified, and production and distribution costs from Equations (13) and (15) can be inverte d accordingly.  
+36 http://rasci.in/downloads/2007/The_BRIC_Promise_2007.pdf  
+
+25 
+ 2011), receiving  supply from manufacturers regularly is more important (to satisfy customer 
+demand) than strategically setting prices  for small emerging market retailers. Finally , in our 
+empirical setting, it is not feasible for us to model the retailers’ pricing roles since we do not have 
+sales data at the individual store level . 
+Estimation Results  
+In this section, f irst, we discuss our  demand -side model selection by showing the 
+importance of considering households’ sequential choice process (the channel first, product  form 
+next, and brand last) and the role of distribution in the demand estimation. Second, we discuss our 
+demand -side estimation results. Third , we discuss our supply -side estimation results. Fourth, we 
+discuss implications of ignoring the role of distribution in estimating firms’ profit margins. Finally, 
+we discuss our robustness check regarding the identification of the  supply -side game played in the 
+data, i.e., Bertrand competition versus collusion. 
+Demand Side Model Selection  
+Our demand- side estimates are reported in Table 3. We estimate three different demand 
+models: 1) multinomial logit demand with price and distribu tion (labeled as Model 1); 2) nested 
+logit demand without distribution (labeled as Model 2);  and 3) nested logit demand with both price 
+and distribution, i.e., our proposed demand model (labeled as Model 3) 36F37. As expected, the NL 
+demand model with both price and distribution 37F38, i.e., Model 3, outperforms both Model s 1 and 2 
+based on the BIC (BIC MODEL 1 =40,092.7M , BIC MODEL 2 =40,113.0M  and BIC MODEL 
+                                                           
+37 In all three estimated demand models, we control for both the potential endogeneity problem (in price and distribution variab les) and unobserved 
+customer heterogeneity. Under our proposed NL structure, if we drop both the endogeneity correction and heterog eneity, the BIC value increases 
+to 40,117.9M from 40,090.2M. If we account for endogeneity without controlling for heterogeneity, the BIC value becomes 40,09 5.6M. This 
+suggests that, in our emerging market setting, accounting  for endogeneity explains relat ively more data variations compared to controlling consumer  
+heterogeneity.  
+38 Regarding the starting values of the parameters in the estimation, we first estimated the homogenous multinomial logit (MNL) model in which 
+the converged set of parameters globall y maximizes the log -likelihood. We next use the estimated parameters from the homogeneous MNL as the 
+starting values of the homogenous NL model. Last, we use the estimated parameters from the homogenous NL model to estimate th e parameters of 
+the heterogeneous NL model. To simulate the log -likelihood under the heterogeneous NL case, we use a set of R=500 i.i.d. standard Normal draws 
+that are drawn at the seed=1.  
+
+26 
+ 3=40,090.2M ) 38F39. Due to the inferior data fit of Model s 1 and 2, we use Model 3 as our main model 
+for further analysis.  
+[Insert Table 3 about here]  
+Demand -Side Estimation Results  
+As seen in Table 3, based on the estimated mean intrinsic preference parameters, customers 
+prefer Firm 1,  the solid product  form, and paan- plus stores to  Firm 2, the liquid product form, and 
+general stores, respectively. As expected, our estimated mean price and distribution coefficients 
+turn out to be negative ( -0.04)  and positive (0.003), respectively. This suggests that as the price of 
+a brand- product form  (the distribution level of a brand- product form -channel) combination 
+increases , customer utility for the corresponding combination decreases (increases ). This finding 
+suggests that there is a direct  positive effect of distribution (through lowering the transportation 
+burden) on customer  utilities. As discussed before, the level of distribution might also have an 
+indirect effect through changing households’ price sensitivities. Our results suggest that as  the 
+level of distribution for a  brand- product form -channel combination increases,  customers’ price 
+sensitivity for that combination also increases . This finding highlights the importance of modeling 
+households’ price disutility as a function of the corresponding brand- product form -channel 
+combination’s  distribution level to be able to understand the true pricing responses of households . 
+Regarding unobserved heterogeneity, we find that households in the insecticide market are 
+highly heterogeneous in terms of their intrinsic preferences and their responsiveness to marketing mix variables. W e find estimates for price and distribution endogeneity controls to be  significant. 
+Further, our results suggest that seasonality, temperature , and rainfall controls are significant , 
+                                                           
+39 Note that the comparison of Model 1 and Model 3 shows that there are significant differences in  the sizes of estimated preference parameters if 
+one does not consider households’ sequential decision process in the estimated choice model (i.e., use  of MNL rather than NL). Further, the 
+comparison of Models 2 and 3 shows that ignoring the role of distri bution also causes significant biases in the estimated preference parameters. For 
+example, the price coefficient is 24% underestimated in Model 2 compared to Model 3, suggesting that it is important to consider the effect of 
+distribution in the demand esti mation even if one’s objective is solely to understand households’ responses to prices to make sales  forecasting.  
+
+27 
+ suggesting that controlling weather -related factors is also important in understanding households’ 
+demand for insecticides . Finally, we find that estimates for inclusive value parameters (of our NL  
+specification) are significant and varying in sizes across different channel and product form nests , 
+suggesting that the nested structure  helps us capture meaningful variations  in the observed sales 
+data.  
+Supply -Side Estimation Results  
+To estimate the production cost function, we first pool the inverted (marginal) production 
+costs fr om Equation ( 13) across firms and product forms . Second, we estimate a linear regression 
+model by using the pooled production costs as our dependent variable, and firm -product form 
+dummies 39F40, year dummies 40 F41, and the interaction of these dummies 41F42 as our independent variables .  
+The parameter estimates of this regression model are reported in the first column of Table 4 as 
+Model 1. As seen in Table 4 , all firm- product form dummies, year dummies , and their interactions 
+are significant , implying that producti on costs not only differ across different firms and product 
+forms but also over time. Further,  the estimated  production cost s are in the same ballpark as the 
+actual cost estimates of managers of the data -providing firm. The differences in costs between 
+model predictions and managerial estimates vary between - 8.73% to + 10.12 %. That provides face 
+validity to our cost estimates.  
+[Insert Table 4 about here]  
+                                                           
+40 Production costs might differ across different firms and within the same firm across different product forms. That’s why we u se firm -product  
+form dummies. Further, note that the inverted production costs are nothing but the observed prices minus optimal margins pred icted by our supply -
+side model. In other words, the variations in the inverted production costs are the unexplained variations (by  our model) in observed prices. Since 
+pricing levels  may differ not only across firms but also within the same firm across product forms, firm -product form dummies can be used to 
+capture such unexplained variation in observed prices that are embedded into the recovered production costs. 
+41 Since the macroeconomic environment in our emerging market is not constant, and since firms might be investing in their produ ction technologies 
+through R&D investments, we expect that firms’ marginal cost of production may  also change over time. Accordingly, we control these time-
+variant effects through the year dummies in our production cost regression.  
+42 It is possible that different firms might invest differently in improving their production technologies (across differe nt product forms) over time. 
+Further, macroeconomic changes in the emerging marketplace might change production cost structures differently for different product forms. To 
+capture such dynamics, we use the interactions of our firm -product form dummies and year dummies as additional controls.  
+
+28 
+ To estimate the distribution  cost function, similar to the production cost function 
+estimation, we  first pool the inverted distribution costs from Equation (15) across firms,  product 
+forms , and retail channels. Next , we estimate a linear regression model by using the pooled 
+distribution  costs as our dependent variable, and firm -product form -channel  dummies 42F43, year 
+dummies , and the interaction of these dummies as our independent variables . The parameter 
+estimates of this regression model are reported in the first column of Table 5 as Model 1. As seen 
+in Table 5, the estimates suggest that distribution costs diff er not only across different firms, 
+product form s, and retail channels but also over time to a smaller  extent.  
+[Insert Table 5 about here]  
+Note that our proposed supply -side model can easily be used by emerging market firms to 
+understand their  competitor s’ cost asymmetries . This information carries  an important value  for 
+firms  in optimizing their  decisions  and calculating their competitors’ reactions . Moreover , 
+understanding the cost of distribution and production might be useful  for firms that are planning  
+to enter  into the  insecticide market to a ssess the profitability of their entry decisions.  
+Role of Retail Distribution in the Supply -Side Estimation  
+In this subsection, we aim to illustrate the role of ignoring  distribution on profit -
+maximizing firms’ pricing decisions. Since the previous models studying firm competition ignore 
+the role of distribution and solely focus on pric e optimization , to achieve our objective , we estimate 
+a price -only supply -side model and compare that benchmark model to  our proposed supply -side 
+model with price and distribution. For the price -only model, we use the estimated price -only 
+demand model (Model 2) in Table 3 as the input and derive the marginal production cost in 
+                                                           
+43 Similar to our previous discussion, distribution costs may not only differ across firms but also within the same firm and acr oss different product 
+forms and retail channels. Further, distribution costs can differ over  time due to i) changes in the macroeconomic environment; and ii) firms’ 
+investments in their transportation technologies and storage/warehouse infrastructures/facilities.   
+
+29 
+ Equation (13). Next, we estimate a production c ost function similar to Model 1 in Table 4 with 
+firm-product form  dummies, year dummies, and their interactions . We label this model as Model 
+2 and report its estimated parameters in Table 4. Our proposed model, i.e., Model 1, outperforms 
+the price- only model, i.e., Model 2, both in terms of 𝑅𝑅2 (95.97%  versus 92.09% ) and SSR 
+(1,002.24 versus 1,421.90) criteria. This suggests that ignoring distribution significantly worsens 
+the fit of the estimated production cost function 43F44.  
+Next, we use the estimated parameters from Model s 1 and 2 (in Table 4) to calculate the 
+optimal profit margins for each firm and product form  combination over our observed data span 
+of four years. Results related to the comparison of the calculated equilibrium profit margins are 
+reported in Table 6. As evident from Table 6, ignoring distribution causes substantive over -
+estimation of optimal profit margins ranging from 7% (Firm 1 in solid -form on Year 2 ) to 55% 
+(Firm 1 in liquid  form on Year 4 ). These results suggest that the incorpor ation of distribution along 
+with price in firms ’ profit maximization objectives is indeed a critical requirement for emerging 
+market firms and ignoring the distribution might cause firms to set  prices that are significantly 
+higher than optimal levels.  
+[Insert Table 6 about here]  
+Do Firms Collude in the Insecticide Market?  
+Note that we assume firms (in our emerging market context) compete in both price and 
+distribution. However, there is a possibility that firms may tacitly collude (rather than compete) 
+and decide on price and distribution levels based on maximizing the combined profits  in the 
+                                                           
+44 Note that inverted marginal production costs under both the proposed and price -only models correspond to the unexplained parts of the observed 
+price variations by the proposed and price -only models, respectively. Thus, comparing SSR values under both the proposed and price -only scenarios 
+tells us which supply -side specification explains the observed price variations better, i.e., the model with smaller SSR value explains the observe d 
+pricing patterns better. A similar idea has been implemented by Cosguner et al. (2018) to compare supply -side pricing models (dynamic versus 
+myopic in their setting).  
+
+30 
+ insecticide category 44 F45. To show that our assumption of Bertrand competition in pricing is 
+consistent with our data, we estimate a model of collusive pricing. See Model 3 in Table 4 for the 
+estimated production cost function under this collusive pricing assumption. Results suggest that our proposed production cost model (Model 1 in Table 4) performs significantly better 
+(𝑅𝑅
+2=95.97%  and SSR= 1,002.4) than the production cost model under the collusive pricing 
+assumption ( 𝑅𝑅2=87.78%  and SSR= 7,026.77). This suggests that the observed price variations  in 
+the data can be better explained by the  proposed price competition model than the alternative 
+collusive pricing  model.  
+Even though firms compete in prices, there is still a possibility that they might be colluding 
+in their distribution decisions. To test whether the observed data supports collusion (rather than competition), we estimate the distribution cost function under the collusion assumption (see Model 2 in Table 5  for the estimates of this alternative model). Similar to the collusive pricing model, we 
+find that the distribution cost model under the collusive distribution assumption has a poor  fit in 
+comparison to our proposed model ( 𝑅𝑅
+2 of 96.46%  versus 98.86%;  and SSR of 4,822.5M versus 
+2,752.9M). Based on the inferior fit performance of the (price and distribution cost) models under 
+the tacit collusion assumption and the respective performan ces of our proposed competitive 
+models, we conclu de that our emerging market firms do not collude in the studied insecticide 
+market.  
+Managerial Implications  
+In this section, based on the estimation results, we conduct a series of counterfactual studies 
+to examine the policy implications of  our distribution and price competition model. Specifically, 
+our objective is to investigate what happens to prices, distribution levels, profits of firms, and 
+                                                           
+45 We thank the anonymous reviewer for pointing out this important point.  
+
+31 
+ consumer surplus (in equilibrium) as  1) firms’ distribution costs  decrease and 2) one firm starts to 
+distribute  exclusiv ely.   
+Decreasing Distribution Costs  
+Since our context is an emerging market, it is possible that the government may improve 
+the transportation infrastructure in India by constructin g new roads and highways, and thus it may 
+become easier and ultimately less costly for product manufacturers to distribute their products in 
+the future. Firms may respond to such decreases in distribution costs by changing their price and 
+distribution leve ls asymmetrically across different product forms and retail channels. Therefore, 
+our objective is to understand such asymmetries among firms in responding to decreases in distribution costs. To achieve this objective, we gradually decrease the estimated di stribution costs 
+from  0% to 20% by 0. 1% increments (by keeping all else – marginal cost and demand -side 
+estimates – constant) and numerically solve for the equilibrium of the supply -side (distribution and 
+price) competition game for each candidate set of d istribution costs. We plot how equilibrium 
+prices, distribution levels, profits , and consumer surplus change as the distribution costs decrease 
+in Figure s 2A, 2B, 2C, and 2D, respectively.  
+[Insert Figure 2 about here]  
+As seen in  Figure s 2A and 2B , firms respond to decreases in the distribution costs by 
+changing their distribution levels rather than prices. Figure 2B illustrates that both firms respond to decreases  in distribution costs by increasing their distribution level in the pa an-plus stores. This 
+is because paan -plus stores are more preferred by customers than  general stores (based on our 
+demand -side estimation results). In other words, increasing presence in paan- plus stores bring s a 
+higher  sales return (on average) for both firms compared to general stores. Due to this relatively 
+higher sales return, both firms increase their presence in paan -plus stores as the distribution costs 
+
+32 
+ decrease. Unlike paan -plus stores, in general stores, firms respond to decreases in the distributions 
+costs asymmetrically: Firm1 increases its distribution level, whereas Firm 2 does the opposite. 
+This happens since Firm 1 is significantly more preferred compared to Firm 2 in that channel 
+(based on our demand- side estimation results). In other words, even though general stores are less 
+preferred than  paan -plus stores, due to the decrease in the distribution cost in this channel, Firm 1 
+prefers to increase its  presence in  general stores sinc e the sales return of this investment is still 
+significant (due to Firm 2’s inferior brand preference) . Whereas Firm 2,  because  the sales return 
+from investing in the general stores channel is only marginal (due to its inferior brand preference) , 
+prefers t o decrease its presence in this channel and shift its distribution resources into the paan-
+plus channel . This strategy helps  Firm 2 to  be more competitive against the more preferred Firm 1 
+in the paan -plus channel . Regarding the equilibrium profits and consumer surplus, as seen in 
+Figure s 2C and 2D, the welfare of all three parties – Firm 1, Firm 2 , and consumers – increases  as 
+the distribution costs decrease.  
+Exclusive Distribution of Firm 1  
+Although the two manufacturers in the insecticide market  do not distribute exclusively  (as 
+evident from the available data), to be able to mitigate the competition , they may consider  
+exclusively distribut ing their products in some parts of the emerging marketplace . Such exclusivity 
+may help firms not only  to charge hig her prices but also to  effectively reallocate their distribution 
+resources to improve their profits. To understand the implications of such exclusivity on policies, profits , and consumer surplus, we allow the more preferred Firm 1 to cover 0% to 20% of the  
+market exclusively with 0.1% increments (by keeping all else – production and distributions costs 
+and demand- side estimates – constant), and numerically solve for the equilibrium of the supply -
+side (distribution and price) competition game for each exclus ive coverage percentage (0% to 
+
+33 
+ 20%) of Firm 1. We plot how equilibrium prices, distribution levels, profits , and consumer surplus 
+change as  the exclusivity percentage of Firm 1 increases in Figures  3A, 3B, 3C, and 3D, 
+respectively.  
+[Insert Figure 3 about here]  
+As seen in Figure 3A, Firm 1 increases its prices in both solid and liquid product forms as 
+its exclusive coverage increases because the exclusivity helps Firm 1 to avoid competition with 
+Firm 2 in the corresponding exclusive segment. Regarding Firm 2’s pricing, as seen in Figure 3A, 
+Firm 2 can keep its prices relatively the same as the exclusivity of Firm 1 increases (or, the 
+potential market size for Firm 2 decreases). Figure 3B shows that both Firm 1 and 2 increase 
+(decrease) their distribution levels in general (paan -plus) stores. Regarding Firm 1, this happens 
+for two reasons: 1) because of exclusivity (i.e., the lack of the compet itor’s  product s in the 
+exclusive segment ), the less preferred general stores become more attractive in terms of bringing 
+sales  for Firm 1 ; and 2) moving distribution resources from paan -plus to general stores saves costs  
+since distributing to the former channel is costlier (based on the supply -side estimation results) 
+than the latter. Regarding Firm 2, given that th e potential market size decreases due to Firm 1’s 
+exclusiv e coverage, sales return from distribution decreases for Firm 2. Thus, Firm 2 shifts its 
+distribution from pa an-plus to general stores to cut its distribution costs , since it is less costly to 
+distribute to general stores (based on the supply -side estimation results). Finally, regarding the 
+profits and consumer surplus, Figure s 3C and 3D show that the exclusivity of Firm 1 increases the 
+welfare of Firm 1 only, but not the remaining two parties: Firm 2 and the consumers . 
+Conclusions  
+In this study, we use a nested logit  framework to model the aggregate demand of insecticide  
+firms in India by using monthly sales data. In doing so, we control  for unobserved consumer  
+
+34 
+ heterogeneity by using the random coefficient specification, and also account  for the potential 
+endogeneity in price and distribution variables via the control function approach. Next , we estimate 
+a supply -side price and distribution competition model taki ng the estimated demand model as an 
+input . Methodologically, we illustrate  how to estimate competitive interactions among firms in a 
+multi- product form and multi -channel setting. Since most emerging economies’ retail industr ies 
+are composed of multiple fir ms, multiple product forms, and multiple channels, acknowledging 
+this set-up is a factual requirement.  
+From our demand estimation, we find that the retail distribution affects the market demand 
+in two ways : the direct effect – the higher the distribution level,  the easier the transportation for 
+consumers, and thus the  higher the demand; and  the indirect effect – the higher the brand’s 
+distribution level, the higher the market’s price sensitivity for th at brand. We further find that 
+ignoring distribution in  the demand estimation significantly biases the market’s response to firms’ 
+pricing decisions. From our supply -side estimation, we find that there are significant differences 
+in the estimated production (distribution) costs across firms, product forms , (retail channels) , and 
+years  (to a lesser extent) . We also find that ignoring distribution and solely focusing on price 
+optimization , as previous studies have done , results in overestimating  the equilibrium 
+manufacturer profit margins by 7% to 55%. Last, we find that observed marketing mix variations 
+can be better explained by firm competition rather than  by tacit collusion.  
+Based on our  estimation results, we conduct a series of simulation  studies to examine the 
+policy implications of  our distribution and price competition model. Our simulation studies show 
+that understanding the asymmetries in consumers’ preferences for brands, product  forms, and retail 
+channels , as well as  firms’ distribution costs , are important in understanding  firms’ reactions to 
+changes in the emerging marketplace. Our first study shows that as the transportation infrastructure 
+
+35 
+ improves (due to the construction of new roads and highways) in the emerging marketplace, firms 
+should respond by reallocating their distribution resources asymmetrically – both firms (only the 
+more preferred firm) should increase their (its) presence in the more (less) preferred pa an-plus 
+(general) stores channel , rather than changing their prices. Our second study shows that the more 
+preferred firm’s exclus ive distribution 1) enables that firm to  charge higher prices  and 2) causes 
+both firms to shift their distribution from the more preferred and costlier paan -plus stores channel 
+to the  general stores channel.  
+To reiterate, our study makes multiple contribut ions to marketing academia and practice as 
+this is the first study  to a) model competitive interactions in emerging market firms across two 
+important marketing decisions , i.e. distribution  and price  (using a unique granular measure of 
+distribution intensit y), b) model marketing interactions at the multi- brand, multi-  product form , 
+and multi -channel level s, and c) guid e emerging market managers  to make profitable marketing - 
+mix decisions by providing a n approach to respond to changes in the emerging marketplace.  
+Although we provide significant contributions to the marketing literature and practice, our 
+study faces some limitations. It is worth noting that our findings are specific to emerging markets 
+and may not be generalizable to mature markets for the following reasons. First, the unavailability 
+of products due to limited, expensive, and unorganized retail distribution is a major issue for emerging market manufacturers; whereas in mature markets, firms may not typically face these issues due to thei r organized and streamlined retail distribution strategies. Second, in most 
+emerging markets, firms use multiple channels/store formats (e.g., mom- and-pop stores, general 
+stores , etc.) to reach their end -consumers , unlike firms in mature markets which distribut e their 
+products through big -super -hyper -markets. Further, these retail channels are typically unique to 
+the corresponding emerging market setting (for example, kirana and general stores in the Indian 
+
+36 
+ market; professional and specialty stores in the C hinese market 4 5F46) and are significantly different 
+from the retail channels in mature markets. Lastly, shelf spaces in a retail channel might be more 
+limited in emerging markets (compared to mature markets) due to smaller store sizes and existing 
+physical/loc ational constraints (such as lack of storage facilities, proper air conditioning etc.). 
+Although manufacturers in mature markets also face limited shelf space issues, most major manufacturers manage to acquire required shelf spaces for their products. Give n such differences, 
+insights from our study may not be applicable to developed market managers.  
+One of the limitations  of our study is that , since our focus is  on distribution competition 
+and price, we treat the effects of other unobserved marketing variables (such as advertising) as 
+exogenous demand shocks. Although we estimate the demand  and supply  side with two marketing 
+decisions, investigating how firms compete with other marketing  mix in struments is an important 
+issue for future research , permitting that the data is available . Moreover, if the data (of a firm’s 
+new versus already existing  distributing stores) is available, modeling fixed costs of distribution 
+can be another fruitful resea rch direction. Second, our data is at  the national level and as a result, 
+we are not able to model the regional heterogeneity ( some regions have only one kind of store 
+and/or one form  of product ). Future research may capture such an important decision. Finally, 
+there can be potential overlap among the channels of a firm and also some overlap with the 
+competitors’ channels. Although we do not observe such overlap, modeling the impact of such 
+overlap upon the availability of data can bring new insights. 
+ 
+ 
+ 
+ 
+ 
+ 
+                                                           
+46 http://www.funggroup.com/eng/knowledge/research/china_dis_issue114.pdf  
+
+37 
+ References  
+ 
+Arnold, David J and John A Quelch (1998), "New strategies in emerging markets," Sloan management . 
+Ataman, M. Berk, Harald J. Van Heerde, and Carl F. Mela (2010), "The Long -Term Effect of Marketing 
+Strategy on Brand Sales,"  Journal of Marketing Research, 47 (5), 866- 82. 
+Balasubramanian, Sridhar (1998), "Mail versus mall: A strategic analysis of competition between direct 
+marketers and conventional retailers," Marketing Science, 17 (3), 181- 95. 
+Berry, Steven T. (1994), "Estim ating discrete -choice models of product differentiation." RAND Journal of 
+Economics , 242- 262. 
+Bloch, Peter H (1995), "Seeking the ideal form: Product design and consumer response," Journal of 
+Marketing, 16 -29. 
+Brynjolfsson, E, Y Hu, and M Rahman (2009), "B attle of the retail channels: How product selection and 
+geography drive cross -channel competition," Management Science , 55 (11), 1755- 65. 
+Cai, Gangshu, Zhe George Zhang, and Michael Zhang (2009), "Game theoretical perspectives on dual -
+channel supply chain competition with price discounts and pricing schemes," International Journal of Production Economics , 117 (1), 80- 96. 
+Cao, Lanlan and Li Li (2015), "The Impact of Cross -Channel Integration on Retailers’ Sales Growth," 
+Journal of Retailing , 91 (2), 198- 216. 
+Che, Hai, K. Sudhir, and P. B. Seetharaman (2007), "Bounded Rationality in Pricing Under State -
+Dependent Demand: Do Firms Look Ahead, and if So, How Far?," Journal of Marketing Research, 44 (3), 434-49. 
+Chiang, Wei -yu Kevin, Dilip Chhajed, and James D Hes s (2003), "Direct marketing, indirect profits: A 
+strategic analysis of dual -channel supply -chain design," Management science , 49 (1), 1- 20. 
+Chintagunta, Pradeep K (2001), "Endogeneity and heterogeneity in a probit demand model: Estimation using aggregate d ata," Marketing Science , 20 (4), 442- 56. 
+Cosguner, Koray, Tat Y Chan, and PB Seetharaman (2018), "Dynamic pricing in a distribution channel in 
+the presence of switching costs," Management Science , 64 (3), 1212- 29. 
+Coughlan, Anne T and Birger Wernerfelt (1989), "On credible delegation by oligopolists: A discussion of 
+distribution channel management," Management Science , 35 (2), 226- 39. 
+Dawar, Niraj and Tony Frost (1999), "Competing with giants: Survival strategies for local companies in emerging markets," Harvard Business Review , 77, 119 -32. 
+Desiraju, Ramarao and Sridhar Moorthy (1997), "Managing a distribution channel under asymmetric 
+information with performance requirements," Management Science , 43 (12), 1628 -44. 
+Frazier, Gary L (1999), "Organizing and managing channels of distribution," Journal of the Academy of 
+Marketing Science, 27 (2), 226- 40. 
+Gallego, Guillermo and Ruxian Wang (2014), "Multiproduct price optimization and competition under the nested logit model  with product -differentiated price sensitivities," Operations Research , 62 (2), 450- 61. 
+
+38 
+ Gerstner, Eitan and James D Hess (1995), "Pull promotions and channel coordination," Marketing Science , 
+14 (1), 43- 60. 
+Geyskens, Inge, Jan -Benedict EM Steenkamp, and Ni rmalya Kumar (1999), "A meta -analysis of 
+satisfaction in marketing channel relationships," Journal of Marketing Research , 223- 38. 
+Ghosh, Debabrata and Janat Shah (2015), "Supply chain analysis under green sensitive consumer demand 
+and cost sharing contract ," International Journal of Production Economics , 164, 319- 29. 
+Gonzalez -Benito, Oscar, Pablo A Munoz -Gallego, and Praveen K Kopalle (2005), "Asymmetric 
+competition in retail store formats: Evaluating inter -and intra -format spatial effects," Journal of Retailing , 
+81 (1), 59- 73. 
+Homburg, Christian, Josef Vollmayr, and Alexander Hahn (2014), "Firm value creation through major 
+channel expansions: evidence from an event study in the United States, Germany, and China," Journal of 
+Marketing, 78 (3), 38- 61. 
+Jerath, Kinshuk, S Sajeesh, and Z John Zhang (2016), "A Model of Unorganized and Organized Retailing 
+in Emerging Economies," Marketing Science, 35 (5), 756- 78. 
+Jill Avery, Thomas J. Steenburgh, John Deighton, and Mary Caravella (2012), "Adding Bricks to Click s: 
+Predicting the Patterns of Cross- Channel Elasticities Over Time," Journal of Marketing, 76 (3), 96- 111. 
+Karray, Salma and Guiomar Martín -Herrán (2009), "A dynamic model for advertising and pricing 
+competition between national and store brands," European  Journal of Operational Research , 193 (2), 451-
+67. 
+Keane, Michael and Nada Wasi (2013), "Comparing alternative models of heterogeneity in c onsumer 
+choice behavior," Journal of Applied Econometrics , 28 (6), 1018- 45. 
+Krafft, Manfred, Oliver Goetz, Murali Man trala, Francesca Sotgiu, and Sebastian Tillmanns (2015), "The 
+evolution of marketing channel research domains and methodologies: an integrative review and future 
+directions," Journal of Retailing , 91 (4), 569- 85. 
+Kumar, V., Sarang Sunder, and Amalesh Sharm a (2015), "Leveraging Distribution to Maximize Firm 
+Performance in Emerging Markets," Journal of Retailing , 91 (4), 627- 43. 
+Ma, Yu, Seethu Seetharaman, and Chakravarthi Narasimhan (2005), "Empirical analysis of competitive 
+pricing strategies with complemen tary product lines," Available at SSRN 899606.  
+McGuire, Timothy W and Richard Staelin (1983), "An industry equilibrium analysis of downstream vertical 
+integration," Marketing Science , 2 (2), 161- 91. 
+Mulky, Avinash G. (2013), "Distribution challenges and workable solutions," IIMB Management Review , 
+25 (3), 179- 95. 
+Narayan, Vishal, Vithala R Rao, and K Sudhir (2015), "Early adoption of modern grocery retail in an 
+emerging market: evidence from India," Marketing Science , 34 (6), 825- 42. 
+Neslin, Scott A., Dhruv  Grewal, Robert Leghorn, Venkatesh Shankar, Marije L. Teerling, Jacquelyn S. 
+Thomas, and Peter C. Verhoef (2006), "Challenges and Opportunities in Multichannel Customer 
+Management," Journal of Service Research , 9 (2), 95- 112. 
+
+39 
+ Padmanabhan, V. and I. P. L. P ng (1997), "Manufacturer's Return Policies and Retail Competition," 
+Marketing Science, 16 (1), 81- 94. 
+Pancras, Joseph and K Sudhir (2007), "Optimal marketing strategies for a customer data intermediary," 
+Journal of Marketing Research , 44 (4), 560- 78. 
+Park,  Sungho and Sachin Gupta (2009), "Simulated maximum likelihood estimator for the random 
+coefficient logit model using aggregate data," Journal of Marketing Research, 46 (4), 531- 42. 
+Pattabhiramaiah, Adithya, S Sriram, and Shrihari Sridhar (2017), "Rising prices under declining 
+preferences: the case of the US print newspaper industry," Marketing Science . 
+Pauwels, Koen and Scott A. Neslin (2015), "Building With Bricks and Mortar: The Revenue Impact of 
+Opening Physical Stores in a Multichannel Environment," Journal of Retailing , 91 (2), 182- 97. 
+Petrin, Amil and Kenneth Train (2010), "A Control Function Approach to Endogeneity in Consumer Choice Models," Journal of Marketing Research , 47 (1), 3- 13. 
+Pick, Doreén and Daniel Müller (2011), "Retailing in India –Background, challenges, prospects," in 
+European Retail Research: Springer.  
+Porter, JH, ML Parry, and TR Carter (1991), "The potential effects of climatic change on agricultural insect 
+pests," Agricultural and Forest Meteorology , 57 (1- 3), 221- 40. 
+Porter, Michae l E and James E Heppelmann (2015), "How smart, connected products are transforming 
+companies," Harvard Business Review , 93 (10), 96- 114. 
+Rangan, V Kasturi and Ramchandran Jaikumar (1991), "Integrating distribution strategy and tactics: A 
+model and an appli cation," Management Science , 37 (11), 1377- 89. 
+Roberts, John, Ujwal Kayande, and Rajendra K. Srivastava (2015), "What’s Different About Emerging Markets, and What Does it Mean for Theory and Practice?," Customer Needs and Solutions , 2 (4), 245- 50. 
+Samaha, Stephen A, Robert W Palmatier, and Rajiv P Dant (2011), "Poisoning relationships: Perceived 
+unfairness in channels of distribution," Journal of Marketing, 75 (3), 99- 117. 
+Sarma, E. A. S. (2005), "Need for Caution in Retail FDI," Economic and Political Week ly, 40 (46), 4795-
+98. 
+Sharma, Arun and Anuj Mehrotra (2007), "Choosing an optimal channel mix in multichannel 
+environments," Industrial Marketing Management , 36 (1), 21- 28. 
+Sheth, Jagdish N. (2011), "Impact of Emerging Markets on Marketing: Rethinking Exis ting Perspectives 
+and Practices," Journal of Marketing, 75 (4), 166- 82. 
+Srivastava, Joydeep, Dipankar Chakravarti, and Amnon Rapoport (2000), "Price and margin negotiations in marketing channels: An experimental study of sequential bargaining under one -sided uncertainty and 
+opportunity cost of delay," Marketing Science, 19 (2) , 163- 84. 
+Sudhir, K. (2001a), "Structural Analysis of Manufacturer Pricing in the Presence of a Strategic Retailer," Marketing Science, 20 (3), 244- 64. 
+Sudhir, Karunakaran (2001b), "Competitive pricing behavior in the auto market: A structural analysis," 
+Marketing Science, 20 (1), 42- 60. 
+
+40 
+ Trivedi, Minakshi (1998), "Distribution Channels: An Extension of Exclusive Retailership," Management 
+Science, 44 (7), 896- 909. 
+Venkatesan, Rajkumar, Paul Farris, Leandro A Guissoni, and Marcos Fava Neves (2015), "Consumer  brand 
+marketing through full -and self -service channels in an emerging economy," Journal of Retailing, 91 (4), 
+644-59. 
+Vilcassim, Naufel J., Vrinda Kadiyali, and Pradeep K. Chintagunta (1999), "Investigating Dynamic 
+Multifirm Market Interactions in Price a nd Advertising," Management Science , 45 (4), 499- 518. 
+Villas -Boas, J Miguel and Russell S Winer (1999), "Endogeneity in brand choice models," Management 
+Science, 45 (10), 1324- 38. 
+Villas -Boas, Sofia Berto (2007), "Vertical relationships between manufacture rs and retailers: Inference 
+with limited data," Review of Economic Studies , 74 (2), 625- 52. 
+Wallace, David W, Joan L Giese, and Jean L Johnson (2004), "Customer retailer loyalty in the context of 
+multiple channel strategies," Journal of Retailing, 80 (4), 249-63. 
+Wolda, Henk (1978), "Seasonal fluctuations in rainfall, food and abundance of tropical insects," Journal of Animal Ecology , 369- 81. 
+Yan, Ruiliang (2011), "Managing channel coordination in a multi -channel manufacturer –retailer supply 
+chain," Industr ial Marketing Management , 40 (4), 636 -42. 
+Zhang, Xi, V Kumar, and Koray Cosguner (2017), "Dynamically Managing a Profitable Email Marketing 
+Program," Journal of Marketing Research.  
+Figure 1: Nested Logit Tree  
+ 
+ 
+ 
+Channels, c=0,1,2  
+(Paan -plus, General)  
+Product Forms, k=1,2     
+(Solid, Liquid)  
+Brands, j=1,2  
+Paan -plus Stores
+  
+ General Stores  
+ No Purchase  
+Solid -Form  
+Product  
+Liquid -Form  
+Product  
+Solid -Form  
+Product  
+Liquid -Form  
+Product  
+Brand 1  
+ Brand 2  
+ Brand 1  
+ Brand 2  
+ Brand 1  
+ Brand 2  
+ Brand 1  
+ Brand 2  
+
+41 
+ Figure 2: Equilibrium Prices, Distribution Levels, Profits, and Surplus versus Percentage Decrease in Distribution Costs
+ 
+
+
+42 
+ Figure 3: Equilibrium Prices, Distribution Levels, Profits, and Surplus versus Exclusivity Percentage of Firm 1
+
+
+43 
+ Table 1:  Related Literature and Positioning of the  Current S tudy 
+*NA represents Not -Applicable  
+Table 2 : Descriptive Statistics   
+Mean  Standard Dev.  
+Price of Firm 1 in Solid Product Form  136 14 
+Price of Firm 1 in Liquid Product Form  147 2 
+Price of Firm 2 in Solid Product Form   132 9 
+Price of Firm 2 in Liquid Product Form  126 13 
+Distribution of Firm 1 in Paan -plus Stores (in raw Numbers)  399 35 
+Distribution of Firm 1 in General Stores (in raw Numbers)  502 19 
+Distribution of Firm 2 in Paan -plus Stores (in raw Numbers)  356 50 
+Distribution of Firm 2 in General Stores (in raw Numbers)  482 60 
+Expected Population Each in Paan -plus Store Serves  2,353  523 
+Expected Population Each General Store Serves  11,986  849 
+Sales of Firm  1 in Paan -plus Stores  227 88 
+Sales of Firm  1 in General Stores  233 59 
+Sales of Firm  2 in Paan -plus Stores  258 78 
+Sales of Firm  2 in General Stores  328 49 
+Price in Paisa (Rupee/100), Distribution in thousands, Sales in hundred -thousands  
+Table 3 : Demand -Side Parameter Estimates  
+ Parameters  Model 1:  Price and 
+Distribution – MNL  Model 2:  
+Price Only – NL Model 3:  Price and  
+Distribution – NL 
+αFirm=1 | Solid Product Form, Paan -plus Stores  1.361876 *** 1.798967 *** 1.807700 *** 
+αFirm=1 | Solid Product Form, General Stores  -0.385638 *** -2.378411 *** 0.802631 *** 
+αFirm=1 | Liquid Product Form, Paan -plus Stores  -0.176789 *** -17.070201 *** 0.566237 *** 
+αFirm=1 | Liquid Product Form, General Stores  -0.188876 *** -12.363232 *** 0.173262 *** 
+αFirm=2 | Solid Product Form, Paan -plus Stores  0.989635 *** 1.459682 *** 1.089735 *** 
+αFirm=2 | Solid Product Form, General Stores  0.890989 *** -2.316726 *** 0.166078 *** 
+αFirm=2 | Liquid Product Form, Paan -plus Stores  -2.924591 *** -20.250492 *** -0.992854 *** 
+αFirm=2 | Liquid Product Form, General Stores  -1.912438 *** -18.899213 *** -2.221228 *** 
+βPrice  -0.044604 *** -0.032315 *** -0.040079 *** 
+βDistribution  0.003613 ***  0.003902 *** 
+βPrice x D istribution  -0.000009 ***  -0.000011 *** 
+𝜃𝜃Summer  -0.094805 *** -0.083908 *** -0.096157 *** 
+𝜃𝜃Minimum  Temperature  0.015249 *** 0.014024 *** 0.013606 ***  0BManufacturer 
+Interactions  1BPricing  2BMulti -channel  
+3BDistribution  4BMarket  5BMulti -channel -multi - 
+product form setting  
+Rangan and Jaikumar 1991  6BNo 7BYes 8BYes 9BDeveloped  10BNo 
+Trivedi 1998  11BYes 12BYes 13BYes 14BNA* 15BNo 
+Balasubramanian 1998  16BNo 17BYes 18BYes 19BNA 20BNo 
+Sharma and Mehrotra 2007  21BNo 22BNo 23BYes 24BNA 25BNo 
+Brynjolfsson et al. 2009  26BNo 27BNo 28BYes 29BDeveloped  30BNo 
+Jill Avery et al. 2012  31BNo 32BNo 33BYes 34BDeveloped  35BNo 
+Homburg et al. 2014  36BNo 37BNo 38BYes 39BDeveloped  40BNo 
+Cao and Li 2015  41BNo 42BNo 43BYes 44BDeveloped  45BNo 
+Pauwels and Neslin 2015  46BNo 47BNo 48BYes 49BDeveloped  50BNo 
+51BThis Study  52BYes 53BYes 54BYes 55BEmerging  56BYes 
+
+44 
+ 𝜃𝜃Maximum  Temperature  -0.040662 *** -0.033255 *** -0.038679 *** 
+𝜃𝜃Rainfall  -0.000082 *** -0.000055 *** -0.000114 *** 
+𝝋𝝋Price Residual -  Firm =1 | Solid Product Form  0.002997 *** 0.010144 *** 0.002590 *** 
+𝝋𝝋 Price Residual -  Firm =1 | Liquid Product Form  0.015546 *** 0.030652 *** 0.009889 *** 
+𝝋𝝋 Price Residual -  Firm =2 | Solid Product Form  0.009583 *** 0.007989 *** 0.007781 *** 
+𝝋𝝋 Price Residual -  Firm =2 | Liquid Product Form  0.023080 *** 0.030914 *** 0.018214 *** 
+𝝋𝝋 Distribution Residual -  Firm =1 | Solid Product Form, Paan -plus Stores  0.013900 ***  0.011222 *** 
+𝝋𝝋 Distribution Residual -  Firm =1 | Solid Product Form, General Stores  -0.000663 ***  0.000873 *** 
+𝝋𝝋 Distribution Residual -  Firm =1 | Liquid Product Form, Paan -plus Stores  0.018772 ***  0.021857 *** 
+𝝋𝝋 Distribution Residual -  Firm =1 | Liquid Product Form, General Stores  0.006897 ***  0.006223 *** 
+𝝋𝝋 Distribution Residual -  Firm =2 | Solid Product Form, Paan -plus Stores  0.000168 ***  -0.000959 *** 
+𝝋𝝋 Distribution Residual -  Firm =2 | Solid Product Form, General Stores  -0.002241 ***  -0.001109 *** 
+𝝋𝝋 Distribution Residual -  Firm =2 | Liquid Product Form, Paan -plus Stores  0.579555 ***  0.620739 *** 
+𝝋𝝋 Distribution Residual -  Firm =2 | Liquid Product Form, General Stores  0.058026 ***  0.059159 *** 
+σFirm=1, Solid Product Form, Paan -plus Stores  1.307344 *** 0.443141 *** 0.658274 *** 
+σFirm=1, Solid Product Form, General Stores  0.440758 *** 2.1355 00***  0.730913 *** 
+σFirm=1, Liquid Product Form, Paan -plus Stores  0.714133 *** 0.016816 *** 3.092251 *** 
+σFirm=1, Liquid Product Form, General Stores  0.080903 *** 2.658132 *** 0.246824 *** 
+σFirm=2, Solid Product Form, Paan -plus Stores  1.116059 *** 0.785814 *** 1.378974 *** 
+σFirm=2, Solid Product Form, General Stores  2.673028 *** 1.756758 *** 0.859093 *** 
+σFirm=2, Liquid Product Form, Paan -plus Stores  0.053846 *** 3.241646 *** 0.630437 *** 
+σFirm=2, Liquid Product Form, General Stores  1.624261 *** 14.287679 *** 0.028899 *** 
+σPrice 0.013012 *** 0.00878 0***  0.010421 *** 
+σDistribution  0.002008 ***  0.000334 *** 
+𝜆𝜆Solid  Product  Form |Paan−plus  Stores   1.345457 *** 1.057025 *** 
+𝜆𝜆Solid  Product  Form |General  Stores   1.009945 *** 3.074303 *** 
+𝜆𝜆Liquid  Product  Form |Paan−plus  Stores   0.215446 *** 2.612888 *** 
+𝜆𝜆Liquid  Product  Form |General  Stores   0.495955 *** 0.986200 *** 
+𝜆𝜆Paan−plus  Stores   0.981549 *** 1.531355 *** 
+𝜆𝜆General  Stores   0.379499 *** 1.146316 *** 
+Log-Likelihood  20,046.4M  20,056.5M  20,045.1M  
+BIC 40,092.7M  40,113.0M  40,090.2M  
+***significant at 1%|**significant at 5%|*significant at 10%  
+Table 4 : Supply -Side Parameter Estimates -  Marginal Cost Estimation  
+Variables  Model 1: Bertrand Price and 
+Distribution Competition  Model 2: Price Only 
+Bertrand Competition  Model 3: Collusion 
+in Pricing  
+Intercept  92.7451***  67.72348***  58.9702***  
+Dum11 (Firm 1, Solid Form)  -32.64***  -14.7355***  -30.9848***  
+Dum21 (Firm 2, Solid Form)  -18.9754***  -7.32721***  17.4403***  
+Dum12 (Firm 1, Liquid Form)  3.0917***  -0.0075  10.528***  
+Year 1  -14.7265***  -12.6933***  0.3382  
+Year 2  -18.977***  -14.2222***  -17.114***  
+Year 3  -17.5479***  -12.4049***  -13.6406***  
+Dum11*Year1  34.8939***  34.5135***  35.7045***  
+Dum11*Year2  44.0107***  41.59668***  50.4865***  
+Dum11*Year3  19.0766***  14.09259***  20.4317***  
+Dum12*Year1  26.0565***  21.76817***  -3.0698  
+Dum12*Year2  33.2727***  26.54989***  9.3306**  
+Dum12*Year3  17.5908***  12.18747***  17.5013***  
+Dum21*Year1  12.5506***  21.40931***  14.4409***  
+Dum21*Year2  18.0411***  22.76995***  26.6711***  
+Dum21*Year3  17.5239***  21.59883***  18.1615***  
+
+45 
+ R2 95.97%  92.09%  87.78%  
+Adj. R2 95.61%  91.39%  86.68%  
+SSR 1,002.24  1,421.90  7,026.77  
+***significant at 1%|**significant at 5%|*significant at 10%  
+Table 5: Supply Side Parameter Estimates -  Distribution Cost Estimation  
+Variables  Model 1: Bertrand Price and 
+Distribution Competition  Model 2: Collusion  in 
+Distribution  
+Intercept  4022.8***  4960.6***  
+D111 (Firm 1, Solid Form, Paan -plus stores)  85893.6***  64263.4***  
+D112 (Firm 1, Solid Form, General stores)  2852.4**  15951.4***  
+D121 (Firm 1, Liquid Form, Paan -plus stores)  8482.4***  33218***  
+D122 (Firm 1, Liquid Form, General stores)  139 -728 
+D211 (Firm 2, Solid Form, Paan -plus stores)  59683***  1350.7  
+D212 (Firm 2, Solid Form, General stores)  485.7  428.7  
+D221 (Firm 2, Liquid Form, Paan -plus stores)  1782.2  11068.2***  
+Year 1  -412 270.9  
+Year 2  -1056.1  -210.8  
+Year 3  -123.3  -380.6  
+D111 * Year 1  -42836.9***  -20806***  
+D111 * Year 2  -46039.6***  -23985.5***  
+D111 * Year 3  -4449.3***  -3231  
+D112 * Year 1  -5109.3***  -14598.4***  
+D112 * Year 2  -4187.3**  -13072***  
+D112 * Year 3  -429.6  -333.8  
+D121 * Year 1  7457.6***  2571.9  
+D121 * Year 2  6252.7***  4130.7*  
+D121 * Year 3  1319.8  469.6  
+D122 * Year 1  732.2  408.1  
+D122 * Year 2  1273.9  753.8  
+D122 * Year 3  302.1  551.4  
+D211 * Year 1  -11659.1***  1754.9  
+D211 * Year 2  -19784.5***  1334.6  
+D211 * Year 3  -728.6  144 
+D212 * Year 1  -2120.7  -587.5  
+D212 * Year 2  -1240.1  913.3  
+D212 * Year 3  121.4  309.2  
+D221 * Year 1  20734.2***  10650.8***  
+D221 * Year 2  9355.2***  5382**  
+D221 * Year 3  5206.1***  5932.2***  
+R2 98.86%  96.46%  
+Adj. R2 98.75%  96.13%  
+SSR 2,752.9M  4,822.5M  
+***significant at 1%|**significant at 5%|*significant at 10%  
+Table 6 : Calculated Equilibrium Profit Margins  
+ Price Only Model   Proposed Model  
+Profit Margins in Paisa  Year 1  Year 2  Year 3  Year 4   Year 1  Year 2  Year 3  Year 4  
+Firm 1 - Solid Form  71.3 71.2 68.9 69.4  65.8 66.4 61.9 62.2 
+Firm 1 - Liquid Form  70.2 71.3 71.1 78.9  53.0 52.7 52.2 50.8 
+Firm 2 - Solid Form  68.7 69.6 63.4 63.7  53.1 54.2 49.8 50.4 
+Firm 2 - Liquid Form  62.6 62.5 65.2 79.8  39.7 42.2 45.4 54.8 
+ 
+

@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Font Comparison</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700;800&family=DM+Sans:wght@400;500;600;700;800&family=Source+Sans+3:wght@400;500;600;700;800&family=Outfit:wght@400;500;600;700;800&family=Nunito+Sans:wght@400;500;600;700;800&family=Manrope:wght@400;500;600;700;800&family=Lato:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        body { margin: 0; padding: 40px; background: #fff; color: #111827; }
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; max-width: 1200px; margin: 0 auto; }
+        .card {
+            border: 1.5px solid #cbd5e1;
+            border-radius: 18px;
+            padding: 32px 28px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            transition: box-shadow 0.25s ease;
+        }
+        .card:hover { box-shadow: 0 12px 32px rgba(0,0,0,0.10); }
+        .label {
+            font-size: 0.72rem;
+            font-weight: 800;
+            color: #990000;
+            text-transform: uppercase;
+            letter-spacing: 0.10em;
+            margin-bottom: 18px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #990000;
+        }
+        .rec { background: #fdf2f2; color: #990000; font-size: 0.65rem; padding: 2px 8px; border-radius: 99px; margin-left: 8px; letter-spacing: 0.04em; }
+        h2 { margin: 0 0 6px; font-size: 2rem; font-weight: 800; letter-spacing: -0.04em; }
+        .role { color: #990000; font-weight: 600; font-size: 1.1rem; margin-bottom: 4px; }
+        .aff { color: #4b5563; font-size: 0.95rem; margin-bottom: 18px; }
+        .bio { color: #4b5563; font-size: 1.05rem; line-height: 1.85; margin-bottom: 18px; }
+        .sub { font-weight: 700; color: #111827; font-size: 0.95rem; margin-bottom: 4px; }
+        .meta { font-size: 0.88rem; color: #4b5563; }
+        .note { font-size: 0.82rem; color: #9ca3af; margin-top: 14px; font-style: italic; }
+
+        .font-1 { font-family: 'Plus Jakarta Sans', sans-serif; }
+        .font-2 { font-family: 'Inter', sans-serif; }
+        .font-3 { font-family: 'DM Sans', sans-serif; }
+        .font-4 { font-family: 'Source Sans 3', sans-serif; }
+        .font-5 { font-family: 'Outfit', sans-serif; }
+        .font-6 { font-family: 'Nunito Sans', sans-serif; }
+        .font-7 { font-family: 'Manrope', sans-serif; }
+        .font-8 { font-family: 'Lato', sans-serif; }
+
+        @media (max-width: 768px) { .grid { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+    <div style="text-align: center; margin-bottom: 40px; font-family: system-ui, sans-serif;">
+        <h1 style="font-size: 1.5rem; font-weight: 700; margin: 0;">Font Comparison — 8 Options</h1>
+        <p style="color: #4b5563; margin-top: 8px;">Same content rendered in each font. Refresh if fonts haven't loaded yet.</p>
+    </div>
+
+    <div class="grid">
+
+        <div class="card font-1">
+            <div class="label">Option 1 — Plus Jakarta Sans (current)</div>
+            <h2>Koray Cosguner</h2>
+            <div class="role">Associate Professor of Marketing</div>
+            <div class="aff">John Rau KSB Faculty Fellow</div>
+            <div class="bio">I stand at the intersection of marketing, economics, and psychology, leveraging rigorous quantitative methods to decode the complexities of consumer decision-making.</div>
+            <div class="sub">Ph.D. in Marketing</div>
+            <div class="meta">Washington University in St. Louis, 2013</div>
+            <div class="note">Geometric, modern, popular with tech/SaaS sites</div>
+        </div>
+
+        <div class="card font-2">
+            <div class="label">Option 2 — Inter <span class="rec">RECOMMENDED</span></div>
+            <h2>Koray Cosguner</h2>
+            <div class="role">Associate Professor of Marketing</div>
+            <div class="aff">John Rau KSB Faculty Fellow</div>
+            <div class="bio">I stand at the intersection of marketing, economics, and psychology, leveraging rigorous quantitative methods to decode the complexities of consumer decision-making.</div>
+            <div class="sub">Ph.D. in Marketing</div>
+            <div class="meta">Washington University in St. Louis, 2013</div>
+            <div class="note">Neutral, highly legible, most popular web font (GitHub, Linear)</div>
+        </div>
+
+        <div class="card font-3">
+            <div class="label">Option 3 — DM Sans</div>
+            <h2>Koray Cosguner</h2>
+            <div class="role">Associate Professor of Marketing</div>
+            <div class="aff">John Rau KSB Faculty Fellow</div>
+            <div class="bio">I stand at the intersection of marketing, economics, and psychology, leveraging rigorous quantitative methods to decode the complexities of consumer decision-making.</div>
+            <div class="sub">Ph.D. in Marketing</div>
+            <div class="meta">Washington University in St. Louis, 2013</div>
+            <div class="note">Softer, rounder, friendly yet professional</div>
+        </div>
+
+        <div class="card font-4">
+            <div class="label">Option 4 — Source Sans 3</div>
+            <h2>Koray Cosguner</h2>
+            <div class="role">Associate Professor of Marketing</div>
+            <div class="aff">John Rau KSB Faculty Fellow</div>
+            <div class="bio">I stand at the intersection of marketing, economics, and psychology, leveraging rigorous quantitative methods to decode the complexities of consumer decision-making.</div>
+            <div class="sub">Ph.D. in Marketing</div>
+            <div class="meta">Washington University in St. Louis, 2013</div>
+            <div class="note">Adobe-designed, traditional/scholarly feel, great readability</div>
+        </div>
+
+        <div class="card font-5">
+            <div class="label">Option 5 — Outfit</div>
+            <h2>Koray Cosguner</h2>
+            <div class="role">Associate Professor of Marketing</div>
+            <div class="aff">John Rau KSB Faculty Fellow</div>
+            <div class="bio">I stand at the intersection of marketing, economics, and psychology, leveraging rigorous quantitative methods to decode the complexities of consumer decision-making.</div>
+            <div class="sub">Ph.D. in Marketing</div>
+            <div class="meta">Washington University in St. Louis, 2013</div>
+            <div class="note">Geometric like Jakarta but more refined and elegant</div>
+        </div>
+
+        <div class="card font-6">
+            <div class="label">Option 6 — Nunito Sans</div>
+            <h2>Koray Cosguner</h2>
+            <div class="role">Associate Professor of Marketing</div>
+            <div class="aff">John Rau KSB Faculty Fellow</div>
+            <div class="bio">I stand at the intersection of marketing, economics, and psychology, leveraging rigorous quantitative methods to decode the complexities of consumer decision-making.</div>
+            <div class="sub">Ph.D. in Marketing</div>
+            <div class="meta">Washington University in St. Louis, 2013</div>
+            <div class="note">Very clean, slightly rounded, warm and approachable</div>
+        </div>
+
+        <div class="card font-7">
+            <div class="label">Option 7 — Manrope</div>
+            <h2>Koray Cosguner</h2>
+            <div class="role">Associate Professor of Marketing</div>
+            <div class="aff">John Rau KSB Faculty Fellow</div>
+            <div class="bio">I stand at the intersection of marketing, economics, and psychology, leveraging rigorous quantitative methods to decode the complexities of consumer decision-making.</div>
+            <div class="sub">Ph.D. in Marketing</div>
+            <div class="meta">Washington University in St. Louis, 2013</div>
+            <div class="note">Semi-rounded geometric, polished and distinctive</div>
+        </div>
+
+        <div class="card font-8">
+            <div class="label">Option 8 — Lato</div>
+            <h2>Koray Cosguner</h2>
+            <div class="role">Associate Professor of Marketing</div>
+            <div class="aff">John Rau KSB Faculty Fellow</div>
+            <div class="bio">I stand at the intersection of marketing, economics, and psychology, leveraging rigorous quantitative methods to decode the complexities of consumer decision-making.</div>
+            <div class="sub">Ph.D. in Marketing</div>
+            <div class="meta">Washington University in St. Louis, 2013</div>
+            <div class="note">Classic, warm humanist sans-serif, widely used in academia</div>
+        </div>
+
+    </div>
+</body>
+</html>

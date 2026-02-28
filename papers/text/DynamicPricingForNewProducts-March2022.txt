@@ -1,0 +1,1757 @@
+See discussions, st ats, and author pr ofiles f or this public ation at : https://www .researchgate.ne t/public ation/355342611
+Dynamic Pricing for New Products Using a Utility-Based Generalization of the
+Bass Diffusion Model
+Preprint    in  Manag ement Scienc e · Mar ch 2022
+DOI: 10.1287/mnsc.2021.4257
+CITATIONS
+0READS
+560
+2 author s:
+Koray Cosguner
+Indiana Univ ersity Bloomingt on
+11 PUBLICA TIONS    102 CITATIONS    
+SEE PROFILE
+Seethu See thar aman
+Washingt on Univ ersity in St . Louis
+21 PUBLICA TIONS    102 CITATIONS    
+SEE PROFILE
+All c ontent f ollo wing this p age was uplo aded b y Koray Cosguner  on 16 Oct ober 2021.
+The user has r equest ed enhanc ement of the do wnlo aded file.
+
+1 
+  
+ 
+Dynamic Pricing for New Products Using a 
+Utility-Based Generalization of the Bass Diffusion Model 
+   
+ 
+Koray Cosguner  
+Assistant Professor of Marketing, Indiana University 
+  
+P.B. (Seethu) Seetharaman 
+† 
+W. Patrick McGinnis Professor of Marketi ng, Washington University in St. Louis 
+  
+October 14, 2021 
+  
+Forthcoming at Management Science 
+ 
+  
+ 
+† Corresponding Author: Seethu Seetharaman, email: seethu@wustl.edu ; Ph: 314-935-3574. Both authors contributed equally to 
+this paper. The authors thank the seminar participations from Em ory University, Georgia Institute of Technology, University of 
+Georgia, Georgia State University at the 2017 Georgia Research Symposium, at the 2017 Marketing Science Conference, and at 
+the 2018 Frontiers of Empirical Marketing Conference. The author s also thank Professor (Emeritus) Ambar Rao for his comments. 
+
+2 
+ Dynamic Pricing for New Products Using a  
+Utility-Based Generalization of the Bass Diffusion Model 
+ 
+Abstract 
+ The Bass Model (BM) has an excellent  track record in the realm of new product sales forecasting. However, 
+its use for optimal dynamic pricing or advertising is  relatively limited since the Generalized Bass Model 
+(GBM), which extends the BM to handle marketing vari ables, uses only percentage changes in marketing 
+variables rather than their actual values. This restri cts the GBM’s prescriptive use, for example, to derive 
+the optimal price path for a new product, conditional on an assumed launch price, but not the launch price 
+itself. In this paper, we employ a utility-based extens ion of the BM, which can yield normative prescriptions 
+regarding both the introductory price, as well as the pr ice path after launch, for the new product. We offer 
+two versions of this utility-b ased diffusion model, namely the Bass-Gumbel Diffusion Model (BGDM)  and 
+the Bass-Logit Diffusion Model (BLDM) , the latter of which has been previously used by Krishnan, 
+Seetharaman and Vakratsas (2012). We show that both BGDM and BLDM  handily outperform the GBM in 
+forecasting new product sales using empirical data from four product categories. We discuss how to 
+estimate BGDM  and BLDM  in the absence of past sales data. We co mpare the optimal pricing policy of the 
+BLDM  with the GBM  and derive optimal pricing pol icies that are implied by the BLDM  under various 
+ranges of model parameters. We illustrate a dynamic pr icing approach that allows managers to derive 
+optimal marketing policies in a computationally c onvenient manner; and extend this approach to a 
+competitive, multi-product case. 
+ 
+Keywords : Dynamic Pricing, Optimal Pricing, Prescrip tive Analytics, New Products, Diffusion Model, 
+Bass Model (BM), Generalized Bass Model (GBM), New Product Sales Forecasting. 
+  
+
+3 
+ Introduction 
+The Bass Model (BM, henceforth), first proposed  by Bass (1969), is the best-known new product 
+diffusion model in the marketing literature. The BM h as well served the managerial purpose of new product 
+sales forecasting in thousands of industrial applicati ons over the past 50 years (successful applications 
+include forecasting market adoptions of DirecT V, XM-Sirius Satellite Radio, Microsoft Windows 
+Operating Systems, etc.). The appealing aspect of the BM is its parsimony. Using just two parameters -- 
+the innovation coefficient (p) and the imitation coeffi cient (q) -- the BM fits a wide range of observed 
+adoption patterns, which reflect two influences on ma rket adoption of the new product: the effects of 
+external media and interpersonal communications (or “w ord of mouth”). While pre-launch sales forecasting 
+has indeed been its main field of use, another impor tant managerial purpose for the BM is to inform the 
+development of optimal marketing policies for the new pr oduct, e.g., dynamic pricing, advertising, etc. (see 
+Peres, Muller and Mahajan 2010 for an  extensive review of the BM). 
+With regard to the above-mentioned managerial purpose of designing optimal marketing policies 
+for new products, it is necessary for the BM to incorporate the effects of marketing variables on new product 
+diffusion. Taking this view, the Generalized Bass Model (GBM, henceforth), which is an extension of the 
+BM to handle marketing variables such as price, advert ising, etc., was proposed by Bass, Krishnan and Jain 
+(1994). The GBM nests the BM as a special case. 1 In fact, the GBM reduces to the BM when either the 
+new product’s marketing mix is cons tant over time or when each marketing mix variable changes by a 
+constant percentage amount from one period to the next. For example, suppose price is the only marketing 
+variable of interest, if price always decreases by x % from one period to the next, then the BM and the GBM 
+would do equally well in terms of fitting the observe d sales pattern of the new product even though the BM 
+ignores the effects of price. The reason for this is th at the GBM overlays the effects of the marketing mix 
+within the BM by parameterizing the diffusion speed in a given period to depend on only the percentage 
+ 
+1 Several other models of new product adop tion have been proposed in the literature to  handle the effects of marketing variables . 
+However, unlike the GBM, they typically do not reduce to the BM as a special case. 
+
+4 
+ changes in the marketing mix variables from the previ ous period to the current period, and not the actual 
+current values of the marketing mix variables. Therefore,  if the percentage change in price is constant from 
+one period to the next, the price change covariate is  perfectly collinear with tim e, making it unnecessary to 
+explicitly incorporate the effect of the price change  in the model from the standpoint of forecasting sales. 
+The above-mentioned operationalizati on of marketing mix effects, using percentage changes under 
+the GBM, makes it necessary to make  additional assumptions before rende ring the GBM usable for optimal 
+price policy planning. For example, Krishnan, Bass a nd Jain (1999) make a specific parametric assumption 
+about how the diffusion speed of the new product add itionally depends on the absolute price of the new 
+product. This parametric assumption is not, nor can be, validated using empirical data. The assumption is 
+only made for the sake of mathematical necessity to solve the dynamic optimiza tion problem characterizing 
+the new product’s optimal pricing policy. Krishnan and Jai n (2006) make a similar untested assumption 
+about how the diffusion speed depends on the absolute a dvertising level to derive  the optimal advertising 
+policy for a new product. Even after making such unt ested assumptions, the GBM can  be used to derive 
+only the optimal price path or advertising path for the new product after launch,  conditional on an assumed 
+launch price or advertising levels, but not the optimal  launch price or advertisi ng level themselves (which 
+must be figured out using other means, such as a cons umer survey, as discussed in Krishnan, Bass and Jain 
+1999). Furthermore, Fruchter and Van den Bulte (2011 ) explicitly show that different assumptions about 
+how absolute levels of the marketing mix are incorporat ed in the GBM can lead to vastly different optimal 
+marketing policies. On that basis, Fruchter and Van den Bulte (2011) argue that the GBM is ill-suited for 
+normative marketing planning. In sum, therefore, the GBM, while being an excellent predictive model for 
+sales forecasting, has a serious shortcoming as a prescr iptive model for marketing policy planning. This 
+shortcoming has been previously recognized in the literature (see, for example, Bass, Jain and Krishnan 
+2000). 
+In this paper, we employ an a lternative extension of the BM, which is utility-based (unlike the 
+GBM) and does not suffer from the prescriptive w eakness of the GBM. Built on the foundations of 
+consumer utility maximization, this utility-based diff usion model allows the a doption rate for the new 
+
+5 
+ product to depend on the absolute levels  of the marketing mix structurally. 2 Therefore, the diffusion model 
+we use can yield, for example, norm ative prescriptions regardin g both the introductory  price and the optimal 
+price path after launch for the new product. In additi on to the marketing mix, the diffusion model can also 
+incorporate market characteristics, category characteristics, and macro-econom ic variables, if available, to 
+affect the consumer’s utility function. We offer two versions of the diffusion model, namely the Bass-
+Gumbel Diffusion Model (BGDM)  and the Bass-Logit Diffusion Model (BLDM) . The BGDM version is new 
+to the literature and nests the BM as a special case and reduces to the BM when consumers are unresponsive 
+to the marketing mix. On the other hand, the BLDM  version – which has been previously estimated on SUV 
+adoption data by Krishnan, Seetharaman and Vakrat sas (2012) – does not nest the BM as a special case. 
+However, the hazard of the BLDM  mimics the parametric shape of the BM hazard very closely; therefore, 
+in a practical sense, it almost  nests the BM as a special case. Since product managers are often interested 
+in figuring out the launch price and advertising st rategy for their new products, and the GBM cannot be 
+used to derive launch strategies for the marke ting mix (as explained above); hence, both the BGDM  and 
+BLDM  offer a practical benefit in that regard. 
+Using empirical data from 4 product categories (tha t have been previously used by Bass, Krishnan 
+and Jain 1994 and Jiang, Bass and Bass 2006), we show that both BGDM and BLDM  handily outperform 
+the GBM and BM in forecasting new product sales both in sample and out of sample, with the BLDM  
+outperforming the BGDM . On the basis of these findings, we propose that even if one’s purpose is to only 
+forecast new product sales, and not optimize the new product’s marketing mix,  both BGDM and BLDM 
+are still to be preferred to the GBM. In addition,  both BGDM and BLDM predict the peak time of adoptions 
+more accurately than the GBM. 
+We illustrate the prescriptive consequences of th e utility-based diffusion model for new product 
+pricing, in terms of deriving both the optimal launch price and the optim al price path for the new product 
+after product launch. Using a computationally conven ient dynamic pricing approach, we compare the 
+ 
+2 Utility-based models of new product adoption have been previous ly proposed in the literature. However, Bass, Krishnan and Jain  
+(1994) show that the GBM consistently outperform s these models in predicting sales outcomes. 
+
+6 
+ dynamic price path yielded by the BLDM  versus that of the GBM . Finally, we extend this pricing approach 
+to handle the competitive, multi-product context. Ou r prescriptive analytics solution will be useful to 
+practitioners for new product planning decisions, especi ally given the ubiquitous global use of the BM for 
+new product sales forecasting and characterizing inte rnal versus external influences on new product 
+adoption. 
+The rest of the paper is organized as follows. In section 2, we present a brief literature review. In 
+section 3, we first derive the widely used BM as a ut ility-based diffusion model. Next, we illustrate how to 
+incorporate the marketing mix variables into this  utility-based diffusion model. Then, we lay out two 
+different versions of the di ffusion model, namely the Bass-Gumbel Diffusion Model (BGDM)  and the Bass-
+Logit Diffusion Model (BLDM) , the latter of which has been pr eviously estimated by Krishnan, 
+Seetharaman and Vakratsas (2012). In section 4, we present the empirical results from estimating BGDM , 
+BLDM , and two comparison models (BM, GBM), using ne w product sales data for four different product 
+categories. In section 5, we discuss how to derive th e optimal pricing policy for the new product, given the 
+parameters of the utility-based diffusion model. We present a computationally convenient solution to the 
+firm’s dynamic optimization problem, which is easy for ma nagers to use. In addition, we present the optimal 
+pricing policies for a new product that are implied by the BLDM  under various ranges of the model 
+parameters. Then, we illustrate how to extend the dynamic pricing approach to a competitive, multi-product 
+context. Section 6 concludes with directions for future research. 
+ 
+Literature Review 
+A number of researchers in the 1980s studied optimal dynamic pricing for new products using 
+analytical models of dynamic pricing (Bass and Bultez 1982, Kalish 1983, Kalish and Lilien 1983, 
+Thompson and Teng 19 84, Dockner and Jorgensen 1988). These m odels relied on assumptions regarding 
+consumer adoption patterns for ne w products. Subsequent research in the 1990s focused on explicit 
+extensions of the BM, by then a workhorse empirica l model for new product sales forecasting, to estimate 
+
+7 
+ the effects of price on new product adoption (Jain and Rao 1990, Bayus 1992,  Bass, Krishnan and Jain 
+1994). The extension that became most well accepted in the marketing literature is the GBM of Bass, 
+Krishnan and Jain (1994), which has subsequently not only been used in several industry consulting 
+applications but also built in to commercially distributed diffusion soft ware such as DecisionPro’s MEXL, 
+Number Analytics etc. Given the wide acceptance of the GBM in both research and practice, Krishnan, 
+Bass and Jain (1999) analytically derived the optimal dynamic pricing implications of the GBM. In doing 
+this, Krishnan, Bass and Jain (1999) treated the in troductory price of the new product as an exogenously 
+pre-specified constraint to render the optimization pr oblem solvable. In this research, we employ a utility-
+based extension of the BM, which does not warrant such  a constraint for price optimization. We offer two 
+versions of this utility-based diffu sion model. Under both versions, th e introductory price for the new 
+product can be explicitly optimized rather than assumed. 
+Song and Chintagunta (2003) and Melnikov (20 12) propose and estimate utility-based models of 
+consumer adoption of durable goods. Unlike the utility-based  model that we use, their models are not based 
+on the BM. However, the implied aggregate adoption pa tterns yielded by their models could resemble the 
+S-shaped adoption curve of the BM under some cond itions. The aggregate adoption curve is derived as an 
+endogenous consequence of the choi ces of individual consumers who are both heterogeneous in terms of 
+their price sensitivity and forward-looking in terms of hol ding future price expecta tions for the product. In 
+other words, the S-shaped temporal pattern in aggr egate adoptions arises when product prices decrease over 
+time and because consumers with different price sens itivities buy at different points of time during the 
+product life cycle. In our setting, however, cons umers are myopic (i.e., do not hold future price 
+expectations) but respond to previous cumulative adopters on account of “word of mouth” effects, 
+consistent with the behavioral foundations of the BM. In fact, in one of its versions, our model 
+mathematically reduces to the BM as a special case, while the utility-based  models of Song and Chintagunta 
+(2003) and Melnikov (2012) would not. Further, tho se two papers do not study optimal dynamic pricing 
+for a new product, which is the focus of our research. 
+
+8 
+ Krishnan, Seetharaman and Vakratsas (2012) study consumer adoption of SUVs using a two-stage 
+model of demand, where the first-stage model pertains  to category adoption, and the second-stage pertains 
+to brand choice. The first-stage model of category adoption is the BLDM , while the second-stage model of 
+brand choice is a Multinomial Logit (MNL). Given our pa rtial overlap with the past research of Krishnan, 
+Seetharaman and Vakratsas (2012), what distinguishes our research from theirs? We note four 
+contributions: First, while Krishnan, S eetharaman and Vakratsas (2012) estimate the BLDM , they do not 
+estimate the GBM on SUV adoptions data. Therefore, the empirical usefulness of the BLDM  relative to the 
+GBM remains unknown. In this paper,  we explicitly compare the empirical  performance of the two models 
+– BLDM  versus GBM – on various predictive metrics across multiple datasets and show that the BLDM  
+vastly outperforms the GBM. We also show that the BLDM  better recovers the effects of price on new 
+product adoption. Second, we offer two vers ions of the utility-based diffusion model, BGDM  (that is new 
+to the literature and nests the or iginal BM as a special case) and BLDM , and compare their empirical 
+performance. The BLDM  outperforms the BGDM  in terms of sales predictions and is, therefore, a more 
+preferred version. Third, we illustrate how to ex tend the utility-based category adoption model to handle 
+multiple brands in the category. On the other hand,  Krishnan, Seetharaman an d Vakratsas (2012) model 
+brands’ market shares separately using a second-stage MNL model. Fourth, and most importantly, we study 
+the normative usefulness of the utility-based diffu sion model vis-à-vis the GBM for marketing mix 
+optimization. Unlike the GBM, which suffers from the weakness of being unable to provide a prescription 
+for the optimal launch price (as shown by Fruchter and Van den Bulte 2011), the utility-based diffusion 
+model, when used as an input to a price optimization algorithm, yields an optimal launch price, as well as 
+an optimal price path, for the new product. Such price optimization was not undertaken by Krishnan, 
+Seetharaman and Vakratsas (2012). We show how to undertake the price optimization using an easy-to-
+implement numerical optimization algorithm (recently  developed by Cosguner, Chan and Seetharaman 
+2018). This is the main contribution of this research. 
+In sum, our key research contribution lies in en abling marketing mix optimization – yielding an 
+optimal price path – for a new product using a pred ictive model of new product adoption that more 
+
+9 
+ accurately forecasts new product sales than existing mode ls. We use a recently proposed numerical dynamic 
+optimization technique for this purpose. 
+ 
+Proposed Utility-Based Generalizat ion of the Bass Diffusion Model 
+We develop our model in four stages. First, we present the BM and its associated Non-linear Least 
+Squares (NLS) estimation procedure for discrete-time  data, first proposed by Srinivasan and Mason (1986), 
+and now commonly used to estimate the BM by resear chers and practitioners. Second, we show how to 
+derive the discrete-time BM as a utility-based diffusion model. Third, we extend the utility-based BM to 
+handle marketing variables to obtain the first version of the diffusion model, the Bass-Gumbel Diffusion 
+Model  (BGDM ). Fourth, we present the second version of the diffusion model, the Bass-Logit Diffusion 
+Model  (BLDM ). We discuss both the difference between BGDM  and BLDM  and the difference between 
+BGDM  / BLDM  and the GBM. 
+ 
+Step 1: Bass Model (BM) 
+According to the BM (Bass 1969), in a market size of M consumers for a new product, the 
+likelihood that a consumer w ill adopt the new product at time t, given that the consumer has not yet adopted, 
+is given by the following equation. 
+()() ,1( )ftpqF tFt         ( 1 )  
+where p and q represent the coefficients of in novation and imitation, respectively, F(t) is the cumulative 
+distribution function (cdf) and f(t) is the probability density function (pdf) characterizing the random 
+variable t, which represents the consumer’s time to  adoption for the new product. Assuming F(0) = 0 and 
+solving the differential equation (1) yields the following. 
+()
+()1() .
+1pq t
+pq teFtqep
+
+         ( 2 )  
+
+10 
+ Since new product sales data are commonly available in discrete time intervals (such as quarters or years), 
+the discrete-time version of the BM is commonly es timated using the non-linear least squares procedure, 
+first proposed by Srinivasan and Mason (1986), by minimizing the following criterion function. 
+2
+1ˆ() () ,T
+tSSE N t N t
+         ( 3 )  
+where T stands for the total number of periods fo r which new product sales data are available, N(t) 
+represents the observed sales of the new product in period t, and 𝑁෡ሺ𝑡ሻ represents the predicted sales of the 
+new product in period t, and is given by 
+ ˆ() * () ( 1 ).Nt M Ft Ft          ( 4 )  
+Minimizing the criterion function in equation (3) yields estimates of p, q, and M for the new product. Sales 
+forecasts can then be generated fo r the new product for any period t, whether in sample or out of sample, 
+using equation (4) above. When no past sales data are available on the new product, such as prior to the 
+launch of the new product, sales data of comparable products, called “analogs,” are first used to estimate p 
+and q for the analogs, after which a weighted average (where the weights represent similarities of the 
+analogs to the new product) of the analogs’ p and q values is taken to represent p and q for the new product. 
+M is estimated separately by combining information on  product purchase intent obtained from a consumer 
+survey with census data using a chain-ratio method. These estimates of p, q, and M for the new product are 
+then used to forecast new product sales, again using equation (4) above. Typically, practical applications 
+of the BM rely on analog-based sales forecasting prio r to product launch, then use Bayesian updating of p, 
+q and M after sales data begin to appear for the new produc t and eventually rely only on historical sales 
+data of the new product to forecast future sales. 
+ 
+Step 2: Deriving the Discrete-Time BM as a Utility-Based Diffusion Model 
+In a market size of M consumers for a new product, suppose the utility of a consumer for the new 
+product at time t is given by the following equation. 
+
+11 
+ 1( 1 )ln ln ,1( )ttFtUFt        ( 5 )   
+where the first term on the right-hand side, lnቂlnቄଵି୊ሺ୲ିଵሻ
+ଵି୊ሺ୲ሻቅቃ, represented by Vt for short, represents the 
+deterministic  attractiveness3 of the new product to the consumer at time t, F(t) represents the cdf given in 
+equation (2), and t represents an unobserved (by the research er) random component that captures other 
+influences on the consumer’s utility for the new pr oduct. If one assumes that the random component t 
+follows a Gumbel distribution with location paramete r 0 and scale parameter 1, it can be shown that the 
+consumer’s probability of buying the new product at time t, given that the consumer has not yet bought the 
+new product, also called the discrete hazard function  characterizing the consumer’s time to adoption for 
+the new product, is given by the following equation (Seetharaman 2004). 
+Pr 1 ,Vte
+t e         ( 6 )   
+which, in turn, can be rewritten as follows. 
+() ( 1 )Pr ,1( 1 )tFt Ft
+Ft        ( 7 )   
+which implies that the consumer’s probability  of not buying the new product at time t, given that the 
+consumer has not yet bought the new product, also called the discrete survivor function  characterizing the 
+consumer’s time to adoption for the new pr oduct, is given by the following equation. 
+1( )1P r .1( 1 )tFt
+Ft        ( 8 )  
+The consumer’s unconditional likelihood of buying the new product at time t, also called the probability 
+mass function  characterizing the consumer’s time to a doption for the new product, depends on the 
+consumer’s discrete hazard and discr ete survivor functions, as follows. 
+ 1 P r ( 1 )*1 P r ( 2 )* . . . *1 P r ( 1 )* P r () ,tL tt          ( 9 )  
+ 
+3 The deterministic attractiveness  term, which reflects the consumer’s intrinsic utility for the product, represents the discrete-time 
+baseline hazard  of adoption (Krishnan, Seetharaman and Vakratsas 2012). It  is strictly increasing ove r time, which means that a 
+consumer’s conditional probability of adopting the product, give n that adoption has not happened yet, increases over time. 
+
+12 
+ which can be rewritten, using equa tions (7) and (8), as follows. 
+1( 1 ) 1( 2 ) 1( 1 ) ( )( 1 )** . . . * * ,1( 0 ) 1( 1 ) 1( 2 )1( 1 )tF F Ft Ft FtLF F Ft Ft          ( 1 0 )  
+which reduces to the following. 
+() ( 1 ) .tLF tF t          ( 1 1 )  
+This implies that the predicted sales of the new product in period t is given by 
+ ˆ() * () ( 1 ).Nt M Ft Ft          ( 1 2 )  
+Equations (4) and (12) are identical.  This establishes that the discrete-time version of the BM can be 
+derived as a utility-based diffusion model, as formulated in equation (5). This e quivalence between a utility-
+based discrete choice model and the BM has not been  explicitly recognized in the marketing literature 
+(except for Krishnan, Seetharaman and Vakratsas 201 2 where it is tacit in their model derivation). 
+Intuitively, equation (5) can be understood as follows: Since F(t) is a monotonic increasing function of t, 
+i.e., F(t) > F(t-1) , it follows that lnቂlnቄଵି୊ሺ୲ିଵሻ
+ଵି୊ሺ୲ሻቅቃ is a monotonic increasing function of t. This means that 
+the deterministic attractiveness of the new product to the consumer, Vt, is an increasing function of t, which, 
+in turn, implies that the discrete hazard, Prt, is also an increasing function of t as per the continuous-time 
+BM represented in equation (1). 
+ 
+Step 3: Bass-Gumbel Diffusion Model (BGDM) 
+In a market size of M consumers for a new product, suppose the utility of a consumer for the new 
+product at time t is given by the following equation. 
+t1( 1 )ln ln Price * ,1( )ttFtUFt       ( 1 3 )   
+where Price t represents the price of the new product at time t and β represents the price sensitivity of the 
+consumer, and the remaining terms are as in equati on (5). Under the same Gumb el distributional assumption 
+for t as in equation (5), this  implies that the consumer’s probability of buying the new product at time t, 
+
+13 
+ given that the consumer has not yet bought the new product, also called the discrete hazard function  
+characterizing the consumer’s time to adoption for th e new product, is given by the following equation. 
+Pr 1 ,Wte
+t e         ( 1 4 )   
+where 
+t1( 1 )ln ln Price * .1( )tFtWFt      ( 1 5 )   
+The consumer’s unconditional likeliho od of buying the new product at time t is as follows. 
+1
+11P r ( ) * P r ( ) ,t
+t
+uL ut
+         ( 1 6 )  
+and the predicted sales of the new product in period t is, therefore, 
+ˆ() * .t Nt M L           ( 1 7 )  
+The criterion function in equation (3) is minimized to estimate the parameters -- p, q, M,   -- of this 
+diffusion model, that we call the BGDM . This model reduces to the traditional BM when β = 0. In this 
+sense, the BGDM  generalizes the BM (as does the GBM) by nesting the BM as a special case. 
+What if no past sales data are available on the new product, such as prior to the launch of the new 
+product? 4 In that case, sales data of comparable products,  called “analogs,” can be first used to estimate p 
+and q for the analogs, after which a weighted average,  where the weights represent similarities of the 
+analogs to the new product, of the analogs’ p and q values is taken to represent p and q for the new product. 
+This is the standard appr oach taken to estimating  p and q in the absence of past sales data under the BM 
+(see Ofek 2008 for details). The remaining parameters, M and , can be estimated using a discrete choice , 
+also called choice-based conjoint , survey (see Louviere, Hensher and Swait 2000), which is conducted as 
+follows. First, the new product prototype, in real or vi rtual form, is shown to respondents so that they fully 
+understand the functional features of the new product.  Second, respondents undertake 18 choice tasks, 
+ 
+4 We thank an anonymous reviewer for raising this important ques tion about the practical usability of the diffusion model in the  
+absence of historical sales data. 
+
+14 
+ divided in to 6 sets of 3 choice tasks each. Each set of 3 choice tasks represents a subsequent year, when 
+compared to the previous set of 3 choice tasks, since hypothetical introduction of the new product. For 
+example, in the first 3 choice tasks, the respondent is told that the new product has just been launched during 
+the current year; in the next 3 choice tasks, the res pondent is told that the new product was launched during 
+the previous year; in the last set of 3 choice tasks, the respondent is told that the new product was launched 
+6 years prior to the current year. The respondent is also  asked to assume that he or she has not yet adopted 
+the new product while responding to each choice task. Within each choice task, which represents a specific 
+period t since launch, the respondent is shown a particular  version of the new product, defined in terms of 
+how long ago it was introduced (as explained above), as well as two other specific attributes: (1) installed 
+base of existing adopters ( M * F(t) ), and (2) price of the new product ( Price t). The respondent is then asked 
+for their likelihood ( Prt) of adopting that version of the new product. 
+In sum, in the discrete choice survey, as discussed above, the 18 versions of the new product differ 
+in terms of lnቂlnቄଵି୊ሺ୲ିଵሻ
+ଵି୊ሺ୲ሻቅቃ, and Price t, which are the two covariates on the right-hand side of equation 
+(13). The respondent’s likelihood of adoption for each ve rsion of the new product serves as the empirical 
+measure of Prt, which is on the left-hand side of equation (14). We now have a survey-based counterpart 
+dataset to proxy for the absent historical sales data , which can be used to estimate the parameters  and M 
+of the BGDM , using equations (15) - (17). In this ma nner, one can estimate the parameters -- p, q, M,   -- 
+of the BGDM  in the absence of historical sales data on the new product. 
+ 
+Step 4: Bass-Logit Diffusion Model (BLDM) 
+Suppose the utility function in equation (13) still app lies, but we assume that the random component, t, 
+follows the Logistic (rather than Gumbel) distribu tion with location parameter 0 and scale parameter 1. 
+This implies that the consumer’s probab ility of buying the new product at time t, given that the consumer 
+has not yet bought the new product, also called the discrete hazard function  characterizing the consumer’s 
+time to adoption for the new product, is given by the following equation. 
+
+15 
+ Pr ,1t
+tW
+t We
+e        ( 1 8 )   
+where Wt is given by equation (15). We call this model the BLDM . This model has been previously 
+estimated on SUV adoption data by Krishnan, Seetha raman and Vakratsas (2012). The only feature that 
+distinguishes the BLDM  from the BGDM  is the assumption about the random component, t. Equations (16) 
+and (17) still apply and the criterion function in equati on (3) is still minimized to estimate the parameters 
+of the BLDM . Unlike the BGDM , the BLDM  will not reduce to the traditional BM when β = 0. However, it 
+will reduce to a logistic counterpart of the discrete- time BM instead. Since the l ogit model is a workhorse 
+random utility model in the marketing literature, inspired by the seminal work of Luce (1958) and a highly 
+cited empirical application by Guadagni and Little  (1983), we offer this version as an alternative 
+formulation of the utility-based diffusion model even though it does not nest the BM as a special case. 
+As a comparison model, which presents an altern ative way of incorporating marketing variables 
+within the BM (as opposed to the derived utility-b ased diffusion model), we present the GBM below. The 
+cdf characterizing the consumer’s time to adoption of the new product under the GBM specification is, 
+() ( )
+() ( )1() ,
+1pqXt
+pqXteFtqep
+
+        ( 1 9 )  
+where 
+0Price() l n ,PricetXt t
+        ( 2 0 )  
+where Price 0 is the launch price for the new product (whi ch needs to be assumed to be equal to Price 1 in 
+the estimation of the GBM; even more importantly, the value of Price 0 needs to be assumed, rather than 
+explicitly optimized, while deriving the optimal pric ing policy using the GBM, as explained earlier). We 
+estimate the GBM using equations (3) and (4) as well. 
+   
+
+16 
+ Model Discussion 
+The utility-based diffusion model that we have deri ved, on account of having a utility foundation, 
+makes it natural to incorporate marketing variables in the usual additive manne r within the consumer’s 
+utility function (see equation (13)).  The GBM, on the other hand, does not operationalize marketing 
+variables within the BM framework using a behavior-the oretic foundation. It simply  embeds the effects of 
+marketing variables on the adoption hazard using a multip licative function. In fact, it is not possible to 
+easily derive the discrete-time GBM as a utility-based  diffusion model (in the same manner as we derive 
+the discrete-time BM as a utility-based diffusion model). In addition to the marke ting mix, the utility-based 
+diffusion model can also incorporate market charact eristics, category characteristics and macro-economic 
+variables, if available, to affect the consumer’s utility function by including them, for example, in linear 
+additive form in equation (13). Some of these variable s can be categorical, and some could represent fixed 
+effects if necessary. It is unclear how one would include such variables, especially if  they are time-invariant, 
+in a behavior-theoretic manner within the GBM. One could also use control func tion approaches to correct 
+for possible endogeneity of marketing variables (if suitabl e instruments are available) by including the fitted 
+residuals from the instrumental variable regressions as additional explanatory variables in the consumer’s 
+utility function. Endogeneity correction in the GBM, however, is a non-trivial task. 
+It is useful to note that Bass, Jain and Krishnan (2000) propose a discrete-time Proportional Hazard 
+Model (PHM) as an alternative diffusion model to th e GBM. However, their proposed PHM does not reduce 
+to the BM as a special case. Since the BM has long-standing precedent in the diffusion literature and has 
+enjoyed great success in new product forecasting a pplications, we retain the BM within the BGDM  as a 
+special case. In the absence of  marketing variables, the BGDM  reduces to the traditional BM. Our goal is 
+to exploit the excellent forecasting properties of the ad option hazard that is implied by the BM, while also 
+additionally modeling the effects of marketing variab les so that our model can be used for prescriptive 
+decision-making. An added benefit of the utility-ba sed diffusion model is that it can handle multiple, 
+competing new products as we illustrate in our “Optim al Dynamic Pricing Policies” section, while the GBM 
+cannot. This makes the utility-based diffusion model more convenient for practical use since many new 
+
+17 
+ product categories involve multiple, competing new produc ts diffusing simultaneously in the market (e.g., 
+iPhone, Samsung Galaxy, LG Tracfone etc.). Last, but not least, since the utility-based extension of the BM 
+makes specific parametric assumptions (Gumbel or Logi stic) about the utility function, the model can also 
+be estimated using maximum likelihood (rather than least squares), which makes it easy to incorporate 
+random coefficients, using discrete or continuous mixt ure distributions, to reflect unobserved heterogeneity 
+across consumers. 
+It is useful to note that the Gumbel (for BGDM ) and Logistic (for BLDM) distributions of error 
+terms yield convenient closed-form expressions for c onsumer adoption probabilities (see equations (14 and 
+(18)). Our choice of the Logistic error distribution is consistent with an extensiv e literature in marketing, 
+statistics and econometrics on discret e choice models. Our choice of Gumbel distribution allows us to 
+establish a random utility foundation for the widely used BM (as shown earlier). Furthermore, there is rich 
+precedence in the econometrics literature for the choice of  Gumbel errors in duration time models (see, for 
+example, Heckman and Singer 1984, Meyer 1990 , Han and Hausman 1990 for applications to 
+unemployment durations). Extreme va lue distributions are the limiting distributions for the maximum of a 
+very large collection of random observations from the same arbitrary distribution. Gumbel (1958) showed 
+that for any well-behaved initial distribution of un observed random errors, the Gumbel distribution is 
+sufficient as such a limiting distributio n. In the case of duration time m odels, extreme value distributions 
+for the maximum apply. For example, if there are n unobserved influences on co nsumer adoption time, and 
+consumer utility for the product crosses the adoption threshold as long as the maximum of these influences 
+becomes sufficiently large, then extreme value theory implies that independent of the choice of component 
+errors, the maximum will approach Gumbel as n becomes large. This provides a behavioral basis for the 
+Gumbel error term in the BGDM . As far as the BLDM  is concerned, because the L ogistic error term can be 
+shown to be a difference of two Gumbel error term s, if one views not only the random utility of the BLDM  
+as Gumbel, but also the adoption threshold of the BLDM  as Gumbel (instead of deterministic), then the 
+BLDM  can also be motivated as arising from a Gumbel specification of error terms. 
+ 
+
+18 
+ Benefit of the BGDM  and BLDM  over the GBM in the Case of No Past Data 
+In the absence of historical sales data, such as prior to the launch of the new product, one can 
+estimate the parameters of the BGDM  or BLDM , including specifically the price sensitivity parameter ( ), 
+using discrete choice survey data, as discussed earlier. Su ch estimation is facilitated by the fact that choice-
+based conjoint relies on random utility primitives, as do BGDM  and BLDM . However, under the GBM , 
+which does not have a random utility  foundation, it is unclear how one  would take the market price 
+sensitivity that is estimated using a conjoint survey  and convert it to yield the price parameter of the GBM . 
+In other words, the GBM  appears unusable in the absence of histori cal sales data. In this sense, the strength 
+of BGDM  and BLDM  over the GBM  becomes even greater in the absence of past sales data. 
+ 
+Empirical Results 
+We have discussed the theoretical merits of th e utility-based diffusion model we derive. Now we 
+study how this model fares, relative to comparis on models (BM and GBM), in explaining actual new 
+product sales data. For this purpose, we employ annual new product adoptions data, along with annual 
+average prices, pertaining to four categories of dur able goods: Color TV, Air Conditioner, Clothes Dryer 
+and Freezer. The reason for choosing th ese categories is that three of th ese categories (except freezer) were 
+used in the first empirical application of the GBM by Bass, Krishnan and Jain (1994). All four categories 
+were used in a recent application of the GBM by Ji ang, Bass and Bass (2006). We use the exact same 
+datasets that have been used in these previous papers. 
+We compare the empirical performance of the tw o versions of the utility-based diffusion model – 
+BGDM  and BLDM  -- versus two comparison models, BM and GBM. The results of fit comparisons are 
+given in Table 1. In terms of the fit criterion (SSE), we see that the BLDM  does the best, while the BGDM  
+does second best, in three out of four categories (AC, Dryer, Freezer). Not surprisi ngly, since it ignores the 
+effects of prices, the BM does the worst in all 4 cate gories. Interestingly, in the only category (Color TV) 
+where the GBM outperforms the utility-based diffusion m odel, its superior perfo rmance is only marginal 
+(SSE of 402,514 for GBM versus 457,051 for BGDM ), in sharp contrast to the utility-based model vastly 
+
+19 
+ outperforming the GBM in the remaining thr ee categories (for example, SSE of 89,550 for BLDM  versus 
+294,659 for GBM in the Air Conditioners  category). This reveals that the utility-based diffusion model is 
+able to much better explain new produc t adoption patterns than the GBM. 
+[Insert Table 1 here] 
+It is possible that an in-sample fit criterion may exaggerate the superior empirical performance of 
+the utility-based diffusion model versus the GBM and BM . For this reason, we additionally compare model 
+performance using out-of-sample holdout predictions. For this purpose, we re-estimate all four diffusion 
+models using only the first 80 % of the observations in the data (training sample), and then use the estimates 
+to makes predictions of sales in each of the last 20 % of observations in the data (holdout validation sample). 
+Table 2 provides the results from the holdout validation comparison, period by period for each product 
+category. The table shows that the predicted sales yielded by the BLDM  comes closer to the actual sales in 
+11 out of the 12 cases, when compared  to the predictions yielded by the other models. In the only case 
+where BLDM  does not yield the best prediction, the BGDM  does the best. In other words, both versions of 
+the utility-based diffusion model yield sales predictions th at are closer to the actual sales data in the holdout 
+validation sample in all cases when compared to th e GBM or BM. This strongly vindicates the forecasting 
+performance of the utility-based diffusion model. On th e basis of these findings, we propose that even if 
+one’s purpose is to only forecast new product sales, and not optimize the new product’s marketing mix, 
+BGDM  and BLDM  must be preferred to the GBM. 5 
+[Insert Table 2 here] 
+Next, we compare the prediction performance of th e three diffusion models that incorporate price 
+– BLDM , BGDM , GBM -- using k-fold cross validation. We do this in two ways: (1) Leave one out, and 
+(2) Leave two out. In (1) we leave one observation out within each validat ion fold, and in (2) we leave two 
+observations out within each validation fold. Given N ob servations in a category dataset, this results in N 
+ 
+5 We also perform holdout predictions using the first 60%, 70%, a nd 90% of the data as training  samples, and find that the BLDM  
+/ BGDM  outperform the BM / GBM in 75%, 92%, and 75% of the cas es, respectively. Please see our Web Appendix A for the 
+details of these additional holdout validations. 
+
+20 
+ folds in (1) and N*(N-1) / 2 folds in (2). Within each holdout fold, we predict the outcome(s). Table 3 
+provides the results from the k-fold cr oss validation, reporting the percenta ge of times across all folds that 
+each model is the “best” in terms of predicting valida tion outcomes. We find that one of the utility-based 
+diffusion models – BLDM  or BGDM  – outperforms the GBM in a majority of the cases for each category, 
+in both (1) and (2). For example,  in the clothes dryer category, in the leave two out case, either BLDM  or 
+BGDM  best predicts validation outcomes 72 % of the time while the GBM wins 28 % of the time. These 
+results further highlight the practical usefulness of the utility-based diffusion models for prediction 
+purposes. 
+[Insert Table 3 here] 
+We report the estimated parame ters – innovation coefficient ( p), imitation coefficient ( q), market 
+potential ( M), and price sensitivity ( β) – for each model in Table 4. We see that the estimated price 
+sensitivity ( β) is negative and significant for each category, as expected, under the BGDM  and BLDM . This 
+means that as price of the new product decreases (i ncreases), its adoption speed accelerates (decelerates). 
+However, under the GBM, the estimated  price coefficient is insignificant in three out of four categories 
+(except Color TV). This means that  using the GBM, one could spuriously conclude that price does not 
+significantly influence new product adoption even t hough our utility-based diffusion model may suggest 
+otherwise. The estimated market potential ( M) is lower under the GBM and BM than under the utility-based 
+diffusion model in three out of four categories (except fr eezer). To investigate this issue further, we look at 
+the re-estimated values of M in the training sample (i.e., first 80 % of observations), as opposed to the full 
+sample. These are reported in Table 4(b). For all four  categories, we note a systematic and large downward 
+bias in the estimated values of M under the GBM and BM. This is consis tent with the findings in Van den 
+Bulte and Lilien (1997) that the estimated value of M goes systematically downward as one right-truncates 
+the observed diffusion data. The two versions of the utility-based diffusion model, on the other hand, yield 
+roughly similar estimates of M for two categories, and understated, albeit much less so than the GBM and 
+BM, estimates for the other two categories. This hi ghlights an additional benefit to using either the BGDM  
+or BLDM , i.e., robustness to minor right truncations in the data. 
+
+21 
+ [Insert Table 4 here] 
+It is difficult to directly interpret the estimated p and q coefficients in Table 4. Therefore, we convert 
+these estimates to probability densities of adoption tim es (under the assumption that price stays at the 
+introductory price, so that we are able to isolate th e intrinsic adoption pattern, absent price effects), using 
+the formulas in equations (11) and (16), for the BM / GBM and the BGDM  / BLDM , respectively. First, we 
+note that the estimated probability density is almost identical between the BM and GBM, and between the 
+BGDM  and BLDM . However, there are significant differences between the probability densities yielded by 
+the BGDM  / BLDM  versus those yielded by the BM / GBM.  For two categories (Color TV and Air 
+Conditioner), the BGDM  / BLDM  implies a much longer, and therefor e slower, adoption cycle, versus the 
+BM / GBM (“fatter tails”). For one category (Freezer), we find the reverse, with the BM / GBM implying 
+a longer adoption cycle. For one category (Clothes Dr yer), the estimated probability densities do not differ 
+by much across the four models. While there is no syst ematic pattern in these diffe rences, it is interesting 
+to see that the utility-based diffusion model yields a di fferent intrinsic adoption pattern (which is still 
+formulated as following a Bass curve when marketing va riables are absent) when compared to the BM or 
+GBM. Therefore, beyond the superiority in  forecasting performance discussed earlier, BGDM  / BLDM  yield 
+different intrinsic adoption patterns than the GB M. In other words, th e descriptive content of BGDM  / 
+BLDM  is different from that of the GBM. 
+Some comments are in order here. It is useful to note that the BGDM  without price is 
+mathematically equivalent to the BM and, therefore, would yield the same estimates of p, q, M as the BM. 
+Therefore, the only reason that the estimates of p, q, M yielded by the BGDM  are different from those 
+yielded by the BM is the inclusion of price in BGDM . In other words, the observed differences in the 
+estimates of p, q, M between the BGDM  and BM is on account of omitted variable bias  in the BM. That 
+said, it is interesting to note that the estimates of p, q, M yielded by GBM do not differ that much from 
+those yielded by the BM. In other words, the effects of omitted variable bias do not seem to show up when 
+comparing the GBM to the BM. Why is  this the case? Our explanation is  that since the GBM incorporates 
+the effect of price by linearly adding the percentage ch ange in price (scaled by the price coefficient) to 
+
+22 
+ calendar time, there is little to no consequence of igno ring price in the GBM when percentage change in 
+price is almost collinear with the time variable. This, in turn, makes the estimated parameters p, q and M 
+immune to whether or not price is included in the GBM. In BGDM  / BLDM , however, price is included as 
+an absolute measure, rather than as a percentage change, within the utility function. Additionally, time is 
+represented non-linearly in the utility function using the ln [ln (.)] term, which means that there is no 
+collinearity between how price versus elapsed time ar e allowed to influence adoption. Therefore, the BGDM  
+/ BLDM  successfully identify the effects of price on adoption in all four categories, unlike the GBM which 
+fails to identify significant price effects in three out of four categories. 
+[Insert Figure 1 here] 
+In order to further elucidate the subs tantive implications of the estimated p and q coefficients, we 
+compute the predicted peak adoptio n time based on the estimated mode l parameters, and present them in 
+Table 5. First, we note that the predicted peak adoption times from the BGDM  / BLDM  exactly agree with 
+the observed peak adoption times in 3 out of 4 categor ies (Color TV, Air Conditioner, Clothes Dryer). In 
+the fourth category (Freezer), the predicted peak adopti on time is slightly (by one period) larger than the 
+observed value. In sharp contrast, the predicted p eak adoption time from the BM / GBM agrees with the 
+observed peak adoption time in only one category (Col or TV). In the second and third categories (Air 
+Conditioner, Clothes Dryer), the BM / GBM overestim ate the peak adoption times by two periods, while 
+in the fourth category (Freezer), the BM / GBM under estimate the peak adoption time (by 2 periods for the 
+BM, and by 4 periods for the GBM). In sum, the BGDM  / BLDM  are able to predict peak adoption times 
+much more accurately than the BM / GBM. This further vindicates the managerial usefulness of the utility-
+based diffusion model. We also predict the “lifetim e” of the adoption lifecycle for each product using the 
+number of periods until the number of adoptions in a pe riod falls to less than 10 (see Table 5). For 3 out of 
+4 categories, we see that the BGDM  / BLDM  predict a much longer adoption lifetime (1.5 – 2 times) than 
+what is predicted by the BM / GBM. To the extent that peak adoption times are more accurately predicted 
+by BGDM  / BLDM , one must place more faith on their predictions of adoption lifetimes as well. 
+
+23 
+ In Table 5, we also report the predicted number of adoptions during the predicted peak time of 
+adoptions. For 2 out of 4 categories (Color TV, Air Conditioners), the predictions of BGDM  / BLDM  come 
+closer to the observed numbers of adoptions, while fo r the remaining 2 categories (Clothes Dryer, Freezer), 
+the GBM makes closer predictions. On  average, across the 4 categories, BGDM  / BLDM  yield a lower 
+prediction error than the BM / GBM. 6 
+[Insert Table 5 here] 
+ 
+Optimal Dynamic Pricing Policies 
+We have already shown in section 4 that BGDM  / BLDM  have excellent forecasting properties 
+using empirical data. Now we derive the prescriptive pricing policies that are implied by the utility-based 
+diffusion model under various ranges of model para meters. For this purpose, we assume that the innovator 
+firm maximizes the revenue yielded by their product. In  reality, it is more likely that the innovator firm 
+maximizes profit, rather than revenue. However, we observe neither the firm’s actual marginal cost of 
+producing the product, nor the dependence of such marg inal cost on the quantity produced (“economies of 
+scale”) and the firm’s production experience in the cat egory (i.e., “experience curve effects”). Therefore, 
+in the absence of a known marginal cost function char acterizing the firm, we cannot correctly specify the 
+firm’s profit function far less maximize it. For this pur pose, we use revenue maximization to illustrate our 
+price optimization approach. It is easy to use our pric ing approach to handle prof it maximization: one would 
+simply replace the objective function to reflect profit rather than revenue. For these numerical simulations, 
+we use a modified version of the dynamic optimiz ation algorithm developed in Cosguner, Chan and 
+Seetharaman (2018) and use the BLDM  version -- which has been previously used by Krishnan, 
+Seetharaman and Vakratsas (2012) -- of the utility-based  diffusion model. In the following subsections, we 
+ 
+6 To illustrate the superior  predictive performance of BGDM  / BLDM , we compare them with earlier diffusion and proportional 
+hazard models in literature. Please see our Web Appendix B for th e details of this comparison exercise. In an additional analys is, 
+we use two recent datasets and illustrate BGDM  / BLDM’s  superior performance as opposed to GBM. Please see our Web Appendix 
+C for the details of this exercise.  
+
+24 
+ discuss our dynamic optimization algorithm first, supply -side implications for an innovator firm next, and 
+the extension of our dynamic pricing appr oach to handle multiple products last. 
+ 
+Numerical Optimization Algorithm to Solve an Innovator Firm’s Dynamic Pricing Problem 
+The pricing objective of the innovator fi rm selling the new product is as follows. 
+ሼPriceଵ, Priceଶ,…,P r i c e ୘ሽൌargmax∑ρ୲ିଵ୘
+୲ୀଵ∗Price୲∗N୲,    ( 2 1 )  
+where 𝜌 is the time discount factor, 𝑃𝑟𝑖𝑐𝑒௧ is the price of the new product at time t, and 𝑁௧ is the expected 
+sales at time t. In this setting, the revenue maximizer firm’s decision for the current price affects not only 
+the current period revenue, but also the revenue stream in the future through chan ging the remaining market 
+potential for the new product. The relevant state variables ( Z) for the innovator firm’s dynamic pricing 
+problem are, therefore, time and th e remaining market potential, i.e., Z୲ൌሼt, R୲ሽ, where R୲ൌMെ
+∑ N୩୲ିଵ
+୩ୀଵ . In order to find the optimal pricing policy function for the new product, we adapt the dynamic 
+optimization algorithm developed in Cosguner, Chan and Seetharaman (2018). First, we parameterize the 
+firm’s temporal pricing policy as a flexible function of the state variables, Z, as shown below. 
+PriceൌPrıce෣ሺZ|θሻ,          ( 2 2 )  
+where Prıce෣ሺ.ሻ denotes a flexible parametric approxima tion of the firm’s pricing policy, and 𝜃 is a vector 
+of parameters characterizing this parametric  approximation. In order to find the true 𝜃 for a given set of 
+diffusion parameters and the discount factor, i.e., ( 𝑝,𝑞,𝑀,𝛽 and 𝜌), we numerically search for 𝜃 that 
+maximizes the lifetime product revenue. This requires us to calculate the lifetime revenue for each candidate 
+value of 𝜃. To do that, we use the following forward simulation algorithm. 
+ For each candidate value of 𝜃: 
+i. Start with the first period, i.e., Zଵൌሼtൌ1, RଵൌMሽ. Given Zଵ, calculate Priceଵൌ
+Prıce෣ሺZଵ|θሻ. Given Priceଵ and Zଵ, calculate the first period sales, NଵሺPriceଵ,Zଵሻ, using 
+equation (4) or (17) for the BM / GBM or BGDM  / BLDM , respectively. 
+
+25 
+ ii. Given Zଶൌሼtൌ2, RଶൌMെNଵሽ, calculate the second period price, Priceଶൌ
+Prıce෣ሺZଶ|θሻ. Given Priceଶ and Zଶ, calculate the second period sales, NଶሺPriceଶ,Zଶሻ, using 
+equation (4) or (17). 
+iii. Repeat (ii) until an iteration T such that R୘ൌMെ∑ N୩ൎ0୘ିଵ
+୩ୀଵ .  
+iv. Calculate the discounted sum of revenues, i.e., ∑ρ୲ିଵ୘
+୲ୀଵ∗Price୲∗N୲. That will be the 
+lifetime revenue for the given policy function Prıce෣ሺZ|θሻ. 
+For our implementation, we use the second order polynom ial approximation with interaction terms for the 
+parameterized policy function (i.e., 𝜃 contains an intercept parame ter, and slope parameters for t, 𝑅௧, t2, 
+𝑅௧2, t*𝑅௧). Since the state transitions are deterministic, an d the market is fully covered within a limited 
+number of iterations, the simulation exercise becomes extr emely fast. In other words, the user can recover 
+the optimal path of prices within a few seconds usi ng a programming environment such as R (please consult 
+Web Appendix D for the sample R code). This is a computationally convenient solution to the firm’s 
+dynamic optimization problem which is easy for manage rs to use. We discuss the supply-side pricing 
+implications next. 
+ 
+Optimal Dynamic Pricing Implica tions for the Innovator Firm 
+First, we report the optimal price paths, alongside the actual price paths (as observed in the data), 
+for all four categories in Figure 2. The key take-aways  of Figure 2 are as follows: First, the optimal price 
+path is non-monotonic, first increasing and then decreasi ng over time, in each of the four categories. The 
+non-monotonicity is most pronounced in the Color TV cat egory, with an introductory price of $580 quickly 
+rising to $850 by period 9, and then gradually decreasi ng to $745 by period 25. The dynamic price path is 
+most shallow in the Clothes Dryer category in the sense that price shows only a minor initial rise and 
+subsequent fall over time. 7 Plots like these, which represent dynamic optimal pricing policies, can be useful 
+ 
+7 Since the recovered price path is a function of estimated mo del parameters, which are associat ed with standard errors, we 
+undertake sensitivity analysis to study the impact of model uncertainty. Web Appendix E reports the optimal price paths based o n 
+ 
+
+26 
+ to managers in innovator firms in terms of enablin g related marketing decisions, such as advertising and 
+sales planning, to be congruent with the prices. Second, consistent with the optimal price paths, we observe 
+that actual price paths are non-monotonic – first increasing and then decreasing – in the Clothes Dryer and 
+Freezer categories. However, they ar e steadily decreasing in the Color TV and Air Conditioner categories. 
+In three out of four categories – Color TV, Clothes Dr yer, Freezer – the actual prices are consistently lower 
+than the actual prices. In the Air Conditioner categor y, however, the actual prices are higher than optimal 
+prices in early periods, and lower in later periods. 
+One should not interpret the observed differences  between optimal and actual price paths, 
+especially with regard to their shapes – nonmonotoni c optimal prices, versus monotonically decreasing 
+actual prices – in two categories, as speaking to the f ace validity (or lack thereof) of our price optimization 
+approach. Our intent in this research  is not to descriptively explain the observed price patterns in the data. 
+Instead, our goal is to provide an easy-to-implemen t normative algorithm for price optimization that uses 
+the descriptively appropriate new product adoption model as an input. As discussed earlier, the actual prices 
+in the data are most likely a consequence of profit maximization on the part of the innovator firm, while we 
+wrongly assume revenue maximization in our numerical simulation. It would require conversations with 
+industry managers who were managi ng product pricing in those categories during the early years of 
+adoption in order for us to understand the (possibly tim e-varying) marginal cost function characterizing the 
+product. Using that information and rerunning our nu merical simulation using a suitably specified profit 
+function would then allow us to derive the optimal pri ce path for a profit maximization objective. That said, 
+we provide a speculative explanation for the actua l price path seen in our data: Suppose the seller 
+experiences declining costs over time (“experience curve” effect), and we assume that their profit margin 
+(m) increases over time as follows: m = 1 – [0.9 / (t0.1)]. Under this assumption, and additionally assuming 
+ 
+the estimated 95 % confidence intervals for p and q. The resu lts suggest the following: (1) the 95% prediction bands are quite 
+“tight” for p, which means that the impact of uncertainty in th e estimated value of p on optimal prices is minimal, (2) the 95%  
+prediction band is wider for q, but not wo rrisomely wide due to parameter uncertainty. For example, the maximum price over the 
+dynamic price path varies from $ 770 (lower bound) versus $880 (upper bound) in the Color TV category, or a difference of $110, 
+on account of model uncertainty. In practice, the risk aversion a nd objective functions of managers will determine how they mak e 
+use of this uncertainty in pricing prescrip tions and its effect on the category profit. 
+
+27 
+ that the seller maximizes profit (rather than revenue),  we find that optimal prices decrease over time for 
+various values of p and q. 8 Therefore, one explanation for the decreasing temporal path of prices that are 
+observed in the data is the existence of experience curv e effects. Since we do not observe seller costs in our 
+data, we are unable to empirically verify whether this  explanation is indeed correct. In practice, however, 
+sellers can use the suggested dynamic pricing approach to maximize profit (rather than revenue, as we do 
+in this study). It is important to note that the sugge sted price optimization approach can yield different 
+shapes – decreasing, increasing, flat, U-shaped, invert ed U-shaped etc. -- for the optimal price paths 
+depending on both the parameters of the new prod uct adoption model, as well as the objective function 
+being maximized by the firm. 
+[Insert Figure 2 here] 
+Next, we derive the optimal dynamic pricing poli cy that is implied by the GBM in order to 
+understand differences in its pr icing implications from the BLDM . For this purpose, we assume the 
+introductory price (Price 0) to be the observed introductory pric e in the data (since the GBM requires 
+introductory price to be exogenously pre-specified as discussed in the introduction section). Since the 
+estimated effect of price under the GBM is significan t only in the Color TV category, we perform this 
+exercise in that category. The optimal price path im plied by the GBM is shown in Figure 3 (alongside that 
+implied by the BLDM ). We note substantively significant differe nces in the pricing implications of the 
+GBM when compared to those of the BLDM . Specifically, the BLDM  suggests an increase in price of the 
+product from $580 to $850 over the first 9 periods beyond which the recommended price gradually 
+decreases to $745 by period 25. In contrast, the GBM suggests a modest initial increase in price from $610 
+to $640 over the first 4 periods beyond which the re commended price falls steeply to $200 by period 25. 
+This results in 13.8 % lower lifetime revenues than those yielded by the optimal price path determined using 
+the BLDM . This exercise reiterates the importance of ha ving an accurate estimate of price on adoption in 
+deriving normative pricing prescr iptions for new products. 
+ 
+8 The results of these numerical simulati ons are reported in our Web Appendix F. 
+
+28 
+ [Insert Figure 3 here] 
+Next we study the impact of p and q on the optimal pricing policy. We keep M and β at the average 
+of their estimated values across the four categories (30,880 and -0.005, respectively). Based on the range 
+of estimated values of p and q across the four categories, we choose the following three possible values for 
+p: 0.01 (low), 0.04 (medium), 0.07 (high), and the following three possible values for q: 0.4 (low), 0.7 
+(medium), 1.0 (high). This yields nine possible combinations of p and q. We present the implied optimal 
+pricing policies for these nine conditions in Figure 4. We see that at low values of q, the optimal pricing 
+policy shows a price increase for several (10-15) periods  after launch after which price flattens out and 
+remains roughly constant over time.  At medium and high values of q, the optimal pricing policy is non-
+monotonic, i.e., initially increasing then  decreasing. At medium values of q, the launch price is higher than 
+that at low values of q, and the subsequent price increase is also steeper, but the increase does not last for 
+long. Between 7 and 12 periods after launch, the price reaches its peak and starts  decreasing. These effects 
+get even more pronounced at high values of q, i.e., higher launch price, stee per subsequent price increase, 
+and faster subsequent turnaround. Holding  p constant, changing q from low (medium) to medium (high) 
+shifts the optimal price policy upward in a more pronounced manner than changing p from low (medium) 
+to medium (high) at a constant q. As long as q is high, the eventual price path is downward sloping. 
+However, a decreasing optimal pricing policy from the time of launch is never f ound to be optimal under 
+any combination of p and q. The reason for this, which we uncover us ing numerical simulations, is that we 
+assume that revenue maximization governs the firm’s pricing objective (since we do not know the firm’s 
+cost function). On the other hand, as discussed earlier, if profit maximization is the firm’s objective and the 
+firm has a steep experiential learni ng curve for the marginal cost of production for its new product, we 
+uncover declining optimal pricing policies (please see our  Web Appendix F for the details of this exercise). 
+Our dynamic optimization method can still be applied under such a scenario. Our main contribution is to 
+provide an easy-to-use prescriptive anal ytics template, as described in  the previous section, where a 
+dynamically optimal pricing policy can be numerically derived by a manager for their new product using 
+
+29 
+ the utility-based extension of the BM, as long as the manager has estimates of ( 𝑝,𝑞,𝑀,𝛽), for their new 
+product based on either historical data or product analogs and surveys.  
+[Insert Figure 4 here] 
+Next, we study the impact of the price sensitivity ( β) on the optimal pricing policy. We keep p and 
+q at the average of their estimated values across the four categories (0 .03 and 0.65, respectively). Based on 
+the estimated values of β across the four categories, we let β vary from a low value of -0.001 to a high value 
+of -0.01. We present the implied introductory prices in Figure 5 (the optimal price paths are non-monotonic, 
+i.e., first increasing and then decreasing,). We see a steep  decline in the implied introductory price as the 
+market becomes more price sensitive (varying from $3500 to $500). Beyond a th reshold level of price 
+sensitivity (-0.003 or so), the decrease in optim al introductory price almost flattens out. It is useful to note 
+here that managers can explicitly derive optimal intr oductory prices for their new products, as illustrated 
+here, based on the utility-based extensi on of the BM, something that is impossible using the GBM (where 
+only the post-launch price path, conditional on an assu med introductory price, can be derived from the 
+model).  
+ [Insert Figure 5 here] 
+Next, we study the impact of the firm’s time discount factor ( ρ) on the optimal pricing policy. We 
+let ρ vary from 0 to 1. We present the implied introductor y prices in Figure 6 (the optimal price paths are 
+non-monotonic, i.e., first increasing and then decreasi ng,). We see a very slow increase in the implied 
+introductory price as the discount factor increases from 0 (myopic) to about 0.7, and then a steep increase 
+thereafter. For example, an increase of the discount factor from 0.8 to 0.9 implies an increase in the 
+introductory price from about $250 to $325. We present Figures 5 and 6 mainly to demonstrate that the 
+optimal launch price, a key strategic lever in a new product manager’s list of responsibilities, can be 
+calculated using the utility-based exte nsion of the BM for any combinati on of market and firm parameters. 
+The GBM cannot be used for this purpose. The GBM requires an assumed  launch price even to compute 
+an optimal post-launch price path. 
+ [Insert Figure 6 here] 
+
+30 
+ Extension of The Dynamic Pricing A pproach to Handle Multiple Products 
+In some product categories, multiple competitors la unch new products at the same time, in which 
+case consumers must decide which of multiple (if any) products to adopt at any point of time. One can 
+handle this by extending the derived random utility model ( BGDM  / BLDM ) to include all available 
+products, in addition to the no purchase option, as choi ce alternatives for consumers. Let us consider, for 
+example, the two product case. Under the BLDM , this yields the following choice probabilities, Pr1t, Pr2t 
+and Pr0t, for consumer adoption for either of the two av ailable products, or the no-purchase option, at time 
+t. 
+1
+012
+2
+012
+0
+0121
+2
+0Pr ,
+Pr ,
+Pr ,t
+tt t
+t
+tt t
+t
+tt tW
+t WWW
+W
+t WWW
+W
+t WW We
+eee
+e
+eee
+e
+eee
+
+        ( 2 3 )   
+where W1t, W2t and W0t are, in turn, represented by the following equations. 
+11 1 t
+22 2 t
+0Price * ,
+Price * ,
+1( 1 )ln ln ,1( )t
+t
+tW
+W
+FtWFt 
+
+
+        ( 2 4 )   
+In other words, this extended version of BLDM  embeds the category-specific diffusion component, 
+lnሾlnሼሾ1െFሺtെ1ሻሿ/ሾ1െFሺtሻሿሽሿ, within the no-purchase option’s deterministic utility, W0t, while 
+allowing consumers’ intrinsic preferences, 1 and 2, to be asymmetric across the two products. The 
+consumer’s unconditiona l likelihood of adopting each product at time t is as follows. 
+1
+10 1
+1
+1
+20 2
+1Pr *Pr ,
+Pr *Pr ,t
+tu t
+u
+t
+tu t
+uL
+L
+
+
+
+
+        ( 2 5 )  
+and the predicted sales of each new product in period t is, therefore, 
+
+31 
+ 11
+22ˆ *,
+ˆ *.tt
+ttNM L
+NM L
+          ( 2 6 )  
+Using data on consumer a doption in a category with multiple pro ducts, one can use the non-linear least 
+squares procedure, first proposed by Srinivasan an d Mason (1986), to estimate model parameters. We 
+would like to note that this extended version of the BLDM  differs from the framework of Krishnan, 
+Seetharaman and Vakratsas (2012) since, in th eir application, they used a first-stage BLDM  to model the 
+category adoption, and a second-stage MNL to model product shares.  
+In our case, to extend our dynamic pricing approach  to handle the multiple product case, we must 
+solve for the Markov-Perfect Nash Equilibrium (MPNE)  of prices for the two competing products, by using 
+a modified Pakes and McGuire (1994) algorithm that utilizes the dynamic optimization procedure 
+developed in Cosguner, Chan and Seethara man (2018) (see Web Appendix G for details). 
+In order to numerically illustrate the application of this extended dynamic pricing approach, we use 
+the Color TV category. First, we fix M = 52274 (the estimated value from Table 3(a)). Second, we assume 
+the existence of two competing products, both of whose prices are assumed to be identical to the category 
+prices observed in our Color TV dataset. Third, we si mulate product-level adoptions data from the observed 
+category-level adoptions in our  Color TV dataset by varying 1 and 2 such that the rela tive baseline market 
+share of product 1, relative to product 2, takes f our possible values: 20 %, 40 %, 60 % and 80 %. This 
+results in four synthetic product-level adoption datasets. Fourth, we  estimate the parameters of the extended 
+BLDM -- p, q, β, 1, 2 – by applying the non-linear least squares procedure to each of the four synthetic 
+product-level datasets. We report the results of our estim ation in Table 6. As expected, we recover identical 
+estimates of p = 0.007, q = 0.885, β = - 0.005 under all 4 datasets (since these parameters require only 
+category-level adoption outcomes, which are identical acr oss all 4 product-level datasets, for identification). 
+Further, the estimates of 1 and 2 adjust in order to reflect the differe nces in relative baseline market shares 
+across the two products in the four synthetic datasets. 
+[Insert Table 6 here] 
+
+32 
+ Fifth, we implement the dynamic pricing appro ach explained in Web Appendix G on the four 
+synthetic product-level datasets. The optimal price paths for the four pr oduct-level baseline market share 
+situations are reported in Figure 7. The shapes of the optimal price paths are similar across the four 
+situations, increasing at a diminishing rate over time a nd saturating in 10 periods or so, with the optimal 
+price level increasing with relative baseline market sh are, as expected. For example, the saturation price 
+varies from $300 (for a 20 % baseline share product) to $475 (for an 80 % baseline share product). 
+[Insert Figure 7 here] 
+Last, we implement the dynamic pricing approach for a situation when both products are owned by 
+a common (monopolist) manufacturer. We assume consumer s’ intrinsic preferences to be identical across 
+the two products, i.e., 1 = 2. The optimal price path yielded by this analysis is reported in Figure 8. For 
+comparison, we also plot the optimal price path  for the case when the two products are owned by 
+competitors (as in Figure 7). As expected, we find th at the optimal prices are always higher in the common 
+ownership case. For example, the saturation price is  $660 in the common owne rship case versus $380 in 
+the competing owners case. We also find that the tim e path of prices shows a smaller increase over time in 
+the competing owners case as opposed  to the common ownership case. 
+[Insert Figure 8 here] 
+ 
+Conclusions 
+The Bass Model (BM) has well served the manage rial purpose of new product sales forecasting in 
+thousands of industrial applications over the p ast few decades. While pre-launch sales forecasting is 
+important for new product planning, an  equally important responsibility for a product manager is the design 
+of optimal marketing policies, especially launch price a nd advertising, for the new product. In this regard, 
+the most successful sales forecasting model for new pr oducts, the Generalized Bass Model (GBM), is found 
+to be severely lacking. This is because the GBM in corporates marketing mix effects within the BM using 
+percentage changes in marketing variables from peri od to period, and not using their absolute levels 
+themselves. Therefore, it is necessary for the manage r to make additional, untested, assumptions before 
+
+33 
+ rendering the GBM usable for optimal price policy pl anning. Even after making such untested assumptions, 
+the GBM can be used to derive only the optimal pri ce path or advertising path for the new product after 
+launch, conditional on an assumed launc h price, but not the launch price or advertising level itself. One 
+solution to this problem is to estimate pre-launch c onsumer price sensitivity using a conjoint survey, and 
+then derive the launch price based on this price sen sitivity. However, given the utility foundation of a 
+conjoint model, such a launch price may not be beha viorally consistent with the post-launch price path 
+yielded by the non-utility based GBM. 
+In this paper, we provide a utility-based extension of the BM (unlike the GBM) that does not suffer 
+from the prescriptive weakness of th e GBM. Unlike other utility-based di ffusion models in the literature, 
+the provided utility-based diffusion model nests the BM  as a special case. Built on the foundations of 
+consumer utility maximization, the diffusion model allows  the adoption rate for the new product to directly 
+depend on the absolute levels of the marketing mix. Therefore, the diffusion mode l can yield, for example, 
+normative prescriptions regarding both the introductory pr ice, as well as the optimal price path after launch, 
+for the new product. We offer two versions of the utility-based diffusion model, namely the Bass-Gumbel 
+Diffusion Model (BGDM)  and the Bass-Logit Diffusion Model (BLDM) , the latter of which has been 
+previously used by Krishnan, Seetharaman and Vakratsas (2012). The BGDM version that is new to the 
+literature nests the BM as a special case. Gi ven its utility foundation, one can estimate BGDM  / BLDM  in 
+the absence of past sales data, using choice-based conjoint data instead. 
+Using empirical data from 4 product categories, we  show that the two versions of the utility-based 
+diffusion model handily outperform the GBM and BM in forecasting new product sales both in sample and 
+out of sample, with the BLDM  outperforming the BGDM . On the basis of these findings, we propose that 
+even if one’s purpose is to only forecast new produc t sales, and not optimize the new product’s marketing 
+mix, the BGDM  / BLDM  are still to be preferred to the GBM. BGDM  / BLDM  also predict the peak time of 
+adoptions more accurately than the GBM. By us ing a computationally convenient dynamic pricing 
+approach, we explicitly compare the op timal pricing policy yielded by the BLDM  to that of the GBM and 
+find that the optimal price path derived from GBM yiel ds 13.8% lower revenue than the price path derived 
+
+34 
+ from BLDM . We also derive the optimal pricing polic ies under a range of possible values of model 
+parameters. Finally, we show how to  extend the dynamic pricing approach  to the competitive, multi-product 
+context. 
+Some important caveats are in order. First, us ing adoption data across many new products, it would 
+be interesting to study the implications of varyi ng degrees of heterogeneity in price sensitivities across 
+consumer segments on the implied opt imal price paths for the product. 9 Second, while estimating the 
+utility-based diffusion model using historical sales da ta, we treat prices as exogenous. In reality, new 
+product prices are chosen by product managers for endogenous reasons that are not observed by the 
+researcher. One could use a control function approach  to correct for possible endogeneity of prices (if 
+suitable instruments are available) by including the fitt ed residuals from an instrumental variable regression 
+as an additional explanatory variable in the consume r’s utility function. Third, we treat consumers as 
+myopic in their decision-making, i.e., they do not antici pate the trajectory of future prices. However, there 
+is a literature in economics and marketing, inspir ed by Coase (1972), that has studied the pricing 
+implications of forward-looking consumers for durab le goods sellers. For example, Besanko and Winston 
+(1990) and Nair (2007) show that the maximum pri ce that a monopolist will charge over the dynamic price 
+path would be lower, and subsequent prices would decline less steeply, when consumers are forward 
+looking. It would be interesting to study the implicat ions of forward-looking consumers in our case to see 
+whether the motivation to eventually  decrease price would be similarly mitigated for the seller. We leave 
+this for future research. 
+Our focus in this study is to provide a utility-based  extension of the BM which not only forecasts 
+new product sales better than existing models such as  GBM, but also has excellent prescriptive properties 
+for optimal price planning, and explicitly undertaki ng endogeneity correction is  not germane to this 
+objective. The provided dynamic pricing algorithm will yield practical value to new product managers. As 
+a fruitful avenue for future research, we propose the study of functional regression, first proposed by Sood, 
+ 
+9 In our dataset, we estimated a two-segment model and found the optimal prices to slightly increase, while maintaining the same  
+non-monotonic shape over time. We thank an anonymous re viewer for encouraging us  to study this issue. 
+
+35 
+ James and Tellis (2009), which exploits data acro ss multiple products and markets, as an improved 
+estimation procedure for the provi ded utility-based diffusion model. 
+References  
+Bass, F. M. (1969). A New-Product Growth Model for Consumer Durables, Management Science, 15, 1, 
+215-227. 
+Bass, F. M., Bultez, A. V. (1982). A Note on Optimal Strategic Pricing of Technological Innovations, 
+Marketing Science, 1, 4, 371-378. 
+Bass, F. M., Jain, D. C., Krishnan, T. V. (2000). Modeling the Marketing Mix Influence in New Product 
+Diffusion, Chapter 5, New Product Diffusion Models, Kluwer Academic Press, 99-122. 
+Bass, F. M., Krishnan, T. V., Jain, D. C. (1994). Why the Bass Model Fits Without Decision Variables, 
+Marketing Science, 13, 2, 203-223. 
+Bayus, B. (1992). The Dynamic Pricing of Next Gene ration Consumer Durables, Marketing Science, 11, 
+3, 251-265. 
+Besanko, D., Winston, W. L. (1990). Optimal Price Skimming by a Monopolist Facing Rational 
+Consumers, Management Sc ience, 36, 4, 555-567. 
+Coase, R. H. (1972). Durability and Monopoly, The J ournal of Law and Economi cs, 15, 1, 143-149. 
+Cosguner, K., Chan, T., Seetharaman, P. B. (2018). Dynamic Pricing in a Distribution Channel in the 
+Presence of Switching Costs, Manageme nt Science, 64, 3, 1212-1229. 
+Dockner, E., Jorgensen, S. (1988). Optimal Pricing Strategies for New Products in Dynamic Oligopolies, 
+Marketing Science, 7, 4, 315-334. 
+Fruchter, G. E., Van den Bulte, C. (2011). Why the Generalized Bass Model Leads to Odd Optimal 
+Advertising Policies, International Journal of Research in Marketing, 28, 1, 218-230. 
+Guadagni, P. M., Little, J. D. C. (1983). A Logit Model of Brand Choice Cali brated on Scanner Data, 
+Marketing Science, 27, 1, 29-48. 
+Gumbel, E. J. (1958). Statistics of Extremes, Co lumbia University Press, New York and London. 
+Han, A., Hausman, J. (1990). Flexible Parametric Estimation of Duration and Competing Risk Models, 
+Journal of Applied Econometrics, 5, 1, 1-28. 
+Heckman, J. J., Singer, B. (1984). A Method for Minimizing the Impact of Distributional Assumptions in 
+Econometric Models for Duration Data , Econometrica, 52, 2, 271-320. 
+Jain, D., Rao, R. C. (1990). Effect of Price on the Demand for Durables: Modeling, Estimation and Findings, 
+Journal of Business and Economic  Statistics, 8, 1, 163-170. 
+ Jiang, Z., Bass, F. M., Bass, P. I. (2006). Vi rtual Bass Model and the Left-Hand Truncation Bias in 
+Diffusion of Innovation Studies, International Jour nal of Research in Marketing, 23, 1, 93-106. 
+
+36 
+ Kalish, S. (1983). Monopolist Pricing with Dyna mic Demand, Marketing Science, 2, 2, 135-159. 
+Kalish, S., Lilien, G. L. (1983). Optimal Price Subs idy Policy for Accelerating the Diffusion of Innovation, 
+Marketing Science, 2, 4, 407-420. 
+ Krishnan, T. V., Bass, F. M., Jain, D. C. (1999). Optimal Pricing Strategy fo r New Products, Management 
+Science, 45, 2, 1650-1663. 
+Krishnan, T. V., Jain, D. C. (2006). Optimal Dyna mic Advertising Policy for New Products, Management 
+Science, 52, 12, 1957-1969. 
+Krishnan, T. V., Seetharaman, P. B., Vakratsas, D. (2012). The Multiple Roles of Interpersonal 
+Communication in New Product Growth, International J ournal of Research in Marketing, 29, 2, 292-
+305. 
+Louviere, J. J., Hensher, D. A., Swait, J. D. ( 2000). Stated Choice Methods: Analysis and Applications, 
+Cambridge University Press. 
+Luce, R. D. (1958). A Probabilistic Theory of Utility, Econometrica, 26, 2, 193-224. 
+Melnikov, O. (2012). Demand for Diffe rentiated Durable Products: The Case of the US Computer Printer 
+Market, Economic Inquiry, 51, 4, 1277-1298. 
+Meyer, B. D. (1990). Unemployment Insurance and Unem ployment Spells, Econometrica, 58, 3, 757-782.  
+Nair, H. (2007). Intertemporal Price Discrimination w ith Forward-Looking Consumers: Application to the 
+US Market for Console Video Games, Quantitativ e Marketing and Economics,  5, 2, 239-292.  
+Ofek, E. (2008). Forecasting the Adoption of a Ne w Product, Harvard Business School Case 9-505-062. 
+Pakes, A., McGuire, P. (1994). Computing Markov-P erfect Nash Equilibria, RAND Journal of Economics, 
+25, 4, 555-589. 
+Peres, R., Muller, E., Mahajan, V. (2010). Inn ovation Diffusion and New Product Growth Models: A 
+Critical Review and Research Directions, Internationa l Journal of Research in Marketing, 27, 2, 91-106. 
+Seetharaman, P. B. (2004). The A dditive Risk Model for Purchase Timing,  Marketing Science, 23, 2, 234-
+242. 
+Song, I., Chintagunta, P. K. (2003). A Micromodel of New Product Adoption with Heterogeneous and 
+Forward Looking Consumers: Application to the Di gital Camera Category, Quantitative Marketing and 
+Economics, 1, 4, 371-407. 
+Srinivasan, V., Mason, C. H. (1986). Nonlinear L east Squares Estimation of New Product Diffusion 
+Models, Marketing Science, 5, 1, 169-178. 
+Thompson, G. L., Teng, J. T. (1984). Optimal Pric ing and Advertising Policies for New Product Oligopoly 
+Models, Marketing Science, 3, 2, 148-168. 
+Van den Bulte, C., Lilien, G. L. (2007). Bias and Syst ematic Change in the Parameter Estimates of Macro-
+Level Diffusion Models, Marketi ng Science, 16, 4, 338-353. 
+ 
+
+37 
+ TABLE 1: FIT COMPARISON OF DIFFUSION MODELS – FULL SAMPLE 
+SSE    BGDM   BLDM  GBM  BM  T 
+Color TV   457,051  457,387  402,514   996,421  10  
+Air Conditioner   90,726  89,550   294,659  341,468  13 
+Clothes Dryer   129,485  129,227   210,770  212,777  13 
+Freezer    136,767  136,728   209,251  242,672  15 
+T = Number of Observations 
+Note: The best-fitting model for each product category is shown in bold. 
+ 
+TABLE 2: PREDICTIONS COMPAR ISON – HOLDOUT VALIDATION  
+SSE  Actual  BGDM   BLDM  GBM  BM  Period 
+Color TV 5962  5506  5524   4705  4288  9 
+  4631  4951   4977  3102  2527  10 
+ 
+AC  1800  1688  1695   1244  1283  11 
+  1580  1453  1471   862  947  12 
+  1500  1466  1488   648  652  13 
+ Dryer  1425  1041  1064   942  991  11 
+  1260  841  878  631  739  12 
+  1236  635  684  472  521  13 
+ Freezer  1205  988  989  866  829  11 
+  1045  988  988  754  724  12 
+  1050  905  910  620  620  13 
+Note: The best-fitting model for each product category / period combination is shown in bold. 
+ 
+TABLE 3: PREDICTION COMPARISON: K-FOLD CROSS VALIDATION 
+(Entries represent the % of times each model is the “best” across all folds) 
+ Leave One Ou t Leave Two Ou t 
+Models with Price BGDM BLDM GBM BGDM BLDM GBM 
+Color TV 30% 30% 40% 24% 38% 38% 
+Air Conditione r 46% 23% 31% 32% 37% 31% 
+Clothes Drye r 54% 15% 31% 32% 40% 28% 
+Freeze r 47% 13% 40% 36% 26% 38% 
+ 
+TABLE 4 (a): PARAMETER ESTIMATES FOR THE FOUR DIFFUSION MODELS  
+   Parameter BGDM   BLDM  GBM  BM 
+Color TV  p  0.007  0.006  0.004  0.005 
+   q  0.887  0.890  0.591  0.635    M  52,290  52,274  40,273  40,248    β  -0.003  -0.003  -5.026  na 
+ 
+Air Conditioner  p  0.030  0.029  0.009  0.009 
+   q  0.800  0.798  0.361  0.375    M  27,848  28,542  18,820  18,710    β  -0.008  -0.008  -0.812*  na 
+ 
+
+38 
+ Clothes Dryer  p  0.030  0.029  0.014  0.014 
+   q  0.455  0.461  0.327  0.327 
+   M  20,350  20,802  16,387  16,497 
+   β  -0.006  -0.006  -0.302*  na 
+ Freezer   p  0.058  0.057  0.020  0.025    q  0.435  0.439  0.143  0.148    M  20,932  21,437  25,578  22,266    β  -0.004  -0.004  1.301*  na 
+Note: * denotes that the coefficient is not significant at the 0.05 level. 
+ 
+TABLE 4 (b): MARKET POTENTIAL ES TIMATES USING TRAINING SAMPLE 
+     B G D M    B L D M   G B M   B M  
+Color TV    59,961  61,317  33,729  31,608 
+Air Conditioner    25,720  26,845  13,467  13,660 
+Clothes Dryer    12,683  13,183  11,532  11,844 
+Freezer     18,971  19,414  16,961  15,774  
+Note: The estimates in this table are genera ted using only the first 80 % of the observations  
+ 
+TABLE 5: PREDICTED PEAK ADOPTION TIMES AND NUMBER OF ADOPTIONS 
+    BGDM BLDM BM GBM Actual 
+Color TV Peak Adoption Time 8 8 8 8 8 
+Peak Number of Adoptions 6,139 6,140 6,442 6,218 5,982 
+Adoption Lifetime 37 37 20 20 NA 
+Air Conditioner Peak Adoption Time 8 8 10 10 8 
+Peak Number of Adoptions 1,784 1,778 1,837 1,933 1,828 
+Adoption Lifetime 48 48 27 27 NA 
+Clothes Dryer Peak Adoption Time 8 8 10 10 8 
+Peak Number of Adoptions 1,412 1,409 1,457 1,454 1,523 
+Adoption Lifetime 45 47 28 28 NA 
+Freezer Peak Adoption Time 14 14 11 9 13 
+Peak Number of Adoptions 1,108 1,106 1,122 1,117 1,205 
+Adoption Lifetime 46 50 47 49 NA 
+ 
+TABLE 6: BLDM ESTIMATES WITH TWO ASYMMETRIC PRODUCTS 
+Market Share of Product 1: 20% 40% 60% 80% 
+p 0.007 0.007 0.007 0.007 
+q 0.885 0.885 0.885 0.885 
+M 52274 52274 52274 52274 
+𝜆ଵ -0.413 0.277 0.682 0.972 
+𝜆ଶ 0.972 0.682 0.277 -0.413 
+B -0.005 -0.005 -0.005 -0.005 
+Note: All estimates are significant at the 5 % level. M is  set to 52274 in the estimation for identification purpose. 
+ 
+ 
+
+39 
+  
+ 
+FIGURE 1: ESTIMATED PROBABILITY DENSITIES OF ADOPTION TIMES 
+ 
+ 
+ 
+ 0 1 02 03 04 00.00 0.05 0.10 0.15Figure 1A: Color TV
+Timefd(t)BM
+GBM
+BGDM
+BLDM
+01 0 2 0 3 0 4 00.00 0.02 0.04 0.06 0.08 0.10Figure 1B: Air Conditioner
+Timefd(t)BM
+GBM
+BGDM
+BLDM
+0 2 04 06 08 00.00 0.02 0.04 0.06 0.08Figure 1C: Clothes Dryers
+Timefd(t)BM
+GBM
+BGDM
+BLDM
+0 2 04 06 08 00.00 0.02 0.04 0.06 0.08Figure 1D: Freezers
+Timefd(t)BM
+GBM
+BGDM
+BLDM
+
+40 
+ FIGURE 2: OPTIMAL DYNAMIC PRICE PATHS YIELDED BY THE BLDM 
+ 
+  
+  
+ 
+  
+
+
+41 
+ FIGURE 3: OPTIMAL DYNAMIC PRICE PATH OF BLDM VERSUS GBM: COLOR TV 
+ 
+ 
+ 
+FIGURE 4: OPTIMAL DYNAMIC PRICING POLICY IMPLIED BY THE BLDM 
+ 
+ 
+ 
+
+
+42 
+ FIGURE 5: OPTIMAL INTRODUCTORY PRICE AT VARIOUS LEVELS OF MARKET PRICE 
+SENSITIVITY ( β) 
+ 
+ 
+FIGURE 6: OPTIMAL INTRODUCTORY PRICE AT VARIOUS LEVELS OF FIRM 
+DISCOUNT FACTOR ( ρ) 
+ 
+ 0.002 0.004 0.006 0.008 0.010500 1000 1500 2000 2500 3000 3500
+Price CoefficientIntroductory Price
+0.0 0.2 0.4 0.6 0.8 1.0200 300 400 500
+Discount FactorIntroductory Price
+
+43 
+ FIGURE 7: OPTIMAL DYNAMIC PRICE PATHS OF BLDM –  
+TWO COMPETING PRODUCTS 
+ 
+ 
+ 
+FIGURE 8: OPTIMAL DYNAMIC PRICE PATH OF BLDM – 
+MONOPOLIST SELLING TWO PRODUCTS 
+ 
+
+
+1 
+ WEB APPENDICES 
+ 
+Web Appendix A: Holdout Validation 
+ 
+We construct the holdout sample in 4 different ways: (i) final 10 % of observations, (ii) final 20 % of 
+observations (reported in the main manuscript), (iii) final 30 % of observations, (iv) final 40 % of 
+observations. We do not use cases (iii) and (iv) for Colo r TV because of the relative paucity of observations 
+in that category. Furthermore, we do not use additional cases, such as having more than 40 % of 
+observations in the holdout sample since the predic tions become unreliable, as is well known in the 
+diffusion modeling literature, with such small training samples, especially when the data span a period 
+sufficiently prior to the projected peak times of adop tion. In practice, product analogs play an important 
+role in such early stages of the a doption cycle, where the implied adopti on rates of the analogs are combined 
+with limited historical data on the product, usi ng a Bayesian updating scheme (see Lenk and Rao 1990), in 
+order to make reliable forecasts. Since we are only usi ng historical data in our study and ignoring product 
+analogs, we study only the 4 cases listed above. In the fo llowing table, we present the results of holdout 
+predictions in all 4 cases for each holdout observation.  
+Scenario (i) – 90% Training Sample 
+Actual BGDM BLDM GBM BM Periods 
+Color TV 4631 5776 5774 4539 4119 10 
+AC 1500 1614 1619 1279 1221 13 
+Dryer 1236 1176 1180 951 977 13 
+Freezer 1050 1032 1037 1071 941 15 
+ 
+Scenario (ii) – 80% Training Sample 
+ Actual BGDM BLDM GBM BM Periods 
+Color TV 5962 5506 5524 4705 4288 9 
+4631 4951 4977 3102 2527 10 
+AC 1800 1688 1695 1244 1283 11 
+1580 1453 1471 862 947 12 
+1500 1466 1488 648 652 13 
+Dryer 1425 1041 1064 942 991 11 
+1260 841 878 631 739 12 
+1236 635 684 472 521 13 
+Freezer 1205 988 989 866 829 13 
+1045 988 988 754 724 14 
+1050 905 910 704 620 15 
+ 
+Scenario (iii) – 70% Training Sample 
+
+2 
+  Actual BGDM BLDM GBM BM Periods 
+AC 1673 1955 1953 1681 1332 10 
+1800 2031 2030 1252 970 11 
+1580 1796 1803 869 643 12 
+1500 1967 1973 655 401 13 
+Dryer 1240 1289 1327 928 1211 10 
+1425 1127 1207 636 966 11 
+1260 991 1141 321 713 12 
+1236 805 992 247 497 13 
+Freezer 925 903 905 834 821 11 
+1101 824 827 702 684 12 
+1205 727 734 587 552 13 
+1045 644 654 465 434 14 
+1050 540 555 384 335 15 
+ 
+Scenario (iv) – 60% Training Sample 
+ Actual Gumbel Logi t GBM Bass Periods 
+AC 1586 1441 1448 1341 1784 9 
+1673 1865 1873 1449 1596 10 
+1800 1925 1938 963 1265 11 
+1580 1688 1709 608 909 12 
+1500 1841 1867 450 609 13 
+Dryer 1294 1835 1839 1762 1772 9 
+1240 1986 2004 1528 1900 10 
+1425 2000 2044 1321 1904 11 
+1260 1792 1876 859 1782 12 
+1236 1531 1653 756 1565 13 
+Freezer 975 1002 1005 914 911 10 
+925 936 941 787 772 11 
+1101 870 878 649 629 12 
+1205 782 795 532 497 13 
+1045 709 725 414 383 14 
+1050 605 626 336 290 15 
+ 
+We summarize the key take-aways  of the above table below: 
+1. In case (i), there are 4 holdout observations in total. BLDM  wins in 2 cases (50%), BGDM  in 1 case 
+(25%), and GBM in 1 case (25%). Overall, theref ore, our utility-based mode ls win in 3 out of 4 
+cases (75%). 
+2. In case (ii), there are 11 holdout observations in total. BLDM  wins in 10 cases (91%), BGDM  in 1 
+case (9%). Overall, therefore, our utility-based models win in 11 out of 11 cases (100%). 
+
+3 
+ 3. In case (iii), there are 13 holdout observations in total. BLDM  wins in 9 cases (69%), BGDM  in 3 
+cases (23%), and GBM in 1 case (8%). Overall, th erefore, our utility-based models win in 12 out 
+of 13 cases (92%). 
+4. In case (iv), there are 16 holdout observations in total. BLDM  wins in 5 cases (31%), BGDM  in 7 
+cases (44%), and GBM in 4 cases (25%). Overall, th erefore, our utility-based models win in 12 out 
+of 16 cases (75%). 
+ 
+We also present a convenient qualitative summ ary of these analyses in the table below.  
+ 
+Training Sample Size BGDM BLDM GBM BM 
+60% 44% 31% 25.0% 0.0% 
+70% 23% 69% 8% 0.0% 
+80% 9% 91% 0.0% 0.0% 90% 25% 50% 25% 0.0% 
+ 
+These analyses lend additional suppor t to the predictive ability of BGDM  / BLDM . 
+ 
+Web Appendix B.1: Prior Models of New Pro duct Adoption with Marketing Mix Variables 
+ 
+We compare the empirical performance of the BLDM  against that of each of several previously proposed 
+diffusion models which incorporate the effects of ma rketing variables. These models are listed below. 
+ Robinson and Lakhani (1975) 
+ 𝑆𝑎𝑙𝑒𝑠
+௧ൌሺ 𝑀െൣ ∑𝑆𝑎𝑙𝑒𝑠௞௧ିଵ
+௞ୀଵ ൧ሻሺ𝑝൅𝑞  ൣ∑𝑆𝑎𝑙𝑒𝑠௞௧ିଵ
+௞ୀଵ ൧ሻ𝑒ିఉ ௉௥௜௖௘೟ 
+ 
+Horsky and Simon (1983) 
+ 𝑆𝑎𝑙𝑒𝑠௧ൌሺ 𝑀െൣ ∑𝑆𝑎𝑙𝑒𝑠௞௧ିଵ
+௞ୀଵ ൧ሻሺ𝛼 ൅𝛽 lnሺ 𝑃𝑟𝑖𝑐𝑒௧ሻ൅𝑞 ൣ∑𝑆𝑎𝑙𝑒𝑠௞௧ିଵ
+௞ୀଵ ൧ሻ 
+ 
+Simon and Sebastian (1987) 
+ Specification A: 𝑆𝑎𝑙𝑒𝑠௧ൌሺ 𝑀െൣ ∑𝑆𝑎𝑙𝑒𝑠௞௧ିଵ
+௞ୀଵ ൧ሻሺ𝑝൅𝑝  𝑓ሺ 𝑃𝑟𝑖𝑐𝑒௧ሻ 𝑞 ൣ∑𝑆𝑎𝑙𝑒𝑠௞௧ିଵ
+௞ୀଵ ൧ሻ 
+ Specification B: 𝑆𝑎𝑙𝑒𝑠௧ൌ൫ 𝑀െൣ ∑𝑆𝑎𝑙𝑒𝑠௞௧ିଵ
+௞ୀଵ ൧൯൫𝑝൅ሼ𝑞൅𝑞  𝑓ሺ 𝑃𝑟𝑖𝑐𝑒௧ሻሽൣ∑𝑆𝑎𝑙𝑒𝑠௞௧ିଵ
+௞ୀଵ ൧൯ 
+where 𝑓ሺ 𝑃𝑟𝑖𝑐𝑒௧ሻ is either lnሺ 𝑃𝑟𝑖𝑐𝑒௧ሻ or ∑ lnሺ 𝑃𝑟𝑖𝑐𝑒௞ሻ௧
+௞ୀଵ . We call these two cases A1 (B1) and A2 
+(B2), respectively. 
+ 
+
+4 
+ Jain and Rao (1990) 
+ Specification A: 𝑆𝑎𝑙𝑒𝑠௧ൌሺ 𝑀  𝑃𝑟𝑖𝑐𝑒௧ିఉെൣ∑𝑆𝑎𝑙𝑒𝑠௞௧ିଵ
+௞ୀଵ ൧ሻிሺ௧ሻିிሺ௧ିଵሻ
+ଵିிሺ௧ିଵሻ 
+ Specification B: 𝑆𝑎𝑙𝑒𝑠௧ൌሺ 𝑀െൣ ∑𝑆𝑎𝑙𝑒𝑠௞௧ିଵ
+௞ୀଵ ൧ሻሺ𝑃𝑟𝑖𝑐𝑒௧ିఉሻிሺ௧ሻିிሺ௧ିଵሻ
+ଵିிሺ௧ିଵሻ 
+where 𝐹ሺ𝑡ሻൌሺ1െ𝑒ିሺ௣ା௤ሻ௧ሻ
+ሺ1൅ሺ𝑞𝑝ൗሻ𝑒ିሺ௣ା௤ሻ௧ሻ൘  
+ 
+In the following table, we report the minimized crite rion function (sum of square d errors) associated with 
+each model estimated on our four datasets.  
+Model    Color TV  AC  Dryer  Freezer 
+ BLDM     457,387   89,550   129,227  136,728  
+Robinson and Lakhani (1975)  2,052,148  535,245  249,838  223,199 Horsky and Simon (1983)  2,184,305  248,158  266,154  251,550 
+Simon and Sebastian (1987) – A1 2,742,153  542,835  269,617  257,846 
+Simon and Sebastian (1987) – A2 1,744,018  310,979  170,260  375,005 Simon and Sebastian (1987) – B1 2,702,510  530,939  278,377  269,620 Simon and Sebastian (1987) – B2 5,641,234  924,557  523,261  409,141 Jain and Rao (1990) – A   573,609   226,088  130,852  135,236 
+Jain and Rao (1990) – B   427,858    144,657  128,350   143,110 
+_____________________________________________________________________________________  Except the Jain and Rao (1990) models, the rema ining models are vastly outperformed by the BLDM . 
+However, the Jain and Rao (1990) – B model outpe rforms our model in the Color TV category, and 
+narrowly beats it in the dryer category. While we ac knowledge the good predictive performance of the Jain 
+and Rao (1990) – B model, we must note that it cannot be used for price optimization since it implies 
+positive infinity as the profit-maximizing price . On the other hand, our model can be used for price 
+optimization, which is the focus of our research.  
+We report the parameter estimates yielded by the Jain and Rao (1990) models below. 
+ 
+   Parameter BLDM   Jain & Rao - A  Jain & Rao - B 
+Color TV  p  0.006   0.006   0.004 
+   q  0.890   0.668   0.887    M  52,720   unstable *  53,410    β  -0.0025   -3.05 *   -0.178 
+ 
+Air Conditioner  p  0.029   0.014   0.013 
+   q  0.803   0.381   0.768    M  28,560   unstable *  46,860    β  -0.008   -1.095 *  -0.444 
+
+5 
+  
+Clothes Dryer  p  0.029   0.014   0.026 
+   q  0.461   0.377   0.498 
+   M  20,800   unstable *  25,610    β  -0.006   -0.826 *  -0.296 * 
+ Freezer   p  0.057   0.024   0.098    q  0.439   0.310   0.432 
+   M  21,440   unstable *  44,060 
+   β  -0.004   -0.802   -0.440 
+Note: * denotes that the coefficient is  not significant at the 0.05 level. 
+ 
+Jain and Rao (1990) – A does not yield stable or statisti cally significant estimates of market potential (M). 
+The estimates of M are generally implausibly large,  with correspondingly large standard errors (the BLDM  
+does not suffer from this concern). The price coeffi cients, while negatively signed, are statistically 
+insignificant in 3 out of the 4 categories (while the BLDM  recovers statistically significant price coefficients 
+in all categories). On the other hand, Jain and Rao (1990) – B yields more sens ible parameter estimates 
+(although the estimates of M are overstated by a factor of 2, compared to our model, in two categories). 
+That said, as we have noted earlier, Jain and Rao (1990) - B is limited from the price optimization 
+perspective since it implies positive infin ity for the level of optimal prices. 
+ 
+Web Appendix B.2: Proportional Hazard Models (PHM) of New Product Adoption 
+ This online appendix compares the BLDM 's empirical performance versus  various proportional hazard 
+models (PHM) with marketing variables. Specifically, we  test five different specifications of the PHM (each 
+using a different baseline hazard function) as listed below. 
+ 
+Exponential Hazard: ℎሺ𝑡ሻൌ𝛾  
+ Prሺ𝑃𝑢𝑟𝑐ℎ𝑎𝑠𝑒 ሻൌ1െe
+ି௘ഁ ುೝ೔೎೐∗ఊ  
+ 
+Erlang-2 Hazard: ℎሺ𝑡ሻൌሺ 𝛾ଶ𝑡ሻ/ሺ1൅𝛾𝑡ሻ   
+ Prሺ𝑃𝑢𝑟𝑐ℎ𝑎𝑠𝑒 ሻൌ1െeି௘ഁ ುೝ೔೎೐∗ሼఊା୪୬ሾଵା ሺ௧ିଵሻఊሿି୪୬ሾଵା௧ఊሿሽ   
+ 
+Weibull  Hazard : ℎሺ𝑡ሻൌ𝛾 𝛼 ሺ𝛾𝑡ሻఈିଵ  
+ Prሺ𝑃𝑢𝑟𝑐ℎ𝑎𝑠𝑒 ሻൌ1െeି௘ഁ ುೝ೔೎೐∗ሼሾ୲ఊሿഀିሾሺ୲ିଵሻఊሿഀሽ 
+ 
+Log-logistic Hazard:  ℎሺ𝑡ሻൌሾ 𝛾  𝛼 ሺ𝛾𝑡ሻఈିଵሿ/ሾ1൅ሺ𝛾𝑡ሻఈሿ 
+
+6 
+  Prሺ𝑃𝑢𝑟𝑐ℎ𝑎𝑠𝑒 ሻൌ1െeି௘ഁ ುೝ೔೎೐∗ሼ୪୬ሾଵାሺ௧ఊሻഀሿି୪୬ሾଵାሺሾ௧ିଵሿఊሻഀሿሽ 
+ 
+Expo-power Hazard:  ℎሺ𝑡ሻൌ𝛾 𝛼𝑡ఈିଵ𝑒ఏ௧ഀ 
+ Prሺ𝑃𝑢𝑟𝑐ℎ𝑎𝑠𝑒 ሻൌ1െeି௘ഁ ುೝ೔೎೐∗ቄം
+ഇቂ௘ഇ೟ഀି௘ഇሺ೟షభሻഀቃቅ 
+ 
+In the following table, we report the minimized crite rion function (sum of square d errors) associated with 
+five different specifications of the PHM (each using a different baseline hazard function) estimated on our 
+four datasets.  
+Model    Color TV  AC  Dryer  Freezer 
+ BLDM    457,387    89,550   129,227  136,728  
+PHM – Exponential  4,880,824  702,022  1,180,811 623,342 
+PHM – Erlang2   4,880,824  573,859  293,558  221,601 
+PHM – Weibull   575,972   150,120  124,395   185,567 
+PHM – Log Logistic  618,587   98,285  155,528  185,530 PHM – Expo Power  653,067   170,205  138,736  195,639 _______________________________________________________________________________  The BLDM  outperforms all five specifications of the PHM in 3 out of 4 categories. In the dryer category, 
+the Weibull specification of the PHM outperforms our  utility-based model. We report the parameter 
+estimates yielded by PHM - Weibull in the dryer category below.  
+Parameter  BLDM    PHM - Weibull 
+p   0.029    na 
+q   0.461    na 
+δ   na    0.200 * 
+α   n a     2 . 1 9 7  
+M   20,800    16,350 β   -0.006    -0.008 *  
+Note: * denotes that the coefficient is  not significant at the 0.05 level. 
+ 
+We see that while the price coefficient under PHM – Weibull is negatively signed, as expected; however, 
+it is not statistically significant. That said, we still  derive the optimal price path implied by the PHM – 
+Weibull by using the estimated size of the price coefficient and report the plot below. The optimal prices 
+implied by the PHM – Weibull appear to be unrealistically low and almost constant over time . The optimal 
+prices implied by our utility-based model, on the other hand, are much closer to the actual prices observed 
+in the data.  
+
+7 
+  
+Web Appendix C.1: Covid-19 Diffusion 
+ 
+To illustrate the empirical performance of BGDM  / BLDM  on recent data, we first focus on an 
+epidemiological application. It is useful to note he re that marketing diffusion models were originally 
+inspired by mathematical models of disease spread th at were developed in epidemiology. Specifically, we 
+study the effect of social distancing (covariate) on th e spread of COVID-19 (disease diffusion) in Missouri. 
+ We located two data sources to enable the above. The first contains daily new positive cases in each of 444 
+school districts in Missouri and was obtained from Missouri Hospital Association. The second contains 
+social distancing measures, collected using GPS loca tion data from a panel of cellphone users, and was 
+obtained from SafeGraph ( http://www.safegraph.com/ covid-19-data-consortium ). We use three time-
+varying metrics of social distancing: (1) percentage of  residents staying home, (2) percentage of residents 
+working full-time at their workplace, (3) percentage of residents working part-time at their workplace. 
+These three metrics serve as covariates in our epidemiol ogical application (similar to price in our marketing 
+applications).  We aggregate daily cases, as well as the covariates, to the weekly level and obtain 18 usable weekly 
+observations. These observations represent the 18-week pe riod from July 1, 2020 to  October 31, 2020. We 
+have a total of 444 datasets representing the 444 school districts. We estimate four diffusion models --BM, 
+GBM, BGDM, and BLDM -- in each of the 444 dataset s. We find that the utility-based models (either 
+
+
+8 
+ BGDM or BLDM) yield the best fit of the observed di ffusion of Covid-19 in 75.45 % of the datasets, while 
+the GBM outperforms our utility-based m odels in 24.55 % of the datasets.  Social distancing measures are 
+observed to significantly influence the spread of disease in expected ways (i.e., more social distancing is 
+associated with slower disease spread). De tailed results are available upon request. 
+ This further vindicates the predictive performance of BGDM  / BLDM , albeit in the context of epidemiology. 
+If one were a public policy planner, one could treat th e social distance metrics as variables that can be 
+“optimized” (to arrest the fast spread of disease in th e school district) by taking in to account monetary and 
+human resource constraints faced by the school district. In principle, our dynamic pricing algorithm can be used to handle this dynamic optimization proble m with a suitably specified dynamic objective. 
+ 
+Web Appendix C.2: Compact SUV Adoption in India 
+ To illustrate the empirical performance of BGDM / BLDM  on recent data, we focus on a new product 
+adoption application. We obtained quarterly data on  consumer adoption of compact SUVs in the Indian 
+market starting from Q2 of 2010 until Q1 of 2015 (i.e., 20 quarters) from Otto Edge Services LLP, a 
+marketing research company in India. In our data, we observe quarterly sales, as well as quarterly print 
+advertising expenditures, and quarterl y TV advertising expenditures, for all brands of compact SUVs in the 
+Indian market. We aggregated the data across all brands to create a category-level dataset. We then 
+estimated BM, GBM, BGDM  and BLDM  on the category-level data. In terms of minimized sum of squared 
+errors, the fit results are as shown below: 
+ 
+BM:  188.8 million 
+GBM:  165.4 million BGDM: 162.3 million BLDM:  157.4 million  Again, BGDM / BLDM  outperformed the GBM, with BLDM  being most preferred. We explicitly estimate 
+a version of BLDM  to see whether print and TV advertisi ng have non-linear effects on SUV sales (using 
+quadratic terms in the utility func tion). Accommodating such non-linear effects of advertising is not 
+straightforward in the GBM. We uncover non-linear advertising effects for both types of advertising. 
+Detailed results are available upon request. 
+ 
+Web Appendix D: Sample R Code for the I nnovator Firm’s Dynamic Price Optimization 
+ 
+# Setting the values of p, q, M, and B  p=0.01 
+
+9 
+ q=0.60 
+M=50000 
+B=-0.005 
+ # Setting the number of periods to forward simulate (NT)  NT=40  
+# Creating the storage matrix for prices 
+ prices=matrix(0,NT,1)  # Setting the initial values for the pricin g policy function pa rameters (theta) 
+ 
+pars=c(400,0,0,0,0,0)  # Making the cost assumption, intercept and slope are zero for the revenue optimization 
+ 
+c0=0 
+c1=0  # Creating the lifetime revenue function  revenue=function(pars){ 
+     
+  A=matrix(pars)        Ntlogit=matrix(0,NT,1)   price=matrix(0,NT,1) 
+  cost=matrix(0,NT,1) 
+       prt=matrix(0,NT,1)   prtm=matrix(0,NT,1)        t=1 
+  tl=t-1 
+       Ft=((1-exp(-(p+q)*t))/(1+(q/p)*exp(-(p+q)*t)))   Ftm1=((1-exp(-(p+q)*tl))/(1+(q/p)*exp(-(p+q)*tl)))    
+  # We recommend to start with a first-order polic y function of states. Once the estimates from the first-
+order policy approximation are obtained, the research er can modify the policy function by adding the 
+quadratic and interaction terms.      X=cbind(1,t,t^2,M,M^2,t*M)    
+  # Calculating the first period price, sales and cost. 
+       price[t]=X%*%A        vt=log(log((1-Ftm1)/(1-Ft)))+B*price[t] 
+
+10 
+      
+  prt[1,]=exp(vt)/(1+exp(vt)) 
+  prtm[1,]=1-prt[1,] 
+       Ntlogit[1]=M*prt[1]        cost[t]=c0+c1*0    
+  # Calculating the prices, sales and costs for periods 2 to NT. 
+     t=2   while(t<=NT){        
+    tl=t-1 
+           Ft=((1-exp(-(p+q)*t))/(1+(q/p)*exp(-(p+q)*t)))     Ftm1=((1-exp(-(p+q)*tl))/(1+(q/p)*exp(-(p+q)*tl)))        
+    if(Ft<1){ 
+               R=(M-sum(Ntlogit[1:(t-1)]))                X=cbind(1,t,t^2,R,R^2,t*R)          
+      price[t]=X%*%A 
+             vt=log(log((1-Ftm1)/(1-Ft)))+B*price[t]                prt[t,]=exp(vt)/(1+exp(vt)) 
+      prtm[t,]=1-prt[t,] 
+               Ntlogit[t]=M*prod(prtm[1:(t-1)])*prt[t]                cost[t]=c0+c1*sum(Ntlogit[1:(t-1)])     } 
+     
+    # If the CDF of the adoption time reaches to 1, set the sales to zero. 
+           if(Ft==1){       Ntlogit[t]=0 
+    } 
+           t=t+1   }      # Creating the discount vector 
+     
+  discount=matrix(1,NT,1)        i=1   while(i<=NT){ 
+
+11 
+        
+    discount[i,]=0.95^(i-1) 
+       
+    i=i+1   }      # Returning the negative of lifetime revenue    
+  return(-sum((price-cost)*Ntlogit*discount)) 
+}  # Optimizing the lifetime revenue to find the parameters of the policy function. 
+ 
+pars=optim(pars,revenue,method="Nel der-Mead",control=list(maxit=500000)) 
+pars=pars$par    # Given the estimated policy functi on parameters, forward simulating prices, sales and costs from period 1 
+to NT. 
+ 
+A=matrix(pars)    Ntlogit=matrix(0,NT,1) price=matrix(0,NT,1) cost=matrix(0,NT,1) 
+   
+prt=matrix(0,NT,1) prtm=matrix(0,NT,1)    t=1 
+tl=t-1 
+   Ft=((1-exp(-(p+q)*t))/(1+(q/p)*exp(-(p+q)*t))) Ftm1=((1-exp(-(p+q)*tl))/ (1+(q/p)*exp(-(p+q)*tl))) 
+   R=(M-sum(Ntlogit[1:(t-1)])) 
+   
+X=cbind(1,t,t^2,M,M^2,t*M)    price[t]=X%*%A    
+vt=log(log((1-Ftm1)/(1-Ft)))+B*price[t] 
+   prt[1,]=exp(vt)/(1+exp(vt)) prtm[1,]=1-prt[1,]    Ntlogit[1]=M*prt[1] 
+   
+cost[t]=c0+c1*0    t=2 while(t<=NT){ 
+
+12 
+      
+  tl=t-1 
+     
+  Ft=((1-exp(-(p+q)*t))/(1+(q/p)*exp(-(p+q)*t)))   Ftm1=((1-exp(-(p+q)*tl))/(1+(q/p)*exp(-(p+q)*tl)))      if(Ft<1){        
+  R=(M-sum(Ntlogit[1:(t-1)])) 
+         X=cbind(1,t,t^2,R,R^2,t*R)          price[t]=X%*%A 
+       
+  vt=log(log((1-Ftm1)/(1-Ft)))+B*price[t]          prt[t,]=exp(vt)/(1+exp(vt))   prtm[t,]=1-prt[t,] 
+     
+  Ntlogit[t]=M*prod(prtm[1:(t-1)])*prt[t]          cost[t]=c0+c1*sum(Ntlogit[1:(t-1)]) }      
+  if(Ft==1){ 
+    Ntlogit[t]=0   }        t=t+1 
+} 
+ # Plotting the optimal price path  ranges=range(price) plot(price,ylim=ranges,type='l',lty=2,col='blue',lw d=2,ylab="Price",xlab="Tim e",main="Optimal Price 
+Path") 
+  
+Web Appendix E: Sensitivity Analysis of Optimal Price Paths  
+ 
+Using the estimated standard errors of the estim ated model parameters, we undertake a sensitivity 
+analysis. Below we report the optimal price paths b ased on the estimated 95 % confidence intervals for p 
+and q. We summarize two take-aways of these graphs : (1) The 95% prediction bands are quite “tight” for 
+p, which means that the impact of uncertainty in the estimated value of  p on optimal prices is minimal, (2) 
+The 95% prediction band is wider for q, but it appe ars substantively wider than necessary because of our 
+scaling of the y-axis. For example, the maximum price over the dynamic price path varies from $770 (lower bound) versus $880 (upper bound) in the color TV cat egory, a difference of $110 because of parameter 
+
+13 
+ uncertainty (large but not worrisomely large). In pr actice, the risk aversion and objective functions of 
+managers will determine how they make use of this un certainty in pricing prescriptions and its effect on 
+the category profit. 
+ 
+FIGURE E1: SENSITIVITY ANALYSES OF OPTIMAL PRICE PATHS WRT p   
+  
+   
+  
+ 
+  
+
+
+14 
+ FIGURE E2: SENSITIVITY ANALYSES OF OPTIMAL PRICE PATHS WRT q   
+  
+   
+   
+ 
+Web Appendix F: The Effect of Declining Costs on Optimal Price Paths 
+ 
+To calculate the dynamic price path s, rather than making any assumpti ons about the unobserved production 
+costs, we allow the firm to maximize its product's lifetime revenue at the given values of the category's 
+diffusion parameters (i.e., p and q). Our simulation studies show that optimal prices follow a non-monotonic 
+path over time (i.e., initially increasing but th en decreasing) across all combinations of p and q. On the other 
+hand, if profit maximization is the firm's objective an d the firm has a steep experiential learning curve for 
+
+
+15 
+ the marginal cost of production for its new product, it might be possible to obtain optimal prices that fall 
+over time. To investigate this possibility, we cond uct additional simulation studies, where we assume 
+declining costs over time or profit margin (m) increases over time as follows: m = 1 – [0.9 / (t0.1)]. Under 
+this assumption, we obtain the following dynamic pr ice paths for the new product. As conjectured, the 
+optimal prices decrease overtime for all possible values of p and q. 
+ 
+ 
+ 
+Web Appendix G: Numerical Optimization Algorithm for the Dynamic Pricing Game 
+ 
+The pricing objective of the innovator firm j=1, 2 selling the new product j=1,2 is shown below. 
+ሼPrice୨ଵ,Price୨ଶ,...,, P r i c e ୨୘ሽൌ argmax∑ρ୲ିଵ∗Price୨୲୘
+୲ୀଵ ∗N୨୲  
+where 𝜌 is the time discount factor, 𝑃𝑟𝑖𝑐𝑒௝௧ is the price of product j at time t, and 𝑁௝௧ is the expected sales 
+of product j at time t. In this setting, each firm’s pricing decision at a period affects not only its and its 
+competitor’s revenue in that period bu t also the revenue stream of both fi rms in the future (through changing 
+the remaining market potential for new products and the ra te at which consumers a dopt the products in the 
+future). The relevant state variables ( Z) for the innovator firms are, therefore, time and the remaining market 
+potential, i.e., 𝑍௧ൌሼ 𝑡 ,𝑅௧ሽ, where 𝑅௧ൌ𝑀െ∑∑ 𝑁௝௞௧ିଵ
+௞ୀଵଶ
+௝ୀଵ . To find the optimal pricing policy functions 
+of each firm, we adopt a modified Pakes and Mc Guire (1994) algorithm that utilizes the dynamic 
+
+
+16 
+ optimization procedure developed in Cosguner, Chan and Seetharaman (2018). First, we parameterize firm 
+j’s temporal pricing policy as a flexible function of the state variables, Z, as shown below. 
+Price୨ൌPrıce෣ሺZ|θ୨ሻ, 
+where 𝑃𝑟𝚤𝑐𝑒ଵ෣ሺ.ሻ and 𝑃𝑟𝚤𝑐𝑒ଶ෣ሺ.ሻ denote a flexible parametric approxima tion of the pricing policy of firm 1 
+and 2, respectively, and 𝜃ଵ and 𝜃ଶ are vectors of parameters to be estimated. To find the true 𝜃ଵ (𝜃ଶሻ for a 
+given set of diffusion parameters  and the discount factor, i.e., 𝑝,𝑞,𝑀,𝛽,𝜆ଵ,𝜆ଶ,a n d  𝜌, we numerically 
+search for 𝜃ଵ (𝜃ଶሻ that i) maximizes firm 1’s (2’s) lifetime product revenue, and ii) is the best response to 
+firm 2’s (1’s) dynamic pricing policy. The algorithm is as follows. 
+1. Start with initial pricing vectors, 𝑃𝑟𝑖𝑐𝑒ଵ଴ൌ ሼ𝑃𝑟𝑖𝑐𝑒ଵଵ଴,𝑃𝑟𝑖𝑐𝑒ଵଶ଴,…,𝑃𝑟𝑖𝑐𝑒ଵ்଴ሽ and 𝑃𝑟𝑖𝑐𝑒ଶ଴ൌ
+ሼ𝑃𝑟𝑖𝑐𝑒ଶଵ଴,𝑃𝑟𝑖𝑐𝑒ଶଶ଴,…,𝑃𝑟𝑖𝑐𝑒ଶ்଴ሽ. 
+1.1.  Given 𝑃𝑟𝑖𝑐𝑒ଶ଴, get 𝑃𝑟𝑖𝑐𝑒ଵଵ by using the subroutine 1. 
+1.2.  Given 𝑃𝑟𝑖𝑐𝑒ଵଵ, get 𝑃𝑟𝑖𝑐𝑒ଶଵ by using the subroutine 2. 
+1.3.  Repeat 1.1-1.2 until 1Price Price 0nn  , where 1
+2PricePrice [ ],
+Pricen
+n
+n . 
+1.4.  Set *Price Pricen  
+Subroutine 1: Finding Firm 1’s Dynamic Best Response 
+The objective of this subroutine is to find the dynamic best response of firm 1 (i.e., 𝜃ଵ) given a policy 
+function of firm 2 (i.e, 𝜃ଶ). Accordingly, 𝜃ଵ can be estimated via using a standard optimization routine by 
+maximizing the lifetime revenue of firm 1 that can be calculated by using the forward simulation algorithm 
+below. 
+ To forward simulate the revenue of  firm 1 for each candidate value of 𝜃ଵ: 
+i. Start with the first period, i.e., 𝑍ଵൌሼ𝑡ൌ 1,𝑅ଵൌ𝑀ሽ. Given 𝑍ଵ, calculate 𝑃𝑟𝑖𝑐𝑒ଵଵൌ
+𝑃𝑟𝚤𝑐𝑒ଵ෣ሺ𝑍ଵ|𝜃ଵሻ and 𝑃𝑟𝑖𝑐𝑒ଶଵൌ𝑃 𝑟 𝚤 𝑐 𝑒 ଶ෣ሺ𝑍ଵ|𝜃ଶሻ. Given 𝑃𝑟𝑖𝑐𝑒ଵଵ,𝑃𝑟𝑖𝑐𝑒ଶଵ and 𝑍ଵ, calculate 
+𝑁ଵଵሺ𝑃𝑟𝑖𝑐𝑒ଵଵ,𝑃𝑟𝑖𝑐𝑒ଶଵ,𝑍ଵሻ and 𝑁ଶଵሺ𝑃𝑟𝑖𝑐𝑒 ଵଵ,𝑃𝑟𝑖𝑐𝑒ଶଵ,𝑍ଵሻ  using equation (26). 
+ii. Given 𝑍ଶൌሼ𝑡ൌ 2,𝑅ଶൌ𝑀െ𝑁 ଵଵെ𝑁ଶଵሽ, calculate 𝑃𝑟𝑖𝑐𝑒ଵଶൌ𝑃 𝑟 𝚤 𝑐 𝑒 ଵ෣ሺ𝑍ଶ|𝜃ଵሻ and 
+𝑃𝑟𝑖𝑐𝑒ଶଶൌ𝑃 𝑟 𝚤 𝑐 𝑒 ଶ෣ሺ𝑍ଶ|𝜃ଶሻ. Given 𝑃𝑟𝑖𝑐𝑒ଵଶ,𝑃𝑟𝑖𝑐𝑒ଶଶ and 𝑍ଶ, calculate 
+𝑁ଵଶሺ𝑃𝑟𝑖𝑐𝑒ଵଶ,𝑃𝑟𝑖𝑐𝑒ଶଶ,𝑍ଶሻ and 𝑁ଶଶሺ𝑃𝑟𝑖𝑐𝑒 ଵଶ,𝑃𝑟𝑖𝑐𝑒ଶଶ,𝑍ଶሻ  using equation (26). 
+iii. Repeat (ii) until an iteration T such that 𝑅்ൌ𝑀െ∑∑ 𝑁௝௞்ିଵ
+௞ୀଵଶ
+௝ୀଵ ൎ0.  
+iv. Calculate the discounted sum of revenues for firm 1, i.e., ∑𝜌௧ିଵ்
+௧ୀଵ∗𝑃𝑟𝑖𝑐𝑒 ଵ௧∗𝑁ଵ௧. That 
+will be the lifetime revenue for the candidate value of 𝜃ଵ. 
+Subroutine 2: Finding Firm 2’s Dynamic Best Response 
+
+17 
+ The objective of this subroutine is to find the dynamic best response of firm 2 (i.e., 𝜃ଶ) given a policy 
+function of firm 1 (i.e, 𝜃ଵ). Accordingly, 𝜃ଶ can be estimated via using a standard optimization routine by 
+maximizing the lifetime revenue of firm 2 that can be calculated by using the forward simulation algorithm 
+below. 
+ To forward simulate the revenue of  firm 2 for each candidate value of 𝜃ଶ: 
+i. Start with the first period, i.e., 𝑍ଵൌሼ𝑡ൌ 1,𝑅ଵൌ𝑀ሽ. Given 𝑍ଵ, calculate 𝑃𝑟𝑖𝑐𝑒ଵଵൌ
+𝑃𝑟𝚤𝑐𝑒ଵ෣ሺ𝑍ଵ|𝜃ଵሻ and 𝑃𝑟𝑖𝑐𝑒ଶଵൌ𝑃 𝑟 𝚤 𝑐 𝑒 ଶ෣ሺ𝑍ଵ|𝜃ଶሻ. Given 𝑃𝑟𝑖𝑐𝑒ଵଵ,𝑃𝑟𝑖𝑐𝑒ଶଵ and 𝑍ଵ, calculate 
+𝑁ଵଵሺ𝑃𝑟𝑖𝑐𝑒ଵଵ,𝑃𝑟𝑖𝑐𝑒ଶଵ,𝑍ଵሻ and 𝑁ଶଵሺ𝑃𝑟𝑖𝑐𝑒 ଵଵ,𝑃𝑟𝑖𝑐𝑒ଶଵ,𝑍ଵሻ  using equation (26). 
+ii. Given 𝑍ଶൌሼ𝑡ൌ 2,𝑅ଶൌ𝑀െ𝑁 ଵଵെ𝑁ଶଵሽ, calculate 𝑃𝑟𝑖𝑐𝑒ଵଶൌ𝑃 𝑟 𝚤 𝑐 𝑒 ଵ෣ሺ𝑍ଶ|𝜃ଵሻ and 
+𝑃𝑟𝑖𝑐𝑒ଶଶൌ𝑃 𝑟 𝚤 𝑐 𝑒 ଶ෣ሺ𝑍ଶ|𝜃ଶሻ. Given 𝑃𝑟𝑖𝑐𝑒ଵଶ,𝑃𝑟𝑖𝑐𝑒ଶଶ and 𝑍ଶ, calculate 
+𝑁ଵଶሺ𝑃𝑟𝑖𝑐𝑒ଵଶ,𝑃𝑟𝑖𝑐𝑒ଶଶ,𝑍ଶሻ and 𝑁ଶଶሺ𝑃𝑟𝑖𝑐𝑒 ଵଶ,𝑃𝑟𝑖𝑐𝑒ଶଶ,𝑍ଶሻ  using equation (26). 
+iii. Repeat (ii) until an iteration T such that 𝑅்ൌ𝑀െ∑∑ 𝑁௝௞்ିଵ
+௞ୀଵଶ
+௝ୀଵ ൎ0.  
+iv. Calculate the discounted sum of revenues for firm 2, i.e., ∑𝜌௧ିଵ்
+௧ୀଵ∗𝑃𝑟𝑖𝑐𝑒 ଶ௧∗𝑁ଶ௧. That 
+will be the lifetime revenue for the candidate value of 𝜃ଶ. 
+ 
+   
+ 
+   
+View publication statsView publication stats
+

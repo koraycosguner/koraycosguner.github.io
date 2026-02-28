@@ -1,0 +1,1964 @@
+Proﬁting from the Decoy Eﬀect:
+A Case Study of an Online Diamond Retailer
+Chunhua Wu and Koray Cosguner∗
+Abstract
+The decoy eﬀect (DE), ﬁrst introduced by Huber et al. (1982), has been robustly documented
+across dozens of product categories and choice settings using lab experiments. However, it has
+never been veriﬁed in a real product market in the literature. In this paper, we empirically test
+and quantify the DE in the diamond sales of a leading online jewelry retailer. We develop a
+diamond-level proportional hazard framework by jointly modeling market-level decoy–dominant
+detection probabilities and the boost in sales upon detection of dominants. Results suggest that
+decoy–dominant detection probabilities are low (11%–25%) in the diamond market; however,
+upon detection, the DE increases dominant diamonds’ sale hazards signiﬁcantly (1.8–3.2 times).
+In terms of the managerial signiﬁcance, we ﬁnd that the DE substantially increases the diamond
+retailer’s gross proﬁt by 14.3%. We further conduct simulation studies to understand the DE’s
+proﬁt impact under various dominance scenarios.
+Keywords: Decoy Eﬀect, Attraction Eﬀect, Asymmetric Dominance Eﬀect, Context Depen-
+dent Choice, Proportional Hazard Model, Diamond Pricing
+∗Chunhua Wu (chunhua.wu@sauder.ubc.ca) is Assistant Professor of Marketing and Behavioral Science at the
+University of British Columbia. Koray Cosguner (kcosgun@iu.edu) is Assistant Professor of Marketing at Indiana
+University. The research idea originated from the ﬁrst author’s engagement ring purchase experience. The authors
+thank the review team and seminar participants at the University of British Columbia, University of Alberta, Uni-
+versity of Colorado at Boulder, Indiana University, University of Pittsburgh, Dartmouth College, the 2014 Marketing
+Science Conference, 5th Empirical & Theoretical (ET) Symposium, and the 2017 UW &UBC Annual Marketing
+Conference for their valuable feedback. The authors also thank Bridd Xu at Zbird.com for providing industry insights.
+1
+
+1 Introduction
+The decoy eﬀect (Huber et al., 1982), also called attraction or asymmetric dominance eﬀect, refers
+to the phenomenon of consumers having diﬀerent preferences for existing choice alternatives with
+and without dominated (i.e., decoy) options in their choice sets. By design, these decoys are inferior
+to some, but not to all, existing choice options. When such decoys exist, all else equal, dominant
+options’ choice likelihoods get larger compared to cases when the decoys are not present. Since its
+introduction, the decoy eﬀect (DE henceforth) has become one of the most popular and frequently
+citedcontexteﬀectsintheconsumerbehaviorliterature, andithasbeenthoroughlyexaminedacross
+dozens of product categories and choice domains using lab experiments (see, for example, Huber
+et al., 1982; Huber and Puto, 1983; Wedell, 1991; Lehmann and Pan, 1994; Royle et al., 1999).
+Despite its popularity, the DE’s practical validity has been severely challenged recently by a
+series of unsuccessful replication attempts that shed light on the limits and boundaries of the eﬀect.
+Frederick et al. (2014) showed that the DE can be observed only in very stylized settings, such as
+the presentation of two products with two numerically depicted attributes. Yang and Lynn (2014)
+provided additional support to these ﬁndings and questioned whether the DE has any practical
+signiﬁcance, or if it is just an experimental artifact. The lack of documentation on the practice of
+the DE in product markets was noted by Huber et al. (2014); and this has further put the practical
+validity and signiﬁcance of the DE into question. In this paper, in response to these recent studies,
+we provide strong empirical evidence that not only validates the DE in a real product market but
+also illustrates its managerial signiﬁcance through quantifying the substantial proﬁt impact.
+Even though it has been almost four decades since the DE was introduced, to the best of our
+knowledge, there has been no empirical study that tests and quantiﬁes the DE with ﬁeld data.
+To achieve this, one must consider and resolve a few key challenges. First, a researcher needs to
+calibrate decoy–dominant relationships among product alternatives. Since products typically have
+horizontalattributes—suchasbrand, taste, size, andpackaging—andconsumershaveheterogeneous
+preferences for them, decoys to some consumers may not be decoys to others. Therefore, in most
+product markets, strict decoy–dominant relationships may not exist, let alone permit calibration.
+Second, consumers should be able to detectthe decoy–dominant relationships. Unlike in lab exper-
+1
+
+iments where alternatives with only two or three attributes are presented, choice scenarios in real
+life are far more complex: in a typical consumer product category, alternatives have a much larger
+number of attributes, e.g., brand, size, design, color, weight, packaging, taste, and price, to name
+a few. Thus, it is much harder for consumers to fully evaluate the trade-oﬀs and detect existing
+decoy–dominant relationships, so that, as noted in Huber et al. (1982), “the eﬀect may be less-
+ened,” and the lack of detection becomes one important mitigating factor of the DE (Huber et al.,
+2014). For consumers to detect decoy–dominant relationships, the choice decision must be salient
+and require enough cognitive processing that consumers’ preferences can be constructed rather than
+already revealed (Huber et al., 2014). For example, for trivial decisions, consumers may just make
+their choices without paying much attention to the alternatives; consequently, they may not be
+able to detect existing decoys/dominants. Similarly, for repeat-purchase products, added decoys
+may not impact the choices of consumers who have already developed clear preferences for existing
+alternatives. From a technical perspective, Simonson (2014) further called for a systematic study
+separating decoy–dominant detection from the DE (i.e., sales boost in dominants upon detection).
+Lastly, it is quite possible that decoy pricing strategies, i.e., introducing decoy–dominant relation-
+ships by charging higher prices for the same or inferior quality products, may not generate positive
+proﬁt impacts for ﬁrms, which limits the existence of the decoy pricing practice in the real world.
+Due to the above-mentioned challenges, to empirically test and quantify the DE, we need data
+from a product category 1) with a reasonably small number of vertical product attributes; 2) that is
+important to consumers but not repeatedly purchased; and 3) that has the decoy pricing practice.
+The online diamond market is a highly appropriate case for this purpose: diamonds are commodity-
+type products with quality clearly deﬁned on a few vertical attributes such as carat, color, cut, and
+clarity (4Cs); diamond purchases are important but not repeated lifetime decisions; and, ﬁnally, we
+frequently observe decoy pricing patterns in the online diamond market.
+We use diamond pricing and sales data from a major U.S. online jewelry retailer to empirically
+test the DE’s existence, quantify its magnitude, and show its signiﬁcance for ﬁrm proﬁtability. We
+validate that a diamond’s value is predominantly determined by its most important vertical at-
+tributes, i.e., the 4Cs. Yet we also observe signiﬁcant price variation in the market for diamonds
+2
+
+with the same characteristics, and we construct dyadic decoy–dominant relationships among dia-
+mond pairs based on their 4Cs and prices for our analysis. Data patterns show that dominants
+have signiﬁcantly larger sale probabilities than diamonds that are neither decoys nor dominants,
+while the opposite is true for decoys. The eﬀect for dominants, interestingly, doubles that for de-
+coys (29% vs. 14%). Sales share regressions reveal that increasing the proportion of dominants in
+the market would extract a dis-proportionally larger sales share from other diamonds. These data
+patterns are consistent with the predictions of the DE but could also be explained qualitatively by
+alternative mechanisms such as the reference price eﬀect, and consumer search. We develop formal
+statistical tests to show that, quantitatively , there are strong statistical supports favoring the DE
+over the reference price explanation and that the observed price variation are consistent with the
+DE coexisting with consumer search but cannot be explained solely by consumer search.
+Given the data providing evidence of the DE, we formally develop a proportional hazard frame-
+work in our empirical analysis. Modeling the impact of decoy diamonds on sales of their dominants
+requires us to separate the market-level decoy–dominant detection from the sales boost once dia-
+monds are detected as dominants. To achieve that, we incorporate two critical components into our
+proposed hazard framework: market-level decoy–dominant detection probability anddominant boost
+hazardupon dominant detection. Thus, in our setting, upon the dominant detection, the dominant
+boost hazard component is used to test the existence and measure the magnitude of the DE.
+In the estimation, we use a diamond’s characteristics, daily demand factors, competition from
+other similar diamonds, and the observed decoy–dominant structure to control for the diﬀerences
+in the sale hazards of diamonds. To capture potential consumer heterogeneity in response to decoy
+pricing, we divide the diamonds into three price segments (low: $2K–$5K; medium: $5K–$10K;
+and high: $10K–$20K) and estimate segment-speciﬁc detection probabilities and sale boosts upon
+dominant detection. Further, to capture the unobserved heterogeneity and correlations in diamond
+sales, we use a diamond-level random eﬀect speciﬁcation. Results suggest that the market-level
+detection probability for a decoy (or dominant) diamond is quite low, ranging from 11% in the high-
+price segment to 25% in the low-price segment. The low decoy–dominant detection probabilities
+conﬁrmthatmodelingthedetectionprobabilitiesexplicitlyisrequiredtoquantifytheDEaccurately.
+3
+
+As opposed to low detection probabilities, upon detection, we ﬁnd that a dominant diamond’s sale
+hazardgets2.7, 1.8, and3.2timeslargerinthelow-, medium-, andhigh-pricesegments, respectively.
+This ﬁnding validates the DE in the ﬁeld in response to recent studies questioning this aspect,
+including Frederick et al. (2014) and Yang and Lynn (2014). Next, we quantify the proﬁt impact
+of the DE and ﬁnd that the DE improves the retailer’s gross proﬁt by 14.3%. This ﬁnding shows
+that the DE is not only real but also highly substantive managerially. Finally, through additional
+simulation studies, we show that the proﬁt impact of the DE gets larger as the number of decoys
+increases; as the price variation increases; and as the market-level detection probability remains
+similar, decreases, and increases in the low-, medium-, and high-price segments, respectively.
+To reiterate our contribution, we advance the literature on the DE by empirically separating
+the market-level decoy–dominant detection from the DE boost of decoys on dominants. More
+importantly, for the ﬁrst time in the literature, we 1) validate the existence of the DE in a real
+market; 2) quantify its magnitude across diﬀerent segments; and 3) show its substantive proﬁt
+impact. This paper thus attenuates the recent concerns (Frederick et al., 2014; Yang and Lynn,
+2014) about the practical validity of this classical context eﬀect beyond traditional lab settings.
+2 Literature Review
+This paper contributes to two streams of literature: the general consumer behavior literature on
+context-dependent choices (in particular, the DE) and the empirical consumer choice-modeling
+literature in marketing and economics.
+Standard rational choice models in economics and marketing are built upon the revealed prefer-
+ence assumption, which implicitly assumes two principles: the principle of regularity (Luce, 1977)
+and the principle of independence of irrelevant alternatives (IIA) (Luce, 1959). In contrast, con-
+sumer behavior researchers adopted the notion of constructed preference (Bettman et al., 1998),
+and they extensively documented context eﬀects in consumer choices (Tversky, 1972; Simonson,
+1989). The DE (Huber et al., 1982), which is a classic example of such context eﬀects, violates
+both regularity and IIA principles. The DE has been examined across dozens of product categories
+and choice domains (see, for example, Huber et al., 1982; Huber and Puto, 1983; Wedell, 1991;
+4
+
+Lehmann and Pan, 1994; Royle et al., 1999). Further, the literature features investigations of cog-
+nitive processes and mechanisms moderating the DE and related context eﬀects (see, for example,
+Ratneshwar et al., 1987; Heath et al., 1995; Khan et al., 2011; Müller et al., 2014; Guo and Wang,
+2016; Morewedge et al., 2018). In this domain, Khan et al. (2011) studied the inﬂuence of choice
+construal on context eﬀects and found that high construal as opposed to low increases the size of
+the DE. Morewedge et al. (2018) demonstrated that when comparisons of alternatives for choice
+makers require social comparisons, the context eﬀects get stronger. Guo and Wang (2016) studied
+underlying causes of context eﬀects and found that the response time can mediate the compromise
+eﬀect, but the context information cannot. Despite an ample amount of research devoted to the
+DE, empirical test and quantiﬁcation of the eﬀect in a real product market has not been achieved
+yet. Our paper ﬁlls this important gap by validating the DE in the ﬁeld.
+Despite its wide acceptance, the limits and boundaries of the DE have been debated by multiple
+studies recently. Frederick et al. (2014) stated that the DE could only be observed in very stylized
+lab settings with 2 2 numerical depictions of the products (two products with two attributes, with
+a decoy to one product added to the choice set later). Through 38 replication attempts, their study
+showed that when the product attributes are depicted with perceptual representations and verbal
+descriptions (rather than numerical), the DE weakens, dies, or gives way to the repulsion eﬀect.
+Through 91 replication attempts, Yang and Lynn (2014) also showed that replicating the DE is
+very diﬃcult with verbal and pictorial depictions of product attributes. With the current research,
+we respond to concerns of Frederick et al. (2014) and Yang and Lynn (2014) by providing strong
+empirical evidence of the existence of the DE in a real product market.
+In response to Frederick et al. (2014) and Yang and Lynn (2014), Simonson (2014) underlined
+the importance of recognizing the set formation, i.e., subjects being aware of decoy–dominant re-
+lationships, in being able to replicate the DE. He argued that consumers’ choices require them
+to make multiple trade-oﬀ contrasts simultaneously. As a result, they may not be able to make
+their decisions based on existing decoy–dominant conﬁgurations, especially if such conﬁgurations
+are diﬃcult to detect. He thus called for a systematic study on the drivers of decoy–dominant
+detection. In addition, Huber et al. (2014) recognized the lack of practice of the DE in today’s
+5
+
+product markets, noting that it is diﬃcult to observe the DE in a real product market since the
+detection of decoys is typically very hard for consumers due to numerous alternatives with many
+attributes. With this research, we respond to the call of Simonson (2014) by explicitly modeling
+decoy–dominant detection in the studied online diamond market to empirically quantify the DE.
+Our study is also closely related to consumer choice models in economics and marketing litera-
+ture. Classicmultinomiallogitandprobitmodelsarebuiltupontherevealedpreferenceassumption,
+thus they cannot directly account for context eﬀects. A few empirical and analytical methods have
+been developed to incorporate the context eﬀects into the choice models. Tversky (1972) formulated
+his well-recognized Elimination-By-Aspects (EBA) model to account for the similarity eﬀect. Ka-
+makura and Srivastava (1984) modiﬁed the standard multinomial probit model to account for the
+similarity eﬀect by modifying the error structure through incorporating similarity-based error cor-
+relations. Kivetz et al. (2004) proposed a choice model that can account for the compromise eﬀect.
+Orhun (2009) developed an analytical choice model to study the decoy and compromise eﬀects under
+the loss-aversion assumption. Rooderkerk et al. (2011) proposed an empirical choice model that can
+incorporate decoy, compromise, and similarity eﬀects all together. They used choice-based conjoint
+data to estimate their proposed model and showed that ignoring context eﬀects signiﬁcantly biases
+the choice model’s predictions. Our paper adopts a diﬀerent approach by developing a proportional
+hazard model that explicitly accounts for the DE using pricing and sales data.
+Since the studied online diamond retailer oﬀers a large number of diamonds daily, as discussed
+earlier we separate the detection of decoys/dominants and the boost in sales upon dominant de-
+tection. Accordingly, our decoy/dominant detection component serves the role of a market-level
+consideration model. Due to that, our research is also related to the empirical literature that sep-
+arately considers consumers’ consideration sets and choices. Existing studies in that domain use
+consumer-level data to model consumers’ consideration and choice decisions together. Some studies
+use purchase data only (see, for example, Siddarth et al., 1995; Chiang et al., 1998; Van Nierop
+et al., 2010), while others use purchase along with search-related data (see, for example, De los
+Santos et al., 2012; Honka, 2014). Unlike those studies, we don’t observe either purchase or search
+behaviors at the individual level. Hence, we derive a diamond-level hazard model from individual
+6
+
+primitives, including consideration sets and choice. Consequently, our hazard speciﬁcation provides
+a framework to separately estimate the market-level decoy/dominant detection from the DE by
+solely utilizing the aggregate product pricing and sales data.
+In the following sections, we ﬁrst describe the online diamond market, our dataset, and how we
+calibrate the decoy–dominant relationships, then we provide data evidence on the existence of the
+DE in this market. We develop our model framework in Section 5, and we present the estimation
+results and illustrate the DE’s managerial implications in the subsequent two sections. Finally, we
+conclude with a discussion of the current study’s limitations and oﬀer directions for future research.
+3 Data
+3.1 Online Diamond Market
+Several U.S. retailers emerged in the online market for diamonds and jewelry products in the past
+two decades. We use panel data from a major retailer in this market. In ﬁscal year 2015, the retailer
+reported net sales of $480 million. According to industry reports, it has around 50% market share
+of the U.S. online diamond market, with sales approximately three times greater than its closest
+competitor. These ﬁgures clearly indicate that the retailer is the leading player in the market.
+The retailer sells a variety of jewelry products to end consumers, such as unbranded loose
+diamonds, gemstones, engagement and wedding rings,1bracelets, necklaces, and earrings. Loose
+diamonds account for the core part of the retailer’s business in terms of revenue contribution.
+According to its annual report, the retailer works with dozens of diamond suppliers worldwide
+under an “exclusivity” agreement, which requires suppliers to sell their diamonds only through the
+retailer’s online channel, and not through their own or other competing online and oﬄine channels.
+For listed diamonds, the identities of the suppliers are not revealed on the retailer’s website so that
+consumers cannot diﬀerentiate diamonds based on the suppliers. Instead, consumers recognize only
+the retailer name as the diamond brand. To operate in a cost-eﬃcient manner, the retailer uses a
+1Buying a diamond ring from the retailer requires a consumer to choose his/her loose diamond ﬁrst and then a
+ring setting. Consumers pay the total price, and the diamond ring is then assembled by the retailer. Typically, the
+loose diamond accounts for more than 90% of the total price paid by consumers.
+7
+
+drop-shippingbusinessmodel, i.e., theretailer, inmostcases, doesnotphysicallycarryinventoriesof
+loose diamonds listed on its website. Instead, it purchases diamonds from corresponding suppliers
+when consumers place their orders with the retailer. Unlike traditional brick-and-mortar stores,
+where only a limited number of diamonds are available, this drop-shipping model allows the retailer
+to list more than a hundred thousand diamonds every day.
+In this setting, suppliers list their diamonds on the retailer’s website and establish wholesale
+prices. The retailer then adds a ﬁxed percentage markup to the wholesale prices. Per the retailer’s
+annualreport, themarkupisﬁxedataround18–20%foralldiamonds. Becausetheretailerchoosesa
+ﬁxed margin over wholesale prices, the decoy pricing structure ultimately comes from the suppliers.2
+Nevertheless, consumers are expected to respond to the decoy–dominant structure regardless of
+whether the retailer or the suppliers create it. That being the case, as we demonstrate later, the
+dominance structure still aﬀects the retailer’s sales and ultimately its proﬁtability to a large extent.
+Since more than a hundred thousand diamonds are listed each day, the retailer provides ﬁltering
+and sorting tools that help consumers to search for diamonds. On the website, a consumer can
+ﬁlter diamonds based on a desired range of diamond characteristics (such as price, carat, clarity,
+etc.). The website then returns a list of all the diamonds that fall into the ﬁltering criteria on a
+single page in the default ascending price order. This one-page structure requires the consumer to
+scroll down to check all diamonds ﬁltered. The web page displays each diamond in a row with its
+carat, cut, color, clarity (4Cs henceforth), and price information. The consumer needs to further
+click into a diamond’s details page to check other less-signiﬁcant characteristics such as symmetry
+and polish. The website also allows the consumer to sort the diamonds based on any one of the 4Cs
+or price. Given abundant diamonds from the retailer, the consumer would still face a long list of
+diamonds (hundreds to thousands) even after a few rounds of ﬁltering and sorting. The list typically
+includes many decoys and dominants that are not easy to detect without laborious investigation.
+In addition, because consumers are presented with a list of diamonds according to their set criteria,
+this search process resembles the non-sequential search that is consistent with our derivation of the
+2We note that the supplier price variation may exist due to multiple reasons. First, due to consumer search costs,
+the observed prices can be the outcome of a mixed-strategy price equilibrium on the supplier side. Second, suppliers
+might have diﬀerent costs, resulting in diﬀerent pricing functions. Third, suppliers may change prices at diﬀerent
+times. Understanding the source of the price variation is beyond the scope of the current study. Instead, we focus
+on quantifying the DE given the observed price variation in our data.
+8
+
+diamond-level hazard model from individual primitives (see Web Appendix B for the details).
+3.2 Data Description
+We construct a panel data set of diamond prices and sales from this online retailer. We collect
+our daily data from the retailer’s website through a web crawler for the period from February 2011
+to September 2011. For each diamond listed during our sample period, we observe the diamond’s
+inherent physical characteristics and daily prices until the diamond is sold. In the data, diamond
+prices typically change over time: on average, each diamond’s price changes once every 21 days,
+conditional upon it being unsold. Figure 1 provides an example of price dynamics among three 1.0-
+carat diamonds from the day of introduction in the market till the end of the observation period.
+Figure 1: Diamond Price Patterns Over Time
+As seen in Figure 1, the diamond prices can go up and down, and each diamond may have a
+unique price pattern over time. We infer that a diamond is sold through the retailer’s website on
+the last day it is listed as available, based on its unique SKU number.3On average, it takes about
+50 days to sell a diamond.
+In our analysis, we focus speciﬁcally on round-shaped diamonds with prices ranging between
+$2K and $20K. Round-shaped diamonds are the most popular ones among those listed (74%) and
+3We believe this is a reasonable approach because, as discussed earlier, the suppliers are under an exclusive channel
+agreement with the retailer so that the diamond sale would not have happened through other channels. Accordingly,
+until a diamond is sold, its supplier is expected to keep listing the diamond on the retailer’s website. That said, we
+acknowledge the sale time of a diamond to be inferred based on its removal day as a limitation of the current research.
+9
+
+sold (78%).4Diamonds in diﬀerent price ranges might be more attractive to diﬀerent segments
+of buyers with various budget levels. To account for the potential heterogeneity in the DE across
+consumer segments, we further divide the diamonds into low- ($2K–$5K), medium- ($5K–$10K)
+and high-price ($10K–$20K) segments based on their ﬁrst-day market prices.
+Before calibrating the decoy–dominant structure, we ﬁrst examine what determines diamond
+prices. We run a linear regression with (log- of) daily diamond prices as our dependent variable
+and the diamonds’ physical characteristics as independent variables to uncover the secret diamond-
+pricing formula. To control for potential demand variation across periods, we also add day ﬁxed
+eﬀects to the regression. We report the regression results in Table 1. The adjusted R-squared
+measure for the model with 4Cs, along with day ﬁxed eﬀects, is as high as 96.67%. Individual
+regressions for each day yield adjusted R-squared measures ranging between 94.92% and 96.57%.
+Theresultsprovideevidencethat4Csarethepredominantattributesindeterminingdiamondprices.
+To further check the robustness, we ran several regressions by incorporating other diamond
+attributes, such as symmetry and polish, into our regression model. Overall, the R-squared measure
+does not improve. Moreover, these additional variables have mostly insigniﬁcant estimates that
+are notably smaller in magnitude compared to the 4C estimates. For example, the implied price
+diﬀerence contributed by symmetry and polish turns out to be less than 0.5%. Thus, we have
+strong statistical evidence to conclude that 4Cs of a diamond can represent its quality very precisely.
+Accordingly, in our analysis, we label each unique 4C combination as a grade.
+Characterizing a diamond as a combination of its 4Cs and price is, indeed, quite consistent
+with industry reports on diamond valuations and with articles educating consumers on purchasing
+diamonds. Eventhoughthevariationindiamonds’physicalattributesexplainsalargeportionofthe
+price variation, we still observe signiﬁcant within-grade and within-day price variation. Speciﬁcally,
+in the data, the average of the ratios of price standard deviation to the mean price at each day-
+grade combination is 0.1, indicating a suﬃciently large within-grade and within-day price variation.
+This variation is essential to characterize the dyadic decoy–dominant relationships among every
+diamond-pair, as discussed next.
+4Diamond shape can be considered as a horizontal attribute. Thus, including only round-shaped diamonds would
+not aﬀect our decoy–dominant constructions since no decoy–dominant relationships exist across diamond shapes.
+Further, we believe most consumers commit to a particular shape before choosing among other attributes.
+10
+
+Table 1: Diamond Price Regression Model: ln(price) on 4Cs and day ﬁxed eﬀects
+Variable Estimate S.E.
+Carat 1:768**0:0004
+Poor 0:000
+Good 0:056**0:0009
+Cut Very Good 0:114**0:0009
+Ideal 0:180**0:0009
+Signature Ideal 0:231**0:0013
+J 0:000
+I 0:141**0:0004
+H 0:268**0:0004
+Color (Low to High) G 0:361**0:0003
+F 0:455**0:0003
+E 0:503**0:0004
+D 0:583**0:0004
+SI2 0:000
+SI1 0:124**0:0003
+VS2 0:274**0:0003
+VS1 0:371**0:0003
+Clarity (Low to High) VVS2 0:455**0:0003
+VVS1 0:544**0:0003
+IF 0:619**0:0004
+FL 0:762**0:0004
+Daily Dummies included
+Adj. R-squared 96:67%
+Adj. R-squared w/o daily dummies 95:27%
+Adj. R-squared w/ daily separate regressions 94.92%–96.57%
+Note:Estimates withandare signiﬁcant at the 0.10 and 0.05 levels, respectively.
+3.3 Dominance Construction
+By deﬁnition, a diamond Bis a decoy to another diamond AwhenBis inferior to Ain at least
+one attribute, but has no superior attribute. In our speciﬁc setting, we deﬁne a diamond as a decoy
+under two conditions: 1) In terms of 4Cs, Bis inferior in at least one attribute to Aand has no
+attribute superior to Abut has the same or a higher price than A; and 2)Bhas the same 4Cs as
+Abut is priced at least 5% higher.5Under the two decoy deﬁnitions, for any two diamonds on a
+5Under the strict deﬁnition, two same-grade diamonds with diﬀerent prices must have a dominance relationship.
+However, in real purchase situations, consumers may not care much about (or even notice) small price diﬀerences.
+Thus, we use a conservative approach, deﬁning a dominance relationship only if the price diﬀerence between the two is
+larger than 5%. This 5% rule helps us avoid the potential problem of deﬁning a false dominance relationship when the
+dominated diamond is, indeed, superior in other non-critical attributes such as symmetry and polish. Our regressions
+show that the price premium contributed by these non-critical attributes is less than 0.5%. As a robustness check,
+we replicate our analysis under the 1% and 10% rules and obtain similar results.
+11
+
+particular day, we deﬁne the relationship between them as follows: AdominatesB(AB),B
+dominatesA(BA), and no dominance ( AB).
+In our data sample, every pairwise decoy–dominant relationship between all listed diamonds is
+constructed for each day.6For a particular diamond j, for each day t, we create two measures:
+number of diamonds that are decoys ( NDecoy
+jt), and dominants ( NDominant
+jt ) to that diamond. The
+median number of decoys and dominants that a diamond has is 7 in the data, while the distribution
+is right-skewed. Since the number of diamonds varies across diﬀerent grades signiﬁcantly, there
+exist large variation in the number of decoys/dominants across grades. Hence, we normalize the
+two measures by dividing them by the number of diamonds in the grade on the same day, and label
+the grade-level percentage measures of decoys and dominants as RDecoy
+jtandRDominant
+jt, respectively.
+4 Data Evidence of the DE
+In this section, we discuss some data patterns and reduced-form analyses that are suggestive of the
+DE. We show that important data patterns cannot be solely explained by alternative mechanisms
+such as the reference price eﬀect or consumer search without considering the DE.
+4.1 Dominance Types and Diamond Sales
+Based on the dominance construction, on day t, diamondjcan belong to one of the four mutually
+exclusive groups: 1) neither decoy nor dominant: RDecoy
+jt = 0andRDominant
+jt = 0; 2) decoy only:
+RDecoy
+jt = 0andRDominant
+jt>0; 3) dominant only: RDecoy
+jt> 0 andRDominant
+jt = 0; and 4) both
+decoy and dominant: RDecoy
+jt>0andRDominant
+jt>0. The middle column of Table 2 shows the
+count of diamond-day observations for each diamond type. Due to the signiﬁcant within-grade price
+variation, we observe that a majority of the diamonds fall into the both decoy and dominant type.
+6Wewouldliketoacknowledgethatomittingdiamondsfromcompetingretailersmaycreatebiasesintheestimated
+size of the DE if the majority of consumers search and compare diamonds from multiple retailers. Given that the
+studied retailer is the dominant player in the market with about 50% market share, we expect such practices to be less
+common. Even if consumers search across competitors, it is laborious for them to compare diamonds from multiple
+retailers altogether since each retailer provides its search/ﬁltering tools, i.e., pooling diamonds from diﬀerent retailers
+is not trivial. As discussed earlier, even with the focal retailer’s ﬁltering tools, the lists of diamonds consumers face
+tend to be very large. In other words, it is very diﬃcult for consumers to detect the decoy–dominant relationships
+from a single retailer—a fact also conﬁrmed by our estimated decoy–dominant detection probabilities—let alone
+comparing across sites. Finally, each retailer’s brand may be perceived as a horizontal attribute, making decoy–
+dominant calibrations invalid across retailers. That being said, if consumer search data across multiple retailers
+become available, modeling the DE beyond a single retailer can be an interesting future research direction.
+12
+
+However, even in the smallest group, i.e., neither decoy nor dominant , we have a suﬃcient number
+of observations (27,077) to allow the identiﬁcation of our model, as we discuss later.
+We summarize the percentage of diamonds sold in the total diamond-day observations across
+diﬀerent diamond types in the last column of Table 2. Each cell is calculated by dividing the number
+of diamonds sold in each diamond type by that type’s total diamond-day observations. For example,
+there are 404,283 decoy only diamond-day observations, out of which 6,792 were sold, yielding the
+average sale probability of 1.68%. Table 2 shows that decoy only diamonds have the lowest average
+sale probability (1.68%), while the opposite is true for dominant only diamonds (2.53%). The both
+type diamonds have a slightly higher average sale probability than the neithertype.
+Table 2: Summary Statistics Across Diamond Types
+Diamond Type Diamond-Day Observations Daily Percentage Sales
+Neither decoy nor dominant 27;077 1 :96%
+Decoy only 404;283 1 :68%
+Dominant only 340;456 2 :53%
+Both decoy and dominant 1;945;009 2 :08%
+Total 2;716;825 2 :07%
+In addition, we explore how the overall dominance structure impacts the sales shares of diﬀerent
+diamond types using two linear regressions. We use the daily sales share of decoys (in percentage)
+and the sales share of dominants as the dependent variables and include price-segment dummies and
+percentage of decoy only and percentage of dominant only diamonds in each segment as independent
+variables. Results reported in Table 3 show that the percentage of decoy only diamonds signiﬁcantly
+increases the decoys’ sales share, while the percentage of dominant only diamonds signiﬁcantly
+increases the sales share of dominants but reduces that of decoys.
+Table 3: Diamond Sales Share Regression
+VariableDecoy Sales Share Dominant Sales Share
+Estimate S.E. Estimate S.E.
+Intercept 0:023 0 :026 0:048 0 :040
+Medium Segment(5K–10K) 0:006 0 :016 0:0820:025
+High Segment(10K–20K)  0:008 0 :021 0:0860:032
+% Decoys 0:8990:198 0 :161 0 :301
+% Dominants  0:3120:155 1 :9720:236
+Adj. R-squared 0:118 0 :117
+Note:Estimates withandare signiﬁcant at the 0.10 and 0.05 levels, respectively. The average value of
+% Decoys and % Dominants are 0.14 and 0.13, respectively.
+13
+
+Qualitatively, the patterns presented in Tables (2) and (3) could be explained by reference price
+eﬀect or consumer search. Dominants are in general more preferred by consumers because their
+prices are relatively lower than comparable diamonds, whereas the opposite is the case for decoys
+(reference price eﬀect). Beyond the relative price disadvantage, a decoy only diamond may also
+be detected as a decoy by a segment of consumers who search extensively, and it would never be
+purchased upon detection, leading to a further reduction in the sale probability (consumer search).
+Notably, the average sale probability of a decoy is still much larger than zero; thus, it is critical to
+control for decoy detection in our analysis. The sales share regression results in Table (3) are also
+directionally consistent with consumer search because having relatively more decoy only diamonds
+in the market would reduce the chances of consumers discovering these decoys along with their
+dominants. In other words, as there is a larger share of decoy only diamonds, the size of the market
+segment detecting them as decoys is expected to decrease, leading the sales share of decoys to
+increase. Similarly, as the percentage of dominant only diamonds increases, consumers are more
+likely to include them in their search process, leading to an increase in the sales share of dominants.
+Quantitatively, however, the magnitude of diﬀerences in the average sale probabilities across
+the diamond types and the magnitude of the regression estimates could be suggestive of additional
+eﬀects beyond reference price and consumer search. The average sale probability diﬀerence between
+adominant only and aneithertype diamond (0.57%) is twice the diﬀerence between a neither
+typeand adecoy only diamond (0.28%). Since buying decoys and dominants can be seen (by
+consumers)asmonetarylossesandgains, respectively, basedontheprospecttheory(Tversky,1972),
+reference price eﬀect would predict the exact opposite pattern, i.e., the former probability diﬀerence
+is expected to be smaller than the latter. Consumer search, on the other hand, could explain the
+signiﬁcant reduction in the average sale probability for decoys (due to the segment detecting them
+never purchasing them), but it could hardly explain the signiﬁcant boost in the sales of dominants,
+especially when the eﬀect is twice that of decoys. In addition, we would expect the sales share of
+dominants to increase proportionally with the increase in the percentage of dominants based on
+random consumer search, yet the estimated elasticity is as high as 1.97, signiﬁcantly larger than
+1.0, suggesting that including additional dominant only diamonds would extract a disproportionally
+larger sales share from other diamonds. All this evidence suggests that there is a signiﬁcant boost
+eﬀect in the sale probabilities for dominants, which is not completely explained by reference price
+14
+
+Figure 2: Sale Probability Function According to Diﬀerent Theories
+eﬀect or consumer search, yet is very consistent with the predictions from the DE.
+We further develop formal statistical tests to show evidence consistent with the DE instead of
+reference price eﬀect and beyond consumer search explanations in the following subsections.
+4.2 Decoy Eﬀect vs. Reference Price Eﬀect
+The marketing literature has extensively examined the importance of relative price comparisons
+in consumers’ purchase decisions (Monroe, 1973). The reference prices could be formed based on
+contextual factors such as the distribution of market prices (Biswas and Blair, 1991; Rajendran and
+Tellis, 1994), or temporal anchoring stimuli such as a product’s past prices (Lynch Jr et al., 1991;
+Rajendran and Tellis, 1994). In our particular context, given that diamonds are not repeat-purchase
+products and there are thousands of diamonds available each day, it is more likely that consumers
+form reference prices based on contextual factors rather than temporal anchors (Kalyanaram and
+Winer, 1995). When consumers use average grade-level price as the reference, the prospect theory
+(Kahneman, 1979) predicts that 1) consumers respond positively to dominants (in the monetary
+gain domain) and negatively to decoys (in the loss domain); and 2) the response to decoys would
+be stronger than to dominants (of the same size) due to loss aversion.
+Even though the reference price eﬀect (RPE henceforth) and decoy eﬀect may look similar at
+ﬁrst glance, we would like to emphasize a few notable diﬀerences that we illustrate in Figure 2. First,
+15
+
+the RPE gradually vanishes as the monetary gains or losses approach zero. In other words, the RPE
+predicts the sale probability function to be continuous as the price of a diamond moves from the gain
+to the loss domain (i.e., around the reference price point). To the contrary, under the decoy eﬀect,
+we expect a discrete jump in the sale probability function around the reference point—because,
+as a non-decoy diamond turns into a decoy one, a market segment emerges with zero probability
+of purchasing it upon detection, resulting in a downward jump in the sale probability function
+around the decoy threshold price. The opposite becomes the case as a non-dominant diamond
+turns into a dominant one: a market segment with signiﬁcantly large purchase probability emerges,
+and this segment induces the sale probability to jump upward around the dominant threshold
+price. Thus, the sale probability function is expected to be discontinuous around the reference price
+point with the decoy eﬀect. Further, the magnitude of the discrete jump (around the reference
+price) depends on the market-level detection probabilities for decoys; and on both the market-level
+detection probabilities and the strength of the DE (i.e., sales boost) for dominants.
+Second, the predicted relative eﬀects across the domains (loss to gain/decoy to dominant) are
+diﬀerent under the RPE and the DE. The RPE predicts the slope of the sale probability function to
+be steeper for decoys than for dominants. We would argue the opposite is more likely to be the case
+under the DE explanation, because further reducing the prices of dominants would not only increase
+the size of the consumer segment who detects them as dominants but also elevate the attractiveness
+of these dominants (i.e., the sales boost level) upon detection. However, as prices of decoys increase,
+it gets easier for consumers to detect them, i.e., the size of the market segment that fails to detect
+them decreases. Note that only this shrinking segment would respond to the increasing prices (or
+monetary losses) of decoys since the other segment would eliminate them upon detection irrespective
+of the loss amount’s size. Therefore, with the DE, the sale probability function is expected to have
+a steeper slope in the gain domain, and a ﬂatter slope in the loss domain.
+We estimate three diamond-level logistic sales regressions to test whether our data support the
+DE theory rather than the RPE. The results of these three speciﬁcations are reported in Table 4.
+In the regressions, we control for the following variables: a diamond’s 4Cs, daily demand eﬀects
+such as weekday and holiday dummies, the Google search indexes for diamond-related keywords,
+and the number of diamonds in the same grade. We deﬁne the reference price as the average price
+of diamonds belonging to the same grade. Central to our test, we include separate intercepts and
+16
+
+separate price slopes ( PGainandPLossas percentage diﬀerences relative to the reference price)
+for diamonds in the GainandLossdomains in the ﬁrst regression. We replace the deﬁnition
+ofGainandLosswithDominant andDecoy, and the relative prices with interactions with the
+Dominant andDecoydummies in the second and third regressions. The diﬀerence between the last
+two speciﬁcations is that the deﬁnition of Dominant andDecoyis based on whether a diamond has
+any decoys or dominants in speciﬁcation (I), while in speciﬁcation (II) we use a stricter deﬁnition
+of whether a diamond is a decoy only ordominant only type. The regression speciﬁcations follow
+the tradition in empirical tests of the RPE (Hardie et al., 1993; Bell and Lattin, 2000).
+Table 4: Diamond Sales Response Function with Logistic Regressions
+VariableGain/Loss Decoy/Dominant(I) Decoy/Dominant(II)
+Estimate S.E. Estimate S.E. Estimate S.E.
+Controls included included included
+Intercept— Gain  0:028 0 :019
+Intercept— Loss  0:006 0 :019
+Intercept— Dominant 0:1520:014 0 :1400:018
+Intercept— Decoy  0:1860:014 0:2050:019
+Slope—PGain  2:4440:145
+Slope—PLoss  1:7330:156
+Slope—PGainDominant  1:4910:131 1:8310:192
+Slope—PLossDecoy  1:0590:137 0:5670:211
+Slope Diﬀerence (Loss  Gain) 0:6860:215 0 :4320:218 1 :2640:292
+AIC 525,333 525,016 525,191
+Note:Estimates withandare signiﬁcant at the 0.10 and 0.05 levels, respectively.
+The results show a very consistent pattern with the price coeﬃcient more negative in the
+gain/dominant domain than in the loss/decoy domain across the three regressions. The diﬀer-
+ences between the slopes (loss minus gain) are all signiﬁcantly positive at the 0.05 level, as shown in
+the table. In addition, intercepts for dominants are signiﬁcantly positive while those for decoys are
+signiﬁcantly negative in the last two regressions, indicating the existence of a discrete jump around
+the reference price point. This is consistent with our earlier discussion about the role of the DE.
+Lastly, the models with the DE outperform the RPE-only model based on the AICs. These results
+are all robust to alternative model speciﬁcations, such as separating the eﬀects across the three price
+segments and including quadratic terms for relative prices. Overall, our test results show strong
+statistical support favoring the DE over the RPE, as illustrated in Figure 2.
+17
+
+4.3 Decoy Eﬀect vs. Consumer Search
+As Simonson (2014) emphasized, consumers’ detection of decoy–dominant relationships is a precon-
+dition for the DE. Given the extremely large number of alternatives in the online diamond market,
+consumers rely on search to ﬁnalize their consideration sets. Thus, consumer search is an inherent
+component in our test for the DE (see our Model section). In this subsection, we develop a formal
+statistical test to check whether the data patterns can be solely explained by consumer search, or if
+there is evidence of the DE in addition to consumer search. Our test relies on the observed market
+price dispersion and sales information. We provide the details of this test in Web Appendix A.
+The intuition behind the test is that under pure consumer search without the DE, a supplier sets
+prices to maximize the expected proﬁt of each individual diamond, and thus identical diamonds
+with diﬀerent prices are expected to generate the same level of proﬁt for the supplier in equilibrium
+(Burdett and Judd, 1983). However, if there is DE along with consumer search, a supplier needs
+to consider the price optimization beyond each individual diamond because decoys would serve as
+“loss leaders” helping the supplier get higher expected proﬁts from the dominants. Consequently,
+one would expect the proﬁt contribution of dominants to be higher than that of decoys.
+UnderthehypothesisofnoDE(i.e., thereisonlysearcheﬀect), wecanutilizetheobservedprices
+and sales information to recover the cost of each diamond jon dayt(cjt)from the corresponding
+supply-side pricing optimality conditions. Recovered costs should be approximately the same for
+diamonds with identical 4Cs, and exactly the same for the same diamond over time. However, if
+there exists DE along with consumer search, because of the positive proﬁt externality from decoys to
+dominants, the recovered costs from the optimality conditions will be higher for decoys and lower for
+dominants, as compared to their true costs. This essentially leads to a positive correlation between
+the diamonds’ recovered costs and their relative price levels. The test of the pure search eﬀect versus
+the search eﬀect along with the DE thus becomes the same as testing whether recovered costs are
+increasing with relative prices. Accordingly, we conduct two statistical tests: 1) using cross-diamond
+price variation (labeled as Test I); and 2) using within-diamond price variation over time (labeled as
+Test II). Results (see Table A1 in Web Appendix A) consistently reject the null hypothesis of a pure
+consumer search explanation across all three diamond price segments. All the estimated coeﬃcients
+of relative price levels ( rpjt) are positive and signiﬁcant, and thus are directionally consistent with
+18
+
+the hypothesis supporting the existence of the DE together with consumer search in our data.
+To sum up, our data analyses yield the following results: 1) A diamond’s sale probability
+largely depends on whether it is a decoy and/or a dominant; 2) It is critical to account for decoy-
+dominant detection in validating the DE; and 3) There is suggestive evidence of the DE beyond
+alternative mechanisms of the RPE and consumer search. Hence, empirical investigation of the
+decoy phenomenon requires a deliberately developed model, which we introduce in the next section.
+5 Model
+We develop a diamond-level proportional hazard model to study daily diamond sales. We control
+for the eﬀect of diamond characteristics and market demand and supply factors in a baseline daily
+diamond sale hazard component. We further capture the role of the DE on diamond sales with
+ourdominance hazard component. Separating the DE from other factors that aﬀect diamond sales
+is a challenging task since consumer-level search and purchase behaviors are unobserved in our
+setting. To achieve the objective, we derive our diamond-level proportional hazard from underlying
+consumer primitives including consumer arrival process ,search,consideration set formation , and
+conditional choice probabilities with the embedded DE . Please see Web Appendix B for the details of
+our derivation including how the DE is embedded into consumers’ conditional choice probabilities,
+and how the proposed hazard speciﬁcation is used to quantify the DE at the market level. Following
+this derivation, we use the following to denote the hazard that diamond jwill be sold on day t:
+hj(t) = j(Xjt;)j(Djt;); (1)
+where j()andj()are the daily diamond sale hazard and the dominance hazard components,
+respectively. We next discuss each component with the choice and rationale of the corresponding
+variables. We present an overview of the variables in Table 5.
+5.1 Daily Diamond Sale Hazard
+The daily diamond sale hazard component (  j()) captures the baseline daily diamond sale likeli-
+hoods without the DE consideration. In general, a diamond’s daily sale likelihood depends on a
+few essential factors. First, since diamond buyers with various budgetary constraints have diﬀerent
+19
+
+Table 5: List of Variables Used in Model Estimation
+Variable Name Description
+Daily Diamond Sale Hazard ( Xjt)
+KjDiamond segment Segment dummies, low (2K–5K), medium (5K–10K), high (10K–20K)
+ZtGoogle search indexes Daily Google search trends index of diamond-related keywords
+Weekday dummies Dummy variables of weekdays
+Holiday dummies Dummy variables for Valentine’s Day and federal holidays
+HjDiamond characteristics Dummy coded cut, color and clarity of diamond j,
+log- of carat of diamond j,
+indicator of carat 1.0 for diamond j
+pjtDiamond price Daily price of diamond j(in 1,000)
+WjtDaily competitiveness Log of number of diamonds of the same grade
+Dominance Hazard ( Djt)
+rpjtRelative price index % price diﬀerence between diamond jand its grade-level average
+RjtPercentage decoys Number of diamond j’s decoys / number of diamonds in j’s grade
+Percentage dominants Number of diamond j’s dominants / number of diamonds in j’s grade
+spjtPrice standard deviation Standard deviation of prices in diamond j’s grade on day t
+preferences for the 4Cs, diamonds at diﬀerent price levels and grades are likely to have diﬀerent
+sale likelihoods. Second, the sale likelihood of a diamond is expected to decrease as the number of
+similar diamonds listed increases. Third, because consumers may have diﬀerent purchase intentions
+on diﬀerent days, the sale likelihoods of diamonds may also change over time. For example, con-
+sumers may have diﬀerent purchase likelihoods on diﬀerent days of a week, or special occasions and
+holidays. Accordingly, we model the daily diamond sale hazard  j()as an exponential function
+of 1) diamond j’s price segment (dummy coded low-, medium-, or high-price, labeled as Kj); 2)
+dummy-coded cut, color, and clarity, log- of carat7(labeled as Hj); 3) its price (labeled as pjt); 4)
+log- of the number of diamonds with the same 4Cs (labeled as Wjt); 5) Google search trends to
+capture consumer interests, weekday and holiday dummies (labeled as Zt).
+WithXjt=fKj;Hj;pjt;Wjt;Ztg, and=fK;H;p;W;Zg, we deﬁne the daily diamond
+sale hazard as,
+ j(Xjt;) = exp(bj+KjK+HjH+pjtp+WjtW+ZtZ): (2)
+We use a random eﬀect speciﬁcation, i.e., exp(bj) (1;2), to allow the intercept term to be
+diamond-speciﬁc.8The random coeﬃcient speciﬁcation helps in capturing unobserved correlations
+7Since 1.0-carat diamonds are more preferred in our data, in addition to controlling for carat as a continuous
+variable, we use an indicator variable that takes the value of 1 if diamond j’s carat is equal to 1.0.
+8We would like to note that modeling the unobserved heterogeneity beyond the intercept term is not possible in
+our setting due to lack of consumer-level panel data. That being said, ignoring price response heterogeneity may
+20
+
+in sale likelihoods among diamonds. This is important in our setting since if there exist demand
+shocksaﬀectingtwodiamondsatthesametime, withoutsuchspeciﬁcation, theeﬀectofonediamond
+on the other one’s demand would likely be inferred with biases. We adopt the Gamma distribution
+assumption following Lancaster (1979), where the random eﬀect can be analytically integrated out.
+5.2 Dominance Hazard
+We capture the DE by our dominance hazard component j(). Per our derivation in Web Appendix
+B, a diamond’s sale likelihood further depends on 1) the size of the market segment detecting it to
+be a decoy/dominant; and 2) the sale boost upon it is detected as a dominant. We separate these
+two parts as the market-level decoy–dominant detection and thedominant boost hazard .
+5.2.1 Market-Level Decoy–Dominant Detection
+The likelihood of detecting decoys and dominants in the diamond market may depend on various
+context-related factors. First of all, it should naturally depend on the decoy–dominant structure in
+themarket. Asconsumerstypicallysamplediamondsbasedontheirdesiredgradesusingtheﬁltering
+and sorting tools, a diamond with a larger percentage of decoys/dominants in its grade would
+have a higher chance of being included together with its decoys/dominants in the consideration
+sets. Second, the relative price of a diamond in its grade matters because a diamond is more
+likely to stand out either on the top or the bottom of the returned lists under the default price-
+sorting design when its absolute relative price diﬀerences get larger. Third, diamond purchases are
+unique, ﬁrst-time experiences for most consumers who have limited knowledge regarding diamond
+pricing. Thus, learning about the prices becomes an inherent part of their decision process. A
+greater variation in the prices of comparable diamonds indicates more opportunities to save, which
+will likely motivate consumers to spend more time on the retailer’s site searching and comparing
+alternatives. Consequently, they would be more likely to detect existing decoy–dominant relations.
+As such, we expect the grade-level price dispersion to be another moderator of dominance detection.
+cause overestimation of the DE’s magnitude if there is selection in the market where more price-sensitive consumers
+enter into the market only when the market prices are low (see Bell and Lattin (2000) for the overestimation of the
+magnitude of loss aversion in the absence of controlling price response heterogeneity). This type of selection might be
+less an issue in our particular setting because a diamond is a one-time purchase product category in which consumers
+are less likely to have well-formed reference prices from past experiences. In addition, the average price within each
+grade stays almost constant week-over-week, making it less likely for the retailer to attract a substantially diﬀerent
+consumer segment (i.e., more price-sensitive) on a weekly basis.
+21
+
+Based on the above rationales, we model the market-level decoy–dominant detection part of our
+dominance hazard as a function of the following variables: 1) percentages of decoys and dominants
+that diamond jhas (RDecoy
+jtandRDominant
+jt), 2) the relative price measurement ( rpjt), and 3) the
+price standard deviation in diamond j’s grade (spjt).
+We denote the market-level decoy and dominant detection probabilities asPrDecoy
+jt ()and
+PrDominant
+jt (), respectively. Given Djt=fKj;RDecoy
+jt;RDominant
+jt;rpjt;spjtg, we model these two
+terms as the following:
+PrDominant
+jt (Djt;) =I(NDecoy
+jt>0)exp(VDominant
+jt )
+1 + exp(VDominant
+jt )
+PrDecoy
+jt (Djt;) =I(NDominant
+jt>0)exp(VDecoy
+jt )
+1 + exp(VDecoy
+jt ); (3)
+whereI()is the indicator function and VDominant
+jt andVDecoy
+jtare speciﬁed as:
+VDominant
+jt =KjDominant
+0 +Dominant
+1 ln(RDecoy
+jt ) +Dominant
+2I(rpjt<0)( rpjt) +Dominant
+3spjt
+VDecoy
+jt =KjDecoy
+0 +Decoy
+1 ln(RDominant
+jt ) +Decoy
+2I(rpjt>0)(rpjt) +Decoy
+3spjt:
+(4)
+The intercept terms ( Dominant
+0 andDecoy
+0) are modeled at each of the diamond price segments
+since decoy–dominant detection probabilities deﬁned in Equation (3) might diﬀer across various
+marketsegmentswithdiﬀerentconsumerbudgetarylevels. Theother scapturehowthepercentage
+measures of decoys/dominants, the relative price, and standard deviation of the grade-level prices
+would impact the decoy–dominant detection probabilities.
+5.2.2 Dominant Boost Hazard
+Upon a diamond being detected as a dominant, the size of the boost in its sale likelihood, i.e., the
+DE, may also depend on a few important context-related factors. First, all else equal, dominants
+with more decoys are likely to become more attractive (DE is also called attraction eﬀect) compared
+to diamonds with fewer decoys, especially when consumers engage in multiple comparisons. Second,
+basedontheprospecttheory(Kahneman,1979), aconsumer’spurchasedecisiondependsonwhether
+the price paid is perceived as fair with respect to her reference price point. Since diamonds are not
+repeat-purchase products, a consumer is expected to form her reference price based on the prices
+22
+
+of available diamonds rather than the past price histories (Mazumdar et al., 2005). Thus, upon
+detection of a dominant, we expect its sale likelihood to increase as the size of the price gain
+relative to comparable diamonds increases. Lastly, following our discussion on consumer learning
+in dominance detection, we expect consumers to spend less time as the variation of the grade-level
+prices decreases. Accordingly, we expect that with a smaller price dispersion, consumers become
+more likely to settle down with their detected dominants rather than continuing the search for other
+diamonds. As such, we expect the sale boost of a detected dominant to be more substantial as the
+within-grade price variation decreases. Given these rationales, we include the same set of variables
+as in the dominance detection component. We label Djt=fKj;RDecoy
+jt;RDominant
+jt;rpjt;spjtg, and
+deﬁne the dominant boost hazard Qjtas follows:
+Qjt(Djt;) = exph
+KjBoost
+0 +Boost
+1 ln(RDecoy
+jt ) +Boost
+2I(rpjt<0)( rpjt) +Boost
+3spjti
+:(5)
+Similar to the intercept term of the market-level decoy–dominant detection probabilities, we
+model the intercept term (Boost
+0 )at each of the diamond price segments since the dominant boost
+sizes might diﬀer across market segments. The other s capture how the percentage measures of
+decoys/dominants, the relative price, and standard deviation of the grade-level prices would impact
+the sales boost upon dominant detection.
+Given market-level detection probabilities and dominant boost hazard speciﬁcations, we opera-
+tionalize the dominance hazard as follows:
+j(tj) =8
+>>>>>><
+>>>>>>:1 ifjisNeither
+(1 PrDecoy
+jt ) ifjisDecoy Only
+(1 PrDominant
+jt ) +PrDominant
+jtQjt ifjisDominant Only
+(1 PrDecoy
+jt )h
+(1 PrDominant
+jt ) +PrDominant
+jtQjti
+ifjisBoth:(6)
+We would like to note that we make an implicit assumption in the derivation of the dominance
+hazard in Equation (6). We assume that once a consumer detects a speciﬁc diamond to be a
+decoy, she would never purchase it, as she can always choose the dominant one. This assumption is
+consistent with the existing literature. For example, Huber et al. (1982) veriﬁed that fully informed
+subjects would seldom make “mistakes” of choosing decoys in lab experiments. We argue that it
+is highly unlikely for a consumer to buy a detected decoy diamond given that diamonds are high
+ticket item products and the monetary cost of doing so is signiﬁcant.
+23
+
+Equation (6) shows how the dominance hazard depends on a diamond’s type: if it is neither
+decoy nor dominant , the DE has no impact on the sale hazard of the diamond, i.e., the dominance
+hazard is normalized to one. If the diamond is decoy only type, it is considered only by the consumer
+segment that fails to detect it as a decoy under our assumption. Further, the DE does not play a
+role in the sale hazard of the diamond given no detection, resulting in the overall dominance hazard
+being the size of this segment, i.e., j() = 1 PrDecoy
+jt (). For adominant only type diamond, there
+exist two market segments: the segment that fails to detect the diamond as a dominant, and the
+segment that is able to. The DE does not have any impact on the former segment (i.e., Qjt() = 1),
+while we expect a boost in sale hazard (i.e., Qjt()>1) for the latter. The overall sale hazard thus
+becomes the expression in the third line of Equation (6). Finally, if the diamond is a both decoy
+and dominant type, it is considered for purchase only by the consumer segment that fails to detect
+it as a decoy, with the size of the segment being 1 PrDecoy
+jt (). Similar to the decoy only case, the
+remaining consumer segment never purchases it, i.e., Qjt() = 0. The segment that fails to detect
+the diamond as a decoy can be divided into two sub-segments: the sub-segment that fails to detect
+the diamond as a dominant and the one that is able to do so. Similar to the dominant only case,
+the former sub-segment with size 1 PrDominant
+jt ()will not be impacted by DE, i.e., Qjt() = 1,
+while the sale hazard from the other sub-segment will be boosted by Qjt()>1. Combining all the
+scenarios, for the dominance hazard, we have the expression in the last line of Equation (6).
+5.3 Model Estimation
+Based on the model components outlined above, we can further arrange the terms and derive the
+following log-hazard representation (see Web Appendix C for details),
+lnhj(t) =bj+Xjt|{z}
+daily diamond sale hazard I(Decoy ) ln(1 +eDDecoy
+jtDecoy)| {z }
+dominance hazard of a decoy
++I(Dominant )h
+ln(1 +eDDominant
+jt(Dominant+Boost)) ln(1 +eDDominant
+jtDominant)i
+| {z }
+dominance hazard of a dominant;(7)
+whereDDecoy
+jt =fKj;lnRDominant
+jt;I(rpjt>0)rpjt;spjtgandDDominant
+jt =fKj;lnRDecoys
+jt;I(rpjt<
+0)( rpjt);spjtg. The eﬀects of being a decoy and being a dominant on the sale hazards are clearly
+outlined in the last two terms of this representation.
+24
+
+Denote the total number of days since diamond j(in totalJdiamonds) is on the market to
+the end of our observation period as Tj, and the day diamond jis sold since its introduction as
+Ts
+j. Following the derivation in Lancaster (1979) for the random eﬀect hazard model, the total
+likelihood we use for estimation becomes the following:
+L=JY
+j=1
+I 
+Ts
+jTj 
+Sj(Ts
+j 1) Sj(Ts
+j)
+
+I 
+Ts
+j>Tj
+Sj(Ts
+j)	
+; (8)
+whereSj(t) =
+1 +2Pt
+=1hj()  2
+is the survivor function and hj()is the mean value of the
+hazardhj()wherebj= 0. Notice that lim2!0Sj(t) =Qt
+=1e hj(), i.e., it reduces to the case
+without random eﬀects. We estimate the model by using the maximum likelihood approach.
+We now discuss a few properties of our model. First, the unit of our analysis is each diamond,
+which is diﬀerent from classic choice models. Second, in terms of how to model the DE conditional
+on dominant detection, we choose to use a scalar function Qjt(). WhenQjt()>1, our speciﬁcation
+becomes consistent with the DE theory, i.e., upon detection, there is a boost in sales for dominant
+diamonds. In other words, under our framework, testing the existence of the DE becomes the same
+as testing whether Qjt()>1. Details of this test are provided in Web Appendix B. Third, it is
+quite possible that consumers are heterogeneous, so we allow our daily diamond sale hazard  j()
+and the dominance hazard j()to diﬀer across diﬀerent diamond price segments.
+5.4 Model Identiﬁcation
+Our identiﬁcation strategy relies on the fact that it takes diﬀerent numbers of days to sell diﬀerent
+types of diamonds ( neither decoy nor dominant, decoy only, dominant only , orboth decoy and
+dominant ); or equivalently, the sale hazards vary across diﬀerent diamond types. Accordingly, we
+use diﬀerent parts of the data to identify diﬀerent components of our speciﬁcation. First, based on
+the normalization in the ﬁrst line of Equation (6), the sale hazard for the neithertype equals to the
+daily diamond sale hazard. Thus, we use the portion of the data regarding the sales of neithertype
+diamondswithdiﬀerent Kj,Hj,Wjt, andZtinXjttoidentifytheparameters inthedailydiamond
+sale hazard component. Second, conditional on the identiﬁcation of , we identify the parameters
+related to the detection probabilities and dominant boost hazard. Since decoy diamonds could only
+be purchased by the market segment that fails to detect them as decoys (see the second line of
+25
+
+Equation (6)), we use portion of the data regarding the sales of decoy only diamonds with diﬀerent
+RDominant
+jt,rpjt, andspjtinDjtto identify the parameters of the market-level decoy detection
+probabilities, i.e., Decoy(alsoseethesecondcomponentofEquation(7)). Third, asseeninthethird
+andfourthlinesofEquation(6),itisnotpossibletoseparatelyidentifytheparametersofthemarket-
+level dominant detection probabilities ( Dominant) and of the dominant boost hazard ( Boost) since
+PrDominant
+jt andQjtarealwaysbundledtogetherintheformof (1 PrDominant
+jt )+PrDominant
+jtQjt. To
+separately identify DominantfromBoost, we make the following assumption: Decoy=Dominant,
+i.e., all else equal, the market-level probability of detecting a diamond with ndecoys as a dominant
+is identical to the probability of detecting a diamond in the same grade with ndominants as a decoy.
+Since the decoy–dominant relationships are calibrated at the diamond-pair level, the probability of
+discovering one diamond dominating another is the ﬂip side of discovering that one is dominated
+by the other. Thus, it is reasonable to assume parameters quantifying the decoy and dominant
+detection probabilities in the diamond market to be the same.9
+Based on this symmetric market-level detection assumption, and conditional on the dominant
+detection parameters ( Dominant) being identiﬁed, we use portion of the data regarding the sales
+ofdominant only andboth decoy and dominant type diamonds with diﬀerent Djtto identify the
+parametersofthe dominant boost hazard ,Boost. Inourempiricalsetting, thediamondpriceschange
+over days and subsequently the decoy–dominant structure also changes daily. This data variation
+empowers the identiﬁcation of our model parameters ( ,Decoy, andBoost). Finally, variation in
+the time it takes to sell diamonds with similar XjtandDjtenables identiﬁcation of the unobserved
+heterogeneity parameter (i.e., 2).
+In addition, the identiﬁcation of the parameters relies on our exclusion restrictions. Speciﬁcally,
+we observe two types of variables in the data–the ones that are directly observable by consumers
+(such as diamond physical attributes and daily demand factors, i.e., Xjt), and the ones that require
+extensive consumer search and comparisons (i.e., the context-related variables, Djt). The Daily
+Diamond Sale Hazard component captures the baseline sale hazard of a diamond that does not
+depend on deliberate diamond comparisons. Hence, we exclude context-related variables ( Djt)
+in the modeling of this component. In contrast, the Dominance Hazard component captures the
+9Our data limit us from testing whether they are empirically equal. Web browsing information from individual
+consumers would potentially help construct measurements to test this. Due to the stringent data requirement, we
+leave this exercise for future research.
+26
+
+critical impact of potential context eﬀect under study. Accordingly, we exclude the variables that
+are directly observable to consumers without extensive search ( Xjt).10
+Finally, given that the derived log-hazard speciﬁcation is highly non-linear, a valid concern is
+whether various components in the function can be identiﬁed accurately. We conﬁrm that our
+statistical test of dominance is valid through Monte Carlo simulations (see details in Web Appendix
+D). We simulate diamond sales by using the proposed model speciﬁcation under various detection
+and dominant boost levels. Estimation with these simulated datasets yields that we can correctly
+recover the assumed parameters with high precision. Further, we show that the dominance hazard
+component is not identiﬁable without the existence of the dominance eﬀect in the simulated data,
+assuring that the quantiﬁed DE is not an artifact of the speciﬁc non-linear functional form.
+6 Results
+6.1 Main Estimation Results
+We report our estimation results in Table 6. Results suggest that the daily diamond sale hazard
+increases with the diamond’s carat size. In addition, 1.0-carat diamonds are signiﬁcantly easier to
+sell. As expected, as a diamond’s price increases, its sale hazard decreases. Regarding the cut, color,
+andclarityattributes, weobserveaninverseU-shaperelationship, i.e., thedailydiamondsalehazard
+is the largest for diamonds with moderate cut, color and clarity levels.11Estimates of daily demand
+proxies suggest that Google search indexes for diamond-related keywords are signiﬁcant proxies for
+the sales. The daily diamond sale hazard increases signiﬁcantly when the search indexes on the
+keywords of “engagement ring” and the studied retailer’s name are high, whereas it decreases when
+the search intensity is high on the keywords of “diamond,” “diamond ring,” and the competitor’s
+name. The daily diamond sale hazard also diﬀers signiﬁcantly across weekdays, with Thursday
+10It might be possible that some context-related variables such as the relative price and the price variation could
+directly aﬀect choice instead of the DE as we operationalize. Similarly, it is possible that diamond physical attributes
+could also moderate the extent of the DE. We conduct robustness checks that a) include relative price and price
+variation in the baseline component and b) move diamond 4C attributes to the dominance hazard component. Our
+main model speciﬁcation in the paper generally outperforms these alternative speciﬁcations based on the AIC. More
+importantly, the quantiﬁed detection probabilities and DE remain quantitatively similar as compared to our main
+model speciﬁcation. Details are available upon request.
+11As previously mentioned, our unit of analysis is each individual diamond; thus the basic sale hazard would be
+determined by both consumer demand for and supply-level of diamonds. Therefore, an inverse U-shape relationship
+does not imply that given the same price, a consumer does not prefer diamonds with better physical attributes.
+27
+
+being the best day for diamond sales, while Saturday and Sunday are the worst days. The results
+also suggest that diamonds are easier to sell during holidays. Regarding the competition from other
+diamonds, we ﬁnd that, intuitively, as the number of same-grade diamonds increases, the daily sale
+hazard decreases. Lastly, the estimated variance of the random eﬀect is reasonably large, i.e., the
+standard deviation is around 27% of the intercepts, highlighting the importance of controlling for
+unobserved correlations in the sale likelihoods among diamonds.
+Table 6: Model Estimates
+Variable Estimate S.E.
+Daily Diamond Sale Hazard
+Low-Price Segment (2K–5K)  3:349**0:114
+Medium-Price Segment (5K–10K)  3:169**0:121
+High-Price Segment (10K–20K)  3:312**0:131
+ln(Carat) 0:462**0:079
+Is 1.0 Carat 0:542**0:018
+Price (in 1000)  0:057**0:006
+Cut: Poor 0:000
+Cut: Good 0:325**0:096
+Cut: Very Good 0:835**0:095
+Cut: Ideal 1:227**0:094
+Cut: Signature Ideal 0:431**0:127
+Color: J 0:000
+Color: I 0:075**0:029
+Color: H 0:228**0:030
+Color: G 0:248**0:031
+Color: F 0:299**0:032
+Color: E 0:065*0:035
+Color: D 0:046 0 :039
+Clarity: SI2 0:000
+Clarity: SI1 0:166**0:023
+Clarity: VS2 0:310**0:025
+Clarity: VS1 0:248**0:027
+Clarity: VVS2 0:078**0:031
+Clarity: VVS1  0:112**0:036
+Clarity: IF  0:564**0:044
+Clarity: FL  0:300 0 :415
+Google Search: “diamond”  0:205*0:110
+Google Search: “diamond ring”  0:527**0:065
+Google Search: “wedding ring”  0:003 0 :057
+Google Search: “engagement ring” 0:079**0:031
+Google Search: retailer’s name 0:183**0:020
+Google Search: competitor’s name  0:446**0:064
+Weekday: Monday 0:000
+Weekday: Tuesday  0:026*0:014
+Weekday: Wednesday  0:053**0:014
+Weekday: Thursday 0:052**0:014
+Continued on next page
+28
+
+Table 6: Model Estimates
+Variable Estimate S.E.
+Weekday: Friday  0:186**0:015
+Weekday: Saturday  1:737**0:026
+Weekday: Sunday  1:158**0:021
+Is Holiday 0:033**0:013
+ln(# Diamonds of the Same Grade)  0:026**0:011
+2(Variance of the Random Eﬀect) 0:787**0:012
+Dominance Hazard—Market-Level Detection Probability
+Low-Price Segment (2K–5K)  1:341**0:114
+Medium-Price Segment (5K–10K)  1:850**0:190
+High-Price Segment (10K–20K)  2:430**0:388
+ln(RDominant
+jt ) 0 :241**0:041
+I(rpjt>0)(rpjt) 1 :816**0:734
+spjt 0:265*0:151
+Dominance Hazard—Dominant Boost Hazard
+Low-Price Segment (2K–5K) 0:965**0:090
+Medium-Price Segment (5K–10K) 0:552**0:155
+High-Price Segment (10K–20K) 1:072**0:305
+ln(RDecoy
+jt ) 0 :072**0:027
+I(rpjt<0)( rpjt) 1 :227**0:496
+spjt 0:087 0 :082
+Log-likelihood  257;666
+AIC 515;432
+Note:Estimates withandare signiﬁcant at the 0.05 and 0.10 levels, respectively.
+We now discuss the estimation results regarding the market-level decoy–dominant detection prob-
+abilities and thedominant boost hazard , which are the most critical components of our model for
+addressing the paper’s central research questions. First, our results suggest that the base market-
+level detection probability of a decoy (or dominant) diamond is the highest for diamonds in the
+low-price segment and the lowest in the high-price segment. One potential explanation is that con-
+sumers of the low-price ($2K–$5K) segment are usually on tight budgets and are more motivated to
+spend extra time searching for better prices, leading to larger consideration sets. As a result, they
+are more likely to detect existing decoy–dominant relationships. The positive signiﬁcant estimate
+of (log- of) grade-level percentage of decoys/dominants (0.241) shows that when a larger percent-
+age of diamonds are decoys in a diamond’s grade, it gets relatively easier for the market to detect
+that diamond as a dominant. The positive signiﬁcant estimate of the relative price index (1.816)
+shows that the further a decoy/dominant diamond is priced from the average grade-level price, the
+higher is the probability of decoy/dominant detection in the diamond market. In addition, results
+29
+
+suggest that as the price variation increases in a grade, the market-level detection probabilities of
+decoys/dominants marginally increase. This ﬁnding suggests that as the within-grade price varia-
+tion gets larger, consumers search more to identify decoys (and dominants). By using our model
+estimates, we next calculate the market-level decoy–dominant detection probabilities. Interestingly,
+we ﬁnd that these probabilities are quite low: 0.25 for the low-, 0.17 for the medium-, and 0.11
+for the high-price segments. These ﬁndings show that our real-life scenario with a large number of
+diamonds deﬁned on 4Cs and price with many decoys and dominants greatly contrasts with usual
+lab settings, in which participants are almost always aware of the decoy–dominant relationships.
+Second, the intercept estimates of our dominant boost hazard component are all positive, con-
+ﬁrmingthat, upondominantdetection, thesalehazardwouldbesigniﬁcantlyboosted. Thisprovides
+direct and conclusive evidence of the existence of the DE in a real product market. The demand
+boost eﬀect is lower for the medium-price segment (0.552) compared to the low- (0.965) and high-
+price (1.072) segments. The parameter estimate for the (log- of) percentage of decoys is positive
+and signiﬁcant (0.072), indicating that having more decoys would increase the dominant diamonds’
+sale hazards. The relative price measure is also positive and signiﬁcant (1.227) suggesting that
+as a dominant is discounted further away from the grade-level average price, its sale likelihood is
+boosted more. The estimate of the grade-level price dispersion turns out to be insigniﬁcant. We
+next calculate the average dominant boost eﬀect in proportional terms using the estimates. We
+ﬁnd that, conditional on a diamond being detected as a dominant, its sale hazard increases by 2.7
+times for the low-, 1.8 times for the medium-, and 3.2 times for the high-price segments, suggesting
+that—due to the DE—there is a substantial boost in the sale hazards of dominant diamonds.
+In summary, our estimation results show that in general, consumers have a low chance of detect-
+ing the decoy–dominant relationships in the online diamond market, especially among diamonds in
+the high-price segment. Thus, it is critical to model the decoy–dominant detection process in real
+product markets in order to correctly quantify the sales impacts of decoys on dominants. On the
+other hand, even though the market-level decoy–dominant detection probabilities are low, once an
+alternative is detected as a dominant, its sale hazard increases quite signiﬁcantly, especially in the
+low- and high-price segments. With this ﬁnding, we not only provide strong ﬁeld evidence about
+the existence of the DE, but also respond to Frederick et al. (2014) and Yang and Lynn (2014), who
+questioned the practical validity and usefulness of the DE.
+30
+
+6.2 Model Comparison and Robustness
+In addition to our main model estimation, we conduct comparisons with two simpler modeling
+approaches and check the robustness of the results with three alternative speciﬁcations. We show
+that one would obtain worse data ﬁts and biased inferences of the DE under these alternative
+approaches. We also conﬁrm that the estimates are very robust under alternative speciﬁcations
+with other ways of heterogeneity control and diﬀerent speciﬁcations of the reference price.
+One important modeling contribution of this paper is the separation of the DE from decoy–
+dominant detection. To test the importance of this separation, in our ﬁrst model comparison, we
+estimate a benchmark proportional hazard model by including the same set of controls directly in
+the baseline hazard. Speciﬁcally, the log-hazard speciﬁcation in Equation (7) becomes the following:
+ln(hj(t)) =bj+Xjt+DDecoy
+jtDecoy+DDominant
+jtDominant: (9)
+The second column of Table 7 (column “No Detection”) reports the estimates of the dominance
+variables for decoys (decoy shrinkage hazard) and dominants (dominant boost hazard). This sim-
+ple modeling approach is outperformed by our proposed model based on the AIC, suggesting that
+explicitly separating the market–level decoy–dominant detection from the dominant boost hazard
+better explains data variation. More importantly, the alternative model’s estimates have a com-
+pound eﬀect of detection and boost on diamonds’ sale hazards, causing inaccurate inferences in
+understanding the magnitude of the DE if one directly uses these estimates. Results suggest that
+dominantboosthazardsfromthisbenchmarkmodelaremuchsmaller(rangingfrom1.1to1.4times)
+compared to ones from the proposed model (1.8 to 3.2 times). Thus, not explicitly controlling for
+the market-level detection causes a signiﬁcant under-estimation of the DE’s magnitude.
+One potential explanation for the observed sales patterns is heterogeneous competitive eﬀects.
+For example, there could exist two diamond segments with diﬀerent competition intensities where
+diamonds in the ﬁrst segment are minimally aﬀected by competition while those in the second are
+highly aﬀected. Further, the likelihood of being in the second segment depends on a diamond’s rel-
+ative price in the grade. Accordingly, if a dominant diamond is priced signiﬁcantly lower than other
+similar diamonds, the competitive eﬀect plays a role implying a boost in the diamond’s sale likeli-
+31
+
+hood, and vice-versa .12To test this alternative explanation, we use a simple 2-segment latent-class
+model with diamond price segment dummies and absolute relative price diﬀerences determining the
+competitive segment membership, and a competition hazard (conditional on being in the compet-
+itive segment) that is modeled by the (log- of) number of competing diamonds in the same grade.
+This speciﬁcation yields a much higher AIC compared to our proposed speciﬁcation (516,718 vs.
+515,432), strongly supporting the DE over the heterogeneous competitive eﬀects explanation.
+Table 7: Model Comparisons and Robustness Checks
+Variable No Detection Homogeneous Reference Price Fixed Eﬀect
+Diamond Random Eﬀects included included included
+Day Fixed Eﬀects included
+PGain:I(rpjt<0)rpjt  1:251**(0:209)
+PLoss:I(rpjt>0)rpjt  0:599**(0:222)
+Market-Level Detection Probability/Decoy Shrinkage Hazard
+Low-Price Segment  0:245**(0:025) 1:548**(0:110) 1:376**(0:120) 1:578**(0:145)
+Medium-Price Segment  0:090**(0:029) 2:048**(0:208) 1:993**(0:217) 1:742**(0:156)
+High-Price Segment  0:095**(0:037) 3:205**(0:413) 2:388**(0:433) 2:176**(0:265)
+ln(RDominant
+jt )  0:044**(0:008) 0:205**(0:047) 0 :243**(0:041) 0 :293**(0:045)
+I(rpjt>0)(rpjt) 0:621**(0:198) 1:164 (0:836) 0 :752 (0:829)
+spjt  0:046 (0:029) 0:587**(0:141) 0 :261 (0:167) 0 :304**(0:140)
+Dominant Boost Hazard
+Low-Price Segment 0:314**(0:027) 0:720**(0:089) 0 :989**(0:092) 1 :118**(0:114)
+Medium-Price Segment 0:050*(0:029) 0:415**(0:168) 0 :493**(0:173) 0 :416**(0:130)
+High-Price Segment 0:064*(0:033) 1:446**(0:334) 0 :941**(0:321) 0 :722**(0:202)
+ln(RDecoy
+jt ) 0 :076**(0:007) 0:040 (0:027) 0 :078**(0:027) 0 :027 (0:030)
+I(rpjt<0)( rpjt) 1 :237**(0:220) 0:910*(0:508) 1 :768**(0:560)
+spjt 0:088**(0:028) 0:010 (0:085) 0 :095 (0:089) 0 :107**(0:007)
+N. parameters 50 49 50 247
+Log-likelihood  257;679 262;156 257;669 254;071
+AIC 515;458 524 ;410 515 ;438 508 ;636
+Note:Numbers reported are mean estimates and standard errors. Estimates withandare signiﬁcant at
+the 0.05 and 0.10 levels, respectively. Other controls (diamond 4Cs, competition, etc.) are included in
+the models but not reported here to save space.
+We also conduct a series of robustness checks with alternative model speciﬁcations and report
+the results in Table 7. The ﬁrst speciﬁcation omits the random eﬀect in the hazard speciﬁcation
+(column “Homogeneous”), the second adopts a RPE speciﬁcation with the relative price variables
+entering into the daily diamond sale hazard component instead of our dominance hazard speciﬁ-
+cation (column “Reference Price”), and the last speciﬁcation includes day ﬁxed eﬀects instead of
+12We thank the Associate Editor for pointing out this. Due to the aggregate nature of our data, it is not possible
+to identify the segment-speciﬁc log-hazards and the segment sizes simultaneously. Thus, for identiﬁcation purposes,
+we normalize the hazard for diamonds in the ﬁrst segment to one, which represents no competitive eﬀect.
+32
+
+Google search indexes and weekday dummies as the control for demand eﬀects across days (column
+“Fixed Eﬀect”). Across these three speciﬁcations, we ﬁnd consistent and robust results: most of the
+estimates have the same direction and similar magnitude as in our main model. One notable diﬀer-
+ence is that the relative magnitude of the DE is reversed for the low- and high- price segments under
+the homogeneous model. We believe our random eﬀect speciﬁcation captures more unobserved het-
+erogeneity across diamonds and thus should be more accurate, with the log-likelihood also much
+improved. The change in moving the relative price variables into the diamond daily hazard compo-
+nent seems to make little impact on the model estimates. In addition, the estimates again show that
+the sales function is more responsive in the gain domain than in the loss domain, consistent with
+the ﬁndings in our data pattern explorations. Finally, including day ﬁxed eﬀects could improve the
+model ﬁt but it comes at the cost of almost 200 additional parameters. Importantly, the coeﬃcient
+estimates for the dominance hazard component remain almost the same. Thus, we prefer our main
+model speciﬁcation for being parsimonious.
+7 Managerial Signiﬁcance
+We now explore the managerial implications of our study. We ﬁrst quantify the DE’s overall proﬁt
+impact to the retailer using model estimates. We also explore through simulation studies how sen-
+sitive the DE’s proﬁt impact is with respect to changes in diﬀerent aspects of dominance structure.
+These exercises shed new light on the DE’s practical signiﬁcance showing that it is not simply an
+experimental artifact.
+To quantify the DE’s proﬁt impact, we start with the retailer’s proﬁt for a given diamond jat
+timetthat can be calculated as:
+jt=Prj(tj)(pjt wjt); (10)
+wherepjtis the price, and wjtis the wholesale price, which can be easily calculated by subtracting
+out the retailer’s mark-up of 18% (provided in retailer’s annual report) from the observed daily retail
+prices. Prj(tj) = 1 exp( hj(tj))is the discrete-time hazard, or the probability that diamond j
+would be sold on day t, conditional on not being sold until that day. The DE’s impact on proﬁt can
+be quantiﬁed by calculating the diﬀerences in the sale probability Prj(tj)with and without setting
+33
+
+the dominant boost hazard component Qjt()to 1.
+We present the results in Table 8. Without the DE, on average, each diamond contributes $22.89
+in gross proﬁt each day; whereas with the DE, the contribution becomes $26.16. The DE increases
+the retailer’s overall gross proﬁt by 14.3%, or equivalently, the DE contributes a 12.5% share of
+the retailer’s gross proﬁt. The proﬁt increase due to the DE is the largest in the low-price segment
+(25.4%), whereas the opposite is the case in the medium-price segment (8.6%). Based on the
+ﬁnancial information of the retailer, this percentage increase would translate into an annual proﬁt
+increase of $9 million. This result shows that even though decoy–dominant detection probabilities
+are low in the online diamond market, the DE still has a substantial proﬁt impact due to the
+signiﬁcant boost in sale likelihoods upon dominance detection. Indeed, this proﬁt impact is what
+matters the most from the substantive point of view.
+Table 8: The Impact of the DE on Retailer’s Gross Proﬁt
+Eﬀect 2K–5K 5K–10K 10K–20K Overall
+Avg Daily Proﬁt Per Diamond W/O the DE 8:71 30 :17 43 :67 22 :89
+Avg Daily Proﬁt Per Diamond W/ the DE 10:92 32 :76 49 :72 26 :16
+% Proﬁt Increase due to the DE 25:37% 8:58% 13:85% 14:29%
+We next investigate the sensitivity of the DE’s proﬁt impact to diﬀerent dominance conﬁgura-
+tions in the diamond market. In the simulation studies, we implement changes in the dominance
+structure within the range of observed data. In the ﬁrst simulation study, we check how the DE’s
+proﬁt impact changes when each existing decoy/dominant diamond has one more decoy and/or
+dominant in the market. Results are presented in the top portion of Table 9. We ﬁnd that, intu-
+itively, having one more decoy would increase the DE’s proﬁt impact by 0.37% due to the eﬀect of
+decoys in boosting the sales of dominants. Whereas, when one more dominant is added, the DE’s
+proﬁt impact decreases by 0.24% because the decoy detection probability would increase leading
+to a decrease of sales from the decoys. The DE’s proﬁt impact slightly increases (0.14%) if each
+decoy/dominant diamond has one more decoy and one more dominant.
+We examine the eﬀect of price dispersion on the DE’s proﬁt impact in the second simulation
+study. Speciﬁcally, weenlargeorshrinktherelativepricesofeachdiamondbyafactor. Forexample,
+think about a diamond that is priced at $11,000, with a calculated mean grade price of $10,000. By
+preserving the mean price level, we change the price of this diamond to $10,500 (dispersion factor
+34
+
+Table 9: Percentage Changes in the DE’s Proﬁt Impact as the Dominance Structure Changes
+2K–5K 5K–10K 10K–20K Overall
+Changing the Number of Decoys/Dominants
+Each Diamond Has 1 More Decoy 0:43% 0:25% 0:39% 0:37%
+Each Diamond Has 1 More Dominant  0:26% 0:25% 0:17% 0:24%
+Each Diamond Has 1 More Decoy and Dominant 0:16% 0:01% 0:22% 0:14%
+Changing the Price Variation
+Multiplying the Dispersion by 0.5  0:52% 0:28% 1:08% 0:60%
+Multiplying the Dispersion by 0.8  0:19% 0:10% 0:44% 0:23%
+Multiplying the Dispersion by 1.2 0:17% 0:10% 0:46% 0:22%
+Multiplying the Dispersion by 1.5 0:37% 0:22% 1:17% 0:53%
+Changing the Market-Level Detection Probabilities
+Market-level Detection Probability in the Data 0:25 0:17 0 :11 0 :19
+Market-level Detection Probability of 0.05  3:36% 1:49% 2:51% 1:41%
+Market-level Detection Probability of 0.10  1:71% 0:99% 0:25% 0:01%
+Market-level Detection Probability of 0.20  0:13% 0:78% 2:45% 1:00%
+Market-level Detection Probability of 0.30  0:45% 4:03% 2:98% 0:04%
+Market-level Detection Probability of 0.40  2:28% 7:65% 1:66% 2:40%
+0.5), $10,800 (dispersion factor 0.8), $11,200 (dispersion factor 1.2), and $11,500 (dispersion factor
+1.5) in our simulation study. The middle portion of Table 9 reports the results of this simulation
+study. Results suggest that the DE’s proﬁt impact increases with the increase in price dispersion
+(between the dispersion factor of 0.5 and 1.5). Based on our model estimates, an expanded price
+dispersion would increase both the detection probabilities of decoys/dominants and the eﬀect of
+demand boost on dominants. The proﬁt gains from dominants (due to higher detection and sales
+boost) outperform the losses from decoy sales (due to higher detection), leading to an increase in
+the retailer’s proﬁt in the studied dispersion range.13
+Given that dominance detection is a critical pre-condition for the DE, we evaluate the proﬁt
+impact of the DE under diﬀerent dominance detection levels in our last simulation study. By
+changing the intercepts in the detection equation, we set the market-level detection probabilities
+at 5%, 10%, 20%, 30%, and 40%. The detection probabilities are between 25% for the low-price
+segment and 11% for the high-price segment in the data. Results reported in the bottom portion
+of Table 9 suggest that the DE’s proﬁt impact gets larger when the detection probability is lower
+in the medium-price segment and higher in the high-price segment, as compared to the current
+levels. On the other hand, the DE’s proﬁt impact is highest around the current detection level in
+13Additional analyses reveal that as the dispersion levels further increase to a few times, the DE’s proﬁt impact
+levels oﬀ, and the retailer’s proﬁt start to decrease due to the DE.
+35
+
+the low-price segment. These patterns are driven by the fact that dominance detection has opposite
+impacts on the proﬁts from decoys versus dominants. Thus, the DE’s proﬁt impact varies based on
+the detection levels and the magnitude of the DE across the diamond price segments.
+In summary, our study oﬀers a framework to guide marketing researchers about how to quantify
+decoy–dominant detection probabilities in real product markets with pricing and sales information.
+We show that the DE has a substantial impact on the studied retailer’s proﬁtability. Further, we
+ﬁnd that the retailer could potentially gain additional proﬁts from the DE when 1) there are more
+decoys in the market, 2) within-grade price variation increases, and 3) dominance detection proba-
+bilities stay similar, decrease, and increase in the low-, medium-, and high-price diamond segments,
+respectively. Having a better understanding of the proﬁt impact could enable the retailer to more
+eﬀectively utilize the DE in its marketing and operations activities. One interesting observation is
+that the retailer recently included a new section of comparable alternatives on the details pages of a
+selected list of diamonds, in which their decoys/dominants are displayed for some of the diamonds.
+This practice could likely change the chances of consumers detecting decoys and dominants.
+8 Conclusions
+In this research, we empirically validate the DE by using unique panel data from a leading online
+jewelry retailer. We estimate a proportional hazard model (derived from consumer primitives) with
+embedded market-level decoy–dominant detection probabilities and the sales boost upon dominant
+detection (i.e., the DE). We ﬁnd that, the market-level probability of detecting decoys or dominants
+is quite low (11%–25%). However, upon a dominant is detected, its sale hazard increases by 1.8 to
+3.2 times. Thus, we empirically validate the existence of the DE in a real product market. Our
+model comparisons reveal that not controlling for decoy–dominant detection yields biased inferences
+regarding the DE’s magnitude. We show that our estimates are robust under various alternative
+speciﬁcations. In addition to validating the DE in the ﬁeld, we contribute to the substantive issue
+of measuring the DE’s proﬁt impact, i.e., the DE’s managerial signiﬁcance. We quantify the proﬁt
+impact of the DE using model estimates and ﬁnd that it improves the retailer’s gross proﬁt by
+14.3%. We explore how sensitive this proﬁt impact is with respect to changes in the dominance
+structure, and ﬁnd that the proﬁt impact could potentially increase with more decoys, a larger price
+36
+
+variation, and changes in the market-level decoy–dominant detection probabilities.
+Our study is the ﬁrst empirical attempt to quantify the widely documented DE in the consumer
+behavior literature. It is exciting to apply the well-developed context-dependent choice theory to
+real-life data and empirically quantify the managerial implications. Accordingly, we would like to
+note that the studied online diamond market is a unique setting to test the DE since diamonds have
+vertical attributes, and decoys and dominants are widely observed. That being said, we believe it is
+possible to ﬁnd other market settings that also allow the DE to be tested. For example, it is com-
+mon that multiple sellers carry diﬀerent price stickers when selling identical products with the same
+shipping/return policies and warranties in e-commerce platforms such as Amazon where the more
+expensive alternatives serve the role of decoys. Similarly, in used-goods platforms such as eBay, it
+is often possible to observe products with inferior conditions from low-rating sellers to be more ex-
+pensive than some of the better condition ones from top sellers. These decoy alternatives may boost
+the sale likelihood of less expensive and/or better condition dominants. Further, to substantiate the
+eﬀect of such decoys on their dominants, these retail platforms can make decoy–dominant detection
+easier or more diﬃcult by either changing the order of the product listings or recommending the
+products of particular sellers. However, such operations may have practical limitations for platform
+designers due to creating equality concerns and discouraging the participation of smaller sellers. In
+addition to within-product price variation on retail platforms, some producers price their product
+bundles the same as their main product to make the bundle more attractive. For example, Dyson
+oﬀers the V11 Torque Drive Cord-Free Vacuum with extra Extension Hose at the same price as
+the Vacuum itself. Last, as opposed to these strict decoy examples, retailers may position some
+products as near decoys. For example, the price diﬀerence between iPhone X 512GB and 256GB
+is the same as the diﬀerence between the 256GB and 64GB, making upgrading to 512GB more
+attractive to some consumers. In the future, quantifying the DE across various product categories
+might help researchers to better understand the DE’s limits and boundaries.
+We believe there are multiple dimensions that can be pursued to extend understanding of the
+DE in future research. One direction is to investigate how consumers learn and respond to decoy–
+dominantrelationshipsintheirsearchprocess. Wefacesigniﬁcantmodelingchallengesinthecurrent
+context given the aggregate nature of our data. Future research could potentially address such issues
+when consumer-level search data are available. Another direction is to jointly model demand for and
+37
+
+supply of diamonds. We are less concerned with the diamond suppliers’ optimal pricing decisions
+in our application since our focus is the DE on the demand side. Modeling the suppliers’ pricing
+decisions under the DE might be an avenue for future study if such supplier-level information is
+observed. A third direction is to consider the DE across multiple retailers since consumers might
+search products from diﬀerent retailers. In our setting, since the retailer captures about 50% of
+the market share in the U.S., this issue was not a major concern. It might be worth pursuing in
+a diﬀerent product market when data of multiple retail outlets are available. Finally, as Bell and
+Lattin (2000) studied the impact of price response heterogeneity in quantifying loss aversion, it is
+worthwhile to investigate the same factor for the DE. We partially achieve this by allowing the
+DE to diﬀer across diamond price segments. When consumer-level panel data are available, the
+heterogeneity in both price responses and the DE could be better formulated in the future.
+References
+Bell, David R, James M Lattin. 2000. Looking for loss aversion in scanner panel data: The con-
+founding eﬀect of price response heterogeneity. Marketing Science 19(2) 185–200.
+Bettman, James R, Mary Frances Luce, John W Payne. 1998. Constructive consumer choice pro-
+cesses.Journal of consumer research 25(3) 187–217.
+Biswas, Abhijit, EdwardABlair.1991. Contextualeﬀectsofreferencepricesinretailadvertisements.
+Journal of marketing 55(3) 1–12.
+Burdett, Kenneth, Kenneth L Judd. 1983. Equilibrium price dispersion. Econometrica: Journal of
+the Econometric Society 955–969.
+Chiang, Jeongwen, Siddhartha Chib, Chakravarthi Narasimhan. 1998. Markov chain monte carlo
+and models of consideration set and parameter heterogeneity. Journal of Econometrics 89(1-2)
+223–248.
+De los Santos, Babur, Ali Hortaçsu, Matthijs R Wildenbeest. 2012. Testing models of consumer
+search using data on web browsing and purchasing behavior. American Economic Review 102(6)
+2955–80.
+Frederick, Shane, Leonard Lee, Ernest Baskin. 2014. The limits of attraction. Journal of Marketing
+Research51(4) 487–507.
+Guo, Liang, Wenbo Wang. 2016. Compromise eﬀects explained by contextual deliberation reveal
+the rationality in preference construction. Working paper, Chinese University of Hong Kong .
+Hardie, Bruce GS, Eric J Johnson, Peter S Fader. 1993. Modeling loss aversion and reference
+dependence eﬀects on brand choice. Marketing science 12(4) 378–394.
+Heath, T B, S Chatterjee, K R France. 1995. Mental accounting and changes in price: the frame
+dependence of reference dependence. Journal of consumer research 2290–97.
+38
+
+Honka, Elisabeth. 2014. Quantifying search and switching costs in the us auto insurance industry.
+The RAND Journal of Economics 45(4) 847–884.
+Huber, J, J W Payne, C Puto. 1982. Adding asymmetrically dominated alternatives: Violations of
+regularity and the similarity hypothesis. Journal of consumer research 9(1) 90–98.
+Huber, J, C Puto. 1983. Market boundaries and product choice: Illustrating attraction and substi-
+tution eﬀects. Journal of consumer research 1031–44.
+Huber, Joel, John W Payne, Christopher P Puto. 2014. Let’s be honest about the attraction eﬀect.
+Journal of Marketing Research 51(4) 520–525.
+Kahneman, Daniel. 1979. Prospect theory: An analysis of decisions under risk. Econometrica 47
+278.
+Kalyanaram, Gurumurthy, Russell S Winer. 1995. Empirical generalizations from reference price
+research. Marketing science 14(3_supplement) G161–G169.
+Kamakura, Wagner A, Rajendra K Srivastava. 1984. Predicting choice shares under conditions of
+brand interdependence. Journal of Marketing Research 420–434.
+Khan,Uzma,MengZhu,AjayKalra.2011. WhenTrade-OﬀsMatter: TheEﬀectofChoiceConstrual
+on Context Eﬀects. Journal of Marketing Research 48(1) 62–71.
+Kivetz, Ran, Oded Netzer, V Srinivasan. 2004. Alternative models for capturing the compromise
+eﬀect.Journal of marketing research 41(3) 237–257.
+Lancaster, Tony. 1979. Econometric methods for the duration of unemployment. Econometrica:
+Journal of the Econometric Society 939–956.
+Lehmann, Donald R, Yigang Pan. 1994. Context Eﬀects, New Brand Entry, and Consideration
+Sets.Journal of Marketing Research 31(3) 364.
+Luce, R Duncan. 1959. Individual Choice Behavior . John Wiley & Sons, Inc, New York.
+Luce, R Duncan. 1977. The choice axiom after twenty years. Journal of Mathematical Psychology
+15215–233.
+Lynch Jr, John G, Dipankar Chakravarti, Anusree Mitra. 1991. Contrast eﬀects in consumer judg-
+ments: Changes in mental representations or in the anchoring of rating scales? Journal of
+Consumer Research 18(3) 284–297.
+Mazumdar, Tridib, Sevilimedu P Raj, Indrajit Sinha. 2005. Reference price research: Review and
+propositions. Journal of marketing 69(4) 84–102.
+Monroe, Kent B. 1973. Buyers’ subjective perceptions of price. Journal of marketing research 10(1)
+70–80.
+Morewedge, Carey K, Meng Zhu, Eva C Buechel, Andrea C Morales. 2018. Hedonic contrast eﬀects
+are larger when comparisons are social. Journal of Consumer Research .
+Müller, Holger, Victor Schliwa, Sebastian Lehmann. 2014. Prize decoys at work—new experimental
+evidence for asymmetric dominance eﬀects in choices on prizes in competitions. International
+Journal of Research in Marketing 31(4) 457–460.
+39
+
+Orhun, A Yesim. 2009. Optimal product line design when consumers exhibit choice set-dependent
+preferences. Marketing Science 28(5) 868–886.
+Rajendran, Kharan N, Gerard J Tellis. 1994. Contextual and temporal components of reference
+price.Journal of Marketing 58(1) 22–34.
+Ratneshwar, S, A D Shocker, D W Stewart. 1987. Toward understanding the attraction eﬀect: The
+implications of product stimulus meaningfulness and familiarity. Journal of consumer research
+13520–533.
+Rooderkerk, Robert P, Harald J Van Heerde, Tammo HA Bijmolt. 2011. Incorporating context
+eﬀects into a choice model. Journal of Marketing Research 48(4) 767–780.
+Royle, JoneR,DavidJ.O’Connor, GarethM.Reynolds, PaulA.Bottomley.1999. Therobustnessof
+the asymmetrically dominated eﬀect: Buying frames, phantom alternative, and instore purchases.
+Psychology and Marketing 16(3) 225–243.
+Siddarth, S, Randolph E Bucklin, Donald G Morrison. 1995. Making the cut: Modeling and ana-
+lyzing choice set restriction in scanner panel data. Journal of Marketing Research 32(3) 255–266.
+Simonson, I. 1989. Choice based on reasons: The case of attraction and compromise eﬀects. Journal
+of consumer research 16158–174.
+Simonson, Itamar. 2014. Vices and virtues of misguided replications: The case of asymmetric
+dominance. Journal of Marketing Research 51(4) 514–519.
+Tversky, A. 1972. Elimination by aspects: A theory of choice. Psychological review 79281–299.
+Van Nierop, Erjen, Bart Bronnenberg, Richard Paap, Michel Wedel, Philip Hans Franses. 2010. Re-
+trieving unobserved consideration sets from household panel data. Journal of Marketing Research
+47(1) 63–74.
+Wedell, Douglas H. 1991. Distinguishing among models of contextually induced preference reversals.
+Journal of Experimental Psychology: Learning, Memory, and Cognition 17(4) 767–778.
+Yang, Sybil, Michael Lynn. 2014. More evidence challenging the robustness and usefulness of the
+attraction eﬀect. Journal of Marketing Research 51(4) 508–513.
+40
+
+Proﬁting from the Decoy Eﬀect: A Case Study of an Online Diamond Retailer
+Wu and Cosguner, 2020, Marketing Science
+Web Appendices
+A A Statistical Test for the Source of the Observed Price Variation
+In this web appendix, we develop a statistical test to understand whether the observed price vari-
+ations in the data can be solely explained by consumer search, or if they are suggestive of both
+consumer search and the DE.
+Burdett and Judd (1983) proved that when consumers search for price, even for homogeneous
+products, price variations can arise in equilibrium. The intuition is that because of consumer search
+cost, consumers may not discover all options; and as a result, high-priced options may be purchased
+by some consumers. Further, in the mixed-strategy pricing equilibrium, each observed price point
+generates the same expected proﬁt. Hong and Shum (2006) used this idea of mixed-strategy pricing
+equilibrium to recover consumer search-cost distribution purely from observed price variations for
+textbooks—a typical homogeneous good. We borrow this idea to conduct our statistical test. For
+diamonds with identical 4Cs (i.e., the same grade), denoted by the set J, we observe two types
+of price variations: 1) across diamonds in the set Jon dayt, and 2) within the same diamond
+(identiﬁed by SKU) over time. We use pjtto denote the price of diamond jon dayt. We use
+Phj(tjpjt)to denote the sale response function conditional on price. Because the retailer has a ﬁxed
+margin ( 1 r= 18%) in our market setting, the wholesale price of suppliers becomes wjt=rpjt.
+We denote the marginal cost for suppliers as cjt.
+If there is no DE in the sale response function Phj(tjpjt)(i.e., the observed price variation is
+driven solely by consumer search), for a supplier, setting prices either through maximizing the total
+expectedproﬁtfromasetofdiamondsorthroughmaximizingtheexpectedproﬁtforeachindividual
+diamond (in the corresponding set) will yield the same set of prices and ultimately the same total
+proﬁt. However, when the DE exists along with consumer search, this no longer holds since decoys
+boost their dominants’ demand, i.e., decoys bring positive externality to the proﬁtability of their
+dominants. Therefore, we predict the expected proﬁt from dominants to be higher than that of
+decoys. In other words, if the DE exists together with consumer search, each price point in the
+1
+
+support of the observed price distribution would no longer yield the same expected proﬁt, i.e.,
+dominants will have higher expected proﬁts compared to decoys. The supplier’s expected proﬁt
+from diamond jon daytis:
+jt= (rpjt cjt)Phj(tjpjt): (A.1)
+Under the assumption of no DE, assume that suppliers have priced optimally, in which case, the
+following ﬁrst-order condition should hold:@jt
+@pjt= 0. Note that this optimality condition holds for
+any price observed in the marketplace, because under mixed pricing equilibrium, each price point
+generates the same optimal proﬁt. From this optimality condition, we can invert the following
+marginal cost:
+cjt=rpjt(1 +1
+jt); (A.2)
+wherejt= [@Phj(tjpjt)
+@pjt][pjt
+Phj(tjpjt)]is the price elasticity at price pjt.
+However, when there is DE, this relationship is no longer true, because decoys serve as “loss
+leaders” and generate less expected proﬁts than their dominants. Consequently, for high-priced
+decoys, the recovered costs under the optimality condition without the DE will be higher than the
+true costs; while the opposite is true for low-priced dominants. Therefore, using Equation (A.2)
+leads us to a relationship where the calculated cost cjtincreases with the observed price pjtfor
+identical diamonds. We use this idea in our proposed statistical tests. In the ﬁrst test (labeled
+as Test I), we assume that the suppliers’ marginal costs of diamonds with identical attributes are
+the same, i.e., cjt=c;8j2J;8t. It might be a reasonable assumption in this particular industry,
+because diamonds are supplied globally by a few dominant manufacturers. Further, this assumption
+was also used by both Burdett and Judd (1983) and Hong and Shum (2006). To conduct our test,
+we proceed with the following steps:
+1. Use a proportional hazard model to ﬁt the sale response function Phj(tjpjt)with polynomials
+ofpjt(we use linear, quadratic, and cubic forms), diamond characteristics, and daily demand
+controls to control for focal and over-time demand eﬀects.
+2. Invert the implied cost ccjtusing Equation (A.2) for each observed price point under our null
+hypothesis that observed price variation is driven by consumer search only.
+2
+
+3. Regressccjtover the relative price index rpjt= (pjt pJt)=pJt(pJtis the average price of
+diamonds in Jon dayt) and other control variables such as diamond characteristics, daily
+demand eﬀects, and grade average prices.
+If the estimated coeﬃcient for rpjtis insigniﬁcant, then the test favors the null hypothesis that
+price dispersion could be explained based on consumer search alone; if the coeﬃcient is positive
+and signiﬁcant, we would have the statistical support to reject the null hypothesis, and the results
+would be consistent with the price variations being driven by the DE along with consumer search.
+In our second test (labeled as Test II), we relax the cost assumption ( cjt=c;8j2J;8t) from Test
+I. Instead, we impose the following assumption: For the same diamond j, the cost for the supplier
+would be the same over time, i.e., cjt=c;8t. In other words, diamonds in the same grade might
+have diﬀerent costs, but this cost is time-invariant. We use the within-diamond over time price
+variation to test our hypothesis and follow the same steps as in Test I, except that in Step 3, we
+run the regressions using diamond-level (i.e., SKU-level) ﬁxed eﬀects as controls and test whether
+the coeﬃcient for rpjtis signiﬁcant. We repeat Test I and II for each of the three diamond price
+segments (low-, medium-, and high-price) and report the results in Table A1. Both tests reject the
+null hypothesis (i.e., the price variation arises solely from consumer search) and support the DE
+coexisting with consumer search.
+Table A1: Test of the Source of the Observed Price Variation
+Variable 2K–5K 5K–10K 10K–20K
+Test I
+Controls 4Cs, daily demand eﬀects, pJt
+rpjt 2.172(0.001) 5.401(0.002) 12.721(0.003)
+Adj. R-squared 0.987 0.995 0.996
+Test II
+Controls diamond ﬁxed eﬀects
+rpjt 1.178(0:028) 1.917(0.052) 1.143(0.167)
+Adj. R-squared 0.943 0.960 0.945
+Note:Estimates withandare signiﬁcant at the 0.05 and 0.10 levels, respectively. Dependent
+variable—estimated cost—is in 1000 dollars. In Test II, we randomly sample 500 diamonds in
+each price segment.
+3
+
+B Derivation of Diamond-Level Sale Hazard from Consumer Primitives
+In this web appendix, we derive our diamond-level proportional hazard model (Equation 1 in the
+manuscript) from consumer primitives including consumer arrival process ,search,consideration set
+formation , and conditional choice probabilities . We further discuss 1) how we embed the DE in
+consumers’ conditional choice probabilities, and 2) how our speciﬁcation serves as a test for the DE.
+B.1 Individual Primitives and Continuous-Time Diamond Hazard
+We assume that potential diamond consumers arrive at random times to the retailer’s website. In
+each speciﬁc time (can be a millisecond), we assume that at most one consumer would be making a
+diamond purchase decision. A representative consumer i, arriving at time i, searches the retailer’s
+website to form her consideration set and then decides whether to purchase one of the diamonds
+from that set that maximizes her utility or not to purchase any diamonds. In terms of search,
+we assume independence across diamonds—that is, the probability that a particular diamond is
+included is independent of any other diamonds being included or not.1We denote the consumer i’s
+consideration set as Mi, and the super set containing all the possible consideration sets as M.
+We deﬁne the conditional choice probability of consumer ichoosing a particular diamond j
+from her consideration set, given jhas not been sold before i, assi(jjMi)(to be discussed in the
+following subsection in detail). The expected sale probability of diamond jat timeiis thus the
+sum of the choice probabilities over all possible consideration sets:
+!j(i) =X
+Mi2MPr(Mi)si(jjMi): (B.1)
+Note that this consumer- and diamond-speciﬁc choice probability is equal to the sale hazard of
+diamondjat timei. This is the case because it is the conditional probability that diamond j
+will be sold at iconditional on it not being sold until i, and the consumer iis the only consumer
+deciding whether jwould be purchased at this particular time.
+1Note that this assumption holds under simultaneous but not sequential search. Researchers have documented
+empirical evidence in support of both sequential (Zhang et al., 2017) and simultaneous search in the literature (De los
+Santos et al., 2012; Honka and Chintagunta, 2016).
+4
+
+B.2 Embedding the DE into the Continuous-Time Diamond Hazard
+For a speciﬁc diamond j, we can classify diamonds into three mutually exclusive and collectively
+exhaustive types based on their relationships to j. The set of Co
+jcontains diamonds that are neither
+dominants nor decoys to j; the setCDominant
+j contains all diamonds that are dominating j; and
+ﬁnally, the set CDecoy
+jrepresents the collection of j’s decoys. Denote as Mo
+ijthe set of diamonds
+fromCo
+jthat are in consumer i’s consideration set, and similarly MDominant
+ij andMDecoy
+ijthe sets
+of diamonds (in i’s consideration set) that are from j’s dominants set ( CDominant
+j ) and decoys set
+(CDecoy
+j). Denote Mo
+j,MDominant
+j, and MDecoy
+jas the super sets of Mo
+ij,MDominant
+ij andMDecoy
+ij,
+respectively. We now can express consumer i’s consideration set Mias a combination of j,Mo
+ij,
+MDominant
+ij andMDecoy
+ij, and deﬁne the choice probability si(jjMi)accordingly:2
+si(jjMi) =8
+>>>>>><
+>>>>>>:0; ifj =2Mi
+si(jjj[Mo
+ij); ifj2Mi&MDominant
+ij =?&MDecoy
+ij =?
+0; ifj2Mi&MDominant
+ij6=?
+si(jjj[Mo
+ij[MDecoy
+ij );ifj2Mi&MDecoy
+ij6=?&MDominant
+ij =?:(B.2)
+In the above equation, jhas a choice probability of zero in the ﬁrst case simply because it is not
+in the consideration set. The choice probability is also zero in the third case, because we assume
+that consumers are rational, and once a dominant is included in the choice set, the inferior decoy
+diamondjwill never be purchased. Also, notice that in the last case, the consumer will only choose
+an option from the subset, not from MDecoy
+ij, because diamonds in MDecoy
+ijare inferior to option
+jand a rational consumer would not buy those decoys. In other words, the eﬀective choice set
+becomes the same as the second case. If there is no DE, si(jjj[Mo
+ij) =si(jjj[Mo
+ij[MDecoy
+ij );
+however, if there is DE, we would expect the presence of diamonds from MDecoy
+ijto increase the
+attractiveness and thus the choice probability of diamond j. To capture that demand boost due to
+the DE, we denote the relationship between the two conditional choice probabilities as follows.
+si(jjj[Mo
+ij[MDecoy
+ij ) =si(jjj[Mo
+ij)qi(j;Mo
+ij;MDecoy
+ij ); (B.3)
+whereqi(j;Mo
+ij;MDecoy
+ij )is a scalar that aﬀects the choice probability of option j, and is a function
+2The functional form of si(jjMi)could be very general. Since we do not have individual-level data, we do not
+specify its functional form here. A natural choice could be the multinomial logit model.
+5
+
+of dominance relationships in the choice set. Note that qi(j;Mo
+ij;MDecoy
+ij ) = 1if there is no DE;
+qi(j;Mo
+ij;MDecoy
+ij )>1if there is DE. Given Equations (B.2) and (B.3), we next aggregate the choice
+probability over the possible consideration sets to derive the continuous-time diamond hazard from
+Equation (B.1) as follows:
+!j(i) =X
+Mi2MPr(Mi)si(jjMi)
+=X
+Mo
+ij2Mo
+jPr(Mi=j[Mo
+ij)si(jjj[Mo
+ij)+
+X
+Mo
+ij2Mo
+jX
+MDecoy
+ij2MDecoy
+jPr(Mi=j[Mo
+ij[MDecoy
+ij )si(jjj[Mo
+ij[MDecoy
+ij )
+=X
+Mo
+ij2Mo
+jPr(Mi=j[Mo
+ij)si(jjj[Mo
+ij)+
+X
+Mo
+ij2Mo
+jX
+MDecoy
+ij2MDecoy
+jPr(Mi=j[Mo
+ij[MDecoy
+ij )si(jjj[Mo
+ij)qi(j;Mo
+ij;MDecoy
+ij )
+=Pr(j2Mi)Pr(MDecoy
+ij =?)Pr(MDominant
+ij =?)X
+Mo
+ij2Mo
+jPr(Mo
+ij2Mi)si(jjj[Mo
+ij)+
+Pr(j2Mi)Pr(MDominant
+ij =?)X
+Mo
+ij2Mo
+jPr(Mo
+ij2Mi)si(jjj[Mo
+ij)
+X
+MDecoy
+ij2MDecoy
+j;MDecoy
+ij6=?Pr(MDecoy
+ij2Mi)qi(j;Mo
+ij;MDecoy
+ij ):(B.4)
+In the above derivation, we ﬁrst use Equation (B.2) (i.e., two non-zero choice probabilities on the
+second and fourth lines) to obtain the second line of Equation (B.4). Next, we use Equation (B.3) to
+move from the second to the third line of Equation (B.4). We then use the independence assumption
+to move from the third to the fourth line of Equation (B.4). Next, we deﬁne the following:
+si(jjj;Mo
+j) =X
+Mo
+ij2Mo
+jPr(Mo
+ij2Mi)si(jjj[Mo
+ij): (B.5)
+Givensi(jjj;Mo
+j)from Equation (B.5), we then deﬁne the following:
+qi(j;Mo
+j;MDecoy
+j ) =X
+Mo
+ij2Mo
+jPr(Mo
+ij2Mi)si(jjj[Mo
+ij)qi(j;Mo
+ij;MDecoy
+j )=si(jjj;Mo
+j);(B.6)
+whereqi(jjMo
+ij;MDecoy
+j ) =P
+MDecoy
+ij2MDecoy
+j;MDecoy
+ij6=?Pr(MDecoy
+ij2Mi)qi(j;Mo
+ij;MDecoy
+ij )
+=Pr(MDecoy
+ij6=?). Plugging si(jjj;Mo
+j)andqi(j;Mo
+j;MDecoy
+j )from Equation (B.5) and (B.6) into
+(B.4), and rearranging the terms, we can simplify Equation (B.4) as follows:
+6
+
+!j(i) =X
+Mi2MPr(Mi)si(jjMi)
+=Pr(j2Mi)Pr(MDecoy
+ij =?)Pr(MDominant
+ij =?)si(jjj;Mo
+j)+
+Pr(j2Mi)Pr(MDecoy
+ij6=?)Pr(MDominant
+ij =?)si(jjj;Mo
+j)qi(j;Mo
+j;MDecoy
+j )
+=Pr(j2Mi)si(jjj;Mo
+j)
+Pr(MDominant
+ij =?)h
+Pr(MDecoy
+ij =?) +Pr(MDecoy
+ij6=?)qi(j;Mo
+j;MDecoy
+j )i
+:(B.7)
+Note thatqi(j;Mo
+j;MDecoy
+j )is the average of qi(j;Mo
+j;MDecoy
+j )weighted by the probability of
+havingMDecoy
+ij; andqi(jjMo
+ij;MDecoy
+j )istheaverageof qi(jjMo
+ij;MDecoy
+j )weightedbytheprobability
+of havingMo
+ij. Thus, the ﬁnal qi(j;Mo
+ij;MDecoy
+j )is the average of all the qi(jj:)weighted by the
+probability of all the possible combinations of MDecoy
+ijandMo
+ij.
+Equation (B.7) tells us that the aggregate sale hazard in the continuous time can be decomposed
+to the sum of two components: 1) the probability that no decoy–dominant relationships are included
+in the consideration set times the aggregate choice probability over all no dominants–no decoys sets
+(i.e., the baseline choice probability); and 2) the probability that a diamond’s decoys but not
+dominants are included in the consideration set times the baseline choice probability multiplied
+by an additional aggregate term qthat depends on the decoy–dominant structure. From the DE
+theory, we know that for each speciﬁc consideration set, qi(j;Mo
+ij;MDecoy
+j )1, i.e., it cannot be the
+case that adding dominated options to the choice set would reduce the choice share of a dominant.
+When thisqfunction aggregates to the market level, it is a weighted average of all the consideration
+set-levelqs. Therefore, the aggregate qi(j;Mo
+ij;MDecoy
+j )1. Asqi(j;Mo
+ij;MDecoy
+j )1captures
+the potential DE at the individual-choice level, testing whether qi(j;Mo
+ij;MDecoy
+j )1equals testing
+whether on average the DE exists in individual choices, i.e., whether Eqi(j;Mo
+ij;MDecoy
+j )1.
+B.3 Daily Diamond Hazard
+We now derive the aggregate-level sale hazard for diamond jat discrete time, i.e., day t. We assume
+ntpotential consumers arrive randomly during day t, and each consumer can be represented by
+consumeri3. By deﬁnition in survival analysis, we know the survival function for diamond jat the
+end of day t, thusSj(t)is deﬁned as:
+3We use a representative consumer to simplify the derivation of the functional form speciﬁcation. Our derivation
+can be extended to include heterogeneous consumer segments where the current model components (i.e., dominance
+detection and hazard boost) can be interpreted as the weighted average eﬀect from heterogeneous segments.
+7
+
+Sj(t) =e Hj(t); (B.8)
+whereHj(t) =Rt
+0!j(i)dis the cumulative hazard function.
+We usePhj(t)to denote the hazard in the discrete time for diamond jon dayt:
+Phj(t) =Sj(t 1) Sj(t)
+Sj(t 1)
+= 1 e (Hj(t) Hj(t 1))
+= 1 e hj(t);(B.9)
+wherehj(t) =nt!j(i), and the corresponding survival function is Sj(t) = t
+k=1e hj(k).
+B.4 Functional Form Speciﬁcation
+Based on our derivation of !j(i)in Equation (B.7), we now can write hj(t)in Equation (B.9) as
+follows:
+hj(t) =nt!j(i)
+=ntPr(j2Mi)si(jjj;Mo
+j)
+Pr(MDominant
+ij =?)h
+Pr(MDecoy
+ij =?) +Pr(MDecoy
+ij6=?)qi(j;Mo
+j;MDecoy
+j )i
+:(B.10)
+In the above equation, the ntPr(j2Mi)si(jjj;Mo
+j)component represents the daily hazard
+for diamond j. The second component, Pr(MDominant
+ij =?)[Pr(MDecoy
+ij =?) +Pr(MDecoy
+ij6=
+?)qi(j;Mo
+j;MDecoy
+j )], represents the combined eﬀect of the probability of diamond dominance de-
+tection4and the boost in sales upon dominant detection. Therefore, we operationalize the hazard
+hj(t)at discrete time in Equation(B.10) as follows:
+hj(t) = j()j(): (B.11)
+Equation (B.11) is the same as Equation (1) in our manuscript. This completes our derivation
+of the diamond-speciﬁc sale hazard function based on individual consumer primitives.
+4In aggregate, the probability of diamond dominance detection can also be interpreted as the size of the consumer
+segment detecting the dominance relationship.
+8
+
+C Log-Hazard Derivation
+BasedonourmodelspeciﬁcationsinEquations(2)and(6),wecanderivethelog-hazardspeciﬁcation
+as:
+lnhj(t) =bj+Xjt+I(Decoy ) ln(1 PrDecoy
+jt ) +I(Dominant ) ln
+(1 PrDominant
+jt ) +PrDominant
+jtQjt
+=bj+Xjt+I(Decoy ) ln1
+1 +eDDecoy
+jtDecoy
++I(Dominant ) ln"
+1
+1 +eDDominant
+jtDominant+eDDominant
+jtDominanteDDominant
+jtBoost
+1 +eDDominant
+jtDominant#
+=bj+Xjt|{z}
+daily diamond sale hazard I(Decoy ) ln(1 +eDDecoy
+jtDecoy)| {z }
+dominance hazard of a decoy
++I(Dominant )h
+ln(1 +eDDominant
+jt(Dominant+Boost)) ln(1 +eDDominant
+jtDominant)i
+| {z }
+dominance hazard of a dominant;
+(C.1)
+whereDDecoy
+jt =fKj;lnRDominant
+jt;I(rpjt>0)rpjt;spjtg,DDominant
+jt =fKj;lnRDecoys
+jt;I(rpjt<
+0)( rpjt);spjtgandI(Decoy )andI(Dominant )are indicators for a diamond with dominants and
+decoys, respectively.
+D Simulation Studies to Illustrate the Model Identiﬁcation
+In our ﬁrst simulation study, we use the diamonds observed in our data and simulate their sales
+by using the proposed hazard speciﬁcation (with the DE). Then, we estimate our proposed model
+with this simulated sales data. The simulation study yields that we can recover back the assumed
+parameters with high accuracy. Please see the ﬁrst two columns of Table A2 below for the results
+of this simulation study. We also conduct additional simulation studies with various detection-
+levels and dominant boost-levels and ﬁnd that we can precisely recover the assumed parameter
+values irrespective of the assumed size of the detection and dominant boost levels. Results of these
+additional analyses are available upon request.
+9
+
+Table A2: Results of the Simulation Studies Regarding the Model Identiﬁcation
+With Dominance Hazard Without Dominance Hazard
+Variable True Value Estimate No Restriction Restrict Boost
+Market-Level Detection Probability
+Low-Price Segment  3:000 3:105**(0:200) 34:758 (na) 12:509 (164:066)
+Medium-Price Segment  3:000 2:995**(0:181) 23:269 (na) 12:290 (21:587)
+High-Price Segment  3:000 3:142**(0:215) 21:235 (na) 9:647 (154:853)
+ln(RDominant
+jt ) 0 :500 0 :473**(0:051) 5 :172 (na) 0:438 (62:541)
+I(rpjt>0)(rpjt) 2 :000 2 :489**(0:771) 0 :059 (na) 0:011 (24:788)
+spjt 0:500 0 :528**(0:060) 10:767 (na) 7:451 (53:051)
+Dominant Boost Hazard
+Low-Price Segment 1:000 1 :174**(0:165) 13 :419 (na) 0 :000
+Medium-Price Segment 1:000 1 :037**(0:152) 9:239 (na) 0 :000
+High-Price Segment 1:000 1 :150**(0:180) 14:611 (na) 0 :000
+ln(RDecoy
+jt ) 0 :300 0 :295**(0:034) 0:894 (na) 0 :000
+I(rpjt<0)( rpjt) 1 :000 0 :799 (0:545) 3:705 (na) 0 :000
+spjt 0:600 0 :591**(0:038) 1 :572 (na) 0 :000
+Note:Numbers reported are mean estimates and standard errors. Estimates withandare signiﬁcant at
+the 0.05 and 0.10 levels, respectively. As noted above, separately identifying Decoy Dominant Detection
+and Dominant Boost components is not possible with no DE in the data. Hence, the standard errors
+cannot be calculated in the speciﬁcation with no restriction due to singular numerical hessian. Other
+controls (diamond 4Cs, competition, etc.) are included in the daily diamond sale hazard but not reported
+here to save space.
+In our second simulation study, we again use the diamonds observed in our data. Unlike the ﬁrst
+simulation study, this time, we simulate the sales of diamonds by using only the Daily Diamond
+Sale Hazard component of our hazard speciﬁcation (i.e., no DE). In other words, while simulating
+the sales data, we assume the decoy-dominant detection probabilities of being strictly zero, and the
+dominanceboostofbeingone. Then, weestimateourproposedhazardmodelbyusingthesimulated
+data. This second simulation study suggests that, without the DE in the data, it is not possible to
+separately identify the detection and dominant boost components because as long as the detection
+is equal to zero the dominant boost size can take any value. Consequently, even if we can get the
+point estimates using MLE, the hessian matrix is numerically singular, and we can not compute the
+standard errors (n.a. in the second column of the following table). The large negative values on the
+pointestimatesoftheprice-segmentdummiesalsoshowthatthedetectionprobabilitiesarenearzero
+(intheexptransformation), indicatingthatindeedwewouldnotﬁndsigniﬁcantlynon-zerodetection
+probabilities. We further ﬁx the dominant boost component to be one (equivalently parameters are
+set to zero in the log transformation) and estimate the detection probability parameters. The last
+10
+
+column in the following table shows the estimation results. The point estimates are, again, large and
+negative, which indicates that we would not ﬁnd numerically non-zero detection probabilities. The
+standard errors are large in this scenario because the estimated parameters can take a large range
+of values in the negative domain to make the detection probabilities numerically equal to zero (for
+example, intercepts of -10 versus -1000 yield practically identical, i.e., zero detection probabilities).
+In conclusion, the simulation studies yield that 1) we can recover the detection- and dominant
+boost-levels precisely as long as there exists DE in the data; 2) without the DE in the data, we
+cannot identify the dominance boost hazard component of our proposed speciﬁcation. In other
+words, the functional form chosen can not cause one to infer the DE if such DE is not present in
+the data (Simulation 2). However, if the DE exists in the data, the proposed model can recover the
+size of the eﬀect accurately (Simulation 1).
+11
+
+References
+Burdett, Kenneth, Kenneth L Judd. 1983. Equilibrium price dispersion. Econometrica: Journal of
+the Econometric Society 955–969.
+De los Santos, Babur, Ali Hortaçsu, Matthijs R Wildenbeest. 2012. Testing models of consumer
+search using data on web browsing and purchasing behavior. American Economic Review 102(6)
+2955–80.
+Hong, Han, Matthew Shum. 2006. Using price distributions to estimate search costs. The RAND
+Journal of Economics 37(2) 257–275.
+Honka, Elisabeth, Pradeep Chintagunta. 2016. Simultaneous or sequential? search strategies in the
+us auto insurance industry. Marketing Science 36(1) 21–42.
+Zhang, Xing, Tat Y Chan, Ying Xie. 2017. Price search and periodic price discounts. Management
+Science64(2) 495–510.
+12
+

@@ -1,0 +1,1411 @@
+ 
+1 
+  
+Channel Intermediaries and Manufac turer Performance: An Exploratory 
+Investigation in an Emerging Market 
+ 
+ 
+   
+Amalesh Sharma* 
+Koray Cosguner 
+Tarun K. Sharma 
+Manoj Motiani 
+ 
+  
+September 2020 
+  
+ 
+ 
+Amalesh Sharma is an Assistant Professor of  Marketing at Mays Business School - Texas A&M 
+University, College Station, TX (email: asharma@mays.tamu.edu ). Koray Cosguner is an Assistant 
+Professor of Marketing at Kelley School of Busine ss, Indiana University, Bloomington, IN (email: 
+kcosgun@iu.edu ). Tarun K. Sharma is a doctoral student in the Executive Fellow Programme in 
+Management at the Indian Institute of Management, Indore, India (email: fi17taruns@iimidr.ac.in ). 
+Manoj Motiani is an Associate Professor of Marketi ng, Indian Institute of Management, Indore, India 
+(email: manojm@iimidr.ac.in ).  
+*Corresponding author 
+Authors thank the participants of the JR Though t Leadership Conference on M etrics and Analytics in 
+Retailing, Atlanta, for their valuable insights, comme nts, and suggestions on the earlier version of the 
+manuscript. The authors thank the data providing ma nufacturer for its support. The authors also thank 
+the participating intermediaries and the managers in the qualitative study for their insights and support. 
+Finally, the authors thank the managers of the data providing manufacturer who are instrumental in implementing the insights from the research and providing us the results. 
+
+ 
+2 
+  
+Channel Intermediaries and Manufacturer Perfor mance: An Exploratory Investigation in an 
+Emerging Market 
+ 
+Abstract 
+Channel intermediaries (hereafter, intermediaries) ar e among the most critical elements of any supply 
+chain as the bulk of manufacturing output is tr ansported through them. However, we have a limited 
+understanding of the approach a manufacturer should take to achieve the dual goal of increasing profitability and intermediary satisfaction. To provid e manufacturers with practical strategies to boost 
+their performance and their intermediaries’ satisfacti on, we rely on three related studies. In Study 1, 
+through interviews with managers and intermediar ies, we find that distribution alignment across 
+intermediary, market, and product types may be a practical strategy for both manufacturers and 
+intermediaries. In Study 2, by using a robust empi rical methodology with data from a construction 
+product manufacturer operating in an emerging ma rket, we find that various combinations of 
+intermediary, market, and product types affect the manufacturer’s performance differently. 
+Accordingly, through a supply-side examination, we quantify the revenue impact of reallocating the 
+studied manufacturer’s retail distribution resour ces among different intermediary-, market-, and 
+product-type combinations. In Study 3, through a field implementation, we find that our recommended intermediary alignment strategy from Study 2 substantially boosts both the manufacturer’s performance (by 14% in revenue and 13% in profit) and intermediaries’ satisfaction 
+(by 7.71%). Thus, with our qualitative, empirical, and field studies, we contribute to the existing 
+research in channel management, emerging market reta iling, retail distribution, and marketing strategy.  
+ Keywords:  channel intermediaries, manufacturers, intermediary management strategies, field 
+implementation, retailing, distribution 
+  
+
+ 
+3 
+ Introduction 
+Channel intermediaries (hereafter, intermediaries) ar e the entities that fac ilitate the distribution 
+of a manufacturer’s products to end consumers ( Kumar, Scheer and Steenkamp 1995 ). These 
+intermediaries typically include dealers, wholesaler s, distributors, retailers, and institutional buyers1, 
+and they are essential elements of any distributi on chain as they transport the bulk of a nation’s 
+manufacturing output ( Krafft et al. 2015 ). For example, in the U.S., th e wholesale distribution market 
+reached a record high of $6.01 trillion in 2018, up 7.5% from 20172; in India, the retail distribution 
+market is projected to grow to $1.1 trillion by 2021 (from $672 billion in 2017)3. In addition to these 
+substantial figures, many academic studies ( Watson IV et al. 2015 ; Arnold and Palmatier 2012 ; Bailey 
+and Bakos 1997 ; Dahlquist and Griffith 2014 ; Coughlan 1985 ) and managerial insights ( Fites 1996 ) 
+support the notion that intermediarie s are the backbone of a manufactu rer’s success. Accordingly, the 
+extant literature has proposed several strategies, incl uding aligning brands with the retail store format 
+(Kumar, Sunder and Sharma 2015 ), inventory sharing ( Zhao, Deshpande and Ryan 2005 ), and the 
+management of power, relationships, and commitment ( Brown, Lusch and Nicholson 1995 ; Lassar 
+and Kerr 1996 ) to manage intermediaries.  
+Despite the abundance of studies in the domain of intermediary management, most studies 
+focus on relationships between the two interacting part ies, i.e., manufacturers and intermediaries, by 
+ignoring the fact that manufacturers typically 1) deal  with multiple intermediary types; 2) operate in 
+different markets (with different demands and c onsumption capacities), and 3) sell a variety of 
+products to meet heterogeneous customer needs. Furt her, most existing studies were carried out in 
+ 
+1 Dealers are the link between distributors and consumers while distribut ors connect the manufacturer to dealers. The definition /classification of 
+distributors/dealers can vary from industry to industry. On many occasions, distributor s are directly connected to retailers/bu yers. Institutional 
+buyers are the organizations/institutions that purchase products fo r the use of their customers. For example, a school/college can be an institutional 
+buyer that buys products for students’ consum ption. Similarly, a company can also be  an institutional buyer as it can purchase products for its 
+employees. There is a marginal difference between distributors and wholesalers. “Distributors are independent selling agents, w ho sell specific 
+goods, mainly as wholesalers. They usually purchase products dir ectly from the manufacturers at wholesale” prices and sell them  to dealers 
+(https://smallbusiness.chron.com/ differences-between-wholesalers- distributors-retailers-30836.html ). When we talk about intermediaries, we refer 
+to physical intermediaries, not on line intermediaries/resellers.  
+2 https://www.naw.org/state-of-the-industry/ 
+3 https://www.export.gov/article?id=Indi a-Distribution-and- Sales-Channels 
+
+ 
+4 
+ the context of developed markets, where intermediar ies are largely organized. Marketplace evidence 
+confirms that emerging market manufacturers typica lly sell multiple products across multiple markets 
+(e.g., rural and urban) by managing multiple types of intermediaries ( EGEDE 2013 ). Hence, the 
+suggested insights from the literature regarding intermediary management may not apply to 
+manufacturers managing intermediaries in a multi-pr oduct, multi-intermediary type, multi-market, and 
+emerging economy context.  
+Motivated by the gaps in the literature and ma rketplace evidence, to develop an implementable 
+intermediary management strategy (across multiple  markets, intermediaries, and product types) for 
+emerging market manufacturers, we conduct three rela ted studies. We start with a qualitative study 
+(labeled as Study 1) by interviewing managers of  manufacturers and intermediaries across different 
+industries. Study 1 reveals that managers do not have specific intermediary management strategies, 
+apart from offering tangible (e.g., cash discount) an d intangible (e.g., a foreign vacation) benefits. Study 
+1 also suggests that manufacturers’ push of produc ts (without a proper understanding of the demand) 
+decreases the intermediary satisfaction. Lastly, and most importantly, Study 1 suggests that some form 
+of distribution alignment across the intermediar y, market, and product types can improve both 
+manufacturers’ profits and intermediaries’ satisfa ction. Thus, Study 1 not only motivates but also 
+guides our other two studies.  
+Building on Study 1, we lean on the Governance Value Analysis (GVA)  framework ( Ghosh 
+and John 1999 ; Ghosh and John 2005 ) that explores the three-way alignment among resources, 
+specific investments, and governance to argue that the alignment of intermediaries with the product 
+and market types can be a strategy for manufacturers  to increase their profit and intermediaries’ 
+satisfaction. Accordingly, our research objectives become the following: 1. Develop an implementable and effectiv e intermediary alignment strategy for emerging market manufacturers at the 
+market and product type levels. 2. Quantify the impact of the developed intermediary alig nment strategy on the manufacturer’s profitability and 
+intermediary satisfaction in the field. 
+
+ 
+5 
+  
+Developing a multi-market-intermediary-prod uct distribution alignment strategy for 
+manufacturers (i.e., our first research objective) requi res quantifying the differential impacts of various 
+intermediary-, market-, and product-type combinat ions on the manufacturer’s revenue performance. 
+To quantify these differential impacts, we use a robust  empirical approach (labeled as Study 2) and 
+data from an emerging market construction product4 manufacturer. Using the estimated empirical 
+model as an input, we quantify the revenue impact of increases/decreases in the number of intermediaries across various combinations. This analysis advises the manufacturer to increase its distribution i) in the urban and semi-urban markets (but not in the rural markets); ii) to the dealers 
+(but not to the institutional buyers); and iii) of th e premium product except in the urban market (but 
+not of the non-premium product), to boost its revenue.  
+Given the distribution alignment strategy deve loped based on Study 2, we attempt to quantify 
+the impact of its implementation on manufacturer pr ofitability and intermediary satisfaction (i.e., our 
+second research objective). We achieve this by a regional field study (labeled as Study 3). Study 3 
+suggests that the recommended alignment (from St udy 2) boosts the manufacturer’s profit by 13%, 
+and intermediaries’ satisfaction by 7.71%.  
+We contribute to the literature by developing  an implementable and effective intermediary 
+management strategy that emerging market manufa cturers can use to boost their profitability and 
+intermediary satisfaction. Our recommended approach  has the flexibility of allowing manufacturers 
+to effectively manage their intermediaries across mult iple markets, intermediaries, and product types. 
+By doing so, the paper shows that increased attention must be directed to managing intermediaries through implementable and effective strategies other than those outlined in the distribution channel 
+literature. Further, the paper shows that along with  the existing relational governance strategies (e.g., 
+ 
+4 Examples of construction products include, but are not limited to, asbestos, cement, and plaster materials. 
+
+ 
+6 
+ offering tangible and intangible benefits ( Heide 1994 ; Chatterji, Cunningham and Joseph 2019 )), 
+realigning intermediaries with the product and mark et types can be a sustainable strategy for increasing 
+profitability ( Palmatier et al. 2006 ).  
+Besides, we show that even when there are mu ltiple layers (such as various intermediaries, 
+markets, products, etc.), the GVA model can explain the effect of the suggested relational governance 
+strategies (i.e., the alignment at the intermediari es, products, and market levels). Thus, we extend the 
+GVA model’s scope and open the door for future research in this space. Moreover, our Study 3 contributes to the extant literature ( Geyskens, Steenkamp and Kumar 1999 ) by showing that the field 
+implementation of empirical results is critical not onl y to verify empirical findings but also to help 
+manufacturers improve their performance and interme diaries’ satisfaction. Finally, as regards to 
+marketing strategy and practice, we contribute by demonstrating that manufacturers should not 
+require all intermediaries to distribute all types of products in every market. Managers should 
+understand and evaluate the market-intermediary- product level demand first and decide how to 
+distribute their products accordingly.  
+ Literature Review 
+This section aims to provide a brief overview of th e literature on retail distribution strategies, channel 
+governance, emerging markets, and the theoretical le ns that we lean on to link the channel governance 
+to manufacturer performance and intermediary satisfaction. Moreover, we provide a distinct 
+understanding of how we contribute to the existing  literature on distribution channels, governance, 
+and intermediary satisfaction.  Representative Research on  Retail Distribution Strategies 
+Extant literature on retail distribution investigated how manufacturers have concentrated 
+mainly on building and implementing effective di stribution strategies to achieve profitability ( Kumar, 
+Sunder and Sharma 2015 ; Kamakura, Kopalle and Lehmann 2014 ; Krafft et al. 2015 ). Within this 
+
+ 
+7 
+ stream of research, multiple advancements have been made to understand various aspects of 
+manufacturer-intermediary relationships. Accordingl y, numerous meta-analysis papers have been 
+developed in this space. 
+Krafft et al. ( 2015 ) looked at the evolution of marketing  channel research methodologies and 
+suggested that longitudinal design and experiment al research backed by qualitative research are 
+required to uncover unknown facets of manufactu rer-intermediary relations, most importantly, how 
+manufacturers can effectively align intermediarie s with product and market types to increase 
+profitability and intermediaries’ sa tisfaction. Accordingly, we build on the future outlook offered by 
+Krafft et al. ( 2015 ). Specifically, we use a multi-study approach (qualitative; empirical using longitudinal 
+data; experimental through field implementation) to identify which channel strategies can benefit both 
+manufacturers and intermediaries. 
+Kamakura, Kopalle, and Lehmann ( 2014 ) identified essential topics in retail channel research 
+that need further examination, including channel co-ordination and data-driven distribution, to 
+improve profitability and shareholder value. Additionally, they advocated for managerial ability to implement the insights from empirical generalizati ons. We contribute to the findings of Kamakura, 
+Kopalle, and Lehmann ( 2014 ) by using a data-driven approach to identify that alignment can improve 
+the profitability of manufacturers and benefit inter mediaries. Moreover, we show how managers can 
+implement the findings of an empirical investigati on and realize the effects of the insights gained 
+through a field implementation. 
+Watson IV et al. ( 2015 ) explored the marketing channels’evolution to identify trends and 
+research directions. They recognized that two critical  decisions must be made concerning distribution 
+channel strategies: channel selection ( Lilien 1979 ) and channel governance ( Heide 1994 ). In response 
+to the insights offered by Watson IV et al. ( 2015 ), we contribute to the literature by identifying and 
+examining another dimension of relational channel governance strategy –  alig ning intermediaries with 
+
+ 
+8 
+ the product and market types. Consiste nt with the extant distribution li terature, our research falls into 
+the interaction of channel gove rnance and emerging markets.  
+Managing Channel Governance and Intermediary Satisfaction 
+The extant literature in channel governance ( Krafft et al. 2015 ; Watson IV et al. 2015 ) suggests 
+that determining the appropriate channels to go to  market is vital to increase the marketing mix 
+effectiveness ( Jeuland and Shugan 1988 ). Most manufacturers strategically decide on the types, 
+numbers, and the differences of channels coexisting in the market ( Coughlan et al. 2006 ).  
+Post channel selection, channel governance also includes the mechanism where a 
+manufacturer must decide how to govern its exch anges with the intermediaries. Governance options 
+range from formal (explicitly defined contractual ob ligations) governance structure to informal (verbal 
+agreements) governance structure ( Heide 1994 ). As regards channel governance strategies, a 
+manufacturer has multiple options: coercion  (Gaski and Nevin 1985 ; Gilliland, Bello and Gundlach 
+2010 ); incentives and monitoring  (Gilliland and Kim 2014 ; Kashyap, Antia and Frazier 2012 ); relational 
+governance  (Arnold and Palmatier 2012 ; Jap and Ganesan 2000 ); and idiosyncratic investments  (Ganesan 
+1994 ).  Further, linking governance to performan ce, the extant literature has investigated how 
+established inter-organizational relationships can shape choice and performance ( Elfenbein and 
+Zenger 2014 ; Gulati 1995 ; Holloway and Parmigiani 2016 ; Chatterji, Cunningham and Joseph 2019 ). 
+Extant literature on channel governance also em phasizes managing intermediary satisfaction 
+and considers it an essential aspect of channel management strategies.  Many studies addressing 
+intermediary satisfaction have found that such sa tisfaction is likely to lead to the long-term 
+continuance of a relationship and is positively re lated to intermediary performance and commitment 
+(Zineldin and Jonsson 2000 ). Our paper supplies the insights that  have to date been lacking in the 
+literature about how a manufacturer’s action ca n help increase intermediary satisfaction 
+(Gassenheimer and Ramsey 1994 ; Kalaignanam, Shankar and Varadarajan 2007 ). To the existing 
+
+ 
+9 
+ literature on intermediary satisfaction, we show  how a manufacturer’s actions in aligning 
+intermediaries, products, and markets help  increase intermediary satisfaction.  
+Channel Governance and Manufacturer Performance – Theoretical Background 
+Extant literature has provided multiple concep tual frameworks to illustrate the relevance of 
+channel governance strategies. However, the prominent among them is the governance value analysis (GVA) framework (Ghosh and John, 1995). Accordingly, we rely on the insights of the GVA framework as our theoretical lens, as explained subsequently, in the ‘theoretical background’ section 
+to expose how alignment at the intermediary, prod uct, and market-levels may affect manufacturers’ 
+performance. Here, we briefly introduce the GVA framework. 
+The GVA model is proposed based on a combined understanding of economizing calculus of 
+transaction-costs analysis and firms’ resource-base d view. It suggests that  “firm-specific resource 
+endowments drive realized positioning to develop a strategizing calculus that posits a discriminating 
+three-way fit among (1) resources, (2) specific invest ments, and (3) governance that yields the highest 
+net receipts.”(Ghosh and John, 2005, pg. 347). In the GVA model, positioning  captures the delivery of 
+value proposition to the partners (i.e., intermediaries) by the manufacturers ( Chung, Chatterjee and 
+Sengupta 2012 ); resources  refer to a firm’s assets and capabilities that create value; specific investments  refer 
+to investments by different parties (e.g., a manufacturer and an intermediary) that create mutual values 
+and safeguard joint value created; and governance  refers to the type of relationship between the parties. 
+A manufacturer’s selection of resources and speci fic investment backed by proper governance 
+mechanisms can enhance channel performance by increasing manufacturers’ commitment to a seller 
+(Anderson and Weitz 1992 ).  
+Consistent with the GVA framework and our proposed alignment strategies, it is crucial to 
+understand what ‘alignment’ means. The term ‘alignment’ refers to the extent to which there is a goal congruence between a manufacturer’s and an inter mediary’s self-interest (in our context). The 
+
+ 
+10 
+ alignment also refers to the complementary resour ces and capabilities among actors in a relationship 
+that helps actors to create shared values ( Jap 1999 ; Anderson and Narayandas 2009 ; Narus and Donath 
+2009 ). Research exposing alignment considers the a lignment of perspectives between dealers and a 
+company and how such an alignment help ac hieve dealer satisfaction and commitment ( Venkatraman 
+and Prescott 1990 ; Anisimova and Mavondo 2014 ). However, investigation of alignment at three levels 
+- intermediary, product, and market - is rare.  
+Managing Channel Intermediaries in Emerging Markets  
+Managing intermediaries is complicated for emerging market manufacturers for reasons such 
+as i) there exist a large number of intermediaries wi th various focuses, ii) customers are heterogeneous 
+in their needs, iii) distribution is difficult due to infrastructural issues, etc. Thus, there is a growing 
+body of literature studying channel strategies in emerging markets.  
+Restricted access to capital, foreign exchan ge, technology development, and restrictions on 
+market entry characterize emerging markets; thus, the number of organized manufacturers in emerging 
+markets is fewer. However, these manufacturers  utilize a large number of intermediaries ( Stem and 
+Adel 1988 ) due to low entry barriers, the emergence of the middle class,  changes in population 
+structure, and demand-supply conditions ( Zikmund, D'Amico and Prough 1984 ). As demand-supply 
+conditions in an economy affect channel distributi on and the degree of exchange relationships, the 
+nature of the economy should influence a manufa cturer’s channel governance strategies. Due to 
+market-specific differences, strategies used to manage intermediaries in developed economies may not hold in emerging markets ( Frazier, Gill and Kale 1989 ).  
+In the context of emerging markets, the extant lit erature has investigated multiple elements of 
+the behavior of intermediaries concerning a manufacturer ( Anderson and Narus 1984 ), such as 
+dependence and reciprocal actions  in the distribution channel relationship and the conditions under 
+which manufacturers can achieve competitive advantages due to such a reliance ( Brown, Lusch and 
+
+ 
+11 
+ Muehling 1983 ; Frazier 1983 ; Emerson 1962 ; Frazier, Gill and Kale 1989 ). Venkatesan et al. ( 2015 ) 
+investigated distribution channel strategies in bot h full and self-service channels in one emerging 
+economy. They have evaluated how a brand’s mark eting mix influences channel partners and 
+consumer sales. Kumar et al. ( 2015 ) investigated how a firm can le verage distribution to maximize 
+sales in an emerging market contex t. They found that not all products can be suitably sold through 
+every retail store format; that is, store format and product form must be aligned. Sharma, Kumar, and 
+Cosguner ( 2019) investigated manufacturer competition at the product form and store format-level 
+and showed that a firm could maximize its profit by managing the number of stores in the various 
+store formats for different product forms. However , unlike Sharma et al. (2019), the current study 
+considers intermediary management at the market and product type level.  
+Further, neither Kumar et al. ( 2015 ) nor Sharma et al. (2019) validates the profit implications 
+of their recommended distribution strategies in th e field, unlike the current study. As discussed, 
+intermediary research in the emerging market c ontext offers a limited understanding of how 
+implementable relational governance strategies can be  developed to enhance manufacturer profit and 
+intermediary satisfaction. Hence, our study fills this critical gap. Table 1 sets out the representative 
+research in channel management, especially in th e context of manufacturer- intermediary relationships, 
+and showcases how we contribute to the existing liter ature. Our unique contribution lies in capturing 
+manufacturers’ intermediary management strategies when a manufacturer manages multiple -products, 
+multi-intermediaries, and multi-markets.  
+
+ 
+12 
+ Table 1:  Related Literature, Research Gap and Unique Contributions of our Study 
+Paper Context Single 
+study/multi study^ Performance of 
+manufacturers /intermediaries Multi-
+product type Multi-
+intermediary type Multi-
+market type Channel 
+intermediary satisfaction Alignment of 
+channel intermediaries Field 
+implementation Contributions 
+Sharma et 
+al.(2019) Emerging 
+Market Single Study Yes Yes No No No No No They investigate the oligopolistic “competition at 
+the brand, product form, and channel” level.  
+Kumar, et al. (2015) Emerging 
+Market Single Study Yes Yes No No No Yes No They investigate how a firm can leverage 
+distribution to maximize sales.  
+Gassenheimer and 
+Ramsey ( 1994) Develop 
+Market Single Study No No No No Yes No No They examine the “level of mutual dependence 
+and power-dependence imbalances across buyer (reseller) supply sources”.  
+Kumar, Scheer, and Steenkamp 
+(1995) Develop 
+Market Single Study No No No No No No No They “propose that the degree of both 
+interdependence asymmetry and total 
+interdependence affect the level of inter-firm 
+conflict, trust, and commitment”. 
+“Frazier, Gill, and Kale ( 1989) Emerging 
+Market Single Study No No No No Yes No No They “expand the understanding of the 
+dependence and reciprocal action constructs in distribution channel relationships”. 
+Brown, Lusch, and Nicholson 
+(1995) Develop 
+Market Single Study Yes No No No Yes No No They investigate the “impact of supplier's use of 
+power on the retailer’s commitment to the channel 
+relationship and supplier and retailer 
+performance”. 
+Skinner, Gassenheimer , and Kelley ( 1992) Develop 
+Market Single Study No No No No Yes No No They find that the conflict in a supplier-dealer 
+relationship reduces satisfaction.   
+Frazier ( 1983) Develop 
+Market Single Study No No No No Yes No No Dealer dependence relates “positively to an inter-
+firm agreement on marketing strategy”, dealer 
+satisfaction, and the manufacturer's perceived 
+interest in the dealer's welfare. 
+Geyskens, Steenkamp, and Kumar ( 1999) NA NA No No No No Yes No No They provide a conceptual model of channel 
+member satisfaction using meta-analysis. 
+Lewis and 
+Lambert ( 1991) Develop 
+Market Single Study Yes No No No Yes No No They present a model of the interrelationships 
+between intermediary satisfaction, performance, 
+and dependence. 
+Our Study Emerging 
+Market Multi-Study Yes Yes Yes Yes Yes Yes Yes Various intermediary-product-market 
+combinations have differential impacts on the manufacturer's performance. The alignment of intermediaries across different 
+combinations increases both manufacturer 
+profit and intermediary satisfaction.  
+^if the paper uses one study or multiple studies to arrive at its main conclusions.  
+
+ 
+13 
+ A Comprehensive Analysis of the Role of In termediaries in Manufacturer Performance 
+Given the dearth of research investigating impl ementable strategies to increase manufacturers’ 
+profitability by managing intermediaries, we direct ly contact manufacturers and intermediaries to 
+understand what they think can be done to fulfill the dual goal of increasing manufacturers’ profitability and intermediaries’ satisf action, as discussed in Study 1.  
+Study 1 (Qualitative) 
+The qualitative study aims to identify strategies that might help manufacturers increase 
+profitability and intermediary satisfaction. With qua litative research, we attempted to generate themes 
+to understand the required strategies ( Corley and Gioia 2011 ). We conducted “theoretical sampling” 
+(Breckenridge and Jones 2009 ) to identify and recruit managers and intermediaries. Our selected 
+respondents come from four industries (cons truction products, fast-moving consumer goods 
+(FMCG), heavy machinery, and automobiles). The data for the qualitative study is collected in nine months.  
+For the recruitment of managers, we initially contacted
+5 60 managers6. A positive response 
+was received from 29 (of the 60), to whom we have  applied three further screening criteria: 1) 
+responsibility for managing intermediaries and, prefer ably, direct relationships (e.g., meeting, visiting, 
+etc.) with the same; 2) at least 15 years’ experience in  managing a portfolio of  intermediaries, and 3) 
+have the experience of operating in one or more  emerging markets. Further, we have tested the 
+managers’ domain knowledge with two more global questions: 1) tenure of their work with their 
+current portfolio of intermediaries, and 2)  tenure of being responsible for managing intermediaries in 
+emerging markets. This approach helped us select proper informants ( Kumar, Stern and Anderson 
+ 
+5 We contacted potential respondents by phone and email. 
+6 To contact managers, we used information from three sources: (1) industry references suggested by two of the authors; (2) part icipants in an 
+executive program in two premier business sc hools in India, and (3) references for al umni furnished by these two institutions.  
+
+ 
+14 
+ 1993 ; Sharma et al. 2020 ). After applying these additional criteria, we ended up with 24 managers7 who 
+participated in the qualitative interviews.  
+As part of the selection process, we ensured that the intermediaries are 
+dealing/distributing/wholesaling a specific ma nufacturer’s products by screening the 
+contract/agreement/informal consent papers between the parties. We also confirmed this information 
+with the manufacturers. We have obtained the list8 of intermediaries from 6 different manufacturers 
+and also used the industry references of one of the authors9. We finally ended up with 29 intermediaries 
+based in India, of which 10, 9, 5, and 5 re presented the construction products, FMCG, heavy 
+machinery, and automobile industries, respectively. We note that 23 respondents spoke English, and 
+6 respondents were recorded in Hindi and translated into English.  
+Data collection and analysis 
+After obtaining the managers’ and intermedi aries’ consent, we developed the interview 
+protocol and recorded the respondents’ comments, ha ving assured them that confidentiality would be 
+maintained. We conducted semi-structured interviews ( Gioia, Corley and Hamilton 2013 ). The 
+interview protocols were modified to capture real -time responses and various emerging consensus10 
+(Arsel 2017 ). A memo for each was prepared after one author and two independent coders separately 
+evaluated all the interviews. Further, they prep ared themes considering the codes in the memo, 
+compared them, and resolved any disagreements through discussion. We re-evaluated the themes on an ongoing basis through regular meetings ( Holloway and Beatty 2003 ; Besharov and Smith 2014 ; 
+Borah, Prakhya and Sharma 2019 ).  
+ 
+7 Of these, 72% were at the senior level (e.g., senior vice presidents, vice presid ents, general managers , deputy general manage rs, senior managers), 
+and 28% were at mid-level (e.g., managers and deputy managers). Our sample containe d representatives from multiple countries, i ncluding India, 
+Bangladesh, and Indonesia, comprising five, twelve, three, and four managers from th e construction products, FMCG, heavy machin ery, and 
+automobile industries, respectively. 
+8 The acquired list contained the business contact de tails of the proprietor, such as a dealer.  
+9 We have contacted 150 intermediaries and have obtained a positive response from 42. Even  though we promised complete confident iality, 10 
+intermediaries did not respond. Further, initial screening has for ced us to drop 3 intermediaries, as they have not submitted t he proper documents. 
+10 For example, after interviewing five intermediaries, we realized  that intermediaries were not satisfied with manufacturers eve n when the latter 
+provide tangible (e.g., discount) an d intangible (e.g., a foreign trip) benefits. This dissatisfaction was due to manufacturers ’ lack of rational behavior 
+in many contexts (e.g., asking intermediaries to incr ease sales without a prope r understanding of demand). 
+
+ 
+15 
+ To ensure clarity in the coding strategies, we used template analysis ( King 2012 ) and first-order 
+coding that uses raw data and allows us to create conceptual categories from the data ( Miles, 
+Huberman and Saldaña 2014 ). We discovered vital data pat terns using first-order coding ( Marshall 
+and Rossman 2014 ; Miles, Huberman and Saldaña 2014 ). We relied on second-order coding (which 
+consisted of various combinati ons of first-order coding ( Braun and Clarke 2013 )) to generate themes 
+representing the relationships with our research questions.  
+Reliability and Validity 
+Checking reliability and validity is a critical component of qualitative research. We used an 
+innovative multi-step approach to test reliability and validity. In the first step, for those manufacturers 
+with more than one respondent, we matched insights across respondents11 (Sharma et al. 2020). 
+Second, we verified the insights for those organi zations represented by a single respondent by 
+interacting with the firm. Third, reliability was es tablished by matching the themes generated by the 
+author and the independent coders. With inter-cod er reliability of more than 94.33%, we achieved 
+reliability. We presented our findings to five mana gers and six intermediaries from other industries 
+(that is, industries not included in our study), who were asked to comment on our findings ( Birt et al. 
+2016 ). We found that most of our themes were consid ered to be accurate, showcasing the validity of 
+our findings.  
+Identifying what a manufacturer ma y do to manage intermediaries 
+As part of the protocol, we as ked a few open-ended questions to the participating managers: 
+1) Are intermediaries important for your business? Do you have any specific intermediary management 
+strategies (e.g., pay, trips, incentives, discounts, etc. )?; 2) Do intermediaries help you design strategies?, 
+and 3) What do you think can be done to manage intermediaries?  
+ 
+11 Within the industry, we found matched ideas, whereas we observed heterogeneity in insights across industry sectors. Such heter ogeneity is 
+possible as manufacturer-intermediary relati onships have different characteristics ac ross industries; for example, the way a re lationship works in 
+FMCG may not be the same in the construction products industry. 
+
+ 
+16 
+ Managers agreed that managing intermediaries are critical in rising competitive emerging 
+markets. Citing the discussion in her board meeting, one respondent noted: “We have been talking about 
+creating something new to manage our de alers. However, so far, we are relyin g on the same old st rategies: trips and 
+discounts”  (FMCG industry). Discussing his ten years of direct relationships with channel 
+intermediaries, one of the respondents from the heavy machinery industry mentioned that: “Dealers 
+and distributors are very important to our business. We struggl e to manage them and see sign ificant attrition as well as 
+lack of exclusiveness. We increased the incentives, which al so made us increase pressure. We so far did not see any 
+significant improvement in our business” . A respondent from the automobile industry informed us that: 
+“While managing dealers is very important for us, in many cases, dealers try to nego tiate the profit we offer. From context 
+to context, we do compromise, but not on every occasion. This ma kes them unsupportive. We have lost a few as they 
+could not reach the sales target.”   
+Further, one respondent mentioned that: “ It is none of my business how they increase sales. Some of 
+them sell products from other manufacturers . I tried to offer them a higher disco unt, but this does not work all the time” 
+(FMCG industry). Regarding the strategies im plemented for intermediary management, one 
+respondent informed us: “We do not have specific strategies to manage intermediaries apart from incentivizing them 
+for their performance. But the market is  changing, and we may not be in benefits if we do  not adopt more effective 
+strategies” (heavy machinery). Hence, the first theme from the qualitative study was the lack of proper 
+intermediary management strategies.   
+Commenting on whether intermediaries help desi gn strategies for effective management, a 
+respondent from the construction product industry mentioned that: “Dealers helped me to identify what 
+products go where. We had a mega-marke t share after following their advice.” Another manager responded:  
+“Dealers, distributors, wholesalers, most  of the time do not want  to overstock although we  push it. Many times, 
+distributors complained, stating that they cannot distribute as per the target as t here is no demand in his/her area. This 
+is an indicator that the distributor is showing the problem in the distribution strategies. However, these insights are not 
+
+ 
+17 
+ fact/data-driven; therefore, we do no t entertain this type of insights” (FMCG industry). Supporting the notion 
+that intermediaries are the information providers regarding what manufacturers should do to gain business from them, one respondent informed us: “Two years ago, multiple dealers from a specific area informed 
+us to supply more of a specific prod uct and less of another product. We did not follow their suggestions and experienced 
+de-growth in sales. After investigation, we  could learn that there was a shift in t he market they were operating, and they 
+could sense the demand. Because of our deci sions, all the dealers in the specified re gion became dissatisfied, and we saw a 
+4.6% decrease in sales and a 14% attrition of dealers.”  Hence, the second theme we learn was: 
+intermediaries provide critical insights  that manufacturers largely overlook.  
+Coming to the responses to our question regarding what managers think can be done to 
+effectively manage intermediaries in such a wa y that a manufacturer’s profit increases and 
+intermediaries are satisfied, one senior manager informed us: “We tried to research the market and could find 
+that some dealers in some markets sell our low-priced prod uct heavily and not premier prod uct. This made us think if 
+we only advise them to deal with the lo w-priced product such that they have en ough inventory, coul d suffice the market 
+demand, less costs involved in storage, and distribute mo re. Could not implement it as top management was not ready”  
+(construction product industry).  Another respondent noted:  “I think there is a need to understand what 
+they can sell perfectly over  what they cannot. This is  lacking in our strategies” (construction product industry). 
+Citing the relevance of data-driven dealer management strategies, one respondent said: “We lack 
+understanding of what should be distri buted and how. We have comprehensiv e distribution strategies where each 
+intermediary deals with each prod uct we offer. This is good. Bu t, what if a specific product category do not have required 
+market demand. It is obvious that the deal ers will be mad as they lose business. One of the ways this  can be handled is 
+identifying what goes where - which dealer  should deal with what product catego ry. This may be complex but can have 
+very productive dealer management strategies”  (construction product industry). Another manager from the 
+automobile industry supported this notion: “Days are gone where we could ha ve coercion with our channel 
+members. We are also not in the days where a formal contract  can give us success. We can only be able to increase profits 
+
+ 
+18 
+ if we understand the intermediaries, deve lop relational governance where we can suggest to them what to do, and make 
+sure they are satisfied and ma king profits for themselves.”  Finally, citing his own company, one respondent 
+noted: “Reallocating resources across channels is not an active st rategy in my company. However, it is critical to align 
+resources dynamically so that we can suggest  what to do when to the intermediaries” (FMCG) . Hence, the third 
+theme here was that managers believe that a form of alignment of prod ucts with the 
+intermediary types can help in crease manufacturers’ profit and intermediaries’ satisfaction.   
+Identifying how intermediaries th ink they can be managed better 
+Similar to the managers, as part  of the protocol, we asked a f ew open-ended questions to the 
+participating intermediaries: 1) How do manufacture rs help you increase sa les and customer demand? 
+and 2) In addition to the existing support to increa se sales offered by the manufacturers, what do you 
+see as a major strategy that can help you increase sales? 
+An intermediary dealing with construction products responded to our first question by stating: 
+“Manufacturers push all the products. However, the market  I operate in does not accept all types of products. 
+Manufacturers do not have an understanding of the fit of the product with the market. This does not help increase sales; 
+rather, my business is heavily affected. T hey advertise products to increase demand . But it is not always advertising; the 
+company should also look at the customers I have, their preferences, lifest yle, to increase sales”. Another intermediary 
+dealing with FMCG products noted:  “Manufacturers offer various incentives:  cash, trip, products (cell phone, TV, 
+etc.). I do not get them as I cannot reac h the target they ask for. If there is no customer for the product, how can I 
+distribute more? Retailers that I work with come and complain to me, return the products. The incentives are meaningless 
+for me”. We also got to know that price and incentives do  not play a big role as an intermediary can get 
+similar price from the competing companie s. An FMCG intermediary mentioned, “ I have offers for the 
+same price from the competing manufacturers. ” 
+In response to our question  regarding additional strategies that manufacturers can adopt to 
+manage intermediaries, one respondent informed us: “My motivation to push [X] company products is very 
+
+ 
+19 
+ much affected by the push I get. The company should know what  the market is looking for. Just developing products and 
+pushing me to sell a bad (high priced or bad performance pr oduct) will not help. The company should learn where the 
+alignment is” (construction product industry) . In contrast, an automobile dealer noted:  “Our company has 
+distinctive strategies for me. They check the demand and acco rdingly adjust the price for the products with the market. I 
+sold 23% more cars in the last month (never thought of it).  This alignment understanding is important for the company’s 
+performance and my values and satisfaction”. 
+Based on these responses, we learned that the sati sfaction of intermediaries is essential. Any 
+strategies that can influence such satisfaction should  be implemented by the manufacturers, as can 
+also be seen from one respondent’s comment about construction products: “I don't see company values 
+my satisfaction. The salesperson comes and asks for the target. Unless I am happy, it is difficult to be motivated. The 
+company needs to tell me what to sell to  whom and when. If my business is down  next quarter, I will take the dealership 
+of another company”. 
+Text Analysis 
+In addition to the template analysis, we conducte d a text analysis exercise to deepen the 
+qualitative study’s insights. In an organizational settin g, deriving values from unstructured textual data 
+is critical as it can provide much-needed inform ation that is not available in structured data ( Müller et 
+al. 2016 ). Information extracted from the textual data is  valuable for a range of enterprise applications 
+and informed decision-making. Text analytics help s support insights from unstructured data, as well 
+as from qualitative data. In our context, the use of  text analytics is relevant not only to validate the 
+insights gained from template analysis of qualitative  data but also to identify potential economic value 
+lying untapped, as revealed in the comments of the managers and intermediaries ( Ittoo and van den 
+Bosch 2016 ; Abbas et al. 2018 ).  
+ Given the importance of text analytics in ou r context, we analyzed the response of each 
+manager and intermediary to each question and presen ted the insights for each question in terms of 
+
+ 
+20 
+ proximity plots12 (used to represent the distance from one or several keywords to others); a 
+dendrogram (showing the hierarchical clustering that identifies themes); link analysis (a technique to 
+evaluate the connections or relationships among wo rds using force-based graphs, multidimensional 
+scaling, or circular graphs (nodes in a network of words))13, and a frequency table (which shows the 
+frequency with which each keyword is used in the comments on each question in our data). We used 
+WordStat for Stata, which allows text analytics technique s to be applied to any string variable stored 
+in a Stata file14. 
+Text analytics of the responses to the questi on “What do you think can be done to manage 
+channel intermediaries?” shows that the keywords are alignment , market , products , dealers , and level; 
+alignment is linked to products and market with va lues of .947 and .583, respectively, in the link 
+analysis (see WA Figure 1 Panel A for link analys is; Panel B for dendrogram ; Panel C for proximity 
+plot). WA Table A1, showing the frequency occurre nce of the keywords, clearly reveals that the 
+alignment of intermediaries with the product and mark et types is considered to be a profitable strategy 
+by managers. In response to the que stions, “Are intermediaries important for your business? Are there 
+any specific intermediary management  strategies you have (e.g., pay, trips, incentive, discount, etc.)?”, 
+the keyword lack is associated with tools and strategies  with values of .524 and .476, respectively (see WA 
+Figure 2 Panel A for link analysis; Panel B for de ndrogram). These insights support those derived 
+from template analysis, where we find that manu facturers lack proper intermediary management 
+strategies.  
+Text analysis of the responses to intermedia ry questions regarding how manufacturers keep 
+intermediaries motivated to increase sales shows that  manufacturers provide benefits in the form of 
+trips, products, incentives, and luxury gifts (see WA Figure 3 Panel A for link analysis; Panel B for 
+ 
+12 https://provalisresearch.com/products/conten t-analysis-software/wordstat-screenshots/  
+13 https://www.sciencedirect.com/topics/computer-science/link-analysis  
+14 https://provalisresearch.com/products/conten t-analysis-software/wordstat-for-stata/  
+
+ 
+21 
+ dendrogram; WA Table A2 for frequency count). Sim ilarly, analysis of responses to the question 
+“What do you see as a major strategy that can help you increase sales?” shows that alignment with markets and products may help intermediaries to improve their performance and impact manufacturers’ performance (see WA Figure 4 Pane l A for link analysis; Panel B for dendrogram; 
+Panel C for proximity plot; WA Table A3 for frequen cy count). Again, the text analysis of intermediary 
+responses provides insights that are consisten t with the findings of the template analysis.
+15  
+Summary of the qualitative study:  The qualitative research (based on both the template 
+analysis and text analytics) yielded three significant insights. First, insights from the managers suggest 
+that it is crucial to managing intermediaries to boost performance. While managers acknowledge that 
+they do not have any distinct strategies to manage intermediaries, they emphasize that some form of 
+alignment at the intermediary-, product-, and market-type levels may be beneficial to both 
+manufacturers and intermediaries. Second, intermedi aries think that manufacturers must dynamically 
+know what to sell, where to sell, and through whom  to trade. Intermediaries expect strategic advice 
+about the alignment that can impact both manu facturers and themselves. Finally, intermediary 
+satisfaction is a critical result of intermediary management strategies, and manufacturers should 
+attempt to implement policies that can increase such  satisfaction to improve their long-term profits. 
+While not all findings from Study 1 are novel as li terature is clear that intermediaries need to be 
+managed to boost performance, about co-ordinat ion of selling efforts, and about intermediary 
+satisfaction; the novel insight is about the strategi es (i.e., aligning products and markets with the 
+intermediaries) that a manufacturer should follow to enhance its profitability and intermediary satisfaction.  
+ 
+Theoretical Background 
+ 
+15 We would like to thank an anonymous reviewer  for directing us to use text analysis t ools along with template analysis in our S tudy 1.  
+
+ 
+22 
+ We build on Ghosh and John’s (1999) GVA model to  argue that alignment may be a profitable 
+strategy. GVA model emphasizes value maximization an d cost minimization in an inter-organizational 
+relationship (e.g., manufacturer-intermediary) ( Chung, Chatterjee and Sengupta 2012 ) by positioning 
+a “three-way fit among  (1) resources, (2) specific investments, and (3) governance that yields the 
+highest net receipts.”(Ghosh and John, 2005, pg . 347). GVA framework shows the necessity of 
+alignment of resources, investment, and governance that may affect the perfor mance of an exchange 
+relationship (i.e., manufacturer-intermediary). Ever y organization forms goals; such goal setting and 
+achievement of the same need resources, investments, and governance. GVA model allows us to theorize the goal setting and performance (i.e., manufacturer profitability and intermediary satisfaction) by aligning resources, investment, and governance.   
+When it comes to manufacturer-intermediary relati onships, it is well known that a firm with a 
+higher profit motivation attempts to devise strategies  that can be helpful for shared value, regardless 
+of power and resource differentials. The nature  of the governance dictates the value that a 
+manufacturer may obtain from intermediaries, which is the essence of the GVA model. Appropriate 
+governance not only supports the profit agenda of the manufacturer but also increases the intermediaries’ performance, creating  current and future joint values ( Williamson 1996 ; Ghosh and 
+John 2005 ). Profit-motivated firms not only undertake value-creating investments (e.g., developing 
+valued products, having geographical reach and divers ification, competitive pricing, relationship with 
+channel partners, etc.) but also engage in value-claimi ng activities (e.g., suggestions for doing business 
+in specific ways that can increase value) ( Jap 2001 )  backed by robust governance (e.g., a healthy 
+relationship). However, to maximize the benefits of the resources, a firm should have specific 
+investment and governance strategies.  
+In our context, manufacturers own various resources, including products, operations in 
+multiple markets, and intermediaries. These interme diaries provide a manufacturer with much-needed 
+
+ 
+23 
+ insights about the market, as reflected in the qualitat ive study. Under healthy governance, if the specific 
+investment by manufacturers is directed towards un derstanding the capability of intermediaries to sell 
+certain products in certain markets effectively (which is related to the value gained from the governance), a manufacturer’s profit motive may be successful. Such values (in the form of alignment 
+and resource contributions) on the part of manufactu rers result in information-sharing, trust, and 
+credibility, thereby reducing monitoring, coordi nating, and enforcement costs and increasing 
+manufacturer profitability (Chung et al., 2012). This is critical as a manufacturer deals with various 
+product and market types, which each intermediary may not be able to deal with effectively.  
+Further, as the natures of products, markets, and intermediaries are different, their alignment 
+might have heterogeneous effects on manufacturers’ profit ( Nickerson, Hamilton and Wada 2001 ; 
+Ghosh and John 1999 ). Moreover, when a manufacturer manages multi-product, multi-market, and 
+multi-intermediary set-up, an alignment can help  govern the exchange relationships such that 
+resources are properly utilized, and specific investments are directed towards achieving the goals. Hence, building on the GVA model’s tenets, we argu e that the alignment of intermediaries with 
+product and market types is expected to have diff erential effects on a manufacturer’s profitability. 
+However, given the scarcity of empirical ev idence regarding the impact of alignment on 
+manufacturers’ profitability, in Study 2, we empirica lly explore the potential relationship between the 
+alignment of intermediaries with the market and prod uct types that may affect manufacturers’ profit.  
+Study 2: Empirical Investigation 
+Study 1 suggests, and the GVA model supports  that the distribution alignment of the 
+intermediary (such as dealer, retailer, institutiona l buyer, etc.), product (such as premium vs. non-
+premium), and market types (such as urban, rural vs. semi-urban, etc.) may benefit a manufacturer and 
+its intermediaries. Hence, in Study 2, we link vari ous combinations of intermediary, product, and 
+market types to the manufacturer's profitability through an empirical investigation.  
+
+ 
+24 
+ Data 
+We use data from a construction product manufact urer operating in India that distributes its 
+products through two types of intermediaries: dealers and institutional buyers. We observe 
+intermediaries that are located in three market ty pes: urban, rural, and semi-urban. Further, the 
+intermediaries deal with two product types with th e same functionality: a premium product, which has 
+a premium price and quality; and a non-premium prod uct, which has a lower price and quality. The 
+data has information about the number of dealer s and institutional buyers that the manufacturer 
+manages in each market and the types of products ea ch intermediary deals with over 37 months (April 
+2016 to April 2019). We also observe information about the manufacturer’s monthly revenue for each 
+combination of intermediary, product, and market type16.  
+Further, we obtain information on the total mo nthly units of competing products in the 
+market distributed by the competitors, monthly m onetary discounts offered by the manufacturer to 
+its intermediaries, and monthly pr oduct prices (for both premium and non-premium products). Also, 
+we are provided (by the manufacture r) the average monthly variable costs of the raw materials used 
+for production. We collect additional information on India’s GDP growth, the consumption expenditure of customers, diesel prices, and the length of railroads in India. Table 2 provides the 
+descriptive statistics (mean and standard deviation in  parenthesis) of the distribution levels; revenues 
+(in millions); average discounts offered by the ma nufacturer (per intermediary); and price of the 
+construction products (per ton) across various comb inations of the market, intermediary, and product 
+types in our data. We also include two additional in dustry-specific variables: electricity use and fuel 
+(e.g., coal, gas) consumption as additional control variables.  
+Table 2:  Descriptive Statistics 
+Market Intermediary Type Product Distribution Re venue (in millions) Discount^ Price (per ton) 
+Urban Dealer Premium 9894 (4754) 594.51 (283.81) 3946 (953) 6440 (1074) 
+Urban Dealer Non-premium 11975 (3170)  763.93 (209.18) 4519 (1130) 5988 (1000) 
+ 
+16 We observe 37 months of revenue of 12 market-intermediary-product combinations. He nce, our estimation sample has 37 x 12 = 444  observations. 
+
+ 
+25 
+ Urban Institutional Buye r Premium 53 (59) 5.65 (6.57) 0 (0) 4778 (1231) 
+Urban Institutional Buye r Non-premium 2804 (1374) 267. 48 (136.2) 0 (0) 4848 (821) 
+Rural Dealer Premium 5015 (1963) 254.91 (105.0) 3330 (975) 6309 (1052) 
+Rural Dealer Non-premium 6106 (1417)  311.93 (78.4) 3666 (1133) 5886 (984) 
+Rural Institutional Buye r Premium 295 (276) 31.67 (30.8) 0 (0) 4585 (805) 
+Rural Institutional Buye r Non-premium 3722 (977) 310. 55 (77.4) 0 (0) 4725 (794) 
+Semi-Urban Dealer Premium 6636 ( 2049) 477.35 (152.6) 4495 (1252) 6501 (1085) 
+Semi-Urban Dealer Non-premium 6115 (1435) 407.77 (108.5) 4614 (1376) 6026 (1007) 
+Semi-Urban Institutional Buyer Premiu m 662 (559) 66.13 (55. 2) 0 (0) 4384 (980) 
+Semi-Urban Institutional Buyer Non-prem ium 3027 (779) 312.83 (80. 9) 0 (0) 4695 (838) 
+Note: The numbers in the parentheses are the standard deviation.^calculate d based on average quantity (tons) of 
+products dealt with.  
+Model 
+With the observed data, to understand the role of intermediaries on manufacturer revenue, we 
+use a linear regression framework to model the fo cal manufacturer’s monthly revenue (in a million 
+Rupees) for each product type (premium and non-pr emium) within each market (urban, rural, and 
+semi-urban), and intermediary type (dealers and inst itutional buyers) as a function of both the focal 
+and the competing product’s i) distribution level (number of intermediaries); ii) average monthly 
+discount offered per intermediary by the manufact urer; and iii) additional controls, specifically month 
+dummies, GDP growth in India, consumption expend iture in India (in billion Rupees), competing 
+manufacturers’ total product distribution in the corresponding market-intermediary combination (in 
+millions), electricity used, and fuel consumption. 
+Since it is critical to understand the re venue asymmetries among different market-, 
+intermediary-, and product-type combinations, we use market-channel intermediary-product fixed 
+effects (urban, rural, semi-urban markets x dealers, institutional buyers x premium product, non-premium product = 12 fixed effects). These fixed eff ects inherently capture the quality of the products 
+along with the attractiveness of markets  and intermediary types for consumers
+17.  
+Further, since our focus of interest is to unde rstand the asymmetries in the effectiveness of 
+distribution in each market-cha nnel intermediary-product combinat ion, we allow the corresponding 
+ 
+17 We also estimate a specification with dummies for market type (urban and rural), premium product, and dealer channel. The prop osed 
+specification with market-intermediary-product fixed effects outperforms this alternative specification based on the R2 criteria. 
+
+ 
+26 
+ response parameter to be combination-specific as well. Consequently, our implementation allows us 
+to capture heterogeneity not only in the baseline re venues (through our fixed effect specification) but 
+also in the revenue response to distribution (th rough market-intermediary-product-specific response 
+parameters). Accordingly, our regre ssion equation becomes the following: 
+𝑅𝑒𝑣𝑒𝑛𝑢𝑒 ௠,௖,௝,௧ൌ𝛼௠,௖,௝൅𝛽௠,௖,௝𝐷𝑖𝑠𝑡𝑟𝑖𝑏𝑢𝑡𝑖𝑜𝑛 ௠,௖,௝,௧൅𝛾𝑋௠,௖,௝,௧൅𝜀௠,௖,௝,௧,   (1) 
+where m={urban, rural, semi-urban} , c={dealer, institutional buyer} , j={premium, non-premium} , t is 
+time/month, 𝑅𝑒𝑣𝑒𝑛𝑢𝑒 ௠,௖,௝,௧ (in million Rupees) and 𝐷𝑖𝑠𝑡𝑟𝑖𝑏𝑢𝑡𝑖𝑜𝑛 ௠,௖,௝,௧ are respectively the revenue 
+and distribution of product j in market m through intermediary c in month t, and 𝑋௠,௖,௝,௧ is a vector of 
+controls including month dummies, 𝑆𝑡𝑜𝑟𝑒  𝐷𝑖𝑠𝑐𝑜𝑢𝑛𝑡 ௠,௖,௝,௧, 𝐷𝑖𝑠𝑡𝑟𝑖𝑏𝑢𝑡𝑖𝑜𝑛 ௠,௖,ି௝,௧, 𝑃𝑟𝑖𝑐𝑒௠,௖,ି௝,௧, 
+𝑆𝑡𝑜𝑟𝑒  𝐷𝑖𝑠𝑐𝑜𝑢𝑛𝑡 ௠,௖,ି௝,௧18,  𝐺𝐷𝑃  𝐺𝑟𝑜𝑤𝑡ℎ ௧, 𝐶𝑜𝑛𝑠𝑢𝑚𝑝𝑡𝑖𝑜𝑛  𝐸𝑥𝑝𝑒𝑛𝑑𝑖𝑡𝑢𝑟𝑒 ௧ (in a billion Rupees), 
+𝐸𝑙𝑒𝑐𝑡𝑟𝑖𝑐𝑖𝑡𝑦  𝑢𝑠𝑒𝑑௧, 𝐹𝑢𝑒𝑙  𝐶𝑜𝑛𝑠𝑢𝑚𝑝𝑡𝑖𝑜𝑛 ௧, 𝐷𝑖𝑠𝑡𝑟𝑖𝑏𝑢𝑡𝑖𝑜𝑛  𝑜𝑓 𝐶𝑜𝑚𝑝𝑒𝑡𝑖𝑛𝑔  𝑃𝑟𝑜𝑑𝑢𝑐𝑡𝑠 ௧ (in 
+millions)19. 
+Endogeneity 
+Since the manufacturer makes marketing-mix decisions other than distribution, and these 
+decisions are potentially correlated with the dist ribution decision and the outcome variable (i.e., 
+revenue), we have a potential endogeneity problem. In other words, we may not be able to infer the 
+magnitude of the distribution response parameters correctly without controlling for the endogeneity problem with valid instruments. Accordingly, we id entify two instruments: monthly diesel price and 
+length of railroads in India over time. Our rationale  in the choice of these instruments is as follows. 
+As diesel prices drop, the manufacturer’s dist ribution costs are expected to decrease, implying 
+opportunities to distribute to a larger number of intermediaries. Whereas, customers are less likely to 
+ 
+18 𝐷𝑖𝑠𝑡𝑟𝑖𝑏𝑢𝑡𝑖𝑜𝑛 ௠,௖,ି௝,௧, 𝑃𝑟𝑖𝑐𝑒௠,௖,ି௝,௧, and 𝑆𝑡𝑜𝑟𝑒  𝐷𝑖𝑠𝑐𝑜𝑢𝑛𝑡 ௠,௖,ି௝,௧ are the competing product’s distribution,  price and store discount, respectively. 
+19 We would like to note that we do not account for the price of th e focal product as a control variable since our dependent vari able (i.e., revenue) 
+is a function of the focal product’s price. Hence, the use of pr ice as a control might be concep tually problematic in our setti ng. That being said, as 
+we discuss in our Model Robustnes s Section, we estimate an alternative model with the price (after controlling for the potentia l price endogeneity 
+problem) as a robustness check and find that both our proposed mode l and this alternative specification yields the same adjuste d R2 value of 0.996. 
+Thus, we decide to stick to our proposed specification without the price (of the focal product) as a control. The reasoning beh ind the use of price as 
+an additional control variable in the robustn ess analysis is that the manufacturer gene rates a stream of revenue from fees of t he godown, contract, 
+and freight in addition to the revenue gene rated from the sales of its products (that is  a direct function of price). Hence, th e overall revenue (i.e., 
+our dependent variable) is not necessarily a direct function of price; rather, the pri ce is just one of the components of the r evenue calculation. 
+
+ 
+27 
+ be affected in their purchase decisions by lower diesel prices, implying no significant changes in 
+revenue levels. The use of diesel prices as an instru ment to control for distribution endogeneity is also 
+consistent with the literature ( Sharma, Kumar and Cosguner 2019 ). Regarding our second instrument, 
+as railroad availability increases, distribution cost s are expected to decrease for the manufacturer, 
+implying higher levels of distribution. Similar to the argument made above, it is hard to expect a 
+significant change in revenues as the length of ra ilroads changes. We use th e control function approach 
+(Petrin and Train 2010 ), whereby we run a first step regression in which we model market-
+intermediary-product-level distribution as a fun ction of market-intermediar y-product-level fixed 
+effects, diesel prices, and length of railroads. 
+Results 
+The first step regression results ar e provided in Table 3. As can be  seen, the first step regression 
+yields an R2 value of 0.908, suggesting that the instru ments capture a significant variation in the 
+endogenous distribution variable. Besides, we find that  the coefficient for the length of railroads is 
+highly significant. As expected, as railroads become  more prevalent in India, the distribution of the 
+products gets easier, implying an increase in distri bution levels as well. That said, our results yield an 
+insignificant relationship between diesel prices and distribution levels.  
+Table 3 : First Step Regression (Distribution Endogeneity) 
+Variables Estimates Std. Errors 
+Intercept -91.88*** 26.80 
+Diesel Price 0.0104 0.0136 
+Length of Rail Lines 0.0015*** 0.0004 
+R_Square: 0.908,  Adjusted R2=0.905 
+Note:  Estimates with ***, **, and * are signif icant at 1%, 5%, and 10%, respectively . Estimates and standard errors are 
+reported in thousands. Market-intermediary-product dummies are included in the model, but not reported to save space. 
+ 
+We use the residuals from the first step regre ssion as an additional variable and embed them 
+into Equation 1 to control for the potential endogeneity of the distribution. The second step regression results are provided in Table 4. As can be seen, the results suggest that the R
+2 of the regression model 
+is 0.996, implying that our independent variables properly explain the variation in the manufacturer’s 
+
+ 
+28 
+ revenue over time. The results suggest that there are significant revenue asymmetries among different 
+market-intermediary-product combinations. For exampl e, the combination of dealer channel, urban 
+market, and premium product (the institutional cha nnel, semi-urban market, premium product) brings 
+the highest (lowest) baseline revenue among all 12 combinations. Results suggest that revenues are higher during the spring season (March to June). As expected, the price of competing products has a 
+significant positive impact on revenue. Results also suggest that the manufacturer discount to increase 
+sales is effective in increasing revenues, and, lastly, that most of our additional controls are significant. 
+Table 4:  Revenue Estimation with and without Price 
+ Proposed Model Alternative Model with Price 
+Variables Estimates Std. Errors Estimates Std. Errors 
+Fixed Effect–Urban/Dealer/Pr emium 243.5* 140. 2 673.344*** 242.837 
+Fixed Effect–Urban/Dealer/N on-Premium 217.3 157.1 614.983** 241.036 
+Fixed Effect–Urban/Ins titutional/Premium 303.6** 119 551.513*** 164.569 
+Fixed Effect–Urban/Ins titutional/Non-Premium 270.6** 110.1 536.82*** 164.455 
+Fixed Effect–Rural/D ealer/Premium 230.9 ** 112.9 629.244*** 215.488 
+Fixed Effect–Rural/D ealer/Non-Premium 221. 1* 116.8 584.987*** 203.845 
+Fixed Effect–Rural/Institutional/P remium 312.7*** 118.1 545.314*** 159.053 
+Fixed Effect–Rural/Institutional/N on-Premium 345.6*** 110.7 605.151*** 162.560 
+Fixed Effect–Semi-Urba n/Dealer/Premium 221.2* 119.8 643.569*** 228.417 
+Fixed Effect–Semi-Urba n/Dealer/Non-Premium 204.9* 116 582.443*** 208.580 
+Fixed Effect–Semi-Urban/Institutio nal/Premium 304*** 116.1 520.088*** 152.355 
+Fixed Effect–Semi-Urban/Institutional/ Non-Premium 356.6***  111.4 611.267*** 161.784 
+February 11.89* 6.37 9.15 6.465 
+March 41.3*** 6.426 44.126*** 6.531 
+April 48.03*** 7.442 51.573*** 7.583 
+May 43.22*** 7.649 49.459*** 8.198 
+June 48.7*** 7.674 57.259*** 8.645 
+July 23.06*** 7.779 31.039*** 8.660 
+August 18.89** 9.162 25.422*** 9.682 
+September 20.83** 8.285 31.165*** 9.577 
+October 25.6*** 9.506 28.422*** 9.610 
+November 20.23** 9.990 26.629** 10.438 
+December 16.21* 9.536 18.553* 9.584 
+Price   -0.088** 0.040 
+Discount Per intermediary 0.012*** 0.004 0.012*** 0.004 
+Competing Product's Distribution -0.003*** 0.001 -0.003*** 0.001 
+Competing Product's Price 0.007*** 0.002 0.006*** 0.002 
+Competing Product's Disc ount Per intermediary -0.009** 0.004 -0.009** 0.004 
+Price Residual   0.088** 0.040 
+Distribution Residual -0.003 0.013 0.001 0.013 
+Consumption Expenditure -0.052 0.076 0.022 0.083 
+GDP Growth -31.36*** 11.130 -28.778** 11.151 
+Distribution of Competing Products 37.04*** 13.840 43.098*** 14.056 
+Power Used -0.084 0.089 -0.08 0.089 
+
+ 
+29 
+ Fuel -0.193*** 0.065 -0.153** 0.067 
+Distribution–Urban/Dealer/Premi um 0.062*** 0.013 0.058*** 0.013 
+Distribution–Urban/Dealer/Non-Pr emium 0.066*** 0. 013 0.062*** 0.013 
+Distribution–Urban/Institutio nal/Premium 0. 102 0.077 0.102 0.077 
+Distribution–Urban/Institutional/N on-Premium 0.104***  0.014 0.1*** 0.014 
+Distribution–Rural/Dealer/Pre mium 0.055*** 0.013 0.05*** 0.013 
+Distribution–Rural/Dealer/Non-Pr emium 0.054*** 0.013 0.05*** 0.013 
+Distribution–Rural/Institutional/ Premium 0.088*** 0.02 0.082*** 0.021 
+Distribution–Rural/Institutional/N on-Premium 0.071*** 0.014 0.066*** 0.014 
+Distribution–Semi-Urban/Dealer/Pr emium 0.075*** 0. 013 0.071*** 0.013 
+Distribution–Semi-Urban/Dealer/Non- Premium 0.072*** 0.013 0.068*** 0.013 
+Distribution–Semi-Urban/Institutional /Premium 0.101*** 0.015 0.097*** 0.015 
+Distribution–Semi-Urban/Institutional /Non-Premium 0.085***  0.014 0.08*** 0.014 
+ R2=0.996, Adjusted R2=0.996 R2=0.996, Adjusted R2=0.996 
+Note:  Estimates with ***, **, and * are signif icant at 1%, 5%, and 10%, respectively. 
+ 
+Going back to our main focus of interest, name ly the effect of dist ribution on revenues, we 
+find significant asymmetries across the market, intermediary, and product types. Regarding market types, the results suggest that increasing the number of intermediaries in a rural market is less effective than doing so in either urban or semi-urban markets. Regarding intermediary types, increasing the number of institutional buyers is more effective in  revenue generation than increasing the number of 
+dealers. Lastly, regarding product types, increasing  the number of intermediaries carrying the premium 
+product brings more revenue than doing the same  for the non-premium product, except in the urban 
+market. These asymmetries in the effectiveness of distribution (across different market-intermediary-
+product combinations) motivated us to quantify the revenue impact of the rea llocation of distribution 
+resources across various market-intermediary-product co mbinations. To that end, we first predict the 
+revenues of each market-intermediary-channel comb ination at the average levels of our controls. 
+Then, we subtract one outlet from each combination and move it to the remaining combinations (one combination at a time) and calculate the predicted re venue changes. Table 5 reports the results of this 
+exercise. 
+Table 5:  Revenue Impact of Reallocating Distribution Resources in the Supply-side 
+  Urban Rural Semi-Urban 
+ Dealer Institutional Dealer Inst itutional Dealer Institutional 
+Impact in 1000 rupees. High Low High Low High Low High Low High Low High Low 
+
+ 
+30 
+  
+Table 5 suggests that: 1) within each intermediary-product type combination, moving one 
+intermediary from the urban and semi-urban markets to the rural market can increase revenue by 8k 
+to 33.7k Rupees (see blue-colored  cells); 2) within each market-in termediary combination, converting 
+the intermediary from premium-product-carrying to non-premium-product-carrying can increase 
+revenue by -17.2k to 3.7k Rupees (see green-color ed cells), and 3) within each market-product-type 
+combination, moving from a dealership to an in stitutional buyer can increase revenue by 12.4k to 
+39.5k Rupees (see red-colored cells). Once we ha d quantified the revenue impacts of potential 
+distribution reallocation decisions, we communicated th is information to the managers of the data-
+providing manufacturer. The manufacturer communicated the insights to the intermediaries and persuaded them to implement the recommended chan ges in their operations. We discuss this field 
+implementation next.  
+Study 3: Field Implementation 
+In Study 3, we intend to implement the insights gained from Study 2 to show that empirical 
+insights can guide managerial decision-making. With Study 3, we aim to answer a) whether alignment 
+increases the manufacturer’s profitability; b) whether  alignment increases intermediaries’ satisfaction; 
+c) whether alignment causes an increase in dealers’ satisfaction, and d) whethe r the dealers’ satisfaction 
+is related to manufacturers’ profitability. Accordingl y, our field implementation in Study 3 consists of 
+four parts, as we discuss next.  Urban Dealer Premium 0 3.7 39.5 41.8 -7.8 -8.8 25.3 8.1 12.8 9.9 39 22.2 
+Urban Dealer  Non- Premium -4 0 35.8 38.1 -11.6 -12.5 21.6 4. 4 9.1 6.1 35.2 18.5 
+Urban Inst.  Premium -40 -35.8 0 2.3 -47.4 -48.4 -14.2 -31.4 -26.7 -29.7 -0.6 -17.3 
+Urban Inst.  Non- Premium -42 -38.1 -2.3 0 -49.7 -50.7 -16.5 -33.7 -29 -32 -2.9 -19.6 
+Rural Dealer  Premium 8 11.6 47.4 49.7 0 -1 33.2 16 20.7 17.7 46.8 30.1 
+Rural Dealer  Non- Premium 9 12.5 48.4 50.7 1 0 34.1 16.9 21.7 18.7 47.8 31 
+Rural Inst.  Pr emium -25 -21.6 14.2 16.5 -33.2 -34.1 0 -17.2 -12.5 -15.5 13.6 -3.1 
+Rural Inst.  Non- Premium -8 -4.4 31.4 33.7 -16 -16.9 17.2 0 4.7 1.8 30.8 14.1 
+Semi-U. Dealer  Premium -13 -9.1  26.7 29 -20.7 -21.7 12.5 -4.7 0 -3 26.1 9.4 
+Semi-U. Dealer  Non- Premium -10 -6.1  29.7 32 -17.7 -18.7 15.5 -1.8 3 0 29.1 12.4 
+Semi-U. Inst. Premium -39 -35.2 0.6 2.9 -46.8 -47.8 -13.6 -30.8 -26.1 -29.1 0 -16.7 
+Semi-U. Inst. Non- Premium -22 -18.5 17.3 19.6 -30.1 -31 3.1 -14. 1 -9.4 -12.4 16.7 0 
+
+ 
+31 
+ In the first part of our field implementation, we have communicated the findings from Study 
+2 and have recommended the manufacturer to inform the intermediaries of the need for alignment and provide strategic advice to implement the insigh ts based on our supply-side reallocation exercise. 
+Accordingly, we have communicated how reallocating  one unit of distribution from one combination 
+to other combinations can affect the manufacturer’s revenue (as seen in Table 5). The manufacturer, 
+having a national presence, has administrative  and technical difficulties implementing the 
+recommendations throughout the country and ha s selected a specific region for the field 
+implementation. The manufacturer has strategically advised on the findings from Study 2 and has recommended changes to operational modalities, that is, dealing and stocking more units of a product 
+type aligned with a specific intermediary and market  type. The manufacturer has made intermediaries 
+aware of the changes through its sales force and ensured that they follow the recommendations, then 
+evaluated the impact of the implementation from the revenue and profit of that region at the end of 
+the six-month: May 2019 to October 2019.
+20 Regarding the internal validity of our field 
+implementation, we would like to note that 1) the manufacturer has not changed its marketing and allied strategies during the time of the field implemen tation (even at the national level); 2) there is no 
+significant changes in the construction product mark et, and 3) there is no change in the number of 
+intermediaries in the specific region or product types marketed in that region. As seen in Table 6, the 
+field implementation has generated substantive pe rformance results for the manufacturer, which 
+experienced a 14% (13%) increase in its revenue (profit) from the corresponding region during the 
+ 
+20 In certain seasons, such as fall and spring (between August a nd November, and February and Ap ril), construction businesses obs erve a demand 
+lift due to favorable environmental conditio ns. First, we would like to note that the field implementation is done based on the  insights from Study 
+2, where we already account for seasonality. That being said, in  our case, the manufacturer’s field implementation covers two 6 -month blocks, both 
+of which are expected to include potentia l demand lifts due to seasonality. Accordingl y, we believe that the seasonality should  not change the 
+profit/revenue impact of our di stribution reallocation recommendations qualitatively.  To confirm that our belief is accurate, w e have consulted the 
+manufacturer and asked them how the numbers  would change if seasonality is accounted  for. Their back-of-the-envelope calculatio n suggests that 
+the recommended intermediary r ealignment is expected to increase the manufactur er’s profit (revenue) by 8.69% to 17.11% (9.36% to 13.99%) 
+even after accounting for the pot ential impact of seasonality. 
+
+ 
+32 
+ relevant six-month window, which can be attributed  to the alignment of th e intermediary, product, 
+and market types. 
+Table 6:  Results-Field Implementation 
+ 
+ 
+ 
+In the second part of our implementation, we have asked the manufacturer to survey 
+satisfaction levels among the dealers regarding 1) sa tisfaction with the manufacturer’s service, and (2) 
+satisfaction due to increases in sales. The manufa cturer has surveyed satisfaction levels before and 
+after recommending the strategic alig nment. Dealer satisfaction is evaluated using a Likert scale where 
+1 = dissatisfied, and 7 = satisfied. A comparis on of satisfaction levels before and after the 
+recommended implementation shows a 7.71% increase in  the average level of dealer satisfaction level 
+due to implementing the recommended strategic alignment. 
+In the third part of our implementation, we comp are two dealer groups’ satisfaction levels: 1) 
+a treatment group that received strategic advice on alignment, and 2) a cont rol group that did not 
+receive the advice. This comparison is made to suppor t the insight that dealer satisfaction is due to 
+the alignment. The control group dealers are from a different region, whose geodemographic 
+characteristics have a 76% match with that of the treatment region (i.e., the region where the 
+implementation was conducted). Note that the c ontrol group intermediaries have a one-to-one 
+matching (pair-level) with treatment group intermediar ies in terms of the products they deal with, the 
+market they operate in, and the intermediaries’ size. Geodemographic characteristics (which are 
+included to assess the match) are the average income  level of the customers, the potential demand for 
+the products (investigated) in the market, the averag e size of the intermediaries, the population in the 
+regions, number of active builders and developers, and consumption of the investigated products in 
+the regions over the past year.  Performance Difference(pre-post) 
+Manufacturer Revenue 14% Increase  
+Manufacturer Profit  13% Increase  
+Intermediary Satisfaction 7.71% Increase 
+
+ 
+33 
+ Regarding the match, some of the insights are provided by the focal manufacturer in terms of 
+percentage match. We have then taken the character istics, looked at the mean values, and compared 
+them using a similarity index, finding that 24% of the mismatches occurred mainly due to the 
+population, average income of consumers, and the nu mber of active builders and developers. We have 
+validated the match/non-match index with the focal manufacturer. Based on the data provided by the latter, we find that the treatment group dealer s experienced, on average, a 7.29% increase in 
+satisfaction than the control group dealers.  
+In the fourth and last part of our implementati on, to contribute to the intermediary satisfaction 
+stream of literature, we link back dealer satisf action with manufacturer performance. We find a 
+positive and significant relationship, indicating that dealer satisfacti on is critical for a manufacturer’s 
+profitability ( β=.00263, p<.05). One of the ways to increase this satisfaction is to manage an effective 
+strategic alignment between de alers and a manufacturer.  
+Model Robustness 
+To check the robustness of our proposed model, we estimate two alternative models. In our first robustness check, we incorporate the price of the focal product as an additional control into our proposed model and account for price endogeneity.  We strictly follow the existing literature ( Papies, 
+Ebbes and Van Heerde 2017 ; Bombaij and Dekimpe 2019 ) to identify a potential instrument for price 
+and the arguments for using it. We use the cost of raw materials as our instrument, in line with the 
+extant literature ( Cosguner, Chan and Seetharaman 2018 ). We argue that raw material costs should 
+not directly affect a manufacturer’s revenue, but the e ffect is realized through price. Increases in the 
+cost of raw material are expected to  increase prices but should not affect the sales of products. As 
+seen from the results for price endogeneity co rrection presented in Table 7, raw material costs 
+positively affect the price of products with an R2 value of 0.404.  
+
+ 
+34 
+ The estimates of the second step regression (i.e.,  the alternative model with price) are provided 
+in Table 4. As evident from Table 4, the residuals’ coefficients from the first step regression for the 
+price is also significant. Further, the correspond ing price response parameter becomes significant and 
+negative once the price endogeneity problem is controlled. All these suggest that it is essential to control for the potential endogeneity problem in th e price variable to recover the corresponding price 
+response parameter precisely. That being said, resu lts in Table 4 suggest that our proposed model 
+(without price) and this alternative specification yield identical adjusted R
+2 values of 0.996. Thus, we 
+retain our proposed specification without the pri ce variable rather than using the alternative 
+specification with the price variable. 
+Table 7:  First Step Regression (Price Endogeneity)  
+Variables Estimates Std. Errors 
+Intercept 5.84*** 0.33 
+Raw Material Cost 0.0006** 0.0003 
+R_Square: 0.404,  Adjusted R2=0.387 
+Note: Estimates with ***, **, and * are significant at 1%, 5%, and 10%, respectively. Estimate s and standard errors are 
+reported in thousands. Market-intermediary-product dummies are included in the model, but not reported to save space. 
+ 
+As a second robustness analysis, we estimate a non-linear model with quadratic distribution 
+terms at the intermediary-market-product type leve ls. See the “Alternative Model with Quadratic 
+Distribution” column of Table 8 for this specificati on. The results suggest that 10 of the 12 response 
+parameters (for the quadratic terms) are statistically insignificant at the 5% level. Further, the linear 
+effects of distribution remain qualitatively similar to  the proposed specification. Lastly, the alternative 
+specification yields an identical adjusted R2 value as the proposed model (0.996). Hence, due to its 
+parsimony, we retain our proposed specification for the rest of our analysis.  
+Table 8:  Revenue Estimation with and without th e Square of the Distribution Variable 
+ Proposed Model Alternative Model with 
+Quadratic Distribution 
+Variables Estimates Std. Errors Estimates Std. Errors 
+Discount Per intermediary 0.012*** 0.004 0.01** 0.004 
+Competing Product's Distribution -0.003*** 0.001 -0.003*** 0.001 
+Competing Product's Price 0.007*** 0.002 0.006*** 0.002 
+Competing Product's Disc ount Per intermediary -0.009** 0.004 -0.009** 0.004 
+Distribution Residual -0.003 0.013 -0.019 0.013 
+
+ 
+35 
+ Consumption Expenditure -0.052 0.076 -0.109 0.075 
+GDP Growth -31.36*** 11.130 -25.5** 10.930 
+Distribution of Competing Products 37.04*** 13.840 44.29*** 13.930 
+Power Used -0.084 0.089 -0.064 0.089 
+Fuel -0.193*** 0.065 -0.215*** 0.064 
+Distribution–Urban/Dealer/Pre mium 0.062*** 0.013 0.074*** 0.013 
+Distribution–Urban/Dealer/Non- Premium 0.066***  0.013 0.084*** 0.014 
+Distribution–Urban/Institut ional/Premium 0.102 0.077 0.288 0.215 
+Distribution–Urban/Institutional/ Non-Premium 0.104 *** 0.014 0.11*** 0.017 
+Distribution–Rural/Dealer/Pre mium 0.055*** 0.013 0.058*** 0.015 
+Distribution–Rural/Dealer/Non- Premium 0.054***  0.013 0.073*** 0.018 
+Distribution–Rural/Institutio nal/Premium 0. 088*** 0.02 0.087 0.061 
+Distribution–Rural/Institutional/ Non-Premium 0.071 *** 0.014 0.151*** 0.027 
+Distribution–Semi-Urban/Dealer/ Premium 0.075*** 0.013 0.074*** 0.016 
+Distribution–Semi-Urban/Dealer/N on-Premium 0.072*** 0.013 0.085*** 0.018 
+Distribution–Semi-Urban/Institution al/Premium 0.101*** 0.015 0.139*** 0.027 
+Distribution–Semi-Urban/Institution al/Non-Premium 0.085 *** 0.014 0.227*** 0.031 
+Distribution Square–Urban /Dealer/Premium   0.237 0.160 
+Distribution Square–Urban/Dea ler/Non-Premium   -0.056 0.274 
+Distribution Square–Urban/Ins titutional/Premium   -927.1 977.800 
+Distribution Square–Urban/Institutional/Non-Premium   1.898 1.683 
+Distribution Square–Rural /Dealer/Premium   1.331 0.886 
+Distribution Square–Rural/Dea ler/Non-Premiu m   -0.235 1.029 
+Distribution Square–Rural/Institutional/Premium   17.95 74.500 
+Distribution Square–Rural/Institu tional/Non-Premium   -9.232*** 3.281 
+Distribution Square–Semi-Urba n/Dealer/Premium   1.254* 0.695 
+Distribution Square–Semi-Urban/ Dealer/Non-Premium   0.347 1.059 
+Distribution Square–Semi-Urban/In stitutional/Prem ium   -13.82 14.400 
+Distribution Square–Semi- Urban/Institutional/Non- Premium   -23.15*** 4.890 
+ R2=0.996, Adjusted R2=0.996 R2=0.996, Adjusted R2=0.996 
+Note: Estimates with ***, **, and * are significant at 1%, 5%, and 10% , respectively. The distribution squares are measured in millio ns. 
+Market-intermediary-product fixed effects and month dummies are included in the model, but not reported to save space. 
+ 
+Discussion 
+In this paper, we use three related studies to identify how a manufacturer can manage 
+intermediaries to increase its profit and intermediar ies’ satisfaction. In Study 1, we identify through 
+template analysis and text analytics tools that so me sort of alignment of  product, market, and 
+intermediary may be beneficial to manufacturers. Insi ghts suggest that such alignment can also increase 
+intermediaries’ satisfaction. In  terms of theory, we build on the GVA model to demonstrate why 
+alignment of product, intermediary, and market can be a profitable strategy for manufacturers. In Study 2, we test the insights obtained from Study 1 to show that alignment at product, market, and 
+intermediary levels differentially impacts the st udied manufacturer’s revenue performance after 
+
+ 
+36 
+ controlling for product-, market-, and intermediary- related factors, the manufacturer’s marketing mix 
+decisions, macro-economic factors, and seasonality. In Study 3, we quantify the managerial implications of the insights obtained in Study 2 in the field. Specifically, we show that insights from 
+empirical research can substantially help manufacture rs deploy strategies and increase profits. Hence, 
+we make critical contributions to  the literature and practice.  
+Contributions to the literature 
+Perhaps one of the significant contributions of our study is that it suggests increased attention 
+should be paid in the future to managing intermediaries through strategies other than those outlined in the distribution channel literature. For example, existing channel research has identified coercion, 
+incentives monitoring, relational governance, and idiosyncratic investments as the major channel 
+governance strategies. However, our research shows that, beyond these strategies, a manufacturer may 
+look at the alignment of product types with the market and intermediary types and act as a conduit of 
+knowledge to provide strategic advice to interme diaries and advance the power and effectiveness of 
+relational governance. Study 1 finds that an effecti ve intermediary management strategy could advise 
+the intermediaries about what product types to deal with and in which market. In essence, insights 
+from Study 1 contribute to the literature on rela tional governance and bring forward an additional 
+relational governance strategy that may be fruitful for manufacturers and intermediaries.  
+Second, although we use the GVA model to argue for the differential effects of the alignment 
+of product, market, and interme diary types on manufacturers’ performance, this model is not 
+developed for a multilayered context (market, produ ct, and intermediaries). We show that even when 
+multiple layers exist, the effect of relational govern ance strategies (i.e., the alignment of intermediaries, 
+products, and markets) can be explained with th e help of the GVA framework. Thus, we extend the 
+GVA framework’s scope and open the door fo r future research in this space.   
+
+ 
+37 
+ Third, the present study outlines the tremendous need for building contingency theories of 
+distribution channel relationships. If we ignore the diversity of channels, we will not be able to 
+understand further how channel governance opera te in different contexts. Extant literature has 
+recognized that the context in which firms operate has a tremendous impact on the way it develops strategies ( Frazier, Gill and Kale 1989 ). Our results positively reinforce this conclusion. Therefore, the 
+market context faced by intermediaries, including the type of market in which they are embedded, 
+needs to be considered to develop contin gency theories for intermediary research.  
+Fourth, with Study 2, we overcome the criticism of not exploring the practical implications of 
+intermediary management strategies presented in the channel literature. Specifically, we show that the 
+understanding of managers and intermediaries of th e need to align intermediary, market, and product 
+types is critical for a manufacturer. In essence, we  find that various combinations of intermediary, 
+market and product types have differential impact s on the manufacturer’s revenue, extending the 
+findings of Kumar et al. (2015). We also add to this line of inquiry by adding vertical heterogeneity by 
+adding market type (i.e., rural, urban, or semi-u rban). Based on the estimation results, we conduct a 
+supply-side analysis and show the effect of a strategic distri bution resource reallocation on the 
+manufacturer’s revenue. Finally, we show an additional way in which a manufacturer can add value to 
+intermediaries. The extant literature explores the drivers of dealer satisf action. We show that 
+manufacturers’ resource allocation decisions can enha nce dealer satisfaction. This finding provides 
+critical insights for managing channel conflict.  
+Contributions to practice 
+Two of the important questions raised in channe l intermediary research are: 1) how a manager 
+can use empirical findings in practice to enhance her company’s profit; and 2) whether the empirical 
+insights are useful in increasing profitability. We belie ve that the applied nature of research in channel 
+management is the need of the hour, and in this study, we attempt to show that insights from an 
+
+ 
+38 
+ empirical study can be taken to the field to tes t their effectiveness. As such, through a field 
+implementation, we show that the a pplication of alignment strategies can increase the manufacturer’s 
+revenue. In our context, the manufacturer has gained  a 13% increase in profit in the region where the 
+implementation is carried out. Note that the effects of the implementation can be more significant if 
+it is made throughout the market. It is critical  to think about the welfare implications of the 
+recommended strategies on intermediaries, as well as the boost to manufacturers’ performance. This 
+research provides an additional strategy for ma nufacturers to enhance intermediary satisfaction. 
+Consistently, through Study 3, we show that a manufacturer can increase such satisfaction by 7.71% by providing strategic advice on the alignment of the intermediary with product and market types.  
+We wish to highlight that this study investigates  two critical matrices in the distribution channel 
+literature - manufacturers’ revenue and intermediarie s’ satisfaction - using advanced analytics tools 
+such as revenue optimization and a predictive re venue model that accounts for endogeneity and 
+heterogeneity. Moreover, this study provides an appr oach for implementing analytics-driven results in 
+practice and captures the effect of implementation. 
+Strategically, using the insights from the study,  manufacturers may decide on pricing strategies 
+such as discounts to make the alignment work in a particular market condition for a specific product 
+type; develop intermediary appreciation strategies to keep intermediaries motivated (by closely looking 
+at the combinations); generate value for intermediar ies so that they remain motivated (by, again, 
+emphasizing a specific alignment), and develop eff ective intermediary pass-through strategies. Finally, 
+regarding the generalizability of the insights, we would like to highlight that they should be valid across 
+most manufacturers in emerging markets; however, market regulations, structure, and norms may sometimes prevent generalization. 
+Limitations and Future Research Directions 
+
+ 
+39 
+ We first caution readers to be aware of the poten tial constraints inherent in our data and field 
+implementations. Although we emphasize the value of  exploring, investigating, and implementing 
+strategies that can help manufacturers manage intermediaries for their own and the latter’s welfare, we have met certain limitations. First, we emphasize that  the results of our study may only be generalized 
+to other industry contexts in any emerging market  with the utmost caution. Our empirical study and 
+field implementation is performed in only one industry and one emerging economy. Given the 
+similarities in market and channel structures acro ss emerging markets, we expect qualitatively similar 
+findings to emerge from research studies performe d in other emerging markets. We urge that more 
+empirical research be conducted in different indust ries in other emerging economies to verify this 
+expectation. Second, we consider th e number of intermediaries in each intermediary type (i.e., dealers 
+and institutional buyers).  
+One of the limitations that may influence the results is that the size of the intermediaries and 
+their covered markets are omitted due to the unavai lability of the required data. Future research may 
+investigate this issue in detail when the relevant da ta become available. Third, it is possible that a 
+manufacturer experiences competition at the intermedia ry level. However, data availability restricts us 
+from incorporating such competition in our model. Future research may bring a much-required understanding of such competition and how it ca n impact manufacturers’ profit. Fourth, our 
+exposition of the strategies to increase intermediary satisfaction is solely based on the insights gained 
+from the field implementation. Although we could have data on intermediary satisfaction from Study 
+3, it would be interesting to see how the effect of such satisfacti on changes manufacturer profitability 
+when a larger sample is surveyed, and secondary data  are used. Fifth, our empirical findings can not 
+be directly theorized (using hypotheses), although  we attempted to explain why alignment may be a 
+fruitful strategy building on the GVA framework. Give n the topic is new and that not much research 
+has been done in this area, this study focuses on the exploratory analysis to uncover relationships 
+
+ 
+40 
+ across alignment at product, market and intermediary-type level, manufacturer performance, and 
+intermediary satisfaction.  As such, we do not pr opose hypotheses and develop conceptual arguments 
+in support of our empirical results. Future research opportunities will be to develop theoretical propositions using the GVA or similar frameworks and empirically test the theoretically derived 
+insights in similar contexts. One can also build on our empirical insights to develop new theoretical 
+insights. Finally, one potential future research avenue  is to investigate the valuation of intermediaries 
+and how manufacturers’ management of such assessmen t can enhance profitability. In this context, 
+one can identify why and how investigating the valuat ion of intermediaries is different from other B2B 
+set-ups, bring the possible network effects into context, use appropriate modeling framework, and show implementable strategies.  References 
+Abbas, Ahmed, Yilu Zhou, Shasha Deng, and Pengzhu Zhang (2018). "Text Analytics to Support Sense-Making 
+in Social Media: A Language-Action Perspective." MIS Quarterly 42 (2). 
+Anderson, Erin and Barton Weitz (1992). "The Use of Pledges to Build and Sustain Commitment in 
+Distribution Channels." Journal of Marketing Research 29 (1), 18-34. 
+Anderson, James C and James A Naru s (1984). "A Model of the Distribu tor's Perspective of Distributor-
+Manufacturer Working Relationships." Journal of Marketing 48 (4), 62-74. 
+Anderson, James C Narus and Ja mes A Narayandas (2009). "Bus iness Market Management." Understanding, 
+Creating, and Delivering Value. 3rd ed. New Jersey . 
+Anisimova, Tatiana and Felix Mavondo (2014). "Alignin g Company and Dealer Pers pectives in Corporate 
+Branding: Implications for Dealer Satisfaction and Commitment." Journal of Business-to-Business Marketing 
+21 (1), 35-56. 
+Arnold, Todd J and Robert W Palmatier ( 2012). "14 Channel Rel ationship St rategy." Handbook of Marketing 
+Strategy , 231. 
+Arsel, Zeynep (2017). "Asking Questions with Reflexiv e Focus: A Tutorial on Designing and Conducting 
+Interviews." Journal of Consumer Research 44 (4), 939-48. 
+Bailey, Joseph P and Yannis Bakos (1997). "An Explor atory Study of the Emergi ng Role of Electronic 
+Intermediaries." International Journal of Electronic Commerce 1 (3), 7-20. 
+Besharov, Marya L and Wendy K Smith (2014). "Multiple Institutional Logics  in Organization s: Explaining 
+Their Varied Nature and Implications." Academy of Management Review 39 (3), 364-81. 
+Birt, Linda, Suzanne Scott, Debbie Cavers, Christin e Campbell, and Fiona Walter  (2016). "Member Checking: 
+A Tool to Enhance Trustworthiness or Merely a Nod to Validation?" Qualitative Health Research 26 (13), 
+1802-11. 
+Bombaij, Nick JF and Marnik G De kimpe (2019). "When Do Loyalty Pr ograms Work? The Moderating Role 
+of Design, Retailer-Strategy, and Country Characteristics." International Journal of Research in Marketing . 
+Borah, Sourav Bikash, Srinivas Prakhya, and Amalesh Sharma (2019). "Leveraging Service Recovery Strategies 
+to Reduce Customer Churn in an Emerging Market." Journal of the Academy of Marketing Science , 1-21. 
+Braun, Virginia and Victoria Clarke (2013). Successful Qualitative Research: A Practical Guide for Beginners . sage. 
+Breckenridge, Jenna and Derek Jones (2009). "Demysti fying Theoretical Samplin g in Grounded Theory 
+Research." Grounded Theory Review 8 (2). 
+
+ 
+41 
+ Brown, James R, Robert F Lusch, and Darrel D Mueh ling (1983). "Conflict and Power-Dependence Relations 
+in Retailer-Supplier Channels." Journal of Retailing 59 (4), 53-80. 
+Brown, James R, Robert F Lusch, and Carolyn Y Ni cholson (1995). "Power and Relationship Commitment: 
+Their Impact on Marketing Channel Member Performance." Journal of Retailing 71 (4), 363-92. 
+Chatterji, Aaron K, Colleen M Cunning ham, and John E Joseph (2019). "The Limits of Relational Governance: 
+Sales Force Strategies in the Us Medical Device Industry." Strategic Management Journal 40 (1), 55-78. 
+Chung, Chiayin, Sharmila C Chatterjee, and Sanjit Sengupta (2012). "Manufacturers’ Reliance on Channel 
+Intermediaries: Value Drivers in the Presence of a Direct Web Channel." Industrial Marketing Management 
+41 (1), 40-53. 
+Corley, Kevin G and Dennis A Gioia (2011). "Building Theory About Theory Build ing: What Constitutes a 
+Theoretical Contribution?" Academy of Management Review 36 (1), 12-32. 
+Cosguner, Koray, Tat Y Chan, and PB Seetharaman (2018). "Dynamic Pricing in a Distribution Channel in the 
+Presence of Switching Costs." Management Science 64 (3), 1212-29. 
+Coughlan, Anne T (1985).  "Competition and Cooper ation in Marketing Cha nnel Choice: Theory and 
+Application." Marketing Science 4 (2), 110-29. 
+Coughlan, Anne T, Erin Anderson, Louis W Stern, and Adel El-Ansary (2006). "Marketing Channels." 
+Dahlquist, Steven H and David A Griffith (2014). "M ultidyadic Industrial Channels: Understanding 
+Component Supplier Profits and Original Equipment Manufacturer Behavior." Journal of Marketing 78 
+(4), 59-79. 
+EGEDE, EHIKWE ANDREW (2013). "Cha nnel Structure and Strategy D ecisions in Emerging Markets." 
+New Media and Mass Communication 20, 42-49. 
+Elfenbein, Daniel W and Todd R Zenger (2014). "What Is  a Relationship Worth? Re peated Exchange and the 
+Development and Deployment of Relational Capital." Organization Science 25 (1), 222-44. 
+Emerson, Richard M (1962). "Pow er-Dependence Relations." American Sociological Review , 31-41. 
+Fites, Donald V (1996). "Make Yo ur Dealers Your Partners." Harvard Business Review 74 (2), 84-&. 
+Frazier, Gary L (1983). "On the Measurement of In terfirm Power in Channels of Distribution." Journal of 
+Marketing Research 20 (2), 158-66. 
+Frazier, Gary L, James D Gill, and Sudhir H Kale (1989) . "Dealer Dependence Levels  and Reciprocal Actions 
+in a Channel of Distribution in a Developing Country." Journal of Marketing 53 (1), 50-69. 
+Ganesan, Shankar (1994). "Determinants of Long-T erm Orientation in Buyer -Seller Relationships." Journal of 
+marketing 58 (2), 1-19. 
+Gaski, John F and John R Nevin (1985 ). "The Differential Effects of Ex ercised and Unexercised Power Sources 
+in a Marketing Channel." Journal of Marketing Research 22 (2), 130-42. 
+Gassenheimer, Jule B and Rosemary Ramsey (1994). "The  Impact of Dependence on  Dealer Satisfaction: A 
+Comparison of Reseller-Su pplier Relationships." Journal of Retailing 70 (3), 253-66. 
+Geyskens, Inge, Jan-Benedict  EM Steenkamp, and Nirmalya Kumar ( 1999). "A Meta-Analysis of Satisfaction 
+in Marketing Channel Relationships." Journal of Marketing Research 36 (2), 223-38. 
+--- (1999). "A Meta-Analysis of Satisfaction  in Marketing Channel Relationships." Journal of Marketing Research , 
+223-38. 
+Ghosh, Mrinal and George John (1999). "Gover nance Value Analysis an d Marketing Strategy." Journal of 
+Marketing 63 (4_suppl1), 131-45. 
+--- (2005). "Strategic Fit in Industrial Alliances: An  Empirical Test of Governance Value Analysis." Journal of 
+Marketing Research 42 (3), 346-57. 
+Gilliland, David I, Daniel C Bello, and Gregory T Gund lach (2010). "Control-Based  Channel Governance and 
+Relative Dependence." Journal of the Academy of Marketing Science 38 (4), 441-55. 
+Gilliland, David I and Stephen K Kim (2014). "When Do Incentives Work in Channels of Distribution?" Journal 
+of the Academy of Marketing Science 42 (4), 361-79. 
+Gioia, Dennis A, Kevin G Corley, and Aimee L Ham ilton (2013). "Seeking Qualit ative Rigor in Inductive 
+Research: Notes on the Gioia Methodology." Organizational Research Methods 16 (1), 15-31. 
+Gulati, Ranjay (1995). "Social Structure and Allian ce Formation Patterns: A Longitudinal Analysis." 
+Administrative Science Quarterly , 619-52. 
+
+ 
+42 
+ Heide, Jan B (1994). "Interor ganizational Governance in Marketing Channels." Journal of Marketing 58 (1), 71-
+85. 
+Holloway, Betsy B and Sharon E Beatty (2003). "Service Fa ilure in Online Retailing: A Recovery Opportunity." 
+Journal of Service Research 6 (1), 92-105. 
+Holloway, Samuel S and Anne Parm igiani (2016). "Friends and Prof its Don’t Mix: The Performance 
+Implications of Repeated Partnerships." Academy of Management Journal 59 (2), 460-78. 
+Ittoo, Ashwin and Antal van den Bosch (2016). "Text Analytics in Industry: Challenges, Desiderata and 
+Trends." Computers in Industry 78, 96-107. 
+Jap, Sandy D (2001). "Perspectives on Joint Competitive Advantages in  Buyer–Supplier Relationships." 
+International Journal of Research in Marketing 18 (1-2), 19-35. 
+--- (1999). "Pie-Expansion Efforts: Collaboration Processes in Buyer–Supplier Relationships." Journal of 
+marketing Research 36 (4), 461-75. 
+Jap, Sandy D and Shankar Ganesan (2000). "Control Mechanisms and the Relationship Life Cycle: Implications 
+for Safeguarding Specific Investments and Developing Commitment." Journal of Marketing Research 37 
+(2), 227-45. 
+Jeuland, Abel P and Steven M Shugan (1988). "Note—Channel of Distribution Profits When Channel Members 
+Form Conjectures." Marketing Science 7 (2), 202-10. 
+Kalaignanam, Kartik, Venkatesh Shankar, and Ra jan Varadarajan (2007). "A symmetric New Product 
+Development Alliances: Win-Win or Win-Lose Partnerships?" Management Science 53 (3), 357-74. 
+Kamakura, Wagner, Praveen K Kopa lle, and Donald R Lehmann (2014) . "Empirical Ge neralizations in 
+Retailing." Journal of Retailing 90 (2), 121. 
+Kashyap, Vishal, Kersi D Antia, and Gary L Frazier ( 2012). "Contracts, Ex tracontractual In centives, and Ex 
+Post Behavior in Franchise Channel Relationships." Journal of Marketing Research 49 (2), 260-76. 
+King, Nigel (2012). "Doing Template Analysis." Qualitative organizational research: Core methods and current challenges 
+426. 
+Krafft, Manfred, Oliver Goetz, Mu rali Mantrala, Francesca Sotgiu, an d Sebastian Tillmanns (2015). "The 
+Evolution of Marketing Channel Research Domains and Methodologies: An Integrative Review and 
+Future Directions." Journal of Retailing 91 (4), 569-85. 
+Kumar, Nirmalya, Lisa K Scheer, and Jan-Benedict EM Steenkamp (1995). "The Effects of Perceived 
+Interdependence on Dealer Attitudes." Journal of Marketing Research 32 (3), 348-56. 
+Kumar, Nirmalya, Louis W Stern, and James C Anderson (1993). "Conduct ing Interorganizational Research 
+Using Key Informants." Academy of Management Journal 36 (6), 1633-51. 
+Kumar, V., Sarang Sunder, and Amalesh Sharma (2015). "Leveraging Distribution to Maximize Firm 
+Performance in Emerging Markets." Journal of Retailing 91 (4), 627-43. 
+Lassar, Walfried M and Jeffrey L Kerr (1996). "Strategy and Control in Supplier–Distributor Relationships: An 
+Agency Perspective." Strategic Management Journal 17 (8), 613-32. 
+Lewis, M Christine and Douglas M La mbert (1991). "A Model of Channel Member Performance, Dependence, 
+and Satisfaction." Journal of Retailing 67 (2), 205. 
+Lilien, Gary L (1979). "Exceptional Paper—Advisor 2: Modeling the Marketing Mix Decision for Industrial 
+Products." Management Science 25 (2), 191-204. 
+Marshall, Catherine and Gr etchen B Rossman (2014). Designing Qualitative Research . Sage publications. 
+Miles, Matthew B, A Michael Huberman, and Johnny Saldaña (2014). "Qualitative Data Analysis: A Methods 
+Sourcebook. 3rd." in: Thousand Oaks, CA: Sage. 
+Müller, Oliver, Iris Junglas, Stefan Debortoli, and Jan vom Brocke (2016). "Using Te xt Analytics to Derive 
+Customer Service Management Benefits from Unstructured Data." MIS Quarterly Executive 15 (4), 243-
+58. 
+Narus, Jim and Bob Donath (2009). Build, Fix, or Terminate: The Distributor's Guide to More Profitable Supplier 
+Relations . Natl Assn Wholesale-Distr. 
+Nickerson, Jack A, Barton H Hamilton, and Tetsuo Wada (2001). "Market Positi on, Resource Profile, and 
+Governance: Linking Porter  and Williamson in the Context of Inte rnational Courier and Small Package 
+Services in Japan." Strategic Management Journal 22 (3), 251-73. 
+
+ 
+43 
+ Palmatier, Robert W, Rajiv P Dant , Dhruv Grewal, and Kenneth R Evan s (2006). "Factors Influencing the 
+Effectiveness of Relationship Marketing: A Meta-Analysis." Journal of Marketing 70 (4), 136-53. 
+Papies, Dominik, Peter Ebbes, and Harald J Van He erde (2017). "Addressing En dogeneity in  Marketing 
+Models." Pp 581-627 in Advanced Methods for Modeling Markets : Springer. 
+Petrin, Amil and Kenneth Train (2010). "A Control Fu nction Approach to Endoge neity in Consumer Choice 
+Models." Journal of Marketing Research 47 (1), 3-13. 
+Sharma, Amalesh, V Kumar, and Koray Cosguner (20 19). "Modeling Emerging-Market Firms’ Competitive 
+Retail Distribution Strategies." Journal of Marketing Research 56 (3), 439-58. 
+Sharma, Amalesh, Mauli Soni, Sourav Bikash Borah, and Alok R Saboo (2020). "Identifying the Drivers of 
+Luxury Brand Sales in Emerging Ma rkets: An Exploratory Study." Journal of Business Research 111, 25-
+40. 
+Skinner, Steven J, Jule B Gassenheimer, and Scott W Kell ey (1992). "Cooperation in Su pplier-Dealer Relations." 
+Journal of Retailing 68 (2), 174-93. 
+Stem, Louis W and I Adel (1988). "El- Ansary, Marketing Channe ls." in: Prentice-hall international editions, 
+New Jersey. 
+Venkatesan, Rajkumar, Paul Farris, Leandro A Guiss oni, and Marcos Fava Neve s (2015). "Consumer Brand 
+Marketing through Full-and Self-Service Channels in an Emerging Economy." Journal of Retailing 91 (4), 
+644-59. 
+Venkatraman, Nenkat and John E Prescott (1990). "Environment ‐Strategy Coalignment: An Empirical Test of 
+Its Performance Implications." Strategic Management Journal 11 (1), 1-23. 
+Watson IV, George F, Stefan Worm, Robert W Palmati er, and Shankar Ganesan ( 2015). "The Evolution of 
+Marketing Channels: Trends and Research Directions." Journal of Retailing 91 (4), 546-68. 
+Williamson, Oliver E (1996). "Efficiency, Power, Aut hority and Economic Organization." Pp 11-42 in 
+Transaction Cost Economics and Beyond : Springer. 
+Zhao, Hui, Vinayak Deshpande, and Jennifer K Ryan  (2005). "Inventory Sharing and Rationing in 
+Decentralized Dealer Networks." Management Science 51 (4), 531-47. 
+Zikmund, William G, Michael D'Amico, and George E Prough (1984). Test Bank to Accompany Marketing . J. 
+Wiley. 
+Zineldin, Mosad and Patrik Jonsson (2000). "An Examination of the Ma in Factors Affecting 
+Trust/Commitment in Supplier ‐Dealer Relationships: An Empirical Study of the Swedish Wood 
+Industry." TQM magazine . 
+  
+
+ 
+44 
+ Web-Appendix 
+WA Figure 1:  Text Analysis of the response to “ What do you think can be done to manage channel 
+intermediaries?”  
+Panel A:  Link Analysis                                                                         Panel B:  Dendrogram 
+        
+ 
+ 
+Panel C:  Proximity Plot 
+ 
+WA Table A1:  Frequency Count 
+ 
+FREQUENCY % SHOWN % PROCESSED % TO TAL NO. CASES % CASES TF • IDF 
+ALIGNMENT 19 24.05% 14.73% 8.37% 19 63.33% 3.8 
+MARKET 19 24.05% 14.73% 8.37% 19 63.33% 3.8 
+PRODUCTS 18 22.78% 13.95% 7.93% 18 60.00% 4 
+LEVEL 13 16.46% 10.08% 5.73% 13 43.33% 4.7 
+DEALERS 10 12.66% 7.75% 4.41% 10 33.33% 4.8 
+ 
+WA Figure 2:  Text Analysis of the response to “ Are channel intermediaries important for your 
+business? Are there any specific intermediary mana gement strategies you have (e.g., pay, trip, 
+incentive, discount, etc.)?” 
+Panel A:  Link Analysis                                                              Panel B:  Dendrogram 
+
+
+ 
+45 
+  
+ 
+ 
+WA Figure 3:  Text Analysis of the response to “ how do manufacturers help intermediaries increase 
+sales?”   
+Panel A:  Link Analysis                                                                               Panel B:  Dendrogram 
+ 
+WA Table A2:  Frequency Table 
+ 
+FREQUENCY % SHOWN % PROCESSED % TO TAL NO. CASES % CASES TF • IDF 
+BENEFITS 27 20.00% 17.65% 10.80% 27 93.10% 0.8 
+BUSINESS 14 10.37% 9.15% 5.60% 14 48.28% 4.4 
+MANUFACTURERS 14 10.37% 9.15% 5.60% 14 48.28% 4.4 
+MULTIPLE 14 10.37% 9.15% 5.60% 14 48.28% 4.4 
+PROVIDE 14 10.37% 9.15% 5.60% 14 48.28% 4.4 
+INCENTIVES 13 9.63% 8.50% 5.20% 13 44.83% 4.5 
+LUXURY 13 9.63% 8.50% 5.20% 13 44.83% 4.5 
+PRODUCTS 13 9.63% 8.50% 5.20% 13 44.83% 4.5 
+TRIPS 13 9.63% 8.50% 5.20% 13 44.83% 4.5 
+ 
+
+
+ 
+46 
+ WA Figure 4:  Text Analysis of the response to “ what do you see as a major strategy that can help you 
+increase performance?”   
+Panel A: Link Analysis                                                      Panel B: Dendrogram  
+ 
+Panel C: Proximity Plot 
+ 
+WA Table A3:  Frequency Count 
+ 
+FREQUENCY % SHOWN % PROCESSED % TO TAL NO. CASES % CASES TF • IDF 
+ADVISING 21 16.67% 11.80% 7.61% 21 72.41% 2.9 
+ALLIGNMENT 32 25.40% 17.98% 11.59% 21 72.41% 4.5 
+HELPS 10 7.94% 5.62% 3.62% 10 34.48% 4.6 
+MANUFACTURERS 11 8.73% 6.18% 3.99% 11 37.93% 4.6 
+MARKET 15 11.90% 8.43% 5.43% 15 51.72% 4.3 
+MISS 11 8.73% 6.18% 3.99% 11 37.93% 4.6 
+PRODUCT 15 11.90% 8.43% 5.43% 15 51.72% 4.3 
+REQUIRED 11 8.73% 6.18% 3.99% 11 37.93% 4.6 
+ 
+ 
+
+

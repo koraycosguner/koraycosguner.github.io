@@ -1,0 +1,980 @@
+This article was downloaded by: [129.79.197.145] On: 12 May 2024, At: 11:55
+Publisher: Institute for Operations Research and the Management Sciences (INFORMS)
+INFORMS is located in Maryland, USA
+Marketing Science
+Publication details, including instructions for authors and subscription information:
+http://pubsonline.informs.org
+Behavioral Price Discrimination in the Presence of
+Switching Costs
+Koray Cosguner, Tat Y . Chan, P . B. (Seethu) Seetharaman
+To cite this article:
+Koray Cosguner, Tat Y . Chan, P . B. (Seethu) Seetharaman  (2017) Behavioral Price Discrimination in the Presence of Switching
+Costs. Marketing Science 36(3):426-435.  https://doi.org/10.1287/mksc.2016.1024
+Full terms and conditions of use: https://pubsonline.informs.org/Publications/Librarians-Portal/PubsOnLine-Terms-and-
+Conditions
+This article may be used only for the purposes of research, teaching, and/or private study. Commercial use
+or systematic downloading (by robots or other automatic processes) is prohibited without explicit Publisher
+approval, unless otherwise noted. For more information, contact permissions@informs.org.
+The Publisher does not warrant or guarantee the article’s accuracy, completeness, merchantability, fitness
+for a particular purpose, or non-infringement. Descriptions of, or references to, products or publications, or
+inclusion of an advertisement in this article, neither constitutes nor implies a guarantee, endorsement, or
+support of claims made of that product, publication, or service.
+Copyright © 2017, INFORMS
+Please scroll down for article—it is on subsequent pages
+With 12,500 members from nearly 90 countries, INFORMS is the largest international association of operations research (O.R.)
+and analytics professionals and students. INFORMS provides unique networking and learning opportunities for individual
+professionals, and organizations of all types and sizes, to better understand and use O.R. and analytics tools and methods to
+transform strategic visions and achieve better outcomes.
+For more information on INFORMS, its publications, membership, or meetings visit http://www.informs.org
+
+MARKETING SCIENCE
+Vol. 36, No. 3, May–June 2017, pp. 426–435
+http://pubsonline.informs.org/journal/mksc/ ISSN 0732-2399 (print), ISSN 1526-548X (online)
+Behavioral Price Discrimination in the Presence of
+Switching Costs
+Koray Cosguner,aTat Y. Chan,bP. B. (Seethu) Seetharamanb
+aJ. Mack Robinson College of Business, Georgia State University, Atlanta, Georgia 30303;bOlin Business School, Washington University in
+St. Louis, St. Louis, Missouri 63130
+Contact:kcosguner@gsu.edu (KC); chan@wustl.edu (TYC); seethu@wustl.edu (PBS)
+Received: August 25, 2014
+Revised: January 22, 2015; May 23, 2016;
+August 4, 2016
+Accepted: August 29, 2016
+Published Online in Articles in Advance:
+February 27, 2017
+https://doi.org/10.1287/mksc.2016.1024
+Copyright: ©2017 INFORMSAbstract. We study the strategic impacts of behavioral price discrimination (BPD) on
+manufacturers and retailers in a distribution channel when there are switching costs in
+consumer demand. Unlike previous empirical studies of behavioral price discrimination,
+whichrelyonlyondiﬀerencesinpriceelasticity across customers ,ourpricingmodelallows
+theﬁrmstrategiestoadditionallyaccountfordiﬀerencesinpriceelasticity across time (due
+to switching costs). We estimate a dynamic pricing model using empirical data from the
+cola category and, through a series of counterfactuals, we ﬁnd that the retailer should
+simply outsource the data analytics and customization of coupons to manufacturers and
+improve its proﬁt beyond what it can achieve by proactively couponing on its own. We
+further ﬁnd that serving as an information broker to sell its customer database to manu-
+facturers can be a vital source of proﬁt to the retailer. By contrast, manufacturers end up
+worseoﬀ,illustratingthatcustomerinformationisapotentsourceofchannelpowertothe
+retailer. Finally, we show that simply using customers’ most recent purchase information
+cansigniﬁcantlyimpactﬁrms’proﬁts.BPDbasedonthisinformationiseasytoimplement
+and of low cost to manufacturers and retailers.
+History:Russell Winer served as the senior editor and J. Miguel Villas-Boas served as associate editor
+for this article.
+Supplemental Material: Data are available at https://doi.org/10.1287/mksc.2016.1024.
+Keywords: behavioral price discrimination •dynamic pricing •targeted coupons •switching costs •inertia
+Introduction
+Behavioral price discrimination (henceforthBPD)refersto
+the pricing strategy of ﬁrms charging diﬀerent prices
+to customers with diﬀerent purchase histories (Shaﬀer
+and Zhang 1995, Villas-Boas 1999, Fudenberg and
+Tirole2000,Chenetal.2001,Villas-Boas2004,Acquisiti
+and Varian 2006, Pazgal and Soberman 2008, Shin and
+Sudhir 2010; see Fudenberg and Villas-Boas 2006 for a
+detaileddiscussionandreviewofBPD).Thisstrategyis
+enabled by the fact that customers’ purchase histories
+are observed in retail transactional data collected by
+retailersusingloyaltycards(suchasthe Kroger Rewards
+card). Using such customer-level transactional data,
+ﬁrmscanestimatecustomer-speciﬁcpriceelasticitiesof
+demand and, therefore, tailor customer-speciﬁc retail
+prices using targeted coupons (see, for example, Elrod
+and Winer 1982, Rossi et al. 1996). Previous empirical
+research on BPD has assumed that while price elas-
+ticities can vary across customers, a given customer’s
+priceelasticityistimeinvariant.However,anextensive
+empirical literature in marketing has documented that
+on account of switching costs in demand, a customer’s
+price elasticity for the most recently purchased brand
+decreasesathernextpurchaseoccasion(see,forexam-
+ple, Seetharaman 2004). This means that while deter-mining the optimal BPD strategy, the retailer must
+recognize diﬀerences in brands’ price elasticities not
+only across customers but also across time (due to
+switching costs). Taking switching costs into account,
+ﬁrms can better tune their BPD schemes by oﬀering
+therightcouponsnotonlytothe“rightcustomers”but
+also at the “right time.”
+One pricing implication of switching costs in de-
+mand is that manufacturers or retailers can target
+price-oﬀ coupons to consumers that are based on
+their most recently purchased brands. Suppose that
+the brand manager of Coke observes that John Doe’s
+most recently purchased brand in the cola category
+is Pepsi. She will realize that, on account of switch-
+ing costs, she should oﬀer John Doe a price discount
+on Coke to induce him to buy Coke instead of Pepsi.
+While such a price discount reduces the current proﬁt
+margin of Coke, oﬀering John Doe a coupon can still
+be proﬁtable to Coke because, once John Doe buys
+Coke, he will be more likely to buy Coke again in the
+future. This future sales gain can dominate the cost
+of the current price discount. The brand manager of
+Pepsi faces a similar incentive to lure previous buy-
+ers of Coke using price discounts. Whether such com-
+petitive pressures, which force ﬁrms to “poach” each
+426
+Downloaded from informs.org by [129.79.197.145] on 12 May 2024, at 11:55 . For personal use only, all rights reserved. 
+
+
+Cosguner, Chan, and Seetharaman: BPD in the Presence of Switching Costs
+Marketing Science, 2017, vol. 36, no. 3, pp. 426–435, ©2017 INFORMS 427
+other’scustomers(Chen1997,ShaﬀerandZhang2000,
+Taylor 2003), could dominate the incentive to “milk”
+the installed customer base (i.e., most recent buyers)
+by charging higher prices, is an interesting empirical
+question. Without accounting for switching costs, pre-
+vious empirical studies on BPD have concluded that
+competingﬁrmsbeneﬁtfromBPD(Besankoetal.2003,
+Pancras and Sudhir 2007). In this research, we study
+whether the dynamic competition discussed above
+yields diﬀerent strategic implications for ﬁrms when
+they engage in BPD.
+WhenstudyingBPD,thestrategicroleoftheretailer
+cannot be ignored (Liu and Zhang 2006). This is be-
+cause, as a category proﬁt maximizer, the retailer’s
+pricing incentive may not align with the manufac-
+turers’ pricing incentives. This means that the proﬁt
+implications of BPD derived for competing manufac-
+turers may unravel in the presence of the retailer. Fur-
+thermore, evenif manufacturerscan eﬀectivelybypass
+the retailer by dropping direct-mail targeted coupons
+to end-consumers, the retailer can put paid to such
+eﬀorts by not sharing its customer database with the
+manufacturers, which makes it impossible for the
+manufacturerstoestimatecustomer-speciﬁcpriceelas-
+ticities(whicharenecessaryforengaginginBPD).Itis
+also logistically easier for the retailer to oﬀer coupons
+to consumers at the store than for a manufacturer to
+mail coupons to consumers’ homes. In this research,
+westudyBPDwithinthedistributionchannelinamar-
+ket with switching costs. In doing this, we are able to
+answer the question of whether it is proﬁtable for the
+retailer to share its customer information with manu-
+facturers and letting them engage in BPD instead of
+managing the BPD by itself.
+Wetakeanempiricalapproach.Weestimateastruc-
+tural model of consumer demand and ﬁrm pricing
+behavior, which is similar to Cosguner et al. (2016)
+andusetheestimatestoperformcounterfactualexper-
+imentsregardingBPD.Inonecounterfactual,westudy
+a“partial”BPDscenario,wherechannelmembersoﬀer
+targetedcouponsbasedoncustomers’mostrecentpur-
+chases only. Another counterfactual is a “full” BPD
+scenario, where the oﬀered coupons are based on cus-
+tomers’ full purchase histories and channel members
+can correctly infer customers’ price elasticities, switch-
+ing costs, and brand preferences. Our key ﬁndings
+are as follows: First, signiﬁcant switching costs exist
+among consumers; thus, optimal BPD should adjust
+over time even for the same set of consumers. Sec-
+ond, the retailer’s proﬁt increases when it engages
+in BPD. Interestingly, the proﬁt increases even more
+when the retailer lets manufacturers employ BPD. In
+other words, the retailer can simply outsource the
+data analytics and customization of coupons to man-
+ufacturers and gain proﬁt beyond what it can achieveby proactively engaging in BPD. Manufacturers’ prof-
+its may increase or decrease when they engage in
+BPD,dependingonhowmuchofcustomers’purchase
+historiestheycanaccess.Third,theretailer’sproﬁtfur-
+ther improves if it can charge the manufacturers for
+accesstoitscustomerdatabase.Servingasaninforma-
+tion broker to sell transactional data to manufacturers
+can,therefore,beavitalsourceofbusinessproﬁttothe
+retailer (see Glazer 1991 for an early view on informa-
+tion as a business asset). However, the manufacturers
+endupbeingworseoﬀthanunderthecaseofnoprice
+discrimination.Finally,weshowthatsimplyusingcus-
+tomers’ most recent purchase information can signiﬁ-
+cantly impact ﬁrms’ proﬁts. We argue that BPD based
+on this information is easy to implement and of low
+cost to manufacturers and retailers.
+Model of Behavioral Price Discrimination
+in the Presence of Switching Costs
+Our model is directly adopted from Cosguner et al.
+(2016), who study the harvesting and investing incen-
+tives of manufacturers and retailers. Our goal in this
+paperistoinvestigatetheproﬁtimpactofBPDforman-
+ufacturers and retailers. To achieve this goal, we use
+the model estimates to conduct counterfactual simula-
+tions.Becausemodelestimationisnotthefocusofthis
+paper,wekeepthediscussionofthemodelsetupbrief,
+and we skip the discussion on how the model is esti-
+mated. We refer interested readers to Cosguner et al.
+(2016).
+We consider a monopolist retailer in a local market.
+Thereare Jmajormanufacturers(Coca-ColaandPepsi
+in our application) selling their brands through the
+retailer. We assume a three-stage game: In the ﬁrst
+stage(atthestartofthegame),theretailer,astheowner
+of the customer database that records customers’ pur-
+chase histories, decides whether to directly engage in
+BPD or to share the information with the manufactur-
+ers and help them employ BPD by distributing man-
+ufacturers’ targeted coupons directly to consumers.
+In the second stage, manufacturers simultaneously
+choose wholesale prices for their brands and, if fea-
+sible, customized price-oﬀ coupons targeting diﬀerent
+customers. In the third stage, taking manufacturers’
+wholesale prices and customized couponing decisions
+asgiven,theretailerchoosesretailpricesforthebrands
+and,iffeasible,customizedprice-oﬀcouponstargeting
+diﬀerent customers.
+LetSm
+jtdenote a state variable that represents the seg-
+ment m-speciﬁc ( m/equalx1;:::; M)installed base , i.e., share
+of customers in latent segment mwhose most recent
+purchase in the category was brand j(j/equalx1;:::; J), as
+of period t¹t/equalx1;:::; T). The set of state variables that
+determinesmanufacturers’andtheretailer’sBPDstrat-
+egyis St/equalxfS1
+1t;S1
+2t;:::; S1
+Jt;:::;SM
+1t;SM
+2t;:::; SM
+Jtg,i.e.,the
+Downloaded from informs.org by [129.79.197.145] on 12 May 2024, at 11:55 . For personal use only, all rights reserved. 
+
+
+Cosguner, Chan, and Seetharaman: BPD in the Presence of Switching Costs
+428 Marketing Science, 2017, vol. 36, no. 3, pp. 426–435, ©2017 INFORMS
+collectionoftheinstalledbasesof Jbrandswithineach
+of the Mconsumer segments. The objective of each
+ﬁrm in the channel is to maximize its long-term dis-
+counted proﬁt. We assume that manufacturers com-
+pete in an inﬁnitely repeated Bertrand pricing game
+and focus our attention on pure-strategy Markov-
+perfect equilibria (MPE). Let ajtbe the set of con-
+trol variables for manufacturer j, which deﬁnes its
+BPD strategy. Suppose the manufacturer obtains cus-
+tomer information from the retailer in the ﬁrst stage
+and, therefore, can identify that a customer bought
+brand kduring his previous purchase and also that
+the customer belongs to latent segment m. The man-
+ufacturer can issue a coupon, C_mftm
+jkt, to such a
+customer whose face value will be deducted from
+the retail price of brand jwhen the customer pur-
+chasesbrand jinperiod t.Themanufacturer’scoupon,
+C_mftm
+jkt,willdirectlyimpacttheper-unitrevenue, wm
+jkt,
+and the “real” price (i.e., retail price minus coupon)
+that the customer has to pay for buying the brand,
+pm
+jkt. The manufacturer also has to decide wholesale
+price Wjt. Thus, the set of control variables is ajt/equalx
+fWjt;C_mftm
+jkt;m/equalx1;:::; M;k/equalx1;:::; Jg. If the retailer
+decides to directly engage in BPD, the retailer can
+issuetargetedcoupons, C_Retm
+jkt,8j;tocustomerswho
+previously purchased brand kand belong to latent
+segment m. The coupon will impact the per-unit rev-
+enue for the retailer, rm
+jkt, and the “real” price that
+the customer has to pay for buying the brand, pm
+jkt.
+The set of control variables of the retailer is aRt/equalx
+fPjt;C_Retm
+jkt;m/equalx1;:::; M;j;k/equalx1;:::; Jg, where Pjtis
+the retail price.
+Letat/equalxfaRt;ajt;j/equalx1;:::; Jgbethecollectionofcon-
+trol variables of the retailer and all manufacturers in
+the second and third stages of the pricing game. In the
+presence of switching costs, current decisions atwill
+haveadynamicimpactonthestatevariablesinthenext
+period, St+1. The following equation, called the state
+equation, captures the temporal evolution of the state
+variable, Sm
+jt:
+Sm
+j;t+1/equalxJX
+k,jSm
+ktPrm
+t¹k!jjatº
++Sm
+jt¹Prm
+t¹j!jjatº+Prm
+t¹j!0jatºº;(1)
+where Prm
+t¹k!jjatºstands for the switching probabil-
+ity, for a customer in segment m, of switching from
+brand kto brand j, conditional on at;Prm
+t¹j!jjatº
+stands for the customer’s repeat purchase probability for
+brand j,conditionalon at;and Prm
+t¹j!0jatºstandsfor
+the probability of the customer choosing the outside
+option, conditional on at, in which case the customer
+remains in the installed base of brand j. This equation
+suggests that brand j’s installed base in a given period
+isthesumofthosewhoboughtbrand jinthepreviousperiod and those who did not buy any brand in the
+previous period but whose most recently purchased
+brand was brand j. We use the inertial multinomial
+logit model (Seetharaman et al. 1999) to represent the
+brand choice probabilities, i.e., switching probability
+and repeat purchase probability, and include the out-
+side option in the usual manner as a ( J+1ºth alterna-
+tive. See Cosguner et al. (2016) for further details.
+We assume that manufacturers and the retailer have
+acommondiscountfactor <1,andforeachmanufac-
+turer j,thediscountedsumofproﬁtscanbewrittenas
+the following Bellman equation:
+Vj¹Sº/equalxmax
+ajMX
+m/equalx1mJX
+k/equalx1¹wm
+jk¹aj;a jº mcjºSm
+k
+Prm¹k!jjaj;a jº+EVj¹S0jS;aj;a jº
+;(2)
+wheremis the size of latent segment m,mcjis the
+marginalproductioncostforthemanufacturer, Vj¹Sºis
+the value function of the manufacturer under optimal
+policies, a jare the policies of other players (i.e., other
+manufacturersandtheretailer), Sm
+kistheinstalledbase
+ofcustomersinlatentsegment mforbrand k,and Sand
+S0arethestatevariablesinthecurrentandnextperiod,
+respectively. The actual revenue per unit sold for the
+manufacturer is denoted by wm
+jk¹aj;a jºand is equal
+to the wholesale price minus the value of the coupon
+issued to customers in segment mwhose previously
+purchased brand was k.
+Similarly,theretailer’sdiscountedsumofproﬁtscan
+be written as
+VR¹Sº/equalxmax
+aRMX
+m/equalx1mJX
+j/equalx1JX
+k/equalx1¹rm
+jk¹aR;a Rº WjºSm
+k
+Prm¹k!jjaR;a Rº+EVR¹S0jS;aR;a Rº
+;(3)
+where Wjis the wholesale price charged by manufac-
+turer j,VR¹Sºisthevaluefunctionoftheretailerunder
+optimal policies, and a Rare the policies of other play-
+ers(i.e.,allmanufacturers).Theactualrevenueperunit
+sold for the retailer is denoted by rm
+jk¹aR;a Rºand is
+equal to the retail price minus the value of the coupon
+issued to customers in segment mwhose previously
+purchased brand was k.
+To investigate the implications of BPD on the pric-
+ing behavior and resulting proﬁts of the manufactur-
+ers and the retailer, we study a number of scenarios
+that correspond to diﬀerent retailer decisions in the
+ﬁrst stage regarding how to use the customer infor-
+mation. The diﬀerent scenarios allow diﬀerent mem-
+bers of the distribution channel to employ BPD. As
+each ﬁrm’s pricing policy has strategic consequences
+forotherchannelmembers’pricingpolicies,weusethe
+full equilibrium approach to examine the MPE pricing
+outcomes within each scenario.
+Downloaded from informs.org by [129.79.197.145] on 12 May 2024, at 11:55 . For personal use only, all rights reserved. 
+
+
+Cosguner, Chan, and Seetharaman: BPD in the Presence of Switching Costs
+Marketing Science, 2017, vol. 36, no. 3, pp. 426–435, ©2017 INFORMS 429
+Figure 1. (Color online) (Scenario 2; Case 1) Retailer Couponing Based on the Most Recent Purchases
+Coke Pepsi
+RetailerWCoke WPepsi
+PCoke
+PPepsi
+C_RetPepsi, Past CokePCoke
+PPepsi
+C_RetCoke, Past Pepsi
+Segment 1
+Past CokeSegment 1
+Past PepsiSegment 2
+Past CokeSegment 2
+Past PepsiSegment 3
+Past CokeSegment 3
+Past Pepsi
+Scenario 1: No BPD (Base Case)
+This is the benchmark case. Manufacturers and the
+retailer do not oﬀer coupons.
+Scenario 2: Partial BPD—Couponing Based on
+Most Recent Purchases Only
+We assume that the retailer or the manufacturers only
+useinformationonthemostrecentlypurchasedbrand
+of each customer. They use this information and the
+unconditional segment probabilities from the demand
+model to update, in a Bayesian manner, the posterior
+probabilitythatthecustomerbelongstoeachsegment.
+The BPD strategy is based on these posterior probabil-
+ities and to which brand’s installed base the customer
+belongs. This scenario helps us understand the eco-
+nomic value to ﬁrms of the very limited information
+contained in the consumer’s most recent purchase.
+Case1:Retailer Couponing : For each brand, the re-
+tailer issues diﬀerent coupons to diﬀerent customers
+(see Figure 1). In practice, the retailer can distribute
+these coupons to customers for future purchases, at
+thecheckoutcounterinsidethestore.Theretailerdoes
+not need to look at the long purchase history of the
+customer each time; it only has to know which brand
+the customer purchases in the current shopping trip.
+Case2:Manufacturer Couponing : The retailer shares
+customers’ most recent purchase information with
+manufacturers and lets them issue coupons to diﬀer-
+ent customer segments based on this information (see
+Figure 2). We assume that the retailer does not issue
+anycoupons.Forimplementation,theretailercanhelp
+manufacturers distribute their coupons at checkout
+counters inside the store, like Case 1 above. We study
+three subcases, as explained below.a.Both Coke and Pepsi Couponing : Retailer shares
+information with both manufacturers.
+b.Exclusive Coke Couponing : Retailer shares infor-
+mation with Coke only.
+c.Exclusive Pepsi Couponing : Retailer shares infor-
+mation with Pepsi only.
+Scenario 3: Full BPD—Couponing Based on the
+Full Purchase History
+In this scenario, the retailer or manufacturers can
+accessthecompletepurchasehistoryofeachcustomer.
+Basedonthis,theycancalculateeachcustomer’sposte-
+rior probabilities of segment membership. We assume
+thattheﬁrmsclassifyeachhouseholdintothesegment
+forwhichtheposteriorprobabilityishighest,andthen
+average the posterior segment membership probabili-
+ties across all households within each segment to ﬁg-
+ure out the targeted coupon values for each segment.1
+We make this assumption for two reasons: (1) It sig-
+niﬁcantly simpliﬁes the computation for ﬁrms, since
+otherwise they need to ﬁgure out a customized price
+for each household in the data (whose computation
+in our dynamic pricing setup is not straightforward).
+(2) Our estimated distribution of posterior probabili-
+tiesofsegmentmembershipforcustomerswithineach
+segment is close to bipolar (i.e., mostly takes values
+close to 0 or 1) and does not show much disper-
+sionacrosshouseholds.TheBPDstrategyis,therefore,
+based on which brand’s installed base the customer
+belongsto,aswellastheprobabilitiesofthecustomer’s
+segment membership as inferred from the purchase
+history. Compared with Scenario 2, this scenario helps
+us understand the additional economic value to ﬁrms
+of knowing a customer’s complete purchase history,
+Downloaded from informs.org by [129.79.197.145] on 12 May 2024, at 11:55 . For personal use only, all rights reserved. 
+
+
+Cosguner, Chan, and Seetharaman: BPD in the Presence of Switching Costs
+430 Marketing Science, 2017, vol. 36, no. 3, pp. 426–435, ©2017 INFORMS
+Figure 2. (Color online) (Scenario 2; Cases 2, 2a, and 2b) Manufacturer Couponing Based on Most Recent Purchases
+Pepsi Coke
+RetailerWCoke WPepsi
+PCoke
+PPepsiPCoke
+PPepsi
+Segment 1
+Past CokeSegment 1
+Past PepsiSegment 2
+Past CokeSegment 2
+Past PepsiSegment 3
+Past CokeSegment 3
+Past PepsiC_mftPepsi, Past Coke C_mftCoke, Past Pepsi
+aboveandbeyondknowingthecustomer’smostrecent
+purchase.
+Case1:Retailer Couponing : The retailer issues cou-
+pons to customers, and manufacturers do not have
+access to the information (see Figure 3).
+Case2:Manufacturer Couponing :Theretailerdoesnot
+issue any coupons. It shares the information with the
+manufacturersandletsthemissuecouponstodiﬀerent
+customer segments (see Figure 4). We study three sub-
+cases, as explained below.
+Figure 3. (Color online) (Scenario 3; Case 1) Retailer Couponing Based on Both Segments and Past Purchases
+Coke Pepsi
+RetailerWCoke WPepsi
+C_RetCoke ,seg1,Past Coke
+C_RetPepsi ,seg1,Past Coke
+C_RetCoke ,seg2,Past Coke
+C_RetPepsi ,seg2,Past CokeC_RetCoke ,seg3,Past Coke
+C_RetPepsi ,seg3,Past Coke
+C_RetCoke ,seg2,Past Pepsi
+C_RetPepsi ,seg2,Past PepsiC_RetCoke ,seg3,Past Pepsi
+C_RetPepsi ,seg3,Past Pepsi
+C_RetCoke ,seg1,Past Pepsi
+C_RetPepsi ,seg1,Past PepsiPCoke and PPepsi
+Segment 1
+Past Coke
+Segment 1
+Past PepsiSegment 2
+Past CokeSegment 2
+Past PepsiSegment 3
+Past CokeSegment 3
+Past Pepsia.Both Coke and Pepsi Couponing : Retailer shares
+information with both manufacturers.
+b.Exclusive Coke Couponing : Retailer shares infor-
+mation with Coke only.
+c.Exclusive Pepsi Couponing : Retailer shares infor-
+mation with Pepsi only.
+Empirical Results
+We use scanner panel data from the Information Re-
+sources Incorporated’s (IRI) scanner-panel database
+Downloaded from informs.org by [129.79.197.145] on 12 May 2024, at 11:55 . For personal use only, all rights reserved. 
+
+
+Cosguner, Chan, and Seetharaman: BPD in the Presence of Switching Costs
+Marketing Science, 2017, vol. 36, no. 3, pp. 426–435, ©2017 INFORMS 431
+Figure 4. (Color online) (Scenario 3; Cases 2, 2a, and 2b) Manufacturer Couponing Based on Both Segments and Past
+Purchases
+Coke Pepsi Retailer WCoke WPepsi
+C_mftCoke ,seg1,Past Coke
+C_mftCoke ,seg2,Past Coke
+C_mftCoke ,seg3,Past CokeC_mftCoke ,seg2,Past Pepsi
+C_mftCoke ,seg3,Past PepsiC_mftCoke ,seg1,Past PepsiPCoke and PPepsi
+Segment 1
+Past Coke
+Segment 1
+Past Pepsi
+Segment 2
+Past Coke
+Segment 2
+Past Pepsi
+Segment 3
+Past Coke
+Segment 3
+Past PepsiC_mftPepsi ,seg1,Past Coke
+C_mftPepsi ,seg1,Past Pepsi
+C_mftPepsi ,seg2,Past Coke
+C_mftPepsi ,seg3,Past PepsiC_mftPepsi ,seg3,Past CokeC_mftPepsi ,seg2,Past Pepsi
+on cola purchases of 356 households making 32,942
+shopping trips at a supermarket store (which is a
+local monopolist) in a suburban market of a large U.S.
+city from June 1991 to June 1993. Households choose
+among Pepsi, Coke, Royal Crown, and a private label.
+Pepsiisthedominantcolabrand(withanaverage46%
+market share), while the private label is the smallest
+brand (with an average 7% market share). In our data,
+neithermanufacturersnortheretailerusesBPD,which
+is the base case in Scenario 1.
+Weﬁrstestimateourdemandmodelusingthepanel
+dataonhouseholds’brandchoices.Inthisapplication,
+weignoretheissuethatconsumersmaypurchasemul-
+tiple units of product for inventory holding.2We also
+abstract away from the complications that consumers
+may be forward-looking and they may purchase mul-
+tiple brands.3As previously noted, the model setup
+is the same as in Cosguner et al. (2016).4Estimation
+results show that there are three segments among
+households: Segment 1 (35% of households) has the
+highestpricesensitivity(  7.53),followedbysegment3
+(48% of households; price sensitivity:  7.30), and seg-
+ment 2 (17% of households; price sensitivity:  4.31).5
+Segment 2 has the highest switching cost, as its esti-
+mated inertia is 2.39, followed by segment 1 (1.03) and
+segment 3 (0.73).6
+For the supply side, we assume that Coke and Pepsi
+directlycompeteagainsteachotherandthattheirpric-
+ing strategies are independent of the pricing strate-
+gies of RC Cola and the private label.7The estimatedmarginal costs for Coke and Pepsi are $0.433 and
+$0.366, respectively.8
+Given the estimated parameters, we run a series
+of counterfactual simulations to study the diﬀerent
+price discrimination scenarios described in the model
+section. For simplicity, we assume that there are no
+coupons from the private label or Royal Crown, and
+we focus on BPD by Coke and Pepsi only. We use the
+Pakes and McGuire (1994) algorithm to solve for the
+dynamic pricing equilibrium in the distribution chan-
+nel. In the simulation, we assume that no customer is
+in any brand’s installed base at the beginning, and for-
+ward simulate retail prices, wholesale prices, and cus-
+tomers’brandchoicesformultiplefutureperiods,until
+the prices and demands reach a steady state. Results
+reported next are based on the steady state equilib-
+rium. In Scenario 2, the partial BPD scenario, there are
+two types of customers, depending on whether they
+purchased Coke or Pepsi most recently. In Scenario 3,
+thefullBPDscenario,foreachbrandtherearesixtypes
+of customers, depending on their segment member-
+ship (segment 1, 2, or 3), and previously purchased
+brand (own or competitor brand). The price elasticity
+of segment 2 for Pepsi decreases from  3.21 (when
+Cokewasboughtpreviously)to  2.25(whenPepsiwas
+boughtpreviously),whilethecorrespondingdecreases
+for segments 1 and 3 are modest (  5.92 to 5.71, and
+ 5.84to 5.80,respectively).Thechangesinpriceelas-
+ticitiesofthethreesegmentsforCokearesimilar,high-
+lighting that the optimal BPD should adjust over time
+even for the same set of customers.
+Downloaded from informs.org by [129.79.197.145] on 12 May 2024, at 11:55 . For personal use only, all rights reserved. 
+
+
+Cosguner, Chan, and Seetharaman: BPD in the Presence of Switching Costs
+432 Marketing Science, 2017, vol. 36, no. 3, pp. 426–435, ©2017 INFORMS
+Table 1. BPD Counterfactual Simulation Results
+Scenario 1: Scenario 2: Targeting based on Scenario 3: Targeting based on segment
+No targeting most recent purchase only membership and most recent purchase
+Case 1 Case 2 Case 2a Case 2b Case 1 Case 2 Case 2a Case 2b
+(No (Retailer (Coke and Pepsi (Coke (Pepsi (Retailer (Coke and Pepsi (Coke (Pepsi
+coupon) couponing) couponing) couponing) couponing) couponing) couponing) couponing) couponing)
+PCoke 0:847 0 :851 0 :889 0 :879 0 :837 0 :965 0 :855 0 :911 0 :837
+PPepsi 0:798 0 :800 0 :811 0 :781 0 :820 0 :877 0 :861 0 :784 0 :884
+WCoke 0:602 0 :597 0 :657 0 :644 0 :594 0 :584 0 :648 0 :709 0 :584
+WPepsi 0:558 0 :552 0 :575 0 :538 0 :579 0 :558 0 :649 0 :534 0 :687
+CCoke;seg1;Past Pepsi Na 0:040 0 :144 0 :139 Na 0:218 0 :141 0 :251 0 :188
+CCoke;seg2;Past Pepsi Na 0:040 0 :144 0 :139 Na Na 0:085 0 :174 Na
+CCoke;seg3;Past Pepsi Na 0:040 0 :144 0 :139 Na 0:220 0 :114 0 :188 0 :185
+CCoke;seg1;Past Coke Na Na Na Na Na 0:234 0 :094 0 :162 0 :324
+CCoke;seg2;Past Coke Na Na Na Na Na 0:066 Na Na 0:247
+CCoke;seg3;Past Coke Na Na Na Na Na 0:239 0 :085 0 :148 0 :245
+CPepsi;seg1;Past Pepsi Na Na Na Na Na 0:172 0 :156 Na Na
+CPepsi;seg2;Past Pepsi Na Na Na Na Na Na Na Na Na
+CPepsi;seg3;Past Pepsi Na Na Na Na Na 0:177 0 :149 Na Na
+CPepsi;seg1;Past Coke Na 0:028 0 :122 Na 0:116 0 :188 0 :242 Na Na
+CPepsi;seg2;Past Coke Na 0:028 0 :122 Na 0:116 0 :066 0 :261 Na Na
+CPepsi;seg3;Past Coke Na 0:028 0 :122 Na 0:116 0 :196 0 :198 Na Na
+Retailer proﬁt 0:933 0 :956 0 :967 0 :962 0 :943 1 :048 1 :069 0 :988 1 :001
+Coke proﬁt 0:229 0 :236 0 :229 0 :264 0 :201 0 :218 0 :235 0 :335 0 :171
+Pepsi proﬁt 0:476 0 :459 0 :472 0 :410 0 :508 0 :587 0 :588 0 :382 0 :695
+We ﬁrst simulate the steady state equilibrium out-
+comes, under the assumption that the same prices are
+oﬀered to all customers in the market, i.e., Scenario 1.
+The second column in Table 1 reports the retail prices
+(PCokeandPPepsiºandwholesaleprices( WCokeandWPepsiº,
+as well as the proﬁts of all channel members, aver-
+agedacrossallcustomers.SincePepsihasaloweraver-
+age marginal cost and a higher brand preference than
+Coke, it enjoys a higher proﬁt than Coke. In addition,
+the retailer as a local monopolist enjoys a higher proﬁt
+than the combined proﬁts of Pepsi and Coke.
+Next, we simulate the equilibrium outcomes in Sce-
+nario 2, under which ﬁrms oﬀer customized coupons
+tocustomersbasedontheirmostrecentpurchases.We
+ﬁrst study the case when the retailer oﬀers coupons.
+Compared with the base case, customers will face a
+lowerretailpriceiftheyswitchbrands.Thereasonthat
+they receive the coupons is because the price elastic-
+ity for a brand among customers who did not pur-
+chase the brand previously is higher than those who
+purchased the brand previously. With such BPD, the
+retailer’s proﬁt per customer increases by 2.5% (from
+$0.933 to $0.956). We then simulate the equilibrium
+outcomesundertheassumptionthattheretailershares
+the information (at no charge) with the manufactur-
+ers and helps manufacturers distribute their coupons
+(Case 2a). Comparing columns 2 and 4, both manu-
+facturers’ proﬁts remain roughly the same, while the
+retailer increases its proﬁt by 3.7% from the manufac-
+turers’ couponing eﬀorts. The proﬁt increase is higher
+thanthecasewhentheretailerissuescouponsbyitself,suggesting that the retailer is better oﬀ by simply out-
+sourcingthecustomizationofcouponstothemanufac-
+turers rather than proactively engaging in customiza-
+tion on its own. Consequently, the retailer’s optimal
+decision in the ﬁrst stage (see our discussion in the
+model section) is to share the customer information
+with the manufacturers and help them employ BPD.
+Since the information on customers’ most recent
+purchases belongs to the retailer, we further explore
+whether the retailer can gain additional proﬁt by
+charging manufacturers for access to the information,
+that is, if the retailer can serve as an information bro-
+ker and sell the information to manufacturers (as in
+Pancras and Sudhir 2007). To answer this question,
+we ﬁrst calculate the highest price that the retailer
+can charge each manufacturer, which is the manufac-
+turer’swillingnesstopay.WeemploytheNashequilib-
+rium solution concept as follows: The highest price to
+charge Coke is the additional proﬁt that Coke obtains,
+when both manufacturers engage in BPD (Table 1,
+Case2a,column4)relativetowhenonlyPepsiengages
+in BPD (Table 1, Case 2c, column 6). Similarly, the
+highest price to charge Pepsi is the additional proﬁt
+that Pepsi obtains in Case 2a relative to when only
+Coke engages in BPD (Table 1, Case 2b, column 5).
+The simulation results suggest that the retailer can
+charge $0.028 ( /equalx$0.229 $0.201) to Coke and $0.062
+(/equalx$0.472 $0.410) to Pepsi, per customer, for access to
+the information. As a result, the retailer will be much
+better oﬀ outsourcing targeted couponing to manufac-
+turers, with a net proﬁt of $1.057 ( /equalx$0.967 +$0.028
+Downloaded from informs.org by [129.79.197.145] on 12 May 2024, at 11:55 . For personal use only, all rights reserved. 
+
+
+Cosguner, Chan, and Seetharaman: BPD in the Presence of Switching Costs
+Marketing Science, 2017, vol. 36, no. 3, pp. 426–435, ©2017 INFORMS 433
++$0.062), which represents a 10.7% increase over the
+proﬁt obtained by managing BPD on its own, and
+13.4% higher than the proﬁt obtained in the No BPD
+case. In other words, serving as an information broker
+toselltransactionaldatatomanufacturerscanbeavital
+source of business proﬁt to the retailer. This ﬁnding
+is consistent with the ﬁndings in Pancras and Sudhir
+(2007), although they use a myopic pricing model in
+their study. Interestingly, this yields a net proﬁt of
+$0.201 and $0.410 for Coke and Pepsi, respectively,
+both lower than the proﬁts under Scenario 1. In other
+words, while the retailer beneﬁts from inducing man-
+ufacturers to engage in BPD, the manufacturers are
+worse oﬀ than under the case of no price discrimina-
+tion.9This is in contrast to the situation in Pancras and
+Sudhir (2007), where the authors ﬁnd that manufac-
+turers’proﬁtsalsoimprove.Thisdiﬀerenceisprobably
+because,whencustomershaveswitchingcostsinbrand
+choicesasinourmodel,theinformationbecomesmore
+valuabletomanufacturersforengaginginBPD;conse-
+quently, the retailer can charge a higher price for the
+information.
+The above results indicate that information on the
+customers’ most recent purchases can have a signiﬁ-
+cant proﬁt impact for the retailer and the manufactur-
+ers. We now explore a further question: Is there any
+more proﬁt gain from using the full customer pur-
+chasehistory?Toanswerthatquestion,weassumethat
+ﬁrmscanusethefullpurchasehistorytoinferthetrue
+segment membership of each customer in Scenario 3.
+Therefore, the retailer or manufacturers can oﬀer tar-
+geted coupons based on six types of customers (seg-
+ment 1, 2, or 3 customers who purchased own or the
+competitorbrandpreviously).SimilartoScenario2,we
+ﬁrststudythecasewhentheretaileroﬀerscustomized
+coupons to customers (Case 1). The results are shown
+in column 7 of Table 1. Compared with column 2,
+allowing the retailer to target based on the full pur-
+chasehistory,inadditiontothemostrecentpurchases,
+bring a 12.3% proﬁt increase for the retailer. We then
+simulatetheequilibriumoutcomesundertheassump-
+tion that the retailer shares customers’ full purchase
+histories(atnocharge)withthemanufacturersandlets
+themengageincouponing(Case2).Theproﬁtincrease
+for the retailer is 14.6% in this case. The results again
+suggest that the retailer is better oﬀ by outsourcing
+BPD to the two manufacturers rather than proactively
+engagingincustomizationonitsown.Fromthemanu-
+facturer perspective, BPD also beneﬁts them since the
+proﬁt increases by 2.6% for Coke and 23.5% for Pepsi.
+The gain for Coke is smaller since as a smaller brand
+in our data it has to cut its prices relatively more to be
+competitive.
+Finally, we also explore whether the above ﬁndings
+change if the retailer can charge manufacturers for
+accesstotheinformation.Resultsshowthattheretailercancharge$0.064( /equalx$0.235 $0.171)toCokeand$0.206
+(/equalx$0.588 $0.382) to Pepsi per customer. Therefore,
+similar to Scenario 2, the retailer is much better oﬀ
+from outsourcing the customized couponing strategy
+tomanufacturers,withanetproﬁtof$1.339( /equalx$1:069+
+$0:064+$0:206),whichrepresentsa27.8%increaseover
+theproﬁtobtainedbymanagingBPDonitsown.From
+the manufacturers’ perspective, compared to targeting
+based on most recent purchases, they become signif-
+icantly worse oﬀ, as Coke (Pepsi) loses an additional
+proﬁtof18.3%(7.6%).Overall,theresultsindicatethat
+having more information (a longer purchase history)
+brings signiﬁcantly more beneﬁt to the retailer but not
+to the manufacturers.
+The comparison of the proﬁt gains between Scenar-
+ios 2 and 3 suggests that, although the full purchase
+history of customers is more important to the retailer,
+theeconomicvalueoftheinformationonwhichbrands
+customers purchased previously is also signiﬁcant.
+Furthermore, to implement BPD based on the most
+recentpurchasesisoflowcosttotheretailerandman-
+ufacturers, as coupons for future purchases can be
+distributed at the checkout counter simply based on
+which brand a customer has purchased during that
+shopping trip. To implement BPD that is based on the
+fullpurchasehistory,however,requiresﬁrmstoaccess
+the customer database each time a customer makes
+a purchase. Implementing this strategy can be more
+costly to the retailer and manufacturers.
+Conclusions
+Westudybehavioralpricediscrimination(BPD),using
+targeted price-oﬀ coupons, within a distribution chan-
+nel in a market with switching costs. Our study delin-
+eates the separate strategic roles of the manufacturers
+andtheretailer.Fromtheretailer’sstandpoint,weﬁnd
+that the retailer should simply outsource the data ana-
+lytics and customization of coupons to manufacturers
+and improve its proﬁt beyond what it can achieve by
+proactively engaging in customization on its own. We
+further ﬁnd that serving as an information broker to
+sell its customer database to manufacturers can be a
+vital source of proﬁt to the retailer. By contrast, cola
+manufacturers end up worse oﬀ, illustrating that cus-
+tomer information is a potent source of channel power
+to the retailer in markets with switching costs. Finally,
+we show that simply using the information contained
+in customers’ most recent purchases can signiﬁcantly
+impact ﬁrms’ proﬁts. BPD based on this information
+is easy to implement and of low cost to manufacturers
+and retailers.
+Some caveats remain. We do not consider the case,
+usuallyconsideredintheliteratureonBPDandreﬂects
+many situations outside supermarket retailing (such
+as direct marketing), where each manufacturer only
+knows whether or not a customer has purchased their
+Downloaded from informs.org by [129.79.197.145] on 12 May 2024, at 11:55 . For personal use only, all rights reserved. 
+
+
+Cosguner, Chan, and Seetharaman: BPD in the Presence of Switching Costs
+434 Marketing Science, 2017, vol. 36, no. 3, pp. 426–435, ©2017 INFORMS
+brand and not which of competing brands (if any) are
+purchased when the focal brand is not purchased. We
+also assume that coupon redemption rates are equal
+across customer segments. In reality, it is possible
+that more price sensitive customers are more likely to
+redeem coupons. If such were the case, our key results
+(for example, that higher face value coupons must
+be dropped to more price sensitive customers) would
+be strengthened. To simplify the analysis, we assume
+that consumers are myopic in decision making. Future
+research may explore the implications for BPD of mar-
+kets with switching costs where strategic, forward-
+looking consumers exist. Additionally, we ignore the
+eﬀects of product inventory in the consumer’s pur-
+chase decision. This could potentially raise an addi-
+tional source of forward-looking behavior for con-
+sumers. Another interesting area for future research is
+to study how consumer preferences may evolve over
+time and how ignoring such preference evolution may
+change our ﬁndings. Finally, it is also important to
+studytheBPDstrategiesofretailersandmanufacturers
+when consumers are variety seeking.
+Acknowledgments
+This article is based on the ﬁrst author’s doctoral disserta-
+tion, written at Olin Business School under the supervision
+of the second and third authors. The authors thank semi-
+nar participants at Washington University in St. Louis, Geor-
+gia State University, Yale University, Rice University, Univer-
+sity of Alberta, Johns Hopkins University, Emory University,
+Carnegie Mellon University, Koç University, Sabancı Univer-
+sity, HEC Paris, and Özye ˇgin University for their comments
+and feedback on earlier versions of this article.
+Endnotes
+1We acknowledge that BPD, as deﬁned in the literature, would
+involve the retailer or manufacturer targeting each customer based
+on the customer’s unique posterior probabilities, which is not what
+we do in this scenario.
+2To check whether ignoring quantity has a signiﬁcant impact on
+the estimation results, we ﬁrst calculate the correlation between the
+market share based on purchase incidences and the market share
+based on quantity outcomes over the entire span of 104 weeks in
+the data, and ﬁnd that the correlation is very high at 0.92. We then
+conduct an independent sample t-test to check whether the mean of
+the two market shares (based on quantity and incidence outcomes)
+diﬀers, and ﬁnd no statistically signiﬁcant diﬀerence. We also con-
+duct a paired sample t-test to see whether the two market shares
+diﬀer in each week, and again ﬁnd no statistically signiﬁcant dif-
+ference. These results suggest that ignoring multiple unit purchases
+may not lead to a signiﬁcant bias in our estimation results. Finally,
+to test whether inventory holding impacts our model estimates, we
+estimateademandmodelwiththevariableofinventorythatiscalcu-
+lated from the weekly purchases and the average consumption level
+over the whole sample period from each household. We ﬁnd that
+theestimatedpriceandinertiacoeﬃcientsareverysimilarwithand
+without the inventory. To test the pricing implications of ignoring
+inventory,wealsosimulatethesteady-stateequilibriumpricesusing
+the estimates from the demand model with inventory. We ﬁnd no
+signiﬁcantdiﬀerencesintheequilibriumretailandwholesaleprices.3As shown in Villas-Boas (2004), if customers are forward-looking,
+they might change their purchase behaviors to avoid revealing their
+true preferences. Our study ignores this issue. Furthermore, house-
+holds buy more than one cola brand at the same time only on 6.9%
+of the purchase observations. If one looks only at Coke and Pepsi
+purchases,thispercentagefurtherdecreasesto4.7%.Therefore,mul-
+tiple brand buying is not a signiﬁcant aspect of our data.
+4Our model allows for three consumer segments, which is diﬀer-
+ent from their model (Cosguner et al. 2016) that only considers two
+segments.
+5We also estimate a four-segment model. The size of the additional
+segment is only 3.9%. As the proﬁt gains from price discriminating
+this segment would be limited to manufacturers and retailers, we
+focus the counterfactuals based on the three-segment model.
+6Our model assumes that consumer preferences are time-invariant.
+To test the validity of this assumption, we estimate our demand
+modelusingdatafromthesecondyearonly.Resultsshowthatmost
+of the estimates are similar to those obtained using the full two
+years of data. Speciﬁcally, the price and inertia coeﬃcients are simi-
+larunderbothcases.Still,therearesomediﬀerencesintheestimated
+brandpreferences.Weacknowledgethatchangingconsumerprefer-
+encescanbeapossibleexplanationfortheestimatedinertiainbrand
+choices.
+7We test this duopoly assumption by regressing the price of one
+brand on the prices of other brands. For Coke (Pepsi), the main
+competitor Pepsi’s (Coke’s) price explains 40.54% (40.54%) of its
+price variation. Adding the price of the private label in the regres-
+sion increases R-square by 5.56% for Pepsi and 1.67% for Coke, and
+addingthepriceofRoyalCrownfurtherincreases R-squareby6.07%
+for Pepsi and 1.83% for Coke. The results suggest that Coke only
+responds to Pepsi, and Pepsi mainly responds to Coke and to a
+lesserextentalsototheprivatelabelandRoyalCrown.Theduopoly
+assumption captures the fact that competition appears to be mainly
+between Coke and Pepsi in this market.
+8Tosavespacewedonotreportallestimationresults.Thefullresults
+are available from the authors on request.
+9These results are based on the assumption that the retailer com-
+mits not to issue customized coupons to customers. To investigate
+whether this is a reasonable assumption, we conduct another sim-
+ulation study, assuming that the retailer will also issue targeted
+coupons, after selling the information to the manufacturers. Results
+show that at the steady state equilibrium the retailer’s proﬁt will be
+lower (at $1.009). This is because, once manufacturers know that the
+retailer will also oﬀer customized coupons for their brands, they are
+not willing to pay such a high price for the customer information.
+Therefore, the retailer has an incentive to commit, when selling the
+information to the manufacturers, not to engage in BPD itself.
+References
+AcquisitiA,VarianH(2006)Conditioningpricesonpurchasehistory.
+Marketing Sci. 24(3):367–381.
+Besanko D, Dube JP, Gupta S (2003) Competitive price discrimina-
+tion strategies in a vertical channel using aggregate retail data.
+Management Sci. 49(9):1121–1138.
+Chen Y (1997) Paying customers to switch. J. Econom. Management
+Strategy6(4):877–897.
+Chen Y, Narasimhan C, Zhang ZJ (2001) Individual marketing with
+imperfect targetability. Marketing Sci. 20(1):23–41.
+Cosguner K, Chan T, Seetharaman PB (2016) Dynamic pricing in a
+distribution channel in the presence of switching costs. Man-
+agement Sci. , ePub ahead of print December 8, https://doi.org/
+10.1287/mnsc.2016.2649.
+Elrod T, Winer RS (1982) An empirical evaluation of aggrega-
+tion approaches for developing market segments. J. Marketing
+46(4):65–74.
+Fudenberg D, Tirole J (2000) Customer poaching and brand switch-
+ing.RAND J. Econom. 31(4):634–657.
+Downloaded from informs.org by [129.79.197.145] on 12 May 2024, at 11:55 . For personal use only, all rights reserved. 
+
+
+Cosguner, Chan, and Seetharaman: BPD in the Presence of Switching Costs
+Marketing Science, 2017, vol. 36, no. 3, pp. 426–435, ©2017 INFORMS 435
+FudenbergD,Villas-BoasJM(2006)Behavior-basedpricediscrimina-
+tionandcustomerrecognition.HendershottT,ed. Economics and
+Information Systems , Vol. 1 (Emerald Group Publishing, Bingley,
+UK), 377–436.
+GlazerR(1991)Marketinginaninformation-intensiveenvironment.
+J. Marketing 6(4):877–897.
+Liu Y, Zhang ZJ (2006) The beneﬁts of personalized pricing in a
+channel. Marketing Sci. 25(1):97–105.
+PakesA,McGuireP(1994)ComputingMarkov-perfectNashequilib-
+ria.RAND J. Econom. 25(4):555–589.
+Pancras J, Sudhir K (2007) Optimal marketing strategies for a cus-
+tomer data intermediary. J. Marketing Res. 44(4):560–578.
+PazgalA,SobermanD(2008)Behavior-baseddiscrimination. Market-
+ing Sci.27(6):977–994.
+Rossi PE, McCulloch RE, Allenby GM (1996) The value of purchase
+history data in target marketing. Marketing Sci. 15(4):321–340.
+Seetharaman PB (2004) Modeling multiple sources of state depen-
+dence in random utility models. Marketing Sci. 23(2):263–271.Seetharaman PB, Ainslie A, Chintagunta PK (1999) Investigating
+household state dependence eﬀects across categories. J. Market-
+ing Res.36(4):488–500.
+Shaﬀer G, Zhang ZJ (1995) Competitive coupon targeting. Marketing
+Sci.14(4):395–416.
+Shaﬀer G, Zhang ZJ (2000) Pay to switch or pay to stay: Preference-
+based price discrimination in markets with switching costs.
+J. Econom. Management Strategy 9(3):397–424.
+Shin J, Sudhir K (2010) A customer management dilemma: When
+is it proﬁtable to reward one’s own customers? Marketing Sci.
+29(4):671–689.
+TaylorCR(2003)Suppliersurﬁng:Competitionandconsumerbehav-
+ior in subscription markets. RAND J. Econom. 34(2):223–246.
+Villas-Boas JM (1999) Dynamic competition with customer recogni-
+tion. RAND J. Econom. 30(4):604–631.
+Villas-BoasJM(2004)Pricecyclesinmarketswithcustomerrecogni-
+tion. RAND J. Econom. 35(3):486–501.
+Downloaded from informs.org by [129.79.197.145] on 12 May 2024, at 11:55 . For personal use only, all rights reserved. 
+
+
