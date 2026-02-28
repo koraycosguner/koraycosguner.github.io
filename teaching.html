@@ -311,26 +311,32 @@
 
         .course-meta {
             display: flex;
-            align-items: baseline;
-            gap: 14px;
+            align-items: center;
+            gap: 0;
             flex-shrink: 0;
         }
         .course-rating {
             display: flex;
             align-items: center;
+            justify-content: flex-end;
             gap: 4px;
             font-size: 0.82rem;
             font-weight: 500;
             color: var(--text-sub);
+            width: 85px;
+            text-align: right;
         }
         .course-rating svg {
             color: #f59e0b;
+            flex-shrink: 0;
         }
         .course-year {
             font-size: 0.82rem;
             font-weight: 500;
             color: var(--text-light);
             white-space: nowrap;
+            width: 105px;
+            text-align: right;
         }
 
         /* Testimonials */
