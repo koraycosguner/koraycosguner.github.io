@@ -94,6 +94,10 @@
             text-decoration: none;
             letter-spacing: -0.03em;
         }
+        .nav-links {
+            display: flex;
+            align-items: center;
+        }
         .nav-links a {
             margin-left: 28px;
             text-decoration: none;
@@ -430,18 +434,14 @@
         }
 
         .quote-icon {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 40px;
-            height: 40px;
-            border-radius: var(--radius-md);
-            background: linear-gradient(135deg, var(--primary-light), rgba(153,0,0,0.06));
+            font-family: Georgia, 'Times New Roman', serif;
+            font-size: 3.5rem;
+            line-height: 0.8;
             color: var(--primary);
-            margin-bottom: 16px;
-        }
-        .quote-icon svg {
-            opacity: 0.6;
+            opacity: 0.15;
+            display: block;
+            margin-bottom: 8px;
+            user-select: none;
         }
 
         /* Show more button */
@@ -561,6 +561,10 @@
             .nav-links a:last-child {
                 border-bottom: none;
             }
+            .nav-links .font-size-controls {
+                padding: 8px 0;
+                border-bottom: 1px solid var(--border);
+            }
             .nav-container {
                 position: relative;
             }
@@ -600,7 +604,6 @@
             display: flex;
             align-items: center;
             gap: 2px;
-            margin-right: 10px;
             border: 1px solid rgba(153,0,0,0.12);
             border-radius: var(--radius-full);
             padding: 3px;
@@ -659,7 +662,7 @@
             letter-spacing: -0.02em;
         }
         @media (max-width: 640px) {
-            .font-size-controls { margin-right: 4px; }
+            .font-size-controls { margin: 0; }
         }
 
         /* Back-to-top button */
@@ -701,18 +704,16 @@
                 <img src="iu-logo.png" alt="IU Logo" style="height: 32px;">
                 <a href="index.html" class="brand">Koray Cosguner</a>
             </div>
-            <div style="display: flex; align-items: center;">
+            <div class="nav-toggle" onclick="document.querySelector('.nav-links').classList.toggle('active')">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+            <div class="nav-links">
                 <div class="font-size-controls">
                     <button class="font-size-btn decrease-a" onclick="adjustFontSize(-1)" title="Decrease text size">A</button>
                     <button class="font-size-btn increase-a" onclick="adjustFontSize(1)" title="Increase text size">A</button>
                 </div>
-                <div class="nav-toggle" onclick="document.querySelector('.nav-links').classList.toggle('active')">
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                </div>
-            </div>
-            <div class="nav-links">
                 <a href="index.html">Home</a>
                 <a href="research.html">Research</a>
                 <a href="teaching.html" class="active">Teaching</a>
@@ -866,62 +867,62 @@
     <div class="testimonials-section">
         <div class="container">
             <div class="section-header">
-                <h2 class="section-title">Selected Comments from Students</h2>
+                <h2 class="section-title">Student Testimonials</h2>
             </div>
 
             <div class="testimonial-grid">
 
                 <div class="testimonial-card fade-in">
-                    <svg class="quote-icon" xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="currentColor"><path d="M11.3 2.5c-4.15 1.83-7.3 5.72-7.3 10.5 0 2.76 2.24 5 5 5s5-2.24 5-5-2.24-5-5-5c-.93 0-1.8.26-2.55.7C7.4 5.55 9.36 3.73 11.97 2.83l-.67-.33zm11 0c-4.15 1.83-7.3 5.72-7.3 10.5 0 2.76 2.24 5 5 5s5-2.24 5-5-2.24-5-5-5c-.93 0-1.8.26-2.55.7C18.4 5.55 20.36 3.73 22.97 2.83l-.67-.33z"/></svg>
-                    <blockquote class="testimonial-quote">
-                        <p>I loved Dr C! He is one of the best professors I have had. He made sure that everything was explained clearly and to the point. He spent so much time ensuring that we were prepared and would go above and beyond with providing extra help. The class is challenging, but like all things, with time and practice it is very doable. Dr C. is so accessible and helped all students. He is so kind and cares tremendously about his students which is so evident. I would definitely recommend that everyone takes a class with him.</p>
-                    </blockquote>
-                </div>
-
-                <div class="testimonial-card fade-in">
-                    <svg class="quote-icon" xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="currentColor"><path d="M11.3 2.5c-4.15 1.83-7.3 5.72-7.3 10.5 0 2.76 2.24 5 5 5s5-2.24 5-5-2.24-5-5-5c-.93 0-1.8.26-2.55.7C7.4 5.55 9.36 3.73 11.97 2.83l-.67-.33zm11 0c-4.15 1.83-7.3 5.72-7.3 10.5 0 2.76 2.24 5 5 5s5-2.24 5-5-2.24-5-5-5c-.93 0-1.8.26-2.55.7C18.4 5.55 20.36 3.73 22.97 2.83l-.67-.33z"/></svg>
-                    <blockquote class="testimonial-quote">
-                        <p>Koray is the best professor I had this semester. He is one of the few Kelley professors that is clearly VERY passionate about the material he teaches. The examples are very relatable, which makes the class more interesting. Furthermore, Koray's Canvas is meticulous. All the materials needed for success are available to students ranging from tutorial videos, to class slides, and answer keys. Finally, Koray is a good man &ndash; he understands the needs of his students, shows compassion, and is always available. Koray is an invaluable part of the Kelley community, and I am thankful that I got to experience him this semester. Thank you!</p>
-                    </blockquote>
-                </div>
-
-                <div class="testimonial-card fade-in">
-                    <svg class="quote-icon" xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="currentColor"><path d="M11.3 2.5c-4.15 1.83-7.3 5.72-7.3 10.5 0 2.76 2.24 5 5 5s5-2.24 5-5-2.24-5-5-5c-.93 0-1.8.26-2.55.7C7.4 5.55 9.36 3.73 11.97 2.83l-.67-.33zm11 0c-4.15 1.83-7.3 5.72-7.3 10.5 0 2.76 2.24 5 5 5s5-2.24 5-5-2.24-5-5-5c-.93 0-1.8.26-2.55.7C18.4 5.55 20.36 3.73 22.97 2.83l-.67-.33z"/></svg>
-                    <blockquote class="testimonial-quote">
-                        <p>Clear, concise, important, relevant, efficient. Very much appreciated the lack of fluff: like a 'lean' manufacturing site, this course's readings and lectures were streamlined to produce the most effect (for us) with the least effort (on our part). O, how I wish other classes were this well prepared and taught! It was obvious that the professor cared not only about the course material and pedagogy but also about the students. Give this man a raise! He earns it!</p>
-                    </blockquote>
-                </div>
-
-                <div class="testimonial-card fade-in">
-                    <svg class="quote-icon" xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="currentColor"><path d="M11.3 2.5c-4.15 1.83-7.3 5.72-7.3 10.5 0 2.76 2.24 5 5 5s5-2.24 5-5-2.24-5-5-5c-.93 0-1.8.26-2.55.7C7.4 5.55 9.36 3.73 11.97 2.83l-.67-.33zm11 0c-4.15 1.83-7.3 5.72-7.3 10.5 0 2.76 2.24 5 5 5s5-2.24 5-5-2.24-5-5-5c-.93 0-1.8.26-2.55.7C18.4 5.55 20.36 3.73 22.97 2.83l-.67-.33z"/></svg>
-                    <blockquote class="testimonial-quote">
-                        <p>Dr. Koray Cosguner &ndash; you are an extremely intelligent professor who knows the inside out of the material. Your passion for the class, as well as your students' learning, is very clear through your teaching. Thank you for making a challenging class something to look forward to. Thank you for emphasizing the learning aspect of school by using grading as an encouraging tool. Thank you for being eager to answer any questions and making time for us to ask questions in office hours.</p>
-                    </blockquote>
-                </div>
-
-                <div class="testimonial-card fade-in">
-                    <svg class="quote-icon" xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="currentColor"><path d="M11.3 2.5c-4.15 1.83-7.3 5.72-7.3 10.5 0 2.76 2.24 5 5 5s5-2.24 5-5-2.24-5-5-5c-.93 0-1.8.26-2.55.7C7.4 5.55 9.36 3.73 11.97 2.83l-.67-.33zm11 0c-4.15 1.83-7.3 5.72-7.3 10.5 0 2.76 2.24 5 5 5s5-2.24 5-5-2.24-5-5-5c-.93 0-1.8.26-2.55.7C18.4 5.55 20.36 3.73 22.97 2.83l-.67-.33z"/></svg>
+                    <span class="quote-icon">&ldquo;</span>
                     <blockquote class="testimonial-quote">
                         <p>He was truly one of the best professors I've had at IU. He was very receptive to student feedback, clearly cared a lot about student success, and was constantly going the extra mile for us. I am so glad I took his course!</p>
                     </blockquote>
                 </div>
 
                 <div class="testimonial-card fade-in">
-                    <svg class="quote-icon" xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="currentColor"><path d="M11.3 2.5c-4.15 1.83-7.3 5.72-7.3 10.5 0 2.76 2.24 5 5 5s5-2.24 5-5-2.24-5-5-5c-.93 0-1.8.26-2.55.7C7.4 5.55 9.36 3.73 11.97 2.83l-.67-.33zm11 0c-4.15 1.83-7.3 5.72-7.3 10.5 0 2.76 2.24 5 5 5s5-2.24 5-5-2.24-5-5-5c-.93 0-1.8.26-2.55.7C18.4 5.55 20.36 3.73 22.97 2.83l-.67-.33z"/></svg>
+                    <span class="quote-icon">&ldquo;</span>
+                    <blockquote class="testimonial-quote">
+                        <p>Koray is the best professor I had this semester. He is one of the few Kelley professors that is clearly VERY passionate about the material he teaches. The examples are very relatable, which makes the class more interesting. Furthermore, Koray's Canvas is meticulous. All the materials needed for success are available to students ranging from tutorial videos, to class slides, and answer keys. Finally, Koray is a good man &ndash; he understands the needs of his students, shows compassion, and is always available. Koray is an invaluable part of the Kelley community, and I am thankful that I got to experience him this semester. Thank you!</p>
+                    </blockquote>
+                </div>
+
+                <div class="testimonial-card fade-in">
+                    <span class="quote-icon">&ldquo;</span>
+                    <blockquote class="testimonial-quote">
+                        <p>Clear, concise, important, relevant, efficient. Very much appreciated the lack of fluff: like a 'lean' manufacturing site, this course's readings and lectures were streamlined to produce the most effect (for us) with the least effort (on our part). O, how I wish other classes were this well prepared and taught! It was obvious that the professor cared not only about the course material and pedagogy but also about the students. Give this man a raise! He earns it!</p>
+                    </blockquote>
+                </div>
+
+                <div class="testimonial-card fade-in">
+                    <span class="quote-icon">&ldquo;</span>
+                    <blockquote class="testimonial-quote">
+                        <p>Dr. Koray Cosguner &ndash; you are an extremely intelligent professor who knows the inside out of the material. Your passion for the class, as well as your students' learning, is very clear through your teaching. Thank you for making a challenging class something to look forward to. Thank you for emphasizing the learning aspect of school by using grading as an encouraging tool. Thank you for being eager to answer any questions and making time for us to ask questions in office hours.</p>
+                    </blockquote>
+                </div>
+
+                <div class="testimonial-card fade-in">
+                    <span class="quote-icon">&ldquo;</span>
+                    <blockquote class="testimonial-quote">
+                        <p>I loved Dr C! He is one of the best professors I have had. He made sure that everything was explained clearly and to the point. He spent so much time ensuring that we were prepared and would go above and beyond with providing extra help. The class is challenging, but like all things, with time and practice it is very doable. Dr C. is so accessible and helped all students. He is so kind and cares tremendously about his students which is so evident. I would definitely recommend that everyone takes a class with him.</p>
+                    </blockquote>
+                </div>
+
+                <div class="testimonial-card fade-in">
+                    <span class="quote-icon">&ldquo;</span>
                     <blockquote class="testimonial-quote">
                         <p>Professor Cosguner was one of the best instructors I've had at IU. The course was extremely challenging and I think he understood that. That understanding translated to him providing amazing help and teaching, to make the course as navigable as possible.</p>
                     </blockquote>
                 </div>
 
                 <div class="testimonial-card fade-in">
-                    <svg class="quote-icon" xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="currentColor"><path d="M11.3 2.5c-4.15 1.83-7.3 5.72-7.3 10.5 0 2.76 2.24 5 5 5s5-2.24 5-5-2.24-5-5-5c-.93 0-1.8.26-2.55.7C7.4 5.55 9.36 3.73 11.97 2.83l-.67-.33zm11 0c-4.15 1.83-7.3 5.72-7.3 10.5 0 2.76 2.24 5 5 5s5-2.24 5-5-2.24-5-5-5c-.93 0-1.8.26-2.55.7C18.4 5.55 20.36 3.73 22.97 2.83l-.67-.33z"/></svg>
+                    <span class="quote-icon">&ldquo;</span>
                     <blockquote class="testimonial-quote">
                         <p>Professor Cosguner was amazing!! I was so nervous about this class but he is a very reasonable and kind professor while still getting all the knowledge and learning objectives across. Kelley would benefit greatly from keeping him on their staff.</p>
                     </blockquote>
                 </div>
 
                 <div class="testimonial-card fade-in">
-                    <svg class="quote-icon" xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="currentColor"><path d="M11.3 2.5c-4.15 1.83-7.3 5.72-7.3 10.5 0 2.76 2.24 5 5 5s5-2.24 5-5-2.24-5-5-5c-.93 0-1.8.26-2.55.7C7.4 5.55 9.36 3.73 11.97 2.83l-.67-.33zm11 0c-4.15 1.83-7.3 5.72-7.3 10.5 0 2.76 2.24 5 5 5s5-2.24 5-5-2.24-5-5-5c-.93 0-1.8.26-2.55.7C18.4 5.55 20.36 3.73 22.97 2.83l-.67-.33z"/></svg>
+                    <span class="quote-icon">&ldquo;</span>
                     <blockquote class="testimonial-quote">
                         <p>I strongly believe that Professor Cosguner genuinely cares about the well-being of each and every one of his students. Everything he says about genuinely wanting to improve his class so that students are able to succeed. Despite how difficult the course content is, Professor has adapted his teaching styles and taken additional time to upload additional help outside of the classroom so that we have access to more resources.</p>
                     </blockquote>
@@ -934,112 +935,112 @@
                 <div class="testimonial-grid" style="margin-top: 20px;">
 
                     <div class="testimonial-card fade-in">
-                        <svg class="quote-icon" xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="currentColor"><path d="M11.3 2.5c-4.15 1.83-7.3 5.72-7.3 10.5 0 2.76 2.24 5 5 5s5-2.24 5-5-2.24-5-5-5c-.93 0-1.8.26-2.55.7C7.4 5.55 9.36 3.73 11.97 2.83l-.67-.33zm11 0c-4.15 1.83-7.3 5.72-7.3 10.5 0 2.76 2.24 5 5 5s5-2.24 5-5-2.24-5-5-5c-.93 0-1.8.26-2.55.7C18.4 5.55 20.36 3.73 22.97 2.83l-.67-.33z"/></svg>
+                        <span class="quote-icon">&ldquo;</span>
                         <blockquote class="testimonial-quote">
                             <p>This professor is one of the best professors I have ever had!!! He was very understanding, and took the time to help all students understand the topics.</p>
                         </blockquote>
                     </div>
 
                     <div class="testimonial-card fade-in">
-                        <svg class="quote-icon" xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="currentColor"><path d="M11.3 2.5c-4.15 1.83-7.3 5.72-7.3 10.5 0 2.76 2.24 5 5 5s5-2.24 5-5-2.24-5-5-5c-.93 0-1.8.26-2.55.7C7.4 5.55 9.36 3.73 11.97 2.83l-.67-.33zm11 0c-4.15 1.83-7.3 5.72-7.3 10.5 0 2.76 2.24 5 5 5s5-2.24 5-5-2.24-5-5-5c-.93 0-1.8.26-2.55.7C18.4 5.55 20.36 3.73 22.97 2.83l-.67-.33z"/></svg>
+                        <span class="quote-icon">&ldquo;</span>
                         <blockquote class="testimonial-quote">
                             <p>My favorite instructor ever he really cares about the success of his students and really wants us to do well.</p>
                         </blockquote>
                     </div>
 
                     <div class="testimonial-card fade-in">
-                        <svg class="quote-icon" xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="currentColor"><path d="M11.3 2.5c-4.15 1.83-7.3 5.72-7.3 10.5 0 2.76 2.24 5 5 5s5-2.24 5-5-2.24-5-5-5c-.93 0-1.8.26-2.55.7C7.4 5.55 9.36 3.73 11.97 2.83l-.67-.33zm11 0c-4.15 1.83-7.3 5.72-7.3 10.5 0 2.76 2.24 5 5 5s5-2.24 5-5-2.24-5-5-5c-.93 0-1.8.26-2.55.7C18.4 5.55 20.36 3.73 22.97 2.83l-.67-.33z"/></svg>
+                        <span class="quote-icon">&ldquo;</span>
                         <blockquote class="testimonial-quote">
                             <p>He is a FANTASTIC professor and I have recommended him to anyone I know. Such a great guy and so understanding of students.</p>
                         </blockquote>
                     </div>
 
                     <div class="testimonial-card fade-in">
-                        <svg class="quote-icon" xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="currentColor"><path d="M11.3 2.5c-4.15 1.83-7.3 5.72-7.3 10.5 0 2.76 2.24 5 5 5s5-2.24 5-5-2.24-5-5-5c-.93 0-1.8.26-2.55.7C7.4 5.55 9.36 3.73 11.97 2.83l-.67-.33zm11 0c-4.15 1.83-7.3 5.72-7.3 10.5 0 2.76 2.24 5 5 5s5-2.24 5-5-2.24-5-5-5c-.93 0-1.8.26-2.55.7C18.4 5.55 20.36 3.73 22.97 2.83l-.67-.33z"/></svg>
+                        <span class="quote-icon">&ldquo;</span>
                         <blockquote class="testimonial-quote">
                             <p>I loved Professor Cosguner. It was very clear he truly wanted all of his students to succeed. He made himself very accessible and recorded many videos for us to watch. I also loved how he made the practice tests similar to the exams because that meant if you took the time to study ahead, you were prepared for the tests. I will recommend Professor Cosguner to anyone who is looking to take this class.</p>
                         </blockquote>
                     </div>
 
                     <div class="testimonial-card fade-in">
-                        <svg class="quote-icon" xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="currentColor"><path d="M11.3 2.5c-4.15 1.83-7.3 5.72-7.3 10.5 0 2.76 2.24 5 5 5s5-2.24 5-5-2.24-5-5-5c-.93 0-1.8.26-2.55.7C7.4 5.55 9.36 3.73 11.97 2.83l-.67-.33zm11 0c-4.15 1.83-7.3 5.72-7.3 10.5 0 2.76 2.24 5 5 5s5-2.24 5-5-2.24-5-5-5c-.93 0-1.8.26-2.55.7C18.4 5.55 20.36 3.73 22.97 2.83l-.67-.33z"/></svg>
+                        <span class="quote-icon">&ldquo;</span>
                         <blockquote class="testimonial-quote">
                             <p>Professor Cosguner is really committed to making sure students succeed. I appreciated how he took feedback from the middle of the semester and implemented it in the second half of the semester. He's very enthusiastic about the material and making sure we understand. I was nervous about taking this course because I'm not good with analytical things but I'm glad he was my professor. He's also unintentionally very funny. He's an amazing Kelley professor!</p>
                         </blockquote>
                     </div>
 
                     <div class="testimonial-card fade-in">
-                        <svg class="quote-icon" xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="currentColor"><path d="M11.3 2.5c-4.15 1.83-7.3 5.72-7.3 10.5 0 2.76 2.24 5 5 5s5-2.24 5-5-2.24-5-5-5c-.93 0-1.8.26-2.55.7C7.4 5.55 9.36 3.73 11.97 2.83l-.67-.33zm11 0c-4.15 1.83-7.3 5.72-7.3 10.5 0 2.76 2.24 5 5 5s5-2.24 5-5-2.24-5-5-5c-.93 0-1.8.26-2.55.7C18.4 5.55 20.36 3.73 22.97 2.83l-.67-.33z"/></svg>
+                        <span class="quote-icon">&ldquo;</span>
                         <blockquote class="testimonial-quote">
                             <p>What I truly enjoyed about this class was the instructor. I have never had a professor be so focused on making sure they were doing everything they could to help students. The fact that the professor offered a midterm instructor feedback survey and then implemented the feedback immediately was incredible!</p>
                         </blockquote>
                     </div>
 
                     <div class="testimonial-card fade-in">
-                        <svg class="quote-icon" xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="currentColor"><path d="M11.3 2.5c-4.15 1.83-7.3 5.72-7.3 10.5 0 2.76 2.24 5 5 5s5-2.24 5-5-2.24-5-5-5c-.93 0-1.8.26-2.55.7C7.4 5.55 9.36 3.73 11.97 2.83l-.67-.33zm11 0c-4.15 1.83-7.3 5.72-7.3 10.5 0 2.76 2.24 5 5 5s5-2.24 5-5-2.24-5-5-5c-.93 0-1.8.26-2.55.7C18.4 5.55 20.36 3.73 22.97 2.83l-.67-.33z"/></svg>
+                        <span class="quote-icon">&ldquo;</span>
                         <blockquote class="testimonial-quote">
                             <p>He worked very well with his students and did everything and anything he could for us to succeed in this class. I really appreciated this, and I think this was the most flexible professor I have ever had at IU. He is also a very kind and understanding person.</p>
                         </blockquote>
                     </div>
 
                     <div class="testimonial-card fade-in">
-                        <svg class="quote-icon" xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="currentColor"><path d="M11.3 2.5c-4.15 1.83-7.3 5.72-7.3 10.5 0 2.76 2.24 5 5 5s5-2.24 5-5-2.24-5-5-5c-.93 0-1.8.26-2.55.7C7.4 5.55 9.36 3.73 11.97 2.83l-.67-.33zm11 0c-4.15 1.83-7.3 5.72-7.3 10.5 0 2.76 2.24 5 5 5s5-2.24 5-5-2.24-5-5-5c-.93 0-1.8.26-2.55.7C18.4 5.55 20.36 3.73 22.97 2.83l-.67-.33z"/></svg>
+                        <span class="quote-icon">&ldquo;</span>
                         <blockquote class="testimonial-quote">
                             <p>Professor Cosguner is amazing. He wants his students to succeed and works hard to make sure they have the tools to do so. He is so patient and is willing to explain things multiple times until we understand.</p>
                         </blockquote>
                     </div>
 
                     <div class="testimonial-card fade-in">
-                        <svg class="quote-icon" xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="currentColor"><path d="M11.3 2.5c-4.15 1.83-7.3 5.72-7.3 10.5 0 2.76 2.24 5 5 5s5-2.24 5-5-2.24-5-5-5c-.93 0-1.8.26-2.55.7C7.4 5.55 9.36 3.73 11.97 2.83l-.67-.33zm11 0c-4.15 1.83-7.3 5.72-7.3 10.5 0 2.76 2.24 5 5 5s5-2.24 5-5-2.24-5-5-5c-.93 0-1.8.26-2.55.7C18.4 5.55 20.36 3.73 22.97 2.83l-.67-.33z"/></svg>
+                        <span class="quote-icon">&ldquo;</span>
                         <blockquote class="testimonial-quote">
                             <p>Professor Cosguner put in so much effort to make sure that our class learned the material. He gave multiple help sessions and office hours as well as practice assignments to prepare us for the exams and material. Cosguner was always available for help with any questions and was able to explain the topic easily and enthusiastically. Cosguner had a passion for the subject matter as well as teaching the subject and went above and beyond to make sure students learned the material.</p>
                         </blockquote>
                     </div>
 
                     <div class="testimonial-card fade-in">
-                        <svg class="quote-icon" xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="currentColor"><path d="M11.3 2.5c-4.15 1.83-7.3 5.72-7.3 10.5 0 2.76 2.24 5 5 5s5-2.24 5-5-2.24-5-5-5c-.93 0-1.8.26-2.55.7C7.4 5.55 9.36 3.73 11.97 2.83l-.67-.33zm11 0c-4.15 1.83-7.3 5.72-7.3 10.5 0 2.76 2.24 5 5 5s5-2.24 5-5-2.24-5-5-5c-.93 0-1.8.26-2.55.7C18.4 5.55 20.36 3.73 22.97 2.83l-.67-.33z"/></svg>
+                        <span class="quote-icon">&ldquo;</span>
                         <blockquote class="testimonial-quote">
                             <p>Professor Cosguner was outstanding. He explained the material very well and was always open to answers any questions. He was very responsive to student feedback throughout the semester and adapted accordingly. He truly wants his students to learn.</p>
                         </blockquote>
                     </div>
 
                     <div class="testimonial-card fade-in">
-                        <svg class="quote-icon" xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="currentColor"><path d="M11.3 2.5c-4.15 1.83-7.3 5.72-7.3 10.5 0 2.76 2.24 5 5 5s5-2.24 5-5-2.24-5-5-5c-.93 0-1.8.26-2.55.7C7.4 5.55 9.36 3.73 11.97 2.83l-.67-.33zm11 0c-4.15 1.83-7.3 5.72-7.3 10.5 0 2.76 2.24 5 5 5s5-2.24 5-5-2.24-5-5-5c-.93 0-1.8.26-2.55.7C18.4 5.55 20.36 3.73 22.97 2.83l-.67-.33z"/></svg>
+                        <span class="quote-icon">&ldquo;</span>
                         <blockquote class="testimonial-quote">
                             <p>I feel that I learned more applicable material with him then I would have with other professors.</p>
                         </blockquote>
                     </div>
 
                     <div class="testimonial-card fade-in">
-                        <svg class="quote-icon" xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="currentColor"><path d="M11.3 2.5c-4.15 1.83-7.3 5.72-7.3 10.5 0 2.76 2.24 5 5 5s5-2.24 5-5-2.24-5-5-5c-.93 0-1.8.26-2.55.7C7.4 5.55 9.36 3.73 11.97 2.83l-.67-.33zm11 0c-4.15 1.83-7.3 5.72-7.3 10.5 0 2.76 2.24 5 5 5s5-2.24 5-5-2.24-5-5-5c-.93 0-1.8.26-2.55.7C18.4 5.55 20.36 3.73 22.97 2.83l-.67-.33z"/></svg>
+                        <span class="quote-icon">&ldquo;</span>
                         <blockquote class="testimonial-quote">
                             <p>Considering this course was online, I felt that this class was the most interactive and student focused course that I have taken.</p>
                         </blockquote>
                     </div>
 
                     <div class="testimonial-card fade-in">
-                        <svg class="quote-icon" xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="currentColor"><path d="M11.3 2.5c-4.15 1.83-7.3 5.72-7.3 10.5 0 2.76 2.24 5 5 5s5-2.24 5-5-2.24-5-5-5c-.93 0-1.8.26-2.55.7C7.4 5.55 9.36 3.73 11.97 2.83l-.67-.33zm11 0c-4.15 1.83-7.3 5.72-7.3 10.5 0 2.76 2.24 5 5 5s5-2.24 5-5-2.24-5-5-5c-.93 0-1.8.26-2.55.7C18.4 5.55 20.36 3.73 22.97 2.83l-.67-.33z"/></svg>
+                        <span class="quote-icon">&ldquo;</span>
                         <blockquote class="testimonial-quote">
                             <p>You clearly care for your students. Asking us for feedback half way through the semester, addressing it, and then taking our feedback and implementing it was really refreshing and really helpful. Clear practice tests were great too.</p>
                         </blockquote>
                     </div>
 
                     <div class="testimonial-card fade-in">
-                        <svg class="quote-icon" xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="currentColor"><path d="M11.3 2.5c-4.15 1.83-7.3 5.72-7.3 10.5 0 2.76 2.24 5 5 5s5-2.24 5-5-2.24-5-5-5c-.93 0-1.8.26-2.55.7C7.4 5.55 9.36 3.73 11.97 2.83l-.67-.33zm11 0c-4.15 1.83-7.3 5.72-7.3 10.5 0 2.76 2.24 5 5 5s5-2.24 5-5-2.24-5-5-5c-.93 0-1.8.26-2.55.7C18.4 5.55 20.36 3.73 22.97 2.83l-.67-.33z"/></svg>
+                        <span class="quote-icon">&ldquo;</span>
                         <blockquote class="testimonial-quote">
                             <p>He is the best!! I learned so much in this class and he loved teaching it.</p>
                         </blockquote>
                     </div>
 
                     <div class="testimonial-card fade-in">
-                        <svg class="quote-icon" xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="currentColor"><path d="M11.3 2.5c-4.15 1.83-7.3 5.72-7.3 10.5 0 2.76 2.24 5 5 5s5-2.24 5-5-2.24-5-5-5c-.93 0-1.8.26-2.55.7C7.4 5.55 9.36 3.73 11.97 2.83l-.67-.33zm11 0c-4.15 1.83-7.3 5.72-7.3 10.5 0 2.76 2.24 5 5 5s5-2.24 5-5-2.24-5-5-5c-.93 0-1.8.26-2.55.7C18.4 5.55 20.36 3.73 22.97 2.83l-.67-.33z"/></svg>
+                        <span class="quote-icon">&ldquo;</span>
                         <blockquote class="testimonial-quote">
                             <p>Amazing professor that truly cares about his students success.</p>
                         </blockquote>
                     </div>
 
                     <div class="testimonial-card fade-in">
-                        <svg class="quote-icon" xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="currentColor"><path d="M11.3 2.5c-4.15 1.83-7.3 5.72-7.3 10.5 0 2.76 2.24 5 5 5s5-2.24 5-5-2.24-5-5-5c-.93 0-1.8.26-2.55.7C7.4 5.55 9.36 3.73 11.97 2.83l-.67-.33zm11 0c-4.15 1.83-7.3 5.72-7.3 10.5 0 2.76 2.24 5 5 5s5-2.24 5-5-2.24-5-5-5c-.93 0-1.8.26-2.55.7C18.4 5.55 20.36 3.73 22.97 2.83l-.67-.33z"/></svg>
+                        <span class="quote-icon">&ldquo;</span>
                         <blockquote class="testimonial-quote">
                             <p>This was one of my favorite professors this year. I really enjoyed and appreciated how each class was set up and how we were able to try examples on our own during class then go through them together.</p>
                         </blockquote>
