@@ -636,7 +636,7 @@
         .font-size-controls {
             display: flex;
             align-items: center;
-            gap: 3px;
+            gap: 2px;
             margin-right: 10px;
             border: 1px solid rgba(153,0,0,0.12);
             border-radius: var(--radius-full);
@@ -645,58 +645,58 @@
             backdrop-filter: blur(8px);
             -webkit-backdrop-filter: blur(8px);
             box-shadow: 0 1px 4px rgba(0,0,0,0.06), inset 0 1px 0 rgba(255,255,255,0.8);
-            position: relative;
-        }
-        .font-size-controls::before {
-            content: 'Aa';
-            position: absolute;
-            left: -26px;
-            font-size: 0.7rem;
-            font-weight: 600;
-            color: var(--text-muted);
-            letter-spacing: 0.02em;
         }
         .font-size-btn {
             border: none;
             background: transparent;
             cursor: pointer;
-            font-weight: 700;
+            font-weight: 800;
             color: var(--text-light);
             border-radius: var(--radius-full);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
             font-family: inherit;
             line-height: 1;
             display: flex;
             align-items: center;
             justify-content: center;
-            width: 30px;
-            height: 30px;
+            width: 32px;
+            height: 32px;
             position: relative;
+            user-select: none;
         }
         .font-size-btn:hover {
             color: var(--primary);
             background: rgba(153,0,0,0.08);
-            transform: scale(1.08);
         }
-        .font-size-btn.active {
-            background: linear-gradient(135deg, var(--primary), #b91c1c);
-            color: white;
-            box-shadow: 0 2px 8px rgba(153,0,0,0.35), 0 1px 2px rgba(153,0,0,0.2);
-            transform: scale(1.05);
+        .font-size-btn:active {
+            transform: scale(0.9);
+            background: rgba(153,0,0,0.15);
+            color: var(--primary);
         }
-        .font-size-btn.active:hover {
-            transform: scale(1.1);
-            box-shadow: 0 3px 12px rgba(153,0,0,0.4), 0 1px 3px rgba(153,0,0,0.25);
+        .font-size-btn.at-limit {
+            opacity: 0.3;
+            cursor: default;
         }
-        .font-size-btn.small-a { font-size: 0.68rem; }
-        .font-size-btn.medium-a { font-size: 0.85rem; }
-        .font-size-btn.large-a { font-size: 1.05rem; }
-        html.font-size-small { font-size: 16px; }
-        html.font-size-medium { font-size: 18px; }
-        html.font-size-large { font-size: 20px; }
+        .font-size-btn.at-limit:hover {
+            background: transparent;
+            color: var(--text-light);
+        }
+        .font-size-btn.at-limit:active {
+            transform: none;
+            background: transparent;
+        }
+        .font-size-btn.decrease-a { font-size: 0.7rem; }
+        .font-size-btn.increase-a { font-size: 1.1rem; }
+        .font-size-level {
+            font-size: 0.65rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            min-width: 14px;
+            text-align: center;
+            letter-spacing: -0.02em;
+        }
         @media (max-width: 640px) {
             .font-size-controls { margin-right: 4px; }
-            .font-size-controls::before { display: none; }
         }
 
         /* Back-to-top button */
@@ -739,10 +739,10 @@
                 <a href="index.html" class="brand">Koray Cosguner</a>
             </div>
             <div style="display: flex; align-items: center;">
-                <div class="font-size-controls" style="margin-left: 28px;">
-                    <button class="font-size-btn small-a" onclick="setFontSize('small')" title="Small text">A</button>
-                    <button class="font-size-btn medium-a active" onclick="setFontSize('medium')" title="Medium text">A</button>
-                    <button class="font-size-btn large-a" onclick="setFontSize('large')" title="Large text">A</button>
+                <div class="font-size-controls">
+                    <button class="font-size-btn decrease-a" onclick="adjustFontSize(-1)" title="Decrease text size">A</button>
+                    <span class="font-size-level" id="fontSizeLevel"></span>
+                    <button class="font-size-btn increase-a" onclick="adjustFontSize(1)" title="Increase text size">A</button>
                 </div>
                 <div class="nav-toggle" onclick="document.querySelector('.nav-links').classList.toggle('active')">
                     <span></span>
@@ -753,6 +753,7 @@
             <div class="nav-links">
                 <a href="index.html">Home</a>
                 <a href="research.html" class="active">Research</a>
+                <a href="teaching.html">Teaching</a>
                 <a href="https://koraycosguner.github.io/miaow-consulting/" target="_blank">Consulting</a>
                 <a href="tools.html">Pricing & Analytics Tools</a>
             </div>
@@ -1323,17 +1324,28 @@
     </button>
 
     <script>
-        // Font size controls
-        function setFontSize(size) {
-            document.documentElement.classList.remove('font-size-small', 'font-size-medium', 'font-size-large');
-            document.documentElement.classList.add('font-size-' + size);
-            localStorage.setItem('fontSize', size);
-            document.querySelectorAll('.font-size-btn').forEach(btn => btn.classList.remove('active'));
-            document.querySelector('.font-size-btn.' + size + '-a')?.classList.add('active');
+        // Font size: 5 steps from 14px to 22px (default step 2 = 18px)
+        const fontSizes = [14, 16, 18, 20, 22];
+        const defaultStep = 2;
+
+        function adjustFontSize(delta) {
+            let step = parseInt(localStorage.getItem('fontSizeStep') ?? defaultStep);
+            step = Math.max(0, Math.min(fontSizes.length - 1, step + delta));
+            applyFontSize(step);
         }
+
+        function applyFontSize(step) {
+            document.documentElement.style.fontSize = fontSizes[step] + 'px';
+            localStorage.setItem('fontSizeStep', step);
+            const label = document.getElementById('fontSizeLevel');
+            if (label) label.textContent = (step + 1);
+            document.querySelectorAll('.decrease-a').forEach(b => b.classList.toggle('at-limit', step === 0));
+            document.querySelectorAll('.increase-a').forEach(b => b.classList.toggle('at-limit', step === fontSizes.length - 1));
+        }
+
         (function() {
-            const saved = localStorage.getItem('fontSize') || 'medium';
-            setFontSize(saved);
+            const saved = parseInt(localStorage.getItem('fontSizeStep') ?? defaultStep);
+            applyFontSize(saved);
         })();
 
         // Back-to-top button visibility
