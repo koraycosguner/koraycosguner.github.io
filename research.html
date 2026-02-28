@@ -169,11 +169,13 @@
         .paper::before {
             content: '';
             position: absolute;
-            top: 0; bottom: 0; left: 0;
-            width: 4px;
-            background: var(--journal-color, var(--primary));
-            border-radius: var(--radius-lg) 0 0 var(--radius-lg);
+            top: 0; left: 0; right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary) 0%, var(--accent) 100%);
+            opacity: 0;
+            transition: opacity var(--transition-base);
         }
+        .paper:hover::before { opacity: 1; }
         .paper:hover {
             transform: translateY(-3px);
             box-shadow: var(--shadow-lg);
@@ -615,7 +617,7 @@
         <div class="container">
 
             <!-- Paper 1 -->
-            <div class="paper fade-in" style="--journal-color: #059669;">
+            <div class="paper fade-in">
                 <div class="paper-header">
                     <div class="paper-cover">
                         <img src="mnsc.png" alt="Management Science">
@@ -633,7 +635,7 @@
             </div>
 
             <!-- Paper 2 -->
-            <div class="paper fade-in" style="--journal-color: #990000;">
+            <div class="paper fade-in">
                 <div class="paper-header">
                     <div class="paper-cover">
                         <img src="mksc.png" alt="Marketing Science">
@@ -651,7 +653,7 @@
             </div>
 
             <!-- Paper 3 -->
-            <div class="paper fade-in" style="--journal-color: #1a1a9e;">
+            <div class="paper fade-in">
                 <div class="paper-header">
                     <div class="paper-cover">
                         <img src="jmr.png" alt="Journal of Marketing Research">
@@ -669,7 +671,7 @@
             </div>
 
             <!-- Paper 4 -->
-            <div class="paper fade-in" style="--journal-color: #059669;">
+            <div class="paper fade-in">
                 <div class="paper-header">
                     <div class="paper-cover">
                         <img src="mnsc.png" alt="Management Science">
@@ -687,7 +689,7 @@
             </div>
 
             <!-- Paper 5 -->
-            <div class="paper fade-in" style="--journal-color: #1a1a9e;">
+            <div class="paper fade-in">
                 <div class="paper-header">
                     <div class="paper-cover">
                         <img src="jmr.png" alt="Journal of Marketing Research">
@@ -705,7 +707,7 @@
             </div>
 
             <!-- Paper 6 -->
-            <div class="paper fade-in" style="--journal-color: #990000;">
+            <div class="paper fade-in">
                 <div class="paper-header">
                     <div class="paper-cover">
                         <img src="mksc.png" alt="Marketing Science">
@@ -723,7 +725,7 @@
             </div>
 
             <!-- Paper 7 -->
-            <div class="paper fade-in" style="--journal-color: #b45309;">
+            <div class="paper fade-in">
                 <div class="paper-header">
                     <div class="paper-cover">
                         <img src="jretail.png" alt="Journal of Retailing">
