@@ -937,6 +937,14 @@
                     </div>
 
                     <div id="regParamsSummary" class="reg-params-summary" style="display: none;"></div>
+
+                    <!-- Estimated Equations Box -->
+                    <div id="regEquationBox" style="display: none; margin-top: 1rem; padding: 1rem 1.25rem; background: #fefce8; border: 1px solid #fde68a; border-radius: 8px;">
+                        <div style="font-weight: 600; font-size: 0.9rem; color: #92400e; margin-bottom: 0.6rem;">Estimated Demand Equations</div>
+                        <div id="regEquation1" style="font-family: 'Georgia', serif; font-size: 0.92rem; color: var(--text-dark); margin-bottom: 0.4rem; line-height: 1.6;"></div>
+                        <div id="regEquation2" style="font-family: 'Georgia', serif; font-size: 0.92rem; color: var(--text-dark); line-height: 1.6;"></div>
+                    </div>
+
                     <div id="regWarning" class="error-message" style="display: none;"></div>
 
                     <div class="params-grid" style="margin-top: 1.25rem;">
@@ -1671,6 +1679,18 @@
                 `<strong>Extracted Demand Parameters:</strong><br>` +
                 `<span style="color:var(--producer1);">Product 1 (${q1Col}):</span> a<sub>1</sub>=${r(a1)}, b<sub>1</sub>=${r(b1)}, c<sub>1</sub>=${r(cc1)}<br>` +
                 `<span style="color:var(--producer2);">Product 2 (${q2Col}):</span> a<sub>2</sub>=${r(a2)}, b<sub>2</sub>=${r(b2)}, c<sub>2</sub>=${r(cc2)}`;
+
+            // Show estimated equations box
+            const n1 = document.getElementById('reg_name1').value.trim() || 'Product 1';
+            const n2 = document.getElementById('reg_name2').value.trim() || 'Product 2';
+            const sign = (v) => v >= 0 ? ' + ' : ' − ';
+            const abs = (v) => Math.abs(v).toFixed(2);
+            const eqBox = document.getElementById('regEquationBox');
+            eqBox.style.display = 'block';
+            document.getElementById('regEquation1').innerHTML =
+                `<span style="color:var(--producer1); font-weight: 600;">Q<sub>${n1}</sub></span> = ${a1.toFixed(2)}${sign(b1)}${abs(b1)} · P<sub>${n1}</sub>${sign(cc1)}${abs(cc1)} · P<sub>${n2}</sub>`;
+            document.getElementById('regEquation2').innerHTML =
+                `<span style="color:var(--producer2); font-weight: 600;">Q<sub>${n2}</sub></span> = ${a2.toFixed(2)}${sign(b2)}${abs(b2)} · P<sub>${n2}</sub>${sign(cc2)}${abs(cc2)} · P<sub>${n1}</sub>`;
 
             // Warnings: b should be negative
             const warningEl = document.getElementById('regWarning');

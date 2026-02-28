@@ -4,30 +4,21 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sign In | Pricing & Analytics Tools</title>
-
-    <!-- Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
-
     <style>
         :root {
             --primary: #990000;
             --text-main: #111827;
             --text-light: #4b5563;
-            --border: #e2e8f0;
             --bg: #ffffff;
             --surface: #f9fafb;
-            --radius-md: 12px;
-            --radius-xl: 24px;
-            --transition-base: 0.25s ease;
+            --border: #e5e7eb;
         }
 
         body {
-            font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             margin: 0;
             padding: 0;
-            background: radial-gradient(circle at center, #ffffff 0%, #f9fafb 100%);
+            background: var(--bg);
             color: var(--text-main);
             line-height: 1.6;
             min-height: 100vh;
@@ -35,22 +26,17 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            position: relative;
-            -webkit-font-smoothing: antialiased;
         }
 
-
         .login-container {
-            position: relative;
-            z-index: 10;
             text-align: center;
-            padding: 40px 24px;
-            max-width: 500px;
+            padding: 40px;
+            max-width: 700px;
             width: 100%;
         }
 
         .logo-section {
-            margin-bottom: 40px;
+            margin-bottom: 50px;
         }
 
         .logo-section img {
@@ -58,61 +44,24 @@
             margin-bottom: 20px;
         }
 
-        .logo-row {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 14px;
-            margin-bottom: 30px;
-        }
-        .logo-row span {
-            color: var(--text-light);
-            font-size: 0.95rem;
-            font-weight: 500;
-        }
-
         h1 {
             margin: 0;
-            font-size: clamp(1.8rem, 5vw, 2.5rem);
-            font-weight: 800;
+            font-size: 2.5rem;
+            font-weight: 700;
             color: var(--text-main);
-            letter-spacing: -0.03em;
         }
 
         .subtitle {
             color: var(--text-light);
-            font-size: 1.05rem;
-            margin-top: 12px;
-            max-width: 450px;
-            margin-left: auto;
-            margin-right: auto;
-            line-height: 1.7;
-        }
-
-        .creator-info {
-            margin-top: 28px;
-            padding-top: 20px;
-            border-top: 1px solid var(--border);
-        }
-        .creator-info p {
-            margin: 0;
-            color: var(--text-sub, #374151);
-            font-size: 0.95rem;
-            font-weight: 600;
-        }
-        .creator-info .meta {
-            color: var(--text-light);
-            font-size: 0.88rem;
-            font-weight: 400;
-            margin-top: 4px;
+            font-size: 1rem;
+            margin-bottom: 30px;
         }
 
         .login-box {
-            background: var(--bg);
+            background: var(--surface);
             border: 1px solid var(--border);
-            border-radius: var(--radius-xl);
-            padding: 40px 32px;
-            box-shadow: 0 12px 40px rgba(0,0,0,0.08);
+            border-radius: 12px;
+            padding: 40px 30px;
         }
 
         .login-box p {
@@ -126,25 +75,23 @@
             align-items: center;
             justify-content: center;
             gap: 12px;
-            background: rgba(255,255,255,0.95);
-            border: none;
-            border-radius: var(--radius-md);
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 8px;
             padding: 14px 28px;
             font-size: 1rem;
-            font-weight: 600;
+            font-weight: 500;
             color: var(--text-main);
             cursor: pointer;
-            transition: all var(--transition-base);
+            transition: all 0.2s;
             width: 100%;
             box-sizing: border-box;
-            box-shadow: 0 4px 16px rgba(0,0,0,0.25);
-            font-family: inherit;
         }
 
         .google-btn:hover {
-            background: #ffffff;
-            transform: translateY(-2px);
-            box-shadow: 0 8px 24px rgba(0,0,0,0.35);
+            background: var(--surface);
+            border-color: var(--primary);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
         }
 
         .google-btn img {
@@ -155,9 +102,8 @@
         .error-message {
             margin-top: 20px;
             padding: 15px;
-            background: #fef2f2;
-            border: 1px solid #fecaca;
-            border-radius: var(--radius-md);
+            background: #fee2e2;
+            border-radius: 8px;
             font-size: 0.9rem;
             color: #991b1b;
             display: none;
@@ -175,21 +121,8 @@
             width: 100%;
             text-align: center;
             padding: 20px;
-            color: var(--text-muted, #9ca3af);
+            color: var(--text-light);
             font-size: 0.85rem;
-            z-index: 10;
-        }
-
-        /* Animations */
-        .logo-section, .login-box {
-            opacity: 0;
-            transform: translateY(20px);
-            animation: fadeUp 0.6s ease forwards;
-        }
-        .logo-section { animation-delay: 0.1s; }
-        .login-box { animation-delay: 0.3s; }
-        @keyframes fadeUp {
-            to { opacity: 1; transform: translateY(0); }
         }
 
         @media (max-width: 480px) {
@@ -197,7 +130,10 @@
                 padding: 20px;
             }
             .login-box {
-                padding: 28px 20px;
+                padding: 30px 20px;
+            }
+            h1 {
+                font-size: 1.5rem;
             }
         }
     </style>
@@ -206,15 +142,18 @@
 
     <div class="login-container">
         <div class="logo-section">
-            <div class="logo-row">
-                <img src="iu-logo.png" alt="Indiana University" style="height: 42px;">
-                <span>Kelley School of Business</span>
+            <div style="display: flex; align-items: center; justify-content: center; gap: 14px; margin-bottom: 30px;">
+                <img src="iu-logo.png" alt="Indiana University" style="height: 42px; margin-bottom: 0;">
+                <span style="color: #4b5563; font-size: 1rem; font-weight: 500;">Kelley School of Business, Indiana University</span>
             </div>
             <h1>Pricing & Analytics Tools</h1>
-            <p class="subtitle">Interactive tools for pricing strategy, demand analysis, and marketing analytics.</p>
-            <div class="creator-info">
-                <p>Created by Dr. Koray Cosguner</p>
-                <p class="meta">Associate Professor of Marketing &middot; John Rau KSB Faculty Fellow</p>
+            <p style="margin-top: 16px; color: #4b5563; font-size: 1.15rem; max-width: 650px; margin-left: auto; margin-right: auto; line-height: 1.7;">
+                Interactive tools for pricing strategy, demand analysis, and marketing analytics.
+            </p>
+            <div style="margin-top: 28px; padding-top: 20px; border-top: 1px solid #e5e7eb;">
+                <p style="margin: 0; color: #111827; font-size: 1.05rem; font-weight: 600;">Created by Dr. Koray Cosguner</p>
+                <p style="margin: 6px 0 0 0; color: #4b5563; font-size: 0.95rem;">Associate Professor of Marketing</p>
+                <p style="margin: 4px 0 0 0; color: #4b5563; font-size: 0.95rem;">John Rau KSB Faculty Fellow</p>
             </div>
         </div>
 
