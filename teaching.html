@@ -145,27 +145,26 @@
             display: inline-flex;
             align-items: center;
             gap: 16px;
-            background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 50%, #fde68a 100%);
-            border: 1.5px solid #f59e0b;
-            color: #92400e;
+            background: linear-gradient(135deg, #fdf2f2 0%, #fce4e4 50%, #f8d0d0 100%);
+            border: 1.5px solid var(--primary);
             padding: 16px 32px;
             border-radius: var(--radius-xl);
             margin-top: 24px;
             position: relative;
             z-index: 1;
-            box-shadow: 0 4px 16px rgba(245, 158, 11, 0.2), 0 1px 4px rgba(245, 158, 11, 0.1), inset 0 1px 0 rgba(255,255,255,0.6);
+            box-shadow: 0 4px 16px rgba(153, 0, 0, 0.15), 0 1px 4px rgba(153, 0, 0, 0.08), inset 0 1px 0 rgba(255,255,255,0.6);
         }
         .award-icon {
             width: 48px;
             height: 48px;
             border-radius: 50%;
-            background: linear-gradient(135deg, #f59e0b, #d97706);
+            background: linear-gradient(135deg, var(--primary), var(--primary-hover));
             display: flex;
             align-items: center;
             justify-content: center;
             flex-shrink: 0;
             color: white;
-            box-shadow: 0 2px 8px rgba(217, 119, 6, 0.35);
+            box-shadow: 0 2px 8px rgba(153, 0, 0, 0.3);
         }
         .award-text {
             display: flex;
@@ -175,14 +174,8 @@
         .award-label {
             font-size: 1rem;
             font-weight: 700;
-            color: #78350f;
+            color: var(--primary-hover);
             line-height: 1.3;
-        }
-        .award-year {
-            font-size: 0.82rem;
-            font-weight: 600;
-            color: #a16207;
-            margin-top: 2px;
         }
 
         /* Main Content */
@@ -246,7 +239,12 @@
 
         /* Course Cards */
         .course-group {
-            margin-bottom: 40px;
+            margin-bottom: 32px;
+            background: var(--bg);
+            border: 1.5px solid var(--border);
+            border-radius: var(--radius-xl);
+            padding: 28px 28px 16px;
+            box-shadow: var(--shadow-sm);
         }
         .course-group-label {
             font-size: 0.78rem;
@@ -258,14 +256,12 @@
             padding-left: 4px;
         }
         .course-card {
-            background: var(--card-gradient);
-            border: 1.5px solid transparent;
-            background-clip: padding-box;
-            border-radius: var(--radius-lg);
-            padding: 22px 28px;
-            margin-bottom: 12px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.04), 0 0 0 1px rgba(0,0,0,0.03);
-            transition: transform var(--transition-base), box-shadow var(--transition-base);
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            padding: 18px 22px;
+            margin-bottom: 10px;
+            transition: background var(--transition-base);
             position: relative;
             overflow: hidden;
             display: flex;
@@ -273,27 +269,12 @@
             align-items: center;
             gap: 16px;
         }
-        .course-card::after {
-            content: '';
-            position: absolute;
-            inset: 0;
-            border-radius: var(--radius-lg);
-            padding: 1.5px;
-            background: linear-gradient(145deg, var(--border) 0%, rgba(153,0,0,0.1) 50%, var(--border) 100%);
-            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-            -webkit-mask-composite: xor;
-            mask-composite: exclude;
-            pointer-events: none;
-            transition: background var(--transition-base);
-        }
-        .course-card:hover::after {
-            background: linear-gradient(145deg, var(--primary) 0%, var(--accent) 50%, var(--primary) 100%);
+        .course-card:last-child {
+            margin-bottom: 0;
         }
         .course-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(0,0,0,0.07), 0 2px 6px rgba(0,0,0,0.04);
+            background: var(--bg);
         }
-
         .course-info {
             flex: 1;
             min-width: 0;
@@ -533,7 +514,8 @@
             .page-header { padding: 56px 20px 24px; }
             .page-header h1 { font-size: 1.8rem; }
             .testimonial-grid { grid-template-columns: 1fr; }
-            .course-card { padding: 18px 22px; }
+            .course-card { padding: 14px 16px; }
+            .course-group { padding: 20px 16px 12px; }
         }
 
         /* Mobile */
@@ -565,10 +547,6 @@
             .nav-links a::after { display: none; }
             .nav-links a:last-child {
                 border-bottom: none;
-            }
-            .nav-links .font-size-controls {
-                padding: 8px 0;
-                border-bottom: 1px solid var(--border);
             }
             .nav-container {
                 position: relative;
@@ -609,6 +587,7 @@
             display: flex;
             align-items: center;
             gap: 2px;
+            margin-right: 10px;
             border: 1px solid rgba(153,0,0,0.12);
             border-radius: var(--radius-full);
             padding: 3px;
@@ -667,7 +646,7 @@
             letter-spacing: -0.02em;
         }
         @media (max-width: 640px) {
-            .font-size-controls { margin: 0; }
+            .font-size-controls { margin-right: 4px; }
         }
 
         /* Back-to-top button */
@@ -709,16 +688,18 @@
                 <img src="iu-logo.png" alt="IU Logo" style="height: 32px;">
                 <a href="index.html" class="brand">Koray Cosguner</a>
             </div>
-            <div class="nav-toggle" onclick="document.querySelector('.nav-links').classList.toggle('active')">
-                <span></span>
-                <span></span>
-                <span></span>
-            </div>
-            <div class="nav-links">
+            <div style="display: flex; align-items: center;">
                 <div class="font-size-controls">
                     <button class="font-size-btn decrease-a" onclick="adjustFontSize(-1)" title="Decrease text size">A</button>
                     <button class="font-size-btn increase-a" onclick="adjustFontSize(1)" title="Increase text size">A</button>
                 </div>
+                <div class="nav-toggle" onclick="document.querySelector('.nav-links').classList.toggle('active')">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            </div>
+            <div class="nav-links">
                 <a href="index.html">Home</a>
                 <a href="research.html">Research</a>
                 <a href="teaching.html" class="active">Teaching</a>
@@ -732,7 +713,7 @@
         <h1>Teaching</h1>
         <div class="award-banner">
             <div class="award-icon">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11"/></svg>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>
             </div>
             <div class="award-text">
                 <span class="award-label">Winner of the IU Trustees Teaching Award (2024)</span>
@@ -1068,27 +1049,18 @@
     <script>
         // Font size: 5 steps from 14px to 22px (default step 2 = 18px)
         const fontSizes = [14, 16, 18, 20, 22];
-        const defaultStep = 2;
+        let currentStep = 2;
 
         function adjustFontSize(delta) {
-            let step = parseInt(localStorage.getItem('fontSizeStep') ?? defaultStep);
-            step = Math.max(0, Math.min(fontSizes.length - 1, step + delta));
-            applyFontSize(step);
+            currentStep = Math.max(0, Math.min(fontSizes.length - 1, currentStep + delta));
+            applyFontSize(currentStep);
         }
 
         function applyFontSize(step) {
             document.documentElement.style.fontSize = fontSizes[step] + 'px';
-            localStorage.setItem('fontSizeStep', step);
-            const label = document.getElementById('fontSizeLevel');
-            if (label) label.textContent = (step + 1);
             document.querySelectorAll('.decrease-a').forEach(b => b.classList.toggle('at-limit', step === 0));
             document.querySelectorAll('.increase-a').forEach(b => b.classList.toggle('at-limit', step === fontSizes.length - 1));
         }
-
-        (function() {
-            const saved = parseInt(localStorage.getItem('fontSizeStep') ?? defaultStep);
-            applyFontSize(saved);
-        })();
 
         // Back-to-top button visibility
         const backBtn = document.getElementById('backToTop');

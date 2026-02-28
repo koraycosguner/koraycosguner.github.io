@@ -370,10 +370,6 @@
             }
             .nav-links a::after { display: none; }
             .nav-links a:last-child { border-bottom: none; }
-            .nav-links .font-size-controls {
-                padding: 8px 0;
-                border-bottom: 1px solid var(--border);
-            }
             .nav-container { position: relative; }
             .header { padding: 48px 16px 36px; }
             h1 { font-size: 1.6rem; }
@@ -393,6 +389,7 @@
             display: flex;
             align-items: center;
             gap: 2px;
+            margin-right: 10px;
             border: 1px solid rgba(153,0,0,0.12);
             border-radius: var(--radius-full);
             padding: 3px;
@@ -451,7 +448,7 @@
             letter-spacing: -0.02em;
         }
         @media (max-width: 640px) {
-            .font-size-controls { margin: 0; }
+            .font-size-controls { margin-right: 4px; }
         }
 
         /* Back-to-top button */
@@ -509,16 +506,18 @@
                 <img src="iu-logo.png" alt="IU Logo" style="height: 32px;">
                 <a href="index.html" class="brand">Koray Cosguner</a>
             </div>
-            <div class="nav-toggle" onclick="document.querySelector('.nav-links').classList.toggle('active')">
-                <span></span>
-                <span></span>
-                <span></span>
-            </div>
-            <div class="nav-links">
+            <div style="display: flex; align-items: center;">
                 <div class="font-size-controls">
                     <button class="font-size-btn decrease-a" onclick="adjustFontSize(-1)" title="Decrease text size">A</button>
                     <button class="font-size-btn increase-a" onclick="adjustFontSize(1)" title="Increase text size">A</button>
                 </div>
+                <div class="nav-toggle" onclick="document.querySelector('.nav-links').classList.toggle('active')">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            </div>
+            <div class="nav-links">
                 <a href="index.html">Home</a>
                 <a href="research.html">Research</a>
                 <a href="teaching.html">Teaching</a>
@@ -759,27 +758,18 @@
         // Font size controls
         // Font size: 5 steps from 14px to 22px (default step 2 = 18px)
         const fontSizes = [14, 16, 18, 20, 22];
-        const defaultStep = 2;
+        let currentStep = 2;
 
         function adjustFontSize(delta) {
-            let step = parseInt(localStorage.getItem('fontSizeStep') ?? defaultStep);
-            step = Math.max(0, Math.min(fontSizes.length - 1, step + delta));
-            applyFontSize(step);
+            currentStep = Math.max(0, Math.min(fontSizes.length - 1, currentStep + delta));
+            applyFontSize(currentStep);
         }
 
         function applyFontSize(step) {
             document.documentElement.style.fontSize = fontSizes[step] + 'px';
-            localStorage.setItem('fontSizeStep', step);
-            const label = document.getElementById('fontSizeLevel');
-            if (label) label.textContent = (step + 1);
             document.querySelectorAll('.decrease-a').forEach(b => b.classList.toggle('at-limit', step === 0));
             document.querySelectorAll('.increase-a').forEach(b => b.classList.toggle('at-limit', step === fontSizes.length - 1));
         }
-
-        (function() {
-            const saved = parseInt(localStorage.getItem('fontSizeStep') ?? defaultStep);
-            applyFontSize(saved);
-        })();
 
         // Auto-update copyright year
         document.querySelectorAll('.year').forEach(el => el.textContent = new Date().getFullYear());
