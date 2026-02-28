@@ -98,6 +98,7 @@
             display: flex;
             align-items: center;
         }
+        .font-size-controls.font-size-mobile { display: none; }
         .nav-links a {
             margin-left: 28px;
             text-decoration: none;
@@ -451,6 +452,8 @@
         }
         @media (max-width: 640px) {
             .nav-toggle { display: flex; }
+            .font-size-controls.font-size-mobile { display: flex; }
+            .font-size-controls.font-size-desktop { display: none; }
             .nav-links {
                 display: none;
                 position: absolute;
@@ -615,7 +618,7 @@
                 <a href="index.html" class="brand">Koray Cosguner</a>
             </div>
             <div style="display: flex; align-items: center;">
-                <div class="font-size-controls">
+                <div class="font-size-controls font-size-mobile">
                     <button class="font-size-btn decrease-a" onclick="adjustFontSize(-1)" title="Decrease text size">A</button>
                     <button class="font-size-btn increase-a" onclick="adjustFontSize(1)" title="Increase text size">A</button>
                 </div>
@@ -626,6 +629,10 @@
                 </div>
             </div>
             <div class="nav-links">
+                <div class="font-size-controls font-size-desktop">
+                    <button class="font-size-btn decrease-a" onclick="adjustFontSize(-1)" title="Decrease text size">A</button>
+                    <button class="font-size-btn increase-a" onclick="adjustFontSize(1)" title="Increase text size">A</button>
+                </div>
                 <a href="index.html" class="active">Home</a>
                 <a href="research.html">Research</a>
                 <a href="teaching.html">Teaching</a>
