@@ -664,17 +664,35 @@ function checkBothUploaded() {
     const designCols = Object.keys(designData[0]);
     const ratingsCols = Object.keys(ratingsData[0]);
 
+    // Debug: log raw parsed data
+    console.log('=== Parsed Design Data ===');
+    console.log('All column names:', designCols);
+    console.log('Row count:', designData.length);
+    console.log('First row:', designData[0]);
+    console.log('=== Parsed Ratings Data ===');
+    console.log('All column names:', ratingsCols);
+    console.log('Row count:', ratingsData.length);
+
     // Dummy columns = everything except "Profile" (trim and case-insensitive)
     dummyColumns = designCols.filter(c => c.trim().toLowerCase() !== 'profile');
     respondentColumns = ratingsCols.filter(c => c.trim().toLowerCase() !== 'profile');
 
+    console.log('Dummy columns (' + dummyColumns.length + '):', dummyColumns);
+    console.log('Respondent columns (' + respondentColumns.length + '):', respondentColumns.slice(0, 5), '...');
+
     // Validate
     if (dummyColumns.length < 2) {
-        alert('Design matrix must have at least 2 dummy variable columns.'); return;
+        alert('Design matrix must have at least 2 dummy variable columns. Found columns: ' + designCols.join(', ')); return;
     }
     if (respondentColumns.length < 2) {
         alert('Ratings file must have at least 2 respondent columns.'); return;
     }
+
+    // Spot-check: can we parse the first dummy value?
+    const testCol = dummyColumns[0];
+    const testVal = designData[0][testCol];
+    const testParsed = parseFloat(testVal);
+    console.log('Spot-check: column "' + testCol + '", raw value =', JSON.stringify(testVal), ', parseFloat =', testParsed);
     if (designData.length !== ratingsData.length) {
         alert('Mismatch: Design has ' + designData.length + ' profiles but ratings has ' + ratingsData.length + ' profiles.'); return;
     }
@@ -787,11 +805,22 @@ function runFullAnalysis() {
                 console.warn('Conjoint Analysis: Design has only ' + n + ' profiles for ' + (p+1) + ' parameters. Results may be less stable. Consider using a design with more profiles.');
             }
 
-            // Design matrix X (n x p)
-            const X_raw = designData.map(row => dummyColumns.map(c => {
-                const val = parseFloat(row[c]);
-                return isNaN(val) ? 0 : val;
+            // Design matrix X (n x p) — parse values, count any NaN
+            let nanCount = 0;
+            const X_raw = designData.map((row, rowIdx) => dummyColumns.map((c, colIdx) => {
+                const raw = row[c];
+                const val = parseFloat(raw);
+                if (isNaN(val)) {
+                    nanCount++;
+                    if (nanCount <= 5) console.warn('NaN at row ' + rowIdx + ', col "' + c + '": raw value =', JSON.stringify(raw));
+                    return 0;
+                }
+                return val;
             }));
+            if (nanCount > 0) {
+                console.warn('Total NaN values in design matrix: ' + nanCount + ' out of ' + (n * p) + ' cells (replaced with 0)');
+            }
+
             // Ratings matrix Y (n x R)
             const Y = ratingsData.map(row => respondentColumns.map(c => {
                 const val = parseFloat(row[c]);
@@ -799,25 +828,28 @@ function runFullAnalysis() {
             }));
 
             // Check for columns that are all-zero (would cause singularity)
+            const zeroColNames = [];
             for (let j = 0; j < p; j++) {
-                const allZero = X_raw.every(row => row[j] === 0);
-                if (allZero) {
-                    throw new Error('Column "' + dummyColumns[j] + '" has all zero values. Check that the design matrix was uploaded correctly.');
-                }
+                if (X_raw.every(row => row[j] === 0)) zeroColNames.push(dummyColumns[j]);
             }
+            if (zeroColNames.length > 0) {
+                throw new Error('These columns have all zero values (check CSV format): ' + zeroColNames.join(', '));
+            }
+
+            // Debug: log design matrix summary
+            console.log('Design matrix: ' + n + ' rows × ' + p + ' dummy cols');
+            console.log('Dummy columns:', dummyColumns);
+            console.log('First row raw values:', designData[0]);
+            console.log('First row parsed:', X_raw[0]);
+            console.log('Column sums:', dummyColumns.map((c, j) => c + '=' + X_raw.reduce((s, row) => s + row[j], 0)));
 
             // Prepend intercept column
             const X = X_raw.map(row => [1, ...row]); // n x (p+1)
 
-            // Compute (X'X)^-1 with ridge regularization for numerical stability
+            // Compute (X'X)^-1
             const Xt = transpose(X);
             const XtX = matMul(Xt, X);
-
-            // Add tiny ridge penalty: (X'X + λI) to handle near-singular designs
-            // λ = 1e-8 is negligible for well-conditioned matrices but prevents singularity
-            const lambda = 1e-8;
-            for (let i = 0; i < XtX.length; i++) XtX[i][i] += lambda;
-
+            console.log('XtX diagonal:', XtX.map((r, i) => r[i]));
             const XtX_inv = matInverse(XtX);
 
             // For each respondent: beta = (X'X)^-1 * X'y
