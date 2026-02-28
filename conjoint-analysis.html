@@ -557,7 +557,7 @@ function matInverse(A) {
         }
         [aug[col], aug[maxRow]] = [aug[maxRow], aug[col]];
         const pivot = aug[col][col];
-        if (Math.abs(pivot) < 1e-12) throw new Error('Design matrix is singular — check for collinear dummy variables.');
+        if (Math.abs(pivot) < 1e-12) throw new Error('Design matrix is singular (failed at column ' + col + ' of ' + n + '). This usually means the design has collinear dummy variables or not enough unique profiles.');
         for (let j = 0; j < 2 * n; j++) aug[col][j] /= pivot;
         for (let row = 0; row < n; row++) {
             if (row === col) continue;
@@ -566,6 +566,26 @@ function matInverse(A) {
         }
     }
     return aug.map(row => row.slice(n));
+}
+
+// =====================================================
+// DATA CLEANING
+// =====================================================
+function cleanParsedData(data) {
+    if (!data || data.length === 0) return data;
+    // 1. Strip BOM and trim whitespace from column names
+    const cleaned = data.map(row => {
+        const obj = {};
+        Object.keys(row).forEach(key => {
+            const cleanKey = key.replace(/^\uFEFF/, '').trim();
+            obj[cleanKey] = row[key];
+        });
+        return obj;
+    });
+    // 2. Remove rows where ALL values are empty
+    return cleaned.filter(row => {
+        return Object.values(row).some(v => v !== '' && v !== undefined && v !== null);
+    });
 }
 
 // =====================================================
@@ -578,7 +598,7 @@ document.getElementById('designFile').addEventListener('change', function(e) {
         header: true,
         skipEmptyLines: true,
         complete: function(results) {
-            designData = results.data;
+            designData = cleanParsedData(results.data);
             document.getElementById('designFileName').textContent = '✓ ' + file.name;
             document.getElementById('designUploadArea').classList.add('loaded');
             checkBothUploaded();
@@ -594,7 +614,7 @@ document.getElementById('ratingsFile').addEventListener('change', function(e) {
         header: true,
         skipEmptyLines: true,
         complete: function(results) {
-            ratingsData = results.data;
+            ratingsData = cleanParsedData(results.data);
             document.getElementById('ratingsFileName').textContent = '✓ ' + file.name;
             document.getElementById('ratingsUploadArea').classList.add('loaded');
             checkBothUploaded();
@@ -610,7 +630,7 @@ document.getElementById('profilesFile').addEventListener('change', function(e) {
         header: true,
         skipEmptyLines: true,
         complete: function(results) {
-            profilesData = results.data;
+            profilesData = cleanParsedData(results.data);
             document.getElementById('profilesFileName').textContent = '✓ ' + file.name;
             document.getElementById('profilesUploadArea').classList.add('loaded');
             // Re-detect attributes if design data already loaded
@@ -644,9 +664,9 @@ function checkBothUploaded() {
     const designCols = Object.keys(designData[0]);
     const ratingsCols = Object.keys(ratingsData[0]);
 
-    // Dummy columns = everything except "Profile"
-    dummyColumns = designCols.filter(c => c.toLowerCase() !== 'profile');
-    respondentColumns = ratingsCols.filter(c => c.toLowerCase() !== 'profile');
+    // Dummy columns = everything except "Profile" (trim and case-insensitive)
+    dummyColumns = designCols.filter(c => c.trim().toLowerCase() !== 'profile');
+    respondentColumns = ratingsCols.filter(c => c.trim().toLowerCase() !== 'profile');
 
     // Validate
     if (dummyColumns.length < 2) {
@@ -757,10 +777,29 @@ function runFullAnalysis() {
             const p = dummyColumns.length;
             const R = respondentColumns.length;
 
+            // Check dimensions: need more profiles than parameters
+            if (n <= p) {
+                throw new Error('Not enough profiles (' + n + ') for the number of dummy variables (' + p + ' + intercept = ' + (p + 1) + '). The design needs at least ' + (p + 1) + ' profiles.');
+            }
+
             // Design matrix X (n x p)
-            const X_raw = designData.map(row => dummyColumns.map(c => parseFloat(row[c]) || 0));
+            const X_raw = designData.map(row => dummyColumns.map(c => {
+                const val = parseFloat(row[c]);
+                return isNaN(val) ? 0 : val;
+            }));
             // Ratings matrix Y (n x R)
-            const Y = ratingsData.map(row => respondentColumns.map(c => parseFloat(row[c]) || 0));
+            const Y = ratingsData.map(row => respondentColumns.map(c => {
+                const val = parseFloat(row[c]);
+                return isNaN(val) ? 0 : val;
+            }));
+
+            // Check for columns that are all-zero (would cause singularity)
+            for (let j = 0; j < p; j++) {
+                const allZero = X_raw.every(row => row[j] === 0);
+                if (allZero) {
+                    throw new Error('Column "' + dummyColumns[j] + '" has all zero values. Check that the design matrix was uploaded correctly.');
+                }
+            }
 
             // Prepend intercept column
             const X = X_raw.map(row => [1, ...row]); // n x (p+1)
