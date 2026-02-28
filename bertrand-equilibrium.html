@@ -512,21 +512,23 @@
 
         /* Responsive */
         @media (max-width: 768px) {
-            .params-grid {
-                grid-template-columns: 1fr;
-            }
-            .results-grid {
-                grid-template-columns: 1fr;
-            }
-            .input-row {
-                flex-wrap: wrap;
-            }
-            .input-row label {
-                width: 100%;
-                margin-bottom: 0.25rem;
-            }
-            .input-row input {
-                max-width: none;
+            body { font-size: 16px; }
+            main { padding: 1rem; }
+            .hero { padding: 1.5rem 0; }
+            .hero h1 { font-size: 1.3rem; }
+            .hero p { font-size: 0.85rem; }
+            .params-grid { grid-template-columns: 1fr; }
+            .results-grid { grid-template-columns: 1fr; }
+            .tool-container { padding: 1.25rem; border-radius: 8px; }
+            .section-title { font-size: 1.1rem; }
+            .input-row { flex-wrap: wrap; }
+            .input-row label { width: 100%; margin-bottom: 0.25rem; }
+            .input-row input { max-width: none; }
+            .mode-toggle button { font-size: 0.8rem; padding: 0.5rem; }
+            .calculate-btn { font-size: 0.95rem; }
+            [style*="grid-template-columns: 1fr 1fr"],
+            [style*="grid-template-columns: repeat"] {
+                grid-template-columns: 1fr !important;
             }
         }
     </style>

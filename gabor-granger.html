@@ -730,16 +730,21 @@
         }
 
         @media (max-width: 600px) {
-            .hero h1 {
-                font-size: 1.5rem;
-            }
-
-            .button-group {
-                flex-direction: column;
-            }
-
-            .tool-container {
-                padding: 1rem;
+            body { font-size: 16px; }
+            main { padding: 1rem; }
+            .hero { padding: 1.5rem 0; }
+            .hero h1 { font-size: 1.3rem; }
+            .hero p { font-size: 0.85rem; }
+            .tool-container { padding: 1rem; border-radius: 8px; }
+            .section-title { font-size: 1.1rem; }
+            .upload-area { padding: 1.5rem; }
+            .button-group { flex-direction: column; }
+            .btn { width: 100%; text-align: center; }
+            .price-points-table { font-size: 0.85rem; }
+            .price-points-table th, .price-points-table td { padding: 0.5rem; }
+            [style*="grid-template-columns: 1fr 1fr"],
+            [style*="grid-template-columns: repeat"] {
+                grid-template-columns: 1fr !important;
             }
         }
 
