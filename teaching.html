@@ -356,6 +356,19 @@
         .course-rating svg {
             color: #f59e0b;
         }
+        .rating-bar {
+            width: 52px;
+            height: 5px;
+            background: var(--border);
+            border-radius: 3px;
+            overflow: hidden;
+            margin-left: 4px;
+        }
+        .rating-fill {
+            height: 100%;
+            border-radius: 3px;
+            background: linear-gradient(90deg, #f59e0b, #f97316);
+        }
         .course-year {
             font-size: 0.88rem;
             font-weight: 600;
@@ -431,6 +444,11 @@
             line-height: 1.8;
             color: var(--text-sub);
             margin: 0;
+        }
+
+        .testimonial-quote strong {
+            font-weight: 600;
+            color: var(--text-main);
         }
 
         .quote-icon {
@@ -765,6 +783,7 @@
                         <div class="course-rating">
                             <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="currentColor" stroke="none"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
                             6.4 / 7.0
+                            <div class="rating-bar"><div class="rating-fill" style="width: 91%"></div></div>
                         </div>
                         <span class="course-year">2024 &ndash; 2025</span>
                     </div>
@@ -779,6 +798,7 @@
                         <div class="course-rating">
                             <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="currentColor" stroke="none"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
                             6.7 / 7.0
+                            <div class="rating-bar"><div class="rating-fill" style="width: 96%"></div></div>
                         </div>
                         <span class="course-year">2019 &ndash; 2023</span>
                     </div>
@@ -793,6 +813,7 @@
                         <div class="course-rating">
                             <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="currentColor" stroke="none"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
                             7.0 / 7.0
+                            <div class="rating-bar"><div class="rating-fill" style="width: 100%"></div></div>
                         </div>
                         <span class="course-year">2022</span>
                     </div>
@@ -812,6 +833,7 @@
                         <div class="course-rating">
                             <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="currentColor" stroke="none"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
                             4.9 / 5.0
+                            <div class="rating-bar"><div class="rating-fill" style="width: 98%"></div></div>
                         </div>
                         <span class="course-year">2013 &ndash; 2018</span>
                     </div>
@@ -826,6 +848,7 @@
                         <div class="course-rating">
                             <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="currentColor" stroke="none"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
                             4.0 / 5.0
+                            <div class="rating-bar"><div class="rating-fill" style="width: 80%"></div></div>
                         </div>
                         <span class="course-year">2014</span>
                     </div>
@@ -840,6 +863,7 @@
                         <div class="course-rating">
                             <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="currentColor" stroke="none"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
                             5.0 / 5.0
+                            <div class="rating-bar"><div class="rating-fill" style="width: 100%"></div></div>
                         </div>
                         <span class="course-year">2013, 2015</span>
                     </div>
@@ -875,28 +899,28 @@
                 <div class="testimonial-card fade-in">
                     <span class="quote-icon">&ldquo;</span>
                     <blockquote class="testimonial-quote">
-                        <p>Clear, concise, important, relevant, efficient. Very much appreciated the lack of fluff: like a 'lean' manufacturing site, this course's readings and lectures were streamlined to produce the most effect (for us) with the least effort (on our part). O, how I wish other classes were this well prepared and taught! It was obvious that the professor cared not only about the course material and pedagogy but also about the students. Give this man a raise! He earns it!</p>
+                        <p>Clear, concise, important, relevant, efficient. Very much appreciated the lack of fluff: like a 'lean' manufacturing site, this course's readings and lectures were streamlined to produce the most effect (for us) with the least effort (on our part). O, how I wish other classes were this well prepared and taught! It was obvious that the professor cared not only about the course material and pedagogy but also about the students. <strong>Give this man a raise!</strong> He earns it!</p>
                     </blockquote>
                 </div>
 
                 <div class="testimonial-card fade-in">
                     <span class="quote-icon">&ldquo;</span>
                     <blockquote class="testimonial-quote">
-                        <p>Dr. Koray Cosguner &ndash; you are an extremely intelligent professor who knows the inside out of the material. Your passion for the class, as well as your students' learning, is very clear through your teaching. Thank you for making a challenging class something to look forward to. Thank you for emphasizing the learning aspect of school by using grading as an encouraging tool. Thank you for being eager to answer any questions and making time for us to ask questions in office hours.</p>
+                        <p>Dr. Koray Cosguner &ndash; you are <strong>an extremely intelligent professor</strong> who knows the inside out of the material. Your passion for the class, as well as your students' learning, is very clear through your teaching. Thank you for making a challenging class something to look forward to. Thank you for emphasizing the learning aspect of school by using grading as an encouraging tool. Thank you for being eager to answer any questions and making time for us to ask questions in office hours.</p>
                     </blockquote>
                 </div>
 
                 <div class="testimonial-card fade-in">
                     <span class="quote-icon">&ldquo;</span>
                     <blockquote class="testimonial-quote">
-                        <p>He was truly one of the best professors I've had at IU. He was very receptive to student feedback, clearly cared a lot about student success, and was constantly going the extra mile for us. I am so glad I took his course!</p>
+                        <p><strong>He was truly one of the best professors I've had at IU.</strong> He was very receptive to student feedback, clearly cared a lot about student success, and was constantly going the extra mile for us. I am so glad I took his course!</p>
                     </blockquote>
                 </div>
 
                 <div class="testimonial-card fade-in">
                     <span class="quote-icon">&ldquo;</span>
                     <blockquote class="testimonial-quote">
-                        <p>Koray is the best professor I had this semester. He is one of the few Kelley professors that is clearly VERY passionate about the material he teaches. The examples are very relatable, which makes the class more interesting. Furthermore, Koray's Canvas is meticulous. All the materials needed for success are available to students ranging from tutorial videos, to class slides, and answer keys. Finally, Koray is a good man &ndash; he understands the needs of his students, shows compassion, and is always available. Koray is an invaluable part of the Kelley community, and I am thankful that I got to experience him this semester. Thank you!</p>
+                        <p><strong>Koray is the best professor I had this semester.</strong> He is one of the few Kelley professors that is clearly VERY passionate about the material he teaches. The examples are very relatable, which makes the class more interesting. Furthermore, Koray's Canvas is meticulous. All the materials needed for success are available to students ranging from tutorial videos, to class slides, and answer keys. Finally, Koray is a good man &ndash; he understands the needs of his students, shows compassion, and is always available. Koray is an invaluable part of the Kelley community, and I am thankful that I got to experience him this semester. Thank you!</p>
                     </blockquote>
                 </div>
 
@@ -910,21 +934,21 @@
                 <div class="testimonial-card fade-in">
                     <span class="quote-icon">&ldquo;</span>
                     <blockquote class="testimonial-quote">
-                        <p>Professor Cosguner was one of the best instructors I've had at IU. The course was extremely challenging and I think he understood that. That understanding translated to him providing amazing help and teaching, to make the course as navigable as possible.</p>
+                        <p><strong>Professor Cosguner was one of the best instructors I've had at IU.</strong> The course was extremely challenging and I think he understood that. That understanding translated to him providing amazing help and teaching, to make the course as navigable as possible.</p>
                     </blockquote>
                 </div>
 
                 <div class="testimonial-card fade-in">
                     <span class="quote-icon">&ldquo;</span>
                     <blockquote class="testimonial-quote">
-                        <p>Professor Cosguner was amazing!! I was so nervous about this class but he is a very reasonable and kind professor while still getting all the knowledge and learning objectives across. Kelley would benefit greatly from keeping him on their staff.</p>
+                        <p><strong>Professor Cosguner was amazing!!</strong> I was so nervous about this class but he is a very reasonable and kind professor while still getting all the knowledge and learning objectives across. Kelley would benefit greatly from keeping him on their staff.</p>
                     </blockquote>
                 </div>
 
                 <div class="testimonial-card fade-in">
                     <span class="quote-icon">&ldquo;</span>
                     <blockquote class="testimonial-quote">
-                        <p>I strongly believe that Professor Cosguner genuinely cares about the well-being of each and every one of his students. Everything he says about genuinely wanting to improve his class so that students are able to succeed. Despite how difficult the course content is, Professor has adapted his teaching styles and taken additional time to upload additional help outside of the classroom so that we have access to more resources.</p>
+                        <p>I strongly believe that Professor Cosguner <strong>genuinely cares about the well-being of each and every one of his students.</strong> Everything he says about genuinely wanting to improve his class so that students are able to succeed. Despite how difficult the course content is, Professor has adapted his teaching styles and taken additional time to upload additional help outside of the classroom so that we have access to more resources.</p>
                     </blockquote>
                 </div>
 
