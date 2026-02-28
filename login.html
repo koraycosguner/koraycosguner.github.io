@@ -113,10 +113,24 @@
 
         .login-box {
             background: var(--bg);
-            border: 1px solid var(--border);
+            border: 1px solid transparent;
+            background-clip: padding-box;
             border-radius: var(--radius-xl);
             padding: 40px 32px;
             box-shadow: 0 12px 40px rgba(0,0,0,0.08);
+            position: relative;
+        }
+        .login-box::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: var(--radius-xl);
+            padding: 1px;
+            background: linear-gradient(145deg, var(--border) 0%, rgba(153,0,0,0.1) 50%, var(--border) 100%);
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            pointer-events: none;
         }
 
         .login-box p {

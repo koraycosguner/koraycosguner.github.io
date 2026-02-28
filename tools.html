@@ -165,7 +165,26 @@
             color: var(--text-main);
         }
 
-        .container { max-width: 1000px; margin: 48px auto; padding: 0 24px; }
+        .container {
+            max-width: 1000px;
+            margin: 48px auto;
+            padding: 0 24px;
+            position: relative;
+            z-index: 1;
+        }
+        .tools-section {
+            position: relative;
+            background-image: radial-gradient(circle, #d1d5db 0.7px, transparent 0.7px);
+            background-size: 24px 24px;
+            background-position: center center;
+        }
+        .tools-section::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(180deg, rgba(255,255,255,0.85) 0%, rgba(255,255,255,0.7) 50%, rgba(255,255,255,0.85) 100%);
+            pointer-events: none;
+        }
 
         .grid {
             display: grid;
@@ -175,7 +194,8 @@
 
         .card {
             background: var(--card-gradient);
-            border: 1.5px solid var(--border-strong);
+            border: 1.5px solid transparent;
+            background-clip: padding-box;
             border-radius: var(--radius-lg);
             padding: 32px 28px;
             transition: all var(--transition-base);
@@ -184,9 +204,25 @@
             display: flex;
             flex-direction: column;
             align-items: flex-start;
-            box-shadow: var(--shadow-md);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04), 0 0 0 1px rgba(0,0,0,0.03);
             position: relative;
             overflow: hidden;
+        }
+        .card::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: var(--radius-lg);
+            padding: 1.5px;
+            background: linear-gradient(145deg, var(--border) 0%, rgba(153,0,0,0.1) 50%, var(--border) 100%);
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            pointer-events: none;
+            transition: background var(--transition-base);
+        }
+        .card:hover::after {
+            background: linear-gradient(145deg, var(--primary) 0%, var(--accent) 50%, var(--primary) 100%);
         }
         .card::before {
             content: '';
@@ -196,12 +232,12 @@
             background: linear-gradient(90deg, var(--primary) 0%, var(--accent) 100%);
             opacity: 0;
             transition: opacity var(--transition-base);
+            z-index: 1;
         }
         .card:hover::before { opacity: 1; }
         .card:hover {
             transform: translateY(-5px);
-            box-shadow: var(--shadow-lg);
-            border-color: var(--border-strong);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.08), 0 2px 6px rgba(0,0,0,0.04);
         }
 
         .tool-label {
@@ -256,6 +292,13 @@
         .card-instructor {
             border-color: #16a34a;
             background: linear-gradient(145deg, #f0fdf4 0%, #ffffff 100%);
+            background-clip: padding-box;
+        }
+        .card-instructor::after {
+            background: linear-gradient(145deg, #86efac 0%, rgba(22,163,74,0.2) 50%, #86efac 100%);
+        }
+        .card-instructor:hover::after {
+            background: linear-gradient(145deg, #16a34a 0%, #059669 50%, #16a34a 100%);
         }
         .card-instructor .tool-label { background: #dcfce7; color: #166534; border-color: #86efac; }
         .card-instructor .icon-box {
@@ -334,6 +377,37 @@
             .card h3 { font-size: 1.05rem; }
             .card p { font-size: 0.92rem; }
             .icon-box { width: 42px; height: 42px; }
+            .back-to-top { bottom: 20px; right: 20px; width: 40px; height: 40px; }
+        }
+
+        /* Back-to-top button */
+        .back-to-top {
+            position: fixed;
+            bottom: 32px;
+            right: 32px;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: var(--text-main);
+            color: white;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.18);
+            opacity: 0;
+            transform: translateY(12px);
+            transition: opacity 0.3s ease, transform 0.3s ease, background 0.2s ease;
+            z-index: 300;
+        }
+        .back-to-top.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .back-to-top:hover {
+            background: var(--primary);
+            box-shadow: 0 6px 20px rgba(153,0,0,0.3);
         }
 
         /* Scroll animations */
@@ -396,6 +470,7 @@
         </div>
     </div>
 
+    <div class="tools-section">
     <div class="container">
         <div class="grid">
 
@@ -554,12 +629,17 @@
 
         </div>
     </div>
+    </div> <!-- end tools-section -->
 
     <footer>
         <p>&copy; <span class="year"></span> Koray Cosguner &middot; Indiana University &middot; All Rights Reserved</p>
     </footer>
 
     </div> <!-- end main-content -->
+
+    <button class="back-to-top" id="backToTop" title="Back to top" onclick="window.scrollTo({ top: 0, behavior: 'smooth' })">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6"/></svg>
+    </button>
 
     <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
@@ -610,6 +690,16 @@
             });
         }, { threshold: 0.1 });
         document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+        // Back-to-top button visibility
+        const backBtn = document.getElementById('backToTop');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 400) {
+                backBtn.classList.add('visible');
+            } else {
+                backBtn.classList.remove('visible');
+            }
+        });
     </script>
 
 </body>

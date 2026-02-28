@@ -120,23 +120,40 @@
             gap: 14px;
             padding: 16px 18px;
             background: #ffffff;
-            border: 1px solid var(--border);
+            border: 1px solid transparent;
+            background-clip: padding-box;
             border-radius: var(--radius-lg);
             text-decoration: none;
             color: var(--text-main);
             font-weight: 600;
             font-size: 0.92rem;
-            box-shadow: var(--shadow-md);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04), 0 0 0 1px rgba(0,0,0,0.03);
             transition: all var(--transition-base);
             opacity: 0;
             transform: translateY(16px);
             animation: slideUp 0.45s var(--transition-slow) forwards;
             animation-delay: var(--delay, 0ms);
+            position: relative;
+        }
+        .link-item::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: var(--radius-lg);
+            padding: 1px;
+            background: linear-gradient(145deg, var(--border) 0%, rgba(153,0,0,0.08) 50%, var(--border) 100%);
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            pointer-events: none;
+            transition: background var(--transition-base);
+        }
+        .link-item:hover::after {
+            background: linear-gradient(145deg, var(--primary) 0%, #1a1a9e 50%, var(--primary) 100%);
         }
         .link-item:hover {
-            border-color: var(--primary);
             transform: translateX(4px);
-            box-shadow: var(--shadow-lg), -4px 0 0 var(--primary);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.08), -4px 0 0 var(--primary);
         }
 
         .link-icon {
