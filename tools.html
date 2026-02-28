@@ -552,7 +552,7 @@
     </div>
 
     <footer>
-        <p>&copy; 2026 Koray Cosguner &middot; Indiana University &middot; All Rights Reserved</p>
+        <p>&copy; <span class="year"></span> Koray Cosguner &middot; Indiana University &middot; All Rights Reserved</p>
     </footer>
 
     </div> <!-- end main-content -->
@@ -592,6 +592,9 @@
                 window.location.href = 'login.html';
             });
         }
+
+        // Auto-update copyright year
+        document.querySelectorAll('.year').forEach(el => el.textContent = new Date().getFullYear());
 
         // Scroll animations
         const observer = new IntersectionObserver((entries) => {

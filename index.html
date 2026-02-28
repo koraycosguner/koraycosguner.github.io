@@ -233,6 +233,8 @@
         .section {
             padding: 96px 24px;
             background: var(--surface);
+            border-top: 1px solid var(--border);
+            border-bottom: 1px solid var(--border);
         }
         .container { max-width: 1200px; margin: 0 auto; }
 
@@ -564,10 +566,13 @@
     </div>
 
     <footer>
-        <p>&copy; 2026 Koray Cosguner &middot; Indiana University &middot; All Rights Reserved</p>
+        <p>&copy; <span class="year"></span> Koray Cosguner &middot; Indiana University &middot; All Rights Reserved</p>
     </footer>
 
     <script>
+        // Auto-update copyright year
+        document.querySelectorAll('.year').forEach(el => el.textContent = new Date().getFullYear());
+
         // Scroll animations
         const observer = new IntersectionObserver((entries) => {
             entries.forEach((entry, i) => {
