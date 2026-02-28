@@ -1048,15 +1048,21 @@ server <- function(input, output, session) {
         tabPanel("Profiles",
           div(style = "margin-top: 15px;",
             tableOutput("profiles_table"),
-            p(style = "font-size: 0.85rem; color: #64748b; font-style: italic;",
-              "Select the table and copy (Ctrl+C / Cmd+C) to paste into Excel.")
+            div(style = "display: flex; align-items: center; gap: 15px; margin-top: 10px;",
+              downloadButton("download_profiles", "Download as CSV", class = "btn-primary"),
+              p(style = "font-size: 0.85rem; color: #64748b; font-style: italic; margin: 0;",
+                "Or select the table and copy (Ctrl+C / Cmd+C) to paste into Excel.")
+            )
           )
         ),
         tabPanel("Dummy Coded",
           div(style = "margin-top: 15px;",
             tableOutput("dummy_table"),
-            p(style = "font-size: 0.85rem; color: #64748b; font-style: italic;",
-              "Reference levels (first level of each attribute) are omitted.")
+            div(style = "display: flex; align-items: center; gap: 15px; margin-top: 10px;",
+              downloadButton("download_dummy", "Download as CSV", class = "btn-primary"),
+              p(style = "font-size: 0.85rem; color: #64748b; font-style: italic; margin: 0;",
+                "Reference levels (first level of each attribute) are omitted.")
+            )
           )
         ),
         tabPanel("R Script",
@@ -1172,6 +1178,45 @@ server <- function(input, output, session) {
       )
 
       writeLines(script, file)
+    }
+  )
+
+  # Download profiles as CSV
+  output$download_profiles <- downloadHandler(
+    filename = function() {
+      "conjoint_profiles.csv"
+    },
+    content = function(file) {
+      result <- design_result()
+      if (is.null(result)) return()
+      profiles <- result$profiles
+      profiles <- cbind(Profile = 1:nrow(profiles), profiles)
+      write.csv(profiles, file, row.names = FALSE)
+    }
+  )
+
+  # Download dummy-coded profiles as CSV
+  output$download_dummy <- downloadHandler(
+    filename = function() {
+      "conjoint_profiles_dummy_coded.csv"
+    },
+    content = function(file) {
+      result <- design_result()
+      if (is.null(result)) return()
+
+      profiles <- result$profiles
+      attrs <- result$attributes
+
+      dummy_df <- data.frame(Profile = 1:nrow(profiles))
+      for (attr_name in names(attrs)) {
+        levels <- attrs[[attr_name]]
+        for (i in 2:length(levels)) {
+          col_name <- paste0(attr_name, "_", gsub(" ", "_", levels[i]))
+          dummy_df[[col_name]] <- as.integer(profiles[[attr_name]] == levels[i])
+        }
+      }
+
+      write.csv(dummy_df, file, row.names = FALSE)
     }
   )
 }
