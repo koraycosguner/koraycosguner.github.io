@@ -399,7 +399,7 @@
                         With the file open in RStudio, click the <strong>"Run App"</strong> button in the top-right corner. The app will open in a new window or your browser.
                     </div>
                     <div class="step-description" style="margin-top: 0.5rem;">
-                        <strong>Note:</strong> On first run, the app will automatically install the required R packages (<code>shiny</code> and <code>conjoint</code>). This may take a minute.
+                        <strong>Note:</strong> On first run, the app will automatically install the required R packages (<code>shiny</code>, <code>conjoint</code>, and <code>readxl</code>). This may take a minute.
                     </div>
                 </div>
             </div>
@@ -411,7 +411,7 @@
             <div class="features">
                 <div class="feature">
                     <div class="feature-title">Add Attributes</div>
-                    <div class="feature-desc">Define attributes and their levels one by one</div>
+                    <div class="feature-desc">Define attributes and their levels manually or upload from Excel</div>
                 </div>
                 <div class="feature">
                     <div class="feature-title">Full Factorial Count</div>
@@ -433,6 +433,10 @@
                     <div class="feature-title">R Script Export</div>
                     <div class="feature-desc">Download reproducible R script</div>
                 </div>
+                <div class="feature">
+                    <div class="feature-title">Excel Upload</div>
+                    <div class="feature-desc">Upload existing profiles from Excel or CSV files</div>
+                </div>
             </div>
         </div>
 
@@ -451,6 +455,7 @@
                 <div class="code-block">
 <code>install.packages("shiny")</code>
 <code>install.packages("conjoint")</code>
+<code>install.packages("readxl")</code>
                 </div>
             </div>
 
@@ -477,9 +482,13 @@ if (!require("shiny", quietly = TRUE)) {
 if (!require("conjoint", quietly = TRUE)) {
   install.packages("conjoint", repos = "https://cloud.r-project.org")
 }
+if (!require("readxl", quietly = TRUE)) {
+  install.packages("readxl", repos = "https://cloud.r-project.org")
+}
 
 library(shiny)
 library(conjoint)
+library(readxl)
 
 ui <- fluidPage(
   # Custom CSS
@@ -628,6 +637,48 @@ ui <- fluidPage(
         font-size: 0.85rem;
         overflow-x: auto;
       }
+      .method-toggle {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 15px;
+      }
+      .method-btn {
+        flex: 1;
+        padding: 12px;
+        border: 2px solid #e2e8f0;
+        border-radius: 8px;
+        background: white;
+        cursor: pointer;
+        text-align: center;
+        transition: all 0.2s;
+        font-size: 0.9rem;
+      }
+      .method-btn:hover {
+        border-color: #cbd5e1;
+      }
+      .method-btn.active {
+        border-color: #2563eb;
+        background: #eff6ff;
+        color: #2563eb;
+        font-weight: 600;
+      }
+      .upload-info {
+        background: #f0fdf4;
+        border: 1px solid #86efac;
+        border-radius: 8px;
+        padding: 12px;
+        margin-top: 10px;
+        font-size: 0.85rem;
+        color: #166534;
+      }
+      .upload-hint {
+        background: #f8fafc;
+        border-radius: 8px;
+        padding: 12px;
+        margin-top: 10px;
+        font-size: 0.85rem;
+        color: #64748b;
+      }
     "))
   ),
 
@@ -648,24 +699,64 @@ ui <- fluidPage(
   # Step 1: Define Attributes
   div(class = "card",
     div(class = "card-title", "1. Define Attributes"),
-    fluidRow(
-      column(4,
-        textInput("attr_name", "Attribute Name", placeholder = "e.g., Brand")
+
+    # Method toggle
+    div(class = "method-toggle",
+      tags$button(id = "btn_manual", class = "method-btn active",
+        onclick = "
+          document.getElementById('btn_manual').className = 'method-btn active';
+          document.getElementById('btn_upload').className = 'method-btn';
+          document.getElementById('panel_manual').style.display = 'block';
+          document.getElementById('panel_upload').style.display = 'none';
+        ",
+        "Define Manually"
       ),
-      column(6,
-        textInput("attr_levels", "Levels (comma-separated)", placeholder = "e.g., Apple, Samsung, Google, Sony")
-      ),
-      column(2,
-        div(style = "margin-top: 25px;",
-          actionButton("add_attr", "Add", class = "btn-primary")
-        )
+      tags$button(id = "btn_upload", class = "method-btn",
+        onclick = "
+          document.getElementById('btn_upload').className = 'method-btn active';
+          document.getElementById('btn_manual').className = 'method-btn';
+          document.getElementById('panel_upload').style.display = 'block';
+          document.getElementById('panel_manual').style.display = 'none';
+        ",
+        "Upload from Excel"
       )
     ),
-    p(class = "help-text", "Enter at least 2 levels per attribute, separated by commas."),
 
-    # Attributes list
-    div(style = "margin-top: 20px;",
-      uiOutput("attributes_list")
+    # Manual panel
+    div(id = "panel_manual",
+      fluidRow(
+        column(4,
+          textInput("attr_name", "Attribute Name", placeholder = "e.g., Brand")
+        ),
+        column(6,
+          textInput("attr_levels", "Levels (comma-separated)", placeholder = "e.g., Apple, Samsung, Google, Sony")
+        ),
+        column(2,
+          div(style = "margin-top: 25px;",
+            actionButton("add_attr", "Add", class = "btn-primary")
+          )
+        )
+      ),
+      p(class = "help-text", "Enter at least 2 levels per attribute, separated by commas."),
+      div(style = "margin-top: 20px;",
+        uiOutput("attributes_list")
+      )
+    ),
+
+    # Upload panel
+    div(id = "panel_upload", style = "display: none;",
+      fileInput("upload_profiles", "Upload Excel or CSV file with profiles",
+        accept = c(".xlsx", ".xls", ".csv"),
+        placeholder = "No file selected"
+      ),
+      div(class = "upload-hint",
+        tags$strong("Expected format:"),
+        " Each column should be an attribute (e.g., Number of Channels, Movie Channels, Price, etc.).",
+        " Each row should be a profile with the level for that attribute.",
+        " The first row should contain the attribute names as column headers."
+      ),
+      uiOutput("upload_status"),
+      uiOutput("upload_preview")
     )
   ),
 
@@ -735,6 +826,97 @@ server <- function(input, output, session) {
     attributes(list())
     design_result(NULL)
   })
+
+  # Handle file upload
+  observeEvent(input$upload_profiles, {
+    req(input$upload_profiles)
+    file <- input$upload_profiles
+
+    tryCatch({
+      # Read file based on extension
+      ext <- tools::file_ext(file$name)
+      if (ext %in% c("xlsx", "xls")) {
+        df <- readxl::read_excel(file$datapath)
+      } else if (ext == "csv") {
+        df <- read.csv(file$datapath, stringsAsFactors = FALSE)
+      } else {
+        showNotification("Unsupported file format. Please upload .xlsx, .xls, or .csv", type = "error")
+        return()
+      }
+
+      # Remove any Profile/# column if present
+      drop_cols <- which(tolower(names(df)) %in% c("profile", "#", "profile #", "profile_number"))
+      if (length(drop_cols) > 0) {
+        df <- df[, -drop_cols, drop = FALSE]
+      }
+
+      if (ncol(df) < 2) {
+        showNotification("File must have at least 2 attribute columns.", type = "error")
+        return()
+      }
+
+      if (nrow(df) < 2) {
+        showNotification("File must have at least 2 profiles (rows).", type = "error")
+        return()
+      }
+
+      # Convert all columns to character
+      df <- as.data.frame(lapply(df, as.character), stringsAsFactors = FALSE)
+
+      # Extract attributes and levels from the uploaded data
+      uploaded_attrs <- list()
+      for (col_name in names(df)) {
+        uploaded_attrs[[col_name]] <- unique(df[[col_name]])
+      }
+
+      # Set attributes and design result
+      attributes(uploaded_attrs)
+
+      design_result(list(
+        profiles = df,
+        attributes = uploaded_attrs
+      ))
+
+      showNotification(
+        paste("Uploaded", nrow(df), "profiles with", ncol(df), "attributes from", file$name),
+        type = "message"
+      )
+
+    }, error = function(e) {
+      showNotification(paste("Error reading file:", e$message), type = "error")
+    })
+  })
+
+  # Upload status
+  output$upload_status <- renderUI({
+    req(input$upload_profiles)
+    result <- design_result()
+    if (is.null(result)) return(NULL)
+
+    div(class = "upload-info",
+      paste("Successfully loaded", nrow(result$profiles), "profiles with",
+            length(result$attributes), "attributes:",
+            paste(names(result$attributes), collapse = ", "))
+    )
+  })
+
+  # Upload preview
+  output$upload_preview <- renderUI({
+    req(input$upload_profiles)
+    result <- design_result()
+    if (is.null(result)) return(NULL)
+
+    div(style = "margin-top: 15px;",
+      p(style = "font-weight: 600; margin-bottom: 8px;", "Preview (first 5 rows):"),
+      tableOutput("upload_preview_table")
+    )
+  })
+
+  output$upload_preview_table <- renderTable({
+    result <- design_result()
+    if (is.null(result)) return(NULL)
+    head(result$profiles, 5)
+  }, rownames = FALSE)
 
   # Render attributes list
   output$attributes_list <- renderUI({
