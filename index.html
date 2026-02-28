@@ -786,7 +786,7 @@
             document.documentElement.style.fontSize = fontSizes[step] + 'px';
             document.querySelectorAll('.decrease-a').forEach(b => b.classList.toggle('at-limit', step === 0));
             document.querySelectorAll('.increase-a').forEach(b => b.classList.toggle('at-limit', step === fontSizes.length - 1));
-        })();
+        }
 
         // Auto-update copyright year
         document.querySelectorAll('.year').forEach(el => el.textContent = new Date().getFullYear());
