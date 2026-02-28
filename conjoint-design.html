@@ -435,7 +435,7 @@
                 </div>
                 <div class="feature">
                     <div class="feature-title">Excel Upload</div>
-                    <div class="feature-desc">Upload existing profiles from Excel or CSV files</div>
+                    <div class="feature-desc">Upload attribute/level definitions from Excel or CSV files</div>
                 </div>
             </div>
         </div>
@@ -751,8 +751,9 @@ ui <- fluidPage(
       ),
       div(class = "upload-hint",
         tags$strong("Expected format:"),
-        " Each column should be an attribute (e.g., Number of Channels, Movie Channels, Price, etc.).",
-        " Each row should be a profile with the level for that attribute.",
+        " Each column is an attribute (e.g., Number of Channels, Movie Channels, Price).",
+        " Each row lists one level per attribute. Attributes can have different numbers of levels",
+        " — leave cells empty for attributes with fewer levels.",
         " The first row should contain the attribute names as column headers."
       ),
       uiOutput("upload_status"),
@@ -828,6 +829,8 @@ server <- function(input, output, session) {
   })
 
   # Handle file upload
+  # Expected format: columns = attributes, rows = levels
+  # Each attribute can have a different number of levels (empty cells are ignored)
   observeEvent(input$upload_profiles, {
     req(input$upload_profiles)
     file <- input$upload_profiles
@@ -836,18 +839,12 @@ server <- function(input, output, session) {
       # Read file based on extension
       ext <- tools::file_ext(file$name)
       if (ext %in% c("xlsx", "xls")) {
-        df <- readxl::read_excel(file$datapath)
+        df <- readxl::read_excel(file$datapath, col_types = "text")
       } else if (ext == "csv") {
-        df <- read.csv(file$datapath, stringsAsFactors = FALSE)
+        df <- read.csv(file$datapath, stringsAsFactors = FALSE, colClasses = "character")
       } else {
         showNotification("Unsupported file format. Please upload .xlsx, .xls, or .csv", type = "error")
         return()
-      }
-
-      # Remove any Profile/# column if present
-      drop_cols <- which(tolower(names(df)) %in% c("profile", "#", "profile #", "profile_number"))
-      if (length(drop_cols) > 0) {
-        df <- df[, -drop_cols, drop = FALSE]
       }
 
       if (ncol(df) < 2) {
@@ -855,31 +852,40 @@ server <- function(input, output, session) {
         return()
       }
 
-      if (nrow(df) < 2) {
-        showNotification("File must have at least 2 profiles (rows).", type = "error")
+      # Extract attributes and their levels from each column
+      # Each column is an attribute; rows are its levels
+      # Empty/NA cells are ignored (attributes can have different numbers of levels)
+      uploaded_attrs <- list()
+      for (col_name in names(df)) {
+        col_values <- df[[col_name]]
+        # Remove NA, empty, and whitespace-only values
+        levels <- trimws(col_values)
+        levels <- levels[!is.na(levels) & levels != ""]
+        if (length(levels) >= 2) {
+          uploaded_attrs[[col_name]] <- levels
+        }
+      }
+
+      if (length(uploaded_attrs) < 2) {
+        showNotification("Need at least 2 attributes with 2+ levels each.", type = "error")
         return()
       }
 
-      # Convert all columns to character
-      df <- as.data.frame(lapply(df, as.character), stringsAsFactors = FALSE)
-
-      # Extract attributes and levels from the uploaded data
-      uploaded_attrs <- list()
-      for (col_name in names(df)) {
-        uploaded_attrs[[col_name]] <- unique(df[[col_name]])
-      }
-
-      # Set attributes and design result
+      # Set attributes (this populates the stats card and enables Generate)
       attributes(uploaded_attrs)
 
-      design_result(list(
-        profiles = df,
-        attributes = uploaded_attrs
-      ))
+      # Clear any previous design so user can click Generate
+      design_result(NULL)
 
+      # Build summary message
+      attr_summary <- paste(
+        sapply(names(uploaded_attrs), function(n) paste0(n, " (", length(uploaded_attrs[[n]]), ")")),
+        collapse = ", "
+      )
       showNotification(
-        paste("Uploaded", nrow(df), "profiles with", ncol(df), "attributes from", file$name),
-        type = "message"
+        paste("Loaded", length(uploaded_attrs), "attributes from", file$name, ":", attr_summary),
+        type = "message",
+        duration = 8
       )
 
     }, error = function(e) {
@@ -890,32 +896,42 @@ server <- function(input, output, session) {
   # Upload status
   output$upload_status <- renderUI({
     req(input$upload_profiles)
-    result <- design_result()
-    if (is.null(result)) return(NULL)
+    attrs <- attributes()
+    if (length(attrs) == 0) return(NULL)
 
+    attr_summary <- paste(
+      sapply(names(attrs), function(n) paste0(n, " (", length(attrs[[n]]), " levels)")),
+      collapse = ", "
+    )
     div(class = "upload-info",
-      paste("Successfully loaded", nrow(result$profiles), "profiles with",
-            length(result$attributes), "attributes:",
-            paste(names(result$attributes), collapse = ", "))
+      paste("Loaded", length(attrs), "attributes:", attr_summary),
+      div(style = "margin-top: 8px; font-style: italic;",
+        "Click \\"Generate Fractional Design\\" below to create the design."
+      )
     )
   })
 
   # Upload preview
   output$upload_preview <- renderUI({
     req(input$upload_profiles)
-    result <- design_result()
-    if (is.null(result)) return(NULL)
+    attrs <- attributes()
+    if (length(attrs) == 0) return(NULL)
 
     div(style = "margin-top: 15px;",
-      p(style = "font-weight: 600; margin-bottom: 8px;", "Preview (first 5 rows):"),
+      p(style = "font-weight: 600; margin-bottom: 8px;", "Uploaded Attributes and Levels:"),
       tableOutput("upload_preview_table")
     )
   })
 
   output$upload_preview_table <- renderTable({
-    result <- design_result()
-    if (is.null(result)) return(NULL)
-    head(result$profiles, 5)
+    attrs <- attributes()
+    if (length(attrs) == 0) return(NULL)
+    # Build a display table: each column is an attribute, rows are levels
+    max_levels <- max(sapply(attrs, length))
+    preview_df <- data.frame(lapply(attrs, function(lvls) {
+      c(lvls, rep("", max_levels - length(lvls)))
+    }), stringsAsFactors = FALSE, check.names = FALSE)
+    preview_df
   }, rownames = FALSE)
 
   # Render attributes list
