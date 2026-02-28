@@ -377,6 +377,15 @@
                     <div class="upload-file-name" id="ratingsFileName"></div>
                 </div>
             </div>
+            <div style="margin-top: 0.75rem;">
+                <div class="upload-area" id="profilesUploadArea" style="max-width: 360px;">
+                    <input type="file" accept=".csv" id="profilesFile">
+                    <div class="upload-icon">📋</div>
+                    <div class="upload-text">Profiles CSV (Optional)</div>
+                    <div class="upload-hint">Original profiles from the Design Tool — labels base levels with actual names</div>
+                    <div class="upload-file-name" id="profilesFileName"></div>
+                </div>
+            </div>
 
             <div id="dataSummary" style="display:none;">
                 <div class="summary-box" id="summaryBox"></div>
@@ -424,7 +433,7 @@
             </p>
             <div class="threshold-row">
                 <label style="font-weight: 500;">Importance threshold:</label>
-                <input type="number" class="threshold-input" id="thresholdInput" value="30" min="0" max="100" step="5">
+                <input type="number" class="threshold-input" id="thresholdInput" value="25" min="0" max="100" step="5">
                 <span style="font-size: 0.9rem;">%</span>
                 <button class="btn btn-secondary" onclick="recomputeSegmentation()">Update</button>
             </div>
@@ -479,6 +488,7 @@
 // =====================================================
 let designData = null;
 let ratingsData = null;
+let profilesData = null;
 let dummyColumns = [];
 let respondentColumns = [];
 let attributes = [];       // [{name, levels: [{name, dummyCol}]}]
@@ -582,6 +592,40 @@ document.getElementById('ratingsFile').addEventListener('change', function(e) {
     });
 });
 
+document.getElementById('profilesFile').addEventListener('change', function(e) {
+    if (e.target.files.length === 0) return;
+    const file = e.target.files[0];
+    Papa.parse(file, {
+        header: true,
+        skipEmptyLines: true,
+        complete: function(results) {
+            profilesData = results.data;
+            document.getElementById('profilesFileName').textContent = '✓ ' + file.name;
+            document.getElementById('profilesUploadArea').classList.add('loaded');
+            // Re-detect attributes if design data already loaded
+            if (designData && dummyColumns.length > 0) {
+                attributes = detectAttributes(dummyColumns);
+                // Refresh summary if already displayed
+                if (document.getElementById('dataSummary').style.display !== 'none') {
+                    refreshSummary();
+                }
+            }
+        },
+        error: function(err) { alert('Error parsing profiles CSV: ' + err.message); }
+    });
+});
+
+function refreshSummary() {
+    const summaryBox = document.getElementById('summaryBox');
+    let badgesHtml = attributes.map(a =>
+        '<span class="attr-badge">' + a.name + ' (' + a.levels.length + ' levels)</span>'
+    ).join(' ');
+    const baseLabelNote = profilesData ? ' Base levels detected from profiles.' : '';
+    summaryBox.innerHTML = '<strong>' + designData.length + ' profiles</strong>, <strong>' +
+        respondentColumns.length + ' respondents</strong>, <strong>' +
+        attributes.length + ' attributes</strong>' + baseLabelNote + '<br>' + badgesHtml;
+}
+
 function checkBothUploaded() {
     if (!designData || !ratingsData) return;
 
@@ -615,9 +659,10 @@ function checkBothUploaded() {
     let badgesHtml = attributes.map(a =>
         '<span class="attr-badge">' + a.name + ' (' + a.levels.length + ' levels)</span>'
     ).join(' ');
+    const baseLabelNote = profilesData ? ' Base levels detected from profiles.' : '';
     summaryBox.innerHTML = '<strong>' + designData.length + ' profiles</strong>, <strong>' +
         respondentColumns.length + ' respondents</strong>, <strong>' +
-        attributes.length + ' attributes</strong><br>' + badgesHtml;
+        attributes.length + ' attributes</strong>' + baseLabelNote + '<br>' + badgesHtml;
 
     // Preview tables
     renderPreviewTable('designPreview', designData, designCols, 5);
@@ -642,10 +687,36 @@ function detectAttributes(columns) {
         if (!attrMap[attrName]) attrMap[attrName] = [];
         attrMap[attrName].push({ name: levelName, dummyCol: col });
     });
-    return Object.keys(attrMap).map(name => ({
-        name: name,
-        levels: [{ name: 'Base', dummyCol: null }, ...attrMap[name]]
-    }));
+    return Object.keys(attrMap).map(name => {
+        const dummyLevels = attrMap[name];
+        let baseName = 'Base';
+
+        // If profiles CSV uploaded, find the real base level name
+        if (profilesData && profilesData.length > 0) {
+            const profilesCols = Object.keys(profilesData[0]);
+            const matchCol = profilesCols.find(c => c === name);
+            if (matchCol) {
+                // All unique values for this attribute in the profiles
+                const allValues = new Set(
+                    profilesData.map(row => String(row[matchCol] ?? '').trim()).filter(v => v !== '')
+                );
+                // Dummy level names (replace _ with space for comparison since design tool encodes spaces as _)
+                const dummyNameMap = new Map(dummyLevels.map(l => [l.name.replace(/_/g, ' '), l.name]));
+                // Base = value present in profiles but not matching any dummy level
+                const baseValues = [...allValues].filter(v => !dummyNameMap.has(v));
+                if (baseValues.length === 1) {
+                    baseName = baseValues[0];
+                } else if (baseValues.length > 1) {
+                    baseName = baseValues[0];
+                }
+            }
+        }
+
+        return {
+            name: name,
+            levels: [{ name: baseName, dummyCol: null }, ...dummyLevels]
+        };
+    });
 }
 
 function renderPreviewTable(containerId, data, cols, maxRows) {
@@ -845,7 +916,7 @@ function renderImportance() {
 // STEP 4: SEGMENTATION
 // =====================================================
 function computeSegmentation() {
-    const threshold = parseFloat(document.getElementById('thresholdInput').value) || 30;
+    const threshold = parseFloat(document.getElementById('thresholdInput').value) || 25;
     const R = respondentColumns.length;
 
     segmentLabels = [];
