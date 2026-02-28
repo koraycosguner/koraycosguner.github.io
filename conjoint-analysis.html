@@ -779,7 +779,12 @@ function runFullAnalysis() {
 
             // Check dimensions: need more profiles than parameters
             if (n <= p) {
-                throw new Error('Not enough profiles (' + n + ') for the number of dummy variables (' + p + ' + intercept = ' + (p + 1) + '). The design needs at least ' + (p + 1) + ' profiles.');
+                throw new Error('Not enough profiles (' + n + ') for the number of dummy variables (' + p + ' + intercept = ' + (p + 1) + '). The design needs at least ' + (p + 2) + ' profiles.');
+            }
+
+            // Warn if design is borderline
+            if (n < p + 5) {
+                console.warn('Conjoint Analysis: Design has only ' + n + ' profiles for ' + (p+1) + ' parameters. Results may be less stable. Consider using a design with more profiles.');
             }
 
             // Design matrix X (n x p)
@@ -804,9 +809,15 @@ function runFullAnalysis() {
             // Prepend intercept column
             const X = X_raw.map(row => [1, ...row]); // n x (p+1)
 
-            // Compute (X'X)^-1
+            // Compute (X'X)^-1 with ridge regularization for numerical stability
             const Xt = transpose(X);
             const XtX = matMul(Xt, X);
+
+            // Add tiny ridge penalty: (X'X + λI) to handle near-singular designs
+            // λ = 1e-8 is negligible for well-conditioned matrices but prevents singularity
+            const lambda = 1e-8;
+            for (let i = 0; i < XtX.length; i++) XtX[i][i] += lambda;
+
             const XtX_inv = matInverse(XtX);
 
             // For each respondent: beta = (X'X)^-1 * X'y
