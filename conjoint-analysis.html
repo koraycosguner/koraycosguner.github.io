@@ -1,0 +1,1199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Conjoint Analysis Tool</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --primary-light: #dbeafe;
+            --success: #16a34a;
+            --success-light: #dcfce7;
+            --danger: #dc2626;
+            --danger-light: #fee2e2;
+            --warning: #f59e0b;
+            --bg: #f8fafc;
+            --card-bg: #ffffff;
+            --text-dark: #1e293b;
+            --text-light: #64748b;
+            --border: #e2e8f0;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-size: 18px;
+            font-family: 'Outfit', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background: var(--bg);
+            color: var(--text-dark);
+            line-height: 1.6;
+            padding: 1rem;
+        }
+
+        .container { max-width: 1100px; margin: 0 auto; }
+
+        h1 { text-align: center; margin-bottom: 0.5rem; color: var(--text-dark); }
+        .subtitle { text-align: center; color: var(--text-light); margin-bottom: 2rem; }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .card-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--text-dark);
+        }
+
+        .disclaimer {
+            background: #fef3c7;
+            border: 1px solid #f59e0b;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+            font-size: 0.9rem;
+        }
+        .disclaimer-title { font-weight: 600; color: #92400e; margin-bottom: 0.5rem; }
+        .disclaimer ul { margin-left: 1.25rem; color: #78350f; }
+        .disclaimer li { margin-bottom: 0.25rem; }
+
+        a { color: var(--primary); text-decoration: none; }
+        a:hover { text-decoration: underline; }
+
+        /* Upload areas */
+        .upload-row {
+            display: flex;
+            gap: 1rem;
+        }
+        .upload-area {
+            flex: 1;
+            border: 2px dashed var(--border);
+            border-radius: 12px;
+            padding: 2rem 1rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            position: relative;
+        }
+        .upload-area:hover { border-color: var(--primary); background: #f0f7ff; }
+        .upload-area.loaded { border-color: var(--success); border-style: solid; background: var(--success-light); }
+        .upload-area input[type="file"] {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            opacity: 0; cursor: pointer;
+        }
+        .upload-icon { font-size: 2rem; margin-bottom: 0.5rem; }
+        .upload-text { font-weight: 600; font-size: 0.95rem; margin-bottom: 0.25rem; }
+        .upload-hint { font-size: 0.8rem; color: var(--text-light); }
+        .upload-file-name { font-size: 0.85rem; color: var(--success); font-weight: 500; margin-top: 0.5rem; }
+
+        /* Buttons */
+        .btn {
+            display: inline-block;
+            padding: 0.65rem 1.25rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            font-weight: 500;
+            cursor: pointer;
+            font-family: inherit;
+            text-decoration: none;
+            transition: background 0.2s;
+        }
+        .btn-primary { background: var(--primary); color: white; }
+        .btn-primary:hover { background: var(--primary-dark); }
+        .btn-success { background: var(--success); color: white; }
+        .btn-success:hover { background: #15803d; }
+        .btn-danger { background: var(--danger); color: white; font-size: 0.85rem; padding: 0.4rem 0.75rem; }
+        .btn-danger:hover { background: #b91c1c; }
+        .btn-secondary { background: #e2e8f0; color: var(--text-dark); }
+        .btn-secondary:hover { background: #cbd5e1; }
+        .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+        /* Summary box */
+        .summary-box {
+            background: var(--primary-light);
+            border: 1px solid var(--primary);
+            border-radius: 8px;
+            padding: 1rem;
+            margin-top: 1rem;
+            font-size: 0.9rem;
+            color: #1e40af;
+        }
+        .summary-box strong { color: #1e3a8a; }
+
+        /* Attribute badges */
+        .attr-badge {
+            display: inline-block;
+            background: var(--primary);
+            color: white;
+            padding: 0.2rem 0.6rem;
+            border-radius: 999px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            margin: 0.15rem;
+        }
+
+        /* Tables */
+        .table-container {
+            overflow-x: auto;
+            margin-top: 1rem;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.8rem;
+            white-space: nowrap;
+        }
+        thead th {
+            background: #f1f5f9;
+            padding: 0.5rem 0.6rem;
+            text-align: left;
+            font-weight: 600;
+            border-bottom: 2px solid var(--border);
+            position: sticky;
+            top: 0;
+            z-index: 1;
+        }
+        tbody td {
+            padding: 0.4rem 0.6rem;
+            border-bottom: 1px solid #f1f5f9;
+        }
+        tbody tr:hover { background: #f8fafc; }
+        .attr-header td {
+            background: #f1f5f9;
+            font-weight: 600;
+            color: var(--primary);
+            padding-top: 0.6rem;
+        }
+        .col-avg { background: #fffbeb; font-weight: 600; }
+        .col-label { position: sticky; left: 0; background: white; z-index: 1; font-weight: 500; }
+        thead .col-label { background: #f1f5f9; }
+
+        /* Step cards */
+        .step-card { display: none; }
+        .step-card.visible { display: block; }
+
+        /* Chart */
+        .chart-container {
+            margin-top: 1rem;
+            max-height: 400px;
+            position: relative;
+        }
+
+        /* Actions bar */
+        .actions-bar {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-top: 1rem;
+            flex-wrap: wrap;
+        }
+
+        /* Product options builder */
+        .product-option {
+            background: #f8fafc;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 1rem;
+            margin-bottom: 0.75rem;
+        }
+        .option-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.75rem;
+        }
+        .option-name-input {
+            font-family: inherit;
+            font-size: 0.95rem;
+            font-weight: 600;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 0.4rem 0.6rem;
+            width: 200px;
+        }
+        .option-name-input:focus { outline: none; border-color: var(--primary); }
+        .attr-selectors {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 0.6rem;
+        }
+        .attr-selector label {
+            display: block;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--text-light);
+            margin-bottom: 0.25rem;
+        }
+        .attr-selector select {
+            width: 100%;
+            font-family: inherit;
+            font-size: 0.85rem;
+            padding: 0.35rem 0.5rem;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            background: white;
+        }
+        .attr-selector select:focus { outline: none; border-color: var(--primary); }
+
+        /* Threshold input */
+        .threshold-row {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+        }
+        .threshold-input {
+            font-family: inherit;
+            font-size: 0.95rem;
+            width: 80px;
+            padding: 0.4rem 0.6rem;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            text-align: center;
+        }
+        .threshold-input:focus { outline: none; border-color: var(--primary); }
+
+        /* Preview table */
+        .preview-label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-light);
+            margin-top: 1rem;
+            margin-bottom: 0.25rem;
+        }
+
+        /* Segment table special styling */
+        .segment-row td:first-child { font-weight: 600; }
+
+        /* Market share highlight */
+        .market-share-table td { font-size: 0.95rem; padding: 0.6rem 0.8rem; }
+        .market-share-table th { font-size: 0.9rem; padding: 0.6rem 0.8rem; }
+
+        /* Loading overlay */
+        .loading-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(255,255,255,0.85);
+            z-index: 100;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+        .loading-overlay.active { display: flex; }
+        .spinner {
+            width: 40px; height: 40px;
+            border: 4px solid var(--border);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .loading-text { margin-top: 0.75rem; color: var(--text-light); font-size: 0.9rem; }
+
+        /* Mobile */
+        @media (max-width: 700px) {
+            body { padding: 0.75rem; }
+            h1 { font-size: 1.4rem; }
+            .subtitle { font-size: 0.85rem; margin-bottom: 1rem; }
+            .card { padding: 0.875rem; margin-bottom: 1rem; }
+            .card-title { font-size: 1rem; }
+            .upload-row { flex-direction: column; }
+            .upload-area { padding: 1.5rem 1rem; }
+            .btn { width: 100%; text-align: center; font-size: 0.85rem; }
+            .actions-bar { flex-direction: column; }
+            .actions-bar .btn { width: 100%; }
+            .attr-selectors { grid-template-columns: 1fr; }
+            .option-name-input { width: 100%; }
+            .threshold-row { flex-wrap: wrap; }
+            table { font-size: 0.7rem; }
+            .disclaimer { padding: 0.75rem; margin-bottom: 1rem; }
+            .disclaimer ul { margin-left: 1rem; }
+        }
+    </style>
+</head>
+<body>
+<!-- Auth check -->
+<div id="loading-screen" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: white; display: flex; align-items: center; justify-content: center; z-index: 9999;">
+    <p style="color: #64748b;">Loading...</p>
+</div>
+
+<!-- Loading overlay for computation -->
+<div class="loading-overlay" id="loadingOverlay">
+    <div class="spinner"></div>
+    <div class="loading-text">Running analysis...</div>
+</div>
+
+<div id="main-content" style="display: none;">
+    <div style="max-width: 1100px; margin: 0 auto; padding: 0 0 10px 0;">
+        <a href="tools.html" style="display: inline-flex; align-items: center; gap: 6px; color: #64748b; text-decoration: none; font-size: 0.9rem; font-weight: 500;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+            Back to Pricing and Analytics Tools
+        </a>
+    </div>
+    <div class="container">
+        <h1>Conjoint Analysis Tool</h1>
+        <p class="subtitle">Estimate part-worth utilities, attribute importance, segments, and market shares</p>
+
+        <!-- Disclaimer -->
+        <div class="disclaimer">
+            <div class="disclaimer-title">Disclaimer</div>
+            <ul>
+                <li><strong>Results may contain errors.</strong> The output from this tool may be inaccurate, incomplete, or incorrect. Users should independently verify all results.</li>
+                <li><strong>No warranty.</strong> This tool is provided "as is" without any warranty of any kind.</li>
+                <li><strong>User assumes all risk.</strong> Users assume full responsibility for reviewing and validating any output.</li>
+            </ul>
+        </div>
+
+        <!-- Step 1: Upload Data -->
+        <div class="card" id="step1">
+            <div class="card-title">Step 1: Upload Data</div>
+            <div class="upload-row">
+                <div class="upload-area" id="designUploadArea">
+                    <input type="file" accept=".csv" id="designFile">
+                    <div class="upload-icon">📊</div>
+                    <div class="upload-text">Design Matrix (Dummy Coded)</div>
+                    <div class="upload-hint">CSV with Profile column + dummy variable columns</div>
+                    <div class="upload-file-name" id="designFileName"></div>
+                </div>
+                <div class="upload-area" id="ratingsUploadArea">
+                    <input type="file" accept=".csv" id="ratingsFile">
+                    <div class="upload-icon">⭐</div>
+                    <div class="upload-text">Ratings Data</div>
+                    <div class="upload-hint">CSV with Profile column + Respondent columns (0-100)</div>
+                    <div class="upload-file-name" id="ratingsFileName"></div>
+                </div>
+            </div>
+
+            <div id="dataSummary" style="display:none;">
+                <div class="summary-box" id="summaryBox"></div>
+                <div class="preview-label">Design Matrix Preview (first 5 rows):</div>
+                <div class="table-container" id="designPreview"></div>
+                <div class="preview-label">Ratings Preview (first 5 rows):</div>
+                <div class="table-container" id="ratingsPreview"></div>
+            </div>
+
+            <div class="actions-bar">
+                <button class="btn btn-success" id="runAnalysis" style="display:none;" onclick="runFullAnalysis()">Run Analysis</button>
+            </div>
+        </div>
+
+        <!-- Step 2: Part-Worth Utilities -->
+        <div class="card step-card" id="step2">
+            <div class="card-title">Step 2: Part-Worth Utilities (OLS Regression)</div>
+            <p style="font-size: 0.85rem; color: var(--text-light); margin-bottom: 0.5rem;">
+                Individual-level OLS regression coefficients. Base levels = 0 (reference category).
+            </p>
+            <div class="table-container" id="coeffTable"></div>
+            <div class="actions-bar">
+                <button class="btn btn-primary" onclick="downloadCSV('coefficients')">Download Coefficients CSV</button>
+            </div>
+        </div>
+
+        <!-- Step 3: Attribute Importance -->
+        <div class="card step-card" id="step3">
+            <div class="card-title">Step 3: Attribute Importance</div>
+            <p style="font-size: 0.85rem; color: var(--text-light); margin-bottom: 0.5rem;">
+                Relative importance (%) based on the range of part-worth utilities per attribute.
+            </p>
+            <div class="table-container" id="importanceTable"></div>
+            <div class="chart-container"><canvas id="importanceChart"></canvas></div>
+            <div class="actions-bar">
+                <button class="btn btn-primary" onclick="downloadCSV('importance')">Download Importance CSV</button>
+            </div>
+        </div>
+
+        <!-- Step 4: Segmentation -->
+        <div class="card step-card" id="step4">
+            <div class="card-title">Step 4: Segmentation</div>
+            <p style="font-size: 0.85rem; color: var(--text-light); margin-bottom: 0.5rem;">
+                Group respondents by their important attributes (those exceeding the threshold).
+            </p>
+            <div class="threshold-row">
+                <label style="font-weight: 500;">Importance threshold:</label>
+                <input type="number" class="threshold-input" id="thresholdInput" value="30" min="0" max="100" step="5">
+                <span style="font-size: 0.9rem;">%</span>
+                <button class="btn btn-secondary" onclick="recomputeSegmentation()">Update</button>
+            </div>
+            <div class="table-container" id="segmentTable"></div>
+            <div class="chart-container" style="max-height: 350px;"><canvas id="segmentChart"></canvas></div>
+            <div class="actions-bar">
+                <button class="btn btn-primary" onclick="downloadCSV('segmentation')">Download Segmentation CSV</button>
+            </div>
+        </div>
+
+        <!-- Step 5: Choice Simulator -->
+        <div class="card step-card" id="step5">
+            <div class="card-title">Step 5: Individual Choice and Choice Probability Simulator</div>
+            <p style="font-size: 0.85rem; color: var(--text-light); margin-bottom: 1rem;">
+                Define product options, then calculate each respondent's utility, choice, and choice probability.
+            </p>
+            <div id="productOptions"></div>
+            <div class="actions-bar" style="margin-bottom: 1rem;">
+                <button class="btn btn-secondary" onclick="addProductOption()">+ Add Option</button>
+                <button class="btn btn-success" id="calculateShares" onclick="runSimulation()">Calculate Market Shares</button>
+            </div>
+            <div id="simulatorResults" style="display:none;">
+                <div class="table-container" id="simTable"></div>
+                <div class="actions-bar">
+                    <button class="btn btn-primary" onclick="downloadCSV('simulation')">Download Individual Results CSV</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Step 6: Market Share -->
+        <div class="card step-card" id="step6">
+            <div class="card-title">Step 6: Market Share</div>
+            <p style="font-size: 0.85rem; color: var(--text-light); margin-bottom: 0.5rem;">
+                Aggregated market shares from individual choices and choice probabilities.
+            </p>
+            <div class="table-container" id="marketShareTable"></div>
+            <div class="chart-container"><canvas id="marketShareChart"></canvas></div>
+            <div class="actions-bar">
+                <button class="btn btn-primary" onclick="downloadCSV('marketshare')">Download Market Share CSV</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- CDN Libraries -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+
+<script>
+// =====================================================
+// GLOBAL STATE
+// =====================================================
+let designData = null;
+let ratingsData = null;
+let dummyColumns = [];
+let respondentColumns = [];
+let attributes = [];       // [{name, levels: [{name, dummyCol}]}]
+let betas = [];            // R arrays of (p+1) coefficients
+let avgBeta = [];
+let relImportance = [];    // numAttrs x R
+let avgImportance = [];
+let segmentLabels = [];
+let segmentCounts = {};
+let simResults = null;
+
+// Chart instances
+let importanceChartInstance = null;
+let segmentChartInstance = null;
+let marketShareChartInstance = null;
+
+// =====================================================
+// MATRIX MATH
+// =====================================================
+function transpose(A) {
+    const m = A.length, n = A[0].length;
+    const R = [];
+    for (let j = 0; j < n; j++) {
+        R[j] = [];
+        for (let i = 0; i < m; i++) R[j][i] = A[i][j];
+    }
+    return R;
+}
+
+function matMul(A, B) {
+    const m = A.length, k = A[0].length, n = B[0].length;
+    const R = Array.from({length: m}, () => new Array(n).fill(0));
+    for (let i = 0; i < m; i++)
+        for (let j = 0; j < n; j++)
+            for (let p = 0; p < k; p++)
+                R[i][j] += A[i][p] * B[p][j];
+    return R;
+}
+
+function matVecMul(A, v) {
+    return A.map(row => row.reduce((s, val, j) => s + val * v[j], 0));
+}
+
+function matInverse(A) {
+    const n = A.length;
+    const aug = A.map((row, i) => {
+        const r = row.slice();
+        for (let j = 0; j < n; j++) r.push(i === j ? 1 : 0);
+        return r;
+    });
+    for (let col = 0; col < n; col++) {
+        let maxRow = col;
+        for (let row = col + 1; row < n; row++) {
+            if (Math.abs(aug[row][col]) > Math.abs(aug[maxRow][col])) maxRow = row;
+        }
+        [aug[col], aug[maxRow]] = [aug[maxRow], aug[col]];
+        const pivot = aug[col][col];
+        if (Math.abs(pivot) < 1e-12) throw new Error('Design matrix is singular — check for collinear dummy variables.');
+        for (let j = 0; j < 2 * n; j++) aug[col][j] /= pivot;
+        for (let row = 0; row < n; row++) {
+            if (row === col) continue;
+            const f = aug[row][col];
+            for (let j = 0; j < 2 * n; j++) aug[row][j] -= f * aug[col][j];
+        }
+    }
+    return aug.map(row => row.slice(n));
+}
+
+// =====================================================
+// CSV UPLOAD HANDLING
+// =====================================================
+document.getElementById('designFile').addEventListener('change', function(e) {
+    if (e.target.files.length === 0) return;
+    const file = e.target.files[0];
+    Papa.parse(file, {
+        header: true,
+        skipEmptyLines: true,
+        complete: function(results) {
+            designData = results.data;
+            document.getElementById('designFileName').textContent = '✓ ' + file.name;
+            document.getElementById('designUploadArea').classList.add('loaded');
+            checkBothUploaded();
+        },
+        error: function(err) { alert('Error parsing design CSV: ' + err.message); }
+    });
+});
+
+document.getElementById('ratingsFile').addEventListener('change', function(e) {
+    if (e.target.files.length === 0) return;
+    const file = e.target.files[0];
+    Papa.parse(file, {
+        header: true,
+        skipEmptyLines: true,
+        complete: function(results) {
+            ratingsData = results.data;
+            document.getElementById('ratingsFileName').textContent = '✓ ' + file.name;
+            document.getElementById('ratingsUploadArea').classList.add('loaded');
+            checkBothUploaded();
+        },
+        error: function(err) { alert('Error parsing ratings CSV: ' + err.message); }
+    });
+});
+
+function checkBothUploaded() {
+    if (!designData || !ratingsData) return;
+
+    // Extract columns
+    const designCols = Object.keys(designData[0]);
+    const ratingsCols = Object.keys(ratingsData[0]);
+
+    // Dummy columns = everything except "Profile"
+    dummyColumns = designCols.filter(c => c.toLowerCase() !== 'profile');
+    respondentColumns = ratingsCols.filter(c => c.toLowerCase() !== 'profile');
+
+    // Validate
+    if (dummyColumns.length < 2) {
+        alert('Design matrix must have at least 2 dummy variable columns.'); return;
+    }
+    if (respondentColumns.length < 2) {
+        alert('Ratings file must have at least 2 respondent columns.'); return;
+    }
+    if (designData.length !== ratingsData.length) {
+        alert('Mismatch: Design has ' + designData.length + ' profiles but ratings has ' + ratingsData.length + ' profiles.'); return;
+    }
+    if (designData.length < 3) {
+        alert('Need at least 3 profiles for regression.'); return;
+    }
+
+    // Detect attributes
+    attributes = detectAttributes(dummyColumns);
+
+    // Show summary
+    const summaryBox = document.getElementById('summaryBox');
+    let badgesHtml = attributes.map(a =>
+        '<span class="attr-badge">' + a.name + ' (' + a.levels.length + ' levels)</span>'
+    ).join(' ');
+    summaryBox.innerHTML = '<strong>' + designData.length + ' profiles</strong>, <strong>' +
+        respondentColumns.length + ' respondents</strong>, <strong>' +
+        attributes.length + ' attributes</strong><br>' + badgesHtml;
+
+    // Preview tables
+    renderPreviewTable('designPreview', designData, designCols, 5);
+    renderPreviewTable('ratingsPreview', ratingsData, ratingsCols, 5);
+
+    document.getElementById('dataSummary').style.display = 'block';
+    document.getElementById('runAnalysis').style.display = 'inline-block';
+}
+
+function detectAttributes(columns) {
+    const attrMap = {};
+    columns.forEach(col => {
+        const idx = col.indexOf('_');
+        if (idx === -1) {
+            // No underscore — treat entire column as its own attribute
+            if (!attrMap[col]) attrMap[col] = [];
+            attrMap[col].push({ name: col, dummyCol: col });
+            return;
+        }
+        const attrName = col.substring(0, idx);
+        const levelName = col.substring(idx + 1);
+        if (!attrMap[attrName]) attrMap[attrName] = [];
+        attrMap[attrName].push({ name: levelName, dummyCol: col });
+    });
+    return Object.keys(attrMap).map(name => ({
+        name: name,
+        levels: [{ name: 'Base', dummyCol: null }, ...attrMap[name]]
+    }));
+}
+
+function renderPreviewTable(containerId, data, cols, maxRows) {
+    const rows = data.slice(0, maxRows);
+    let html = '<table><thead><tr>';
+    cols.forEach(c => { html += '<th>' + c + '</th>'; });
+    html += '</tr></thead><tbody>';
+    rows.forEach(row => {
+        html += '<tr>';
+        cols.forEach(c => { html += '<td>' + (row[c] ?? '') + '</td>'; });
+        html += '</tr>';
+    });
+    html += '</tbody></table>';
+    document.getElementById(containerId).innerHTML = html;
+}
+
+// =====================================================
+// STEP 2: OLS REGRESSION
+// =====================================================
+function runFullAnalysis() {
+    document.getElementById('loadingOverlay').classList.add('active');
+
+    setTimeout(() => {
+        try {
+            // Build numeric matrices
+            const n = designData.length;
+            const p = dummyColumns.length;
+            const R = respondentColumns.length;
+
+            // Design matrix X (n x p)
+            const X_raw = designData.map(row => dummyColumns.map(c => parseFloat(row[c]) || 0));
+            // Ratings matrix Y (n x R)
+            const Y = ratingsData.map(row => respondentColumns.map(c => parseFloat(row[c]) || 0));
+
+            // Prepend intercept column
+            const X = X_raw.map(row => [1, ...row]); // n x (p+1)
+
+            // Compute (X'X)^-1
+            const Xt = transpose(X);
+            const XtX = matMul(Xt, X);
+            const XtX_inv = matInverse(XtX);
+
+            // For each respondent: beta = (X'X)^-1 * X'y
+            betas = [];
+            for (let r = 0; r < R; r++) {
+                const y = Y.map(row => row[r]);
+                const Xty = Xt.map(row => row.reduce((s, v, i) => s + v * y[i], 0));
+                betas.push(matVecMul(XtX_inv, Xty));
+            }
+
+            // Average beta
+            avgBeta = new Array(p + 1).fill(0);
+            for (let j = 0; j <= p; j++) {
+                for (let r = 0; r < R; r++) avgBeta[j] += betas[r][j];
+                avgBeta[j] /= R;
+            }
+
+            renderCoefficients();
+            computeImportance();
+            renderImportance();
+            computeSegmentation();
+            renderSegmentation();
+
+            // Show steps
+            ['step2', 'step3', 'step4', 'step5'].forEach(id => {
+                document.getElementById(id).classList.add('visible');
+            });
+
+            // Initialize product options
+            if (document.getElementById('productOptions').children.length === 0) {
+                addProductOption();
+                addProductOption();
+            }
+
+            document.getElementById('loadingOverlay').classList.remove('active');
+            document.getElementById('step2').scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+        } catch (err) {
+            document.getElementById('loadingOverlay').classList.remove('active');
+            alert('Error running analysis: ' + err.message);
+        }
+    }, 50);
+}
+
+function renderCoefficients() {
+    const R = respondentColumns.length;
+    let html = '<table><thead><tr><th class="col-label" style="min-width:180px;">Attribute / Level</th>';
+    respondentColumns.forEach(c => { html += '<th>' + c.replace('Respondent_', 'R') + '</th>'; });
+    html += '<th class="col-avg">Average</th></tr></thead><tbody>';
+
+    // Intercept row
+    html += '<tr><td class="col-label"><strong>Intercept</strong></td>';
+    for (let r = 0; r < R; r++) html += '<td>' + betas[r][0].toFixed(2) + '</td>';
+    html += '<td class="col-avg">' + avgBeta[0].toFixed(2) + '</td></tr>';
+
+    // Attribute rows
+    attributes.forEach(attr => {
+        // Attribute header
+        html += '<tr class="attr-header"><td class="col-label" colspan="' + (R + 2) + '">' + attr.name + '</td></tr>';
+        attr.levels.forEach(level => {
+            html += '<tr><td class="col-label" style="padding-left:1.5rem;">' + level.name + '</td>';
+            if (level.dummyCol === null) {
+                // Base level = 0
+                for (let r = 0; r < R; r++) html += '<td>0</td>';
+                html += '<td class="col-avg">0</td>';
+            } else {
+                const colIdx = dummyColumns.indexOf(level.dummyCol) + 1; // +1 for intercept
+                for (let r = 0; r < R; r++) html += '<td>' + betas[r][colIdx].toFixed(2) + '</td>';
+                html += '<td class="col-avg">' + avgBeta[colIdx].toFixed(2) + '</td>';
+            }
+            html += '</tr>';
+        });
+    });
+
+    html += '</tbody></table>';
+    document.getElementById('coeffTable').innerHTML = html;
+}
+
+// =====================================================
+// STEP 3: ATTRIBUTE IMPORTANCE
+// =====================================================
+function computeImportance() {
+    const R = respondentColumns.length;
+    const numAttrs = attributes.length;
+
+    // Compute ranges
+    const ranges = []; // numAttrs x R
+    for (let a = 0; a < numAttrs; a++) {
+        const attrRanges = [];
+        for (let r = 0; r < R; r++) {
+            const coeffs = attributes[a].levels.map(level => {
+                if (level.dummyCol === null) return 0;
+                return betas[r][dummyColumns.indexOf(level.dummyCol) + 1];
+            });
+            attrRanges.push(Math.max(...coeffs) - Math.min(...coeffs));
+        }
+        ranges.push(attrRanges);
+    }
+
+    // Relative importance
+    relImportance = [];
+    for (let a = 0; a < numAttrs; a++) {
+        const row = [];
+        for (let r = 0; r < R; r++) {
+            const total = ranges.reduce((s, rng) => s + rng[r], 0);
+            row.push(total > 0 ? (ranges[a][r] / total) * 100 : 0);
+        }
+        relImportance.push(row);
+    }
+
+    // Average importance
+    avgImportance = relImportance.map(row => row.reduce((s, v) => s + v, 0) / R);
+}
+
+function renderImportance() {
+    const R = respondentColumns.length;
+    let html = '<table><thead><tr><th class="col-label" style="min-width:160px;">Attribute</th>';
+    respondentColumns.forEach(c => { html += '<th>' + c.replace('Respondent_', 'R') + '</th>'; });
+    html += '<th class="col-avg">Average</th></tr></thead><tbody>';
+
+    attributes.forEach((attr, a) => {
+        html += '<tr><td class="col-label"><strong>' + attr.name + '</strong></td>';
+        for (let r = 0; r < R; r++) html += '<td>' + relImportance[a][r].toFixed(1) + '%</td>';
+        html += '<td class="col-avg">' + avgImportance[a].toFixed(1) + '%</td></tr>';
+    });
+
+    html += '</tbody></table>';
+    document.getElementById('importanceTable').innerHTML = html;
+
+    // Chart
+    if (importanceChartInstance) importanceChartInstance.destroy();
+    const ctx = document.getElementById('importanceChart').getContext('2d');
+    importanceChartInstance = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: attributes.map(a => a.name),
+            datasets: [{
+                label: 'Average Relative Importance (%)',
+                data: avgImportance.map(v => parseFloat(v.toFixed(1))),
+                backgroundColor: '#2563eb',
+                borderRadius: 4
+            }]
+        },
+        options: {
+            indexAxis: 'y',
+            responsive: true,
+            maintainAspectRatio: true,
+            plugins: { legend: { display: false } },
+            scales: {
+                x: { beginAtZero: true, max: Math.min(100, Math.ceil(Math.max(...avgImportance) * 1.2)), title: { display: true, text: 'Relative Importance (%)' } }
+            }
+        }
+    });
+}
+
+// =====================================================
+// STEP 4: SEGMENTATION
+// =====================================================
+function computeSegmentation() {
+    const threshold = parseFloat(document.getElementById('thresholdInput').value) || 30;
+    const R = respondentColumns.length;
+
+    segmentLabels = [];
+    for (let r = 0; r < R; r++) {
+        const important = [];
+        for (let a = 0; a < attributes.length; a++) {
+            if (relImportance[a][r] >= threshold) {
+                important.push(attributes[a].name);
+            }
+        }
+        segmentLabels.push(important.length > 0 ? important.join(', ') : 'No dominant attribute');
+    }
+
+    segmentCounts = {};
+    segmentLabels.forEach(s => { segmentCounts[s] = (segmentCounts[s] || 0) + 1; });
+}
+
+function renderSegmentation() {
+    const R = respondentColumns.length;
+    const sorted = Object.entries(segmentCounts).sort((a, b) => b[1] - a[1]);
+
+    let html = '<table class="market-share-table"><thead><tr><th>Segment (Important Attributes)</th><th>Count</th><th>Percentage</th></tr></thead><tbody>';
+    sorted.forEach(([seg, count]) => {
+        html += '<tr class="segment-row"><td>' + seg + '</td><td>' + count + '</td><td>' + (count / R * 100).toFixed(1) + '%</td></tr>';
+    });
+    html += '</tbody></table>';
+    document.getElementById('segmentTable').innerHTML = html;
+
+    // Chart
+    if (segmentChartInstance) segmentChartInstance.destroy();
+    const ctx = document.getElementById('segmentChart').getContext('2d');
+    const colors = ['#2563eb', '#7c3aed', '#db2777', '#ea580c', '#16a34a', '#0891b2', '#ca8a04', '#475569', '#dc2626', '#4f46e5'];
+    segmentChartInstance = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+            labels: sorted.map(s => s[0].length > 30 ? s[0].substring(0, 28) + '...' : s[0]),
+            datasets: [{
+                data: sorted.map(s => s[1]),
+                backgroundColor: sorted.map((_, i) => colors[i % colors.length])
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            plugins: {
+                legend: { position: 'right', labels: { font: { size: 11 }, boxWidth: 12 } }
+            }
+        }
+    });
+}
+
+function recomputeSegmentation() {
+    computeSegmentation();
+    renderSegmentation();
+}
+
+// =====================================================
+// STEP 5: CHOICE SIMULATOR
+// =====================================================
+let optionCount = 0;
+
+function addProductOption() {
+    optionCount++;
+    const div = document.createElement('div');
+    div.className = 'product-option';
+    div.id = 'option-' + optionCount;
+
+    let selectorsHtml = '';
+    attributes.forEach((attr, ai) => {
+        selectorsHtml += '<div class="attr-selector"><label>' + attr.name + '</label><select data-attr="' + ai + '">';
+        attr.levels.forEach((level, li) => {
+            selectorsHtml += '<option value="' + li + '">' + level.name + '</option>';
+        });
+        selectorsHtml += '</select></div>';
+    });
+
+    div.innerHTML = '<div class="option-header">' +
+        '<input type="text" class="option-name-input" value="Option ' + optionCount + '" placeholder="Option name">' +
+        '<button class="btn btn-danger" onclick="removeOption(\'' + div.id + '\')">Remove</button>' +
+        '</div><div class="attr-selectors">' + selectorsHtml + '</div>';
+
+    document.getElementById('productOptions').appendChild(div);
+}
+
+function removeOption(id) {
+    const el = document.getElementById(id);
+    if (el) el.remove();
+    // Hide results if fewer than 2 options
+    if (document.querySelectorAll('.product-option').length < 2) {
+        document.getElementById('simulatorResults').style.display = 'none';
+        document.getElementById('step6').classList.remove('visible');
+    }
+}
+
+function getProductOptions() {
+    const optionEls = document.querySelectorAll('.product-option');
+    const options = [];
+    optionEls.forEach(el => {
+        const name = el.querySelector('.option-name-input').value || 'Unnamed';
+        const selections = [];
+        el.querySelectorAll('select').forEach(sel => {
+            selections.push(parseInt(sel.value));
+        });
+        options.push({ name, selections });
+    });
+    return options;
+}
+
+function runSimulation() {
+    const options = getProductOptions();
+    if (options.length < 2) {
+        alert('Please add at least 2 product options.'); return;
+    }
+
+    const R = respondentColumns.length;
+    const numOpts = options.length;
+
+    // Build dummy vector for each option
+    const optionVectors = options.map(opt => {
+        const vec = new Array(dummyColumns.length).fill(0);
+        opt.selections.forEach((levelIdx, attrIdx) => {
+            const level = attributes[attrIdx].levels[levelIdx];
+            if (level.dummyCol !== null) {
+                const colIdx = dummyColumns.indexOf(level.dummyCol);
+                if (colIdx >= 0) vec[colIdx] = 1;
+            }
+        });
+        return vec;
+    });
+
+    // Compute utilities, choices, probabilities
+    const utilities = [];
+    const choices = [];
+    const probabilities = [];
+
+    for (let r = 0; r < R; r++) {
+        const beta = betas[r];
+        const optUtils = optionVectors.map(vec => {
+            let u = beta[0]; // intercept
+            for (let j = 0; j < vec.length; j++) u += beta[j + 1] * vec[j];
+            return u;
+        });
+        utilities.push(optUtils);
+
+        // Individual choice: argmax
+        let maxU = -Infinity, maxIdx = 0;
+        optUtils.forEach((u, i) => { if (u > maxU) { maxU = u; maxIdx = i; } });
+        choices.push(maxIdx);
+
+        // Choice probability: softmax with numerical stability
+        const maxVal = Math.max(...optUtils);
+        const expUtils = optUtils.map(u => Math.exp(u - maxVal));
+        const sumExp = expUtils.reduce((a, b) => a + b, 0);
+        probabilities.push(expUtils.map(e => e / sumExp));
+    }
+
+    simResults = { options, utilities, choices, probabilities };
+    renderSimulation();
+    computeMarketShare();
+
+    document.getElementById('simulatorResults').style.display = 'block';
+    document.getElementById('step6').classList.add('visible');
+    document.getElementById('step6').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function renderSimulation() {
+    const { options, utilities, choices, probabilities } = simResults;
+    const R = respondentColumns.length;
+
+    let html = '<table><thead><tr><th class="col-label">Respondent</th>';
+    options.forEach(o => { html += '<th>Utility: ' + o.name + '</th>'; });
+    html += '<th>Choice</th>';
+    options.forEach(o => { html += '<th>Prob: ' + o.name + '</th>'; });
+    html += '</tr></thead><tbody>';
+
+    for (let r = 0; r < R; r++) {
+        html += '<tr><td class="col-label">' + respondentColumns[r] + '</td>';
+        utilities[r].forEach(u => { html += '<td>' + u.toFixed(2) + '</td>'; });
+        html += '<td><strong>' + options[choices[r]].name + '</strong></td>';
+        probabilities[r].forEach(p => { html += '<td>' + (p * 100).toFixed(1) + '%</td>'; });
+        html += '</tr>';
+    }
+
+    html += '</tbody></table>';
+    document.getElementById('simTable').innerHTML = html;
+}
+
+// =====================================================
+// STEP 6: MARKET SHARE
+// =====================================================
+function computeMarketShare() {
+    const { options, choices, probabilities } = simResults;
+    const R = choices.length;
+    const numOpts = options.length;
+
+    // First Choice Share
+    const firstChoice = new Array(numOpts).fill(0);
+    choices.forEach(c => firstChoice[c]++);
+    const firstChoiceShare = firstChoice.map(c => (c / R) * 100);
+
+    // Choice Probability Share (Share of Preference)
+    const avgProb = new Array(numOpts).fill(0);
+    probabilities.forEach(probs => probs.forEach((p, j) => avgProb[j] += p));
+    const choiceProbShare = avgProb.map(s => (s / R) * 100);
+
+    renderMarketShare(options, firstChoiceShare, choiceProbShare);
+}
+
+function renderMarketShare(options, firstChoiceShare, choiceProbShare) {
+    let html = '<table class="market-share-table"><thead><tr><th>Option</th><th>First Choice Share (%)</th><th>Choice Probability Share (%)</th></tr></thead><tbody>';
+    options.forEach((opt, i) => {
+        html += '<tr><td><strong>' + opt.name + '</strong></td><td>' +
+            firstChoiceShare[i].toFixed(1) + '%</td><td>' +
+            choiceProbShare[i].toFixed(1) + '%</td></tr>';
+    });
+    html += '</tbody></table>';
+    document.getElementById('marketShareTable').innerHTML = html;
+
+    // Chart
+    if (marketShareChartInstance) marketShareChartInstance.destroy();
+    const ctx = document.getElementById('marketShareChart').getContext('2d');
+    marketShareChartInstance = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: options.map(o => o.name),
+            datasets: [
+                { label: 'First Choice Share (%)', data: firstChoiceShare.map(v => parseFloat(v.toFixed(1))), backgroundColor: '#2563eb', borderRadius: 4 },
+                { label: 'Choice Probability Share (%)', data: choiceProbShare.map(v => parseFloat(v.toFixed(1))), backgroundColor: '#93c5fd', borderRadius: 4 }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            plugins: { legend: { position: 'top' } },
+            scales: { y: { beginAtZero: true, title: { display: true, text: 'Market Share (%)' } } }
+        }
+    });
+}
+
+// =====================================================
+// CSV DOWNLOAD
+// =====================================================
+function downloadCSV(type) {
+    let csvContent = '';
+    let filename = '';
+    const R = respondentColumns.length;
+
+    if (type === 'coefficients') {
+        filename = 'conjoint_coefficients.csv';
+        let headers = ['Attribute', 'Level', ...respondentColumns, 'Average'];
+        csvContent = headers.join(',') + '\n';
+        // Intercept
+        csvContent += '(Intercept),,' + betas.map(b => b[0].toFixed(4)).join(',') + ',' + avgBeta[0].toFixed(4) + '\n';
+        attributes.forEach(attr => {
+            attr.levels.forEach(level => {
+                let row = '"' + attr.name + '","' + level.name + '"';
+                if (level.dummyCol === null) {
+                    row += ',' + new Array(R).fill('0').join(',') + ',0';
+                } else {
+                    const ci = dummyColumns.indexOf(level.dummyCol) + 1;
+                    row += ',' + betas.map(b => b[ci].toFixed(4)).join(',') + ',' + avgBeta[ci].toFixed(4);
+                }
+                csvContent += row + '\n';
+            });
+        });
+    } else if (type === 'importance') {
+        filename = 'conjoint_importance.csv';
+        let headers = ['Attribute', ...respondentColumns, 'Average'];
+        csvContent = headers.join(',') + '\n';
+        attributes.forEach((attr, a) => {
+            csvContent += '"' + attr.name + '",' + relImportance[a].map(v => v.toFixed(2)).join(',') + ',' + avgImportance[a].toFixed(2) + '\n';
+        });
+    } else if (type === 'segmentation') {
+        filename = 'conjoint_segmentation.csv';
+        csvContent = 'Respondent,Segment\n';
+        respondentColumns.forEach((c, r) => {
+            csvContent += c + ',"' + segmentLabels[r] + '"\n';
+        });
+        csvContent += '\nSegment Summary\nSegment,Count,Percentage\n';
+        Object.entries(segmentCounts).sort((a, b) => b[1] - a[1]).forEach(([seg, count]) => {
+            csvContent += '"' + seg + '",' + count + ',' + (count / R * 100).toFixed(1) + '%\n';
+        });
+    } else if (type === 'simulation') {
+        filename = 'conjoint_individual_choices.csv';
+        const { options, utilities, choices, probabilities } = simResults;
+        let headers = ['Respondent'];
+        options.forEach(o => headers.push('Utility_' + o.name));
+        headers.push('Choice');
+        options.forEach(o => headers.push('Prob_' + o.name));
+        csvContent = headers.join(',') + '\n';
+        for (let r = 0; r < R; r++) {
+            let row = respondentColumns[r];
+            utilities[r].forEach(u => row += ',' + u.toFixed(4));
+            row += ',' + options[choices[r]].name;
+            probabilities[r].forEach(p => row += ',' + (p * 100).toFixed(2) + '%');
+            csvContent += row + '\n';
+        }
+    } else if (type === 'marketshare') {
+        filename = 'conjoint_market_share.csv';
+        const { options, choices, probabilities } = simResults;
+        const numOpts = options.length;
+        const firstChoice = new Array(numOpts).fill(0);
+        choices.forEach(c => firstChoice[c]++);
+        const firstChoiceShare = firstChoice.map(c => (c / R) * 100);
+        const avgProb = new Array(numOpts).fill(0);
+        probabilities.forEach(probs => probs.forEach((p, j) => avgProb[j] += p));
+        const choiceProbShare = avgProb.map(s => (s / R) * 100);
+
+        csvContent = 'Option,First Choice Share (%),Choice Probability Share (%)\n';
+        options.forEach((o, i) => {
+            csvContent += o.name + ',' + firstChoiceShare[i].toFixed(2) + ',' + choiceProbShare[i].toFixed(2) + '\n';
+        });
+    }
+
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+}
+</script>
+
+<!-- Firebase Auth -->
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+<script>
+    const firebaseConfig = {
+        apiKey: "AIzaSyBg3LJDwVIRGWtFZb_mM_CSRJMNCJUta20",
+        authDomain: "iu-pricing-tools.firebaseapp.com",
+        projectId: "iu-pricing-tools",
+        storageBucket: "iu-pricing-tools.firebasestorage.app",
+        messagingSenderId: "659335573790",
+        appId: "1:659335573790:web:00013a166787efecb3d90f",
+        measurementId: "G-NGKNY08XWP"
+    };
+    firebase.initializeApp(firebaseConfig);
+    firebase.auth().onAuthStateChanged(function(user) {
+        if (user) {
+            document.getElementById('loading-screen').style.display = 'none';
+            document.getElementById('main-content').style.display = 'block';
+        } else {
+            window.location.href = 'login.html';
+        }
+    });
+</script>
+</body>
+</html>
