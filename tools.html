@@ -505,6 +505,37 @@
 
     <div id="main-content" style="display: none;">
 
+    <nav>
+        <div class="nav-container">
+            <div style="display: flex; align-items: center; gap: 12px;">
+                <img src="iu-logo.png" alt="IU Logo" style="height: 32px;">
+                <a href="index.html" class="brand">Koray Cosguner</a>
+            </div>
+            <div style="display: flex; align-items: center;">
+                <div class="font-size-controls font-size-mobile">
+                    <button class="font-size-btn decrease-a" onclick="adjustFontSize(-1)" title="Decrease text size">A</button>
+                    <button class="font-size-btn increase-a" onclick="adjustFontSize(1)" title="Increase text size">A</button>
+                </div>
+                <div class="nav-toggle" onclick="document.querySelector('.nav-links').classList.toggle('active')">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            </div>
+            <div class="nav-links">
+                <div class="font-size-controls font-size-desktop">
+                    <button class="font-size-btn decrease-a" onclick="adjustFontSize(-1)" title="Decrease text size">A</button>
+                    <button class="font-size-btn increase-a" onclick="adjustFontSize(1)" title="Increase text size">A</button>
+                </div>
+                <a href="index.html">Home</a>
+                <a href="research.html">Research</a>
+                <a href="teaching.html">Teaching</a>
+                <a href="https://koraycosguner.github.io/miaow-consulting/" target="_blank">Consulting</a>
+                <a href="tools.html" class="active">Pricing and Analytics Tools</a>
+            </div>
+        </div>
+    </nav>
+
     <div class="header">
         <div id="user-info">
             <span id="user-email"></span>
