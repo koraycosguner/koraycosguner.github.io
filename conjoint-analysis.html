@@ -358,6 +358,19 @@
             </ul>
         </div>
 
+        <!-- Data Requirements -->
+        <div class="card">
+            <div class="card-title">Data Requirements</div>
+            <div style="font-size: 0.85rem; color: var(--text-light); line-height: 1.7;">
+                <p style="margin-bottom: 0.75rem;">This tool requires two CSV files (and one optional):</p>
+                <ol style="margin-left: 1.25rem; margin-bottom: 0;">
+                    <li style="margin-bottom: 0.5rem;"><strong>Design Matrix (Dummy Coded)</strong> — A CSV where the first column is <em>Profile</em> and all remaining columns are dummy-coded attribute levels. Column names follow the format <code>AttributeName_LevelName</code> (e.g., <code>Price_60</code>, <code>DVR_HD_DVR</code>). The base level for each attribute is omitted (all zeros). You can generate this file using the <a href="conjoint-design.html">Conjoint Fractional Factorial Design Tool</a>.</li>
+                    <li style="margin-bottom: 0.5rem;"><strong>Ratings Data</strong> — A CSV where the first column is <em>Profile</em> (matching the design matrix) and each additional column is a respondent's ratings (e.g., <code>Respondent_1</code>, <code>Respondent_2</code>, ...). Ratings should be numeric (e.g., 0–100).</li>
+                    <li><strong>Profiles CSV (Optional)</strong> — The original (non-dummy-coded) profiles from the Design Tool. If provided, base level names are automatically detected and labeled (e.g., "50" instead of "Base" for Number of Channels).</li>
+                </ol>
+            </div>
+        </div>
+
         <!-- Step 1: Upload Data -->
         <div class="card" id="step1">
             <div class="card-title">Step 1: Upload Data</div>
@@ -376,13 +389,11 @@
                     <div class="upload-hint">CSV with Profile column + Respondent columns (0-100)</div>
                     <div class="upload-file-name" id="ratingsFileName"></div>
                 </div>
-            </div>
-            <div style="margin-top: 0.75rem;">
-                <div class="upload-area" id="profilesUploadArea" style="max-width: 360px;">
+                <div class="upload-area" id="profilesUploadArea">
                     <input type="file" accept=".csv" id="profilesFile">
                     <div class="upload-icon">📋</div>
                     <div class="upload-text">Profiles CSV (Optional)</div>
-                    <div class="upload-hint">Original profiles from the Design Tool — labels base levels with actual names</div>
+                    <div class="upload-hint">Original profiles from the Design Tool — labels base levels</div>
                     <div class="upload-file-name" id="profilesFileName"></div>
                 </div>
             </div>
