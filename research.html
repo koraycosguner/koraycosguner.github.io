@@ -632,6 +632,51 @@
             .back-to-top { bottom: 20px; right: 20px; width: 40px; height: 40px; }
         }
 
+        /* Font size controls */
+        .font-size-controls {
+            display: flex;
+            align-items: center;
+            gap: 2px;
+            margin-right: 8px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-full);
+            padding: 2px;
+            background: var(--surface);
+        }
+        .font-size-btn {
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            font-weight: 700;
+            color: var(--text-light);
+            border-radius: var(--radius-full);
+            transition: all var(--transition-fast);
+            font-family: inherit;
+            line-height: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 28px;
+            height: 28px;
+        }
+        .font-size-btn:hover {
+            color: var(--primary);
+            background: rgba(153,0,0,0.06);
+        }
+        .font-size-btn.active {
+            background: var(--text-main);
+            color: white;
+        }
+        .font-size-btn.small-a { font-size: 0.7rem; }
+        .font-size-btn.medium-a { font-size: 0.85rem; }
+        .font-size-btn.large-a { font-size: 1rem; }
+        html.font-size-small { font-size: 16px; }
+        html.font-size-medium { font-size: 18px; }
+        html.font-size-large { font-size: 20px; }
+        @media (max-width: 640px) {
+            .font-size-controls { margin-right: 4px; }
+        }
+
         /* Back-to-top button */
         .back-to-top {
             position: fixed;
@@ -671,10 +716,17 @@
                 <img src="iu-logo.png" alt="IU Logo" style="height: 32px;">
                 <a href="index.html" class="brand">Koray Cosguner</a>
             </div>
-            <div class="nav-toggle" onclick="document.querySelector('.nav-links').classList.toggle('active')">
-                <span></span>
-                <span></span>
-                <span></span>
+            <div style="display: flex; align-items: center;">
+                <div class="font-size-controls">
+                    <button class="font-size-btn small-a" onclick="setFontSize('small')" title="Small text">A</button>
+                    <button class="font-size-btn medium-a active" onclick="setFontSize('medium')" title="Medium text">A</button>
+                    <button class="font-size-btn large-a" onclick="setFontSize('large')" title="Large text">A</button>
+                </div>
+                <div class="nav-toggle" onclick="document.querySelector('.nav-links').classList.toggle('active')">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
             </div>
             <div class="nav-links">
                 <a href="index.html">Home</a>
@@ -1249,6 +1301,18 @@
     </button>
 
     <script>
+        // Font size controls
+        function setFontSize(size) {
+            document.documentElement.classList.remove('font-size-small', 'font-size-medium', 'font-size-large');
+            document.documentElement.classList.add('font-size-' + size);
+            localStorage.setItem('fontSize', size);
+            document.querySelectorAll('.font-size-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelector('.font-size-btn.' + size + '-a')?.classList.add('active');
+        }
+        (function() {
+            const saved = localStorage.getItem('fontSize') || 'medium';
+            setFontSize(saved);
+        })();
 
         // Back-to-top button visibility
         const backBtn = document.getElementById('backToTop');
