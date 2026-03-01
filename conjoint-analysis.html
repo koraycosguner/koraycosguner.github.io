@@ -432,7 +432,7 @@
             </div>
 
             <div class="actions-bar">
-                <button class="btn btn-success" id="runAnalysis" style="display:none;" onclick="runFullAnalysis()">Run Analysis</button>
+                <button class="btn btn-success" id="runAnalysis" style="display:none;" onclick="runRegression()">Run Regression →</button>
             </div>
         </div>
 
@@ -446,6 +446,7 @@
             <div class="chart-container"><canvas id="partworthChart"></canvas></div>
             <div class="actions-bar">
                 <button class="btn btn-primary" onclick="downloadCSV('coefficients')">Download Coefficients CSV</button>
+                <button class="btn btn-success" onclick="runImportanceStep()">Calculate Importances →</button>
             </div>
         </div>
 
@@ -459,6 +460,7 @@
             <div class="chart-container"><canvas id="importanceChart"></canvas></div>
             <div class="actions-bar">
                 <button class="btn btn-primary" onclick="downloadCSV('importance')">Download Importance CSV</button>
+                <button class="btn btn-success" onclick="runSegmentationStep()">Run Segmentation →</button>
             </div>
         </div>
 
@@ -492,12 +494,19 @@
         <div class="card step-card" id="step5">
             <div class="card-title">Step 5: Individual Choice and Choice Probability Simulator</div>
             <p style="font-size: 0.85rem; color: var(--text-light); margin-bottom: 1rem;">
-                Define product options, then calculate each respondent's utility, choice, and choice probability.
+                Define product options manually or upload a dummy-coded profiles CSV (same format as the design matrix). Each row becomes a product option.
             </p>
+            <div style="margin-bottom: 1rem;">
+                <label class="btn btn-secondary" style="cursor:pointer; display:inline-block;">
+                    📁 Upload Products CSV
+                    <input type="file" accept=".csv" id="productsCSVFile" style="display:none;" onchange="loadProductsCSV(this)">
+                </label>
+                <span id="productsCSVStatus" style="font-size: 0.85rem; color: var(--text-light); margin-left: 0.5rem;"></span>
+            </div>
             <div id="productOptions"></div>
             <div class="actions-bar" style="margin-bottom: 1rem;">
                 <button class="btn btn-secondary" onclick="addProductOption()">+ Add Option</button>
-                <button class="btn btn-success" id="calculateShares" onclick="runSimulation()">Calculate Market Shares</button>
+                <button class="btn btn-success" id="calculateShares" onclick="runSimulation()">Simulate Choices & Market Shares →</button>
             </div>
             <div id="simulatorResults" style="display:none;">
                 <div class="table-container" id="simTable"></div>
@@ -822,9 +831,9 @@ function renderPreviewTable(containerId, data, cols, maxRows) {
 }
 
 // =====================================================
-// STEP 2: OLS REGRESSION
+// STEP 2: RUN REGRESSION
 // =====================================================
-function runFullAnalysis() {
+function runRegression() {
     document.getElementById('loadingOverlay').classList.add('active');
 
     setTimeout(() => {
@@ -907,31 +916,47 @@ function runFullAnalysis() {
             }
 
             renderCoefficients();
-            computeImportance();
-            renderImportance();
-            computeSegmentation();
-            renderSegmentation();
-            renderSegmentProfiles();
 
-            // Show steps
-            ['step2', 'step3', 'step4', 'step5'].forEach(id => {
-                document.getElementById(id).classList.add('visible');
-            });
-
-            // Initialize product options
-            if (document.getElementById('productOptions').children.length === 0) {
-                addProductOption();
-                addProductOption();
-            }
-
+            // Reveal Step 2 only
+            document.getElementById('step2').classList.add('visible');
             document.getElementById('loadingOverlay').classList.remove('active');
             document.getElementById('step2').scrollIntoView({ behavior: 'smooth', block: 'start' });
 
         } catch (err) {
             document.getElementById('loadingOverlay').classList.remove('active');
-            alert('Error running analysis: ' + err.message);
+            alert('Error running regression: ' + err.message);
         }
     }, 50);
+}
+
+// =====================================================
+// STEP 3: CALCULATE IMPORTANCES (triggered from Step 2 button)
+// =====================================================
+function runImportanceStep() {
+    computeImportance();
+    renderImportance();
+    document.getElementById('step3').classList.add('visible');
+    document.getElementById('step3').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+// =====================================================
+// STEP 4: RUN SEGMENTATION (triggered from Step 3 button)
+// =====================================================
+function runSegmentationStep() {
+    computeSegmentation();
+    renderSegmentation();
+    renderSegmentProfiles();
+
+    document.getElementById('step4').classList.add('visible');
+    document.getElementById('step5').classList.add('visible');
+
+    // Initialize product options
+    if (document.getElementById('productOptions').children.length === 0) {
+        addProductOption();
+        addProductOption();
+    }
+
+    document.getElementById('step4').scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
 function renderCoefficients() {
@@ -967,19 +992,35 @@ function renderCoefficients() {
     html += '</tbody></table>';
     document.getElementById('coeffTable').innerHTML = html;
 
-    // --- Part-Worth Utility Chart (average) ---
+    // --- Part-Worth Utility Chart (average, grouped by attribute) ---
     if (partworthChartInstance) partworthChartInstance.destroy();
     const pwCtx = document.getElementById('partworthChart').getContext('2d');
+    const attrColorPalette = ['#2563eb', '#7c3aed', '#db2777', '#ea580c', '#16a34a', '#0891b2'];
 
+    // Build labels with gaps between attributes and two-line labels
     const chartLabels = [];
     const chartValues = [];
     const chartColors = [];
-    const attrColorPalette = ['#2563eb', '#7c3aed', '#db2777', '#ea580c', '#16a34a', '#0891b2'];
+    const barBorders = [];
+    let barIndex = 0;
 
     attributes.forEach((attr, ai) => {
+        if (ai > 0) {
+            // Insert gap separator
+            chartLabels.push('');
+            chartValues.push(null);
+            chartColors.push('transparent');
+            barBorders.push('transparent');
+            barIndex++;
+        }
         const color = attrColorPalette[ai % attrColorPalette.length];
-        attr.levels.forEach(level => {
-            chartLabels.push(level.name);
+        attr.levels.forEach((level, li) => {
+            // Two-line label: level name on top, attribute name below (only on first level)
+            if (li === 0) {
+                chartLabels.push([level.name, '▸ ' + attr.name]);
+            } else {
+                chartLabels.push([level.name, '']);
+            }
             if (level.dummyCol === null) {
                 chartValues.push(0);
             } else {
@@ -987,6 +1028,8 @@ function renderCoefficients() {
                 chartValues.push(parseFloat(avgBeta[ci].toFixed(2)));
             }
             chartColors.push(color);
+            barBorders.push(color);
+            barIndex++;
         });
     });
 
@@ -998,7 +1041,11 @@ function renderCoefficients() {
                 label: 'Average Part-Worth Utility',
                 data: chartValues,
                 backgroundColor: chartColors,
-                borderRadius: 4
+                borderColor: barBorders,
+                borderWidth: 1,
+                borderRadius: 4,
+                barPercentage: 0.85,
+                categoryPercentage: 0.9
             }]
         },
         options: {
@@ -1007,17 +1054,44 @@ function renderCoefficients() {
             plugins: {
                 legend: { display: false },
                 datalabels: {
-                    display: true,
+                    display: (ctx) => ctx.dataset.data[ctx.dataIndex] !== null,
                     anchor: (ctx) => ctx.dataset.data[ctx.dataIndex] >= 0 ? 'end' : 'start',
                     align: (ctx) => ctx.dataset.data[ctx.dataIndex] >= 0 ? 'top' : 'bottom',
                     color: '#1e293b',
                     font: { weight: '600', size: 10 },
-                    formatter: (value) => value.toFixed(1)
+                    formatter: (value) => value === null ? '' : value.toFixed(1)
                 }
             },
             scales: {
                 y: { title: { display: true, text: 'Part-Worth Utility' } },
-                x: { ticks: { maxRotation: 45, minRotation: 0, font: { size: 10 } } }
+                x: {
+                    ticks: {
+                        maxRotation: 0,
+                        minRotation: 0,
+                        font: (ctx) => {
+                            const label = chartLabels[ctx.index];
+                            // Bold + smaller for attribute name line
+                            if (Array.isArray(label) && label[1] && label[1].startsWith('▸')) {
+                                return { size: 10 };
+                            }
+                            return { size: 11 };
+                        },
+                        color: (ctx) => {
+                            const label = chartLabels[ctx.index];
+                            if (Array.isArray(label) && label[1] && label[1].startsWith('▸')) {
+                                return ['#1e293b', '#64748b'];
+                            }
+                            return '#1e293b';
+                        }
+                    },
+                    grid: {
+                        color: (ctx) => {
+                            // Thicker line at attribute boundaries (where gap bars are)
+                            if (chartValues[ctx.index] === null) return 'rgba(0,0,0,0.08)';
+                            return 'transparent';
+                        }
+                    }
+                }
             }
         }
     });
@@ -1323,6 +1397,63 @@ function getProductOptions() {
         options.push({ name, selections });
     });
     return options;
+}
+
+function loadProductsCSV(input) {
+    const file = input.files[0];
+    if (!file) return;
+
+    Papa.parse(file, {
+        header: true,
+        skipEmptyLines: true,
+        complete: function(results) {
+            const rows = results.data;
+            if (rows.length === 0) {
+                alert('CSV file is empty.'); return;
+            }
+
+            // Clear existing options
+            document.getElementById('productOptions').innerHTML = '';
+            optionCount = 0;
+
+            // For each row, create a product option and set dropdowns
+            rows.forEach((row, ri) => {
+                addProductOption();
+                const optionDiv = document.getElementById('option-' + optionCount);
+                const nameInput = optionDiv.querySelector('.option-name-input');
+
+                // Use "Profile" column or row name if available, otherwise "Product N"
+                const profileName = row['Profile'] || row['profile'] || row['Name'] || row['name'] || ('Product ' + (ri + 1));
+                nameInput.value = profileName;
+
+                // Set each attribute's dropdown based on dummy values
+                const selects = optionDiv.querySelectorAll('select');
+                attributes.forEach((attr, ai) => {
+                    const sel = selects[ai];
+                    // Find which level is active (has dummy=1)
+                    let selectedLevel = 0; // default to base level
+                    for (let li = 0; li < attr.levels.length; li++) {
+                        const level = attr.levels[li];
+                        if (level.dummyCol !== null) {
+                            const val = parseFloat(row[level.dummyCol]);
+                            if (val === 1) {
+                                selectedLevel = li;
+                                break;
+                            }
+                        }
+                    }
+                    sel.value = selectedLevel;
+                });
+            });
+
+            document.getElementById('productsCSVStatus').textContent =
+                '✓ Loaded ' + rows.length + ' products from ' + file.name;
+            document.getElementById('productsCSVStatus').style.color = 'var(--success)';
+        },
+        error: function(err) {
+            alert('Error parsing CSV: ' + err.message);
+        }
+    });
 }
 
 function runSimulation() {
