@@ -506,12 +506,13 @@
             <div id="productOptions"></div>
             <div class="actions-bar" style="margin-bottom: 1rem;">
                 <button class="btn btn-secondary" onclick="addProductOption()">+ Add Option</button>
-                <button class="btn btn-success" id="calculateShares" onclick="runSimulation()">Simulate Choices & Market Shares →</button>
+                <button class="btn btn-success" onclick="runSimulation()">Simulate Choices →</button>
             </div>
             <div id="simulatorResults" style="display:none;">
                 <div class="table-container" id="simTable"></div>
                 <div class="actions-bar">
                     <button class="btn btn-primary" onclick="downloadCSV('simulation')">Download Individual Results CSV</button>
+                    <button class="btn btn-success" onclick="runMarketShareStep()">Calculate Market Shares →</button>
                 </div>
             </div>
         </div>
@@ -1477,9 +1478,14 @@ function runSimulation() {
 
     simResults = { options, utilities, choices, probabilities };
     renderSimulation();
-    computeMarketShare();
 
     document.getElementById('simulatorResults').style.display = 'block';
+    document.getElementById('step6').classList.remove('visible');
+    document.getElementById('simulatorResults').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function runMarketShareStep() {
+    computeMarketShare();
     document.getElementById('step6').classList.add('visible');
     document.getElementById('step6').scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
