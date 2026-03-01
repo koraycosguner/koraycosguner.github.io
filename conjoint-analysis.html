@@ -997,100 +997,71 @@ function renderCoefficients() {
     const pwCtx = document.getElementById('partworthChart').getContext('2d');
     const attrColorPalette = ['#2563eb', '#7c3aed', '#db2777', '#ea580c', '#16a34a', '#0891b2'];
 
-    // Build labels with gaps between attributes and two-line labels
-    const chartLabels = [];
-    const chartValues = [];
-    const chartColors = [];
-    const barBorders = [];
-    let barIndex = 0;
+    // Find the max number of levels across all attributes (for uniform x-axis)
+    const maxLevels = Math.max(...attributes.map(a => a.levels.length));
 
-    attributes.forEach((attr, ai) => {
-        if (ai > 0) {
-            // Insert gap separator
-            chartLabels.push('');
-            chartValues.push(null);
-            chartColors.push('transparent');
-            barBorders.push('transparent');
-            barIndex++;
-        }
+    // Build x-axis labels: "Level 1", "Level 2", etc. (generic position labels)
+    const xLabels = [];
+    for (let i = 0; i < maxLevels; i++) xLabels.push('Level ' + (i + 1));
+
+    // One dataset per attribute
+    const pwDatasets = attributes.map((attr, ai) => {
         const color = attrColorPalette[ai % attrColorPalette.length];
-        attr.levels.forEach((level, li) => {
-            // Two-line label: level name on top, attribute name below (only on first level)
-            if (li === 0) {
-                chartLabels.push([level.name, '▸ ' + attr.name]);
+        const data = [];
+        const levelLabels = [];
+        for (let li = 0; li < maxLevels; li++) {
+            if (li < attr.levels.length) {
+                const level = attr.levels[li];
+                levelLabels.push(level.name);
+                if (level.dummyCol === null) {
+                    data.push(0);
+                } else {
+                    const ci = dummyColumns.indexOf(level.dummyCol) + 1;
+                    data.push(parseFloat(avgBeta[ci].toFixed(2)));
+                }
             } else {
-                chartLabels.push([level.name, '']);
+                data.push(null);
+                levelLabels.push('');
             }
-            if (level.dummyCol === null) {
-                chartValues.push(0);
-            } else {
-                const ci = dummyColumns.indexOf(level.dummyCol) + 1;
-                chartValues.push(parseFloat(avgBeta[ci].toFixed(2)));
-            }
-            chartColors.push(color);
-            barBorders.push(color);
-            barIndex++;
-        });
+        }
+        return {
+            label: attr.name,
+            data: data,
+            backgroundColor: color,
+            borderRadius: 4,
+            barPercentage: 0.85,
+            _levelLabels: levelLabels
+        };
     });
 
     partworthChartInstance = new Chart(pwCtx, {
         type: 'bar',
-        data: {
-            labels: chartLabels,
-            datasets: [{
-                label: 'Average Part-Worth Utility',
-                data: chartValues,
-                backgroundColor: chartColors,
-                borderColor: barBorders,
-                borderWidth: 1,
-                borderRadius: 4,
-                barPercentage: 0.85,
-                categoryPercentage: 0.9
-            }]
-        },
+        data: { labels: xLabels, datasets: pwDatasets },
         options: {
             responsive: true,
             maintainAspectRatio: true,
             plugins: {
-                legend: { display: false },
+                legend: {
+                    position: 'top',
+                    labels: { font: { size: 12 }, boxWidth: 14, padding: 14 }
+                },
                 datalabels: {
                     display: (ctx) => ctx.dataset.data[ctx.dataIndex] !== null,
                     anchor: (ctx) => ctx.dataset.data[ctx.dataIndex] >= 0 ? 'end' : 'start',
                     align: (ctx) => ctx.dataset.data[ctx.dataIndex] >= 0 ? 'top' : 'bottom',
                     color: '#1e293b',
-                    font: { weight: '600', size: 10 },
-                    formatter: (value) => value === null ? '' : value.toFixed(1)
+                    font: { weight: '600', size: 9 },
+                    formatter: (value, ctx) => {
+                        if (value === null) return '';
+                        const lbl = ctx.dataset._levelLabels[ctx.dataIndex];
+                        return lbl + '\n' + value.toFixed(1);
+                    }
                 }
             },
             scales: {
                 y: { title: { display: true, text: 'Part-Worth Utility' } },
                 x: {
-                    ticks: {
-                        maxRotation: 0,
-                        minRotation: 0,
-                        font: (ctx) => {
-                            const label = chartLabels[ctx.index];
-                            // Bold + smaller for attribute name line
-                            if (Array.isArray(label) && label[1] && label[1].startsWith('▸')) {
-                                return { size: 10 };
-                            }
-                            return { size: 11 };
-                        },
-                        color: (ctx) => {
-                            const label = chartLabels[ctx.index];
-                            if (Array.isArray(label) && label[1] && label[1].startsWith('▸')) {
-                                return ['#1e293b', '#64748b'];
-                            }
-                            return '#1e293b';
-                        }
-                    },
-                    grid: {
-                        color: (ctx) => {
-                            // Thicker line at attribute boundaries (where gap bars are)
-                            if (chartValues[ctx.index] === null) return 'rgba(0,0,0,0.08)';
-                            return 'transparent';
-                        }
-                    }
+                    ticks: { font: { size: 11 } }
                 }
             }
         }
