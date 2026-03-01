@@ -18,7 +18,7 @@
 set.seed(1)
 
 # --- 1. Read design ---
-design <- read.csv("conjoint_design.csv")
+design <- read.csv("conjoint_dummyprofiles.csv")
 X <- as.matrix(design[, -1])
 n_profiles <- nrow(X)
 n_dummies  <- ncol(X)
