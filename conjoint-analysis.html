@@ -275,6 +275,31 @@
             margin-bottom: 0.25rem;
         }
 
+        /* Custom chart legend */
+        .custom-legend {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 0.5rem 1.25rem;
+            margin-top: 0.75rem;
+            padding: 0 0.5rem;
+        }
+        .custom-legend-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.4rem;
+            font-size: 0.82rem;
+            color: var(--text-dark);
+            line-height: 1.3;
+        }
+        .custom-legend-color {
+            width: 14px;
+            height: 14px;
+            min-width: 14px;
+            border-radius: 3px;
+            margin-top: 1px;
+        }
+
         /* Segment table special styling */
         .segment-row td:first-child { font-weight: 600; }
 
@@ -418,6 +443,7 @@
                 Individual-level OLS regression coefficients. Base levels = 0 (reference category).
             </p>
             <div class="table-container" id="coeffTable"></div>
+            <div class="chart-container"><canvas id="partworthChart"></canvas></div>
             <div class="actions-bar">
                 <button class="btn btn-primary" onclick="downloadCSV('coefficients')">Download Coefficients CSV</button>
             </div>
@@ -450,8 +476,15 @@
             </div>
             <div class="table-container" id="segmentTable"></div>
             <div class="chart-container" style="max-height: 350px;"><canvas id="segmentChart"></canvas></div>
+            <div id="segmentLegend" class="custom-legend"></div>
+            <div id="segmentProfileSection" style="display:none; margin-top: 1.5rem;">
+                <div style="font-weight: 600; font-size: 0.95rem; margin-bottom: 0.5rem; color: var(--text-dark);">Segment Profiles — Average Importance by Segment</div>
+                <div class="table-container" id="segmentProfileTable"></div>
+                <div class="chart-container"><canvas id="segmentProfileChart"></canvas></div>
+            </div>
             <div class="actions-bar">
                 <button class="btn btn-primary" onclick="downloadCSV('segmentation')">Download Segmentation CSV</button>
+                <button class="btn btn-primary" onclick="downloadCSV('allresults')">Download All Results CSV</button>
             </div>
         </div>
 
@@ -516,8 +549,10 @@ let segmentCounts = {};
 let simResults = null;
 
 // Chart instances
+let partworthChartInstance = null;
 let importanceChartInstance = null;
 let segmentChartInstance = null;
+let segmentProfileChartInstance = null;
 let marketShareChartInstance = null;
 
 // =====================================================
@@ -876,6 +911,7 @@ function runFullAnalysis() {
             renderImportance();
             computeSegmentation();
             renderSegmentation();
+            renderSegmentProfiles();
 
             // Show steps
             ['step2', 'step3', 'step4', 'step5'].forEach(id => {
@@ -930,6 +966,61 @@ function renderCoefficients() {
 
     html += '</tbody></table>';
     document.getElementById('coeffTable').innerHTML = html;
+
+    // --- Part-Worth Utility Chart (average) ---
+    if (partworthChartInstance) partworthChartInstance.destroy();
+    const pwCtx = document.getElementById('partworthChart').getContext('2d');
+
+    const chartLabels = [];
+    const chartValues = [];
+    const chartColors = [];
+    const attrColorPalette = ['#2563eb', '#7c3aed', '#db2777', '#ea580c', '#16a34a', '#0891b2'];
+
+    attributes.forEach((attr, ai) => {
+        const color = attrColorPalette[ai % attrColorPalette.length];
+        attr.levels.forEach(level => {
+            chartLabels.push(level.name);
+            if (level.dummyCol === null) {
+                chartValues.push(0);
+            } else {
+                const ci = dummyColumns.indexOf(level.dummyCol) + 1;
+                chartValues.push(parseFloat(avgBeta[ci].toFixed(2)));
+            }
+            chartColors.push(color);
+        });
+    });
+
+    partworthChartInstance = new Chart(pwCtx, {
+        type: 'bar',
+        data: {
+            labels: chartLabels,
+            datasets: [{
+                label: 'Average Part-Worth Utility',
+                data: chartValues,
+                backgroundColor: chartColors,
+                borderRadius: 4
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            plugins: {
+                legend: { display: false },
+                datalabels: {
+                    display: true,
+                    anchor: (ctx) => ctx.dataset.data[ctx.dataIndex] >= 0 ? 'end' : 'start',
+                    align: (ctx) => ctx.dataset.data[ctx.dataIndex] >= 0 ? 'top' : 'bottom',
+                    color: '#1e293b',
+                    font: { weight: '600', size: 10 },
+                    formatter: (value) => value.toFixed(1)
+                }
+            },
+            scales: {
+                y: { title: { display: true, text: 'Part-Worth Utility' } },
+                x: { ticks: { maxRotation: 45, minRotation: 0, font: { size: 10 } } }
+            }
+        }
+    });
 }
 
 // =====================================================
@@ -1060,10 +1151,7 @@ function renderSegmentation() {
     segmentChartInstance = new Chart(ctx, {
         type: 'doughnut',
         data: {
-            labels: sorted.map(s => {
-                const pct = (s[1] / total * 100).toFixed(1);
-                return s[0] + ' (' + pct + '%)';
-            }),
+            labels: sorted.map(s => s[0]),
             datasets: [{
                 data: sorted.map(s => s[1]),
                 backgroundColor: sorted.map((_, i) => colors[i % colors.length])
@@ -1073,10 +1161,7 @@ function renderSegmentation() {
             responsive: true,
             maintainAspectRatio: true,
             plugins: {
-                legend: {
-                    position: 'bottom',
-                    labels: { font: { size: 12 }, boxWidth: 14, padding: 12 }
-                },
+                legend: { display: false },
                 datalabels: {
                     color: '#fff',
                     font: { weight: 'bold', size: 13 },
@@ -1091,11 +1176,101 @@ function renderSegmentation() {
             }
         }
     });
+
+    // Custom HTML legend (wraps long labels)
+    const legendEl = document.getElementById('segmentLegend');
+    legendEl.innerHTML = sorted.map((s, i) => {
+        const pct = (s[1] / total * 100).toFixed(1);
+        return '<div class="custom-legend-item">' +
+            '<span class="custom-legend-color" style="background:' + colors[i % colors.length] + '"></span>' +
+            '<span>' + s[0] + ' (' + pct + '%)</span>' +
+            '</div>';
+    }).join('');
 }
 
 function recomputeSegmentation() {
     computeSegmentation();
     renderSegmentation();
+    renderSegmentProfiles();
+}
+
+function renderSegmentProfiles() {
+    const R = respondentColumns.length;
+    const sorted = Object.entries(segmentCounts).sort((a, b) => b[1] - a[1]);
+    if (sorted.length < 2) {
+        document.getElementById('segmentProfileSection').style.display = 'none';
+        return;
+    }
+    document.getElementById('segmentProfileSection').style.display = 'block';
+
+    // Compute average importance per segment
+    const segAvgImp = {}; // segName -> [avg importance per attribute]
+    sorted.forEach(([seg]) => {
+        segAvgImp[seg] = new Array(attributes.length).fill(0);
+        let count = 0;
+        for (let r = 0; r < R; r++) {
+            if (segmentLabels[r] === seg) {
+                for (let a = 0; a < attributes.length; a++) {
+                    segAvgImp[seg][a] += relImportance[a][r];
+                }
+                count++;
+            }
+        }
+        for (let a = 0; a < attributes.length; a++) {
+            segAvgImp[seg][a] = count > 0 ? segAvgImp[seg][a] / count : 0;
+        }
+    });
+
+    // Table
+    let html = '<table><thead><tr><th class="col-label">Attribute</th>';
+    sorted.forEach(([seg, cnt]) => {
+        const shortLabel = seg.length > 25 ? seg.substring(0, 23) + '...' : seg;
+        html += '<th title="' + seg + '">' + shortLabel + '<br><small style="font-weight:400;color:var(--text-light);">n=' + cnt + '</small></th>';
+    });
+    html += '</tr></thead><tbody>';
+    attributes.forEach((attr, a) => {
+        html += '<tr><td class="col-label"><strong>' + attr.name + '</strong></td>';
+        sorted.forEach(([seg]) => {
+            const val = segAvgImp[seg][a];
+            const bold = val >= (parseFloat(document.getElementById('thresholdInput').value) || 20);
+            html += '<td style="' + (bold ? 'font-weight:700;color:var(--primary);' : '') + '">' + val.toFixed(1) + '%</td>';
+        });
+        html += '</tr>';
+    });
+    html += '</tbody></table>';
+    document.getElementById('segmentProfileTable').innerHTML = html;
+
+    // Chart — grouped bar
+    if (segmentProfileChartInstance) segmentProfileChartInstance.destroy();
+    const ctx = document.getElementById('segmentProfileChart').getContext('2d');
+    const segColors = ['#2563eb', '#7c3aed', '#db2777', '#ea580c', '#16a34a', '#0891b2', '#ca8a04', '#475569'];
+
+    const datasets = sorted.map(([seg, cnt], i) => ({
+        label: seg + ' (n=' + cnt + ')',
+        data: attributes.map((_, a) => parseFloat(segAvgImp[seg][a].toFixed(1))),
+        backgroundColor: segColors[i % segColors.length],
+        borderRadius: 3
+    }));
+
+    segmentProfileChartInstance = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: attributes.map(a => a.name),
+            datasets: datasets
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            plugins: {
+                legend: { position: 'bottom', labels: { font: { size: 11 }, boxWidth: 12, padding: 10 } },
+                datalabels: { display: false }
+            },
+            scales: {
+                y: { beginAtZero: true, title: { display: true, text: 'Average Importance (%)' } },
+                x: { ticks: { font: { size: 11 } } }
+            }
+        }
+    });
 }
 
 // =====================================================
@@ -1364,6 +1539,44 @@ function downloadCSV(type) {
         options.forEach((o, i) => {
             csvContent += o.name + ',' + firstChoiceShare[i].toFixed(2) + ',' + choiceProbShare[i].toFixed(2) + '\n';
         });
+    } else if (type === 'allresults') {
+        filename = 'conjoint_all_results.csv';
+        // One row per respondent: coefficients, importance, segment
+        let headers = ['Respondent', 'Intercept'];
+        attributes.forEach(attr => {
+            attr.levels.forEach(level => {
+                headers.push(attr.name + ': ' + level.name);
+            });
+        });
+        attributes.forEach(attr => {
+            headers.push('Importance_' + attr.name + ' (%)');
+        });
+        headers.push('Segment');
+        csvContent = headers.join(',') + '\n';
+
+        for (let r = 0; r < R; r++) {
+            let row = respondentColumns[r];
+            // Intercept
+            row += ',' + betas[r][0].toFixed(4);
+            // Coefficients per level
+            attributes.forEach(attr => {
+                attr.levels.forEach(level => {
+                    if (level.dummyCol === null) {
+                        row += ',0';
+                    } else {
+                        const ci = dummyColumns.indexOf(level.dummyCol) + 1;
+                        row += ',' + betas[r][ci].toFixed(4);
+                    }
+                });
+            });
+            // Importance
+            attributes.forEach((_, a) => {
+                row += ',' + relImportance[a][r].toFixed(2);
+            });
+            // Segment
+            row += ',"' + segmentLabels[r] + '"';
+            csvContent += row + '\n';
+        }
     }
 
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
