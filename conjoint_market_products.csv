@@ -1,5 +1,8 @@
-"Profile","Number of Channels_100","Number of Channels_200","Number of Channels_300","Movie Channels_HBO","Movie Channels_HBO+ShowTime","DVR_SD_DVR","DVR_HD_DVR","Price_60","Price_90","Price_120","Price_150","Price_200","High-Speed Internet_100_Mbps","High-Speed Internet_300_Mbps","Phone Service_200_Mins","Phone Service_Unlimited"
-"Budget Basic",0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-"Internet Plus",1,0,0,0,0,0,0,0,1,0,0,0,0,1,0,0
-"Family Bundle",0,1,0,1,0,1,0,0,0,1,0,0,1,0,0,1
-"Premium All-In",0,0,1,0,1,0,1,0,0,0,0,1,0,1,0,1
+Profile,Number of Channels_100,Number of Channels_200,Number of Channels_300,Movie Channels_HBO,Movie Channels_HBO+ShowTime,DVR_SD_DVR,DVR_HD_DVR,Price_60,Price_90,Price_120,Price_150,Price_200,High-Speed Internet_100_Mbps,High-Speed Internet_300_Mbps,Phone Service_200_Mins,Phone Service_Unlimited
+Internet Basic,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0
+Internet Pro,0,0,0,0,0,0,0,1,0,0,0,0,0,1,0,0
+Internet + Cable Basic,0,1,0,0,0,0,0,0,1,0,0,0,1,0,0,0
+Internet + Cable Pro,0,0,1,0,0,1,0,0,0,1,0,0,1,0,0,0
+Internet + Cable + Movie Basic,0,1,0,1,0,1,1,0,0,1,0,0,1,0,0,0
+Internet + Cable + Movie Pro,0,0,1,0,1,1,0,0,0,0,1,0,0,1,0,0
+All In,0,0,1,0,1,0,1,0,0,0,0,1,0,1,0,1

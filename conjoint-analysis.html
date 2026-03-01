@@ -1375,6 +1375,10 @@ function loadProductsCSV(input) {
     const file = input.files[0];
     if (!file) return;
 
+    // Reset so re-uploading the same file triggers onchange again
+    const fileName = file.name;
+    setTimeout(() => { input.value = ''; }, 0);
+
     Papa.parse(file, {
         header: true,
         skipEmptyLines: true,
