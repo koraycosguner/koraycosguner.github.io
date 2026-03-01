@@ -4,7 +4,7 @@
 # Approach:
 #   1. Draw random parameter vectors in chunks:
 #      - Non-price dummies: U(0, 30)
-#      - Price dummies: U(-40, 0)  — wider range for higher price sensitivity
+#      - Price dummies: U(-45, 0)  — wider range for higher price sensitivity
 #      - Sort within attributes for monotonicity
 #   2. Worst profile (all base + worst price) → rating ≈ 0
 #      Best profile (all max + base price) → rating ≈ 100
@@ -65,7 +65,7 @@ for (chunk in 1:max_chunks) {
   # Generate random betas
   betas <- matrix(0, nrow = chunk_size, ncol = n_dummies)
   betas[, non_price_idx] <- runif(chunk_size * 11, 0, 30)
-  betas[, price_idx]     <- runif(chunk_size * 5, -40, 0)
+  betas[, price_idx]     <- runif(chunk_size * 5, -45, 0)
 
   # Monotonicity: Channels (3-element sorting network)
   a <- betas[,1]; b <- betas[,2]; c <- betas[,3]
