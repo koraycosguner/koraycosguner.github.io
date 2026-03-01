@@ -1,8 +1,7 @@
-Profile,Number of Channels_100,Number of Channels_200,Number of Channels_300,Movie Channels_HBO,Movie Channels_HBO+ShowTime,DVR_SD_DVR,DVR_HD_DVR,Price_60,Price_90,Price_120,Price_150,Price_200,High-Speed Internet_100_Mbps,High-Speed Internet_300_Mbps,Phone Service_200_Mins,Phone Service_Unlimited
-Internet Basic,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0
-Internet Pro,0,0,0,0,0,0,0,1,0,0,0,0,0,1,0,0
-Internet + Cable Basic,0,1,0,0,0,0,0,0,1,0,0,0,1,0,0,0
-Internet + Cable Pro,0,0,1,0,0,1,0,0,0,1,0,0,1,0,0,0
-Internet + Cable + Movie Basic,0,1,0,1,0,1,1,0,0,1,0,0,1,0,0,0
-Internet + Cable + Movie Pro,0,0,1,0,1,1,0,0,0,0,1,0,0,1,0,0
-All In,0,0,1,0,1,0,1,0,0,0,0,1,0,1,0,1
+Market Offerings,Number of Channels_100,Number of Channels_200,Number of Channels_300,Movie Channels_HBO,Movie Channels_HBO+ShowTime,DVR_SD_DVR,DVR_HD_DVR,Price_60,Price_90,Price_120,Price_150,Price_200,High-Speed Internet_100_Mbps,High-Speed Internet_300_Mbps,Phone Service_200_Mins,Phone Service_Unlimited
+Basic Internet (100Mbps $30),0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0
+Fast Internet (300Mbps $60),0,0,0,0,0,0,0,1,0,0,0,0,0,1,0,0
+Internet + 100ch ($90),1,0,0,0,0,0,0,0,1,0,0,0,0,1,0,0
+Internet + 200ch ($120),0,1,0,0,0,0,0,0,0,1,0,0,0,1,0,0
+Internet + 300ch ($150),0,0,1,0,0,0,0,0,0,0,1,0,0,1,0,0
+Full Package ($200),0,0,1,0,1,0,0,0,0,0,0,1,0,1,0,0
