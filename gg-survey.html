@@ -396,8 +396,7 @@
         let priceLadder = [];
         let currentPriceIndex = 0;
         let startingPriceIndex = 0;
-        let startingPrice = 0; // The actual random starting price shown first
-        let isFirstQuestion = true; // Track if showing the random starting price
+        let startingPrice = 0; // The random starting ladder price
         let direction = null; // 'up' or 'down'
         let hasAnsweredYes = false;
         let lastYesPrice = null;
@@ -481,17 +480,12 @@
                 priceLadder.push(p);
             }
 
-            // Random starting price (any integer in middle 60% of range)
-            // e.g., if range is $10-$100, middle 60% is $28-$82, pick any integer like $47, $63, $71
-            const priceRange = maxPrice - minPrice;
-            const startMin = minPrice + (priceRange * 0.2);
-            const startMax = minPrice + (priceRange * 0.8);
-            // Random integer in that range
-            startingPrice = Math.floor(Math.random() * (startMax - startMin + 1)) + Math.floor(startMin);
-
-            // Find closest ladder index (for navigation purposes)
-            currentPriceIndex = priceLadder.findIndex(p => p >= startingPrice);
-            if (currentPriceIndex === -1) currentPriceIndex = priceLadder.length - 1;
+            // Random starting price from the middle 60% of the ladder
+            // This keeps the starting price on-grid while reducing anchoring bias
+            const startIdx = Math.round(priceLadder.length * 0.2);
+            const endIdx = Math.round(priceLadder.length * 0.8) - 1;
+            currentPriceIndex = startIdx + Math.floor(Math.random() * (endIdx - startIdx + 1));
+            startingPrice = priceLadder[currentPriceIndex];
             startingPriceIndex = currentPriceIndex;
 
             // Start the survey immediately
@@ -499,14 +493,7 @@
         }
 
         function updateDisplay() {
-            // First question shows the random starting price (e.g., $67)
-            // Subsequent questions use the ladder prices
-            let price;
-            if (isFirstQuestion) {
-                price = startingPrice;
-            } else {
-                price = priceLadder[currentPriceIndex];
-            }
+            const price = priceLadder[currentPriceIndex];
             document.getElementById('current-price').textContent = currency + price.toFixed(2);
             document.getElementById('progress-info').textContent = `Question ${stepCount + 1}`;
         }
@@ -514,65 +501,38 @@
         function answer(isYes) {
             stepCount++;
 
-            // Get current price (random for first, ladder for rest)
-            const currentPrice = isFirstQuestion ? startingPrice : priceLadder[currentPriceIndex];
+            const currentPrice = priceLadder[currentPriceIndex];
 
             if (isYes) {
                 hasAnsweredYes = true;
                 lastYesPrice = currentPrice;
 
-                // After first question, switch to ladder navigation
-                if (isFirstQuestion) {
-                    isFirstQuestion = false;
-                    direction = 'up';
-                    currentPriceIndex++; // Move up on the ladder
-                    if (currentPriceIndex >= priceLadder.length) {
-                        // Already at top
-                        submitResponse(lastYesPrice);
-                        return;
-                    }
+                if (direction === 'down') {
+                    // Was going down, now they said yes - found their max WTP
+                    submitResponse(lastYesPrice);
+                    return;
+                }
+                direction = 'up';
+                if (currentPriceIndex < priceLadder.length - 1) {
+                    currentPriceIndex++;
                     updateDisplay();
                 } else {
-                    // Try to go up
-                    if (currentPriceIndex < priceLadder.length - 1) {
-                        if (direction === 'down') {
-                            // Was going down, now they said yes - we found their max WTP
-                            submitResponse(lastYesPrice);
-                            return;
-                        }
-                        direction = 'up';
-                        currentPriceIndex++;
-                        updateDisplay();
-                    } else {
-                        // At the top of the ladder
-                        submitResponse(priceLadder[currentPriceIndex]);
-                    }
+                    // At the top of the ladder
+                    submitResponse(currentPrice);
                 }
             } else {
-                // No
-                if (isFirstQuestion) {
-                    isFirstQuestion = false;
-                    direction = 'down';
-                    currentPriceIndex--; // Move down on the ladder
-                    if (currentPriceIndex < 0) {
-                        // Already at bottom
-                        submitResponse(0);
-                        return;
-                    }
-                    updateDisplay();
-                } else if (hasAnsweredYes) {
-                    // They previously said yes, now no - we found their max WTP
+                if (hasAnsweredYes) {
+                    // Previously said yes, now no - found their max WTP
                     submitResponse(lastYesPrice);
+                    return;
+                }
+                direction = 'down';
+                if (currentPriceIndex > 0) {
+                    currentPriceIndex--;
+                    updateDisplay();
                 } else {
-                    // Haven't said yes yet, try to go down
-                    if (currentPriceIndex > 0) {
-                        direction = 'down';
-                        currentPriceIndex--;
-                        updateDisplay();
-                    } else {
-                        // At the bottom, they never said yes
-                        submitResponse(0); // Below minimum WTP
-                    }
+                    // At the bottom, never said yes
+                    submitResponse(0);
                 }
             }
         }
