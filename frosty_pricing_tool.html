@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Frosty Delights – Dynamic Pricing Optimizer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+  :root {
+    --primary: #2563eb;
+    --primary-dark: #1d4ed8;
+    --primary-light: #dbeafe;
+    --success: #16a34a;
+    --success-light: #dcfce7;
+    --danger: #dc2626;
+    --warning: #f59e0b;
+    --bg: #f8fafc;
+    --card-bg: #ffffff;
+    --text-dark: #1e293b;
+    --text-light: #64748b;
+    --border: #e2e8f0;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-size: 18px;
+    font-family: 'Outfit', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text-dark);
+    line-height: 1.6;
+    padding: 1rem;
+  }
+  .container { max-width: 1100px; margin: 0 auto; }
+  h1 { text-align: center; margin-bottom: 0.5rem; color: var(--text-dark); }
+  .subtitle { text-align: center; color: var(--text-light); margin-bottom: 2rem; font-size: 0.95rem; }
+
+  .card {
+    background: var(--card-bg);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  }
+  .card-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    color: var(--text-dark);
+  }
+
+  /* Layout */
+  .layout {
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    gap: 1.5rem;
+    align-items: start;
+  }
+
+  /* Controls */
+  .ctrl-label {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--text-light);
+    margin-bottom: 0.35rem;
+    display: flex;
+    justify-content: space-between;
+  }
+  .ctrl-label .ctrl-val {
+    color: var(--text-dark);
+    font-weight: 700;
+  }
+  input[type=range] {
+    width: 100%;
+    margin-bottom: 1rem;
+    accent-color: var(--primary);
+    height: 6px;
+  }
+  .btn-group {
+    display: grid;
+    gap: 0.4rem;
+    margin-bottom: 1rem;
+  }
+  .btn-group.cols2 { grid-template-columns: 1fr 1fr; }
+  .toggle-btn {
+    padding: 0.5rem 0;
+    border-radius: 8px;
+    border: 1.5px solid var(--border);
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 0.82rem;
+    font-weight: 500;
+    background: var(--card-bg);
+    color: var(--text-light);
+    transition: all 0.15s;
+    text-align: center;
+  }
+  .toggle-btn:hover { border-color: var(--primary); color: var(--primary); }
+  .toggle-btn.active {
+    background: var(--primary-light);
+    color: var(--primary-dark);
+    border-color: var(--primary);
+    font-weight: 700;
+  }
+
+  /* Result cards */
+  .result-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-bottom: 1rem;
+  }
+  .result-card {
+    border-radius: 12px;
+    padding: 1.25rem;
+  }
+  .result-card.profit {
+    background: var(--success-light);
+    border: 1px solid var(--success);
+  }
+  .result-card.revenue {
+    background: var(--primary-light);
+    border: 1px solid var(--primary);
+  }
+  .result-card .rc-label {
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 0.4rem;
+  }
+  .result-card.profit .rc-label { color: var(--success); }
+  .result-card.revenue .rc-label { color: var(--primary); }
+  .result-card .rc-price {
+    font-size: 2rem;
+    font-weight: 800;
+    color: var(--text-dark);
+  }
+  .result-card .rc-detail {
+    font-size: 0.85rem;
+    color: var(--text-light);
+    margin-top: 0.3rem;
+  }
+  .result-card .rc-detail b { font-weight: 700; }
+  .result-card.profit .rc-detail b { color: #15803d; }
+  .result-card.revenue .rc-detail b { color: var(--primary-dark); }
+
+  /* Context bar */
+  .context-bar {
+    background: #f1f5f9;
+    border-radius: 8px;
+    padding: 0.6rem 1rem;
+    font-size: 0.85rem;
+    color: var(--text-light);
+    text-align: center;
+    margin-bottom: 1rem;
+  }
+  .context-bar strong { color: var(--text-dark); }
+
+  /* Metrics */
+  .metrics-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+  }
+  .metric-box {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 0.9rem;
+    text-align: center;
+  }
+  .metric-box .mb-label {
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: var(--text-light);
+    margin-bottom: 0.25rem;
+  }
+  .metric-box .mb-value {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--text-dark);
+  }
+
+  /* Chart */
+  .chart-wrap { position: relative; height: 320px; }
+
+  /* Footer */
+  footer {
+    text-align: center;
+    font-size: 0.8rem;
+    color: var(--text-light);
+    margin-top: 1rem;
+    padding: 0.5rem;
+  }
+
+  /* Mobile */
+  @media (max-width: 720px) {
+    body { padding: 0.75rem; }
+    h1 { font-size: 1.4rem; }
+    .subtitle { font-size: 0.85rem; margin-bottom: 1rem; }
+    .layout { grid-template-columns: 1fr; }
+    .card { padding: 1rem; margin-bottom: 1rem; }
+    .result-row { grid-template-columns: 1fr; }
+    .chart-wrap { height: 260px; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <h1>🍦 Frosty Delights – Dynamic Pricing Optimizer</h1>
+  <p class="subtitle">Linear demand model with price × context interactions · exact closed-form solutions</p>
+
+  <div class="layout">
+    <!-- LEFT: Controls -->
+    <div>
+      <div class="card">
+        <div class="card-title">Market Conditions</div>
+
+        <div class="ctrl-label"><span>Time of Day</span></div>
+        <div class="btn-group cols2" id="periodBtns">
+          <button class="toggle-btn" data-val="1" onclick="setPeriod(1)">Morning</button>
+          <button class="toggle-btn active" data-val="0" onclick="setPeriod(0)">Aftn / Evening</button>
+        </div>
+
+        <div class="ctrl-label"><span>Day Type</span></div>
+        <div class="btn-group cols2" id="dayBtns">
+          <button class="toggle-btn" data-val="0" onclick="setDay(0)">Weekday</button>
+          <button class="toggle-btn active" data-val="1" onclick="setDay(1)">Weekend</button>
+        </div>
+
+        <div class="ctrl-label">
+          <span>Temperature</span>
+          <span class="ctrl-val" id="tempVal">70°F</span>
+        </div>
+        <input type="range" id="tempSlider" min="20" max="100" step="1" value="70" oninput="setTemp(this.value)">
+
+        <div class="ctrl-label">
+          <span>Unit Cost</span>
+          <span class="ctrl-val" id="costVal">$2.00</span>
+        </div>
+        <input type="range" id="costSlider" min="0.50" max="6.00" step="0.10" value="2.00" oninput="setCost(this.value)">
+      </div>
+    </div>
+
+    <!-- RIGHT: Results -->
+    <div>
+      <div class="result-row">
+        <div class="result-card profit">
+          <div class="rc-label">Profit-Maximizing Price</div>
+          <div class="rc-price" id="profPrice">$7.95</div>
+          <div class="rc-detail">
+            <span id="profUnits">52.1</span> units/hr → <b>$<span id="profProfit">310.27</span> profit</b>
+          </div>
+        </div>
+        <div class="result-card revenue">
+          <div class="rc-label">Revenue-Maximizing Price</div>
+          <div class="rc-price" id="revPrice">$6.95</div>
+          <div class="rc-detail">
+            <span id="revUnits">60.9</span> units/hr → <b>$<span id="revRev">423.75</span> revenue</b>
+          </div>
+        </div>
+      </div>
+
+      <div class="context-bar" id="contextBar">
+        <strong>Aftn / Evening</strong> · <strong>Weekend</strong> · <strong>70°F</strong> · Unit cost <strong>$2.00</strong>
+      </div>
+
+      <div class="metrics-row">
+        <div class="metric-box">
+          <div class="mb-label">Quantity at P*</div>
+          <div class="mb-value" id="mQ">52.1</div>
+        </div>
+        <div class="metric-box">
+          <div class="mb-label">Revenue at P*</div>
+          <div class="mb-value" id="mRev">$414</div>
+        </div>
+        <div class="metric-box">
+          <div class="mb-label">Optimal Margin</div>
+          <div class="mb-value" id="mMargin">75%</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Demand, Revenue & Profit</div>
+        <div class="chart-wrap"><canvas id="mainChart"></canvas></div>
+      </div>
+    </div>
+  </div>
+
+  <footer>© 2026 Koray Cosguner · All Rights Reserved</footer>
+</div>
+
+<script>
+// ===== STATE =====
+var T = 70, M = 0, W = 1, cost = 2.0;
+
+// ===== DEMAND MODEL =====
+// Q = A + B×P
+// A(T,M,W) = 99.4868 + 0.099×T − 9.8182×M + 15.3339×W
+// B(T,M,W) = −9.9441 + 0.0107×T − 0.5183×M + 0.4398×W
+function getA() { return 99.4868 + 0.099*T - 9.8182*M + 15.3339*W; }
+function getB() { return -9.9441 + 0.0107*T - 0.5183*M + 0.4398*W; }
+
+function solve() {
+  var A = getA(), B = getB();
+  var pChoke = -A / B;
+
+  // Profit optimal: FOC of (P-c)(A+BP) → P* = (c + pChoke)/2
+  var pProf = (cost + pChoke) / 2;
+  var qProf = A + B * pProf;
+  var piProf = (pProf - cost) * qProf;
+  var revAtProf = pProf * qProf;
+  var lerner = (pProf - cost) / pProf;
+
+  // Revenue optimal: FOC of P(A+BP) → P = -A/(2B)
+  var pRev = -A / (2 * B);
+  var qRev = A + B * pRev;
+  var revAtRev = pRev * qRev;
+
+  return { A: A, B: B, pChoke: pChoke, pProf: pProf, qProf: qProf, piProf: piProf, revAtProf: revAtProf, lerner: lerner, pRev: pRev, qRev: qRev, revAtRev: revAtRev };
+}
+
+// ===== UI =====
+function setPeriod(val) {
+  M = val;
+  document.querySelectorAll('#periodBtns .toggle-btn').forEach(function(b) { b.classList.toggle('active', +b.dataset.val === val); });
+  update();
+}
+function setDay(val) {
+  W = val;
+  document.querySelectorAll('#dayBtns .toggle-btn').forEach(function(b) { b.classList.toggle('active', +b.dataset.val === val); });
+  update();
+}
+function setTemp(val) {
+  T = +val;
+  document.getElementById('tempVal').textContent = T + '°F';
+  update();
+}
+function setCost(val) {
+  cost = +val;
+  document.getElementById('costVal').textContent = '$' + cost.toFixed(2);
+  update();
+}
+
+function update() {
+  var s = solve();
+
+  document.getElementById('profPrice').textContent = '$' + s.pProf.toFixed(2);
+  document.getElementById('profUnits').textContent = s.qProf.toFixed(1);
+  document.getElementById('profProfit').textContent = s.piProf.toFixed(2);
+
+  document.getElementById('revPrice').textContent = '$' + s.pRev.toFixed(2);
+  document.getElementById('revUnits').textContent = s.qRev.toFixed(1);
+  document.getElementById('revRev').textContent = s.revAtRev.toFixed(2);
+
+  var periodLabel = M ? 'Morning' : 'Aftn / Evening';
+  var dayLabel = W ? 'Weekend' : 'Weekday';
+  document.getElementById('contextBar').innerHTML =
+    '<strong>' + periodLabel + '</strong> · <strong>' + dayLabel + '</strong> · <strong>' + T + '°F</strong> · Unit cost <strong>$' + cost.toFixed(2) + '</strong>';
+
+  document.getElementById('mQ').textContent = s.qProf.toFixed(1);
+  document.getElementById('mRev').textContent = '$' + s.revAtProf.toFixed(0);
+  document.getElementById('mMargin').textContent = (s.lerner * 100).toFixed(0) + '%';
+
+  drawChart(s);
+}
+
+// ===== CHART =====
+var mainChart;
+
+function drawChart(s) {
+  var A = s.A, B = s.B;
+  var pMax = Math.min(s.pChoke + 0.5, 16);
+  var pMin = Math.max(cost * 0.3, 0.5);
+  var steps = 120;
+  var prices = [];
+  for (var i = 0; i <= steps; i++) prices.push(pMin + (pMax - pMin) * i / steps);
+
+  var demand = prices.map(function(p) { return Math.max(0, A + B * p); });
+  var revenue = prices.map(function(p) { return p * Math.max(0, A + B * p); });
+  var profit = prices.map(function(p) { return (p - cost) * Math.max(0, A + B * p); });
+  var labels = prices.map(function(p) { return p.toFixed(2); });
+
+  if (mainChart) mainChart.destroy();
+  mainChart = new Chart(document.getElementById('mainChart'), {
+    type: 'line',
+    data: {
+      labels: labels,
+      datasets: [
+        {
+          label: 'Demand (units/hr)',
+          data: demand,
+          borderColor: '#f59e0b',
+          backgroundColor: 'rgba(245,158,11,0.05)',
+          borderWidth: 2.5,
+          pointRadius: 0,
+          tension: 0.1,
+          yAxisID: 'y',
+          fill: true
+        },
+        {
+          label: 'Revenue ($/hr)',
+          data: revenue,
+          borderColor: '#2563eb',
+          borderWidth: 2,
+          pointRadius: 0,
+          tension: 0.1,
+          yAxisID: 'y2',
+          borderDash: [6, 3]
+        },
+        {
+          label: 'Profit ($/hr)',
+          data: profit,
+          borderColor: '#16a34a',
+          backgroundColor: 'rgba(22,163,74,0.05)',
+          borderWidth: 2.5,
+          pointRadius: 0,
+          tension: 0.1,
+          yAxisID: 'y2',
+          fill: true
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      interaction: { intersect: false, mode: 'index' },
+      plugins: {
+        legend: {
+          position: 'top',
+          labels: {
+            color: '#64748b',
+            font: { family: "'Outfit'", size: 12, weight: '500' },
+            boxWidth: 14,
+            padding: 16
+          }
+        },
+        tooltip: {
+          backgroundColor: '#ffffff',
+          titleColor: '#1e293b',
+          bodyColor: '#1e293b',
+          borderColor: '#e2e8f0',
+          borderWidth: 1,
+          titleFont: { family: "'Outfit'", size: 13, weight: '600' },
+          bodyFont: { family: "'Outfit'", size: 12 },
+          padding: 10,
+          callbacks: {
+            title: function(ctx) { return 'Price: $' + (+ctx[0].label).toFixed(2); },
+            label: function(ctx) {
+              var v = ctx.parsed.y;
+              if (ctx.datasetIndex === 0) return '  Demand: ' + v.toFixed(1) + ' units';
+              return '  ' + ctx.dataset.label.split(' (')[0] + ': $' + v.toFixed(2);
+            }
+          }
+        }
+      },
+      scales: {
+        x: {
+          title: { display: true, text: 'Price ($)', color: '#64748b', font: { family: "'Outfit'", size: 13, weight: '500' } },
+          ticks: {
+            color: '#94a3b8',
+            font: { size: 11 },
+            maxTicksLimit: 10,
+            callback: function(val) { return '$' + (+this.getLabelForValue(val)).toFixed(0); }
+          },
+          grid: { color: '#f1f5f9' }
+        },
+        y: {
+          position: 'left',
+          title: { display: true, text: 'Units / hr', color: '#f59e0b', font: { family: "'Outfit'", size: 12, weight: '500' } },
+          ticks: { color: '#94a3b8', font: { size: 11 } },
+          grid: { color: '#f1f5f9' },
+          min: 0
+        },
+        y2: {
+          position: 'right',
+          title: { display: true, text: '$ / hr', color: '#2563eb', font: { family: "'Outfit'", size: 12, weight: '500' } },
+          ticks: {
+            color: '#94a3b8',
+            font: { size: 11 },
+            callback: function(v) { return '$' + v.toFixed(0); }
+          },
+          grid: { display: false }
+        }
+      }
+    }
+  });
+}
+
+// ===== INIT =====
+update();
+</script>
+</body>
+</html>
