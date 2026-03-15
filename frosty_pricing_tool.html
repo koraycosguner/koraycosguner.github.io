@@ -53,10 +53,18 @@
   /* Layout */
   .layout {
     display: grid;
-    grid-template-columns: 280px 1fr;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  /* Horizontal controls */
+  .controls-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
     gap: 1.5rem;
     align-items: start;
   }
+  .ctrl-group input[type=range] { margin-bottom: 0; }
 
   /* Controls */
   .ctrl-label {
@@ -203,8 +211,8 @@
     body { padding: 0.75rem; }
     h1 { font-size: 1.4rem; }
     .subtitle { font-size: 0.85rem; margin-bottom: 1rem; }
-    .layout { grid-template-columns: 1fr; }
     .card { padding: 1rem; margin-bottom: 1rem; }
+    .controls-grid { grid-template-columns: 1fr 1fr; }
     .result-row { grid-template-columns: 1fr; }
     .metrics-row { grid-template-columns: repeat(2, 1fr); }
     .chart-wrap { height: 260px; }
@@ -218,38 +226,42 @@
   <p class="subtitle">Based on the sales response model with price, all demand shifters, and their interactions with price.</p>
 
   <div class="layout">
-    <!-- LEFT: Controls -->
-    <div>
-      <div class="card">
-        <div class="card-title">Market Conditions</div>
-
-        <div class="ctrl-label"><span>Time of Day</span></div>
-        <div class="btn-group cols2" id="periodBtns">
-          <button class="toggle-btn" data-val="1" onclick="setPeriod(1)">Morning</button>
-          <button class="toggle-btn active" data-val="0" onclick="setPeriod(0)">Aftn / Evening</button>
+    <!-- Controls -->
+    <div class="card">
+      <div class="card-title">Market Conditions</div>
+      <div class="controls-grid">
+        <div class="ctrl-group">
+          <div class="ctrl-label"><span>Time of Day</span></div>
+          <div class="btn-group cols2" id="periodBtns">
+            <button class="toggle-btn" data-val="1" onclick="setPeriod(1)">Morning</button>
+            <button class="toggle-btn active" data-val="0" onclick="setPeriod(0)">Aftn / Evening</button>
+          </div>
         </div>
-
-        <div class="ctrl-label"><span>Day Type</span></div>
-        <div class="btn-group cols2" id="dayBtns">
-          <button class="toggle-btn" data-val="0" onclick="setDay(0)">Weekday</button>
-          <button class="toggle-btn active" data-val="1" onclick="setDay(1)">Weekend</button>
+        <div class="ctrl-group">
+          <div class="ctrl-label"><span>Day Type</span></div>
+          <div class="btn-group cols2" id="dayBtns">
+            <button class="toggle-btn" data-val="0" onclick="setDay(0)">Weekday</button>
+            <button class="toggle-btn active" data-val="1" onclick="setDay(1)">Weekend</button>
+          </div>
         </div>
-
-        <div class="ctrl-label">
-          <span>Temperature</span>
-          <span class="ctrl-val" id="tempVal">70°F</span>
+        <div class="ctrl-group">
+          <div class="ctrl-label">
+            <span>Temperature</span>
+            <span class="ctrl-val" id="tempVal">70°F</span>
+          </div>
+          <input type="range" id="tempSlider" min="20" max="100" step="1" value="70" oninput="setTemp(this.value)">
         </div>
-        <input type="range" id="tempSlider" min="20" max="100" step="1" value="70" oninput="setTemp(this.value)">
-
-        <div class="ctrl-label">
-          <span>Unit Cost</span>
-          <span class="ctrl-val" id="costVal">$2.00</span>
+        <div class="ctrl-group">
+          <div class="ctrl-label">
+            <span>Unit Cost</span>
+            <span class="ctrl-val" id="costVal">$2.00</span>
+          </div>
+          <input type="range" id="costSlider" min="0.50" max="6.00" step="0.10" value="2.00" oninput="setCost(this.value)">
         </div>
-        <input type="range" id="costSlider" min="0.50" max="6.00" step="0.10" value="2.00" oninput="setCost(this.value)">
       </div>
     </div>
 
-    <!-- RIGHT: Results -->
+    <!-- Results -->
     <div>
       <div class="result-row">
         <div class="result-card profit">
