@@ -161,7 +161,7 @@
   /* Metrics */
   .metrics-row {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(4, 1fr);
     gap: 0.75rem;
     margin-bottom: 1.5rem;
   }
@@ -281,7 +281,11 @@
           <div class="mb-value" id="mRev">$414</div>
         </div>
         <div class="metric-box">
-          <div class="mb-label">Optimal Margin</div>
+          <div class="mb-label">Profit at P*</div>
+          <div class="mb-value" id="mProfit">$310</div>
+        </div>
+        <div class="metric-box">
+          <div class="mb-label">Margin at P*</div>
           <div class="mb-value" id="mMargin">75%</div>
         </div>
       </div>
@@ -366,6 +370,7 @@ function update() {
 
   document.getElementById('mQ').textContent = s.qProf.toFixed(1);
   document.getElementById('mRev').textContent = '$' + s.revAtProf.toFixed(0);
+  document.getElementById('mProfit').textContent = '$' + s.piProf.toFixed(0);
   document.getElementById('mMargin').textContent = (s.lerner * 100).toFixed(0) + '%';
 
   drawChart(s);
