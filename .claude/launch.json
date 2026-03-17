@@ -4,8 +4,9 @@
     {
       "name": "website",
       "runtimeExecutable": "/usr/bin/python3",
-      "runtimeArgs": ["-m", "http.server", "8081", "--directory", "/Users/kcosgun/Desktop/Claude Code/Personal Website"],
-      "port": 8081
+      "runtimeArgs": ["-m", "http.server", "8082", "--directory", "/Users/kcosgun/Desktop/Claude Code/Personal Website"],
+      "port": 8082,
+      "autoPort": true
     }
   ]
 }
