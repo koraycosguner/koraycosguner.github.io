@@ -1168,7 +1168,6 @@ server = function(input, output, session) {
       # Single segment GLM
       coefs = coef(result$fit)
       lines = c(lines, build_equation(coefs, dv, mt, "Seg1"))
-      lines = c(lines, "")
       lines = c(lines, paste0("Size_Seg1 = 1.0000"))
 
     } else {
@@ -1184,7 +1183,6 @@ server = function(input, output, session) {
         names(coefs) = rownames(coef_matrix)
         seg_label = paste0("Seg", i)
         lines = c(lines, build_equation(coefs, dv, mt, seg_label))
-        lines = c(lines, "")
       }
 
       # Add segment sizes
