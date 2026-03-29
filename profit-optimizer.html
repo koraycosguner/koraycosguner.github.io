@@ -1147,12 +1147,12 @@ Profit = Revenue - Cost * Sales" oninput="parseEquations()"></textarea>
             container.innerHTML = undefinedVars.map(v => `
                 <div class="prediction-input-group">
                     <label>${v} =</label>
-                    <input type="number" id="predict_${v}" step="any" placeholder="value">
+                    <input type="number" id="predict_${v}" step="any" placeholder="value" oninput="predict(true)">
                 </div>
             `).join('');
         }
 
-        function predict() {
+        function predict(silent = false) {
             const errorEl = document.getElementById('errorMessage');
             errorEl.classList.remove('visible');
 
@@ -1164,8 +1164,7 @@ Profit = Revenue - Cost * Sales" oninput="parseEquations()"></textarea>
             for (const dv of activeDecVars) {
                 const input = document.getElementById(`predict_${dv.name}`);
                 if (!input || input.value === '') {
-                    errorEl.textContent = `Enter a value for ${dv.name}.`;
-                    errorEl.classList.add('visible');
+                    if (!silent) { errorEl.textContent = `Enter a value for ${dv.name}.`; errorEl.classList.add('visible'); }
                     return;
                 }
                 inputValues[dv.name] = parseFloat(input.value);
@@ -1183,8 +1182,7 @@ Profit = Revenue - Cost * Sales" oninput="parseEquations()"></textarea>
                 if (!(v in inputValues)) {
                     const input = document.getElementById(`predict_${v}`);
                     if (!input || input.value === '') {
-                        errorEl.textContent = `Enter a value for ${v} or add it as a control variable.`;
-                        errorEl.classList.add('visible');
+                        if (!silent) { errorEl.textContent = `Enter a value for ${v} or add it as a control variable.`; errorEl.classList.add('visible'); }
                         return;
                     }
                     inputValues[v] = parseFloat(input.value);
