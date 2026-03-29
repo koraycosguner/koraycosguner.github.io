@@ -1208,7 +1208,7 @@ server = function(input, output, session) {
         tags$button(
           id = paste0("copy_", eq_id),
           style = "position: absolute; top: 10px; right: 10px; background: #475569; color: white; border: none; padding: 6px 12px; border-radius: 6px; font-size: 0.8rem; cursor: pointer; z-index: 1;",
-          onclick = paste0("var text = document.getElementById('", eq_id, "').innerText; navigator.clipboard.writeText(text).then(function() { var btn = document.getElementById('copy_", eq_id, "'); btn.innerText = 'Copied!'; setTimeout(function() { btn.innerText = 'Copy'; }, 2000); });"),
+          onclick = paste0("var text = document.getElementById('", eq_id, "').innerText; var ta = document.createElement('textarea'); ta.value = text; ta.style.position = 'fixed'; ta.style.left = '-9999px'; document.body.appendChild(ta); ta.select(); document.execCommand('copy'); document.body.removeChild(ta); var btn = document.getElementById('copy_", eq_id, "'); btn.innerText = 'Copied!'; setTimeout(function() { btn.innerText = 'Copy'; }, 2000);"),
           "Copy"
         ),
         pre(id = eq_id,
