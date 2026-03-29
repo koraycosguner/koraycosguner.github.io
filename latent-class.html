@@ -1107,7 +1107,7 @@ server = function(input, output, session) {
   }, rownames = FALSE)
 
   # Helper: build equation string from coefficients
-  build_equation = function(coefs, dv, model_type) {
+  build_equation = function(coefs, dv, model_type, seg_label = "") {
     # coefs is a named vector of estimates
     terms = c()
     intercept_val = NULL
@@ -1137,20 +1137,20 @@ server = function(input, output, session) {
       linear_pred = paste(terms, collapse = "")
     }
 
+    # Segment suffix for variable names
+    seg_suffix = if (seg_label != "") paste0("_", seg_label) else ""
+
     # Wrap based on model type
     if (model_type == "gaussian") {
-      eq = paste0(dv, " = ", linear_pred)
-      note = ""
+      eq = paste0(dv, seg_suffix, " = ", linear_pred)
     } else if (model_type == "poisson") {
-      eq = paste0("Mean_", dv, " = EXP(", linear_pred, ")")
-      note = "Note: Poisson regression uses a log link, so the mean is obtained by exponentiating the linear predictor."
+      eq = paste0("Mean_", dv, seg_suffix, " = EXP(", linear_pred, ")")
     } else {
-      eq = paste0("Prob_", dv, " = EXP(eta) / (1 + EXP(eta))")
-      eq = paste0(eq, "\\n\\nwhere eta = ", linear_pred)
-      note = paste0("Note: Prob_", dv, " = Pr(", dv, " = 1). If you are interested in Pr(", dv, " = 0), calculate 1 - Prob_", dv, ".")
+      eq = paste0("Prob_", dv, seg_suffix, " = EXP(eta", seg_suffix, ") / (1 + EXP(eta", seg_suffix, "))")
+      eq = paste0(eq, "\\nwhere eta", seg_suffix, " = ", linear_pred)
     }
 
-    return(list(equation = eq, note = note))
+    return(eq)
   }
 
   # Equations output
@@ -1161,22 +1161,15 @@ server = function(input, output, session) {
     dv = result$dv
     mt = result$model_type
 
+    lines = c()
+    note = ""
+
     if (result$type == "glm") {
       # Single segment GLM
       coefs = coef(result$fit)
-      eq_result = build_equation(coefs, dv, mt)
-
-      tagList(
-        div(class = "segment-header", "Segment 1 (100% of sample)"),
-        div(class = "segment-body",
-          pre(style = "white-space: pre-wrap; word-wrap: break-word; font-size: 0.9rem; background: #1e293b; color: #e2e8f0; padding: 15px; border-radius: 8px; margin-bottom: 10px;",
-            eq_result$equation
-          ),
-          if (eq_result$note != "") {
-            p(style = "font-size: 0.85rem; color: #64748b; font-style: italic;", eq_result$note)
-          }
-        )
-      )
+      lines = c(lines, build_equation(coefs, dv, mt, "Seg1"))
+      lines = c(lines, "")
+      lines = c(lines, paste0("Size_Seg1 = 1.0000"))
 
     } else {
       # Flexmix model - one equation per segment
@@ -1184,31 +1177,49 @@ server = function(input, output, session) {
       k = result$k
       fit = result$fit
 
-      eq_blocks = lapply(1:k, function(i) {
+      for (i in 1:k) {
         comp_name = paste0("Comp.", i)
         coef_matrix = refit_mod@components[[1]][[comp_name]]
         coefs = coef_matrix[, 1]
         names(coefs) = rownames(coef_matrix)
+        seg_label = paste0("Seg", i)
+        lines = c(lines, build_equation(coefs, dv, mt, seg_label))
+        lines = c(lines, "")
+      }
 
-        eq_result = build_equation(coefs, dv, mt)
-
-        div(style = "margin-bottom: 20px;",
-          div(class = "segment-header",
-            paste0("Segment ", i, " (", round(fit@prior[i] * 100, 1), "% of sample)")
-          ),
-          div(class = "segment-body",
-            pre(style = "white-space: pre-wrap; word-wrap: break-word; font-size: 0.9rem; background: #1e293b; color: #e2e8f0; padding: 15px; border-radius: 8px; margin-bottom: 10px;",
-              eq_result$equation
-            ),
-            if (eq_result$note != "") {
-              p(style = "font-size: 0.85rem; color: #64748b; font-style: italic;", eq_result$note)
-            }
-          )
-        )
-      })
-
-      tagList(eq_blocks)
+      # Add segment sizes
+      for (i in 1:k) {
+        lines = c(lines, paste0("Size_Seg", i, " = ", formatC(round(fit@prior[i], 4), format = "f", digits = 4)))
+      }
     }
+
+    # Build note based on model type
+    if (mt == "poisson") {
+      note = "Note: Poisson regression uses a log link, so the mean is obtained by exponentiating the linear predictor."
+    } else if (mt == "binomial") {
+      note = paste0("Note: Prob_", dv, " = Pr(", dv, " = 1). If you are interested in Pr(", dv, " = 0), calculate 1 - Prob_", dv, ".")
+    }
+
+    eq_text = paste(lines, collapse = "\\n")
+    eq_id = paste0("eq_text_", sample(1000:9999, 1))
+
+    tagList(
+      div(style = "position: relative;",
+        tags$button(
+          id = paste0("copy_", eq_id),
+          style = "position: absolute; top: 10px; right: 10px; background: #475569; color: white; border: none; padding: 6px 12px; border-radius: 6px; font-size: 0.8rem; cursor: pointer; z-index: 1;",
+          onclick = paste0("var text = document.getElementById('", eq_id, "').innerText; navigator.clipboard.writeText(text).then(function() { var btn = document.getElementById('copy_", eq_id, "'); btn.innerText = 'Copied!'; setTimeout(function() { btn.innerText = 'Copy'; }, 2000); });"),
+          "Copy"
+        ),
+        pre(id = eq_id,
+          style = "white-space: pre-wrap; word-wrap: break-word; font-size: 0.9rem; background: #1e293b; color: #e2e8f0; padding: 15px; padding-right: 80px; border-radius: 8px; margin-bottom: 10px;",
+          eq_text
+        )
+      ),
+      if (note != "") {
+        p(style = "font-size: 0.85rem; color: #64748b; font-style: italic;", note)
+      }
+    )
   })
 
   # R Script
