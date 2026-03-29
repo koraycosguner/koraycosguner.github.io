@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Assignment 2 — Solution Manual</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;0,8..60,600;1,8..60,400&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --crimson: #990000;
+    --crimson-dark: #4a0000;
+    --crimson-light: #d4a8a8;
+    --bg: #faf7f7;
+    --card: #ffffff;
+    --text: #333333;
+    --text-dark: #1a1a1a;
+    --border: #e8e0e0;
+    --green: #2d6a2e;
+    --green-bg: #f0f7f0;
+    --serif: 'Source Serif 4', Georgia, 'Times New Roman', serif;
+    --display: 'Playfair Display', Georgia, serif;
+    --mono: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: var(--serif);
+    background: #f3efef;
+    color: var(--text);
+    font-size: 16px;
+    line-height: 1.8;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .page-wrapper {
+    max-width: 820px;
+    margin: 0 auto;
+    padding: 32px 16px 80px;
+  }
+
+  .header {
+    background: linear-gradient(135deg, var(--crimson), var(--crimson-dark));
+    padding: 36px 36px 28px;
+    border-radius: 10px 10px 0 0;
+    position: relative;
+    overflow: hidden;
+  }
+  .header::after {
+    content: '';
+    position: absolute;
+    top: -40px; right: -40px;
+    width: 180px; height: 180px;
+    background: rgba(255,255,255,0.04);
+    border-radius: 50%;
+  }
+  .header h1 {
+    font-family: var(--display);
+    color: #fff;
+    font-size: clamp(22px, 3.2vw, 32px);
+    font-weight: 700;
+    margin-bottom: 4px;
+    position: relative;
+  }
+  .header .sub {
+    color: var(--crimson-light);
+    font-size: clamp(12px, 1.6vw, 15px);
+    font-weight: 300;
+    letter-spacing: 0.3px;
+  }
+
+  .body-card {
+    background: var(--bg);
+    border: 2px solid var(--crimson);
+    border-top: none;
+    border-radius: 0 0 10px 10px;
+    padding: 32px 36px 40px;
+  }
+
+  /* Context block */
+  .context-block {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 20px 24px;
+    margin-bottom: 28px;
+    font-size: 14.5px;
+    line-height: 1.7;
+    color: #444;
+  }
+  .context-block strong { color: var(--crimson-dark); }
+  .context-block .eq {
+    display: block;
+    margin: 12px 0;
+    padding: 10px 16px;
+    background: #f8f5f5;
+    border-radius: 4px;
+    font-family: var(--mono);
+    font-size: 13.5px;
+    color: var(--text-dark);
+  }
+
+  .section-title {
+    font-family: var(--display);
+    font-size: clamp(17px, 2.4vw, 22px);
+    color: var(--crimson);
+    margin: 36px 0 18px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid var(--crimson);
+  }
+  .section-title:first-of-type { margin-top: 8px; }
+
+  .question-block {
+    background: var(--card);
+    border-left: 4px solid var(--crimson);
+    border-radius: 0 8px 8px 0;
+    padding: 22px 26px 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+    transition: box-shadow 0.2s;
+  }
+  .question-block:hover {
+    box-shadow: 0 3px 12px rgba(153,0,0,0.08);
+  }
+
+  .q-header {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    margin-bottom: 12px;
+  }
+  .q-number {
+    font-family: var(--display);
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--crimson);
+    white-space: nowrap;
+  }
+  .q-pts {
+    font-size: 12px;
+    color: #999;
+    font-weight: 400;
+    letter-spacing: 0.3px;
+    text-transform: uppercase;
+  }
+
+  .q-prompt {
+    font-style: italic;
+    color: #555;
+    font-size: 14.5px;
+    line-height: 1.7;
+    margin-bottom: 16px;
+    padding: 12px 16px;
+    background: #fdf9f9;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+  }
+
+  .solution-step {
+    font-size: 15px;
+    line-height: 1.75;
+    margin-bottom: 6px;
+    color: var(--text-dark);
+  }
+  .solution-step strong {
+    color: var(--crimson-dark);
+  }
+  .solution-step .label {
+    font-weight: 600;
+    color: var(--crimson);
+    display: block;
+    margin-top: 10px;
+    margin-bottom: 2px;
+    font-size: 13px;
+    letter-spacing: 0.2px;
+    text-transform: uppercase;
+  }
+
+  .answer-box {
+    margin-top: 14px;
+    padding: 10px 16px;
+    background: var(--green-bg);
+    border-left: 4px solid var(--green);
+    border-radius: 0 6px 6px 0;
+    font-weight: 600;
+    color: var(--green);
+    font-size: 15.5px;
+  }
+
+  .note {
+    margin-top: 10px;
+    font-size: 13.5px;
+    color: #777;
+    font-style: italic;
+    line-height: 1.6;
+  }
+
+  .reg-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 12px 0;
+    font-size: 13.5px;
+  }
+  .reg-table th {
+    background: #f8f5f5;
+    color: var(--crimson);
+    font-weight: 600;
+    text-align: left;
+    padding: 8px 12px;
+    border-bottom: 2px solid var(--crimson);
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+  }
+  .reg-table td {
+    padding: 6px 12px;
+    border-bottom: 1px solid #eee;
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--text-dark);
+  }
+  .reg-table tr:last-child td { border-bottom: none; }
+
+  .stmt-true { color: var(--green); font-weight: 600; }
+  .stmt-false { color: #b33; font-weight: 600; }
+
+  /* ── Excel-style spreadsheet grid ── */
+  .excel-grid {
+    border-collapse: collapse;
+    margin: 10px 0 14px 0;
+    font-size: 13.5px;
+    border: 1.5px solid #999;
+  }
+  .excel-grid .col-header {
+    background: #f0f0f0;
+    color: #555;
+    font-weight: 600;
+    text-align: center;
+    padding: 4px 14px;
+    border: 1px solid #bbb;
+    font-size: 12px;
+    min-width: 40px;
+  }
+  .excel-grid .row-num {
+    background: #f0f0f0;
+    color: #555;
+    font-weight: 600;
+    text-align: center;
+    padding: 4px 8px;
+    border: 1px solid #bbb;
+    font-size: 12px;
+    min-width: 28px;
+  }
+  .excel-grid td {
+    padding: 5px 12px;
+    border: 1px solid #ccc;
+    font-size: 13px;
+    color: var(--text-dark);
+    white-space: nowrap;
+  }
+  .excel-grid .cell-label {
+    font-weight: 600;
+    background: #fafafa;
+  }
+  .excel-grid .cell-value {
+    font-family: var(--mono);
+    text-align: right;
+  }
+  .excel-grid .cell-formula {
+    font-family: var(--mono);
+    color: #555;
+    font-size: 12px;
+  }
+
+  .footer {
+    text-align: center;
+    margin-top: 40px;
+    font-size: 13px;
+    color: #aaa;
+    letter-spacing: 0.3px;
+  }
+
+  @media (max-width: 600px) {
+    .body-card, .header { padding-left: 18px; padding-right: 18px; }
+    .question-block { padding: 16px 18px; }
+  }
+</style>
+</head>
+<body>
+<div class="page-wrapper">
+
+  <div class="header">
+    <h1>Assignment 2 — Solution Manual</h1>
+    <p class="sub">Performance Driven Pricing · M574</p>
+  </div>
+
+  <div class="body-card">
+
+    <!-- Context -->
+    <div class="context-block">
+      <strong>Background:</strong> FreshMart, a grocery store in Willowbrook, wants to understand how weekly demand for Coke and Pepsi responds to price changes. Using the <em>WeeklySoftDrinkSales.xlsx</em> dataset (416 weekly observations), FreshMart estimates demand regression models for both products.
+      <span class="eq">Sales<sub>Coke</sub> = β₀ + β₁ · Price<sub>Coke</sub> + ε</span>
+      <span class="eq">Sales<sub>Pepsi</sub> = β₀ + β₁ · Price<sub>Pepsi</sub> + ε</span>
+    </div>
+
+    <!-- ═══════════════════════════════════════ -->
+    <!-- COKE REGRESSION                         -->
+    <!-- ═══════════════════════════════════════ -->
+    <h2 class="section-title">Coke Demand Regression</h2>
+
+    <!-- Regression summary table -->
+    <div class="question-block" style="border-left-color: var(--crimson-dark);">
+      <div class="q-header">
+        <span class="q-number" style="font-size: 15px;">Coke Regression Output</span>
+        <span class="q-pts">Reference</span>
+      </div>
+      <table class="reg-table">
+        <tr><th>Statistic</th><th>Value</th></tr>
+        <tr><td>R²</td><td>0.2643</td></tr>
+        <tr><td>Observations</td><td>416</td></tr>
+      </table>
+      <table class="reg-table" style="margin-top: 8px;">
+        <tr><th>Variable</th><th>Coefficient</th><th>Std. Error</th><th>t Stat</th><th>p-value</th></tr>
+        <tr><td>Intercept</td><td>1,194.99</td><td>77.95</td><td>15.33</td><td>≈ 0</td></tr>
+        <tr><td>Price_Coke</td><td>−500.27</td><td>41.03</td><td>−12.19</td><td>≈ 0</td></tr>
+      </table>
+      <p class="solution-step" style="margin-top: 12px;">Estimated model: <strong>Sales<sub>Coke</sub> = 1,194.99 − 500.27 · Price<sub>Coke</sub></strong></p>
+    </div>
+
+    <!-- Q1 -->
+    <div class="question-block">
+      <div class="q-header">
+        <span class="q-number">Question 1</span>
+        <span class="q-pts">5 pts</span>
+      </div>
+      <div class="q-prompt">
+        What is the interpretation of the estimated intercept in Coke's weekly sales regression?
+      </div>
+      <p class="solution-step"><span class="label">Interpretation</span></p>
+      <p class="solution-step">The intercept (β₀ = 1,194.99) represents the predicted value of Sales<sub>Coke</sub> when Price<sub>Coke</sub> = 0. In other words, if Coke were free, the model predicts approximately 1,195 units would be sold per week.</p>
+      <p class="note">Note: This is a mathematical interpretation. A price of $0 is outside the observed data range, so the intercept does not have a practical real-world meaning — it simply anchors the regression line.</p>
+      <div class="answer-box">✓ Answer: When the price of Coke is $0, the predicted sales of Coke is about 1195 units.</div>
+    </div>
+
+    <!-- Q2 -->
+    <div class="question-block">
+      <div class="q-header">
+        <span class="q-number">Question 2</span>
+        <span class="q-pts">5 pts · True / False</span>
+      </div>
+      <div class="q-prompt">
+        The estimated slope in Coke's weekly sales regression could be interpreted as follows: "One unit increase in the price of Coke increases the predicted sales of Coke by 500 units."
+      </div>
+      <p class="solution-step"><span class="stmt-false">FALSE.</span> The slope coefficient is <em>negative</em> (β₁ = −500.27), so a one-dollar increase in the price of Coke <em>decreases</em> predicted weekly sales by about 500 units — it does not increase them. The statement gets the direction wrong.</p>
+      <div class="answer-box">✓ Answer: FALSE</div>
+    </div>
+
+    <!-- Q3 -->
+    <div class="question-block">
+      <div class="q-header">
+        <span class="q-number">Question 3</span>
+        <span class="q-pts">5 pts · True / False</span>
+      </div>
+      <div class="q-prompt">
+        The R² in Coke's weekly sales regression could be interpreted as follows: "26.4% of the variation in the price of Coke could be explained by the sales of Coke."
+      </div>
+      <p class="solution-step"><span class="stmt-false">FALSE.</span> The statement reverses the dependent and independent variables. R² describes how much variation in the <em>dependent variable</em> (Sales<sub>Coke</sub>) is explained by the <em>independent variable</em> (Price<sub>Coke</sub>), not the other way around. The correct interpretation: 26.4% of the variation in the <em>sales</em> of Coke is explained by the <em>price</em> of Coke.</p>
+      <div class="answer-box">✓ Answer: FALSE</div>
+    </div>
+
+    <!-- Q4 -->
+    <div class="question-block">
+      <div class="q-header">
+        <span class="q-number">Question 4</span>
+        <span class="q-pts">5 pts</span>
+      </div>
+      <div class="q-prompt">
+        What is the predicted sales of Coke when the price of Coke is $2?
+      </div>
+      <p class="solution-step"><span class="label">Calculation</span></p>
+      <p class="solution-step">Sales<sub>Coke</sub> = 1,194.99 + (−500.27) × Price<sub>Coke</sub></p>
+      <p class="solution-step">Sales<sub>Coke</sub> = 1,194.99 − 500.27 × 2</p>
+      <p class="solution-step">Sales<sub>Coke</sub> = 1,194.99 − 1,000.54 = <strong>194.44</strong></p>
+      <div class="answer-box">✓ Answer: 194.44</div>
+    </div>
+
+    <!-- Q5 -->
+    <div class="question-block">
+      <div class="q-header">
+        <span class="q-number">Question 5</span>
+        <span class="q-pts">5 pts</span>
+      </div>
+      <div class="q-prompt">
+        If the wholesale price of Coke is $1 (i.e., the cost to FreshMart), what is the profit-maximizing retail price for Coke?<br><br>
+        <em>Note: Use the range of 1 to 3 for the possible range of optimal prices.</em>
+      </div>
+      <p class="solution-step"><span class="label">Logic</span></p>
+      <p class="solution-step">Profit = (Price − Cost) × Predicted Sales = (P − 1) × (1,194.99 − 500.27 · P)</p>
+      <p class="solution-step">We need to find the price P that maximizes this profit function. There are three ways to do this.</p>
+
+      <p class="solution-step"><span class="label">Method 1 — Excel</span></p>
+      <p class="solution-step">After running your Coke regression, copy just the coefficients into a clean area and set up the following:</p>
+      <table class="excel-grid">
+        <tr>
+          <td class="col-header"></td>
+          <td class="col-header">A</td>
+          <td class="col-header">B</td>
+          <td class="col-header">C</td>
+        </tr>
+        <tr>
+          <td class="row-num">1</td>
+          <td class="cell-label"></td>
+          <td class="cell-label" style="font-style: italic;">Coefficients</td>
+          <td class="cell-formula"></td>
+        </tr>
+        <tr>
+          <td class="row-num">2</td>
+          <td class="cell-label">Intercept</td>
+          <td class="cell-value">1194.986705</td>
+          <td class="cell-formula"></td>
+        </tr>
+        <tr>
+          <td class="row-num">3</td>
+          <td class="cell-label">Price_Coke</td>
+          <td class="cell-value">-500.2726941</td>
+          <td class="cell-formula"></td>
+        </tr>
+        <tr>
+          <td class="row-num">4</td>
+          <td class="cell-label"></td>
+          <td class="cell-value"></td>
+          <td class="cell-formula"></td>
+        </tr>
+        <tr>
+          <td class="row-num">5</td>
+          <td class="cell-label" style="background: #e8e8e8;">Price</td>
+          <td class="cell-value" style="background: #e8e8e8;">1.694</td>
+          <td class="cell-formula"></td>
+        </tr>
+        <tr>
+          <td class="row-num">6</td>
+          <td class="cell-label" style="background: #e8e8e8;">Sales_Coke</td>
+          <td class="cell-value" style="background: #e8e8e8;">347.357</td>
+          <td class="cell-formula">=B2+B3*B5</td>
+        </tr>
+        <tr>
+          <td class="row-num">7</td>
+          <td class="cell-label" style="background: #e8e8e8;">Profit_Coke</td>
+          <td class="cell-value" style="background: #e8e8e8;">241.182</td>
+          <td class="cell-formula">=(B5-1)*B6</td>
+        </tr>
+      </table>
+      <p class="solution-step">Use Solver: set B7 (Profit) as the objective to maximize, with B5 (Price) as the decision variable, constrained between 1 and 3. Solver returns P* = <strong>1.694</strong>.</p>
+      <p class="solution-step">Alternatively, you can discretize the price between 1 and 3 in $0.01 increments, compute the profit at each price, and see which one gives the highest profit.</p>
+
+      <p class="solution-step"><span class="label">Method 2 — R</span></p>
+      <p class="solution-step" style="font-family: var(--mono); font-size: 13px; background: #f8f5f5; padding: 10px 14px; border-radius: 4px; line-height: 1.9;">
+        profit_Coke = function(P) {<br>
+        &nbsp;&nbsp;sales = 1194.99 - 500.27 * P<br>
+        &nbsp;&nbsp;profit = (P - 1) * sales<br>
+        &nbsp;&nbsp;return(profit)<br>
+        }<br><br>
+        optimize(profit_Coke, c(1, 3), maximum = TRUE)<br>
+        # $maximum = 1.694 &nbsp;&nbsp; $objective = 241.18
+      </p>
+
+      <p class="solution-step"><span class="label">Method 3 — <a href="https://koraycosguner.github.io/profit-optimizer.html" target="_blank" style="color: var(--crimson);">Tool 8: General Purpose Optimizer</a></span></p>
+      <p class="solution-step">Enter the following equations:</p>
+      <p class="solution-step" style="font-family: var(--mono); font-size: 13px; background: #f8f5f5; padding: 10px 14px; border-radius: 4px; line-height: 1.9;">
+        Sales_Coke = 1194.99 - 500.27 * Price_Coke<br>
+        Profit_Coke = (Price_Coke - 1) * Sales_Coke
+      </p>
+      <p class="solution-step">Set <strong>Maximize: Profit_Coke</strong>. Choose <strong>Price_Coke</strong> as the decision variable with bounds 1 to 3. Leave Control Variables empty. Click <strong>Find Optimal Solution</strong>.</p>
+      <p class="solution-step">The tool returns: Price_Coke = <strong>1.694</strong>, Profit_Coke = 241.18.</p>
+
+      <p class="solution-step"><span class="label">Result</span></p>
+      <p class="solution-step">At P* = 1.694: Sales ≈ 347.36, Profit = (1.694 − 1) × 347.36 ≈ <strong>$241.18</strong></p>
+      <div class="answer-box">✓ Answer: 1.694</div>
+    </div>
+
+    <!-- ═══════════════════════════════════════ -->
+    <!-- PEPSI REGRESSION                        -->
+    <!-- ═══════════════════════════════════════ -->
+    <h2 class="section-title">Pepsi Demand Regression</h2>
+
+    <!-- Regression summary table -->
+    <div class="question-block" style="border-left-color: var(--crimson-dark);">
+      <div class="q-header">
+        <span class="q-number" style="font-size: 15px;">Pepsi Regression Output</span>
+        <span class="q-pts">Reference</span>
+      </div>
+      <table class="reg-table">
+        <tr><th>Statistic</th><th>Value</th></tr>
+        <tr><td>R²</td><td>0.2564</td></tr>
+        <tr><td>Observations</td><td>416</td></tr>
+      </table>
+      <table class="reg-table" style="margin-top: 8px;">
+        <tr><th>Variable</th><th>Coefficient</th><th>Std. Error</th><th>t Stat</th><th>p-value</th></tr>
+        <tr><td>Intercept</td><td>1,268.00</td><td>86.23</td><td>14.70</td><td>≈ 0</td></tr>
+        <tr><td>Price_Pepsi</td><td>−540.69</td><td>45.26</td><td>−11.95</td><td>≈ 0</td></tr>
+      </table>
+      <p class="solution-step" style="margin-top: 12px;">Estimated model: <strong>Sales<sub>Pepsi</sub> = 1,268.00 − 540.69 · Price<sub>Pepsi</sub></strong></p>
+    </div>
+
+    <!-- Q6 -->
+    <div class="question-block">
+      <div class="q-header">
+        <span class="q-number">Question 6</span>
+        <span class="q-pts">5 pts · True / False</span>
+      </div>
+      <div class="q-prompt">
+        The estimated intercept in Pepsi's weekly sales regression could be interpreted as follows: "When the price of Pepsi is zero, the predicted sales for Pepsi becomes 1268 units."
+      </div>
+      <p class="solution-step"><span class="stmt-true">TRUE.</span> The intercept (β₀ = 1,268.00) is the predicted value of Sales<sub>Pepsi</sub> when Price<sub>Pepsi</sub> = 0. The statement correctly describes this mathematical interpretation: if the price of Pepsi were $0, the model predicts approximately 1,268 units sold per week.</p>
+      <div class="answer-box">✓ Answer: TRUE</div>
+    </div>
+
+    <!-- Q7 -->
+    <div class="question-block">
+      <div class="q-header">
+        <span class="q-number">Question 7</span>
+        <span class="q-pts">5 pts · True / False</span>
+      </div>
+      <div class="q-prompt">
+        The estimated slope in Pepsi's weekly sales regression could be interpreted as follows: "When the price of Pepsi increases by 1 unit, the predicted sales of Pepsi decreases by 1268 units."
+      </div>
+      <p class="solution-step"><span class="stmt-false">FALSE.</span> The statement confuses the intercept with the slope. The slope coefficient is β₁ = −540.69, not −1,268. The correct interpretation: when the price of Pepsi increases by $1, the predicted sales of Pepsi decreases by approximately 541 units. The value 1,268 is the intercept, not the slope.</p>
+      <div class="answer-box">✓ Answer: FALSE</div>
+    </div>
+
+    <!-- Q8 -->
+    <div class="question-block">
+      <div class="q-header">
+        <span class="q-number">Question 8</span>
+        <span class="q-pts">5 pts · True / False</span>
+      </div>
+      <div class="q-prompt">
+        The R² in Pepsi's weekly sales regression could be interpreted as follows: "25.6% of the variation in the sales of Pepsi could be explained by the price of Pepsi."
+      </div>
+      <p class="solution-step"><span class="stmt-true">TRUE.</span> This correctly states that the R² (0.2564) measures the proportion of variation in the dependent variable (Sales<sub>Pepsi</sub>) that is explained by the independent variable (Price<sub>Pepsi</sub>). Unlike the Coke version of this question (Q3), the direction is stated correctly here — sales is the dependent variable and price is the independent variable.</p>
+      <div class="answer-box">✓ Answer: TRUE</div>
+    </div>
+
+    <!-- Q9 -->
+    <div class="question-block">
+      <div class="q-header">
+        <span class="q-number">Question 9</span>
+        <span class="q-pts">5 pts</span>
+      </div>
+      <div class="q-prompt">
+        What is the predicted sales of Pepsi when the price of Pepsi is $2?
+      </div>
+      <p class="solution-step"><span class="label">Calculation</span></p>
+      <p class="solution-step">Sales<sub>Pepsi</sub> = 1,268.00 + (−540.69) × Price<sub>Pepsi</sub></p>
+      <p class="solution-step">Sales<sub>Pepsi</sub> = 1,268.00 − 540.69 × 2</p>
+      <p class="solution-step">Sales<sub>Pepsi</sub> = 1,268.00 − 1,081.37 = <strong>186.63</strong></p>
+      <div class="answer-box">✓ Answer: 186.63</div>
+    </div>
+
+    <!-- Q10 -->
+    <div class="question-block">
+      <div class="q-header">
+        <span class="q-number">Question 10</span>
+        <span class="q-pts">5 pts</span>
+      </div>
+      <div class="q-prompt">
+        If the wholesale price of Pepsi is $1 (i.e., the cost to FreshMart), what is the level of maximized profit for Pepsi?<br><br>
+        <em>Note: Use the range of 1 to 3 for the possible range of optimal prices.</em>
+      </div>
+      <p class="solution-step"><span class="label">Logic</span></p>
+      <p class="solution-step">Profit = (Price − Cost) × Predicted Sales = (P − 1) × (1,268.00 − 540.69 · P)</p>
+
+      <p class="solution-step"><span class="label">Method 1 — Excel</span></p>
+      <p class="solution-step">After running your Pepsi regression, copy just the coefficients into a clean area and set up the following:</p>
+      <table class="excel-grid">
+        <tr>
+          <td class="col-header"></td>
+          <td class="col-header">A</td>
+          <td class="col-header">B</td>
+          <td class="col-header">C</td>
+        </tr>
+        <tr>
+          <td class="row-num">1</td>
+          <td class="cell-label"></td>
+          <td class="cell-label" style="font-style: italic;">Coefficients</td>
+          <td class="cell-formula"></td>
+        </tr>
+        <tr>
+          <td class="row-num">2</td>
+          <td class="cell-label">Intercept</td>
+          <td class="cell-value">1268.002994</td>
+          <td class="cell-formula"></td>
+        </tr>
+        <tr>
+          <td class="row-num">3</td>
+          <td class="cell-label">Price_Pepsi</td>
+          <td class="cell-value">-540.6853349</td>
+          <td class="cell-formula"></td>
+        </tr>
+        <tr>
+          <td class="row-num">4</td>
+          <td class="cell-label"></td>
+          <td class="cell-value"></td>
+          <td class="cell-formula"></td>
+        </tr>
+        <tr>
+          <td class="row-num">5</td>
+          <td class="cell-label" style="background: #e8e8e8;">Price</td>
+          <td class="cell-value" style="background: #e8e8e8;">1.672588669</td>
+          <td class="cell-formula"></td>
+        </tr>
+        <tr>
+          <td class="row-num">6</td>
+          <td class="cell-label" style="background: #e8e8e8;">Sales_Pepsi</td>
+          <td class="cell-value" style="background: #e8e8e8;">363.6588298</td>
+          <td class="cell-formula">=B2+B3*B5</td>
+        </tr>
+        <tr>
+          <td class="row-num">7</td>
+          <td class="cell-label" style="background: #e8e8e8;">Profit_Pepsi</td>
+          <td class="cell-value" style="background: #e8e8e8;">244.5928083</td>
+          <td class="cell-formula">=(B5-1)*B6</td>
+        </tr>
+      </table>
+      <p class="solution-step">Use Solver: set B7 (Profit) as the objective to maximize, with B5 (Price) as the decision variable, constrained between 1 and 3. Solver returns P* = 1.673, and the maximized profit in B7 = <strong>244.59</strong>.</p>
+
+      <p class="solution-step"><span class="label">Method 2 — R</span></p>
+      <p class="solution-step" style="font-family: var(--mono); font-size: 13px; background: #f8f5f5; padding: 10px 14px; border-radius: 4px; line-height: 1.9;">
+        profit_Pepsi = function(P) {<br>
+        &nbsp;&nbsp;sales = 1268.00 - 540.69 * P<br>
+        &nbsp;&nbsp;profit = (P - 1) * sales<br>
+        &nbsp;&nbsp;return(profit)<br>
+        }<br><br>
+        optimize(profit_Pepsi, c(1, 3), maximum = TRUE)<br>
+        # $maximum = 1.673 &nbsp;&nbsp; $objective = 244.59
+      </p>
+
+      <p class="solution-step"><span class="label">Method 3 — <a href="https://koraycosguner.github.io/profit-optimizer.html" target="_blank" style="color: var(--crimson);">Tool 8: General Purpose Optimizer</a></span></p>
+      <p class="solution-step">Enter the following equations:</p>
+      <p class="solution-step" style="font-family: var(--mono); font-size: 13px; background: #f8f5f5; padding: 10px 14px; border-radius: 4px; line-height: 1.9;">
+        Sales_Pepsi = 1268.00 - 540.69 * Price_Pepsi<br>
+        Profit_Pepsi = (Price_Pepsi - 1) * Sales_Pepsi
+      </p>
+      <p class="solution-step">Set <strong>Maximize: Profit_Pepsi</strong>. Choose <strong>Price_Pepsi</strong> as the decision variable with bounds 1 to 3. Leave Control Variables empty. Click <strong>Find Optimal Solution</strong>.</p>
+      <p class="solution-step">The tool returns: Profit_Pepsi = <strong>244.59</strong>.</p>
+
+      <p class="solution-step"><span class="label">Result</span></p>
+      <p class="solution-step">At P* = 1.673: Sales ≈ 363.66, Profit = (1.673 − 1) × 363.66 ≈ <strong>$244.59</strong></p>
+      <p class="note">Note: This question asks for the <em>level of maximized profit</em> (the $objective value), not the optimal price. The optimal price is 1.673; the maximized profit at that price is 244.59.</p>
+      <div class="answer-box">✓ Answer: 244.59</div>
+    </div>
+
+  </div><!-- /body-card -->
+
+  <p class="footer">M574 · Performance Driven Pricing</p>
+
+</div><!-- /page-wrapper -->
+</body>
+</html>
