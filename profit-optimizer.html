@@ -1501,8 +1501,17 @@ Profit = Revenue - Cost * Sales" oninput="parseEquations()"></textarea>
                 current[dv.name] = (parseFloat(dv.min) + parseFloat(dv.max)) / 2;
             });
 
+            // Save original control vars
+            const savedControlVars = [...controlVars];
+
             // Optimize each variable one at a time
             for (const dv of decVars) {
+                // Temporarily add all OTHER decision vars as control vars with current values
+                const tempControls = decVars
+                    .filter(other => other.name !== dv.name)
+                    .map((other, idx) => ({ id: 90000 + idx, name: other.name, value: String(current[other.name]) }));
+                controlVars = [...savedControlVars, ...tempControls];
+
                 // Try analytical first
                 const analytical = tryAnalyticalSolution(objVar, dv, goal);
                 if (analytical) {
@@ -1515,6 +1524,9 @@ Profit = Revenue - Cost * Sales" oninput="parseEquations()"></textarea>
                     }
                 }
             }
+
+            // Restore original control vars
+            controlVars = savedControlVars;
 
             // Final evaluation at the combined optimum
             const result = evalModel(current);
