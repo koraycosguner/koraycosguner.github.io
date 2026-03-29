@@ -1454,6 +1454,76 @@ Profit = Revenue - Cost * Sales" oninput="parseEquations()"></textarea>
             return best;
         }
 
+        // Check if the objective is separable across decision variables
+        // i.e., changing D1 doesn't affect the marginal contribution of D2
+        function checkSeparability(objVar, decVars, goal) {
+            if (decVars.length <= 1) return false;
+
+            // Pick midpoints for all decision variables
+            const mids = {};
+            decVars.forEach(dv => {
+                mids[dv.name] = (parseFloat(dv.min) + parseFloat(dv.max)) / 2;
+            });
+
+            // For each pair of decision variables, check if they interact
+            for (let i = 0; i < decVars.length; i++) {
+                for (let j = i + 1; j < decVars.length; j++) {
+                    const vi = decVars[i], vj = decVars[j];
+                    const midI = mids[vi.name], midJ = mids[vj.name];
+                    const minI = parseFloat(vi.min), minJ = parseFloat(vj.min);
+
+                    // Evaluate at 4 points: (midI, midJ), (minI, midJ), (midI, minJ), (minI, minJ)
+                    const r11 = evalModel({ ...mids, [vi.name]: midI, [vj.name]: midJ });
+                    const r10 = evalModel({ ...mids, [vi.name]: midI, [vj.name]: minJ });
+                    const r01 = evalModel({ ...mids, [vi.name]: minI, [vj.name]: midJ });
+                    const r00 = evalModel({ ...mids, [vi.name]: minI, [vj.name]: minJ });
+
+                    if (r11.error || r10.error || r01.error || r00.error) return false;
+
+                    // Cross-partial derivative test:
+                    // If separable: f(mid,mid) - f(mid,min) - f(min,mid) + f(min,min) ≈ 0
+                    const cross = r11.scope[objVar] - r10.scope[objVar] - r01.scope[objVar] + r00.scope[objVar];
+                    const scale = Math.max(Math.abs(r11.scope[objVar]), 1e-10);
+
+                    if (Math.abs(cross / scale) > 1e-6) {
+                        return false; // Variables interact
+                    }
+                }
+            }
+            return true;
+        }
+
+        // Optimize each decision variable independently (for separable problems)
+        function coordinateWiseOptimize(objVar, decVars, goal) {
+            // Start with midpoints for all variables
+            const current = {};
+            decVars.forEach(dv => {
+                current[dv.name] = (parseFloat(dv.min) + parseFloat(dv.max)) / 2;
+            });
+
+            // Optimize each variable one at a time
+            for (const dv of decVars) {
+                // Try analytical first
+                const analytical = tryAnalyticalSolution(objVar, dv, goal);
+                if (analytical) {
+                    current[dv.name] = analytical[dv.name];
+                } else {
+                    // Grid search on just this one variable
+                    const singleResult = gridSearch(objVar, [dv], goal);
+                    if (singleResult) {
+                        current[dv.name] = singleResult[dv.name];
+                    }
+                }
+            }
+
+            // Final evaluation at the combined optimum
+            const result = evalModel(current);
+            if (result.error) return null;
+
+            const best = { ...current, __objective: result.scope[objVar], __scope: result.scope, __method: 'coordinate' };
+            return best;
+        }
+
         // Main optimization function - tries analytical first, then grid search
         function findOptimum(objVar, decVars, goal) {
             // For single variable, try analytical solution first
@@ -1462,6 +1532,12 @@ Profit = Revenue - Cost * Sales" oninput="parseEquations()"></textarea>
                 if (analytical) {
                     return analytical;
                 }
+            }
+
+            // For multiple variables, check if problem is separable
+            if (decVars.length > 1 && checkSeparability(objVar, decVars, goal)) {
+                const coordResult = coordinateWiseOptimize(objVar, decVars, goal);
+                if (coordResult) return coordResult;
             }
 
             // Fall back to grid search
@@ -1529,7 +1605,7 @@ Profit = Revenue - Cost * Sales" oninput="parseEquations()"></textarea>
             document.getElementById('resultsSection').style.display = 'block';
 
             // Show method used
-            const methodLabel = method === 'analytical' ? ' (Exact Solution)' : ' (Grid Search)';
+            const methodLabel = method === 'analytical' ? ' (Exact Solution)' : method === 'coordinate' ? ' (Coordinate-wise)' : ' (Grid Search)';
             document.getElementById('solutionTitle').textContent =
                 `${goal === 'maximize' ? 'Maximum' : 'Minimum'} Found${methodLabel}`;
 
