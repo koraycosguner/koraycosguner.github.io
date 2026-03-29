@@ -975,6 +975,22 @@ Profit = Revenue - Cost * Sales" oninput="parseEquations()"></textarea>
 
             updateDropdowns();
             hidePredictionResults();
+
+            // Reset all downstream state
+            decisionVars = [];
+            decisionVarId = 0;
+            controlVars = [];
+            controlVarId = 0;
+            lastResult = null;
+            document.getElementById('decisionVarsContainer').innerHTML = '';
+            document.getElementById('controlVarsContainer').innerHTML = '';
+            document.getElementById('resultsSection').style.display = 'none';
+            document.getElementById('goalType').selectedIndex = 0;
+            if (mainChart) {
+                mainChart.data.labels = [];
+                mainChart.data.datasets[0].data = [];
+                mainChart.update();
+            }
         }
 
         function downloadEquations() {
