@@ -873,6 +873,11 @@ server = function(input, output, session) {
             uiOutput("segment_estimates")
           )
         ),
+        tabPanel("Equations",
+          div(style = "margin-top: 15px;",
+            uiOutput("equations_output")
+          )
+        ),
         tabPanel("Segment Sizes",
           div(style = "margin-top: 15px;",
             uiOutput("segment_sizes")
@@ -1012,7 +1017,7 @@ server = function(input, output, session) {
       z.value = round(coefs[, 3], 4),
       P.Value = round(coefs[, 4], 4)
     )
-  }, rownames = FALSE)
+  }, rownames = FALSE, digits = 4)
 
   # Dynamic segment tables for flexmix
   observe({
@@ -1039,7 +1044,7 @@ server = function(input, output, session) {
             z.value = round(coef_matrix[, 3], 4),
             P.Value = round(coef_matrix[, 4], 4)
           )
-        }, rownames = FALSE)
+        }, rownames = FALSE, digits = 4)
       })
     })
   })
@@ -1100,6 +1105,111 @@ server = function(input, output, session) {
 
     as.data.frame(result$clusters)
   }, rownames = FALSE)
+
+  # Helper: build equation string from coefficients
+  build_equation = function(coefs, dv, model_type) {
+    # coefs is a named vector of estimates
+    terms = c()
+    intercept_val = NULL
+
+    for (i in seq_along(coefs)) {
+      varname = names(coefs)[i]
+      est = round(coefs[i], 4)
+      if (varname == "(Intercept)") {
+        intercept_val = est
+      } else if (est != 0) {
+        # Clean variable name: remove backticks, factor() wrappers
+        clean = varname
+        clean = gsub("factor\\\\(([^)]+)\\\\)", "\\\\1", clean)
+        clean = gsub("\`", "", clean)
+        if (est >= 0) {
+          terms = c(terms, paste0(" + ", formatC(est, format = "f", digits = 4), " * ", clean))
+        } else {
+          terms = c(terms, paste0(" - ", formatC(abs(est), format = "f", digits = 4), " * ", clean))
+        }
+      }
+    }
+
+    # Build linear predictor
+    if (!is.null(intercept_val)) {
+      linear_pred = paste0(formatC(intercept_val, format = "f", digits = 4), paste(terms, collapse = ""))
+    } else {
+      linear_pred = paste(terms, collapse = "")
+    }
+
+    # Wrap based on model type
+    if (model_type == "gaussian") {
+      eq = paste0(dv, " = ", linear_pred)
+      note = ""
+    } else if (model_type == "poisson") {
+      eq = paste0("Mean_", dv, " = EXP(", linear_pred, ")")
+      note = "Note: Poisson regression uses a log link, so the mean is obtained by exponentiating the linear predictor."
+    } else {
+      eq = paste0("Prob_", dv, " = EXP(eta) / (1 + EXP(eta))")
+      eq = paste0(eq, "\\n\\nwhere eta = ", linear_pred)
+      note = paste0("Note: Prob_", dv, " = Pr(", dv, " = 1). If you are interested in Pr(", dv, " = 0), calculate 1 - Prob_", dv, ".")
+    }
+
+    return(list(equation = eq, note = note))
+  }
+
+  # Equations output
+  output$equations_output = renderUI({
+    result = model_result()
+    if (is.null(result)) return(NULL)
+
+    dv = result$dv
+    mt = result$model_type
+
+    if (result$type == "glm") {
+      # Single segment GLM
+      coefs = coef(result$fit)
+      eq_result = build_equation(coefs, dv, mt)
+
+      tagList(
+        div(class = "segment-header", "Segment 1 (100% of sample)"),
+        div(class = "segment-body",
+          pre(style = "white-space: pre-wrap; word-wrap: break-word; font-size: 0.9rem; background: #1e293b; color: #e2e8f0; padding: 15px; border-radius: 8px; margin-bottom: 10px;",
+            eq_result$equation
+          ),
+          if (eq_result$note != "") {
+            p(style = "font-size: 0.85rem; color: #64748b; font-style: italic;", eq_result$note)
+          }
+        )
+      )
+
+    } else {
+      # Flexmix model - one equation per segment
+      refit_mod = result$refit_model
+      k = result$k
+      fit = result$fit
+
+      eq_blocks = lapply(1:k, function(i) {
+        comp_name = paste0("Comp.", i)
+        coef_matrix = refit_mod@components[[1]][[comp_name]]
+        coefs = coef_matrix[, 1]
+        names(coefs) = rownames(coef_matrix)
+
+        eq_result = build_equation(coefs, dv, mt)
+
+        div(style = "margin-bottom: 20px;",
+          div(class = "segment-header",
+            paste0("Segment ", i, " (", round(fit@prior[i] * 100, 1), "% of sample)")
+          ),
+          div(class = "segment-body",
+            pre(style = "white-space: pre-wrap; word-wrap: break-word; font-size: 0.9rem; background: #1e293b; color: #e2e8f0; padding: 15px; border-radius: 8px; margin-bottom: 10px;",
+              eq_result$equation
+            ),
+            if (eq_result$note != "") {
+              p(style = "font-size: 0.85rem; color: #64748b; font-style: italic;", eq_result$note)
+            }
+          )
+        )
+      })
+
+      tagList(eq_blocks)
+    }
+  })
 
   # R Script
   output$r_script = renderText({
