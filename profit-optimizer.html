@@ -1156,37 +1156,17 @@ Profit = Revenue - Cost * Sales" oninput="parseEquations()"></textarea>
             const errorEl = document.getElementById('errorMessage');
             errorEl.classList.remove('visible');
 
-            // Gather input values from decision vars and control vars
+            // Gather input values only from the prediction input fields
             const inputValues = {};
+            const undefinedVars = getUndefinedVars();
 
-            // Get decision variable values from prediction inputs
-            const activeDecVars = decisionVars.filter(dv => dv.name);
-            for (const dv of activeDecVars) {
-                const input = document.getElementById(`predict_${dv.name}`);
+            for (const v of undefinedVars) {
+                const input = document.getElementById(`predict_${v}`);
                 if (!input || input.value === '') {
-                    if (!silent) { errorEl.textContent = `Enter a value for ${dv.name}.`; errorEl.classList.add('visible'); }
+                    if (!silent) { errorEl.textContent = `Enter a value for ${v}.`; errorEl.classList.add('visible'); }
                     return;
                 }
-                inputValues[dv.name] = parseFloat(input.value);
-            }
-
-            // Get control variable values
-            const activeControlVars = controlVars.filter(cv => cv.name && cv.value !== '');
-            for (const cv of activeControlVars) {
-                inputValues[cv.name] = parseFloat(cv.value);
-            }
-
-            // Check for any remaining undefined vars that need values
-            const undefinedVars = getUndefinedVars();
-            for (const v of undefinedVars) {
-                if (!(v in inputValues)) {
-                    const input = document.getElementById(`predict_${v}`);
-                    if (!input || input.value === '') {
-                        if (!silent) { errorEl.textContent = `Enter a value for ${v} or add it as a control variable.`; errorEl.classList.add('visible'); }
-                        return;
-                    }
-                    inputValues[v] = parseFloat(input.value);
-                }
+                inputValues[v] = parseFloat(input.value);
             }
 
             // Evaluate the model
