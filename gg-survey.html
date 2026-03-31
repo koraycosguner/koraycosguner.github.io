@@ -558,10 +558,14 @@
                     submittedAt: firebase.firestore.FieldValue.serverTimestamp()
                 });
 
-                // Update response count
-                await db.collection('surveys').doc(surveyId).update({
-                    ggResponseCount: firebase.firestore.FieldValue.increment(1)
-                });
+                // Update response count (non-blocking, don't fail if this errors)
+                try {
+                    await db.collection('surveys').doc(surveyId).update({
+                        ggResponseCount: firebase.firestore.FieldValue.increment(1)
+                    });
+                } catch (e) {
+                    console.warn('Could not update response count:', e);
+                }
             } catch (error) {
                 console.error('Error saving response:', error);
                 // Still show thank you even if save failed
