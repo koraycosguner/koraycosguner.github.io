@@ -2372,7 +2372,7 @@
                     demandData.push({ price, intent, revenueIndex, profitIndex });
                 }
 
-                // Find optimal prices by searching through all points
+                // Find optimal prices using step-function demand at unique WTP values
                 let maxRevenue = 0;
                 let optimalRevenuePrice = 0;
                 let optimalRevenueIntent = 0;
@@ -2381,17 +2381,22 @@
                 let optimalProfitPrice = 0;
                 let optimalProfitIntent = 0;
 
-                demandData.forEach(point => {
-                    if (point.revenueIndex > maxRevenue) {
-                        maxRevenue = point.revenueIndex;
-                        optimalRevenuePrice = point.price;
-                        optimalRevenueIntent = point.intent;
+                uniqueWtps.forEach(price => {
+                    const willBuy = wtpValues.filter(wtp => wtp >= price).length;
+                    const intent = (willBuy / n) * 100;
+                    const revenueIndex = price * (intent / 100);
+                    const profitIndex = cost !== null ? (price - cost) * (intent / 100) : null;
+
+                    if (revenueIndex > maxRevenue) {
+                        maxRevenue = revenueIndex;
+                        optimalRevenuePrice = price;
+                        optimalRevenueIntent = intent;
                     }
 
-                    if (cost !== null && point.profitIndex !== null && point.profitIndex > maxProfit) {
-                        maxProfit = point.profitIndex;
-                        optimalProfitPrice = point.price;
-                        optimalProfitIntent = point.intent;
+                    if (cost !== null && profitIndex !== null && profitIndex > maxProfit) {
+                        maxProfit = profitIndex;
+                        optimalProfitPrice = price;
+                        optimalProfitIntent = intent;
                     }
                 });
 
@@ -2697,18 +2702,30 @@
         function exportCSV() {
             if (!analysisResults) return;
 
-            const { data, optimalIndex, currency } = analysisResults;
+            const { data, revenueOptimalIndex, profitOptimalIndex, currency, cost } = analysisResults;
 
             let csv = 'Gabor-Granger Price Analysis Results\n\n';
             csv += 'Key Findings\n';
-            csv += `Optimal Price,${currency}${data[optimalIndex].price.toFixed(2)}\n`;
-            csv += `Maximum Revenue Index,${data[optimalIndex].revenueIndex.toFixed(2)}\n`;
-            csv += `Purchase Intent at Optimal,${data[optimalIndex].intent.toFixed(1)}%\n\n`;
-            csv += 'Detailed Results\n';
-            csv += 'Price,Purchase Intent (%),Revenue Index,Is Optimal\n';
+            csv += `Revenue-Maximizing Price,${currency}${data[revenueOptimalIndex].price.toFixed(2)}\n`;
+            csv += `Maximum Revenue Index,${data[revenueOptimalIndex].revenueIndex.toFixed(2)}\n`;
+            csv += `Purchase Intent at Optimal,${data[revenueOptimalIndex].intent.toFixed(1)}%\n`;
+            if (cost !== null && profitOptimalIndex !== null) {
+                csv += `Profit-Maximizing Price,${currency}${data[profitOptimalIndex].price.toFixed(2)}\n`;
+                csv += `Maximum Profit Index,${data[profitOptimalIndex].profitIndex.toFixed(2)}\n`;
+            }
+            csv += '\nDetailed Results\n';
+            if (cost !== null) {
+                csv += 'Price,Purchase Intent (%),Revenue Index,Profit Index,Is Revenue Optimal,Is Profit Optimal\n';
+            } else {
+                csv += 'Price,Purchase Intent (%),Revenue Index,Is Optimal\n';
+            }
 
             data.forEach((item, idx) => {
-                csv += `${currency}${item.price.toFixed(2)},${item.intent.toFixed(1)},${item.revenueIndex.toFixed(2)},${idx === optimalIndex ? 'Yes' : 'No'}\n`;
+                if (cost !== null) {
+                    csv += `${currency}${item.price.toFixed(2)},${item.intent.toFixed(1)},${item.revenueIndex.toFixed(2)},${item.profitIndex.toFixed(2)},${idx === revenueOptimalIndex ? 'Yes' : 'No'},${idx === profitOptimalIndex ? 'Yes' : 'No'}\n`;
+                } else {
+                    csv += `${currency}${item.price.toFixed(2)},${item.intent.toFixed(1)},${item.revenueIndex.toFixed(2)},${idx === revenueOptimalIndex ? 'Yes' : 'No'}\n`;
+                }
             });
 
             const blob = new Blob([csv], { type: 'text/csv' });
