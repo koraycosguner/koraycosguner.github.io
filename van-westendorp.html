@@ -748,30 +748,16 @@
                         <div class="price-point-value" id="pmeValue">-</div>
                         <div class="price-point-desc">Your absolute maximum. Beyond this, you lose more people than you could possibly attract.</div>
                     </div>
-                </div>
-
-                <!-- Acceptable Price Range -->
-                <div style="background: var(--bg-light); border-radius: 12px; padding: 1.5rem; text-align: center; margin-bottom: 1.5rem;">
-                    <h4 style="color: var(--iu-crimson); margin-bottom: 0.75rem;">Acceptable Price Range</h4>
-                    <div style="font-size: 1.5rem; font-weight: 700; color: var(--iu-crimson);" id="priceRange">-</div>
-                    <p style="font-size: 0.9rem; color: var(--text-light); margin-top: 0.5rem;">Your pricing decision should live somewhere in this band.</p>
+                    <div class="price-point-card" style="border-top: 3px solid var(--iu-crimson);">
+                        <div class="price-point-label">Acceptable Price Range</div>
+                        <div class="price-point-value" id="priceRange">-</div>
+                        <div class="price-point-desc">The range between Floor and Ceiling. Your pricing decision should live somewhere in this band.</div>
+                    </div>
                 </div>
 
                 <!-- Chart -->
                 <div class="chart-container">
                     <canvas id="psmChart"></canvas>
-                </div>
-
-                <!-- Interpretation -->
-                <div class="interpretation">
-                    <h4>Interpretation</h4>
-                    <ul>
-                        <li><strong>Floor Price:</strong> Your minimum credible price. Below this, too many people question quality. You would actually hurt yourself by going lower.</li>
-                        <li><strong>Optimal Price:</strong> The price with the least total resistance. Important caveat: "optimal" here means least pushback, NOT maximum revenue.</li>
-                        <li><strong>Market Price:</strong> Equal shares call it a bargain versus expensive. This is the price consumers would expect to see on the shelf. It is what feels "normal."</li>
-                        <li><strong>Ceiling Price:</strong> Your absolute maximum. Beyond this, you are losing more people than you could possibly attract.</li>
-                        <li><strong>Acceptable Price Range:</strong> The range between Floor and Ceiling is your acceptable price zone. Your pricing decision should live somewhere in that band.</li>
-                    </ul>
                 </div>
 
                 <!-- Export Section -->
@@ -1353,19 +1339,12 @@
                                 <td style="padding: 12px; text-align: right;">${symbol}${stats.expensive.min.toFixed(2)}</td>
                                 <td style="padding: 12px; text-align: right;">${symbol}${stats.tooExpensive.min.toFixed(2)}</td>
                             </tr>
-                            <tr style="border-bottom: 1px solid var(--border);">
+                            <tr style="background: var(--bg-light);">
                                 <td style="padding: 12px; font-weight: 600;">Max</td>
                                 <td style="padding: 12px; text-align: right;">${symbol}${stats.tooCheap.max.toFixed(2)}</td>
                                 <td style="padding: 12px; text-align: right;">${symbol}${stats.cheap.max.toFixed(2)}</td>
                                 <td style="padding: 12px; text-align: right;">${symbol}${stats.expensive.max.toFixed(2)}</td>
                                 <td style="padding: 12px; text-align: right;">${symbol}${stats.tooExpensive.max.toFixed(2)}</td>
-                            </tr>
-                            <tr style="background: var(--bg-light);">
-                                <td style="padding: 12px; font-weight: 600;">IQR (Q1-Q3)</td>
-                                <td style="padding: 12px; text-align: right;">${symbol}${stats.tooCheap.q1.toFixed(2)} - ${symbol}${stats.tooCheap.q3.toFixed(2)}</td>
-                                <td style="padding: 12px; text-align: right;">${symbol}${stats.cheap.q1.toFixed(2)} - ${symbol}${stats.cheap.q3.toFixed(2)}</td>
-                                <td style="padding: 12px; text-align: right;">${symbol}${stats.expensive.q1.toFixed(2)} - ${symbol}${stats.expensive.q3.toFixed(2)}</td>
-                                <td style="padding: 12px; text-align: right;">${symbol}${stats.tooExpensive.q1.toFixed(2)} - ${symbol}${stats.tooExpensive.q3.toFixed(2)}</td>
                             </tr>
                         </tbody>
                     </table>
