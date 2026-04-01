@@ -960,36 +960,16 @@
                 Survey respondents are shown a price and asked if they would buy. By testing multiple prices, you can build a demand curve and find the price that maximizes revenue (Price × Purchase Intent). Typically 5-10 price points are tested.
             </div>
 
-            <div class="info-box" style="background: #f0fdf4; border-color: #86efac; color: #166534;">
-                <strong>Two Input Options</strong>
-                <ul style="margin: 0.5rem 0 0 1.25rem; padding: 0;">
-                    <li><strong>Aggregated Data:</strong> Price points with % willing to buy at each price (e.g., "$30, 65%"). This is common when you've already summarized survey results.</li>
-                    <li><strong>Raw WTP Data:</strong> Individual respondent maximum willingness-to-pay values (e.g., "$30, $45, $50..."). The tool will calculate the demand curve and find the <em>continuous</em> optimal price—not limited to discrete price points.</li>
-                </ul>
-            </div>
-
-            <!-- Data Type Toggle -->
-            <div class="data-type-toggle">
-                <button class="data-type-btn active" id="aggregatedBtn" onclick="setDataType('aggregated')">
-                    <div class="data-type-label">📊 Aggregated Data</div>
-                    <div class="data-type-desc">Price points with purchase intent %</div>
-                </button>
-                <button class="data-type-btn" id="rawWtpBtn" onclick="setDataType('raw')">
-                    <div class="data-type-label">👥 Raw WTP Data</div>
-                    <div class="data-type-desc">Individual respondent max WTP values</div>
-                </button>
-            </div>
-
-            <!-- Aggregated Data Section (Manual/CSV toggle) -->
-            <div id="aggregatedSection">
+            <!-- Removed: Aggregated Data Section -->
+            <div id="aggregatedSection" style="display:none;">
                 <!-- Input Mode Toggle -->
                 <div class="input-mode-toggle">
                     <button class="mode-btn active" id="manualModeBtn" onclick="setAggregatedInputMode('manual')">
-                        <div class="mode-icon">✏️</div>
+                        <div class="mode-icon"></div>
                         <div class="mode-label">Manual Entry</div>
                     </button>
                     <button class="mode-btn" id="csvModeBtn" onclick="setAggregatedInputMode('csv')">
-                        <div class="mode-icon">📁</div>
+                        <div class="mode-icon"></div>
                         <div class="mode-label">Upload CSV</div>
                     </button>
                 </div>
@@ -1170,7 +1150,7 @@
             </div> <!-- end aggregatedSection -->
 
             <!-- Raw WTP Data Section -->
-            <div class="raw-wtp-section" id="rawWtpSection">
+            <div class="raw-wtp-section visible" id="rawWtpSection">
                 <!-- Input Mode Toggle for WTP -->
                 <div class="input-mode-toggle">
                     <button class="mode-btn active" id="wtpManualModeBtn" onclick="setWtpInputMode('manual')">
@@ -1245,9 +1225,6 @@
                                 <td>30, 45, 50, 35, 40</td>
                             </tr>
                         </table>
-                        <p style="margin-top: 12px; font-size: 0.85rem; color: var(--text-light);">
-                            <strong>Tip:</strong> Download WTP data directly from the Survey Admin tool
-                        </p>
                     </div>
 
                     <!-- Upload Area -->
@@ -1454,7 +1431,7 @@
         let revenueChart = null;
         let analysisResults = null;
         let currentMode = 'manual';
-        let currentDataType = 'aggregated'; // 'aggregated' or 'raw'
+        let currentDataType = 'raw'; // 'raw' WTP only
 
         // DOM Elements
         const statusMessage = document.getElementById('statusMessage');
