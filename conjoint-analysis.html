@@ -1476,12 +1476,7 @@ function runSimulation() {
 
         // Choice probability: utility / sum(utilities)
         const sumUtil = optUtils.reduce((a, b) => a + b, 0);
-        if (sumUtil > 0) {
-            probabilities.push(optUtils.map(u => u / sumUtil));
-        } else {
-            // Fallback to equal shares if sum is non-positive
-            probabilities.push(optUtils.map(() => 1 / optUtils.length));
-        }
+        probabilities.push(optUtils.map(u => u / sumUtil));
     }
 
     simResults = { options, utilities, choices, probabilities };
