@@ -2358,7 +2358,7 @@
 
                 // Calculate demand at various price points using LINEAR INTERPOLATION
                 // This allows finding optimal prices between observed WTP values
-                const minPrice = Math.min(...sortedWtp) * 0.9; // Start slightly below min
+                const minPrice = 0; // Start at $0
                 const maxPrice = Math.max(...sortedWtp) * 1.1; // End slightly above max
 
                 // Create many price points for smooth curve and optimization
