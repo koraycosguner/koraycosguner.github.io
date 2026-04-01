@@ -1474,11 +1474,14 @@ function runSimulation() {
         optUtils.forEach((u, i) => { if (u > maxU) { maxU = u; maxIdx = i; } });
         choices.push(maxIdx);
 
-        // Choice probability: softmax with numerical stability
-        const maxVal = Math.max(...optUtils);
-        const expUtils = optUtils.map(u => Math.exp(u - maxVal));
-        const sumExp = expUtils.reduce((a, b) => a + b, 0);
-        probabilities.push(expUtils.map(e => e / sumExp));
+        // Choice probability: utility / sum(utilities)
+        const sumUtil = optUtils.reduce((a, b) => a + b, 0);
+        if (sumUtil > 0) {
+            probabilities.push(optUtils.map(u => u / sumUtil));
+        } else {
+            // Fallback to equal shares if sum is non-positive
+            probabilities.push(optUtils.map(() => 1 / optUtils.length));
+        }
     }
 
     simResults = { options, utilities, choices, probabilities };
