@@ -1367,7 +1367,6 @@
                                 <th>Price Point</th>
                                 <th>Purchase Intent (%)</th>
                                 <th>Revenue Index</th>
-                                <th>Price Elasticity</th>
                             </tr>
                         </thead>
                         <tbody id="resultsBody">
@@ -1382,7 +1381,6 @@
                     <ul>
                         <li><strong>Optimal Price:</strong> The price that generates the most potential revenue by balancing what you charge with how many customers will buy.</li>
                         <li><strong>Revenue Index:</strong> Shows relative revenue potential at each price. Higher numbers mean better combinations of price and demand.</li>
-                        <li><strong>Price Elasticity:</strong> Shows how much demand drops when prices rise. Below -1 means customers are very price-sensitive.</li>
                         <li><strong>Strategy tip:</strong> Price slightly below optimal if you want to grow market share, or slightly above if maximizing profit margin is your priority.</li>
                     </ul>
                 </div>
@@ -2011,7 +2009,6 @@
                         <th>Purchase Intent (%)</th>
                         <th>Revenue Index</th>
                         <th>Profit Index</th>
-                        <th>Price Elasticity</th>
                     </tr>
                 `;
             } else {
@@ -2020,7 +2017,6 @@
                         <th>Price Point</th>
                         <th>Purchase Intent (%)</th>
                         <th>Revenue Index</th>
-                        <th>Price Elasticity</th>
                     </tr>
                 `;
             }
@@ -2051,7 +2047,6 @@
                             <td>${item.intent.toFixed(1)}%</td>
                             <td>${item.revenueIndex.toFixed(2)}</td>
                             <td>${item.profitIndex.toFixed(2)}</td>
-                            <td>${item.elasticity !== null ? item.elasticity.toFixed(2) : '-'}</td>
                         </tr>
                     `;
                 } else {
@@ -2060,7 +2055,6 @@
                             <td>${marker}${formatPrice(item.price, currency)}</td>
                             <td>${item.intent.toFixed(1)}%</td>
                             <td>${item.revenueIndex.toFixed(2)}</td>
-                            <td>${item.elasticity !== null ? item.elasticity.toFixed(2) : '-'}</td>
                         </tr>
                     `;
                 }
@@ -2359,7 +2353,7 @@
                 // Calculate demand at various price points using LINEAR INTERPOLATION
                 // This allows finding optimal prices between observed WTP values
                 const minPrice = 0; // Start at $0
-                const maxPrice = Math.max(...sortedWtp) * 1.1; // End slightly above max
+                const maxPrice = Math.max(...sortedWtp); // End at max WTP
 
                 // Create many price points for smooth curve and optimization
                 const numPoints = 500;
@@ -2527,7 +2521,6 @@
                         <th>Purchase Intent (%)</th>
                         <th>Revenue Index</th>
                         <th>Profit Index</th>
-                        <th>Price Elasticity</th>
                     </tr>
                 `;
             } else {
@@ -2536,7 +2529,6 @@
                         <th>Price Point</th>
                         <th>Purchase Intent (%)</th>
                         <th>Revenue Index</th>
-                        <th>Price Elasticity</th>
                     </tr>
                 `;
             }
@@ -2567,7 +2559,6 @@
                             <td>${item.intent.toFixed(1)}%</td>
                             <td>${item.revenueIndex.toFixed(2)}</td>
                             <td>${item.profitIndex.toFixed(2)}</td>
-                            <td>${item.elasticity !== null ? item.elasticity.toFixed(2) : '-'}</td>
                         </tr>
                     `;
                 } else {
@@ -2576,7 +2567,6 @@
                             <td>${marker}${formatPrice(item.price, currency)}</td>
                             <td>${item.intent.toFixed(1)}%</td>
                             <td>${item.revenueIndex.toFixed(2)}</td>
-                            <td>${item.elasticity !== null ? item.elasticity.toFixed(2) : '-'}</td>
                         </tr>
                     `;
                 }
@@ -2738,10 +2728,10 @@
             csv += `Maximum Revenue Index,${data[optimalIndex].revenueIndex.toFixed(2)}\n`;
             csv += `Purchase Intent at Optimal,${data[optimalIndex].intent.toFixed(1)}%\n\n`;
             csv += 'Detailed Results\n';
-            csv += 'Price,Purchase Intent (%),Revenue Index,Price Elasticity,Is Optimal\n';
+            csv += 'Price,Purchase Intent (%),Revenue Index,Is Optimal\n';
 
             data.forEach((item, idx) => {
-                csv += `${currency}${item.price.toFixed(2)},${item.intent.toFixed(1)},${item.revenueIndex.toFixed(2)},${item.elasticity !== null ? item.elasticity.toFixed(2) : 'N/A'},${idx === optimalIndex ? 'Yes' : 'No'}\n`;
+                csv += `${currency}${item.price.toFixed(2)},${item.intent.toFixed(1)},${item.revenueIndex.toFixed(2)},${idx === optimalIndex ? 'Yes' : 'No'}\n`;
             });
 
             const blob = new Blob([csv], { type: 'text/csv' });
