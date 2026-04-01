@@ -1353,9 +1353,9 @@
                 <p style="font-size: 0.85rem; color: var(--text-light); margin-top: 0.5rem;" id="tableFootnote">* Indicates revenue-maximizing price point</p>
 
                 <!-- Interpretation -->
-                <div class="interpretation">
+                <div class="interpretation" id="interpretationSection">
                     <h4>How to Interpret These Results</h4>
-                    <ul>
+                    <ul id="interpretationList">
                         <li><strong>Optimal Price:</strong> The price that generates the most potential revenue by balancing what you charge with how many customers will buy.</li>
                         <li><strong>Revenue Index:</strong> Shows relative revenue potential at each price. Higher numbers mean better combinations of price and demand.</li>
                         <li><strong>Strategy tip:</strong> Price slightly below optimal if you want to grow market share, or slightly above if maximizing profit margin is your priority.</li>
@@ -2045,6 +2045,9 @@
                 footnote.textContent = '* Indicates revenue-maximizing price point';
             }
 
+            // Update interpretation
+            updateInterpretation(cost);
+
             // Show results
             resultsContainer.classList.add('visible');
             resultsContainer.scrollIntoView({ behavior: 'smooth' });
@@ -2562,6 +2565,9 @@
                 footnote.textContent = `* Indicates revenue-maximizing price point | Based on ${sampleSize} respondents (continuous optimization)`;
             }
 
+            // Update interpretation
+            updateInterpretation(cost, true);
+
             // Show results
             resultsContainer.classList.add('visible');
             resultsContainer.scrollIntoView({ behavior: 'smooth' });
@@ -2696,6 +2702,25 @@
                     }
                 }
             });
+        }
+
+        function updateInterpretation(cost, isRawWtp = false) {
+            const list = document.getElementById('interpretationList');
+            if (cost !== null) {
+                list.innerHTML = `
+                    <li><strong>Revenue-Maximizing Price:</strong> The price that generates the most potential revenue by balancing what you charge with how many customers will buy.</li>
+                    <li><strong>Profit-Maximizing Price:</strong> The price that maximizes profit after subtracting unit cost. This may differ from the revenue-maximizing price because higher margins can offset lower demand.</li>
+                    <li><strong>Revenue Index:</strong> Shows relative revenue potential at each price (Price × Purchase Intent).</li>
+                    <li><strong>Profit Index:</strong> Shows relative profit potential at each price ((Price − Cost) × Purchase Intent).</li>
+                    ${isRawWtp ? '<li><strong>Continuous Optimization:</strong> The demand curve is smoothed using linear interpolation between observed WTP values, enabling the tool to identify optimal prices that may fall between discrete survey responses.</li>' : ''}
+                `;
+            } else {
+                list.innerHTML = `
+                    <li><strong>Optimal Price:</strong> The price that generates the most potential revenue by balancing what you charge with how many customers will buy.</li>
+                    <li><strong>Revenue Index:</strong> Shows relative revenue potential at each price. Higher numbers mean better combinations of price and demand.</li>
+                    ${isRawWtp ? '<li><strong>Continuous Optimization:</strong> The demand curve is smoothed using linear interpolation between observed WTP values, enabling the tool to identify optimal prices that may fall between discrete survey responses.</li>' : ''}
+                `;
+            }
         }
 
         // Export functions
