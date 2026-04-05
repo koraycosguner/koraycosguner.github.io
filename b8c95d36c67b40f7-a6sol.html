@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Assignment 6 — Solution Manual</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Source+Serif+4:opsz,wght@8..60,300;8..60,400;8..60,600&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --crimson: #990000; --crimson-dark: #4a0000; --crimson-light: #d4a8a8;
+    --bg: #faf7f7; --card: #ffffff; --text: #333; --text-dark: #1a1a1a;
+    --border: #e8e0e0; --green: #2d6a2e; --green-bg: #f0f7f0;
+    --serif: 'Source Serif 4', Georgia, 'Times New Roman', serif;
+    --display: 'Playfair Display', Georgia, serif;
+    --mono: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: var(--serif); background: #f3efef; color: var(--text); font-size: 16px; line-height: 1.8; -webkit-font-smoothing: antialiased; }
+  .page-wrapper { max-width: 900px; margin: 0 auto; padding: 32px 16px 80px; }
+  .header { background: linear-gradient(135deg, var(--crimson), var(--crimson-dark)); padding: 36px 36px 28px; border-radius: 10px 10px 0 0; position: relative; overflow: hidden; }
+  .header::after { content: ''; position: absolute; top: -40px; right: -40px; width: 180px; height: 180px; background: rgba(255,255,255,0.04); border-radius: 50%; }
+  .header h1 { font-family: var(--display); color: #fff; font-size: clamp(22px, 3.2vw, 32px); font-weight: 700; margin-bottom: 4px; position: relative; }
+  .header .sub { color: var(--crimson-light); font-size: clamp(12px, 1.6vw, 15px); font-weight: 300; letter-spacing: 0.3px; }
+  .body-card { background: var(--bg); border: 2px solid var(--crimson); border-top: none; border-radius: 0 0 10px 10px; padding: 32px 36px 40px; }
+  .context-block { background: #fff; border: 1px solid var(--border); border-radius: 8px; padding: 20px 24px; margin-bottom: 28px; font-size: 14.5px; line-height: 1.7; color: #444; }
+  .context-block strong { color: var(--crimson-dark); }
+  .section-title { font-family: var(--display); font-size: clamp(17px, 2.4vw, 22px); color: var(--crimson); margin: 36px 0 18px; padding-bottom: 8px; border-bottom: 2px solid var(--crimson); }
+  .section-title:first-of-type { margin-top: 8px; }
+  .question-block { background: var(--card); border-left: 4px solid var(--crimson); border-radius: 0 8px 8px 0; padding: 22px 26px 20px; margin-bottom: 20px; box-shadow: 0 1px 4px rgba(0,0,0,0.04); }
+  .question-block:hover { box-shadow: 0 3px 12px rgba(153,0,0,0.08); }
+  .q-header { display: flex; align-items: baseline; gap: 10px; margin-bottom: 12px; }
+  .q-number { font-family: var(--display); font-size: 17px; font-weight: 700; color: var(--crimson); white-space: nowrap; }
+  .q-pts { font-size: 12px; color: #999; font-weight: 400; letter-spacing: 0.3px; text-transform: uppercase; }
+  .q-prompt { font-style: italic; color: #555; font-size: 14.5px; line-height: 1.7; margin-bottom: 16px; padding: 12px 16px; background: #fdf9f9; border-radius: 6px; border: 1px solid var(--border); }
+  .solution-step { font-size: 15px; line-height: 1.75; margin-bottom: 6px; color: var(--text-dark); }
+  .solution-step strong { color: var(--crimson-dark); }
+  .solution-step .label { font-weight: 600; color: var(--crimson); display: block; margin-top: 10px; margin-bottom: 2px; font-size: 13px; letter-spacing: 0.2px; text-transform: uppercase; }
+  .answer-box { margin-top: 14px; padding: 10px 16px; background: var(--green-bg); border-left: 4px solid var(--green); border-radius: 0 6px 6px 0; font-weight: 600; color: var(--green); font-size: 15.5px; }
+  .note { margin-top: 10px; font-size: 13.5px; color: #777; font-style: italic; line-height: 1.6; }
+
+  /* Data tables */
+  .data-table { border-collapse: separate; border-spacing: 0; margin: 14px 0; font-size: 12.5px; border-radius: 8px; overflow: hidden; border: 1px solid #d0c8c8; width: 100%; }
+  .data-table th { background: linear-gradient(135deg, var(--crimson), var(--crimson-dark)); color: #fff; font-weight: 600; text-align: center; padding: 8px 6px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.2px; border-right: 1px solid rgba(255,255,255,0.15); }
+  .data-table th:first-child { text-align: left; padding-left: 12px; }
+  .data-table th:last-child { border-right: none; }
+  .data-table td { padding: 5px 6px; border-bottom: 1px solid #e8e0e0; border-right: 1px solid #e8e0e0; text-align: center; font-family: var(--mono); font-size: 11.5px; color: var(--text-dark); background: #fff; }
+  .data-table td:first-child { text-align: left; font-family: var(--serif); font-weight: 500; font-size: 12px; padding-left: 12px; background: #faf7f7; }
+  .data-table td:last-child { border-right: none; }
+  .data-table tr:last-child td { border-bottom: none; }
+  .data-table tr:nth-child(even) td:not(:first-child) { background: #fdf9f9; }
+  .data-table .row-total td { background: #f0f7f0 !important; font-weight: 700; border-top: 2px solid var(--crimson); }
+  .data-table .row-total td:first-child { color: var(--crimson-dark); }
+  .data-table .cell-highlight { background: #ffffcc !important; font-weight: 700; }
+  .data-table .cell-green { background: #e6f5e6 !important; font-weight: 700; }
+
+  .footer { text-align: center; margin-top: 40px; font-size: 13px; color: #aaa; letter-spacing: 0.3px; }
+  @media (max-width: 700px) { .body-card, .header { padding-left: 16px; padding-right: 16px; } .question-block { padding: 16px 14px; } .data-table { font-size: 10.5px; } .data-table td, .data-table th { padding: 4px 3px; } }
+</style>
+</head>
+<body>
+<div class="page-wrapper">
+
+  <div class="header">
+    <h1>Assignment 6 &mdash; Solution Manual</h1>
+    <p class="sub">Performance Driven Pricing &middot; M574</p>
+  </div>
+
+  <div class="body-card">
+
+    <h2 class="section-title">Multi-Respondent Conjoint: Executive Sedans (Q1&ndash;Q7)</h2>
+
+    <div class="context-block">
+      <strong>Setup:</strong> A luxury car brand designs a conjoint study with 8 attributes, reduced from 51,840 full factorial profiles to 30 via fractional factorial design. 8 respondents evaluated the 30 profiles on a 0&ndash;100 scale. Individual-level regression estimates are provided in the <em>Conjoint Output</em> sheet.<br><br>
+      <strong>Two cars to compare:</strong>
+      <table class="data-table" style="width: auto; margin-top: 10px;">
+        <tr><th>Attribute</th><th>Budget Car</th><th>Performance Car</th></tr>
+        <tr><td>MPG</td><td>40</td><td>20</td></tr>
+        <tr><td>Brand</td><td>Genesis</td><td>Mercedes</td></tr>
+        <tr><td>Engine</td><td>2L Twin Turbo V4</td><td>3L V6</td></tr>
+        <tr><td>Infotainment</td><td>12 Inches</td><td>12 Inches</td></tr>
+        <tr><td>Warranty</td><td>84 Months</td><td>36 Months</td></tr>
+        <tr><td>Safety Rating</td><td>4 Star</td><td>5 Star</td></tr>
+        <tr><td>Self Driving</td><td>Level 2</td><td>Level 3</td></tr>
+        <tr><td>Price</td><td>$50K</td><td>$65K</td></tr>
+      </table>
+    </div>
+
+    <!-- Q1 -->
+    <div class="question-block">
+      <div class="q-header"><span class="q-number">Question 1</span><span class="q-pts">5 pts</span></div>
+      <div class="q-prompt">Calculate the ranges of each attribute for each respondent. What is the sum of the ranges for Akasuki?</div>
+      <p class="solution-step"><span class="label">Ranges of Attributes</span></p>
+      <p class="solution-step">For each attribute, Range = MAX(part-worths) &minus; MIN(part-worths) within that attribute. Excel formula example for Matteo&rsquo;s MPG: <code style="background:#f0f0f0; padding: 2px 6px; border-radius: 3px;">=MAX(C3:C6)-MIN(C3:C6)</code></p>
+
+      <table class="data-table">
+        <tr><th>Attribute</th><th>Matteo</th><th>Ritvik</th><th>Akasuki</th><th>Xi</th><th>Yosef</th><th>Abayomi</th><th>Sofia</th><th>Doug</th></tr>
+        <tr><td>MPG</td><td>6.11</td><td>5.07</td><td>6.76</td><td>5.54</td><td>5.05</td><td>6.79</td><td>5.82</td><td>4.65</td></tr>
+        <tr><td>Brand</td><td>31.20</td><td>6.47</td><td>8.34</td><td>8.83</td><td>5.48</td><td>31.61</td><td>7.09</td><td>32.67</td></tr>
+        <tr><td>Engine</td><td>31.99</td><td>8.85</td><td>5.84</td><td>11.12</td><td>8.22</td><td>32.23</td><td>5.54</td><td>30.97</td></tr>
+        <tr><td>Infotainment</td><td>7.88</td><td>7.18</td><td>2.44</td><td>8.08</td><td>7.41</td><td>5.62</td><td>8.28</td><td>3.57</td></tr>
+        <tr><td>Warranty</td><td>6.33</td><td>5.98</td><td>32.10</td><td>7.10</td><td>33.81</td><td>4.40</td><td>4.12</td><td>5.30</td></tr>
+        <tr><td>Safety Rating</td><td>5.38</td><td>3.73</td><td>32.47</td><td>4.44</td><td>32.19</td><td>6.80</td><td>4.43</td><td>5.24</td></tr>
+        <tr><td>Self Driving</td><td>7.01</td><td>31.02</td><td>6.22</td><td>37.12</td><td>6.53</td><td>1.67</td><td>32.34</td><td>7.55</td></tr>
+        <tr><td>Price</td><td>3.06</td><td>32.30</td><td>3.98</td><td>36.50</td><td>6.11</td><td>8.12</td><td>30.03</td><td>9.97</td></tr>
+        <tr class="row-total"><td>Sum of Ranges</td><td>98.96</td><td>100.60</td><td class="cell-highlight">98.15</td><td>118.73</td><td>104.80</td><td>97.24</td><td>97.65</td><td>99.92</td></tr>
+      </table>
+
+      <div class="answer-box">&#10003; Answer: 98.15</div>
+    </div>
+
+    <!-- Q2 -->
+    <div class="question-block">
+      <div class="q-header"><span class="q-number">Question 2</span><span class="q-pts">5 pts</span></div>
+      <div class="q-prompt">Calculate the % relative importance of each attribute for each respondent. What is the least important attribute for Matteo?</div>
+      <p class="solution-step"><span class="label">% Relative Importance</span></p>
+      <p class="solution-step">% Importance = Range / Sum of Ranges. Excel formula example: <code style="background:#f0f0f0; padding: 2px 6px; border-radius: 3px;">=B26/$B$32</code> (where B32 is the sum of ranges).</p>
+
+      <table class="data-table">
+        <tr><th>Attribute</th><th>Matteo</th><th>Ritvik</th><th>Akasuki</th><th>Xi</th><th>Yosef</th><th>Abayomi</th><th>Sofia</th><th>Doug</th></tr>
+        <tr><td>MPG</td><td>6.17%</td><td>5.04%</td><td>6.89%</td><td>4.67%</td><td>4.82%</td><td>6.98%</td><td>5.96%</td><td>4.65%</td></tr>
+        <tr><td>Brand</td><td>31.53%</td><td>6.43%</td><td>8.50%</td><td>7.44%</td><td>5.23%</td><td>32.51%</td><td>7.26%</td><td>32.70%</td></tr>
+        <tr><td>Engine</td><td>32.33%</td><td>8.80%</td><td>5.95%</td><td>9.37%</td><td>7.84%</td><td>33.14%</td><td>5.67%</td><td>30.99%</td></tr>
+        <tr><td>Infotainment</td><td>7.96%</td><td>7.14%</td><td>2.49%</td><td>6.81%</td><td>7.07%</td><td>5.78%</td><td>8.48%</td><td>3.57%</td></tr>
+        <tr><td>Warranty</td><td>6.40%</td><td>5.94%</td><td>32.71%</td><td>5.98%</td><td>32.26%</td><td>4.52%</td><td>4.22%</td><td>5.30%</td></tr>
+        <tr><td>Safety Rating</td><td>5.44%</td><td>3.71%</td><td>33.08%</td><td>3.74%</td><td>30.72%</td><td>6.99%</td><td>4.54%</td><td>5.24%</td></tr>
+        <tr><td>Self Driving</td><td>7.08%</td><td>30.83%</td><td>6.34%</td><td>31.26%</td><td>6.23%</td><td>1.72%</td><td>33.12%</td><td>7.56%</td></tr>
+        <tr><td>Price</td><td class="cell-highlight">3.09%</td><td>32.11%</td><td>4.06%</td><td>30.74%</td><td>5.83%</td><td>8.35%</td><td>30.75%</td><td>9.98%</td></tr>
+      </table>
+
+      <p class="solution-step">Matteo&rsquo;s least important attribute is <strong>Price</strong> at 3.09%.</p>
+      <div class="answer-box">&#10003; Answer: Price</div>
+    </div>
+
+    <!-- Q3 -->
+    <div class="question-block">
+      <div class="q-header"><span class="q-number">Question 3</span><span class="q-pts">8 pts</span></div>
+      <div class="q-prompt">Determine the consumer segments informally (use a threshold of 30% to label an attribute as important). What is the size of the segment which cares about Warranty and Safety Rating the most?</div>
+      <p class="solution-step"><span class="label">Segmentation (30% threshold)</span></p>
+      <p class="solution-step">Label an attribute as &ldquo;important&rdquo; for a respondent if its % importance exceeds 30%.</p>
+
+      <table class="data-table">
+        <tr><th>Attribute</th><th>Matteo</th><th>Ritvik</th><th>Akasuki</th><th>Xi</th><th>Yosef</th><th>Abayomi</th><th>Sofia</th><th>Doug</th></tr>
+        <tr><td>MPG</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+        <tr><td>Brand</td><td class="cell-highlight">&#10003;</td><td></td><td></td><td></td><td></td><td class="cell-highlight">&#10003;</td><td></td><td class="cell-highlight">&#10003;</td></tr>
+        <tr><td>Engine</td><td class="cell-highlight">&#10003;</td><td></td><td></td><td></td><td></td><td class="cell-highlight">&#10003;</td><td></td><td class="cell-highlight">&#10003;</td></tr>
+        <tr><td>Infotainment</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+        <tr><td>Warranty</td><td></td><td></td><td class="cell-highlight">&#10003;</td><td></td><td class="cell-highlight">&#10003;</td><td></td><td></td><td></td></tr>
+        <tr><td>Safety Rating</td><td></td><td></td><td class="cell-highlight">&#10003;</td><td></td><td class="cell-highlight">&#10003;</td><td></td><td></td><td></td></tr>
+        <tr><td>Self Driving</td><td></td><td class="cell-highlight">&#10003;</td><td></td><td class="cell-highlight">&#10003;</td><td></td><td></td><td class="cell-highlight">&#10003;</td><td></td></tr>
+        <tr><td>Price</td><td></td><td class="cell-highlight">&#10003;</td><td></td><td class="cell-highlight">&#10003;</td><td></td><td></td><td class="cell-highlight">&#10003;</td><td></td></tr>
+      </table>
+
+      <p class="solution-step">The segment that cares about <strong>Warranty and Safety Rating</strong> consists of Akasuki and Yosef.</p>
+      <p class="solution-step">Segment size = 2 / 8 = <strong>0.25</strong></p>
+      <div class="answer-box">&#10003; Answer: 0.25</div>
+    </div>
+
+    <!-- Q4 -->
+    <div class="question-block">
+      <div class="q-header"><span class="q-number">Question 4</span><span class="q-pts">8 pts</span></div>
+      <div class="q-prompt">Predict the choices of each respondent for the Budget and Performance car. What would be the predicted choice of Doug?</div>
+      <p class="solution-step"><span class="label">Utility Calculation</span></p>
+      <p class="solution-step">For each respondent, sum the intercept plus the part-worths of the selected levels. Excel formula: <code style="background:#f0f0f0; padding: 2px 6px; border-radius: 3px;">=SUM(C37:C45)</code> (summing the intercept + each attribute&rsquo;s selected level).</p>
+
+      <table class="data-table">
+        <tr><th></th><th>Matteo</th><th>Ritvik</th><th>Akasuki</th><th>Xi</th><th>Yosef</th><th>Abayomi</th><th>Sofia</th><th>Doug</th></tr>
+        <tr><td>U(Budget)</td><td>1.63</td><td>25.56</td><td>70.89</td><td>34.81</td><td>62.77</td><td>54.84</td><td>20.08</td><td>46.19</td></tr>
+        <tr><td>U(Performance)</td><td>51.06</td><td>34.71</td><td>46.09</td><td>22.50</td><td>46.84</td><td>16.08</td><td>21.10</td><td>47.67</td></tr>
+        <tr class="row-total"><td>Choice</td><td>Perf</td><td>Perf</td><td>Budget</td><td>Budget</td><td>Budget</td><td>Budget</td><td>Perf</td><td class="cell-highlight">Perf</td></tr>
+      </table>
+
+      <p class="solution-step">Doug: U(Budget) = 46.19 &lt; U(Performance) = 47.67, so Doug chooses <strong>Performance</strong>.</p>
+      <p class="solution-step" style="font-size: 13px; color: #777;">Excel: <code style="background:#f0f0f0; padding: 2px 6px; border-radius: 3px;">=IF(C46>C58, "Budget", "Performance")</code></p>
+      <div class="answer-box">&#10003; Answer: Performance</div>
+    </div>
+
+    <!-- Q5 -->
+    <div class="question-block">
+      <div class="q-header"><span class="q-number">Question 5</span><span class="q-pts">8 pts</span></div>
+      <div class="q-prompt">Predict the choice probabilities of each respondent. What is the choice probability of Sofia for the Budget car?</div>
+      <p class="solution-step"><span class="label">Choice Probability (Share of Utility)</span></p>
+      <p class="solution-step">P(Budget) = U(Budget) / (U(Budget) + U(Performance)). Excel: <code style="background:#f0f0f0; padding: 2px 6px; border-radius: 3px;">=C46/(C46+C58)</code></p>
+
+      <table class="data-table">
+        <tr><th></th><th>Matteo</th><th>Ritvik</th><th>Akasuki</th><th>Xi</th><th>Yosef</th><th>Abayomi</th><th>Sofia</th><th>Doug</th></tr>
+        <tr><td>P(Budget)</td><td>0.03</td><td>0.42</td><td>0.61</td><td>0.61</td><td>0.57</td><td>0.77</td><td class="cell-highlight">0.49</td><td>0.49</td></tr>
+        <tr><td>P(Performance)</td><td>0.97</td><td>0.58</td><td>0.39</td><td>0.39</td><td>0.43</td><td>0.23</td><td>0.51</td><td>0.51</td></tr>
+      </table>
+
+      <p class="solution-step">Sofia: P(Budget) = 20.08 / (20.08 + 21.10) = 20.08 / 41.18 = <strong>0.49</strong></p>
+      <div class="answer-box">&#10003; Answer: 0.49</div>
+    </div>
+
+    <!-- Q6 -->
+    <div class="question-block">
+      <div class="q-header"><span class="q-number">Question 6</span><span class="q-pts">8 pts</span></div>
+      <div class="q-prompt">Predict the market shares by aggregating respondent-level choices. What would be the market share of the Budget car?</div>
+      <p class="solution-step"><span class="label">Choice Aggregation</span></p>
+      <p class="solution-step">Count the respondents who choose Budget: Akasuki, Xi, Yosef, Abayomi = 4 out of 8.</p>
+      <p class="solution-step">Market Share (Budget) = 4 / 8 = <strong>0.50</strong></p>
+      <p class="solution-step" style="font-size: 13px; color: #777;">Excel: <code style="background:#f0f0f0; padding: 2px 6px; border-radius: 3px;">=SUM(C61:J61)/8</code> where row 61 contains 1 if Budget, 0 if Performance.</p>
+      <div class="answer-box">&#10003; Answer: 0.50</div>
+    </div>
+
+    <!-- Q7 -->
+    <div class="question-block">
+      <div class="q-header"><span class="q-number">Question 7</span><span class="q-pts">8 pts</span></div>
+      <div class="q-prompt">Predict the market shares by aggregating respondent-level choice probabilities. What would be the market share of the Budget car?</div>
+      <p class="solution-step"><span class="label">Choice Probability Aggregation</span></p>
+      <p class="solution-step">Average the P(Budget) values across all 8 respondents:</p>
+      <p class="solution-step">(0.03 + 0.42 + 0.61 + 0.61 + 0.57 + 0.77 + 0.49 + 0.49) / 8 = 3.99 / 8 = <strong>0.50</strong></p>
+      <p class="solution-step" style="font-size: 13px; color: #777;">Excel: <code style="background:#f0f0f0; padding: 2px 6px; border-radius: 3px;">=AVERAGE(C62:J62)</code></p>
+      <p class="note">Both aggregation methods (Q6: choice-based, Q7: probability-based) yield approximately the same market share of 0.50, indicating an evenly split market between the Budget and Performance cars.</p>
+      <div class="answer-box">&#10003; Answer: 0.50</div>
+    </div>
+
+  </div>
+
+  <p class="footer">M574 &middot; Performance Driven Pricing</p>
+
+</div>
+</body>
+</html>
