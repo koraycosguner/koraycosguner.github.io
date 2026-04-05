@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Assignment 5 — Solution Manual</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Source+Serif+4:opsz,wght@8..60,300;8..60,400;8..60,600&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --crimson: #990000; --crimson-dark: #4a0000; --crimson-light: #d4a8a8;
+    --bg: #faf7f7; --card: #ffffff; --text: #333; --text-dark: #1a1a1a;
+    --border: #e8e0e0; --green: #2d6a2e; --green-bg: #f0f7f0;
+    --serif: 'Source Serif 4', Georgia, 'Times New Roman', serif;
+    --display: 'Playfair Display', Georgia, serif;
+    --mono: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: var(--serif); background: #f3efef; color: var(--text); font-size: 16px; line-height: 1.8; -webkit-font-smoothing: antialiased; }
+  .page-wrapper { max-width: 860px; margin: 0 auto; padding: 32px 16px 80px; }
+  .header { background: linear-gradient(135deg, var(--crimson), var(--crimson-dark)); padding: 36px 36px 28px; border-radius: 10px 10px 0 0; position: relative; overflow: hidden; }
+  .header::after { content: ''; position: absolute; top: -40px; right: -40px; width: 180px; height: 180px; background: rgba(255,255,255,0.04); border-radius: 50%; }
+  .header h1 { font-family: var(--display); color: #fff; font-size: clamp(22px, 3.2vw, 32px); font-weight: 700; margin-bottom: 4px; position: relative; }
+  .header .sub { color: var(--crimson-light); font-size: clamp(12px, 1.6vw, 15px); font-weight: 300; letter-spacing: 0.3px; }
+  .body-card { background: var(--bg); border: 2px solid var(--crimson); border-top: none; border-radius: 0 0 10px 10px; padding: 32px 36px 40px; }
+  .context-block { background: #fff; border: 1px solid var(--border); border-radius: 8px; padding: 20px 24px; margin-bottom: 28px; font-size: 14.5px; line-height: 1.7; color: #444; }
+  .context-block strong { color: var(--crimson-dark); }
+  .section-title { font-family: var(--display); font-size: clamp(17px, 2.4vw, 22px); color: var(--crimson); margin: 36px 0 18px; padding-bottom: 8px; border-bottom: 2px solid var(--crimson); }
+  .section-title:first-of-type { margin-top: 8px; }
+  .question-block { background: var(--card); border-left: 4px solid var(--crimson); border-radius: 0 8px 8px 0; padding: 22px 26px 20px; margin-bottom: 20px; box-shadow: 0 1px 4px rgba(0,0,0,0.04); }
+  .question-block:hover { box-shadow: 0 3px 12px rgba(153,0,0,0.08); }
+  .q-header { display: flex; align-items: baseline; gap: 10px; margin-bottom: 12px; }
+  .q-number { font-family: var(--display); font-size: 17px; font-weight: 700; color: var(--crimson); white-space: nowrap; }
+  .q-pts { font-size: 12px; color: #999; font-weight: 400; letter-spacing: 0.3px; text-transform: uppercase; }
+  .q-prompt { font-style: italic; color: #555; font-size: 14.5px; line-height: 1.7; margin-bottom: 16px; padding: 12px 16px; background: #fdf9f9; border-radius: 6px; border: 1px solid var(--border); }
+  .solution-step { font-size: 15px; line-height: 1.75; margin-bottom: 6px; color: var(--text-dark); }
+  .solution-step strong { color: var(--crimson-dark); }
+  .solution-step .label { font-weight: 600; color: var(--crimson); display: block; margin-top: 10px; margin-bottom: 2px; font-size: 13px; letter-spacing: 0.2px; text-transform: uppercase; }
+  .answer-box { margin-top: 14px; padding: 10px 16px; background: var(--green-bg); border-left: 4px solid var(--green); border-radius: 0 6px 6px 0; font-weight: 600; color: var(--green); font-size: 15.5px; }
+  .note { margin-top: 10px; font-size: 13.5px; color: #777; font-style: italic; line-height: 1.6; }
+
+  /* Excel-style grid */
+  .excel-grid { border-collapse: collapse; margin: 10px 0 14px 0; font-size: 13.5px; border: 1.5px solid #999; }
+  .excel-grid .col-header { background: #f0f0f0; color: #555; font-weight: 600; text-align: center; padding: 4px 14px; border: 1px solid #bbb; font-size: 12px; min-width: 40px; }
+  .excel-grid .row-num { background: #f0f0f0; color: #555; font-weight: 600; text-align: center; padding: 4px 8px; border: 1px solid #bbb; font-size: 12px; min-width: 28px; }
+  .excel-grid td { padding: 5px 12px; border: 1px solid #ccc; font-size: 13px; color: var(--text-dark); white-space: nowrap; }
+  .excel-grid .cell-label { font-weight: 600; background: #fafafa; }
+  .excel-grid .cell-value { font-family: var(--mono); text-align: right; }
+  .excel-grid .cell-formula { font-family: var(--mono); color: #555; font-size: 12px; }
+  .excel-grid .cell-highlight { background: #ffffcc; }
+  .excel-grid .cell-green { background: #e6f5e6; }
+  .excel-grid .cell-header-row td { background: #e8e8e8; font-weight: 700; }
+
+  .footer { text-align: center; margin-top: 40px; font-size: 13px; color: #aaa; letter-spacing: 0.3px; }
+  @media (max-width: 600px) { .body-card, .header { padding-left: 18px; padding-right: 18px; } .question-block { padding: 16px 18px; } }
+</style>
+</head>
+<body>
+<div class="page-wrapper">
+
+  <div class="header">
+    <h1>Assignment 5 &mdash; Solution Manual</h1>
+    <p class="sub">Performance Driven Pricing &middot; M574</p>
+  </div>
+
+  <div class="body-card">
+
+    <h2 class="section-title">Conjoint Analysis: Aamir&rsquo;s Laptop Preferences (Q1&ndash;Q6)</h2>
+
+    <div class="context-block">
+      <strong>Setup:</strong> A conjoint regression was estimated to model Aamir&rsquo;s laptop ratings. The part-worth estimates are provided. Base levels (coded as 0): Brand = Asus, Processor = i3, Screen = 1080P, RAM = 8GB, HDD = 512GB, Price = $1,000.<br><br>
+      <strong>Excel Setup:</strong> Enter the estimates into column B as shown below. This layout is used for all calculations in Q1&ndash;Q6.
+
+      <table class="excel-grid" style="margin-top: 14px;">
+        <tr>
+          <td class="col-header"></td><td class="col-header">A</td><td class="col-header">B</td>
+        </tr>
+        <tr><td class="row-num">1</td><td class="cell-label">Estimates</td><td class="cell-value"></td></tr>
+        <tr><td class="row-num">2</td><td class="cell-label">(Constant)</td><td class="cell-value">7.376</td></tr>
+        <tr><td class="row-num">3</td><td class="cell-label">Brand_Asus</td><td class="cell-value">0</td></tr>
+        <tr><td class="row-num">4</td><td class="cell-label">Brand_Dell</td><td class="cell-value">11.086</td></tr>
+        <tr><td class="row-num">5</td><td class="cell-label">Brand_HP</td><td class="cell-value">5.816</td></tr>
+        <tr><td class="row-num">6</td><td class="cell-label">Brand_Lenovo</td><td class="cell-value">29.255</td></tr>
+        <tr><td class="row-num">7</td><td class="cell-label">Processor_i3</td><td class="cell-value">0</td></tr>
+        <tr><td class="row-num">8</td><td class="cell-label">Processor_i5</td><td class="cell-value">4.793</td></tr>
+        <tr><td class="row-num">9</td><td class="cell-label">Processor_i7</td><td class="cell-value">8.795</td></tr>
+        <tr><td class="row-num">10</td><td class="cell-label">Processor_i9</td><td class="cell-value">10.741</td></tr>
+        <tr><td class="row-num">11</td><td class="cell-label">Screen_1080p</td><td class="cell-value">0</td></tr>
+        <tr><td class="row-num">12</td><td class="cell-label">Screen_4K</td><td class="cell-value">21.178</td></tr>
+        <tr><td class="row-num">13</td><td class="cell-label">Screen_4KTouch</td><td class="cell-value">31.506</td></tr>
+        <tr><td class="row-num">14</td><td class="cell-label">RAM_8GB</td><td class="cell-value">0</td></tr>
+        <tr><td class="row-num">15</td><td class="cell-label">RAM_16GB</td><td class="cell-value">10.612</td></tr>
+        <tr><td class="row-num">16</td><td class="cell-label">RAM_32GB</td><td class="cell-value">16.176</td></tr>
+        <tr><td class="row-num">17</td><td class="cell-label">HDD_512GB</td><td class="cell-value">0</td></tr>
+        <tr><td class="row-num">18</td><td class="cell-label">HDD_1TB</td><td class="cell-value">17.776</td></tr>
+        <tr><td class="row-num">19</td><td class="cell-label">HDD_2TB</td><td class="cell-value">29.258</td></tr>
+        <tr><td class="row-num">20</td><td class="cell-label">Price_1000</td><td class="cell-value">0</td></tr>
+        <tr><td class="row-num">21</td><td class="cell-label">Price_1500</td><td class="cell-value">&minus;4.953</td></tr>
+        <tr><td class="row-num">22</td><td class="cell-label">Price_2000</td><td class="cell-value">&minus;8.828</td></tr>
+        <tr><td class="row-num">23</td><td class="cell-label">Price_2500</td><td class="cell-value">&minus;15.326</td></tr>
+      </table>
+    </div>
+
+    <!-- Q1 -->
+    <div class="question-block">
+      <div class="q-header"><span class="q-number">Question 1</span><span class="q-pts">5 pts</span></div>
+      <div class="q-prompt">What is Aamir&rsquo;s relative importance range for the Brand attribute?</div>
+      <p class="solution-step"><span class="label">Calculation</span></p>
+      <p class="solution-step">The importance range = MAX part-worth &minus; MIN part-worth within the attribute.</p>
+      <p class="solution-step">Brand levels: Asus (0), Dell (11.086), HP (5.816), Lenovo (29.255)</p>
+      <p class="solution-step">Range = 29.255 &minus; 0 = <strong>29.26</strong></p>
+      <p class="solution-step"><span class="label">Excel</span></p>
+      <table class="excel-grid">
+        <tr><td class="col-header"></td><td class="col-header">A</td><td class="col-header">B</td><td class="col-header">C</td></tr>
+        <tr><td class="row-num">26</td><td class="cell-label cell-highlight">Brand</td><td class="cell-value cell-highlight">29.26</td><td class="cell-formula">=MAX(B3:B6)-MIN(B3:B6)</td></tr>
+      </table>
+      <div class="answer-box">&#10003; Answer: 29.26</div>
+    </div>
+
+    <!-- Q2 -->
+    <div class="question-block">
+      <div class="q-header"><span class="q-number">Question 2</span><span class="q-pts">5 pts</span></div>
+      <div class="q-prompt">What is Aamir&rsquo;s relative percentage importance for the Processor attribute?</div>
+      <p class="solution-step"><span class="label">Step 1 &mdash; Compute all attribute ranges</span></p>
+      <p class="solution-step"><span class="label">Step 2 &mdash; Sum the ranges and divide</span></p>
+
+      <table class="excel-grid">
+        <tr><td class="col-header"></td><td class="col-header">A</td><td class="col-header">B</td><td class="col-header">C</td></tr>
+        <tr class="cell-header-row"><td class="row-num">25</td><td>Ranges of Attributes</td><td></td><td></td></tr>
+        <tr><td class="row-num">26</td><td class="cell-label">Brand</td><td class="cell-value">29.26</td><td class="cell-formula">=MAX(B3:B6)-MIN(B3:B6)</td></tr>
+        <tr><td class="row-num">27</td><td class="cell-label">Processor</td><td class="cell-value">10.74</td><td class="cell-formula">=MAX(B7:B10)-MIN(B7:B10)</td></tr>
+        <tr><td class="row-num">28</td><td class="cell-label">Screen</td><td class="cell-value">31.51</td><td class="cell-formula">=MAX(B11:B13)-MIN(B11:B13)</td></tr>
+        <tr><td class="row-num">29</td><td class="cell-label">RAM</td><td class="cell-value">16.18</td><td class="cell-formula">=MAX(B14:B16)-MIN(B14:B16)</td></tr>
+        <tr><td class="row-num">30</td><td class="cell-label">HDD</td><td class="cell-value">29.26</td><td class="cell-formula">=MAX(B17:B19)-MIN(B17:B19)</td></tr>
+        <tr><td class="row-num">31</td><td class="cell-label">Price</td><td class="cell-value">15.33</td><td class="cell-formula">=MAX(B20:B23)-MIN(B20:B23)</td></tr>
+        <tr><td class="row-num">32</td><td class="cell-label" style="font-weight: 700;">Sum of the Ranges</td><td class="cell-value" style="font-weight: 700;">132.26</td><td class="cell-formula">=SUM(B26:B31)</td></tr>
+        <tr><td class="row-num">33</td><td class="cell-label"></td><td class="cell-value"></td><td class="cell-formula"></td></tr>
+        <tr class="cell-header-row"><td class="row-num">34</td><td>Relative % Importance</td><td></td><td></td></tr>
+        <tr><td class="row-num">35</td><td class="cell-label">Brand</td><td class="cell-value">22.12%</td><td class="cell-formula">=B26/$B$32</td></tr>
+        <tr><td class="row-num">36</td><td class="cell-label">Processor</td><td class="cell-value cell-highlight">8.12%</td><td class="cell-formula">=B27/$B$32</td></tr>
+        <tr><td class="row-num">37</td><td class="cell-label">Screen</td><td class="cell-value">23.82%</td><td class="cell-formula">=B28/$B$32</td></tr>
+        <tr><td class="row-num">38</td><td class="cell-label">RAM</td><td class="cell-value">12.23%</td><td class="cell-formula">=B29/$B$32</td></tr>
+        <tr><td class="row-num">39</td><td class="cell-label">HDD</td><td class="cell-value">22.12%</td><td class="cell-formula">=B30/$B$32</td></tr>
+        <tr><td class="row-num">40</td><td class="cell-label">Price</td><td class="cell-value">11.59%</td><td class="cell-formula">=B31/$B$32</td></tr>
+      </table>
+
+      <div class="answer-box">&#10003; Answer: 8.12</div>
+    </div>
+
+    <!-- Q3 -->
+    <div class="question-block">
+      <div class="q-header"><span class="q-number">Question 3</span><span class="q-pts">8 pts</span></div>
+      <div class="q-prompt">What is the least important attribute for Aamir?</div>
+      <p class="solution-step">From the table above, Processor has the smallest range (10.74) and the lowest percentage importance (8.12%).</p>
+      <div class="answer-box">&#10003; Answer: Processor</div>
+    </div>
+
+    <!-- Q4, Q5, Q6 -->
+    <div class="question-block">
+      <div class="q-header"><span class="q-number">Questions 4, 5 &amp; 6</span><span class="q-pts">8 + 8 + 8 pts</span></div>
+      <div class="q-prompt">
+        <strong>Q4:</strong> What is Aamir&rsquo;s calculated utility for Laptop A?<br>
+        <strong>Q5:</strong> Which laptop would Aamir choose?<br>
+        <strong>Q6:</strong> What is Aamir&rsquo;s choice probability for Laptop A?<br><br>
+        Laptop A: Dell, i7 Processor, 4K Touch Screen, 8GB RAM, 1TB HDD, $1,500<br>
+        Laptop B: HP, i3 Processor, 1080P Screen, 16GB RAM, 1TB HDD, $2,000
+      </div>
+
+      <p class="solution-step"><span class="label">Excel Setup for Utility &amp; Choice Probability</span></p>
+      <p class="solution-step">For each laptop, sum the constant plus the part-worth of each selected level. Base levels (i3, 1080P, 8GB, etc.) contribute 0.</p>
+
+      <table class="excel-grid">
+        <tr><td class="col-header"></td><td class="col-header" style="min-width: 130px;">D</td><td class="col-header" style="min-width: 90px;">E</td><td class="col-header" style="min-width: 90px;">F</td></tr>
+        <tr class="cell-header-row"><td class="row-num">1</td><td colspan="3" style="text-align: left; padding-left: 16px;">Utility of Aamir</td></tr>
+      </table>
+
+      <table class="excel-grid" style="margin-top: -1px;">
+        <tr>
+          <td class="col-header"></td>
+          <td class="col-header" style="min-width: 130px;">D (Component)</td>
+          <td class="col-header" style="min-width: 90px;">E (Laptop A)</td>
+          <td class="col-header" style="min-width: 90px;">F (Laptop B)</td>
+        </tr>
+        <tr><td class="row-num">2</td><td class="cell-label">Constant</td><td class="cell-value">7.376</td><td class="cell-value">7.376</td></tr>
+        <tr><td class="row-num">3</td><td class="cell-label">Brand</td><td class="cell-value">11.086 <span style="color:#999; font-size:11px;">(Dell)</span></td><td class="cell-value">5.816 <span style="color:#999; font-size:11px;">(HP)</span></td></tr>
+        <tr><td class="row-num">4</td><td class="cell-label">Processor</td><td class="cell-value">8.795 <span style="color:#999; font-size:11px;">(i7)</span></td><td class="cell-value">0 <span style="color:#999; font-size:11px;">(i3)</span></td></tr>
+        <tr><td class="row-num">5</td><td class="cell-label">Screen</td><td class="cell-value">31.506 <span style="color:#999; font-size:11px;">(4KT)</span></td><td class="cell-value">0 <span style="color:#999; font-size:11px;">(1080P)</span></td></tr>
+        <tr><td class="row-num">6</td><td class="cell-label">RAM</td><td class="cell-value">0 <span style="color:#999; font-size:11px;">(8GB)</span></td><td class="cell-value">10.612 <span style="color:#999; font-size:11px;">(16GB)</span></td></tr>
+        <tr><td class="row-num">7</td><td class="cell-label">HDD</td><td class="cell-value">17.776 <span style="color:#999; font-size:11px;">(1TB)</span></td><td class="cell-value">17.776 <span style="color:#999; font-size:11px;">(1TB)</span></td></tr>
+        <tr><td class="row-num">8</td><td class="cell-label">Price</td><td class="cell-value">&minus;4.953 <span style="color:#999; font-size:11px;">($1.5K)</span></td><td class="cell-value">&minus;8.828 <span style="color:#999; font-size:11px;">($2K)</span></td></tr>
+        <tr><td class="row-num">9</td><td class="cell-label" style="font-weight: 700; border-top: 2px solid var(--crimson);">Total Utility</td><td class="cell-value cell-green" style="font-weight: 700; border-top: 2px solid var(--crimson);">71.59</td><td class="cell-value cell-green" style="font-weight: 700; border-top: 2px solid var(--crimson);">32.75</td></tr>
+      </table>
+
+      <p class="solution-step" style="margin-top: 10px; font-size: 13px; color: #777;">Excel formulas: &nbsp; E9 = <code style="background:#f0f0f0; padding: 2px 6px; border-radius: 3px;">B2+B4+B9+B13+B14+B18+B21</code> &nbsp;&nbsp; F9 = <code style="background:#f0f0f0; padding: 2px 6px; border-radius: 3px;">B2+B5+B7+B11+B15+B18+B22</code></p>
+
+      <table class="excel-grid" style="margin-top: 14px;">
+        <tr><td class="col-header"></td><td class="col-header" style="min-width: 130px;">D</td><td class="col-header" style="min-width: 90px;">E</td><td class="col-header" style="min-width: 170px;">F (Formula)</td></tr>
+        <tr class="cell-header-row"><td class="row-num">11</td><td colspan="3" style="text-align: left; padding-left: 16px;">Choice Probability</td></tr>
+        <tr><td class="row-num">12</td><td class="cell-label">Laptop A</td><td class="cell-value cell-highlight" style="font-weight: 700;">0.69</td><td class="cell-formula">=E9/(E9+F9)</td></tr>
+        <tr><td class="row-num">13</td><td class="cell-label">Laptop B</td><td class="cell-value cell-highlight">0.31</td><td class="cell-formula">=F9/(E9+F9)</td></tr>
+      </table>
+
+      <p class="solution-step"><span class="label">Q4 &mdash; Utility of Laptop A</span></p>
+      <p class="solution-step">U(A) = 7.376 + 11.086 + 8.795 + 31.506 + 0 + 17.776 + (&minus;4.953) = <strong>71.59</strong></p>
+
+      <p class="solution-step"><span class="label">Q5 &mdash; Choice</span></p>
+      <p class="solution-step">U(A) = 71.59 &gt; U(B) = 32.75, so Aamir chooses <strong>Laptop A</strong>.</p>
+
+      <p class="solution-step"><span class="label">Q6 &mdash; Choice Probability (Share of Utility)</span></p>
+      <p class="solution-step">P(A) = U(A) / (U(A) + U(B)) = 71.59 / (71.59 + 32.75) = 71.59 / 104.34 = <strong>0.69</strong></p>
+
+      <div class="answer-box">&#10003; Q4: 71.59 &nbsp;&nbsp; Q5: Laptop A &nbsp;&nbsp; Q6: 0.69</div>
+    </div>
+
+    <!-- ═══════════════════════════════════════ -->
+    <h2 class="section-title">Full Factorial Design (Q7)</h2>
+
+    <div class="question-block">
+      <div class="q-header"><span class="q-number">Question 7</span><span class="q-pts">8 pts</span></div>
+      <div class="q-prompt">
+        A luxury car brand designs a conjoint study with the following attributes. What is the number of possible product profiles under a full factorial design?
+      </div>
+
+      <table class="excel-grid">
+        <tr><td class="col-header"></td><td class="col-header">D</td><td class="col-header">E</td></tr>
+        <tr><td class="row-num">9</td><td class="cell-label" style="font-size: 12px;">MPG: 20, 30, 40, 50</td><td class="cell-value" style="text-align: center;">4</td></tr>
+        <tr><td class="row-num">10</td><td class="cell-label" style="font-size: 12px;">Brand: BMW, Mercedes, Audi, Lexus, Genesis</td><td class="cell-value" style="text-align: center;">5</td></tr>
+        <tr><td class="row-num">11</td><td class="cell-label" style="font-size: 12px;">Engine: V4, V6, V8, Hybrid, Plug-In Hybrid, Electric</td><td class="cell-value" style="text-align: center;">6</td></tr>
+        <tr><td class="row-num">12</td><td class="cell-label" style="font-size: 12px;">Infotainment: 8&Prime;, 12&Prime;, 16&Prime;</td><td class="cell-value" style="text-align: center;">3</td></tr>
+        <tr><td class="row-num">13</td><td class="cell-label" style="font-size: 12px;">Warranty: 36, 60, 84 months</td><td class="cell-value" style="text-align: center;">3</td></tr>
+        <tr><td class="row-num">14</td><td class="cell-label" style="font-size: 12px;">Safety Rating: 3, 4, 5 Star</td><td class="cell-value" style="text-align: center;">3</td></tr>
+        <tr><td class="row-num">15</td><td class="cell-label" style="font-size: 12px;">Self-Driving: Level 2, 3, 4, 5</td><td class="cell-value" style="text-align: center;">4</td></tr>
+        <tr><td class="row-num">16</td><td class="cell-label" style="font-size: 12px;">Price: $50K, $65K, $80K, $100K</td><td class="cell-value" style="text-align: center;">4</td></tr>
+        <tr><td class="row-num">17</td><td class="cell-label" style="font-weight: 700;">Full Factorial</td><td class="cell-value cell-highlight" style="text-align: center; font-weight: 700;">51,840</td></tr>
+      </table>
+
+      <p class="solution-step"><span class="label">Calculation</span></p>
+      <p class="solution-step">Full factorial = 4 &times; 5 &times; 6 &times; 3 &times; 3 &times; 3 &times; 4 &times; 4 = <strong>51,840</strong></p>
+      <div class="answer-box">&#10003; Answer: 51,840</div>
+    </div>
+
+  </div>
+
+  <p class="footer">M574 &middot; Performance Driven Pricing</p>
+
+</div>
+</body>
+</html>
