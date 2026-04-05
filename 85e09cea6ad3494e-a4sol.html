@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Assignment 4 — Solution Manual</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Source+Serif+4:opsz,wght@8..60,300;8..60,400;8..60,600&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --crimson: #990000; --crimson-dark: #4a0000; --crimson-light: #d4a8a8;
+    --bg: #faf7f7; --card: #ffffff; --text: #333; --text-dark: #1a1a1a;
+    --border: #e8e0e0; --green: #2d6a2e; --green-bg: #f0f7f0;
+    --serif: 'Source Serif 4', Georgia, 'Times New Roman', serif;
+    --display: 'Playfair Display', Georgia, serif;
+    --mono: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: var(--serif); background: #f3efef; color: var(--text); font-size: 16px; line-height: 1.8; -webkit-font-smoothing: antialiased; }
+  .page-wrapper { max-width: 860px; margin: 0 auto; padding: 32px 16px 80px; }
+  .header { background: linear-gradient(135deg, var(--crimson), var(--crimson-dark)); padding: 36px 36px 28px; border-radius: 10px 10px 0 0; position: relative; overflow: hidden; }
+  .header::after { content: ''; position: absolute; top: -40px; right: -40px; width: 180px; height: 180px; background: rgba(255,255,255,0.04); border-radius: 50%; }
+  .header h1 { font-family: var(--display); color: #fff; font-size: clamp(22px, 3.2vw, 32px); font-weight: 700; margin-bottom: 4px; position: relative; }
+  .header .sub { color: var(--crimson-light); font-size: clamp(12px, 1.6vw, 15px); font-weight: 300; letter-spacing: 0.3px; }
+  .body-card { background: var(--bg); border: 2px solid var(--crimson); border-top: none; border-radius: 0 0 10px 10px; padding: 32px 36px 40px; }
+  .context-block { background: #fff; border: 1px solid var(--border); border-radius: 8px; padding: 20px 24px; margin-bottom: 28px; font-size: 14.5px; line-height: 1.7; color: #444; }
+  .context-block strong { color: var(--crimson-dark); }
+  .eq { display: block; margin: 12px 0; padding: 10px 16px; background: #f8f5f5; border-radius: 4px; font-family: var(--mono); font-size: 13px; color: var(--text-dark); line-height: 1.6; }
+  .section-title { font-family: var(--display); font-size: clamp(17px, 2.4vw, 22px); color: var(--crimson); margin: 36px 0 18px; padding-bottom: 8px; border-bottom: 2px solid var(--crimson); }
+  .section-title:first-of-type { margin-top: 8px; }
+  .question-block { background: var(--card); border-left: 4px solid var(--crimson); border-radius: 0 8px 8px 0; padding: 22px 26px 20px; margin-bottom: 20px; box-shadow: 0 1px 4px rgba(0,0,0,0.04); }
+  .question-block:hover { box-shadow: 0 3px 12px rgba(153,0,0,0.08); }
+  .q-header { display: flex; align-items: baseline; gap: 10px; margin-bottom: 12px; }
+  .q-number { font-family: var(--display); font-size: 17px; font-weight: 700; color: var(--crimson); white-space: nowrap; }
+  .q-pts { font-size: 12px; color: #999; font-weight: 400; letter-spacing: 0.3px; text-transform: uppercase; }
+  .q-prompt { font-style: italic; color: #555; font-size: 14.5px; line-height: 1.7; margin-bottom: 16px; padding: 12px 16px; background: #fdf9f9; border-radius: 6px; border: 1px solid var(--border); }
+  .solution-step { font-size: 15px; line-height: 1.75; margin-bottom: 6px; color: var(--text-dark); }
+  .solution-step strong { color: var(--crimson-dark); }
+  .solution-step .label { font-weight: 600; color: var(--crimson); display: block; margin-top: 10px; margin-bottom: 2px; font-size: 13px; letter-spacing: 0.2px; text-transform: uppercase; }
+  .answer-box { margin-top: 14px; padding: 10px 16px; background: var(--green-bg); border-left: 4px solid var(--green); border-radius: 0 6px 6px 0; font-weight: 600; color: var(--green); font-size: 15.5px; }
+  .note { margin-top: 10px; font-size: 13.5px; color: #777; font-style: italic; line-height: 1.6; }
+  .stmt-true { color: var(--green); font-weight: 600; }
+  .stmt-false { color: #b33; font-weight: 600; }
+
+  /* Tool mockup styles */
+  .tool-mockup { background: #eef3ff; border-radius: 12px; padding: 20px 24px; margin: 14px 0; border: 1px solid #c8d8f0; }
+  .tool-mockup .tool-title { font-weight: 700; font-size: 15px; color: #1a3a6e; margin-bottom: 12px; }
+  .tool-mockup .tool-row { display: flex; align-items: center; gap: 12px; margin-bottom: 8px; font-size: 14px; color: #333; }
+  .tool-mockup .tool-label { min-width: 180px; color: #555; }
+  .tool-mockup .tool-input { background: #fff; border: 1px solid #ccc; border-radius: 4px; padding: 4px 10px; font-family: var(--mono); font-size: 14px; min-width: 60px; text-align: center; color: var(--text-dark); }
+  .tool-mockup .tool-btn { background: #2563eb; color: #fff; border: none; border-radius: 6px; padding: 8px 20px; font-size: 14px; font-weight: 600; margin: 12px 0 8px; cursor: default; }
+  .tool-mockup .tool-result { background: #f8f9fc; border-radius: 8px; padding: 14px 18px; margin-top: 10px; }
+  .tool-mockup .tool-result-label { font-size: 13px; color: #666; margin-bottom: 2px; }
+  .tool-mockup .tool-result-value { font-size: 22px; font-weight: 700; margin-bottom: 4px; }
+  .tool-mockup .tool-result-detail { font-size: 12px; color: #888; font-family: var(--mono); }
+  .tool-mockup .result-red { color: #dc2626; }
+  .tool-mockup .result-blue { color: #2563eb; }
+
+  /* Comparison table */
+  .comp-table { width: 100%; border-collapse: separate; border-spacing: 0; margin: 14px 0; font-size: 13px; border-radius: 8px; overflow: hidden; border: 1px solid #d0c8c8; }
+  .comp-table th { background: linear-gradient(135deg, var(--crimson), var(--crimson-dark)); color: #fff; font-weight: 600; text-align: center; padding: 12px 10px; font-size: 11.5px; text-transform: uppercase; letter-spacing: 0.3px; border-right: 1px solid rgba(255,255,255,0.15); }
+  .comp-table th:first-child { text-align: left; padding-left: 16px; }
+  .comp-table th:last-child { border-right: none; }
+  .comp-table td { padding: 9px 10px; border-bottom: 1px solid #e8e0e0; border-right: 1px solid #e8e0e0; text-align: center; font-family: var(--mono); font-size: 12.5px; color: var(--text-dark); background: #fff; }
+  .comp-table td:first-child { text-align: left; font-family: var(--serif); font-weight: 500; font-size: 13px; padding-left: 16px; background: #faf7f7; }
+  .comp-table td:last-child { border-right: none; }
+  .comp-table tr:last-child td { border-bottom: none; }
+  .comp-table tr:nth-child(even) td:not(:first-child) { background: #fdf9f9; }
+  .comp-table .row-total td { background: #f0f7f0 !important; font-weight: 700; color: var(--green); border-top: 2px solid var(--crimson); }
+  .comp-table .row-total td:first-child { color: var(--crimson-dark); }
+
+  .footer { text-align: center; margin-top: 40px; font-size: 13px; color: #aaa; letter-spacing: 0.3px; }
+  @media (max-width: 600px) { .body-card, .header { padding-left: 18px; padding-right: 18px; } .question-block { padding: 16px 18px; } .tool-mockup .tool-row { flex-direction: column; align-items: flex-start; gap: 4px; } }
+</style>
+</head>
+<body>
+<div class="page-wrapper">
+
+  <div class="header">
+    <h1>Assignment 4 &mdash; Solution Manual</h1>
+    <p class="sub">Performance Driven Pricing &middot; M574</p>
+  </div>
+
+  <div class="body-card">
+
+    <h2 class="section-title">Complementary Goods Pricing: GrillKing &amp; BunCraft (Q1&ndash;Q3)</h2>
+
+    <div class="context-block">
+      <strong>Setup:</strong> GrillKing (hot dogs) and BunCraft (buns) are complementary products sold in 6-packs. Estimated weekly demand:
+      <span class="eq">Sales<sub>GK</sub> = 500 &minus; 30 &middot; Price<sub>GK</sub> &minus; 10 &middot; Price<sub>BC</sub><br>Sales<sub>BC</sub> = 450 &minus; 28 &middot; Price<sub>BC</sub> &minus; 8 &middot; Price<sub>GK</sub></span>
+      Production costs: $3.00/6-pack (GrillKing), $2.00/6-pack (BunCraft).<br><br>
+      <strong>Tool:</strong> Use <a href="https://koraycosguner.github.io/competitive-channel.html" target="_blank" style="color: var(--crimson); font-weight: 600;">Tool 11: Competitive &amp; Channel Pricing</a>. Under the <strong>Manual Parameters</strong> tab, enter:
+      <span class="eq">Product 1 (GrillKing): &nbsp; a<sub>1</sub> = 500, &nbsp; b<sub>1</sub> = &minus;30, &nbsp; C<sub>1</sub> = 3<br>Product 2 (BunCraft): &nbsp; a<sub>2</sub> = 450, &nbsp; b<sub>2</sub> = &minus;28, &nbsp; C<sub>2</sub> = 2<br>Cross-Price Effects: &nbsp; c<sub>1</sub> (P<sub>2</sub> &rarr; Q<sub>1</sub>) = &minus;10, &nbsp; c<sub>2</sub> (P<sub>1</sub> &rarr; Q<sub>2</sub>) = &minus;8</span>
+    </div>
+
+    <!-- Q1 -->
+    <div class="question-block">
+      <div class="q-header"><span class="q-number">Question 1</span><span class="q-pts">3 pts</span></div>
+      <div class="q-prompt">Calculate predicted sales of hot dogs when prices are $6 and $4, for hot dogs and buns, respectively.</div>
+      <p class="solution-step"><span class="label">Calculation</span></p>
+      <p class="solution-step">Sales<sub>GK</sub> = 500 &minus; 30(6) &minus; 10(4) = 500 &minus; 180 &minus; 40 = <strong>280</strong></p>
+
+      <p class="solution-step"><span class="label">Using Tool 11</span></p>
+      <p class="solution-step">Under <strong>Demand Prediction</strong>, enter P<sub>1</sub> = 6 and P<sub>2</sub> = 4, then click <strong>Predict Demand</strong>. The tool returns Q<sub>1</sub> = 280.</p>
+      <div class="answer-box">&#10003; Answer: 280</div>
+    </div>
+
+    <!-- Q2 -->
+    <div class="question-block">
+      <div class="q-header"><span class="q-number">Question 2</span><span class="q-pts">3 pts</span></div>
+      <div class="q-prompt">What is the calculated cross-price elasticity of demand for BunCraft when the price of GrillKing increases from $9 to $10 when the price of BunCraft is $10?</div>
+      <p class="solution-step"><span class="label">Using Tool 11</span></p>
+      <p class="solution-step">Under the <strong>Elasticity Calculator</strong>, select <strong>Vary P<sub>1</sub> (hold P<sub>2</sub> constant)</strong>, then enter P<sub>1</sub> (initial) = 9, P<sub>1</sub> (new) = 10, P<sub>2</sub> (held constant) = 10. Click <strong>Calculate Elasticities</strong>. The tool returns a cross-price elasticity of Q<sub>2</sub> (w.r.t. P<sub>1</sub>) = &minus;0.7347.</p>
+
+      <p class="solution-step"><span class="label">Manual verification</span></p>
+      <p class="solution-step">Sales<sub>BC</sub> at P<sub>GK</sub>=9: 450 &minus; 28(10) &minus; 8(9) = 98</p>
+      <p class="solution-step">Sales<sub>BC</sub> at P<sub>GK</sub>=10: 450 &minus; 28(10) &minus; 8(10) = 90</p>
+      <p class="solution-step">%&Delta;Q = (90&minus;98)/98 = &minus;8.16%, &nbsp; %&Delta;P = (10&minus;9)/9 = 11.11%</p>
+      <p class="solution-step">Cross-price elasticity = &minus;8.16% / 11.11% = <strong>&minus;0.7347</strong></p>
+      <p class="note">The negative sign confirms the products are complements: when hot dog prices rise, bun sales fall.</p>
+      <div class="answer-box">&#10003; Answer: &minus;0.7347</div>
+    </div>
+
+    <!-- Q3 -->
+    <div class="question-block">
+      <div class="q-header"><span class="q-number">Question 3</span><span class="q-pts">12 pts &middot; Short Answer</span></div>
+      <div class="q-prompt">
+        3.1. Under direct sales, the single owner earns $1,900 while two independent competitors earn $1,865. Why do higher prices lead to lower total profit with complements?<br><br>
+        3.2. When the single owner switches to selling through a retailer, total channel profit drops from $1,900 to $1,425. What causes this?<br><br>
+        3.3. Two independent competitors selling through a retailer produce the lowest channel profit ($1,289). What two inefficiencies are present?<br><br>
+        3.4. Rank the four structures from best to worst for consumers. Would the ranking change if the products were substitutes?
+      </div>
+
+      <p class="solution-step"><span class="label">Reference: Tool 11 Comparison Table</span></p>
+      <p class="solution-step">After entering the parameters, the tool produces the following comparison across all four scenarios:</p>
+
+      <table class="comp-table">
+        <tr>
+          <th>Metric</th>
+          <th>1. Single Owner<br>Direct</th>
+          <th>2. Single Owner<br>+ Retailer</th>
+          <th>3. Competitors<br>Direct</th>
+          <th>4. Competitors<br>+ Retailer</th>
+        </tr>
+        <tr><td>GrillKing Wholesale Price</td><td>N/A</td><td>7.7500</td><td>N/A</td><td>8.4396</td></tr>
+        <tr><td>BunCraft Wholesale Price</td><td>N/A</td><td>7.2500</td><td>N/A</td><td>7.9026</td></tr>
+        <tr><td>GrillKing Retail Price</td><td>8.0000</td><td>10.2500</td><td>8.5305</td><td>10.5787</td></tr>
+        <tr><td>BunCraft Retail Price</td><td>7.0000</td><td>9.7500</td><td>7.8171</td><td>10.0938</td></tr>
+        <tr><td>GrillKing Sales</td><td>190.0000</td><td>95.0000</td><td>165.9146</td><td>81.7017</td></tr>
+        <tr><td>BunCraft Sales</td><td>190.0000</td><td>95.0000</td><td>162.8780</td><td>82.7447</td></tr>
+        <tr><td>Owner / GrillKing Profit</td><td>1,900.00</td><td>950.00</td><td>917.59</td><td>444.43</td></tr>
+        <tr><td>BunCraft Profit</td><td>N/A (same owner)</td><td>N/A (same owner)</td><td>947.47</td><td>488.41</td></tr>
+        <tr><td>Retailer Profit</td><td>0.00</td><td>475.00</td><td>0.00</td><td>356.08</td></tr>
+        <tr class="row-total"><td>Total Channel Profit</td><td>1,900.00</td><td>1,425.00</td><td>1,865.06</td><td>1,288.91</td></tr>
+      </table>
+
+      <p class="solution-step"><span class="label">3.1 &mdash; Complement Pricing Externality</span></p>
+      <p class="solution-step">When GrillKing and BunCraft are separate firms, each sets its price to maximize its own profit without considering that a higher price for one product reduces demand for the other. Since the products are complements, raising the hot dog price hurts bun sales (and vice versa). The single owner internalizes this negative externality and sets lower prices on both products (P<sub>GK</sub> = $8.00 vs. $8.53, P<sub>BC</sub> = $7.00 vs. $7.82), leading to higher combined demand and higher total profit ($1,900 vs. $1,865) despite lower individual margins.</p>
+
+      <p class="solution-step"><span class="label">3.2 &mdash; Double Marginalization</span></p>
+      <p class="solution-step">When the single owner sells through a retailer, two separate markups are stacked: the owner marks up above production cost when setting wholesale prices ($7.75 and $7.25), and the retailer marks up again when setting retail prices ($10.25 and $9.75). This double marginalization raises the final price to consumers well above the directly optimal level, cutting sales in half (190 &rarr; 95) and reducing total channel profit by $475 ($1,900 &rarr; $1,425). The retailer captures $475 of this reduced pie, but the overall pie shrinks.</p>
+
+      <p class="solution-step"><span class="label">3.3 &mdash; Two Simultaneous Inefficiencies</span></p>
+      <p class="solution-step">This scenario combines both inefficiencies: (1) the horizontal complement pricing externality (each competitor ignores the cross-product demand effect, pushing wholesale prices to $8.44 and $7.90) and (2) vertical double marginalization (the retailer adds another markup, pushing retail prices to $10.58 and $10.09). Their combined effect is worse than the sum of their individual effects because they compound: the horizontal externality inflates wholesale prices, and the retailer&rsquo;s markup amplifies these already-inflated prices further, producing the highest retail prices and the lowest total channel profit ($1,289).</p>
+
+      <p class="solution-step"><span class="label">3.4 &mdash; Consumer Ranking</span></p>
+      <p class="solution-step">From best to worst for consumers (lowest to highest retail prices):</p>
+      <p class="solution-step">(1) Single Owner, Direct Sales (P<sub>GK</sub> = $8.00, P<sub>BC</sub> = $7.00)</p>
+      <p class="solution-step">(2) Competitors, Direct Sales (P<sub>GK</sub> = $8.53, P<sub>BC</sub> = $7.82)</p>
+      <p class="solution-step">(3) Single Owner + Retailer (P<sub>GK</sub> = $10.25, P<sub>BC</sub> = $9.75)</p>
+      <p class="solution-step">(4) Competitors + Retailer (P<sub>GK</sub> = $10.58, P<sub>BC</sub> = $10.09)</p>
+      <p class="solution-step">The key insight is that the vertical inefficiency (double marginalization from adding a retailer) raises prices for consumers more than the horizontal complement externality (having separate competitors instead of a single owner). If the products were substitutes instead of complements, the ranking would change: competition between substitute producers drives prices <em>down</em>, so the competitor-direct scenario would produce the lowest prices and become the best outcome for consumers.</p>
+
+      <div class="answer-box">&#10003; See explanations above (2&ndash;3 sentences each)</div>
+    </div>
+
+    <!-- ═══════════════════════════════════════ -->
+    <h2 class="section-title">Log-Log Demand Model (Q4&ndash;Q6)</h2>
+
+    <div class="context-block">
+      <strong>Model:</strong>
+      <span class="eq">ln(Sales) = 1 &minus; 2 &middot; ln(Price) + 0.3 &middot; Summer</span>
+      Sales in units, Price in dollars, Summer is a dummy (1 if summer). All estimates significant at 5%.
+    </div>
+
+    <div class="question-block">
+      <div class="q-header"><span class="q-number">Question 4</span><span class="q-pts">3 pts &middot; True / False</span></div>
+      <div class="q-prompt">During a non-summer season, when the price is set to zero, the predicted unit sales become exp{1}.</div>
+      <p class="solution-step"><span class="stmt-false">FALSE.</span> To interpret the intercept, we need the intercept to stand alone on the right-hand side of the equation. That happens when all other terms equal zero: ln(Price) = 0 and Summer = 0. Since ln(Price) = 0 when Price = 1 (not when Price = 0), the intercept is isolated at Price = $1 in a non-summer season. At that point, ln(Sales) = 1, and to get Sales we take the exponential: Sales = exp(1). The statement is false because it says this occurs when Price = 0, but ln(0) is undefined &mdash; you cannot set Price to zero in a log-log model.</p>
+      <div class="answer-box">&#10003; Answer: FALSE</div>
+    </div>
+
+    <div class="question-block">
+      <div class="q-header"><span class="q-number">Question 5</span><span class="q-pts">4 pts &middot; True / False</span></div>
+      <div class="q-prompt">An increase in price from $100 to $101 increases unit sales by about 2%.</div>
+      <p class="solution-step"><span class="stmt-false">FALSE.</span> Two problems. First, the coefficient on ln(Price) is &minus;2, which in a log-log model is the price elasticity. A 1% increase in price leads to approximately a 2% <em>decrease</em> in sales, not an increase &mdash; the statement gets the direction wrong. Second, the statement is incomplete: the interpretation must include &ldquo;holding the season constant,&rdquo; since the model includes Summer as a second independent variable.</p>
+      <div class="answer-box">&#10003; Answer: FALSE</div>
+    </div>
+
+    <div class="question-block">
+      <div class="q-header"><span class="q-number">Question 6</span><span class="q-pts">5 pts</span></div>
+      <div class="q-prompt">What is the predicted difference in sales between a summer and a non-summer season if the price is $1? (Round to closest integer.)</div>
+      <p class="solution-step"><span class="label">Calculation</span></p>
+      <p class="solution-step">At Price = $1: ln(1) = 0</p>
+      <p class="solution-step">Summer: ln(Sales) = 1 &minus; 2(0) + 0.3(1) = 1.3 &nbsp;&rarr;&nbsp; Sales = exp(1.3) = 3.669</p>
+      <p class="solution-step">Non-summer: ln(Sales) = 1 &minus; 2(0) + 0.3(0) = 1.0 &nbsp;&rarr;&nbsp; Sales = exp(1.0) = 2.718</p>
+      <p class="solution-step">Difference = 3.669 &minus; 2.718 = 0.951 &asymp; <strong>1</strong></p>
+      <div class="answer-box">&#10003; Answer: 1</div>
+    </div>
+
+    <!-- ═══════════════════════════════════════ -->
+    <h2 class="section-title">Log-Linear Model &amp; Pass-Through (Q7&ndash;Q8)</h2>
+
+    <div class="context-block">
+      <strong>Model:</strong>
+      <span class="eq">ln(Sales) = 16 &minus; 5 &middot; Retail_Price</span>
+      Weekly store-level ice cream sales. Wholesale price = $1/unit. Kroger sets retail price to maximize profit.
+    </div>
+
+    <div class="question-block">
+      <div class="q-header"><span class="q-number">Question 7</span><span class="q-pts">5 pts</span></div>
+      <div class="q-prompt">The manufacturer cuts the wholesale price by 20% (from $1.00 to $0.80). What retail price discount (in cents) should Kroger offer?</div>
+
+      <p class="solution-step"><span class="label">Step 1 &mdash; Find the original optimal price using <a href="https://koraycosguner.github.io/profit-optimizer.html" target="_blank" style="color: var(--crimson);">Tool 8: General Purpose Optimizer</a></span></p>
+      <p class="solution-step">Enter the equations below. Use Retail_Price as the decision variable between 0.80 and 20. Leave Control Variables empty.</p>
+      <div style="position: relative; margin: 8px 0;">
+        <pre id="q7-eq" style="font-family: var(--mono); font-size: 13px; background: #f8f5f5; padding: 14px 16px; border-radius: 4px; line-height: 1.8; color: var(--text-dark); white-space: pre-wrap; margin: 0;">Sales = exp(16 - 5 * Retail_Price)
+Profit = (Retail_Price - 1) * Sales</pre>
+        <button onclick="navigator.clipboard.writeText(document.getElementById('q7-eq').textContent).then(function(){var b=event.target;b.textContent='Copied!';b.style.background='var(--green)';setTimeout(function(){b.textContent='Copy';b.style.background='var(--crimson)'},1500)})" style="position: absolute; top: 8px; right: 8px; background: var(--crimson); color: #fff; border: none; padding: 4px 12px; border-radius: 4px; font-size: 12px; cursor: pointer; font-weight: 600;">Copy</button>
+      </div>
+      <p class="solution-step">The tool returns Retail_Price = <strong>$1.20</strong>.</p>
+
+      <p class="solution-step"><span class="label">Step 2 &mdash; Find the new optimal price after the wholesale cut</span></p>
+      <p class="solution-step">Change the Profit equation to reflect the new cost of $0.80:</p>
+      <div style="position: relative; margin: 8px 0;">
+        <pre id="q7-eq2" style="font-family: var(--mono); font-size: 13px; background: #f8f5f5; padding: 14px 16px; border-radius: 4px; line-height: 1.8; color: var(--text-dark); white-space: pre-wrap; margin: 0;">Sales = exp(16 - 5 * Retail_Price)
+Profit = (Retail_Price - 0.8) * Sales</pre>
+        <button onclick="navigator.clipboard.writeText(document.getElementById('q7-eq2').textContent).then(function(){var b=event.target;b.textContent='Copied!';b.style.background='var(--green)';setTimeout(function(){b.textContent='Copy';b.style.background='var(--crimson)'},1500)})" style="position: absolute; top: 8px; right: 8px; background: var(--crimson); color: #fff; border: none; padding: 4px 12px; border-radius: 4px; font-size: 12px; cursor: pointer; font-weight: 600;">Copy</button>
+      </div>
+      <p class="solution-step">The tool returns Retail_Price = <strong>$1.00</strong>.</p>
+
+      <p class="solution-step"><span class="label">Discount</span></p>
+      <p class="solution-step">$1.20 &minus; $1.00 = <strong>20 cents</strong></p>
+      <div class="answer-box">&#10003; Answer: 20 cents</div>
+    </div>
+
+    <div class="question-block">
+      <div class="q-header"><span class="q-number">Question 8</span><span class="q-pts">5 pts</span></div>
+      <div class="q-prompt">Instead of cutting wholesale price, the manufacturer provides a 20-cent coupon directly to consumers (100% redemption). What retail price discount (in cents) should Kroger offer?</div>
+
+      <p class="solution-step"><span class="label">Key Difference from Q7</span></p>
+      <p class="solution-step">The coupon reduces the <em>consumer&rsquo;s</em> net price, not Kroger&rsquo;s cost. Without the coupon, consumers pay P and demand is Sales = exp(16 &minus; 5 * P). With the coupon, consumers effectively pay (P &minus; 0.20), so demand becomes Sales = exp(16 &minus; 5 * (P &minus; 0.20)). Kroger&rsquo;s cost is still $1.</p>
+
+      <p class="solution-step"><span class="label">Using <a href="https://koraycosguner.github.io/profit-optimizer.html" target="_blank" style="color: var(--crimson);">Tool 8: General Purpose Optimizer</a></span></p>
+      <p class="solution-step">The only thing that changes from Q7 is the Sales equation. The Profit equation stays the same (cost is still $1).</p>
+      <div style="position: relative; margin: 8px 0;">
+        <pre id="q8-eq" style="font-family: var(--mono); font-size: 13px; background: #f8f5f5; padding: 14px 16px; border-radius: 4px; line-height: 1.8; color: var(--text-dark); white-space: pre-wrap; margin: 0;">Sales = exp(16 - 5 * (Retail_Price - 0.20))
+Profit = (Retail_Price - 1) * Sales</pre>
+        <button onclick="navigator.clipboard.writeText(document.getElementById('q8-eq').textContent).then(function(){var b=event.target;b.textContent='Copied!';b.style.background='var(--green)';setTimeout(function(){b.textContent='Copy';b.style.background='var(--crimson)'},1500)})" style="position: absolute; top: 8px; right: 8px; background: var(--crimson); color: #fff; border: none; padding: 4px 12px; border-radius: 4px; font-size: 12px; cursor: pointer; font-weight: 600;">Copy</button>
+      </div>
+      <p class="solution-step">The tool returns Retail_Price = <strong>$1.20</strong> &mdash; the same as the original (no coupon) case. Kroger does not change its price.</p>
+
+      <p class="solution-step"><span class="label">Discount</span></p>
+      <p class="solution-step">$1.20 &minus; $1.20 = <strong>0 cents</strong></p>
+      <div class="answer-box">&#10003; Answer: 0 cents</div>
+    </div>
+
+    <!-- ═══════════════════════════════════════ -->
+    <h2 class="section-title">Regression Interpretation (Q9&ndash;Q10)</h2>
+
+    <div class="question-block">
+      <div class="q-header"><span class="q-number">Question 9</span><span class="q-pts">5 pts</span></div>
+      <div class="q-prompt">
+        In Y = &beta;<sub>0</sub> + &beta;<sub>1</sub>X<sub>1</sub> + &beta;<sub>2</sub>X<sub>2</sub>, which can be said about &beta;<sub>1</sub>?<br><br>
+        (A) Slope of the first independent variable.<br>
+        (B) Predicted value of the DV when the first IV is zero.<br>
+        (C) The increase in the DV when the first IV increases by 1 unit.
+      </div>
+      <p class="solution-step"><span class="stmt-true">A &mdash; TRUE.</span> &beta;<sub>1</sub> is the slope on X<sub>1</sub>: the rate of change in Y per unit change in X<sub>1</sub>, holding X<sub>2</sub> constant.</p>
+      <p class="solution-step"><span class="stmt-false">B &mdash; FALSE.</span> When X<sub>1</sub> = 0 alone, the predicted value is &beta;<sub>0</sub> + &beta;<sub>2</sub>X<sub>2</sub>, not &beta;<sub>1</sub>. The intercept &beta;<sub>0</sub> is the predicted value of Y when <em>both</em> X<sub>1</sub> = 0 and X<sub>2</sub> = 0.</p>
+      <p class="solution-step"><span class="stmt-false">C &mdash; FALSE.</span> The statement says &ldquo;the increase in the DV when the first IV increases by 1 unit&rdquo; but does not specify that the second IV must be held constant. Without that condition, the statement is incomplete and therefore incorrect.</p>
+      <div class="answer-box">&#10003; Answer: A</div>
+    </div>
+
+    <div class="question-block">
+      <div class="q-header"><span class="q-number">Question 10</span><span class="q-pts">5 pts</span></div>
+      <div class="q-prompt">ln(Spending) = 10 &minus; 4 &middot; Price + 1 &middot; Male. What is the predicted difference between males and females in spending at Price = $1? (Round to closest integer.)</div>
+      <p class="solution-step"><span class="label">Male (Male = 1)</span></p>
+      <p class="solution-step">ln(Spending) = 10 &minus; 4(1) + 1(1) = 7 &nbsp;&rarr;&nbsp; Spending = exp(7) = 1,096.63</p>
+      <p class="solution-step"><span class="label">Female (Male = 0)</span></p>
+      <p class="solution-step">ln(Spending) = 10 &minus; 4(1) + 1(0) = 6 &nbsp;&rarr;&nbsp; Spending = exp(6) = 403.43</p>
+      <p class="solution-step"><span class="label">Difference</span></p>
+      <p class="solution-step">1,096.63 &minus; 403.43 = 693.20 &asymp; <strong>693</strong></p>
+      <div class="answer-box">&#10003; Answer: 693</div>
+    </div>
+
+  </div>
+
+  <p class="footer">M574 &middot; Performance Driven Pricing</p>
+
+</div>
+</body>
+</html>
