@@ -1560,8 +1560,122 @@ Profit = Revenue - Cost * Sales" oninput="parseEquations()"></textarea>
             return best;
         }
 
-        // Main optimization function - tries analytical first, then grid search
-        function findOptimum(objVar, decVars, goal) {
+        // Group decision variables into independent blocks using the same cross-partial
+        // test that checkSeparability uses, but pairwise — vars with non-zero cross-partial
+        // go in the same block (union-find). Returns an array of arrays of decision vars,
+        // or null on error. A single block means "everything interacts" (fall through to
+        // existing logic for zero behavior change).
+        function findBlocks(objVar, decVars) {
+            if (decVars.length <= 1) return [decVars];
+
+            const n = decVars.length;
+            const mids = {};
+            decVars.forEach(dv => {
+                mids[dv.name] = (parseFloat(dv.min) + parseFloat(dv.max)) / 2;
+            });
+
+            // Union-find
+            const parent = Array.from({ length: n }, (_, i) => i);
+            function find(x) {
+                while (parent[x] !== x) { parent[x] = parent[parent[x]]; x = parent[x]; }
+                return x;
+            }
+            function union(a, b) {
+                const ra = find(a), rb = find(b);
+                if (ra !== rb) parent[ra] = rb;
+            }
+
+            for (let i = 0; i < n; i++) {
+                for (let j = i + 1; j < n; j++) {
+                    if (find(i) === find(j)) continue; // already same block
+                    const vi = decVars[i], vj = decVars[j];
+                    const midI = mids[vi.name], midJ = mids[vj.name];
+                    const minI = parseFloat(vi.min), minJ = parseFloat(vj.min);
+
+                    const r11 = evalModel({ ...mids, [vi.name]: midI, [vj.name]: midJ });
+                    const r10 = evalModel({ ...mids, [vi.name]: midI, [vj.name]: minJ });
+                    const r01 = evalModel({ ...mids, [vi.name]: minI, [vj.name]: midJ });
+                    const r00 = evalModel({ ...mids, [vi.name]: minI, [vj.name]: minJ });
+
+                    if (r11.error || r10.error || r01.error || r00.error) {
+                        // On error, treat as interacting (safe default — no wrong split)
+                        union(i, j);
+                        continue;
+                    }
+
+                    const cross = r11.scope[objVar] - r10.scope[objVar] - r01.scope[objVar] + r00.scope[objVar];
+                    const scale = Math.max(Math.abs(r11.scope[objVar]), 1e-10);
+
+                    if (Math.abs(cross / scale) > 1e-6) {
+                        union(i, j); // interact → same block
+                    }
+                }
+            }
+
+            // Group decision vars by root
+            const groups = new Map();
+            for (let i = 0; i < n; i++) {
+                const root = find(i);
+                if (!groups.has(root)) groups.set(root, []);
+                groups.get(root).push(decVars[i]);
+            }
+            return Array.from(groups.values());
+        }
+
+        // Optimize each block independently, treating other blocks' decision vars as
+        // fixed control vars at their midpoints. Because blocks are independent by
+        // construction (cross-partial = 0 across blocks), each block's optimum is
+        // unaffected by the other blocks' values, so the combined assignment is the
+        // global optimum.
+        function optimizeBlocks(objVar, allDecVars, blocks, goal) {
+            const savedControlVars = [...controlVars];
+            const combined = {};
+
+            // Use midpoints for other blocks' vars when optimizing a given block
+            const midpoints = {};
+            allDecVars.forEach(dv => {
+                midpoints[dv.name] = (parseFloat(dv.min) + parseFloat(dv.max)) / 2;
+            });
+
+            try {
+                for (const block of blocks) {
+                    const blockNames = new Set(block.map(dv => dv.name));
+                    const otherDecVars = allDecVars.filter(dv => !blockNames.has(dv.name));
+
+                    // Fix other blocks' decision vars as control vars at midpoints (or at
+                    // already-chosen values if they come from an earlier-optimized block).
+                    const tempControls = otherDecVars.map((other, idx) => {
+                        const value = combined[other.name] !== undefined
+                            ? combined[other.name]
+                            : midpoints[other.name];
+                        return { id: 80000 + idx, name: other.name, value: String(value) };
+                    });
+                    controlVars = [...savedControlVars, ...tempControls];
+
+                    // Recursively solve this block, skipping further block decomposition
+                    // (all vars in a block interact by definition, so it would be wasted work).
+                    const blockResult = findOptimum(objVar, block, goal, true);
+                    if (!blockResult) return null;
+
+                    block.forEach(dv => {
+                        combined[dv.name] = blockResult[dv.name];
+                    });
+                }
+            } finally {
+                controlVars = savedControlVars;
+            }
+
+            // Final evaluation at combined optimum (with original control vars)
+            const result = evalModel(combined);
+            if (result.error) return null;
+
+            return { ...combined, __objective: result.scope[objVar], __scope: result.scope, __method: 'block' };
+        }
+
+        // Main optimization function - tries analytical first, then grid search.
+        // skipBlockDecomp: internal flag used when called recursively from optimizeBlocks
+        // to avoid re-running block detection on an already-known-connected set of vars.
+        function findOptimum(objVar, decVars, goal, skipBlockDecomp = false) {
             // For single variable, try analytical solution first
             if (decVars.length === 1) {
                 const analytical = tryAnalyticalSolution(objVar, decVars[0], goal);
@@ -1570,7 +1684,18 @@ Profit = Revenue - Cost * Sales" oninput="parseEquations()"></textarea>
                 }
             }
 
-            // For multiple variables, check if problem is separable
+            // For multiple variables, try block decomposition first. If the problem splits
+            // into ≥2 independent blocks, this converts an N-dim search into several smaller
+            // searches (e.g., 9 vars → 3 blocks of 3) — same answer, dramatically faster.
+            if (!skipBlockDecomp && decVars.length > 1) {
+                const blocks = findBlocks(objVar, decVars);
+                if (blocks && blocks.length > 1) {
+                    const blockResult = optimizeBlocks(objVar, decVars, blocks, goal);
+                    if (blockResult) return blockResult;
+                }
+            }
+
+            // For multiple variables, check if problem is fully separable (coord-wise works)
             if (decVars.length > 1 && checkSeparability(objVar, decVars, goal)) {
                 const coordResult = coordinateWiseOptimize(objVar, decVars, goal);
                 if (coordResult) return coordResult;
@@ -1656,7 +1781,7 @@ Profit = Revenue - Cost * Sales" oninput="parseEquations()"></textarea>
             document.getElementById('resultsSection').style.display = 'block';
 
             // Show method used
-            const methodLabel = method === 'analytical' ? ' (Exact Solution)' : method === 'coordinate' ? ' (Coordinate-wise)' : ' (Grid Search)';
+            const methodLabel = method === 'analytical' ? ' (Exact Solution)' : method === 'coordinate' ? ' (Coordinate-wise)' : method === 'block' ? ' (Block Decomposition)' : ' (Grid Search)';
             document.getElementById('solutionTitle').textContent =
                 `${goal === 'maximize' ? 'Maximum' : 'Minimum'} Found${methodLabel}`;
 
