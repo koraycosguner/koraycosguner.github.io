@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Cotton T-Shirts &mdash; Multi-Channel Pricing Setup</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Source+Serif+4:opsz,wght@8..60,300;8..60,400;8..60,600&display=swap" rel="stylesheet" />
+<script>
+  window.MathJax = {
+    tex: { inlineMath: [['$', '$']], displayMath: [['$$', '$$']] },
+    svg: { fontCache: 'global' }
+  };
+</script>
+<script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+<style>
+  :root {
+    --crimson: #990000; --crimson-dark: #4a0000; --crimson-light: #d4a8a8;
+    --bg: #faf7f7; --card: #ffffff; --text: #333; --text-dark: #1a1a1a;
+    --border: #e8e0e0; --green: #2d6a2e; --green-bg: #f0f7f0;
+    --serif: 'Source Serif 4', Georgia, 'Times New Roman', serif;
+    --display: 'Playfair Display', Georgia, serif;
+    --mono: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: var(--serif); background: #f3efef; color: var(--text); font-size: 16px; line-height: 1.7; -webkit-font-smoothing: antialiased; }
+  .page-wrapper { max-width: 920px; margin: 0 auto; padding: 32px 16px 80px; }
+
+  .header { background: linear-gradient(135deg, var(--crimson), var(--crimson-dark)); padding: 36px 36px 28px; border-radius: 10px 10px 0 0; position: relative; overflow: hidden; }
+  .header::after { content: ''; position: absolute; top: -40px; right: -40px; width: 180px; height: 180px; background: rgba(255,255,255,0.04); border-radius: 50%; }
+  .header h1 { font-family: var(--display); color: #fff; font-size: clamp(22px, 3.2vw, 32px); font-weight: 700; margin-bottom: 4px; position: relative; }
+  .header .sub { color: var(--crimson-light); font-size: clamp(12px, 1.6vw, 15px); font-weight: 300; letter-spacing: 0.3px; }
+
+  .body-card { background: var(--bg); border: 2px solid var(--crimson); border-top: none; border-radius: 0 0 10px 10px; padding: 32px 36px 40px; }
+
+  .context-block { background: #fff; border: 1px solid var(--border); border-radius: 8px; padding: 20px 24px; margin-bottom: 28px; font-size: 14.5px; line-height: 1.75; color: #444; }
+  .context-block strong { color: var(--crimson-dark); }
+
+  .section-title { font-family: var(--display); font-size: clamp(18px, 2.4vw, 24px); color: var(--crimson); margin: 36px 0 14px; padding-bottom: 8px; border-bottom: 2px solid var(--crimson); }
+  .section-title:first-of-type { margin-top: 8px; }
+  .section-intro { font-size: 14.5px; color: #555; margin-bottom: 14px; }
+
+  .subsection-title { font-family: var(--display); font-size: 19px; color: var(--crimson-dark); margin: 28px 0 12px; display: flex; align-items: baseline; flex-wrap: wrap; gap: 10px; }
+  .subsection-title .badge { display: inline-block; background: var(--crimson); color: #fff; font-family: var(--serif); font-size: 12px; font-weight: 600; padding: 3px 10px; border-radius: 12px; vertical-align: middle; letter-spacing: 0.3px; }
+
+  .equation-block { background: #fff; border-left: 4px solid var(--crimson); border-radius: 0 8px 8px 0; padding: 16px 24px 18px; margin: 12px 0; box-shadow: 0 1px 4px rgba(0,0,0,0.04); overflow-x: auto; }
+  .equation-block .label { font-weight: 600; color: var(--crimson); display: block; margin-bottom: 6px; font-size: 12px; letter-spacing: 0.4px; text-transform: uppercase; }
+  .equation-block + .equation-block { margin-top: 8px; }
+  .equation-block mjx-container { margin: 6px 0 !important; }
+
+  .code-card { position: relative; background: #2a2a2a; color: #e8e8e8; border-radius: 8px; padding: 18px 20px 18px 20px; margin: 22px 0 30px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+  .code-card .code-title { font-family: var(--serif); font-size: 12px; color: #bbb; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 12px; padding-right: 92px; }
+  .code-card .copy-btn { position: absolute; top: 14px; right: 14px; background: var(--crimson); color: #fff; border: none; border-radius: 6px; padding: 8px 16px; font-family: var(--serif); font-size: 13px; font-weight: 600; cursor: pointer; letter-spacing: 0.3px; transition: background 0.15s; }
+  .code-card .copy-btn:hover { background: #b30000; }
+  .code-card .copy-btn.copied { background: var(--green); }
+  .code-card pre { font-family: var(--mono); font-size: 12.5px; line-height: 1.65; white-space: pre-wrap; word-break: break-word; color: #e8e8e8; max-height: 480px; overflow-y: auto; }
+
+  .footer { text-align: center; margin-top: 40px; font-size: 13px; color: #aaa; letter-spacing: 0.3px; }
+
+  @media (max-width: 600px) {
+    .body-card, .header { padding-left: 18px; padding-right: 18px; }
+    .equation-block { padding: 12px 16px; }
+    .code-card { padding: 14px 16px; }
+    .code-card pre { padding-top: 0; }
+    .code-card .code-title { padding-right: 0; padding-top: 36px; }
+    .code-card .copy-btn { top: 10px; right: 10px; }
+  }
+</style>
+</head>
+<body>
+<div class="page-wrapper">
+
+  <div class="header">
+    <h1>Cotton T-Shirts &mdash; Multi-Channel Pricing Setup</h1>
+    <p class="sub">MNL Choice Model &middot; Profit Equations &middot; M574 Pricing Management</p>
+  </div>
+
+  <div class="body-card">
+
+    <div class="context-block">
+      This page lays out two MNL-based profit setups for a cotton t-shirt product line sold across three channels &mdash; <strong>Retail Chain</strong> (1,000 customers), <strong>Online Store</strong> (700 customers), and <strong>Premium Boutique</strong> (400 customers). Each setup is shown in standard equation form, followed by a code block you can copy directly into the <strong>General Purpose Optimizer</strong> on the website.
+      <br><br>
+      <strong>Unit costs:</strong> Basic Cotton Blend = $10, 100% Cotton = $20, Organic Cotton = $30. <strong>Reference alternative:</strong> No Purchase ($U = 0$).
+    </div>
+
+    <!-- ============================================== -->
+    <!-- POOLED -->
+    <!-- ============================================== -->
+    <h2 class="section-title">1. Pooled Analysis (n = 2,100)</h2>
+    <p class="section-intro">A single MNL is estimated on all 2,100 customers, ignoring channel membership. One set of coefficients applies to every customer.</p>
+
+    <div class="equation-block">
+      <span class="label">Utilities</span>
+      $$U_{\text{100\%~Cotton}} = 2.2496 - 0.0792 \cdot P_{\text{100\%~Cotton}}$$
+      $$U_{\text{Basic~Cotton~Blend}} = 2.2462 - 0.1309 \cdot P_{\text{Basic~Cotton~Blend}}$$
+      $$U_{\text{Organic~Cotton}} = 1.5185 - 0.0429 \cdot P_{\text{Organic~Cotton}}$$
+    </div>
+
+    <div class="equation-block">
+      <span class="label">Denominator</span>
+      $$D = 1 + e^{U_{\text{100\%~Cotton}}} + e^{U_{\text{Basic~Cotton~Blend}}} + e^{U_{\text{Organic~Cotton}}}$$
+    </div>
+
+    <div class="equation-block">
+      <span class="label">Choice Probabilities</span>
+      $$\Pr(\text{No Purchase}) = \frac{1}{D} \qquad \Pr(j) = \frac{e^{U_j}}{D}$$
+    </div>
+
+    <div class="equation-block">
+      <span class="label">Profit</span>
+      $$\pi_{\text{per cust}} = \Pr(\text{100\%}) \cdot (P_{\text{100\%}} - 20) + \Pr(\text{Basic}) \cdot (P_{\text{Basic}} - 10) + \Pr(\text{Org}) \cdot (P_{\text{Org}} - 30)$$
+      $$\Pi = 2{,}100 \cdot \pi_{\text{per cust}}$$
+    </div>
+
+    <div class="code-card">
+      <div class="code-title">Paste into the General Purpose Optimizer</div>
+      <button class="copy-btn" onclick="copyBlock('pooled-code', this)">Copy</button>
+<pre id="pooled-code"># Pooled Analysis (n = 2,100)
+
+U_100_Cotton = 2.2496 - 0.0792 * P_100_Cotton
+U_Basic_Cotton_Blend = 2.2462 - 0.1309 * P_Basic_Cotton_Blend
+U_Organic_Cotton = 1.5185 - 0.0429 * P_Organic_Cotton
+
+Denominator = 1 + exp(U_100_Cotton) + exp(U_Basic_Cotton_Blend) + exp(U_Organic_Cotton)
+
+Pr_No_Purchase = 1 / Denominator
+Pr_100_Cotton = exp(U_100_Cotton) / Denominator
+Pr_Basic_Cotton_Blend = exp(U_Basic_Cotton_Blend) / Denominator
+Pr_Organic_Cotton = exp(U_Organic_Cotton) / Denominator
+
+Profit_Per_Customer = Pr_100_Cotton * (P_100_Cotton - 20) + Pr_Basic_Cotton_Blend * (P_Basic_Cotton_Blend - 10) + Pr_Organic_Cotton * (P_Organic_Cotton - 30)
+
+Profit = Profit_Per_Customer * 2100</pre>
+    </div>
+
+    <!-- ============================================== -->
+    <!-- CHANNEL-BY-CHANNEL -->
+    <!-- ============================================== -->
+    <h2 class="section-title">2. Channel-by-Channel Analysis</h2>
+    <p class="section-intro">A separate MNL is estimated within each channel, allowing demand sensitivity (and therefore optimal prices) to differ across the three sales venues. Channel profits are summed for the firm-level objective.</p>
+
+    <!-- Channel 1 -->
+    <h3 class="subsection-title">Channel 1: Retail Chain <span class="badge">n = 1,000</span></h3>
+
+    <div class="equation-block">
+      <span class="label">Utilities</span>
+      $$U_{\text{Basic}}^{R} = 3.2219 - 0.1614 \cdot P_{\text{Basic}}^{R}$$
+      $$U_{\text{100\%}}^{R} = 2.5525 - 0.1085 \cdot P_{\text{100\%}}^{R}$$
+      $$U_{\text{Org}}^{R} = 2.4886 - 0.0772 \cdot P_{\text{Org}}^{R}$$
+    </div>
+
+    <div class="equation-block">
+      <span class="label">Denominator &amp; Probabilities</span>
+      $$D^{R} = 1 + e^{U_{\text{Basic}}^{R}} + e^{U_{\text{100\%}}^{R}} + e^{U_{\text{Org}}^{R}} \qquad \Pr(j)^{R} = \frac{e^{U_j^{R}}}{D^{R}}$$
+    </div>
+
+    <div class="equation-block">
+      <span class="label">Channel Profit</span>
+      $$\pi_{\text{per cust}}^{R} = \Pr(\text{Basic})^{R} (P_{\text{Basic}}^{R} - 10) + \Pr(\text{100\%})^{R} (P_{\text{100\%}}^{R} - 20) + \Pr(\text{Org})^{R} (P_{\text{Org}}^{R} - 30)$$
+      $$\Pi_{R} = 1{,}000 \cdot \pi_{\text{per cust}}^{R}$$
+    </div>
+
+    <!-- Channel 2 -->
+    <h3 class="subsection-title">Channel 2: Online Store <span class="badge">n = 700</span></h3>
+
+    <div class="equation-block">
+      <span class="label">Utilities</span>
+      $$U_{\text{Basic}}^{O} = 1.6488 - 0.1202 \cdot P_{\text{Basic}}^{O}$$
+      $$U_{\text{100\%}}^{O} = 2.8434 - 0.0767 \cdot P_{\text{100\%}}^{O}$$
+      $$U_{\text{Org}}^{O} = 1.6097 - 0.0401 \cdot P_{\text{Org}}^{O}$$
+    </div>
+
+    <div class="equation-block">
+      <span class="label">Denominator &amp; Probabilities</span>
+      $$D^{O} = 1 + e^{U_{\text{Basic}}^{O}} + e^{U_{\text{100\%}}^{O}} + e^{U_{\text{Org}}^{O}} \qquad \Pr(j)^{O} = \frac{e^{U_j^{O}}}{D^{O}}$$
+    </div>
+
+    <div class="equation-block">
+      <span class="label">Channel Profit</span>
+      $$\pi_{\text{per cust}}^{O} = \Pr(\text{Basic})^{O} (P_{\text{Basic}}^{O} - 10) + \Pr(\text{100\%})^{O} (P_{\text{100\%}}^{O} - 20) + \Pr(\text{Org})^{O} (P_{\text{Org}}^{O} - 30)$$
+      $$\Pi_{O} = 700 \cdot \pi_{\text{per cust}}^{O}$$
+    </div>
+
+    <!-- Channel 3 -->
+    <h3 class="subsection-title">Channel 3: Premium Boutique <span class="badge">n = 400</span></h3>
+
+    <div class="equation-block">
+      <span class="label">Utilities</span>
+      $$U_{\text{Basic}}^{B} = 1.0558 - 0.0871 \cdot P_{\text{Basic}}^{B}$$
+      $$U_{\text{100\%}}^{B} = 1.5573 - 0.0552 \cdot P_{\text{100\%}}^{B}$$
+      $$U_{\text{Org}}^{B} = 1.6808 - 0.0281 \cdot P_{\text{Org}}^{B}$$
+    </div>
+
+    <div class="equation-block">
+      <span class="label">Denominator &amp; Probabilities</span>
+      $$D^{B} = 1 + e^{U_{\text{Basic}}^{B}} + e^{U_{\text{100\%}}^{B}} + e^{U_{\text{Org}}^{B}} \qquad \Pr(j)^{B} = \frac{e^{U_j^{B}}}{D^{B}}$$
+    </div>
+
+    <div class="equation-block">
+      <span class="label">Channel Profit</span>
+      $$\pi_{\text{per cust}}^{B} = \Pr(\text{Basic})^{B} (P_{\text{Basic}}^{B} - 10) + \Pr(\text{100\%})^{B} (P_{\text{100\%}}^{B} - 20) + \Pr(\text{Org})^{B} (P_{\text{Org}}^{B} - 30)$$
+      $$\Pi_{B} = 400 \cdot \pi_{\text{per cust}}^{B}$$
+    </div>
+
+    <!-- Total -->
+    <h3 class="subsection-title">Total Profit</h3>
+
+    <div class="equation-block">
+      <span class="label">Aggregated Across Channels</span>
+      $$\Pi = \Pi_{R} + \Pi_{O} + \Pi_{B}$$
+    </div>
+
+    <div class="code-card">
+      <div class="code-title">Paste into the General Purpose Optimizer (9 prices &middot; 3 blocks)</div>
+      <button class="copy-btn" onclick="copyBlock('multichannel-code', this)">Copy</button>
+<pre id="multichannel-code"># Setting up the Profit from the Retail Chain (n = 1,000)
+
+U_Basic_Cotton_Blend_Retail_Chain = 3.2219 - 0.1614 * P_Basic_Cotton_Blend_Retail_Chain
+U_100_Cotton_Retail_Chain = 2.5525 - 0.1085 * P_100_Cotton_Retail_Chain
+U_Organic_Cotton_Retail_Chain = 2.4886 - 0.0772 * P_Organic_Cotton_Retail_Chain
+
+Denominator_Retail_Chain = 1 + exp(U_Basic_Cotton_Blend_Retail_Chain) + exp(U_100_Cotton_Retail_Chain) + exp(U_Organic_Cotton_Retail_Chain)
+
+Pr_Basic_Cotton_Blend_Retail_Chain = exp(U_Basic_Cotton_Blend_Retail_Chain) / Denominator_Retail_Chain
+Pr_100_Cotton_Retail_Chain = exp(U_100_Cotton_Retail_Chain) / Denominator_Retail_Chain
+Pr_Organic_Cotton_Retail_Chain = exp(U_Organic_Cotton_Retail_Chain) / Denominator_Retail_Chain
+
+Profit_Per_Customer_Retail_Chain = Pr_Basic_Cotton_Blend_Retail_Chain * (P_Basic_Cotton_Blend_Retail_Chain - 10) + Pr_100_Cotton_Retail_Chain * (P_100_Cotton_Retail_Chain - 20) + Pr_Organic_Cotton_Retail_Chain * (P_Organic_Cotton_Retail_Chain - 30)
+
+Profit_Retail_Chain = Profit_Per_Customer_Retail_Chain * 1000
+
+# Setting up the Profit from the Online Store (n = 700)
+
+U_Basic_Cotton_Blend_Online_Store = 1.6488 - 0.1202 * P_Basic_Cotton_Blend_Online_Store
+U_100_Cotton_Online_Store = 2.8434 - 0.0767 * P_100_Cotton_Online_Store
+U_Organic_Cotton_Online_Store = 1.6097 - 0.0401 * P_Organic_Cotton_Online_Store
+
+Denominator_Online_Store = 1 + exp(U_Basic_Cotton_Blend_Online_Store) + exp(U_100_Cotton_Online_Store) + exp(U_Organic_Cotton_Online_Store)
+
+Pr_Basic_Cotton_Blend_Online_Store = exp(U_Basic_Cotton_Blend_Online_Store) / Denominator_Online_Store
+Pr_100_Cotton_Online_Store = exp(U_100_Cotton_Online_Store) / Denominator_Online_Store
+Pr_Organic_Cotton_Online_Store = exp(U_Organic_Cotton_Online_Store) / Denominator_Online_Store
+
+Profit_Per_Customer_Online_Store = Pr_Basic_Cotton_Blend_Online_Store * (P_Basic_Cotton_Blend_Online_Store - 10) + Pr_100_Cotton_Online_Store * (P_100_Cotton_Online_Store - 20) + Pr_Organic_Cotton_Online_Store * (P_Organic_Cotton_Online_Store - 30)
+
+Profit_Online_Store = Profit_Per_Customer_Online_Store * 700
+
+# Setting up the Profit from the Premium Boutique (n = 400)
+
+U_Basic_Cotton_Blend_Premium_Boutique = 1.0558 - 0.0871 * P_Basic_Cotton_Blend_Premium_Boutique
+U_100_Cotton_Premium_Boutique = 1.5573 - 0.0552 * P_100_Cotton_Premium_Boutique
+U_Organic_Cotton_Premium_Boutique = 1.6808 - 0.0281 * P_Organic_Cotton_Premium_Boutique
+
+Denominator_Premium_Boutique = 1 + exp(U_Basic_Cotton_Blend_Premium_Boutique) + exp(U_100_Cotton_Premium_Boutique) + exp(U_Organic_Cotton_Premium_Boutique)
+
+Pr_Basic_Cotton_Blend_Premium_Boutique = exp(U_Basic_Cotton_Blend_Premium_Boutique) / Denominator_Premium_Boutique
+Pr_100_Cotton_Premium_Boutique = exp(U_100_Cotton_Premium_Boutique) / Denominator_Premium_Boutique
+Pr_Organic_Cotton_Premium_Boutique = exp(U_Organic_Cotton_Premium_Boutique) / Denominator_Premium_Boutique
+
+Profit_Per_Customer_Premium_Boutique = Pr_Basic_Cotton_Blend_Premium_Boutique * (P_Basic_Cotton_Blend_Premium_Boutique - 10) + Pr_100_Cotton_Premium_Boutique * (P_100_Cotton_Premium_Boutique - 20) + Pr_Organic_Cotton_Premium_Boutique * (P_Organic_Cotton_Premium_Boutique - 30)
+
+Profit_Premium_Boutique = Profit_Per_Customer_Premium_Boutique * 400
+
+# Total Profit Across All Channels
+
+Profit = Profit_Retail_Chain + Profit_Online_Store + Profit_Premium_Boutique</pre>
+    </div>
+
+  </div>
+
+  <p class="footer">Created by Dr. Koray Cosguner &middot; Performance Driven Pricing &middot; M574</p>
+</div>
+
+<script>
+  function copyBlock(id, btn) {
+    const text = document.getElementById(id).innerText;
+    navigator.clipboard.writeText(text).then(() => {
+      const original = btn.textContent;
+      btn.textContent = '\u2713 Copied';
+      btn.classList.add('copied');
+      setTimeout(() => { btn.textContent = original; btn.classList.remove('copied'); }, 1800);
+    }).catch(() => {
+      btn.textContent = 'Copy failed';
+      setTimeout(() => { btn.textContent = 'Copy'; }, 1800);
+    });
+  }
+</script>
+</body>
+</html>
