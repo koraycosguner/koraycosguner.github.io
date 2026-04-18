@@ -3,12 +3,12 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Tailor &amp; Co. &mdash; Targeted Channel Pricing</title>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Source+Serif+4:opsz,wght@8..60,300;8..60,400;8..60,600&display=swap" rel="stylesheet" />
+<title>Tailor &amp; Co. &mdash; Product Portfolio &amp; Channel Level Pricing</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Source+Serif+4:opsz,wght@8..60,300;8..60,400;8..60,600&display=swap" rel="stylesheet" />
 <script>
   // Default MathJax delimiters: \( \) for inline, $$ $$ for display.
-  // Do NOT enable $...$ as inline math — dollar signs in plain text (e.g. "$10")
-  // would otherwise be parsed as math, and the % character that follows would
+  // Do NOT enable $...$ as inline math — dollar signs in plain text would
+  // otherwise be parsed as math, and the % character that follows would
   // be read as a TeX comment marker, eating the rest of the line.
   window.MathJax = {
     tex: { displayMath: [['$$', '$$']] },
@@ -19,63 +19,456 @@
 <style>
   :root {
     --crimson: #990000; --crimson-dark: #4a0000; --crimson-light: #d4a8a8;
-    --bg: #faf7f7; --card: #ffffff; --text: #333; --text-dark: #1a1a1a;
-    --border: #e8e0e0; --green: #2d6a2e; --green-bg: #f0f7f0;
+    --crimson-soft: #fbf3f3;
+    --bg: #faf7f7; --card: #ffffff; --text: #333; --text-dark: #1a1a1a; --text-light: #888;
+    --border: #ece4e4; --green: #2d6a2e; --green-bg: #f0f7f0;
     --serif: 'Source Serif 4', Georgia, 'Times New Roman', serif;
     --display: 'Playfair Display', Georgia, serif;
     --mono: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
   }
   * { margin: 0; padding: 0; box-sizing: border-box; }
-  body { font-family: var(--serif); background: #f3efef; color: var(--text); font-size: 16px; line-height: 1.7; -webkit-font-smoothing: antialiased; }
-  .page-wrapper { max-width: 960px; margin: 0 auto; padding: 32px 16px 80px; }
+  body {
+    font-family: var(--serif);
+    background: #efeaea;
+    background-image:
+      radial-gradient(ellipse 60% 40% at 20% 5%, rgba(153,0,0,0.04) 0%, transparent 50%),
+      radial-gradient(ellipse 50% 30% at 90% 100%, rgba(74,0,0,0.05) 0%, transparent 50%);
+    background-attachment: fixed;
+    color: var(--text);
+    font-size: 16px;
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+  }
+  .page-wrapper { max-width: 980px; margin: 0 auto; padding: 32px 16px 60px; }
 
-  .header { background: linear-gradient(135deg, var(--crimson), var(--crimson-dark)); padding: 36px 36px 28px; border-radius: 10px 10px 0 0; position: relative; overflow: hidden; }
-  .header::after { content: ''; position: absolute; top: -40px; right: -40px; width: 180px; height: 180px; background: rgba(255,255,255,0.04); border-radius: 50%; }
-  .header h1 { font-family: var(--display); color: #fff; font-size: clamp(22px, 3.2vw, 32px); font-weight: 700; margin-bottom: 4px; position: relative; }
-  .header .sub { color: var(--crimson-light); font-size: clamp(12px, 1.6vw, 15px); font-weight: 300; letter-spacing: 0.3px; }
+  /* HEADER */
+  .header {
+    background: linear-gradient(135deg, var(--crimson), var(--crimson-dark));
+    padding: 40px 40px 32px;
+    border-radius: 12px 12px 0 0;
+    position: relative;
+    overflow: hidden;
+  }
+  .header::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image:
+      radial-gradient(circle at 90% 20%, rgba(255,255,255,0.08) 0%, transparent 35%),
+      radial-gradient(circle at 10% 90%, rgba(255,255,255,0.05) 0%, transparent 40%);
+    pointer-events: none;
+  }
+  .header .lecture-tag {
+    display: inline-block;
+    color: var(--crimson-light);
+    font-size: 12px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    font-weight: 600;
+    margin-bottom: 8px;
+    position: relative;
+  }
+  .header h1 {
+    font-family: var(--display);
+    color: #fff;
+    font-size: clamp(24px, 3.4vw, 36px);
+    font-weight: 700;
+    line-height: 1.15;
+    margin-bottom: 10px;
+    position: relative;
+  }
+  .header .sub {
+    color: var(--crimson-light);
+    font-size: clamp(13px, 1.6vw, 15px);
+    font-weight: 300;
+    letter-spacing: 0.3px;
+    position: relative;
+  }
 
-  .body-card { background: var(--bg); border: 2px solid var(--crimson); border-top: none; border-radius: 0 0 10px 10px; padding: 32px 36px 40px; }
+  /* BODY */
+  .body-card {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-top: none;
+    border-radius: 0 0 12px 12px;
+    padding: 36px 40px 44px;
+    box-shadow: 0 6px 20px rgba(74,0,0,0.07);
+  }
 
-  .context-block { background: #fff; border: 1px solid var(--border); border-radius: 8px; padding: 20px 24px; margin-bottom: 28px; font-size: 14.5px; line-height: 1.75; color: #444; }
+  /* CONTEXT BLOCK */
+  .context-block {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 22px 26px;
+    margin-bottom: 22px;
+    font-size: 14.5px;
+    line-height: 1.75;
+    color: #444;
+  }
   .context-block strong { color: var(--crimson-dark); }
-  .context-block .tier { display: inline-block; padding: 1px 8px; margin: 0 2px; border-radius: 4px; font-size: 12.5px; font-weight: 600; letter-spacing: 0.3px; }
-  .context-block .tier-good { background: #f3efef; color: var(--crimson-dark); }
-  .context-block .tier-better { background: #ffe4cc; color: #8a3a00; }
-  .context-block .tier-best { background: #e6efe6; color: var(--green); }
 
-  .tool-link { display: inline-flex; align-items: center; gap: 8px; background: var(--crimson); color: #fff; text-decoration: none; padding: 10px 18px; border-radius: 8px; font-weight: 600; font-size: 14px; margin-top: 14px; transition: background 0.15s; letter-spacing: 0.3px; }
-  .tool-link:hover { background: var(--crimson-dark); }
-  .tool-link::after { content: '\2192'; font-size: 18px; line-height: 1; }
+  /* PRODUCT PORTFOLIO CARD */
+  .overview-card {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 22px 26px 24px;
+    margin-bottom: 22px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+  }
+  .overview-card .card-header {
+    font-size: 11px;
+    color: var(--text-light);
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    font-weight: 700;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .overview-card .card-header::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+  .portfolio-tiles { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+  .tier-tile {
+    padding: 18px 16px;
+    border-radius: 10px;
+    text-align: center;
+    position: relative;
+    border: 1px solid var(--border);
+    transition: transform 0.18s, box-shadow 0.18s;
+  }
+  .tier-tile:hover { transform: translateY(-2px); box-shadow: 0 6px 18px rgba(0,0,0,0.06); }
+  .tier-tile .tier-name {
+    font-size: 10.5px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    margin-bottom: 8px;
+  }
+  .tier-tile .product-name {
+    font-family: var(--display);
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--text-dark);
+    line-height: 1.2;
+    margin-bottom: 10px;
+  }
+  .tier-tile .cost { font-size: 12.5px; color: var(--text-light); }
+  .tier-tile .cost-value { color: var(--crimson-dark); font-weight: 700; font-size: 15px; }
+  .tier-good { background: linear-gradient(180deg, #faf7f5, #fff); border-top: 4px solid #a89181; }
+  .tier-good .tier-name { color: #786555; }
+  .tier-better { background: linear-gradient(180deg, #fff7ee, #fff); border-top: 4px solid #c68142; }
+  .tier-better .tier-name { color: #8a3a00; }
+  .tier-best { background: linear-gradient(180deg, #f5f9f5, #fff); border-top: 4px solid var(--green); }
+  .tier-best .tier-name { color: var(--green); }
 
-  .section-title { font-family: var(--display); font-size: clamp(18px, 2.4vw, 24px); color: var(--crimson); margin: 36px 0 14px; padding-bottom: 8px; border-bottom: 2px solid var(--crimson); }
-  .section-title:first-of-type { margin-top: 8px; }
-  .section-intro { font-size: 14.5px; color: #555; margin-bottom: 14px; }
+  /* CHANNEL OVERVIEW */
+  .channels-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+  .channel-stat {
+    text-align: center;
+    padding: 18px 14px;
+    border-radius: 10px;
+    background: linear-gradient(180deg, var(--crimson-soft), #fff);
+    border: 1px solid #f1e4e4;
+  }
+  .channel-stat .num {
+    font-family: var(--display);
+    font-size: 34px;
+    font-weight: 700;
+    color: var(--crimson);
+    line-height: 1;
+  }
+  .channel-stat .label { font-size: 14px; color: var(--text-dark); margin-top: 8px; font-weight: 600; }
+  .channel-stat .meta { font-size: 10.5px; color: var(--text-light); margin-top: 4px; text-transform: uppercase; letter-spacing: 1px; font-weight: 600; }
+  .channel-total { text-align: center; margin-top: 14px; font-size: 13px; color: var(--text-light); padding-top: 14px; border-top: 1px dashed var(--border); }
+  .channel-total strong { color: var(--crimson-dark); font-weight: 700; }
 
-  .subsection-title { font-family: var(--display); font-size: 19px; color: var(--crimson-dark); margin: 28px 0 12px; display: flex; align-items: baseline; flex-wrap: wrap; gap: 10px; }
-  .subsection-title .badge { display: inline-block; background: var(--crimson); color: #fff; font-family: var(--serif); font-size: 12px; font-weight: 600; padding: 3px 10px; border-radius: 12px; vertical-align: middle; letter-spacing: 0.3px; }
+  /* SECTION HEADER (numbered) */
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin: 44px 0 18px;
+    padding-bottom: 14px;
+    border-bottom: 2px solid var(--crimson);
+  }
+  .section-header .num {
+    width: 46px; height: 46px;
+    background: linear-gradient(135deg, var(--crimson), var(--crimson-dark));
+    color: #fff;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--display);
+    font-size: 22px; font-weight: 700;
+    flex-shrink: 0;
+    box-shadow: 0 3px 10px rgba(153,0,0,0.25);
+  }
+  .section-header h2 {
+    font-family: var(--display);
+    font-size: clamp(20px, 2.6vw, 26px);
+    color: var(--crimson);
+    margin: 0;
+    flex: 1;
+    line-height: 1.25;
+  }
+  .section-header .meta {
+    font-size: 12px;
+    color: var(--text-light);
+    font-weight: 700;
+    letter-spacing: 0.6px;
+    text-transform: uppercase;
+    white-space: nowrap;
+    background: var(--crimson-soft);
+    padding: 6px 12px;
+    border-radius: 14px;
+  }
+  .section-intro {
+    font-size: 14.5px;
+    color: #555;
+    margin: 0 0 18px;
+    line-height: 1.7;
+  }
 
-  .equation-block { background: #fff; border-left: 4px solid var(--crimson); border-radius: 0 8px 8px 0; padding: 16px 24px 18px; margin: 12px 0; box-shadow: 0 1px 4px rgba(0,0,0,0.04); overflow-x: auto; }
-  .equation-block .label { font-weight: 600; color: var(--crimson); display: block; margin-bottom: 6px; font-size: 12px; letter-spacing: 0.4px; text-transform: uppercase; }
-  .equation-block .explanation { font-style: italic; color: #666; font-size: 13.5px; line-height: 1.65; margin: 4px 0 12px; }
+  /* CHANNEL HERO */
+  .channel-hero {
+    background: linear-gradient(135deg, #fff, var(--crimson-soft));
+    border-radius: 12px;
+    padding: 22px 28px;
+    margin: 30px 0 14px;
+    border-left: 5px solid var(--crimson);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+  .channel-hero .left { flex: 1; min-width: 200px; }
+  .channel-hero .channel-num {
+    font-size: 11px;
+    color: var(--text-light);
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+  .channel-hero h3 {
+    font-family: var(--display);
+    color: var(--crimson-dark);
+    font-size: 24px;
+    font-weight: 700;
+    margin: 0;
+    line-height: 1.2;
+  }
+  .channel-hero .size-badge {
+    background: linear-gradient(135deg, var(--crimson), var(--crimson-dark));
+    color: #fff;
+    padding: 10px 18px;
+    border-radius: 24px;
+    font-weight: 700;
+    font-size: 14px;
+    white-space: nowrap;
+    box-shadow: 0 3px 10px rgba(153,0,0,0.22);
+    letter-spacing: 0.3px;
+  }
+
+  /* SUBSECTION TITLE (Total Profit) */
+  .subsection-title {
+    font-family: var(--display);
+    font-size: 21px;
+    color: var(--crimson-dark);
+    margin: 36px 0 14px;
+    font-weight: 700;
+    padding-left: 14px;
+    border-left: 4px solid var(--crimson);
+    line-height: 1.25;
+  }
+
+  /* EQUATION BLOCK */
+  .equation-block {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-left: 4px solid var(--crimson);
+    border-radius: 0 10px 10px 0;
+    padding: 18px 26px 20px;
+    margin: 10px 0;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.03);
+    overflow-x: auto;
+  }
+  .equation-block .label {
+    display: inline-block;
+    color: var(--crimson);
+    font-size: 11px;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    font-weight: 700;
+    margin-bottom: 6px;
+    padding: 3px 10px;
+    background: var(--crimson-soft);
+    border-radius: 4px;
+  }
+  .equation-block .explanation {
+    font-style: italic;
+    color: #6c6c6c;
+    font-size: 13.5px;
+    line-height: 1.65;
+    margin: 8px 0 14px;
+  }
+  .equation-block .explanation code {
+    font-family: var(--mono);
+    background: #f5f0f0;
+    color: var(--crimson-dark);
+    padding: 1px 5px;
+    border-radius: 3px;
+    font-size: 12.5px;
+    font-style: normal;
+  }
   .equation-block + .equation-block { margin-top: 8px; }
   .equation-block mjx-container { margin: 6px 0 !important; }
 
-  .code-card { position: relative; background: #2a2a2a; color: #e8e8e8; border-radius: 8px; padding: 18px 20px 18px 20px; margin: 22px 0 30px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
-  .code-card .code-title { font-family: var(--serif); font-size: 12px; color: #bbb; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 12px; padding-right: 92px; }
-  .code-card .copy-btn { position: absolute; top: 14px; right: 14px; background: var(--crimson); color: #fff; border: none; border-radius: 6px; padding: 8px 16px; font-family: var(--serif); font-size: 13px; font-weight: 600; cursor: pointer; letter-spacing: 0.3px; transition: background 0.15s; }
-  .code-card .copy-btn:hover { background: #b30000; }
-  .code-card .copy-btn.copied { background: var(--green); }
-  .code-card pre { font-family: var(--mono); font-size: 12.5px; line-height: 1.65; white-space: pre-wrap; word-break: break-word; color: #e8e8e8; max-height: 480px; overflow-y: auto; }
+  /* CODE CARD */
+  .code-card {
+    position: relative;
+    background: #2a2a2a;
+    color: #e8e8e8;
+    border-radius: 10px;
+    padding: 18px 22px;
+    margin: 22px 0 30px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+    border: 1px solid #1a1a1a;
+  }
+  .code-card .code-title {
+    font-family: var(--serif);
+    font-size: 12px;
+    color: #c8c8c8;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    margin-bottom: 14px;
+    padding-right: 100px;
+    font-weight: 600;
+  }
+  .code-card .copy-btn {
+    position: absolute;
+    top: 14px; right: 14px;
+    background: var(--crimson);
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    padding: 9px 16px;
+    font-family: var(--serif);
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    letter-spacing: 0.3px;
+    transition: all 0.15s;
+    box-shadow: 0 2px 6px rgba(153,0,0,0.35);
+  }
+  .code-card .copy-btn:hover { background: #b30000; transform: translateY(-1px); }
+  .code-card .copy-btn.copied { background: var(--green); box-shadow: 0 2px 6px rgba(45,106,46,0.35); }
+  .code-card pre {
+    font-family: var(--mono);
+    font-size: 12.5px;
+    line-height: 1.65;
+    white-space: pre-wrap;
+    word-break: break-word;
+    color: #e8e8e8;
+    max-height: 480px;
+    overflow-y: auto;
+  }
 
-  .footer { text-align: center; margin-top: 40px; font-size: 13px; color: #aaa; letter-spacing: 0.3px; }
+  /* CTA */
+  .cta-block {
+    background: linear-gradient(135deg, var(--crimson), var(--crimson-dark));
+    color: #fff;
+    border-radius: 12px;
+    padding: 32px 32px 30px;
+    margin: 40px 0 0;
+    text-align: center;
+    box-shadow: 0 6px 22px rgba(74,0,0,0.22);
+    position: relative;
+    overflow: hidden;
+  }
+  .cta-block::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image:
+      radial-gradient(circle at 90% 20%, rgba(255,255,255,0.08) 0%, transparent 40%),
+      radial-gradient(circle at 10% 80%, rgba(255,255,255,0.05) 0%, transparent 40%);
+    pointer-events: none;
+  }
+  .cta-block .cta-eyebrow {
+    font-size: 11px;
+    color: var(--crimson-light);
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    font-weight: 700;
+    margin-bottom: 6px;
+    position: relative;
+  }
+  .cta-block h4 {
+    font-family: var(--display);
+    font-size: 22px;
+    font-weight: 700;
+    margin-bottom: 8px;
+    position: relative;
+  }
+  .cta-block p {
+    color: rgba(255,255,255,0.85);
+    font-size: 14px;
+    margin-bottom: 20px;
+    position: relative;
+    max-width: 540px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .cta-block .cta-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: #fff;
+    color: var(--crimson);
+    text-decoration: none;
+    padding: 14px 28px;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 15px;
+    letter-spacing: 0.3px;
+    transition: all 0.2s;
+    position: relative;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.18);
+  }
+  .cta-block .cta-btn:hover { background: var(--bg); transform: translateY(-2px); box-shadow: 0 6px 18px rgba(0,0,0,0.25); }
+  .cta-block .cta-btn::after { content: '\2192'; font-size: 18px; line-height: 1; }
 
+  /* FOOTER */
+  .footer {
+    text-align: center;
+    margin-top: 30px;
+    font-size: 13px;
+    color: rgba(74,0,0,0.5);
+    letter-spacing: 0.3px;
+  }
+
+  /* RESPONSIVE */
+  @media (max-width: 720px) {
+    .portfolio-tiles, .channels-grid { grid-template-columns: 1fr; }
+  }
   @media (max-width: 600px) {
-    .body-card, .header { padding-left: 18px; padding-right: 18px; }
-    .equation-block { padding: 12px 16px; }
+    .body-card, .header { padding-left: 22px; padding-right: 22px; }
+    .equation-block { padding: 14px 18px; }
     .code-card { padding: 14px 16px; }
     .code-card pre { padding-top: 0; }
     .code-card .code-title { padding-right: 0; padding-top: 36px; }
     .code-card .copy-btn { top: 10px; right: 10px; }
+    .channel-hero { padding: 18px 22px; }
+    .section-header .num { width: 38px; height: 38px; font-size: 18px; }
+    .cta-block { padding: 26px 22px; }
   }
 </style>
 </head>
@@ -83,29 +476,74 @@
 <div class="page-wrapper">
 
   <div class="header">
+    <span class="lecture-tag">Tailor &amp; Co. &middot; M574</span>
     <h1>Product Portfolio Pricing &amp; Channel Level Pricing</h1>
-    <p class="sub">Tailor &amp; Co. &middot; Good&ndash;Better&ndash;Best Portfolio &middot; M574 Performance Driven Pricing</p>
+    <p class="sub">Good&ndash;Better&ndash;Best Portfolio &middot; Performance Driven Pricing</p>
   </div>
 
   <div class="body-card">
 
+    <!-- CONTEXT -->
     <div class="context-block">
-      <strong>Tailor &amp; Co.</strong> sells dress shirts across three distinct channels and offers a tiered product portfolio:
-      <span class="tier tier-good">GOOD</span> Basic Cotton Blend,
-      <span class="tier tier-better">BETTER</span> 100% Cotton, and
-      <span class="tier tier-best">BEST</span> Organic Cotton.
-      With diverse customer bases across channels, consumer preferences and price sensitivities can vary, so we compare two estimation strategies on the same 2,100&minus;customer dataset:
-      <strong>(1) a pooled product choice model</strong> using all customers, and <strong>(2) channel-level product choice models</strong> estimated separately for the Retail Chain (1,000 customers), Online Store (700 customers), and Premium Boutique (400 customers). Each setup is shown in standard equation form, followed by a code block ready to paste into <strong>Tool 8: General Purpose Optimizer</strong> for finding the profit-maximizing prices.
-      <br><br>
-      <strong>Unit costs:</strong> Basic Cotton Blend = $10, 100% Cotton = $20, Organic Cotton = $30. <strong>Reference alternative:</strong> No Purchase \(\bigl(U = 0\bigr)\).
-      <br>
-      <a class="tool-link" href="profit-optimizer.html" target="_blank" rel="noopener">Open Tool 8: General Purpose Optimizer</a>
+      <strong>Tailor &amp; Co.</strong> sells dress shirts across three distinct channels, with a tiered product portfolio. With diverse customer bases across channels, consumer preferences and price sensitivities can vary, so we compare two estimation strategies on the same 2,100&minus;customer dataset:
+      <strong>(1) a pooled product choice model</strong> using all customers, and <strong>(2) channel-level product choice models</strong> estimated separately for each venue. Each setup is shown in standard equation form, followed by a code block ready to paste into <strong>Tool 8: General Purpose Optimizer</strong>.
+    </div>
+
+    <!-- PRODUCT PORTFOLIO -->
+    <div class="overview-card">
+      <div class="card-header">Product Portfolio &amp; Unit Costs</div>
+      <div class="portfolio-tiles">
+        <div class="tier-tile tier-good">
+          <div class="tier-name">GOOD</div>
+          <div class="product-name">Basic Cotton Blend</div>
+          <div class="cost">Unit cost: <span class="cost-value">$10</span></div>
+        </div>
+        <div class="tier-tile tier-better">
+          <div class="tier-name">BETTER</div>
+          <div class="product-name">100% Cotton</div>
+          <div class="cost">Unit cost: <span class="cost-value">$20</span></div>
+        </div>
+        <div class="tier-tile tier-best">
+          <div class="tier-name">BEST</div>
+          <div class="product-name">Organic Cotton</div>
+          <div class="cost">Unit cost: <span class="cost-value">$30</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CHANNELS OVERVIEW -->
+    <div class="overview-card">
+      <div class="card-header">Channels &amp; Customer Counts</div>
+      <div class="channels-grid">
+        <div class="channel-stat">
+          <div class="num">1,000</div>
+          <div class="label">Retail Chain</div>
+          <div class="meta">Channel 1</div>
+        </div>
+        <div class="channel-stat">
+          <div class="num">700</div>
+          <div class="label">Online Store</div>
+          <div class="meta">Channel 2</div>
+        </div>
+        <div class="channel-stat">
+          <div class="num">400</div>
+          <div class="label">Premium Boutique</div>
+          <div class="meta">Channel 3</div>
+        </div>
+      </div>
+      <div class="channel-total">
+        Total dataset: <strong>2,100 customers</strong> &middot; Reference alternative: No Purchase \(\bigl(U = 0\bigr)\)
+      </div>
     </div>
 
     <!-- ============================================== -->
     <!-- POOLED -->
     <!-- ============================================== -->
-    <h2 class="section-title">1. Pooled Analysis (n = 2,100)</h2>
+    <div class="section-header">
+      <div class="num">1</div>
+      <h2>Pooled Product Choice Model</h2>
+      <span class="meta">n = 2,100</span>
+    </div>
     <p class="section-intro">A single product choice model is estimated on all 2,100 customers, ignoring channel membership. One set of coefficients applies to every customer regardless of where they shop.</p>
 
     <div class="equation-block">
@@ -166,11 +604,21 @@ Profit = Profit_Per_Customer * 2100</pre>
     <!-- ============================================== -->
     <!-- CHANNEL-BY-CHANNEL -->
     <!-- ============================================== -->
-    <h2 class="section-title">2. Channel-by-Channel Analysis</h2>
+    <div class="section-header">
+      <div class="num">2</div>
+      <h2>Channel-Level Product Choice Models</h2>
+      <span class="meta">3 channels</span>
+    </div>
     <p class="section-intro">A separate product choice model is estimated within each channel, allowing intercepts (intrinsic appeal) and slopes (price sensitivity) to differ across the three sales venues. Channel profits are then summed for the firm-level objective.</p>
 
     <!-- ====================== Channel 1 ====================== -->
-    <h3 class="subsection-title">Channel 1: Retail Chain <span class="badge">n = 1,000</span></h3>
+    <div class="channel-hero">
+      <div class="left">
+        <div class="channel-num">Channel 1</div>
+        <h3>Retail Chain</h3>
+      </div>
+      <div class="size-badge">1,000 customers</div>
+    </div>
 
     <div class="equation-block">
       <span class="label">Utilities &mdash; Retail Chain</span>
@@ -210,7 +658,13 @@ Profit = Profit_Per_Customer * 2100</pre>
     </div>
 
     <!-- ====================== Channel 2 ====================== -->
-    <h3 class="subsection-title">Channel 2: Online Store <span class="badge">n = 700</span></h3>
+    <div class="channel-hero">
+      <div class="left">
+        <div class="channel-num">Channel 2</div>
+        <h3>Online Store</h3>
+      </div>
+      <div class="size-badge">700 customers</div>
+    </div>
 
     <div class="equation-block">
       <span class="label">Utilities &mdash; Online Store</span>
@@ -250,7 +704,13 @@ Profit = Profit_Per_Customer * 2100</pre>
     </div>
 
     <!-- ====================== Channel 3 ====================== -->
-    <h3 class="subsection-title">Channel 3: Premium Boutique <span class="badge">n = 400</span></h3>
+    <div class="channel-hero">
+      <div class="left">
+        <div class="channel-num">Channel 3</div>
+        <h3>Premium Boutique</h3>
+      </div>
+      <div class="size-badge">400 customers</div>
+    </div>
 
     <div class="equation-block">
       <span class="label">Utilities &mdash; Premium Boutique</span>
@@ -289,7 +749,7 @@ Profit = Profit_Per_Customer * 2100</pre>
       $$\text{Profit}^{\text{Premium Boutique}} = 400 \cdot \text{Profit}^{\text{Premium Boutique}}_{\text{per Customer}}$$
     </div>
 
-    <!-- Total -->
+    <!-- TOTAL -->
     <h3 class="subsection-title">Total Profit Across Channels</h3>
 
     <div class="equation-block">
@@ -354,9 +814,13 @@ Profit_Premium_Boutique = Profit_Per_Customer_Premium_Boutique * 400
 Profit = Profit_Retail_Chain + Profit_Online_Store + Profit_Premium_Boutique</pre>
     </div>
 
-    <p style="text-align: center; margin-top: 32px;">
-      <a class="tool-link" href="profit-optimizer.html" target="_blank" rel="noopener">Open Tool 8: General Purpose Optimizer</a>
-    </p>
+    <!-- CTA -->
+    <div class="cta-block">
+      <div class="cta-eyebrow">Next Step</div>
+      <h4>Find the Profit-Maximizing Prices</h4>
+      <p>Copy either code block above and paste it into Tool 8: General Purpose Optimizer to compute the optimal prices for the pooled or channel-level setup.</p>
+      <a class="cta-btn" href="profit-optimizer.html" target="_blank" rel="noopener">Open Tool 8: General Purpose Optimizer</a>
+    </div>
 
   </div>
 
