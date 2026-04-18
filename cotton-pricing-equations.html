@@ -111,23 +111,23 @@
     <div class="equation-block">
       <span class="label">Utilities</span>
       <p class="explanation">Each alternative's deterministic utility is a linear function of its own price. The intercept captures the alternative's intrinsic appeal; the slope is the price-sensitivity coefficient (more negative = more sensitive to price).</p>
-      $$U_{100\%\,\text{Cotton}} = 2.2496 - 0.0792 \cdot P_{100\%\,\text{Cotton}}$$
       $$U_{\text{Basic Cotton Blend}} = 2.2462 - 0.1309 \cdot P_{\text{Basic Cotton Blend}}$$
+      $$U_{100\%\,\text{Cotton}} = 2.2496 - 0.0792 \cdot P_{100\%\,\text{Cotton}}$$
       $$U_{\text{Organic Cotton}} = 1.5185 - 0.0429 \cdot P_{\text{Organic Cotton}}$$
     </div>
 
     <div class="equation-block">
       <span class="label">Denominator</span>
       <p class="explanation">The denominator normalizes the choice shares so they sum to one. The leading 1 corresponds to <code>exp(0)</code>, the utility of the No&nbsp;Purchase outside option (the reference level).</p>
-      $$D = 1 + \exp(U_{100\%\,\text{Cotton}}) + \exp(U_{\text{Basic Cotton Blend}}) + \exp(U_{\text{Organic Cotton}})$$
+      $$D = 1 + \exp(U_{\text{Basic Cotton Blend}}) + \exp(U_{100\%\,\text{Cotton}}) + \exp(U_{\text{Organic Cotton}})$$
     </div>
 
     <div class="equation-block">
       <span class="label">Choice Probabilities</span>
       <p class="explanation">In the product choice model, the choice probability of each alternative is its <code>exp(utility)</code> divided by the denominator. The four probabilities are mutually exclusive and sum to one.</p>
       $$\Pr(\text{No Purchase}) = \frac{1}{D}$$
-      $$\Pr(100\%\,\text{Cotton}) = \frac{\exp(U_{100\%\,\text{Cotton}})}{D}$$
       $$\Pr(\text{Basic Cotton Blend}) = \frac{\exp(U_{\text{Basic Cotton Blend}})}{D}$$
+      $$\Pr(100\%\,\text{Cotton}) = \frac{\exp(U_{100\%\,\text{Cotton}})}{D}$$
       $$\Pr(\text{Organic Cotton}) = \frac{\exp(U_{\text{Organic Cotton}})}{D}$$
     </div>
 
@@ -135,8 +135,8 @@
       <span class="label">Profit</span>
       <p class="explanation">Per-customer profit is the probability-weighted sum of unit margins (price minus unit cost) across the three products. Total firm profit scales by market size (2,100 customers).</p>
       $$\begin{aligned}
-        \text{Profit}_{\text{per Customer}} = \;& \Pr(100\%\,\text{Cotton}) \cdot (P_{100\%\,\text{Cotton}} - 20) \\
-        + \;& \Pr(\text{Basic Cotton Blend}) \cdot (P_{\text{Basic Cotton Blend}} - 10) \\
+        \text{Profit}_{\text{per Customer}} = \;& \Pr(\text{Basic Cotton Blend}) \cdot (P_{\text{Basic Cotton Blend}} - 10) \\
+        + \;& \Pr(100\%\,\text{Cotton}) \cdot (P_{100\%\,\text{Cotton}} - 20) \\
         + \;& \Pr(\text{Organic Cotton}) \cdot (P_{\text{Organic Cotton}} - 30)
       \end{aligned}$$
       $$\text{Profit} = 2{,}100 \cdot \text{Profit}_{\text{per Customer}}$$
@@ -147,18 +147,18 @@
       <button class="copy-btn" onclick="copyBlock('pooled-code', this)">Copy</button>
 <pre id="pooled-code"># Pooled Analysis (n = 2,100)
 
-U_100_Cotton = 2.2496 - 0.0792 * P_100_Cotton
 U_Basic_Cotton_Blend = 2.2462 - 0.1309 * P_Basic_Cotton_Blend
+U_100_Cotton = 2.2496 - 0.0792 * P_100_Cotton
 U_Organic_Cotton = 1.5185 - 0.0429 * P_Organic_Cotton
 
-Denominator = 1 + exp(U_100_Cotton) + exp(U_Basic_Cotton_Blend) + exp(U_Organic_Cotton)
+Denominator = 1 + exp(U_Basic_Cotton_Blend) + exp(U_100_Cotton) + exp(U_Organic_Cotton)
 
 Pr_No_Purchase = 1 / Denominator
-Pr_100_Cotton = exp(U_100_Cotton) / Denominator
 Pr_Basic_Cotton_Blend = exp(U_Basic_Cotton_Blend) / Denominator
+Pr_100_Cotton = exp(U_100_Cotton) / Denominator
 Pr_Organic_Cotton = exp(U_Organic_Cotton) / Denominator
 
-Profit_Per_Customer = Pr_100_Cotton * (P_100_Cotton - 20) + Pr_Basic_Cotton_Blend * (P_Basic_Cotton_Blend - 10) + Pr_Organic_Cotton * (P_Organic_Cotton - 30)
+Profit_Per_Customer = Pr_Basic_Cotton_Blend * (P_Basic_Cotton_Blend - 10) + Pr_100_Cotton * (P_100_Cotton - 20) + Pr_Organic_Cotton * (P_Organic_Cotton - 30)
 
 Profit = Profit_Per_Customer * 2100</pre>
     </div>
