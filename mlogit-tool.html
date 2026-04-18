@@ -771,6 +771,10 @@ ui = fluidPage(
 
 server = function(input, output, session) {
 
+  # Sanitize alternative names for use as identifiers in R/Python/Excel
+  # (replaces spaces with underscores and removes "%")
+  sanitize_alt = function(x) gsub("%", "", gsub(" ", "_", x))
+
   # Process Summary
   output$process_summary = renderUI({
     req(input$data_format)
@@ -1754,7 +1758,14 @@ server = function(input, output, session) {
         )
       ),
       div(style = "margin-top: 10px;",
-        downloadButton("download_equations", "Download as TXT", class = "btn-secondary")
+        downloadButton("download_equations", "Download as TXT", class = "btn-secondary"),
+        tags$button(
+          "Copy to Clipboard",
+          type = "button",
+          class = "btn btn-secondary",
+          style = "margin-left: 10px;",
+          onclick = "navigator.clipboard.writeText(document.getElementById('equations_text').innerText)"
+        )
       )
     )
   })
@@ -1789,7 +1800,7 @@ server = function(input, output, session) {
     # Build utility equations text for each non-baseline alternative
     utility_lines = c()
     utility_lines = c(utility_lines, "# Utility Equations")
-    utility_lines = c(utility_lines, paste0("# Baseline: U_", gsub(" ", "_", reflevel), " = 0"))
+    utility_lines = c(utility_lines, paste0("# Baseline: U_", sanitize_alt(reflevel), " = 0"))
     utility_lines = c(utility_lines, "")
 
     # First, identify generic (alternative-invariant) coefficients that apply to ALL alternatives
@@ -1814,7 +1825,7 @@ server = function(input, output, session) {
     }
 
     for (alt in non_base_alts) {
-      alt_clean = gsub(" ", "_", alt)
+      alt_clean = sanitize_alt(alt)
       terms = c()
 
       # Check for alternative-specific intercept first
@@ -1881,18 +1892,21 @@ server = function(input, output, session) {
     # Denominator: 1 + exp(U_1) + exp(U_2) + ...
     denom_terms = c("1")  # baseline exp(0) = 1
     for (alt in non_base_alts) {
-      alt_clean = gsub(" ", "_", alt)
+      alt_clean = sanitize_alt(alt)
       denom_terms = c(denom_terms, paste0("exp(U_", alt_clean, ")"))
     }
     denom_str = paste(denom_terms, collapse = " + ")
 
+    # Define denominator once and reuse
+    utility_lines = c(utility_lines, paste0("Denominator = ", denom_str))
+
     # Baseline probability
-    utility_lines = c(utility_lines, paste0("Pr_", gsub(" ", "_", reflevel), " = 1 / (", denom_str, ")"))
+    utility_lines = c(utility_lines, paste0("Pr_", sanitize_alt(reflevel), " = 1 / Denominator"))
 
     # Other probabilities
     for (alt in non_base_alts) {
-      alt_clean = gsub(" ", "_", alt)
-      utility_lines = c(utility_lines, paste0("Pr_", alt_clean, " = exp(U_", alt_clean, ") / (", denom_str, ")"))
+      alt_clean = sanitize_alt(alt)
+      utility_lines = c(utility_lines, paste0("Pr_", alt_clean, " = exp(U_", alt_clean, ") / Denominator"))
     }
 
     # Combine all lines
@@ -1928,7 +1942,7 @@ server = function(input, output, session) {
 
       utility_lines = c()
       utility_lines = c(utility_lines, "# Utility Equations")
-      utility_lines = c(utility_lines, paste0("# Baseline: U_", gsub(" ", "_", reflevel), " = 0"))
+      utility_lines = c(utility_lines, paste0("# Baseline: U_", sanitize_alt(reflevel), " = 0"))
       utility_lines = c(utility_lines, "")
 
       generic_terms = list()
@@ -1946,7 +1960,7 @@ server = function(input, output, session) {
       }
 
       for (alt in non_base_alts) {
-        alt_clean = gsub(" ", "_", alt)
+        alt_clean = sanitize_alt(alt)
         terms = c()
 
         alt_intercept_found = FALSE
@@ -1996,16 +2010,18 @@ server = function(input, output, session) {
 
       denom_terms = c("1")
       for (alt in non_base_alts) {
-        alt_clean = gsub(" ", "_", alt)
+        alt_clean = sanitize_alt(alt)
         denom_terms = c(denom_terms, paste0("exp(U_", alt_clean, ")"))
       }
       denom_str = paste(denom_terms, collapse = " + ")
 
-      utility_lines = c(utility_lines, paste0("Pr_", gsub(" ", "_", reflevel), " = 1 / (", denom_str, ")"))
+      utility_lines = c(utility_lines, paste0("Denominator = ", denom_str))
+
+      utility_lines = c(utility_lines, paste0("Pr_", sanitize_alt(reflevel), " = 1 / Denominator"))
 
       for (alt in non_base_alts) {
-        alt_clean = gsub(" ", "_", alt)
-        utility_lines = c(utility_lines, paste0("Pr_", alt_clean, " = exp(U_", alt_clean, ") / (", denom_str, ")"))
+        alt_clean = sanitize_alt(alt)
+        utility_lines = c(utility_lines, paste0("Pr_", alt_clean, " = exp(U_", alt_clean, ") / Denominator"))
       }
 
       writeLines(utility_lines, file)
