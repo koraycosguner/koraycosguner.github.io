@@ -914,6 +914,11 @@ Profit = Revenue - Cost * Sales" oninput="parseEquations()"></textarea>
         let mainChart = null;
         let lastResult = null;
 
+        // Cached compiled model (set by prepareModel(), used by evalModel() in hot loops).
+        // When non-null, evalModel uses pre-compiled formulas + pre-computed eval order
+        // instead of re-parsing every call. Cleared after the optimization run finishes.
+        let _compiledModel = null;
+
         document.addEventListener('DOMContentLoaded', () => {
             initChart();
             addDecisionVar('', '', '');
@@ -1269,8 +1274,49 @@ Profit = Revenue - Cost * Sales" oninput="parseEquations()"></textarea>
             return values;
         }
 
+        // Build a cached, pre-compiled model for use inside hot optimization loops.
+        // - Topological order is computed once
+        // - Each formula is normalized + parsed + compiled once (math.js compiled nodes
+        //   are much faster to .evaluate(scope) than re-parsing the string each call)
+        // Returns the cache object, or null on failure (circular dep / parse error).
+        function prepareModel() {
+            const order = getEvalOrder();
+            if (!order) return null;
+            const compiled = [];
+            for (const eq of order) {
+                try {
+                    const node = math.parse(normalizeFormula(eq.formula)).compile();
+                    compiled.push({ varName: eq.varName, formula: eq.formula, node });
+                } catch (e) {
+                    return null;
+                }
+            }
+            return { compiled };
+        }
+
         function evalModel(decisionValues) {
-            // Merge decision values with control variable values
+            // Fast path: use cached compiled formulas + cached eval order if available.
+            // Control values are still re-fetched each call so coordinateWiseOptimize
+            // (which mutates controlVars temporarily) keeps working correctly.
+            if (_compiledModel) {
+                const controlValues = getControlVarValues();
+                const scope = { ...controlValues, ...decisionValues };
+                const compiled = _compiledModel.compiled;
+                for (let i = 0; i < compiled.length; i++) {
+                    const item = compiled[i];
+                    let val;
+                    try {
+                        val = item.node.evaluate(scope);
+                    } catch (e) {
+                        return { error: `Error in ${item.varName} = ${item.formula}`, scope: null };
+                    }
+                    if (isNaN(val)) return { error: `Error in ${item.varName} = ${item.formula}`, scope: null };
+                    scope[item.varName] = val;
+                }
+                return { error: null, scope };
+            }
+
+            // Fallback: original behavior (used outside optimize(), e.g. single predictions).
             const controlValues = getControlVarValues();
             const scope = { ...controlValues, ...decisionValues };
             const order = getEvalOrder();
@@ -1577,7 +1623,22 @@ Profit = Revenue - Cost * Sales" oninput="parseEquations()"></textarea>
                 return;
             }
 
-            const best = findOptimum(objVar, activeDecVars, goal);
+            // Pre-compile equations once so the inner search loop (~133k+ evals on a 3-var
+            // grid) reuses compiled ASTs instead of re-parsing the formula strings each time.
+            _compiledModel = prepareModel();
+            if (!_compiledModel) {
+                errorEl.textContent = 'Could not compile equations (check for circular dependencies or syntax errors).';
+                errorEl.classList.add('visible');
+                return;
+            }
+
+            let best;
+            try {
+                best = findOptimum(objVar, activeDecVars, goal);
+            } finally {
+                _compiledModel = null;
+            }
+
             if (!best) {
                 errorEl.textContent = 'Optimization failed.';
                 errorEl.classList.add('visible');
