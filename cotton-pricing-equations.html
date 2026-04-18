@@ -3,11 +3,15 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Cotton T-Shirts &mdash; Multi-Channel Pricing Setup</title>
+<title>Tailor &amp; Co. &mdash; Targeted Channel Pricing</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Source+Serif+4:opsz,wght@8..60,300;8..60,400;8..60,600&display=swap" rel="stylesheet" />
 <script>
+  // Default MathJax delimiters: \( \) for inline, $$ $$ for display.
+  // Do NOT enable $...$ as inline math — dollar signs in plain text (e.g. "$10")
+  // would otherwise be parsed as math, and the % character that follows would
+  // be read as a TeX comment marker, eating the rest of the line.
   window.MathJax = {
-    tex: { inlineMath: [['$', '$']], displayMath: [['$$', '$$']] },
+    tex: { displayMath: [['$$', '$$']] },
     svg: { fontCache: 'global' }
   };
 </script>
@@ -23,7 +27,7 @@
   }
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body { font-family: var(--serif); background: #f3efef; color: var(--text); font-size: 16px; line-height: 1.7; -webkit-font-smoothing: antialiased; }
-  .page-wrapper { max-width: 920px; margin: 0 auto; padding: 32px 16px 80px; }
+  .page-wrapper { max-width: 960px; margin: 0 auto; padding: 32px 16px 80px; }
 
   .header { background: linear-gradient(135deg, var(--crimson), var(--crimson-dark)); padding: 36px 36px 28px; border-radius: 10px 10px 0 0; position: relative; overflow: hidden; }
   .header::after { content: ''; position: absolute; top: -40px; right: -40px; width: 180px; height: 180px; background: rgba(255,255,255,0.04); border-radius: 50%; }
@@ -34,6 +38,14 @@
 
   .context-block { background: #fff; border: 1px solid var(--border); border-radius: 8px; padding: 20px 24px; margin-bottom: 28px; font-size: 14.5px; line-height: 1.75; color: #444; }
   .context-block strong { color: var(--crimson-dark); }
+  .context-block .tier { display: inline-block; padding: 1px 8px; margin: 0 2px; border-radius: 4px; font-size: 12.5px; font-weight: 600; letter-spacing: 0.3px; }
+  .context-block .tier-good { background: #f3efef; color: var(--crimson-dark); }
+  .context-block .tier-better { background: #ffe4cc; color: #8a3a00; }
+  .context-block .tier-best { background: #e6efe6; color: var(--green); }
+
+  .tool-link { display: inline-flex; align-items: center; gap: 8px; background: var(--crimson); color: #fff; text-decoration: none; padding: 10px 18px; border-radius: 8px; font-weight: 600; font-size: 14px; margin-top: 14px; transition: background 0.15s; letter-spacing: 0.3px; }
+  .tool-link:hover { background: var(--crimson-dark); }
+  .tool-link::after { content: '\2192'; font-size: 18px; line-height: 1; }
 
   .section-title { font-family: var(--display); font-size: clamp(18px, 2.4vw, 24px); color: var(--crimson); margin: 36px 0 14px; padding-bottom: 8px; border-bottom: 2px solid var(--crimson); }
   .section-title:first-of-type { margin-top: 8px; }
@@ -44,6 +56,7 @@
 
   .equation-block { background: #fff; border-left: 4px solid var(--crimson); border-radius: 0 8px 8px 0; padding: 16px 24px 18px; margin: 12px 0; box-shadow: 0 1px 4px rgba(0,0,0,0.04); overflow-x: auto; }
   .equation-block .label { font-weight: 600; color: var(--crimson); display: block; margin-bottom: 6px; font-size: 12px; letter-spacing: 0.4px; text-transform: uppercase; }
+  .equation-block .explanation { font-style: italic; color: #666; font-size: 13.5px; line-height: 1.65; margin: 4px 0 12px; }
   .equation-block + .equation-block { margin-top: 8px; }
   .equation-block mjx-container { margin: 6px 0 !important; }
 
@@ -70,49 +83,67 @@
 <div class="page-wrapper">
 
   <div class="header">
-    <h1>Cotton T-Shirts &mdash; Multi-Channel Pricing Setup</h1>
-    <p class="sub">MNL Choice Model &middot; Profit Equations &middot; M574 Pricing Management</p>
+    <h1>Product Portfolio Pricing &amp; Channel Level Pricing</h1>
+    <p class="sub">Tailor &amp; Co. &middot; Good&ndash;Better&ndash;Best Portfolio &middot; M574 Pricing Management</p>
   </div>
 
   <div class="body-card">
 
     <div class="context-block">
-      This page lays out two MNL-based profit setups for a cotton t-shirt product line sold across three channels &mdash; <strong>Retail Chain</strong> (1,000 customers), <strong>Online Store</strong> (700 customers), and <strong>Premium Boutique</strong> (400 customers). Each setup is shown in standard equation form, followed by a code block you can copy directly into the <strong>General Purpose Optimizer</strong> on the website.
+      <strong>Tailor &amp; Co.</strong> sells dress shirts across three distinct channels and offers a tiered product portfolio:
+      <span class="tier tier-good">GOOD</span> Basic Cotton Blend,
+      <span class="tier tier-better">BETTER</span> 100% Cotton, and
+      <span class="tier tier-best">BEST</span> Organic Cotton.
+      With diverse customer bases across channels, consumer preferences and price sensitivities can vary, so we compare two estimation strategies on the same 2,100&minus;customer dataset:
+      <strong>(1) a pooled product choice model</strong> using all customers, and <strong>(2) channel-level product choice models</strong> estimated separately for the Retail Chain (1,000 customers), Online Store (700 customers), and Premium Boutique (400 customers). Each setup is shown in standard equation form, followed by a code block ready to paste into <strong>Tool 8: General Purpose Optimizer</strong> for finding the profit-maximizing prices.
       <br><br>
-      <strong>Unit costs:</strong> Basic Cotton Blend = $10, 100% Cotton = $20, Organic Cotton = $30. <strong>Reference alternative:</strong> No Purchase ($U = 0$).
+      <strong>Unit costs:</strong> Basic Cotton Blend = $10, 100% Cotton = $20, Organic Cotton = $30. <strong>Reference alternative:</strong> No Purchase \(\bigl(U = 0\bigr)\).
+      <br>
+      <a class="tool-link" href="profit-optimizer.html" target="_blank" rel="noopener">Open Tool 8: General Purpose Optimizer</a>
     </div>
 
     <!-- ============================================== -->
     <!-- POOLED -->
     <!-- ============================================== -->
     <h2 class="section-title">1. Pooled Analysis (n = 2,100)</h2>
-    <p class="section-intro">A single MNL is estimated on all 2,100 customers, ignoring channel membership. One set of coefficients applies to every customer.</p>
+    <p class="section-intro">A single product choice model is estimated on all 2,100 customers, ignoring channel membership. One set of coefficients applies to every customer regardless of where they shop.</p>
 
     <div class="equation-block">
       <span class="label">Utilities</span>
-      $$U_{\text{100\%~Cotton}} = 2.2496 - 0.0792 \cdot P_{\text{100\%~Cotton}}$$
-      $$U_{\text{Basic~Cotton~Blend}} = 2.2462 - 0.1309 \cdot P_{\text{Basic~Cotton~Blend}}$$
-      $$U_{\text{Organic~Cotton}} = 1.5185 - 0.0429 \cdot P_{\text{Organic~Cotton}}$$
+      <p class="explanation">Each alternative's deterministic utility is a linear function of its own price. The intercept captures the alternative's intrinsic appeal; the slope is the price-sensitivity coefficient (more negative = more sensitive to price).</p>
+      $$U_{100\%\,\text{Cotton}} = 2.2496 - 0.0792 \cdot P_{100\%\,\text{Cotton}}$$
+      $$U_{\text{Basic Cotton Blend}} = 2.2462 - 0.1309 \cdot P_{\text{Basic Cotton Blend}}$$
+      $$U_{\text{Organic Cotton}} = 1.5185 - 0.0429 \cdot P_{\text{Organic Cotton}}$$
     </div>
 
     <div class="equation-block">
       <span class="label">Denominator</span>
-      $$D = 1 + e^{U_{\text{100\%~Cotton}}} + e^{U_{\text{Basic~Cotton~Blend}}} + e^{U_{\text{Organic~Cotton}}}$$
+      <p class="explanation">The denominator normalizes the choice shares so they sum to one. The leading 1 corresponds to <code>exp(0)</code>, the utility of the No&nbsp;Purchase outside option (the reference level).</p>
+      $$D = 1 + \exp(U_{100\%\,\text{Cotton}}) + \exp(U_{\text{Basic Cotton Blend}}) + \exp(U_{\text{Organic Cotton}})$$
     </div>
 
     <div class="equation-block">
       <span class="label">Choice Probabilities</span>
-      $$\Pr(\text{No Purchase}) = \frac{1}{D} \qquad \Pr(j) = \frac{e^{U_j}}{D}$$
+      <p class="explanation">In the product choice model, the choice probability of each alternative is its <code>exp(utility)</code> divided by the denominator. The four probabilities are mutually exclusive and sum to one.</p>
+      $$\Pr(\text{No Purchase}) = \frac{1}{D}$$
+      $$\Pr(100\%\,\text{Cotton}) = \frac{\exp(U_{100\%\,\text{Cotton}})}{D}$$
+      $$\Pr(\text{Basic Cotton Blend}) = \frac{\exp(U_{\text{Basic Cotton Blend}})}{D}$$
+      $$\Pr(\text{Organic Cotton}) = \frac{\exp(U_{\text{Organic Cotton}})}{D}$$
     </div>
 
     <div class="equation-block">
       <span class="label">Profit</span>
-      $$\pi_{\text{per cust}} = \Pr(\text{100\%}) \cdot (P_{\text{100\%}} - 20) + \Pr(\text{Basic}) \cdot (P_{\text{Basic}} - 10) + \Pr(\text{Org}) \cdot (P_{\text{Org}} - 30)$$
-      $$\Pi = 2{,}100 \cdot \pi_{\text{per cust}}$$
+      <p class="explanation">Per-customer profit is the probability-weighted sum of unit margins (price minus unit cost) across the three products. Total firm profit scales by market size (2,100 customers).</p>
+      $$\begin{aligned}
+        \text{Profit}_{\text{per Customer}} = \;& \Pr(100\%\,\text{Cotton}) \cdot (P_{100\%\,\text{Cotton}} - 20) \\
+        + \;& \Pr(\text{Basic Cotton Blend}) \cdot (P_{\text{Basic Cotton Blend}} - 10) \\
+        + \;& \Pr(\text{Organic Cotton}) \cdot (P_{\text{Organic Cotton}} - 30)
+      \end{aligned}$$
+      $$\text{Profit} = 2{,}100 \cdot \text{Profit}_{\text{per Customer}}$$
     </div>
 
     <div class="code-card">
-      <div class="code-title">Paste into the General Purpose Optimizer</div>
+      <div class="code-title">Paste into Tool 8: General Purpose Optimizer</div>
       <button class="copy-btn" onclick="copyBlock('pooled-code', this)">Copy</button>
 <pre id="pooled-code"># Pooled Analysis (n = 2,100)
 
@@ -136,81 +167,139 @@ Profit = Profit_Per_Customer * 2100</pre>
     <!-- CHANNEL-BY-CHANNEL -->
     <!-- ============================================== -->
     <h2 class="section-title">2. Channel-by-Channel Analysis</h2>
-    <p class="section-intro">A separate MNL is estimated within each channel, allowing demand sensitivity (and therefore optimal prices) to differ across the three sales venues. Channel profits are summed for the firm-level objective.</p>
+    <p class="section-intro">A separate product choice model is estimated within each channel, allowing intercepts (intrinsic appeal) and slopes (price sensitivity) to differ across the three sales venues. Channel profits are then summed for the firm-level objective.</p>
 
-    <!-- Channel 1 -->
+    <!-- ====================== Channel 1 ====================== -->
     <h3 class="subsection-title">Channel 1: Retail Chain <span class="badge">n = 1,000</span></h3>
 
     <div class="equation-block">
-      <span class="label">Utilities</span>
-      $$U_{\text{Basic}}^{R} = 3.2219 - 0.1614 \cdot P_{\text{Basic}}^{R}$$
-      $$U_{\text{100\%}}^{R} = 2.5525 - 0.1085 \cdot P_{\text{100\%}}^{R}$$
-      $$U_{\text{Org}}^{R} = 2.4886 - 0.0772 \cdot P_{\text{Org}}^{R}$$
+      <span class="label">Utilities &mdash; Retail Chain</span>
+      <p class="explanation">Estimated only on the 1,000 Retail Chain customers. Variables are channel-specific (each price decision applies only inside this channel).</p>
+      $$U^{\text{Retail Chain}}_{\text{Basic Cotton Blend}} = 3.2219 - 0.1614 \cdot P^{\text{Retail Chain}}_{\text{Basic Cotton Blend}}$$
+      $$U^{\text{Retail Chain}}_{100\%\,\text{Cotton}} = 2.5525 - 0.1085 \cdot P^{\text{Retail Chain}}_{100\%\,\text{Cotton}}$$
+      $$U^{\text{Retail Chain}}_{\text{Organic Cotton}} = 2.4886 - 0.0772 \cdot P^{\text{Retail Chain}}_{\text{Organic Cotton}}$$
     </div>
 
     <div class="equation-block">
-      <span class="label">Denominator &amp; Probabilities</span>
-      $$D^{R} = 1 + e^{U_{\text{Basic}}^{R}} + e^{U_{\text{100\%}}^{R}} + e^{U_{\text{Org}}^{R}} \qquad \Pr(j)^{R} = \frac{e^{U_j^{R}}}{D^{R}}$$
+      <span class="label">Denominator &mdash; Retail Chain</span>
+      <p class="explanation">Normalizing constant for the Retail Chain choice probabilities; the leading 1 is the No Purchase outside option.</p>
+      $$\begin{aligned}
+        D^{\text{Retail Chain}} = \;& 1 + \exp(U^{\text{Retail Chain}}_{\text{Basic Cotton Blend}}) \\
+        + \;& \exp(U^{\text{Retail Chain}}_{100\%\,\text{Cotton}}) + \exp(U^{\text{Retail Chain}}_{\text{Organic Cotton}})
+      \end{aligned}$$
     </div>
 
     <div class="equation-block">
-      <span class="label">Channel Profit</span>
-      $$\pi_{\text{per cust}}^{R} = \Pr(\text{Basic})^{R} (P_{\text{Basic}}^{R} - 10) + \Pr(\text{100\%})^{R} (P_{\text{100\%}}^{R} - 20) + \Pr(\text{Org})^{R} (P_{\text{Org}}^{R} - 30)$$
-      $$\Pi_{R} = 1{,}000 \cdot \pi_{\text{per cust}}^{R}$$
+      <span class="label">Choice Probabilities &mdash; Retail Chain</span>
+      <p class="explanation">Choice probabilities computed within the Retail Chain channel.</p>
+      $$\Pr(\text{No Purchase})^{\text{Retail Chain}} = \frac{1}{D^{\text{Retail Chain}}}$$
+      $$\Pr(\text{Basic Cotton Blend})^{\text{Retail Chain}} = \frac{\exp(U^{\text{Retail Chain}}_{\text{Basic Cotton Blend}})}{D^{\text{Retail Chain}}}$$
+      $$\Pr(100\%\,\text{Cotton})^{\text{Retail Chain}} = \frac{\exp(U^{\text{Retail Chain}}_{100\%\,\text{Cotton}})}{D^{\text{Retail Chain}}}$$
+      $$\Pr(\text{Organic Cotton})^{\text{Retail Chain}} = \frac{\exp(U^{\text{Retail Chain}}_{\text{Organic Cotton}})}{D^{\text{Retail Chain}}}$$
     </div>
 
-    <!-- Channel 2 -->
+    <div class="equation-block">
+      <span class="label">Channel Profit &mdash; Retail Chain</span>
+      <p class="explanation">Per-customer profit is the probability-weighted margin within this channel. Channel-level profit scales by 1,000 customers.</p>
+      $$\begin{aligned}
+        \text{Profit}^{\text{Retail Chain}}_{\text{per Customer}} = \;& \Pr(\text{Basic Cotton Blend})^{\text{Retail Chain}} \cdot (P^{\text{Retail Chain}}_{\text{Basic Cotton Blend}} - 10) \\
+        + \;& \Pr(100\%\,\text{Cotton})^{\text{Retail Chain}} \cdot (P^{\text{Retail Chain}}_{100\%\,\text{Cotton}} - 20) \\
+        + \;& \Pr(\text{Organic Cotton})^{\text{Retail Chain}} \cdot (P^{\text{Retail Chain}}_{\text{Organic Cotton}} - 30)
+      \end{aligned}$$
+      $$\text{Profit}^{\text{Retail Chain}} = 1{,}000 \cdot \text{Profit}^{\text{Retail Chain}}_{\text{per Customer}}$$
+    </div>
+
+    <!-- ====================== Channel 2 ====================== -->
     <h3 class="subsection-title">Channel 2: Online Store <span class="badge">n = 700</span></h3>
 
     <div class="equation-block">
-      <span class="label">Utilities</span>
-      $$U_{\text{Basic}}^{O} = 1.6488 - 0.1202 \cdot P_{\text{Basic}}^{O}$$
-      $$U_{\text{100\%}}^{O} = 2.8434 - 0.0767 \cdot P_{\text{100\%}}^{O}$$
-      $$U_{\text{Org}}^{O} = 1.6097 - 0.0401 \cdot P_{\text{Org}}^{O}$$
+      <span class="label">Utilities &mdash; Online Store</span>
+      <p class="explanation">Estimated only on the 700 Online Store customers. Coefficients differ from the Retail Chain because online shoppers tend to have different preferences and price sensitivities.</p>
+      $$U^{\text{Online Store}}_{\text{Basic Cotton Blend}} = 1.6488 - 0.1202 \cdot P^{\text{Online Store}}_{\text{Basic Cotton Blend}}$$
+      $$U^{\text{Online Store}}_{100\%\,\text{Cotton}} = 2.8434 - 0.0767 \cdot P^{\text{Online Store}}_{100\%\,\text{Cotton}}$$
+      $$U^{\text{Online Store}}_{\text{Organic Cotton}} = 1.6097 - 0.0401 \cdot P^{\text{Online Store}}_{\text{Organic Cotton}}$$
     </div>
 
     <div class="equation-block">
-      <span class="label">Denominator &amp; Probabilities</span>
-      $$D^{O} = 1 + e^{U_{\text{Basic}}^{O}} + e^{U_{\text{100\%}}^{O}} + e^{U_{\text{Org}}^{O}} \qquad \Pr(j)^{O} = \frac{e^{U_j^{O}}}{D^{O}}$$
+      <span class="label">Denominator &mdash; Online Store</span>
+      <p class="explanation">Normalizing constant for the Online Store choice probabilities.</p>
+      $$\begin{aligned}
+        D^{\text{Online Store}} = \;& 1 + \exp(U^{\text{Online Store}}_{\text{Basic Cotton Blend}}) \\
+        + \;& \exp(U^{\text{Online Store}}_{100\%\,\text{Cotton}}) + \exp(U^{\text{Online Store}}_{\text{Organic Cotton}})
+      \end{aligned}$$
     </div>
 
     <div class="equation-block">
-      <span class="label">Channel Profit</span>
-      $$\pi_{\text{per cust}}^{O} = \Pr(\text{Basic})^{O} (P_{\text{Basic}}^{O} - 10) + \Pr(\text{100\%})^{O} (P_{\text{100\%}}^{O} - 20) + \Pr(\text{Org})^{O} (P_{\text{Org}}^{O} - 30)$$
-      $$\Pi_{O} = 700 \cdot \pi_{\text{per cust}}^{O}$$
+      <span class="label">Choice Probabilities &mdash; Online Store</span>
+      <p class="explanation">Choice probabilities computed within the Online Store channel.</p>
+      $$\Pr(\text{No Purchase})^{\text{Online Store}} = \frac{1}{D^{\text{Online Store}}}$$
+      $$\Pr(\text{Basic Cotton Blend})^{\text{Online Store}} = \frac{\exp(U^{\text{Online Store}}_{\text{Basic Cotton Blend}})}{D^{\text{Online Store}}}$$
+      $$\Pr(100\%\,\text{Cotton})^{\text{Online Store}} = \frac{\exp(U^{\text{Online Store}}_{100\%\,\text{Cotton}})}{D^{\text{Online Store}}}$$
+      $$\Pr(\text{Organic Cotton})^{\text{Online Store}} = \frac{\exp(U^{\text{Online Store}}_{\text{Organic Cotton}})}{D^{\text{Online Store}}}$$
     </div>
 
-    <!-- Channel 3 -->
+    <div class="equation-block">
+      <span class="label">Channel Profit &mdash; Online Store</span>
+      <p class="explanation">Channel-level profit scales by 700 customers.</p>
+      $$\begin{aligned}
+        \text{Profit}^{\text{Online Store}}_{\text{per Customer}} = \;& \Pr(\text{Basic Cotton Blend})^{\text{Online Store}} \cdot (P^{\text{Online Store}}_{\text{Basic Cotton Blend}} - 10) \\
+        + \;& \Pr(100\%\,\text{Cotton})^{\text{Online Store}} \cdot (P^{\text{Online Store}}_{100\%\,\text{Cotton}} - 20) \\
+        + \;& \Pr(\text{Organic Cotton})^{\text{Online Store}} \cdot (P^{\text{Online Store}}_{\text{Organic Cotton}} - 30)
+      \end{aligned}$$
+      $$\text{Profit}^{\text{Online Store}} = 700 \cdot \text{Profit}^{\text{Online Store}}_{\text{per Customer}}$$
+    </div>
+
+    <!-- ====================== Channel 3 ====================== -->
     <h3 class="subsection-title">Channel 3: Premium Boutique <span class="badge">n = 400</span></h3>
 
     <div class="equation-block">
-      <span class="label">Utilities</span>
-      $$U_{\text{Basic}}^{B} = 1.0558 - 0.0871 \cdot P_{\text{Basic}}^{B}$$
-      $$U_{\text{100\%}}^{B} = 1.5573 - 0.0552 \cdot P_{\text{100\%}}^{B}$$
-      $$U_{\text{Org}}^{B} = 1.6808 - 0.0281 \cdot P_{\text{Org}}^{B}$$
+      <span class="label">Utilities &mdash; Premium Boutique</span>
+      <p class="explanation">Estimated only on the 400 Premium Boutique customers. Lower price-sensitivity slopes typically reflect a less price-elastic, premium clientele.</p>
+      $$U^{\text{Premium Boutique}}_{\text{Basic Cotton Blend}} = 1.0558 - 0.0871 \cdot P^{\text{Premium Boutique}}_{\text{Basic Cotton Blend}}$$
+      $$U^{\text{Premium Boutique}}_{100\%\,\text{Cotton}} = 1.5573 - 0.0552 \cdot P^{\text{Premium Boutique}}_{100\%\,\text{Cotton}}$$
+      $$U^{\text{Premium Boutique}}_{\text{Organic Cotton}} = 1.6808 - 0.0281 \cdot P^{\text{Premium Boutique}}_{\text{Organic Cotton}}$$
     </div>
 
     <div class="equation-block">
-      <span class="label">Denominator &amp; Probabilities</span>
-      $$D^{B} = 1 + e^{U_{\text{Basic}}^{B}} + e^{U_{\text{100\%}}^{B}} + e^{U_{\text{Org}}^{B}} \qquad \Pr(j)^{B} = \frac{e^{U_j^{B}}}{D^{B}}$$
+      <span class="label">Denominator &mdash; Premium Boutique</span>
+      <p class="explanation">Normalizing constant for the Premium Boutique choice probabilities.</p>
+      $$\begin{aligned}
+        D^{\text{Premium Boutique}} = \;& 1 + \exp(U^{\text{Premium Boutique}}_{\text{Basic Cotton Blend}}) \\
+        + \;& \exp(U^{\text{Premium Boutique}}_{100\%\,\text{Cotton}}) + \exp(U^{\text{Premium Boutique}}_{\text{Organic Cotton}})
+      \end{aligned}$$
     </div>
 
     <div class="equation-block">
-      <span class="label">Channel Profit</span>
-      $$\pi_{\text{per cust}}^{B} = \Pr(\text{Basic})^{B} (P_{\text{Basic}}^{B} - 10) + \Pr(\text{100\%})^{B} (P_{\text{100\%}}^{B} - 20) + \Pr(\text{Org})^{B} (P_{\text{Org}}^{B} - 30)$$
-      $$\Pi_{B} = 400 \cdot \pi_{\text{per cust}}^{B}$$
+      <span class="label">Choice Probabilities &mdash; Premium Boutique</span>
+      <p class="explanation">Choice probabilities computed within the Premium Boutique channel.</p>
+      $$\Pr(\text{No Purchase})^{\text{Premium Boutique}} = \frac{1}{D^{\text{Premium Boutique}}}$$
+      $$\Pr(\text{Basic Cotton Blend})^{\text{Premium Boutique}} = \frac{\exp(U^{\text{Premium Boutique}}_{\text{Basic Cotton Blend}})}{D^{\text{Premium Boutique}}}$$
+      $$\Pr(100\%\,\text{Cotton})^{\text{Premium Boutique}} = \frac{\exp(U^{\text{Premium Boutique}}_{100\%\,\text{Cotton}})}{D^{\text{Premium Boutique}}}$$
+      $$\Pr(\text{Organic Cotton})^{\text{Premium Boutique}} = \frac{\exp(U^{\text{Premium Boutique}}_{\text{Organic Cotton}})}{D^{\text{Premium Boutique}}}$$
+    </div>
+
+    <div class="equation-block">
+      <span class="label">Channel Profit &mdash; Premium Boutique</span>
+      <p class="explanation">Channel-level profit scales by 400 customers.</p>
+      $$\begin{aligned}
+        \text{Profit}^{\text{Premium Boutique}}_{\text{per Customer}} = \;& \Pr(\text{Basic Cotton Blend})^{\text{Premium Boutique}} \cdot (P^{\text{Premium Boutique}}_{\text{Basic Cotton Blend}} - 10) \\
+        + \;& \Pr(100\%\,\text{Cotton})^{\text{Premium Boutique}} \cdot (P^{\text{Premium Boutique}}_{100\%\,\text{Cotton}} - 20) \\
+        + \;& \Pr(\text{Organic Cotton})^{\text{Premium Boutique}} \cdot (P^{\text{Premium Boutique}}_{\text{Organic Cotton}} - 30)
+      \end{aligned}$$
+      $$\text{Profit}^{\text{Premium Boutique}} = 400 \cdot \text{Profit}^{\text{Premium Boutique}}_{\text{per Customer}}$$
     </div>
 
     <!-- Total -->
-    <h3 class="subsection-title">Total Profit</h3>
+    <h3 class="subsection-title">Total Profit Across Channels</h3>
 
     <div class="equation-block">
-      <span class="label">Aggregated Across Channels</span>
-      $$\Pi = \Pi_{R} + \Pi_{O} + \Pi_{B}$$
+      <span class="label">Firm-Level Objective</span>
+      <p class="explanation">Total firm profit is the sum of the three channel profits. Because each channel's prices appear only in its own profit term, the channels are independent &mdash; they can be optimized separately and the optima summed.</p>
+      $$\text{Profit} = \text{Profit}^{\text{Retail Chain}} + \text{Profit}^{\text{Online Store}} + \text{Profit}^{\text{Premium Boutique}}$$
     </div>
 
     <div class="code-card">
-      <div class="code-title">Paste into the General Purpose Optimizer (9 prices &middot; 3 blocks)</div>
+      <div class="code-title">Paste into Tool 8: General Purpose Optimizer (9 prices &middot; 3 independent blocks)</div>
       <button class="copy-btn" onclick="copyBlock('multichannel-code', this)">Copy</button>
 <pre id="multichannel-code"># Setting up the Profit from the Retail Chain (n = 1,000)
 
@@ -264,6 +353,10 @@ Profit_Premium_Boutique = Profit_Per_Customer_Premium_Boutique * 400
 
 Profit = Profit_Retail_Chain + Profit_Online_Store + Profit_Premium_Boutique</pre>
     </div>
+
+    <p style="text-align: center; margin-top: 32px;">
+      <a class="tool-link" href="profit-optimizer.html" target="_blank" rel="noopener">Open Tool 8: General Purpose Optimizer</a>
+    </p>
 
   </div>
 
