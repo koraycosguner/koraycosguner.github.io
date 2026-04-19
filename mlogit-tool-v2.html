@@ -1049,8 +1049,12 @@
                     longRows = dataRows;
                     longHeaders = columnNames;
                 } else {
+                    // Use letter-prefixed names. read.csv() defaults to check.names=TRUE
+                    // which prepends "X" to any column name that isn't a valid R identifier
+                    // (anything starting with "_" gets mangled), so underscore-prefixed names
+                    // disappear by the time the formula references them.
                     const reshape = reshapeWideToLong(dataRows);
-                    chidVar = '_chid'; altVar = '_alt'; choiceVar = '_choice';
+                    chidVar = 'mlogit_chid'; altVar = 'mlogit_alt'; choiceVar = 'mlogit_choice';
                     reflevel = $('wideReflevel').value;
                     longRows = reshape.rows;
                     longHeaders = reshape.headers;
@@ -1170,9 +1174,9 @@ paste(c(.coef_json, .alts_json, .fit_json, .summary_marker), collapse = '\\n---M
                     const alt = colToAlt[cc];
                     if (!alt) continue;
                     const longRow = {
-                        _chid: wr[chidVar],
-                        _alt: alt,
-                        _choice: (parseFloat(wr[cc]) || 0) ? 1 : 0
+                        mlogit_chid: wr[chidVar],
+                        mlogit_alt: alt,
+                        mlogit_choice: (parseFloat(wr[cc]) || 0) ? 1 : 0
                     };
                     for (const ba of baseAttrs) {
                         const colInfo = attrColInfo.find(x => x.base === ba && x.alt === alt);
@@ -1181,7 +1185,7 @@ paste(c(.coef_json, .alts_json, .fit_json, .summary_marker), collapse = '\\n---M
                     longRows.push(longRow);
                 }
             }
-            const headers = ['_chid', '_alt', '_choice', ...baseAttrs];
+            const headers = ['mlogit_chid', 'mlogit_alt', 'mlogit_choice', ...baseAttrs];
             return { headers, rows: longRows };
         }
 
