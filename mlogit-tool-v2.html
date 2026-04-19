@@ -76,6 +76,17 @@
         @media (max-width: 720px) { .form-row { grid-template-columns: 1fr; } }
         .field-hint { color: #999; font-weight: 400; font-size: 0.85rem; margin-left: 0.4rem; }
 
+        /* Long-vs-wide explainer cards (mirrors the v1 Shiny tool's format help). */
+        .format-explainer { display: grid; grid-template-columns: 1fr 1fr; gap: 0.85rem; margin-top: 0.85rem; }
+        @media (max-width: 760px) { .format-explainer { grid-template-columns: 1fr; } }
+        .format-card { background: #fafafa; border: 1px solid var(--border); border-left: 3px solid var(--iu-crimson); border-radius: 6px; padding: 0.85rem 1rem; }
+        .format-card h4 { font-size: 0.95rem; color: var(--iu-crimson-dark); margin-bottom: 0.4rem; display: flex; align-items: center; gap: 0.5rem; }
+        .format-card p { font-size: 0.85rem; color: var(--text-light); line-height: 1.55; margin-bottom: 0.5rem; }
+        .format-card pre { background: var(--white); border: 1px solid var(--border); border-radius: 4px; padding: 0.6rem 0.75rem; font-family: 'Monaco', 'Menlo', 'Courier New', monospace; font-size: 0.78rem; line-height: 1.45; overflow-x: auto; color: var(--text-dark); }
+        .format-card code { font-family: 'Monaco', 'Menlo', 'Courier New', monospace; font-size: 0.8rem; background: var(--white); border: 1px solid var(--border); padding: 0.05rem 0.3rem; border-radius: 3px; }
+        .format-recommended { font-size: 0.65rem; font-weight: 700; letter-spacing: 0.6px; padding: 0.1rem 0.45rem; background: var(--green-bg); color: var(--green); border-radius: 999px; text-transform: uppercase; }
+        .format-note { font-size: 0.78rem !important; color: var(--text-light); font-style: italic; margin-top: 0.5rem !important; margin-bottom: 0 !important; }
+
         .radio-row { display: flex; gap: 0.65rem; flex-wrap: wrap; }
         .radio-row label { display: inline-flex; align-items: center; gap: 0.4rem; font-weight: 500; cursor: pointer; padding: 0.4rem 0.85rem; border-radius: 6px; border: 1px solid var(--border); background: var(--white); font-size: 0.9rem; }
         .radio-row label:has(input:checked) { border-color: var(--iu-crimson); background: rgba(153,0,0,0.04); color: var(--iu-crimson); font-weight: 600; }
@@ -292,6 +303,27 @@
                     <div class="radio-row">
                         <label><input type="radio" name="dataShape" value="long" checked> Long format (one row per alt per occasion)</label>
                         <label><input type="radio" name="dataShape" value="wide"> Wide format (one row per occasion)</label>
+                    </div>
+                    <div class="format-explainer">
+                        <div class="format-card">
+                            <h4>Long Format <span class="format-recommended">recommended</span></h4>
+                            <p>Each row represents <strong>one alternative within one choice occasion</strong>. If there are 3 alternatives per choice, each occasion has 3 rows. Required columns: a Choice ID, an Alternative name, a binary Choice indicator, and any alternative-specific attributes (e.g., Price).</p>
+<pre>ChoiceID  Alt   Price  Chosen
+1         A     5.99   0
+1         B     4.99   1
+1         C     6.99   0
+2         A     5.49   1
+2         B     5.29   0
+2         C     6.49   0</pre>
+                        </div>
+                        <div class="format-card">
+                            <h4>Wide Format</h4>
+                            <p>Each row represents <strong>one choice occasion</strong>. There is one binary choice column per alternative, plus alternative-specific attribute columns named with a per-alternative suffix (e.g., <code>Price_Coke</code>, <code>Price_Pepsi</code>).</p>
+<pre>ID  Week  Price_Coke  Price_Pepsi  Choice_Coke  Choice_Pepsi
+1   1     0.64        0.85         0            1
+1   2     0.87        0.63         0            0</pre>
+                            <p class="format-note">The tool automatically reshapes wide data to long before estimation.</p>
+                        </div>
                     </div>
                 </div>
 
@@ -562,19 +594,60 @@
                     showStatus('Could not parse CSV. Is it empty or malformed?', 'error', 5000);
                     return;
                 }
+                // Full reset of all derived UI state — new data invalidates every prior selection.
+                resetForNewData();
                 columnNames = headers;
                 rows = parsedRows;
                 detectColumnTypes();
                 renderPreview();
                 populateColumnSelectors();
-                populateFilterColumns();
                 populateWideColumnLists();
                 $('dataFilterSection').classList.add('visible');
                 $('modelConfig').style.display = 'block';
-                if ($('varRows').children.length === 0) addVarRow();
+                addVarRow(); // start with one fresh row
                 showStatus(`Loaded ${parsedRows.length.toLocaleString()} rows × ${headers.length} columns.`, 'success', 3000);
             };
             reader.readAsText(file);
+        }
+
+        // Wipe every piece of UI state that depends on the previously-uploaded CSV.
+        function resetForNewData() {
+            alternatives = [];
+            lastResult = null;
+            // Filter section: revert to "Use Full Data", clear any rows.
+            $('filterRows').innerHTML = '';
+            $('filterSummary').style.display = 'none';
+            $('filterConditions').classList.remove('visible');
+            const fullRadio = document.querySelector('input[name="dataChoice"][value="full"]');
+            if (fullRadio) fullRadio.checked = true;
+            // Shape selector: revert to long.
+            const longRadio = document.querySelector('input[name="dataShape"][value="long"]');
+            if (longRadio) longRadio.checked = true;
+            $('longFields').style.display = 'block';
+            $('wideFields').style.display = 'none';
+            // Variable builder: clear all rows; a fresh one will be added by handleFile.
+            $('varRows').innerHTML = '';
+            varRowId = 0;
+            // Reset intercept to default.
+            const altIntRadio = document.querySelector('input[name="interceptType"][value="alt_specific"]');
+            if (altIntRadio) altIntRadio.checked = true;
+            // Reset significance filter and prediction inputs/result.
+            const sigAll = document.getElementById('sigAll');
+            if (sigAll) sigAll.checked = true;
+            $('predictionInputs').innerHTML = '';
+            $('predictionResult').classList.remove('visible');
+            $('predictionPrGrid').innerHTML = '';
+            // Hide stale results.
+            $('resultsContainer').classList.remove('visible');
+            $('coefTable').innerHTML = '';
+            $('fitStats').innerHTML = '';
+            $('equationsBox').textContent = '';
+            $('rawOutput').textContent = '';
+            // Wide-format mapping panels:
+            $('wideChoiceMap').innerHTML = '';
+            // Reset run button label/state.
+            $('runButton').textContent = 'Estimate Model';
+            $('runButton').disabled = true;
         }
 
         function renderPreview(rowsToShow) {
@@ -628,7 +701,11 @@
         function addFilterRow() {
             const row = document.createElement('div');
             row.className = 'filter-row';
-            const colOpts = columnNames.map(c => `<option value="${escapeHtml(c)}">${escapeHtml(c)}</option>`).join('');
+            // Annotate each column option with its detected type so the user can tell at a glance.
+            const colOpts = columnNames.map(c => {
+                const tag = columnTypes[c] === 'numeric' ? '#' : 'A';
+                return `<option value="${escapeHtml(c)}" data-type="${columnTypes[c] || 'text'}">${escapeHtml(c)} (${tag})</option>`;
+            }).join('');
             row.innerHTML = `
                 <select class="filter-col"><option value="">-- Column --</option>${colOpts}</select>
                 <select class="filter-op">
@@ -639,7 +716,7 @@
                     <option value="<">&lt;</option>
                     <option value="<=">&le;</option>
                 </select>
-                <input type="text" class="filter-val" placeholder="value">
+                <span class="filter-val-wrap"><input type="text" class="filter-val" placeholder="value"></span>
                 <button type="button" class="remove-filter-btn">Remove</button>
             `;
             $('filterRows').appendChild(row);
@@ -647,7 +724,47 @@
                 row.remove();
                 updateFilterSummary();
             });
-            row.querySelectorAll('select, input').forEach(el => el.addEventListener('input', updateFilterSummary));
+            // When the column changes, swap the value input between text/number and select-of-unique-values
+            // based on the detected type. Categorical → dropdown; numeric → number input.
+            const colSel = row.querySelector('.filter-col');
+            const opSel  = row.querySelector('.filter-op');
+            colSel.addEventListener('change', () => {
+                rebuildFilterValueInput(row);
+                updateFilterSummary();
+            });
+            opSel.addEventListener('change', updateFilterSummary);
+            row.querySelector('.filter-val').addEventListener('input', updateFilterSummary);
+        }
+
+        // Replace the value input inside a filter row to match the picked column's type.
+        function rebuildFilterValueInput(row) {
+            const col = row.querySelector('.filter-col').value;
+            const wrap = row.querySelector('.filter-val-wrap');
+            if (!col) {
+                wrap.innerHTML = '<input type="text" class="filter-val" placeholder="value">';
+                wrap.querySelector('.filter-val').addEventListener('input', updateFilterSummary);
+                return;
+            }
+            if (columnTypes[col] === 'numeric') {
+                wrap.innerHTML = '<input type="number" step="any" class="filter-val" placeholder="value">';
+            } else {
+                // Categorical: collect unique values (limit to keep the dropdown sensible) and offer a select.
+                const seen = new Set();
+                for (const r of rows) {
+                    const v = r[col];
+                    if (v !== undefined && v !== null && v !== '') seen.add(String(v));
+                    if (seen.size > 500) break; // safety cap
+                }
+                const uniq = Array.from(seen).sort((a, b) => a.localeCompare(b, undefined, { numeric: true }));
+                if (uniq.length <= 500) {
+                    wrap.innerHTML = '<select class="filter-val"><option value="">-- Value --</option>' +
+                        uniq.map(v => `<option value="${escapeHtml(v)}">${escapeHtml(v)}</option>`).join('') + '</select>';
+                } else {
+                    wrap.innerHTML = '<input type="text" class="filter-val" placeholder="value (too many uniques to list)">';
+                }
+            }
+            wrap.querySelector('.filter-val').addEventListener('input', updateFilterSummary);
+            wrap.querySelector('.filter-val').addEventListener('change', updateFilterSummary);
         }
 
         function getFilteredRows() {
