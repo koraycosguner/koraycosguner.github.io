@@ -982,22 +982,32 @@
             });
         }
 
+        // Variables available in wide-format mode = base names of alt-specific attribute
+        // columns (e.g., "Price" from "Price_Coke", "Price_Pepsi") PLUS any other column
+        // that wasn't claimed as the chid, a choice column, or an attribute column. The
+        // "other" columns are individual-specific (constant within an occasion, like a
+        // customer demographic) and become candidates for either Choice-Invariant or
+        // Choice-Specific slopes after reshape.
         function wideAttrGroups() {
-            const cols = Array.from($('wideAttrCols').querySelectorAll('input.wide-attr-col:checked')).map(i => i.value);
-            const groups = new Set();
-            for (const c of cols) {
-                // strip the trailing "_alt" / ".alt" / "Alt" suffix to get the base attribute name
-                // We use the alt names the user entered to do a more reliable strip.
-                const altInputs = Array.from($('wideChoiceMap').querySelectorAll('input.wide-alt-name'));
-                const knownAlts = altInputs.map(i => i.value).filter(Boolean);
+            const attrCols   = Array.from($('wideAttrCols').querySelectorAll('input.wide-attr-col:checked')).map(i => i.value);
+            const choiceCols = Array.from($('wideChoiceCols').querySelectorAll('input.wide-choice-col:checked')).map(i => i.value);
+            const chid       = $('wideChidVar').value;
+            const knownAlts  = Array.from($('wideChoiceMap').querySelectorAll('input.wide-alt-name')).map(i => i.value).filter(Boolean);
+
+            const attrBases = new Set();
+            for (const c of attrCols) {
                 let base = c;
                 for (const alt of knownAlts) {
                     const re = new RegExp(`[_.\\\\-]?${escapeRegex(alt)}$`);
                     if (re.test(c)) { base = c.replace(re, ''); break; }
                 }
-                groups.add(base);
+                attrBases.add(base);
             }
-            return Array.from(groups);
+
+            const used = new Set([chid, ...choiceCols, ...attrCols].filter(Boolean));
+            const individualCols = columnNames.filter(c => !used.has(c));
+
+            return [...attrBases, ...individualCols];
         }
 
         function getModelVars() {
@@ -1188,6 +1198,12 @@ paste(c(.coef_json, .alts_json, .fit_json, .summary_marker), collapse = '\\n---M
             }).filter(x => x.alt !== null);
 
             const baseAttrs = Array.from(new Set(attrColInfo.map(x => x.base)));
+            // Individual-specific columns: the user didn't tag them as chid, choice, or
+            // alt-specific attr, so they're constant within an occasion. We replicate
+            // them across every alt row so they're available as IVs after reshape.
+            const usedCols = new Set([chidVar, ...choiceCols, ...attrCols]);
+            const indivCols = columnNames.filter(c => !usedCols.has(c));
+
             const longRows = [];
             for (const wr of wideRows) {
                 for (const cc of choiceCols) {
@@ -1200,12 +1216,19 @@ paste(c(.coef_json, .alts_json, .fit_json, .summary_marker), collapse = '\\n---M
                     };
                     for (const ba of baseAttrs) {
                         const colInfo = attrColInfo.find(x => x.base === ba && x.alt === alt);
-                        longRow[ba] = colInfo ? wr[colInfo.col] : '';
+                        // Fill missing alt-specific values with 0 instead of '' / NA so
+                        // mlogit doesn't drop the whole choice occasion. A baseline
+                        // outside-option (e.g. "No Purchase") with no Price_NoPurchase
+                        // column gets Price = 0 — which is the conventional treatment.
+                        longRow[ba] = colInfo ? wr[colInfo.col] : 0;
+                    }
+                    for (const ic of indivCols) {
+                        longRow[ic] = wr[ic];
                     }
                     longRows.push(longRow);
                 }
             }
-            const headers = ['mlogit_chid', 'mlogit_alt', 'mlogit_choice', ...baseAttrs];
+            const headers = ['mlogit_chid', 'mlogit_alt', 'mlogit_choice', ...baseAttrs, ...indivCols];
             return { headers, rows: longRows };
         }
 
