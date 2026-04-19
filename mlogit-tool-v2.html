@@ -703,8 +703,8 @@
             row.className = 'filter-row';
             // Annotate each column option with its detected type so the user can tell at a glance.
             const colOpts = columnNames.map(c => {
-                const tag = columnTypes[c] === 'numeric' ? '#' : 'A';
-                return `<option value="${escapeHtml(c)}" data-type="${columnTypes[c] || 'text'}">${escapeHtml(c)} (${tag})</option>`;
+                const tag = columnTypes[c] === 'numeric' ? 'numeric' : 'categorical';
+                return `<option value="${escapeHtml(c)}" data-type="${columnTypes[c] || 'text'}">${escapeHtml(c)} — ${tag}</option>`;
             }).join('');
             row.innerHTML = `
                 <select class="filter-col"><option value="">-- Column --</option>${colOpts}</select>
@@ -902,10 +902,21 @@
             $('wideAttrCols').addEventListener('change', () => { refreshVarRowChoices(); updateRunEnabled(); });
         }
 
-        // Pull the alt name from a column like "Choice_Coke" or "ChoiceCoke" or "Choice.Coke"
+        // Pull the alt name from a column like "Choice_Coke", "ChoiceCoke", "Choice.Coke",
+        // or "Price-Pepsi". Strategy:
+        //   1. If the column has a separator (underscore / dot / dash), split on the LAST
+        //      occurrence and return everything after it. e.g. "Choice_Coke" -> "Coke".
+        //   2. Otherwise look for a camelCase boundary (lowercase then uppercase) and split
+        //      there. e.g. "ChoiceCoke" -> "Coke".
+        //   3. Fall back to returning the column name unchanged so the user can edit it.
+        // The previous regex was greedy and gobbled all but the last letter, producing
+        // single-character "alt names" like "e" for "ChoiceCoke".
         function guessAltFromColumn(col) {
-            const m = col.match(/^[A-Za-z]+[_.\-]?(.+)$/);
-            return m && m[1] ? m[1].replace(/^[_.\-]/, '') : col;
+            const sep = col.match(/^(.+)[_.\-]([^_.\-]+)$/);
+            if (sep && sep[2]) return sep[2];
+            const camel = col.match(/^([a-z]+|[A-Z][a-z]+)([A-Z][A-Za-z]*)$/);
+            if (camel && camel[2]) return camel[2];
+            return col;
         }
 
         function refreshWideReflevel() {
