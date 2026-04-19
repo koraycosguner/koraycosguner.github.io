@@ -1,0 +1,928 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Multinomial &amp; Conditional Logit (Browser) | Koray Cosguner</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --iu-crimson: #990000;
+            --iu-crimson-dark: #7a0000;
+            --text-dark: #333;
+            --text-light: #666;
+            --bg-light: #f5f5f5;
+            --white: #fff;
+            --border: #ddd;
+            --green: #15803d;
+            --green-bg: #dcfce7;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-size: 18px;
+            font-family: 'Outfit', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            line-height: 1.6;
+            color: var(--text-dark);
+            background-color: var(--bg-light);
+        }
+
+        nav { position: sticky; top: 0; background: var(--white); box-shadow: 0 2px 10px rgba(0,0,0,0.1); z-index: 1000; padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; }
+        .nav-brand { font-size: 1.5rem; font-weight: 700; color: var(--iu-crimson); text-decoration: none; }
+        .back-link { color: var(--text-dark); text-decoration: none; font-size: 0.95rem; font-weight: 500; }
+        .back-link:hover { color: var(--iu-crimson); }
+
+        main { max-width: 1200px; margin: 0 auto; padding: 2rem; }
+        .hero { text-align: center; padding: 2.5rem 0 1.5rem; }
+        .hero h1 { font-size: 1.8rem; color: var(--text-dark); margin-bottom: 0.75rem; }
+        .hero .badge {
+            display: inline-block; padding: 0.3rem 0.8rem; border-radius: 999px;
+            background: var(--green-bg); color: var(--green); font-size: 0.8rem;
+            font-weight: 600; letter-spacing: 0.4px; margin-bottom: 1rem;
+        }
+        .hero ul { text-align: left; display: inline-block; margin: 0 auto; padding-left: 1.5rem; color: var(--text-light); font-size: 1rem; line-height: 1.8; }
+
+        .tool-container { background: var(--white); border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); padding: 2rem; margin-top: 2rem; }
+        .section-title { font-size: 1.3rem; color: var(--iu-crimson); margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 2px solid var(--iu-crimson); }
+        .section-title.mt { margin-top: 2rem; }
+        .section-hint { font-size: 0.9rem; color: var(--text-light); margin-bottom: 1rem; }
+
+        .disclaimer { background: #fef2f2; border: 1px solid #fecaca; border-radius: 8px; padding: 1rem 1.25rem; margin-bottom: 2rem; }
+        .disclaimer-title { font-weight: 700; color: var(--iu-crimson); margin-bottom: 0.5rem; }
+        .disclaimer ul { margin: 0; padding-left: 1.25rem; color: var(--text-light); font-size: 0.9rem; }
+        .disclaimer li { margin-bottom: 0.25rem; }
+
+        .loading-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.96); display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 9999; }
+        .loading-overlay.hidden { display: none; }
+        .spinner { width: 60px; height: 60px; border: 4px solid var(--border); border-top-color: var(--iu-crimson); border-radius: 50%; animation: spin 1s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .loading-text { margin-top: 1rem; font-size: 1.1rem; color: var(--text-light); }
+        .loading-stage { margin-top: 0.5rem; font-size: 0.85rem; color: #999; }
+
+        .upload-area { border: 2px dashed var(--border); border-radius: 8px; padding: 3rem; text-align: center; cursor: pointer; transition: all 0.3s; margin-bottom: 1.5rem; }
+        .upload-area:hover, .upload-area.dragover { border-color: var(--iu-crimson); background: rgba(153, 0, 0, 0.05); }
+        .upload-area input[type="file"] { display: none; }
+        .upload-icon { font-size: 3rem; color: var(--iu-crimson); margin-bottom: 1rem; }
+        .upload-text { font-size: 1.1rem; color: var(--text-dark); }
+        .upload-hint { font-size: 0.9rem; color: var(--text-light); margin-top: 0.5rem; }
+
+        .form-group { margin-bottom: 1.25rem; }
+        .form-group label { display: block; font-weight: 600; margin-bottom: 0.4rem; color: var(--text-dark); }
+        .form-group select, .form-group input[type="text"], .form-group input[type="number"] {
+            width: 100%; padding: 0.65rem 0.75rem; border: 1px solid var(--border);
+            border-radius: 6px; font-size: 1rem; font-family: inherit; background: var(--white);
+        }
+        .form-group select:focus, .form-group input:focus { outline: none; border-color: var(--iu-crimson); }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+        @media (max-width: 720px) { .form-row { grid-template-columns: 1fr; } }
+
+        .radio-row { display: flex; gap: 1rem; flex-wrap: wrap; }
+        .radio-row label { display: inline-flex; align-items: center; gap: 0.4rem; font-weight: 500; cursor: pointer; padding: 0.4rem 0.8rem; border-radius: 6px; border: 1px solid var(--border); background: var(--white); }
+        .radio-row input[type="radio"]:checked + span { color: var(--iu-crimson); font-weight: 600; }
+        .radio-row input[type="radio"] { accent-color: var(--iu-crimson); }
+
+        .var-builder { border: 1px solid var(--border); border-radius: 8px; padding: 1rem; }
+        .var-row {
+            display: grid; grid-template-columns: 1fr 1fr 80px; gap: 0.75rem;
+            align-items: center; padding: 0.5rem 0; border-bottom: 1px dashed var(--border);
+        }
+        .var-row:last-child { border-bottom: none; }
+        .var-row .remove-btn { background: transparent; color: #b91c1c; border: 1px solid #fca5a5; padding: 0.35rem 0.6rem; border-radius: 4px; cursor: pointer; font-size: 0.85rem; font-family: inherit; }
+        .var-row .remove-btn:hover { background: #fef2f2; }
+        .add-var-btn { background: var(--white); color: var(--iu-crimson); border: 2px dashed var(--iu-crimson); border-radius: 6px; padding: 0.6rem 1rem; cursor: pointer; font-weight: 600; font-size: 0.9rem; margin-top: 0.75rem; width: 100%; font-family: inherit; }
+        .add-var-btn:hover { background: rgba(153,0,0,0.04); }
+
+        .btn { display: inline-block; padding: 0.75rem 2rem; font-size: 1rem; font-weight: 600; text-align: center; border: none; border-radius: 6px; cursor: pointer; transition: all 0.2s; font-family: inherit; }
+        .btn-primary { background: var(--iu-crimson); color: var(--white); }
+        .btn-primary:hover:not(:disabled) { background: var(--iu-crimson-dark); }
+        .btn-primary:disabled { background: var(--text-light); cursor: not-allowed; opacity: 0.6; }
+        .btn-secondary { background: var(--white); color: var(--iu-crimson); border: 2px solid var(--iu-crimson); }
+        .btn-secondary:hover { background: var(--iu-crimson); color: var(--white); }
+        .button-group { display: flex; gap: 1rem; margin-top: 1.5rem; flex-wrap: wrap; }
+
+        .data-preview { margin-top: 1.5rem; display: none; }
+        .data-preview.visible { display: block; }
+        .preview-table-container { overflow-x: auto; max-height: 280px; border: 1px solid var(--border); border-radius: 6px; }
+        .preview-table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+        .preview-table th, .preview-table td { padding: 0.5rem 0.85rem; text-align: left; border-bottom: 1px solid var(--border); }
+        .preview-table th { background: var(--iu-crimson); color: var(--white); position: sticky; top: 0; z-index: 1; }
+        .preview-table tr:hover { background: rgba(153, 0, 0, 0.04); }
+        .preview-meta { font-size: 0.85rem; color: var(--text-light); margin-top: 0.5rem; }
+
+        .status-message { padding: 0.85rem 1rem; border-radius: 6px; margin-bottom: 1rem; display: none; font-size: 0.95rem; }
+        .status-message.visible { display: block; }
+        .status-message.error { background: #fee2e2; color: #991b1b; border: 1px solid #fecaca; }
+        .status-message.success { background: #d1fae5; color: #065f46; border: 1px solid #a7f3d0; }
+        .status-message.info { background: #dbeafe; color: #1e40af; border: 1px solid #bfdbfe; }
+
+        .results-container { margin-top: 2rem; display: none; }
+        .results-container.visible { display: block; }
+
+        .tabs { display: flex; gap: 4px; border-bottom: 2px solid var(--border); margin-bottom: 1.25rem; flex-wrap: wrap; }
+        .tab-btn { background: transparent; border: none; padding: 0.75rem 1rem; cursor: pointer; font-size: 0.95rem; font-weight: 600; color: var(--text-light); border-bottom: 3px solid transparent; margin-bottom: -2px; font-family: inherit; }
+        .tab-btn.active { color: var(--iu-crimson); border-bottom-color: var(--iu-crimson); }
+        .tab-pane { display: none; }
+        .tab-pane.active { display: block; }
+
+        .coef-table { width: 100%; border-collapse: collapse; font-size: 0.9rem; background: var(--white); margin-top: 0.5rem; }
+        .coef-table th, .coef-table td { padding: 0.55rem 0.9rem; text-align: right; border: 1px solid var(--border); }
+        .coef-table th { background: var(--iu-crimson); color: var(--white); font-weight: 600; }
+        .coef-table td:first-child, .coef-table th:first-child { text-align: left; }
+        .coef-table tr:hover td { background: rgba(153,0,0,0.03); }
+        .coef-sig { color: var(--green); font-weight: 600; }
+        .coef-insig { color: #b91c1c; }
+
+        .fit-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 0.75rem; margin-top: 1rem; }
+        .fit-stat { background: #fafafa; border: 1px solid var(--border); border-radius: 8px; padding: 0.85rem 1rem; }
+        .fit-stat .label { font-size: 0.75rem; color: var(--text-light); text-transform: uppercase; letter-spacing: 0.6px; font-weight: 600; }
+        .fit-stat .value { font-size: 1.3rem; color: var(--iu-crimson); font-weight: 700; margin-top: 0.2rem; font-variant-numeric: tabular-nums; }
+
+        .equation-box { background: #fafafa; border: 1px solid var(--border); border-radius: 8px; padding: 1rem 1.25rem; font-family: 'Monaco', 'Menlo', 'Courier New', monospace; font-size: 0.85rem; white-space: pre-wrap; line-height: 1.65; color: var(--text-dark); position: relative; max-height: 480px; overflow-y: auto; }
+        .equation-actions { display: flex; gap: 0.5rem; margin-top: 0.75rem; flex-wrap: wrap; }
+
+        .results-output { background: #1e1e1e; color: #d4d4d4; font-family: 'Monaco', 'Menlo', 'Courier New', monospace; font-size: 0.85rem; padding: 1.25rem; border-radius: 8px; overflow-x: auto; white-space: pre; line-height: 1.5; max-height: 500px; overflow-y: auto; }
+
+        footer { text-align: center; padding: 2rem; color: var(--text-light); font-size: 0.9rem; }
+
+        @media (max-width: 768px) {
+            body { font-size: 16px; }
+            main { padding: 1rem; }
+            nav { padding: 0.75rem 1rem; }
+            .tool-container { padding: 1.25rem; }
+            .hero { padding: 1.5rem 0 1rem; }
+            .hero h1 { font-size: 1.4rem; }
+            .button-group { flex-direction: column; }
+            .btn { width: 100%; }
+            .var-row { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="spinner"></div>
+        <p class="loading-text" id="loadingText">Loading WebR (R in your browser)...</p>
+        <p class="loading-stage" id="loadingStage">First load may take 30-60 seconds</p>
+    </div>
+
+    <!-- Nav -->
+    <nav>
+        <a class="nav-brand" href="index.html">Dr. Cosguner</a>
+        <a class="back-link" href="tools.html">&larr; Back to Tools</a>
+    </nav>
+
+    <main>
+        <section class="hero">
+            <span class="badge">Runs entirely in your browser &middot; powered by WebR</span>
+            <h1>Multinomial &amp; Conditional Logit Regressions</h1>
+            <ul>
+                <li>Estimate discrete-choice models using the <code>mlogit</code> R package &mdash; with no R install required</li>
+                <li>Long-format CSV upload (one row per alternative per choice occasion)</li>
+                <li>Pick choice ID, alternative variable, choice variable, and reference level</li>
+                <li>Add variables with alternative-invariant or alternative-specific slopes</li>
+                <li>View coefficients, fit statistics, and ready-to-paste prediction equations</li>
+            </ul>
+        </section>
+
+        <div class="disclaimer">
+            <div class="disclaimer-title">Disclaimer</div>
+            <ul>
+                <li><strong>Results may contain errors.</strong> Output may be inaccurate or incomplete. Verify all results independently.</li>
+                <li><strong>No warranty.</strong> Provided "as is" without any warranty.</li>
+                <li><strong>Privacy:</strong> Data never leaves your browser &mdash; everything runs locally in WebAssembly.</li>
+            </ul>
+            <div style="margin-top: 0.85rem; padding-top: 0.85rem; border-top: 1px solid rgba(153, 0, 0, 0.2); font-size: 0.9rem;">
+                <strong>📧 Report issues:</strong> Email Dr. Cosguner at <a href="mailto:kcosgun@iu.edu" style="color: var(--iu-crimson); font-weight: 600;">kcosgun@iu.edu</a>.
+            </div>
+        </div>
+
+        <div class="tool-container">
+
+            <div class="status-message" id="statusMessage"></div>
+
+            <!-- Step 1: Upload -->
+            <h2 class="section-title">1. Upload Your Data</h2>
+            <p class="section-hint">CSV in <strong>long format</strong>: one row per alternative per choice occasion. Columns include the choice ID, the alternative name, a binary choice indicator (0/1), and any alternative-specific attributes (e.g., price).</p>
+            <div class="upload-area" id="uploadArea">
+                <input type="file" id="fileInput" accept=".csv">
+                <div class="upload-icon">📊</div>
+                <p class="upload-text">Click to upload or drag and drop a CSV</p>
+                <p class="upload-hint">Long format only in this version</p>
+            </div>
+            <div class="data-preview" id="dataPreview">
+                <h3 style="margin-bottom: 0.5rem; font-size: 1.05rem; color: var(--text-dark);">Data Preview (first 8 rows)</h3>
+                <div class="preview-table-container">
+                    <table class="preview-table" id="previewTable"></table>
+                </div>
+                <p class="preview-meta" id="previewMeta"></p>
+            </div>
+
+            <!-- Step 2: Configure mlogit data -->
+            <div id="configSection" style="display: none;">
+                <h2 class="section-title mt">2. Configure Choice Data</h2>
+                <p class="section-hint">Tell <code>mlogit.data()</code> how the columns map to the choice structure.</p>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="chidVar">Choice ID Variable <span style="color:#999;font-weight:400">(groups rows per occasion)</span></label>
+                        <select id="chidVar"><option value="">-- Select --</option></select>
+                    </div>
+                    <div class="form-group">
+                        <label for="altVar">Alternative Variable <span style="color:#999;font-weight:400">(names the options)</span></label>
+                        <select id="altVar"><option value="">-- Select --</option></select>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="choiceVar">Choice Variable <span style="color:#999;font-weight:400">(0/1 indicator)</span></label>
+                        <select id="choiceVar"><option value="">-- Select --</option></select>
+                    </div>
+                    <div class="form-group">
+                        <label for="reflevel">Reference Alternative <span style="color:#999;font-weight:400">(baseline; e.g., No_Purchase)</span></label>
+                        <select id="reflevel" disabled><option value="">-- Pick alternative variable first --</option></select>
+                    </div>
+                </div>
+
+                <!-- Step 3: Model spec -->
+                <h2 class="section-title mt">3. Specify the Model</h2>
+                <p class="section-hint">Add variables one by one. <strong>Choice-Invariant</strong> = single coefficient applied to all alternatives (e.g., Price with one slope). <strong>Choice-Specific</strong> = separate coefficient per alternative.</p>
+                <div class="var-builder" id="varBuilder">
+                    <div id="varRows"></div>
+                    <button type="button" class="add-var-btn" id="addVarBtn">+ Add Variable</button>
+                </div>
+                <div class="form-group" style="margin-top: 1.25rem;">
+                    <label>Intercept</label>
+                    <div class="radio-row">
+                        <label><input type="radio" name="interceptType" value="alt_specific" checked><span>Alternative-Specific Intercepts</span></label>
+                        <label><input type="radio" name="interceptType" value="none"><span>No Intercept</span></label>
+                    </div>
+                </div>
+
+                <div class="button-group">
+                    <button class="btn btn-primary" id="runButton" disabled>Estimate Model</button>
+                    <button class="btn btn-secondary" id="resetButton">Reset</button>
+                </div>
+            </div>
+
+            <!-- Step 4: Results -->
+            <div class="results-container" id="resultsContainer">
+                <h2 class="section-title mt">4. Results</h2>
+
+                <div class="tabs">
+                    <button class="tab-btn active" data-tab="coefs">Estimates &amp; Fit</button>
+                    <button class="tab-btn" data-tab="eqs">Prediction Equations</button>
+                    <button class="tab-btn" data-tab="raw">Full R Output</button>
+                </div>
+
+                <!-- Coefs tab -->
+                <div class="tab-pane active" id="tab-coefs">
+                    <div class="form-group" style="display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap;">
+                        <label style="margin-bottom: 0;">Significance filter for equations:</label>
+                        <div class="radio-row">
+                            <label><input type="radio" name="sigLevel" value="all" checked><span>All coefficients</span></label>
+                            <label><input type="radio" name="sigLevel" value="0.10"><span>p &lt; 0.10</span></label>
+                            <label><input type="radio" name="sigLevel" value="0.05"><span>p &lt; 0.05</span></label>
+                            <label><input type="radio" name="sigLevel" value="0.01"><span>p &lt; 0.01</span></label>
+                        </div>
+                    </div>
+                    <table class="coef-table" id="coefTable"></table>
+                    <div class="fit-stats" id="fitStats"></div>
+                </div>
+
+                <!-- Equations tab -->
+                <div class="tab-pane" id="tab-eqs">
+                    <p class="section-hint">Insignificant coefficients (per the filter above) are set to zero.</p>
+                    <div class="equation-box" id="equationsBox"></div>
+                    <div class="equation-actions">
+                        <button class="btn btn-secondary" id="copyEquationsBtn">Copy to Clipboard</button>
+                        <button class="btn btn-secondary" id="downloadEquationsBtn">Download as TXT</button>
+                    </div>
+                </div>
+
+                <!-- Raw R output -->
+                <div class="tab-pane" id="tab-raw">
+                    <pre class="results-output" id="rawOutput"></pre>
+                    <div class="equation-actions">
+                        <button class="btn btn-secondary" id="downloadScriptBtn">Download R Script</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <p>&copy; 2026 Koray Cosguner. All Rights Reserved.</p>
+    </footer>
+
+    <script type="module">
+        import { WebR } from 'https://webr.r-wasm.org/latest/webr.mjs';
+
+        // ============================================================
+        // STATE
+        // ============================================================
+        let webR = null;
+        let csvText = '';
+        let columnNames = [];
+        let rows = []; // parsed CSV rows as array of objects
+        let alternatives = []; // unique alt names, populated when altVar selected
+        let varRowId = 0;
+        let lastResult = null; // { coefs:[{name,est,se,p}], alts, reflevel, interceptType, vars_single, vars_alt, choiceVar, formula, rOutput, rScript }
+
+        // ============================================================
+        // DOM
+        // ============================================================
+        const $ = (id) => document.getElementById(id);
+        const loadingOverlay = $('loadingOverlay');
+        const loadingText = $('loadingText');
+        const loadingStage = $('loadingStage');
+        const uploadArea = $('uploadArea');
+        const fileInput = $('fileInput');
+        const dataPreview = $('dataPreview');
+        const previewTable = $('previewTable');
+        const previewMeta = $('previewMeta');
+        const configSection = $('configSection');
+        const chidVar = $('chidVar');
+        const altVar = $('altVar');
+        const choiceVar = $('choiceVar');
+        const reflevel = $('reflevel');
+        const varBuilder = $('varBuilder');
+        const varRows = $('varRows');
+        const addVarBtn = $('addVarBtn');
+        const runButton = $('runButton');
+        const resetButton = $('resetButton');
+        const resultsContainer = $('resultsContainer');
+        const statusMessage = $('statusMessage');
+
+        // ============================================================
+        // STATUS / LOADING HELPERS
+        // ============================================================
+        function showStatus(msg, type = 'info', autoHideMs = 0) {
+            statusMessage.textContent = msg;
+            statusMessage.className = `status-message visible ${type}`;
+            if (autoHideMs > 0) setTimeout(() => statusMessage.classList.remove('visible'), autoHideMs);
+        }
+        function setLoadingStage(stage) { loadingStage.textContent = stage; }
+        function setLoadingText(text) { loadingText.textContent = text; }
+
+        // ============================================================
+        // INIT WEBR
+        // ============================================================
+        async function initWebR() {
+            try {
+                setLoadingText('Loading WebR…');
+                webR = new WebR();
+                await webR.init();
+                setLoadingText('Installing mlogit package and dependencies…');
+                setLoadingStage('Downloading ~6 MB of compiled R packages (cached after first load)');
+                await webR.installPackages(['mlogit'], { quiet: true });
+                setLoadingText('Preparing R session…');
+                await webR.evalR('suppressPackageStartupMessages(library(mlogit))');
+                loadingOverlay.classList.add('hidden');
+                showStatus('Ready. Upload a CSV to begin.', 'success', 4000);
+            } catch (err) {
+                loadingOverlay.innerHTML = `
+                    <div style="text-align:center; padding:2rem; max-width:520px;">
+                        <p style="color:#991b1b; font-size:1.2rem; font-weight:600;">Failed to load WebR / mlogit</p>
+                        <p style="color:#666; margin-top:1rem; font-size:0.9rem;">${err.message}</p>
+                        <p style="color:#666; margin-top:0.5rem; font-size:0.85rem;">Reload the page to try again. If the problem persists, ensure your browser supports WebAssembly and is up to date.</p>
+                    </div>
+                `;
+            }
+        }
+
+        // ============================================================
+        // CSV PARSING (simple, comma-only)
+        // ============================================================
+        function parseCSV(text) {
+            const lines = text.replace(/\r\n/g, '\n').replace(/\r/g, '\n').split('\n').filter(l => l.length > 0);
+            if (lines.length < 2) return { headers: [], rows: [] };
+            const headers = splitCSVLine(lines[0]);
+            const rows = [];
+            for (let i = 1; i < lines.length; i++) {
+                const cells = splitCSVLine(lines[i]);
+                if (cells.length === 0) continue;
+                const obj = {};
+                headers.forEach((h, idx) => { obj[h] = cells[idx] !== undefined ? cells[idx] : ''; });
+                rows.push(obj);
+            }
+            return { headers, rows };
+        }
+        // Handles double-quoted fields with embedded commas / quotes.
+        function splitCSVLine(line) {
+            const result = []; let cur = ''; let inQuotes = false;
+            for (let i = 0; i < line.length; i++) {
+                const c = line[i];
+                if (inQuotes) {
+                    if (c === '"' && line[i + 1] === '"') { cur += '"'; i++; }
+                    else if (c === '"') { inQuotes = false; }
+                    else { cur += c; }
+                } else {
+                    if (c === ',') { result.push(cur); cur = ''; }
+                    else if (c === '"') { inQuotes = true; }
+                    else { cur += c; }
+                }
+            }
+            result.push(cur);
+            return result.map(s => s.trim());
+        }
+
+        // ============================================================
+        // UPLOAD / PREVIEW
+        // ============================================================
+        uploadArea.addEventListener('click', () => fileInput.click());
+        uploadArea.addEventListener('dragover', (e) => { e.preventDefault(); uploadArea.classList.add('dragover'); });
+        uploadArea.addEventListener('dragleave', () => uploadArea.classList.remove('dragover'));
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.classList.remove('dragover');
+            if (e.dataTransfer.files.length > 0) handleFile(e.dataTransfer.files[0]);
+        });
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) handleFile(e.target.files[0]);
+        });
+
+        function handleFile(file) {
+            if (!file.name.toLowerCase().endsWith('.csv')) {
+                showStatus('Please upload a .csv file.', 'error', 4000);
+                return;
+            }
+            const reader = new FileReader();
+            reader.onload = (ev) => {
+                csvText = ev.target.result;
+                const { headers, rows: parsedRows } = parseCSV(csvText);
+                if (headers.length === 0 || parsedRows.length === 0) {
+                    showStatus('Could not parse CSV. Is it empty or malformed?', 'error', 5000);
+                    return;
+                }
+                columnNames = headers;
+                rows = parsedRows;
+                renderPreview();
+                populateColumnSelectors();
+                configSection.style.display = 'block';
+                if (varRows.children.length === 0) addVarRow();
+                showStatus(`Loaded ${parsedRows.length} rows × ${headers.length} columns.`, 'success', 3000);
+            };
+            reader.readAsText(file);
+        }
+
+        function renderPreview() {
+            let html = '<thead><tr>';
+            columnNames.forEach(h => { html += `<th>${escapeHtml(h)}</th>`; });
+            html += '</tr></thead><tbody>';
+            rows.slice(0, 8).forEach(row => {
+                html += '<tr>';
+                columnNames.forEach(h => { html += `<td>${escapeHtml(row[h] ?? '')}</td>`; });
+                html += '</tr>';
+            });
+            html += '</tbody>';
+            previewTable.innerHTML = html;
+            previewMeta.textContent = `${rows.length.toLocaleString()} total rows · ${columnNames.length} columns`;
+            dataPreview.classList.add('visible');
+        }
+
+        function populateColumnSelectors() {
+            const blank = '<option value="">-- Select --</option>';
+            const opts = columnNames.map(c => `<option value="${escapeHtml(c)}">${escapeHtml(c)}</option>`).join('');
+            chidVar.innerHTML = blank + opts;
+            altVar.innerHTML = blank + opts;
+            choiceVar.innerHTML = blank + opts;
+            reflevel.innerHTML = '<option value="">-- Pick alternative variable first --</option>';
+            reflevel.disabled = true;
+            updateRunEnabled();
+        }
+
+        // When alt var changes, populate reflevel choices from unique values in that column.
+        altVar.addEventListener('change', () => {
+            const col = altVar.value;
+            if (!col) {
+                reflevel.innerHTML = '<option value="">-- Pick alternative variable first --</option>';
+                reflevel.disabled = true;
+                alternatives = [];
+            } else {
+                const seen = new Set();
+                rows.forEach(r => { if (r[col] !== undefined && r[col] !== '') seen.add(r[col]); });
+                alternatives = Array.from(seen);
+                reflevel.innerHTML = '<option value="">-- Select reference --</option>' +
+                    alternatives.map(a => `<option value="${escapeHtml(a)}">${escapeHtml(a)}</option>`).join('');
+                reflevel.disabled = false;
+            }
+            refreshVarRowChoices();
+            updateRunEnabled();
+        });
+
+        [chidVar, choiceVar, reflevel].forEach(el => el.addEventListener('change', () => {
+            refreshVarRowChoices();
+            updateRunEnabled();
+        }));
+
+        // ============================================================
+        // VARIABLE BUILDER
+        // ============================================================
+        function addVarRow() {
+            varRowId++;
+            const id = varRowId;
+            const row = document.createElement('div');
+            row.className = 'var-row';
+            row.dataset.id = id;
+            row.innerHTML = `
+                <select class="var-name" data-id="${id}">
+                    <option value="">-- Select variable --</option>
+                </select>
+                <select class="var-type" data-id="${id}">
+                    <option value="single">Choice-Invariant (one slope)</option>
+                    <option value="alt_specific">Choice-Specific (per-alt slope)</option>
+                </select>
+                <button type="button" class="remove-btn" data-id="${id}">Remove</button>
+            `;
+            varRows.appendChild(row);
+            row.querySelector('.remove-btn').addEventListener('click', () => {
+                row.remove();
+                updateRunEnabled();
+            });
+            row.querySelector('.var-name').addEventListener('change', updateRunEnabled);
+            refreshVarRowChoices();
+            updateRunEnabled();
+        }
+        addVarBtn.addEventListener('click', addVarRow);
+
+        // Variables shown in the dropdowns: any column that's not chid / alt / choice.
+        function refreshVarRowChoices() {
+            const exclude = new Set([chidVar.value, altVar.value, choiceVar.value].filter(Boolean));
+            const candidates = columnNames.filter(c => !exclude.has(c));
+            varRows.querySelectorAll('.var-name').forEach(sel => {
+                const current = sel.value;
+                sel.innerHTML = '<option value="">-- Select variable --</option>' +
+                    candidates.map(c => `<option value="${escapeHtml(c)}"${c === current ? ' selected' : ''}>${escapeHtml(c)}</option>`).join('');
+            });
+        }
+
+        function getModelVars() {
+            const out = [];
+            varRows.querySelectorAll('.var-row').forEach(row => {
+                const name = row.querySelector('.var-name').value;
+                const type = row.querySelector('.var-type').value;
+                if (name) out.push({ name, type });
+            });
+            return out;
+        }
+
+        function updateRunEnabled() {
+            const ok = chidVar.value && altVar.value && choiceVar.value && reflevel.value && getModelVars().length > 0;
+            runButton.disabled = !ok;
+        }
+
+        // ============================================================
+        // RESET
+        // ============================================================
+        resetButton.addEventListener('click', () => {
+            csvText = ''; columnNames = []; rows = []; alternatives = []; lastResult = null;
+            fileInput.value = '';
+            dataPreview.classList.remove('visible');
+            configSection.style.display = 'none';
+            varRows.innerHTML = '';
+            varRowId = 0;
+            resultsContainer.classList.remove('visible');
+            statusMessage.classList.remove('visible');
+        });
+
+        // ============================================================
+        // RUN: build R code, execute via WebR, parse results
+        // ============================================================
+        runButton.addEventListener('click', runEstimation);
+
+        async function runEstimation() {
+            try {
+                runButton.disabled = true;
+                runButton.textContent = 'Estimating…';
+                showStatus('Sending data and formula to R…', 'info');
+
+                const interceptType = document.querySelector('input[name="interceptType"]:checked').value;
+                const modelVars = getModelVars();
+                const varsSingle = modelVars.filter(v => v.type === 'single').map(v => v.name);
+                const varsAlt    = modelVars.filter(v => v.type === 'alt_specific').map(v => v.name);
+
+                // Build mlogit formula parts (mirrors the original Shiny app's logic)
+                let part1 = varsSingle.length > 0 ? varsSingle.join(' + ') : '0';
+                let part2;
+                if (interceptType === 'alt_specific') {
+                    part2 = varsAlt.length > 0 ? varsAlt.join(' + ') : '1';
+                } else {
+                    part2 = varsAlt.length > 0 ? '0 + ' + varsAlt.join(' + ') : '0';
+                    if (part1 !== '0') part1 = '0 + ' + part1;
+                }
+                const formulaStr = `${rEsc(choiceVar.value)} ~ ${part1} | ${part2}`;
+
+                // Write the CSV to WebR's virtual filesystem (avoids brittle string-escape
+                // interpolation of the data into R code).
+                const csvBytes = new TextEncoder().encode(csvText);
+                await webR.FS.writeFile('/tmp/mlogit_data.csv', csvBytes);
+
+                const rScript = buildRScript({
+                    chidVar: chidVar.value,
+                    altVar: altVar.value,
+                    choiceVar: choiceVar.value,
+                    reflevel: reflevel.value,
+                    formulaStr
+                });
+
+                const rCode = `${rScript}
+# === Capture results for the browser ===
+.coef_summary = summary(.fit)$CoefTable
+.coef_rows = c()
+for (i in 1:nrow(.coef_summary)) {
+    nm = gsub('"', '\\\\"', rownames(.coef_summary)[i])
+    est = .coef_summary[i, 1]
+    se  = .coef_summary[i, 2]
+    pv  = .coef_summary[i, 4]
+    .coef_rows = c(.coef_rows, paste0('{"name":"', nm, '","est":', est, ',"se":', se, ',"p":', pv, '}'))
+}
+.coef_json = paste0('COEFS_JSON:[', paste(.coef_rows, collapse = ','), ']:END')
+
+.fit_summary = summary(.fit)
+.aic = AIC(.fit)
+.ll  = as.numeric(logLik(.fit))
+.df  = attr(logLik(.fit), 'df')
+.r2  = if (!is.null(.fit_summary$mfR2)) as.numeric(.fit_summary$mfR2) else NA
+.alt_levels = levels(index(.mldata)$alt)
+.alts_json = paste0('ALTS_JSON:["', paste(.alt_levels, collapse = '","'), '"]:END')
+.fit_json = paste0('FIT_JSON:{"aic":', .aic, ',"ll":', .ll, ',"df":', .df, ',"r2":', if (is.na(.r2)) 'null' else .r2, ',"n":', nrow(index(.mldata)) / length(.alt_levels), '}:END')
+
+# Capture the printed summary for the "Full R Output" tab
+.summary_text = paste(capture.output(print(.fit_summary)), collapse = '\\n')
+.summary_marker = paste0('SUMMARY:', .summary_text, ':END_SUMMARY')
+
+paste(c(.coef_json, .alts_json, .fit_json, .summary_marker), collapse = '\\n---MARK---\\n')
+`;
+
+                const result = await webR.evalR(rCode);
+                const outObj = await result.toJs();
+                let outStr;
+                if (typeof outObj === 'string') outStr = outObj;
+                else if (outObj && outObj.values) outStr = Array.isArray(outObj.values) ? outObj.values.join('\n') : outObj.values;
+                else if (Array.isArray(outObj)) outStr = outObj.join('\n');
+                else outStr = String(outObj);
+
+                const coefMatch = outStr.match(/COEFS_JSON:(\[.*?\]):END/);
+                const altsMatch = outStr.match(/ALTS_JSON:(\[.*?\]):END/);
+                const fitMatch  = outStr.match(/FIT_JSON:({.*?}):END/);
+                const sumMatch  = outStr.match(/SUMMARY:([\s\S]*?):END_SUMMARY/);
+
+                if (!coefMatch || !altsMatch || !fitMatch) {
+                    throw new Error('Could not parse R output. Raw: ' + outStr.slice(0, 500));
+                }
+
+                const coefs = JSON.parse(coefMatch[1]);
+                const alts  = JSON.parse(altsMatch[1]);
+                const fit   = JSON.parse(fitMatch[1]);
+                const rawSummary = sumMatch ? sumMatch[1] : '(no summary captured)';
+
+                lastResult = {
+                    coefs, alts, reflevel: reflevel.value, interceptType,
+                    varsSingle, varsAlt, choiceVar: choiceVar.value,
+                    formula: formulaStr, fit, rawSummary, rScript
+                };
+                renderResults();
+                resultsContainer.classList.add('visible');
+                showStatus(`Model estimated. n = ${fit.n.toLocaleString()} choice occasions, ${alts.length} alternatives.`, 'success', 5000);
+                resultsContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            } catch (err) {
+                console.error(err);
+                showStatus('Error: ' + err.message, 'error');
+            } finally {
+                runButton.disabled = false;
+                runButton.textContent = 'Estimate Model';
+            }
+        }
+
+        // R-string escape (single backslashes and double-quotes only — JS template literal handles the rest).
+        function rEsc(s) {
+            return String(s).replace(/\\/g, '\\\\').replace(/"/g, '\\"');
+        }
+
+        function buildRScript({ chidVar, altVar, choiceVar, reflevel, formulaStr }) {
+            // The CSV is written to WebR's virtual filesystem at /tmp/mlogit_data.csv
+            // by the caller before evalR runs.
+            return `# Multinomial / Conditional Logit estimation in WebR
+suppressPackageStartupMessages(library(mlogit))
+
+# === Load data ===
+data = read.csv("/tmp/mlogit_data.csv", stringsAsFactors = FALSE)
+
+# Coerce numeric columns where possible
+for (col in names(data)) {
+    nv = suppressWarnings(as.numeric(data[[col]]))
+    if (!all(is.na(nv)) && sum(is.na(nv)) <= sum(is.na(data[[col]]))) {
+        data[[col]] = nv
+    }
+}
+
+# === Build mlogit data ===
+.mldata = mlogit.data(
+    data,
+    choice   = "${rEsc(choiceVar)}",
+    shape    = "long",
+    alt.var  = "${rEsc(altVar)}",
+    chid.var = "${rEsc(chidVar)}"
+)
+
+# === Fit ===
+.formula = as.formula("${rEsc(formulaStr)}")
+.fit = mlogit(.formula, data = .mldata, reflevel = "${rEsc(reflevel)}")
+`;
+        }
+
+        // ============================================================
+        // RESULTS RENDERING
+        // ============================================================
+        function renderResults() {
+            renderCoefTable();
+            renderFitStats();
+            renderRawOutput();
+            renderEquations();
+        }
+
+        function renderCoefTable() {
+            const tbody = lastResult.coefs.map(c => {
+                const sigClass = c.p < 0.05 ? 'coef-sig' : (c.p < 0.10 ? '' : 'coef-insig');
+                return `<tr>
+                    <td>${escapeHtml(c.name)}</td>
+                    <td class="${sigClass}">${c.est.toFixed(4)}</td>
+                    <td>${c.se.toFixed(4)}</td>
+                    <td class="${sigClass}">${formatP(c.p)}</td>
+                </tr>`;
+            }).join('');
+            $('coefTable').innerHTML = `
+                <thead><tr><th>Variable</th><th>Estimate</th><th>Std. Error</th><th>p-value</th></tr></thead>
+                <tbody>${tbody}</tbody>
+            `;
+        }
+
+        function renderFitStats() {
+            const f = lastResult.fit;
+            const items = [
+                { label: 'Observations (choice occasions)', value: f.n.toLocaleString() },
+                { label: 'AIC', value: f.aic.toFixed(2) },
+                { label: 'Log-Likelihood', value: f.ll.toFixed(2) },
+                { label: 'Parameters', value: f.df },
+            ];
+            if (f.r2 !== null) items.push({ label: 'McFadden R²', value: f.r2.toFixed(4) });
+            $('fitStats').innerHTML = items.map(i => `<div class="fit-stat"><div class="label">${i.label}</div><div class="value">${i.value}</div></div>`).join('');
+        }
+
+        function renderRawOutput() {
+            $('rawOutput').textContent = lastResult.rawSummary;
+        }
+
+        function formatP(p) {
+            if (p < 0.0001) return '< 0.0001';
+            return p.toFixed(4);
+        }
+
+        // ============================================================
+        // PREDICTION EQUATIONS — ported from the original Tool 17
+        // ============================================================
+        document.querySelectorAll('input[name="sigLevel"]').forEach(r => r.addEventListener('change', () => {
+            if (lastResult) renderEquations();
+        }));
+
+        function sanitizeAlt(x) { return String(x).replace(/%/g, '').replace(/ /g, '_'); }
+
+        function renderEquations() {
+            if (!lastResult) return;
+            const sigLevel = document.querySelector('input[name="sigLevel"]:checked').value;
+            const threshold = sigLevel === 'all' ? 1 : parseFloat(sigLevel);
+
+            const { coefs, alts, reflevel: ref, interceptType } = lastResult;
+            const nonBaseAlts = alts.filter(a => a !== ref);
+
+            // Apply significance filter (set insignificant -> 0)
+            const eff = coefs.map(c => ({ name: c.name, val: c.p < threshold ? c.est : 0 }));
+
+            // Identify generic (alternative-invariant) terms vs alt-specific
+            // Convention from mlogit naming:
+            //   generic terms have no ":" and are not "(intercept)"
+            //   alt-specific intercepts look like "(Intercept):AltName"
+            //   alt-specific covariates look like "AltName:Var" or "Var:AltName"
+            const genericTerms = {};       // name -> val
+            let genericIntercept = null;
+            for (const c of eff) {
+                if (c.val === 0) continue;
+                if (!c.name.includes(':') && /intercept/i.test(c.name)) {
+                    genericIntercept = c.val;
+                } else if (!c.name.includes(':')) {
+                    genericTerms[c.name] = c.val;
+                }
+            }
+
+            const lines = [];
+            lines.push('# Utility Equations');
+            lines.push(`# Baseline: U_${sanitizeAlt(ref)} = 0`);
+            lines.push('');
+
+            for (const alt of nonBaseAlts) {
+                const altClean = sanitizeAlt(alt);
+                const terms = [];
+
+                // alt-specific intercept first (if present)
+                let altInterceptFound = false;
+                for (const c of eff) {
+                    if (c.val === 0) continue;
+                    if (/intercept/i.test(c.name) && c.name.includes(':') && c.name.includes(alt)) {
+                        terms.push(round4(c.val).toString());
+                        altInterceptFound = true;
+                        break;
+                    }
+                }
+                if (!altInterceptFound && genericIntercept !== null && interceptType === 'alt_specific') {
+                    terms.push(round4(genericIntercept).toString());
+                }
+
+                // alt-specific covariates
+                for (const c of eff) {
+                    if (c.val === 0) continue;
+                    if (c.name.includes(':') && c.name.includes(alt)) {
+                        let varName = c.name.replace(new RegExp(`^${escapeRegex(alt)}:`), '')
+                                            .replace(new RegExp(`:${escapeRegex(alt)}$`), '');
+                        if (/intercept/i.test(varName)) continue;
+                        const v = round4(c.val);
+                        const sign = v >= 0 && terms.length > 0 ? ' + ' : (v < 0 ? ' - ' : '');
+                        terms.push(`${sign}${Math.abs(v)} * ${varName}`);
+                    }
+                }
+
+                // generic covariates (apply to every alt)
+                for (const [varName, val] of Object.entries(genericTerms)) {
+                    const v = round4(val);
+                    const sign = v >= 0 && terms.length > 0 ? ' + ' : (v < 0 ? ' - ' : '');
+                    terms.push(`${sign}${Math.abs(v)} * ${varName}`);
+                }
+
+                let eq = terms.join('');
+                if (eq === '') eq = '0';
+                eq = eq.replace(/^\s*\+\s*/, '');
+                lines.push(`U_${altClean} = ${eq}`);
+            }
+
+            // Probabilities
+            lines.push('');
+            lines.push('# Choice Probabilities');
+            const denomTerms = ['1', ...nonBaseAlts.map(a => `exp(U_${sanitizeAlt(a)})`)];
+            const denomStr = denomTerms.join(' + ');
+            lines.push(`Denominator = ${denomStr}`);
+            lines.push(`Pr_${sanitizeAlt(ref)} = 1 / Denominator`);
+            for (const alt of nonBaseAlts) {
+                const a = sanitizeAlt(alt);
+                lines.push(`Pr_${a} = exp(U_${a}) / Denominator`);
+            }
+
+            $('equationsBox').textContent = lines.join('\n');
+        }
+
+        function round4(x) { return Math.round(x * 10000) / 10000; }
+        function escapeRegex(s) { return String(s).replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }
+        function escapeHtml(s) { return String(s).replace(/[&<>"']/g, ch => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch])); }
+
+        // Equation actions
+        $('copyEquationsBtn').addEventListener('click', (e) => {
+            navigator.clipboard.writeText($('equationsBox').textContent).then(() => {
+                const orig = e.target.textContent;
+                e.target.textContent = '✓ Copied';
+                setTimeout(() => e.target.textContent = orig, 1500);
+            });
+        });
+        $('downloadEquationsBtn').addEventListener('click', () => {
+            downloadBlob($('equationsBox').textContent, 'prediction_equations.txt', 'text/plain');
+        });
+        $('downloadScriptBtn').addEventListener('click', () => {
+            if (!lastResult) return;
+            downloadBlob(lastResult.rScript, 'mlogit_analysis.R', 'text/plain');
+        });
+        function downloadBlob(text, filename, type) {
+            const blob = new Blob([text], { type });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url; a.download = filename;
+            document.body.appendChild(a); a.click();
+            document.body.removeChild(a); URL.revokeObjectURL(url);
+        }
+
+        // ============================================================
+        // TABS
+        // ============================================================
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+                btn.classList.add('active');
+                $('tab-' + btn.dataset.tab).classList.add('active');
+            });
+        });
+
+        // ============================================================
+        // GO
+        // ============================================================
+        initWebR();
+    </script>
+</body>
+</html>
