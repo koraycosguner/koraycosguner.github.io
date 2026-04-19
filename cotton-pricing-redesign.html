@@ -1,0 +1,1282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Tailor &amp; Co. &mdash; Product Portfolio &amp; Channel Level Pricing</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;800&family=Source+Serif+4:opsz,wght@8..60,300;8..60,400;8..60,600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<script>
+  // Default MathJax delimiters: \( \) for inline, $$ $$ for display.
+  // Do NOT enable $...$ as inline math — dollar signs in plain text would
+  // otherwise be parsed as math, and the % character that follows would
+  // be read as a TeX comment marker, eating the rest of the line.
+  window.MathJax = {
+    tex: { displayMath: [['$$', '$$']] },
+    svg: { fontCache: 'global' }
+  };
+</script>
+<script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+<style>
+  :root {
+    --crimson: #990000;
+    --crimson-bright: #b30000;
+    --crimson-dark: #4a0000;
+    --crimson-deep: #2d0000;
+    --crimson-light: #d4a8a8;
+    --crimson-soft: #fbf3f3;
+    --crimson-tint: #f6e8e8;
+    --gold: #b8941f;
+    --bg: #faf6f6;
+    --paper: #fdfbfb;
+    --card: #ffffff;
+    --text: #2a2225;
+    --text-dark: #1a1010;
+    --text-light: #8a7d7d;
+    --text-muted: #b8a8a8;
+    --border: #ede4e4;
+    --border-strong: #d8c5c5;
+    --green: #2d6a2e;
+    --green-bg: #f0f7f0;
+    --serif: 'Source Serif 4', Georgia, 'Times New Roman', serif;
+    --display: 'Playfair Display', Georgia, serif;
+    --sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    --mono: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+    --shadow-sm: 0 1px 3px rgba(74,0,0,0.04), 0 1px 2px rgba(74,0,0,0.03);
+    --shadow-md: 0 4px 12px rgba(74,0,0,0.06), 0 2px 4px rgba(74,0,0,0.04);
+    --shadow-lg: 0 12px 32px rgba(74,0,0,0.10), 0 4px 8px rgba(74,0,0,0.05);
+    --shadow-xl: 0 20px 48px rgba(74,0,0,0.14), 0 6px 12px rgba(74,0,0,0.08);
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; scroll-padding-top: 80px; }
+  body {
+    font-family: var(--serif);
+    background: #f0e9e9;
+    background-image:
+      radial-gradient(ellipse 800px 600px at 10% -10%, rgba(153,0,0,0.06) 0%, transparent 50%),
+      radial-gradient(ellipse 600px 500px at 95% 110%, rgba(74,0,0,0.07) 0%, transparent 50%);
+    background-attachment: fixed;
+    color: var(--text);
+    font-size: 16px;
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  /* READING PROGRESS BAR */
+  .progress-bar {
+    position: fixed; top: 0; left: 0; right: 0;
+    height: 3px;
+    background: rgba(74,0,0,0.08);
+    z-index: 100;
+  }
+  .progress-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--crimson), var(--crimson-bright), var(--crimson));
+    width: 0%;
+    transition: width 0.1s ease-out;
+    box-shadow: 0 0 8px rgba(153,0,0,0.4);
+  }
+
+  /* GRID LAYOUT */
+  .page-wrapper { max-width: 1280px; margin: 0 auto; padding: 24px 24px 60px; }
+  .layout-grid { display: grid; grid-template-columns: 220px minmax(0, 1fr); gap: 36px; align-items: start; }
+
+  /* STICKY TOC */
+  .toc {
+    position: sticky;
+    top: 24px;
+    padding: 28px 0 0 8px;
+  }
+  .toc-eyebrow {
+    font-family: var(--sans);
+    font-size: 10.5px;
+    font-weight: 700;
+    color: var(--text-light);
+    letter-spacing: 1.8px;
+    text-transform: uppercase;
+    margin-bottom: 14px;
+    padding-left: 14px;
+  }
+  .toc ul { list-style: none; }
+  .toc li { margin: 0; }
+  .toc li.nested { padding-left: 14px; }
+  .toc a {
+    display: block;
+    padding: 7px 14px;
+    font-family: var(--sans);
+    font-size: 13.5px;
+    font-weight: 500;
+    color: var(--text-light);
+    text-decoration: none;
+    border-left: 2px solid var(--border);
+    transition: all 0.15s;
+    line-height: 1.4;
+  }
+  .toc a:hover { color: var(--crimson); border-left-color: var(--crimson-light); background: rgba(255,255,255,0.4); }
+  .toc a.active { color: var(--crimson-dark); border-left-color: var(--crimson); font-weight: 600; background: var(--crimson-soft); }
+
+  /* MAIN CONTENT WRAPPER */
+  .main-content { min-width: 0; }
+
+  /* HEADER */
+  .header {
+    background: linear-gradient(135deg, var(--crimson) 0%, var(--crimson-dark) 70%, var(--crimson-deep) 100%);
+    padding: 56px 48px 44px;
+    border-radius: 16px 16px 0 0;
+    position: relative;
+    overflow: hidden;
+    box-shadow: var(--shadow-lg);
+  }
+  .header::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image:
+      radial-gradient(circle at 88% 18%, rgba(255,255,255,0.10) 0%, transparent 40%),
+      radial-gradient(circle at 12% 88%, rgba(255,255,255,0.06) 0%, transparent 40%);
+    pointer-events: none;
+  }
+  .header::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
+  }
+  .header-inner { position: relative; }
+  .header .lecture-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--crimson-light);
+    font-family: var(--sans);
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    font-weight: 700;
+    margin-bottom: 14px;
+    padding: 6px 12px;
+    border: 1px solid rgba(212,168,168,0.3);
+    border-radius: 20px;
+    background: rgba(255,255,255,0.04);
+  }
+  .header .lecture-tag::before {
+    content: '';
+    width: 6px; height: 6px;
+    background: var(--crimson-light);
+    border-radius: 50%;
+    box-shadow: 0 0 8px var(--crimson-light);
+  }
+  .header h1 {
+    font-family: var(--display);
+    color: #fff;
+    font-size: clamp(28px, 4vw, 44px);
+    font-weight: 700;
+    line-height: 1.1;
+    margin-bottom: 14px;
+    letter-spacing: -0.02em;
+  }
+  .header .sub {
+    color: rgba(255,255,255,0.7);
+    font-family: var(--sans);
+    font-size: clamp(13px, 1.5vw, 15px);
+    font-weight: 400;
+    letter-spacing: 0.2px;
+  }
+
+  /* BODY */
+  .body-card {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-top: none;
+    border-radius: 0 0 16px 16px;
+    padding: 44px 48px 56px;
+    box-shadow: var(--shadow-md);
+  }
+
+  /* CONTEXT - editorial style */
+  .lead {
+    font-family: var(--serif);
+    font-size: 17.5px;
+    line-height: 1.7;
+    color: #3a2f30;
+    margin-bottom: 36px;
+    padding: 8px 0 4px;
+    font-weight: 400;
+  }
+  .lead strong { color: var(--crimson-dark); font-weight: 600; }
+  .lead .firstchar {
+    font-family: var(--display);
+    float: left;
+    font-size: 56px;
+    line-height: 0.95;
+    padding: 6px 12px 0 0;
+    color: var(--crimson);
+    font-weight: 700;
+  }
+
+  /* OVERVIEW CARDS */
+  .overview-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-bottom: 36px; }
+  @media (max-width: 720px) { .overview-grid { grid-template-columns: 1fr; } }
+  .overview-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 22px 22px 24px;
+    box-shadow: var(--shadow-sm);
+    position: relative;
+  }
+  .overview-card .card-header {
+    font-family: var(--sans);
+    font-size: 10.5px;
+    color: var(--text-light);
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    font-weight: 700;
+    margin-bottom: 16px;
+  }
+
+  /* PRODUCT TILES */
+  .portfolio-tiles { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .tier-tile {
+    padding: 14px 10px 14px;
+    border-radius: 10px;
+    text-align: center;
+    position: relative;
+    border: 1px solid var(--border);
+    transition: transform 0.18s, box-shadow 0.18s;
+  }
+  .tier-tile:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
+  .tier-tile .tier-name {
+    font-family: var(--sans);
+    font-size: 9.5px;
+    font-weight: 800;
+    letter-spacing: 1.8px;
+    margin-bottom: 6px;
+  }
+  .tier-tile .product-name {
+    font-family: var(--display);
+    font-size: 14.5px;
+    font-weight: 700;
+    color: var(--text-dark);
+    line-height: 1.15;
+    margin-bottom: 8px;
+  }
+  .tier-tile .cost {
+    font-family: var(--sans);
+    font-size: 11px;
+    color: var(--text-light);
+  }
+  .tier-tile .cost-value { color: var(--crimson-dark); font-weight: 700; font-size: 14px; }
+  .tier-good { background: linear-gradient(180deg, #faf7f5, #fff); border-top: 3px solid #a89181; }
+  .tier-good .tier-name { color: #786555; }
+  .tier-better { background: linear-gradient(180deg, #fff7ee, #fff); border-top: 3px solid #c68142; }
+  .tier-better .tier-name { color: #8a3a00; }
+  .tier-best { background: linear-gradient(180deg, #f5f9f5, #fff); border-top: 3px solid var(--green); }
+  .tier-best .tier-name { color: var(--green); }
+
+  /* CHANNEL STATS */
+  .channels-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .channel-stat {
+    text-align: center;
+    padding: 14px 8px;
+    border-radius: 10px;
+    background: linear-gradient(180deg, var(--crimson-soft), #fff);
+    border: 1px solid var(--crimson-tint);
+  }
+  .channel-stat .num {
+    font-family: var(--display);
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--crimson);
+    line-height: 1;
+    letter-spacing: -0.02em;
+  }
+  .channel-stat .label {
+    font-family: var(--sans);
+    font-size: 12px;
+    color: var(--text-dark);
+    margin-top: 6px;
+    font-weight: 600;
+  }
+  .channel-stat .meta {
+    font-family: var(--sans);
+    font-size: 9.5px;
+    color: var(--text-light);
+    margin-top: 3px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-weight: 700;
+  }
+
+  /* COEFFICIENT COMPARISON TABLE */
+  .comparison-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 24px 28px 28px;
+    margin-bottom: 36px;
+    box-shadow: var(--shadow-sm);
+    overflow-x: auto;
+  }
+  .comparison-card .card-header {
+    font-family: var(--sans);
+    font-size: 10.5px;
+    color: var(--text-light);
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+  .comparison-card h3 {
+    font-family: var(--display);
+    font-size: 19px;
+    color: var(--crimson-dark);
+    margin-bottom: 6px;
+    font-weight: 700;
+  }
+  .comparison-card .desc {
+    font-size: 13.5px;
+    color: var(--text-light);
+    margin-bottom: 20px;
+    font-style: italic;
+  }
+  .compare-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: var(--sans);
+    font-size: 13.5px;
+    min-width: 540px;
+  }
+  .compare-table th, .compare-table td {
+    padding: 10px 12px;
+    text-align: right;
+  }
+  .compare-table thead th {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: var(--text-light);
+    font-weight: 700;
+    border-bottom: 2px solid var(--crimson);
+    text-align: right;
+  }
+  .compare-table thead th:first-child {
+    text-align: left;
+    color: var(--crimson-dark);
+  }
+  .compare-table tbody tr { border-bottom: 1px solid var(--border); }
+  .compare-table tbody tr:last-child { border-bottom: none; }
+  .compare-table tbody tr.section-row td {
+    background: var(--crimson-soft);
+    color: var(--crimson-dark);
+    font-weight: 700;
+    font-size: 11.5px;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    padding: 8px 12px;
+    text-align: left;
+  }
+  .compare-table .row-label {
+    text-align: left;
+    color: var(--text-dark);
+    font-weight: 600;
+    padding-left: 18px;
+  }
+  .compare-table .num-cell {
+    font-family: var(--mono);
+    font-size: 12.5px;
+    color: var(--text-dark);
+    font-weight: 500;
+  }
+  .compare-table .pooled-col { background: rgba(184,148,31,0.04); }
+  .compare-table tbody .pooled-col { color: var(--text); font-weight: 600; }
+  .compare-table thead .pooled-col { color: var(--gold); }
+
+  /* SECTION HEADER */
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    margin: 56px 0 18px;
+    padding-bottom: 16px;
+    border-bottom: 2px solid var(--crimson);
+  }
+  .section-header .num {
+    width: 48px; height: 48px;
+    background: linear-gradient(135deg, var(--crimson), var(--crimson-dark));
+    color: #fff;
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--display);
+    font-size: 24px; font-weight: 700;
+    flex-shrink: 0;
+    box-shadow: 0 4px 14px rgba(153,0,0,0.28);
+  }
+  .section-header h2 {
+    font-family: var(--display);
+    font-size: clamp(22px, 2.8vw, 30px);
+    color: var(--crimson-dark);
+    margin: 0;
+    flex: 1;
+    line-height: 1.15;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+  }
+  .section-header .meta {
+    font-family: var(--sans);
+    font-size: 11.5px;
+    color: var(--text-light);
+    font-weight: 700;
+    letter-spacing: 0.6px;
+    text-transform: uppercase;
+    white-space: nowrap;
+    background: var(--crimson-soft);
+    padding: 7px 14px;
+    border-radius: 16px;
+    border: 1px solid var(--crimson-tint);
+  }
+  .section-intro {
+    font-size: 15px;
+    color: #4d4042;
+    margin: 0 0 22px;
+    line-height: 1.75;
+  }
+
+  /* CHANNEL HERO */
+  .channel-hero {
+    background: linear-gradient(135deg, #fff, var(--crimson-soft));
+    border: 1px solid var(--border);
+    border-left: 5px solid var(--crimson);
+    border-radius: 14px;
+    padding: 22px 28px;
+    margin: 36px 0 16px;
+    box-shadow: var(--shadow-sm);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+  .channel-hero .left { flex: 1; min-width: 200px; }
+  .channel-hero .channel-num {
+    font-family: var(--sans);
+    font-size: 11px;
+    color: var(--text-light);
+    letter-spacing: 1.8px;
+    text-transform: uppercase;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+  .channel-hero h3 {
+    font-family: var(--display);
+    color: var(--crimson-dark);
+    font-size: 26px;
+    font-weight: 700;
+    margin: 0;
+    line-height: 1.15;
+    letter-spacing: -0.01em;
+  }
+  .channel-hero .size-badge {
+    background: linear-gradient(135deg, var(--crimson), var(--crimson-dark));
+    color: #fff;
+    padding: 11px 20px;
+    border-radius: 24px;
+    font-family: var(--sans);
+    font-weight: 700;
+    font-size: 14px;
+    white-space: nowrap;
+    box-shadow: 0 4px 12px rgba(153,0,0,0.25);
+    letter-spacing: 0.3px;
+  }
+
+  /* SUBSECTION TITLE */
+  .subsection-title {
+    font-family: var(--display);
+    font-size: 22px;
+    color: var(--crimson-dark);
+    margin: 44px 0 16px;
+    font-weight: 700;
+    padding-left: 16px;
+    border-left: 4px solid var(--crimson);
+    line-height: 1.2;
+    letter-spacing: -0.01em;
+  }
+
+  /* EQUATION BLOCKS */
+  .equation-block {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-left: 4px solid var(--crimson);
+    border-radius: 0 12px 12px 0;
+    padding: 20px 28px 22px;
+    margin: 12px 0;
+    box-shadow: var(--shadow-sm);
+    overflow-x: auto;
+    transition: box-shadow 0.18s;
+  }
+  .equation-block:hover { box-shadow: var(--shadow-md); }
+  .equation-block .label {
+    display: inline-block;
+    font-family: var(--sans);
+    color: var(--crimson);
+    font-size: 10.5px;
+    letter-spacing: 0.9px;
+    text-transform: uppercase;
+    font-weight: 700;
+    margin-bottom: 6px;
+    padding: 4px 11px;
+    background: var(--crimson-soft);
+    border-radius: 5px;
+    border: 1px solid var(--crimson-tint);
+  }
+  .equation-block .explanation {
+    font-style: italic;
+    color: #6c5d5d;
+    font-size: 13.5px;
+    line-height: 1.7;
+    margin: 10px 0 16px;
+  }
+  .equation-block .explanation code {
+    font-family: var(--mono);
+    background: #f5ecec;
+    color: var(--crimson-dark);
+    padding: 1.5px 6px;
+    border-radius: 4px;
+    font-size: 12.5px;
+    font-style: normal;
+  }
+  .equation-block + .equation-block { margin-top: 8px; }
+  .equation-block mjx-container { margin: 6px 0 !important; }
+
+  /* CODE CARD */
+  .code-card {
+    position: relative;
+    background: linear-gradient(180deg, #2c2326, #1a1416);
+    color: #e8dede;
+    border-radius: 12px;
+    padding: 20px 24px;
+    margin: 26px 0 32px;
+    box-shadow: var(--shadow-lg);
+    border: 1px solid #1a1010;
+  }
+  .code-card .code-title {
+    font-family: var(--sans);
+    font-size: 11.5px;
+    color: #b8a8a8;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    margin-bottom: 14px;
+    padding-right: 110px;
+    font-weight: 700;
+  }
+  .code-card .copy-btn {
+    position: absolute;
+    top: 16px; right: 16px;
+    background: linear-gradient(135deg, var(--crimson), var(--crimson-bright));
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 9px 18px;
+    font-family: var(--sans);
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    letter-spacing: 0.3px;
+    transition: all 0.15s;
+    box-shadow: 0 3px 10px rgba(153,0,0,0.4);
+  }
+  .code-card .copy-btn:hover { transform: translateY(-1px); box-shadow: 0 5px 14px rgba(153,0,0,0.5); }
+  .code-card .copy-btn.copied {
+    background: linear-gradient(135deg, var(--green), #1f4f1f);
+    box-shadow: 0 3px 10px rgba(45,106,46,0.4);
+  }
+  .code-card pre {
+    font-family: var(--mono);
+    font-size: 12.5px;
+    line-height: 1.7;
+    white-space: pre-wrap;
+    word-break: break-word;
+    color: #e8dede;
+    max-height: 520px;
+    overflow-y: auto;
+  }
+  /* Light syntax highlighting via spans (added by JS) */
+  .code-card .tok-comment { color: #8a7676; font-style: italic; }
+  .code-card .tok-num { color: #f0c674; }
+  .code-card .tok-op { color: #d4a8a8; }
+  .code-card .tok-fn { color: #c5e478; }
+
+  /* CTA */
+  .cta-block {
+    background: linear-gradient(135deg, var(--crimson) 0%, var(--crimson-dark) 70%, var(--crimson-deep) 100%);
+    color: #fff;
+    border-radius: 16px;
+    padding: 40px 36px 36px;
+    margin: 44px 0 0;
+    text-align: center;
+    box-shadow: var(--shadow-xl);
+    position: relative;
+    overflow: hidden;
+  }
+  .cta-block::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image:
+      radial-gradient(circle at 88% 18%, rgba(255,255,255,0.10) 0%, transparent 40%),
+      radial-gradient(circle at 12% 82%, rgba(255,255,255,0.06) 0%, transparent 40%);
+    pointer-events: none;
+  }
+  .cta-block .cta-eyebrow {
+    font-family: var(--sans);
+    font-size: 11px;
+    color: var(--crimson-light);
+    letter-spacing: 1.8px;
+    text-transform: uppercase;
+    font-weight: 700;
+    margin-bottom: 8px;
+    position: relative;
+  }
+  .cta-block h4 {
+    font-family: var(--display);
+    font-size: 26px;
+    font-weight: 700;
+    margin-bottom: 10px;
+    position: relative;
+    letter-spacing: -0.01em;
+  }
+  .cta-block p {
+    color: rgba(255,255,255,0.82);
+    font-size: 15px;
+    margin-bottom: 22px;
+    position: relative;
+    max-width: 560px;
+    margin-left: auto;
+    margin-right: auto;
+    line-height: 1.6;
+  }
+  .cta-block .cta-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: #fff;
+    color: var(--crimson-dark);
+    text-decoration: none;
+    padding: 15px 30px;
+    border-radius: 10px;
+    font-family: var(--sans);
+    font-weight: 700;
+    font-size: 15px;
+    letter-spacing: 0.3px;
+    transition: all 0.2s;
+    position: relative;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.22);
+  }
+  .cta-block .cta-btn:hover {
+    background: var(--bg);
+    transform: translateY(-2px);
+    box-shadow: 0 10px 24px rgba(0,0,0,0.28);
+  }
+  .cta-block .cta-btn::after { content: '\2192'; font-size: 18px; line-height: 1; }
+
+  /* FLOATING CTA */
+  .floating-cta {
+    position: fixed;
+    bottom: 28px;
+    right: 28px;
+    background: linear-gradient(135deg, var(--crimson), var(--crimson-dark));
+    color: #fff;
+    text-decoration: none;
+    padding: 13px 22px;
+    border-radius: 30px;
+    font-family: var(--sans);
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+    box-shadow: 0 8px 24px rgba(74,0,0,0.35);
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.25s, transform 0.25s, box-shadow 0.18s;
+    pointer-events: none;
+    z-index: 50;
+  }
+  .floating-cta.visible { opacity: 1; transform: translateY(0); pointer-events: auto; }
+  .floating-cta:hover { box-shadow: 0 12px 32px rgba(74,0,0,0.45); }
+  .floating-cta::before { content: ''; width: 8px; height: 8px; background: var(--crimson-light); border-radius: 50%; box-shadow: 0 0 8px var(--crimson-light); animation: pulse 2s infinite; }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+  }
+
+  /* FOOTER */
+  .footer {
+    text-align: center;
+    margin-top: 36px;
+    font-family: var(--sans);
+    font-size: 12.5px;
+    color: rgba(74,0,0,0.45);
+    letter-spacing: 0.3px;
+  }
+
+  /* RESPONSIVE */
+  @media (max-width: 1080px) {
+    .layout-grid { grid-template-columns: 1fr; gap: 0; }
+    .toc { display: none; }
+  }
+  @media (max-width: 720px) {
+    .portfolio-tiles, .channels-grid { grid-template-columns: 1fr; }
+    .body-card, .header { padding-left: 24px; padding-right: 24px; }
+    .header { padding-top: 36px; padding-bottom: 30px; }
+    .lead .firstchar { font-size: 44px; }
+  }
+  @media (max-width: 600px) {
+    .equation-block { padding: 14px 18px; }
+    .code-card { padding: 16px 18px; }
+    .code-card .code-title { padding-right: 0; padding-top: 36px; }
+    .code-card .copy-btn { top: 12px; right: 12px; }
+    .channel-hero { padding: 18px 22px; }
+    .section-header { gap: 12px; }
+    .section-header .num { width: 40px; height: 40px; font-size: 19px; }
+    .cta-block { padding: 30px 22px 26px; }
+    .floating-cta { bottom: 16px; right: 16px; padding: 11px 18px; font-size: 13px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="progress-bar"><div class="progress-bar-fill" id="progressFill"></div></div>
+
+<div class="page-wrapper">
+  <div class="layout-grid">
+
+    <!-- ============================== TOC SIDEBAR ============================== -->
+    <aside class="toc">
+      <div class="toc-eyebrow">On This Page</div>
+      <ul>
+        <li><a href="#overview" data-section="overview">Overview</a></li>
+        <li><a href="#pooled" data-section="pooled">1 &middot; Pooled Model</a></li>
+        <li><a href="#channels" data-section="channels">2 &middot; Channel-Level Models</a></li>
+        <li class="nested"><a href="#retail-chain" data-section="retail-chain">Retail Chain</a></li>
+        <li class="nested"><a href="#online-store" data-section="online-store">Online Store</a></li>
+        <li class="nested"><a href="#premium-boutique" data-section="premium-boutique">Premium Boutique</a></li>
+        <li><a href="#total" data-section="total">Total Profit</a></li>
+        <li><a href="#code" data-section="code">Code &amp; Optimizer</a></li>
+      </ul>
+    </aside>
+
+    <!-- ============================== MAIN CONTENT ============================== -->
+    <div class="main-content">
+
+      <div class="header">
+        <div class="header-inner">
+          <span class="lecture-tag">Tailor &amp; Co. &middot; M574</span>
+          <h1>Product Portfolio Pricing &amp; Channel Level Pricing</h1>
+          <p class="sub">Good&ndash;Better&ndash;Best Portfolio &middot; Performance Driven Pricing</p>
+        </div>
+      </div>
+
+      <div class="body-card">
+
+        <!-- LEAD / OVERVIEW -->
+        <section id="overview">
+          <p class="lead">
+            <span class="firstchar">T</span><strong>ailor &amp; Co.</strong> sells dress shirts across three distinct channels with a tiered product portfolio. Because customer bases differ across venues, preferences and price sensitivities can vary &mdash; so we compare two estimation strategies on the same 2,100&minus;customer dataset: <strong>(1) a pooled product choice model</strong> and <strong>(2) channel-level product choice models</strong> estimated separately. Each setup is shown in standard equation form, with code blocks ready to paste into <strong>Tool 8: General Purpose Optimizer</strong>.
+          </p>
+
+          <!-- TWO OVERVIEW CARDS SIDE-BY-SIDE -->
+          <div class="overview-grid">
+            <div class="overview-card">
+              <div class="card-header">Product Portfolio &amp; Costs</div>
+              <div class="portfolio-tiles">
+                <div class="tier-tile tier-good">
+                  <div class="tier-name">GOOD</div>
+                  <div class="product-name">Basic Cotton Blend</div>
+                  <div class="cost"><span class="cost-value">$10</span> unit cost</div>
+                </div>
+                <div class="tier-tile tier-better">
+                  <div class="tier-name">BETTER</div>
+                  <div class="product-name">100% Cotton</div>
+                  <div class="cost"><span class="cost-value">$20</span> unit cost</div>
+                </div>
+                <div class="tier-tile tier-best">
+                  <div class="tier-name">BEST</div>
+                  <div class="product-name">Organic Cotton</div>
+                  <div class="cost"><span class="cost-value">$30</span> unit cost</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="overview-card">
+              <div class="card-header">Channels &amp; Customers</div>
+              <div class="channels-grid">
+                <div class="channel-stat">
+                  <div class="num">1,000</div>
+                  <div class="label">Retail Chain</div>
+                  <div class="meta">CH 1</div>
+                </div>
+                <div class="channel-stat">
+                  <div class="num">700</div>
+                  <div class="label">Online Store</div>
+                  <div class="meta">CH 2</div>
+                </div>
+                <div class="channel-stat">
+                  <div class="num">400</div>
+                  <div class="label">Premium Boutique</div>
+                  <div class="meta">CH 3</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- COEFFICIENT COMPARISON TABLE -->
+          <div class="comparison-card">
+            <div class="card-header">Estimated Coefficients</div>
+            <h3>Pooled vs. Channel-Level Comparison</h3>
+            <p class="desc">Side-by-side view of intercepts and price slopes from all four model fits. Slopes are more negative when customers are more price-sensitive.</p>
+            <table class="compare-table">
+              <thead>
+                <tr>
+                  <th>Coefficient</th>
+                  <th class="pooled-col">Pooled</th>
+                  <th>Retail Chain</th>
+                  <th>Online Store</th>
+                  <th>Premium Boutique</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr class="section-row"><td colspan="5">Intercepts (intrinsic appeal)</td></tr>
+                <tr>
+                  <td class="row-label">Basic Cotton Blend</td>
+                  <td class="num-cell pooled-col">2.2462</td>
+                  <td class="num-cell">3.2219</td>
+                  <td class="num-cell">1.6488</td>
+                  <td class="num-cell">1.0558</td>
+                </tr>
+                <tr>
+                  <td class="row-label">100% Cotton</td>
+                  <td class="num-cell pooled-col">2.2496</td>
+                  <td class="num-cell">2.5525</td>
+                  <td class="num-cell">2.8434</td>
+                  <td class="num-cell">1.5573</td>
+                </tr>
+                <tr>
+                  <td class="row-label">Organic Cotton</td>
+                  <td class="num-cell pooled-col">1.5185</td>
+                  <td class="num-cell">2.4886</td>
+                  <td class="num-cell">1.6097</td>
+                  <td class="num-cell">1.6808</td>
+                </tr>
+                <tr class="section-row"><td colspan="5">Price slopes (sensitivity)</td></tr>
+                <tr>
+                  <td class="row-label">Basic Cotton Blend</td>
+                  <td class="num-cell pooled-col">&minus;0.1309</td>
+                  <td class="num-cell">&minus;0.1614</td>
+                  <td class="num-cell">&minus;0.1202</td>
+                  <td class="num-cell">&minus;0.0871</td>
+                </tr>
+                <tr>
+                  <td class="row-label">100% Cotton</td>
+                  <td class="num-cell pooled-col">&minus;0.0792</td>
+                  <td class="num-cell">&minus;0.1085</td>
+                  <td class="num-cell">&minus;0.0767</td>
+                  <td class="num-cell">&minus;0.0552</td>
+                </tr>
+                <tr>
+                  <td class="row-label">Organic Cotton</td>
+                  <td class="num-cell pooled-col">&minus;0.0429</td>
+                  <td class="num-cell">&minus;0.0772</td>
+                  <td class="num-cell">&minus;0.0401</td>
+                  <td class="num-cell">&minus;0.0281</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- ============================================== -->
+        <!-- POOLED -->
+        <!-- ============================================== -->
+        <section id="pooled">
+          <div class="section-header">
+            <div class="num">1</div>
+            <h2>Pooled Product Choice Model</h2>
+            <span class="meta">n = 2,100</span>
+          </div>
+          <p class="section-intro">A single product choice model is estimated on all 2,100 customers, ignoring channel membership. One set of coefficients applies to every customer regardless of where they shop.</p>
+
+          <div class="equation-block">
+            <span class="label">Utilities</span>
+            <p class="explanation">Each alternative's deterministic utility is a linear function of its own price. The intercept captures the alternative's intrinsic appeal; the slope is the price-sensitivity coefficient (more negative = more sensitive to price).</p>
+            $$U_{\text{Basic Cotton Blend}} = 2.2462 - 0.1309 \cdot P_{\text{Basic Cotton Blend}}$$
+            $$U_{100\%\,\text{Cotton}} = 2.2496 - 0.0792 \cdot P_{100\%\,\text{Cotton}}$$
+            $$U_{\text{Organic Cotton}} = 1.5185 - 0.0429 \cdot P_{\text{Organic Cotton}}$$
+          </div>
+
+          <div class="equation-block">
+            <span class="label">Denominator</span>
+            <p class="explanation">The denominator normalizes the choice shares so they sum to one. The leading 1 corresponds to <code>exp(0)</code>, the utility of the No&nbsp;Purchase outside option (the reference level).</p>
+            $$D = 1 + \exp(U_{\text{Basic Cotton Blend}}) + \exp(U_{100\%\,\text{Cotton}}) + \exp(U_{\text{Organic Cotton}})$$
+          </div>
+
+          <div class="equation-block">
+            <span class="label">Choice Probabilities</span>
+            <p class="explanation">In the product choice model, the choice probability of each alternative is its <code>exp(utility)</code> divided by the denominator. The four probabilities are mutually exclusive and sum to one.</p>
+            $$\Pr(\text{No Purchase}) = \frac{1}{D}$$
+            $$\Pr(\text{Basic Cotton Blend}) = \frac{\exp(U_{\text{Basic Cotton Blend}})}{D}$$
+            $$\Pr(100\%\,\text{Cotton}) = \frac{\exp(U_{100\%\,\text{Cotton}})}{D}$$
+            $$\Pr(\text{Organic Cotton}) = \frac{\exp(U_{\text{Organic Cotton}})}{D}$$
+          </div>
+
+          <div class="equation-block">
+            <span class="label">Profit</span>
+            <p class="explanation">Per-customer profit is the probability-weighted sum of unit margins (price minus unit cost) across the three products. Total firm profit scales by market size (2,100 customers).</p>
+            $$\begin{aligned}
+              \text{Profit}_{\text{per Customer}} = \;& \Pr(\text{Basic Cotton Blend}) \cdot (P_{\text{Basic Cotton Blend}} - 10) \\
+              + \;& \Pr(100\%\,\text{Cotton}) \cdot (P_{100\%\,\text{Cotton}} - 20) \\
+              + \;& \Pr(\text{Organic Cotton}) \cdot (P_{\text{Organic Cotton}} - 30)
+            \end{aligned}$$
+            $$\text{Profit} = 2{,}100 \cdot \text{Profit}_{\text{per Customer}}$$
+          </div>
+
+          <div class="code-card">
+            <div class="code-title">Paste into Tool 8: General Purpose Optimizer</div>
+            <button class="copy-btn" onclick="copyBlock('pooled-code', this)">Copy</button>
+<pre id="pooled-code"># Pooled Analysis (n = 2,100)
+
+U_Basic_Cotton_Blend = 2.2462 - 0.1309 * P_Basic_Cotton_Blend
+U_100_Cotton = 2.2496 - 0.0792 * P_100_Cotton
+U_Organic_Cotton = 1.5185 - 0.0429 * P_Organic_Cotton
+
+Denominator = 1 + exp(U_Basic_Cotton_Blend) + exp(U_100_Cotton) + exp(U_Organic_Cotton)
+
+Pr_No_Purchase = 1 / Denominator
+Pr_Basic_Cotton_Blend = exp(U_Basic_Cotton_Blend) / Denominator
+Pr_100_Cotton = exp(U_100_Cotton) / Denominator
+Pr_Organic_Cotton = exp(U_Organic_Cotton) / Denominator
+
+Profit_Per_Customer = Pr_Basic_Cotton_Blend * (P_Basic_Cotton_Blend - 10) + Pr_100_Cotton * (P_100_Cotton - 20) + Pr_Organic_Cotton * (P_Organic_Cotton - 30)
+
+Profit = Profit_Per_Customer * 2100</pre>
+          </div>
+        </section>
+
+        <!-- ============================================== -->
+        <!-- CHANNEL-BY-CHANNEL -->
+        <!-- ============================================== -->
+        <section id="channels">
+          <div class="section-header">
+            <div class="num">2</div>
+            <h2>Channel-Level Product Choice Models</h2>
+            <span class="meta">3 channels</span>
+          </div>
+          <p class="section-intro">A separate product choice model is estimated within each channel, allowing intercepts (intrinsic appeal) and slopes (price sensitivity) to differ across the three sales venues. Channel profits are then summed for the firm-level objective.</p>
+
+          <!-- ====================== Channel 1 ====================== -->
+          <div id="retail-chain">
+            <div class="channel-hero">
+              <div class="left">
+                <div class="channel-num">Channel 1</div>
+                <h3>Retail Chain</h3>
+              </div>
+              <div class="size-badge">1,000 customers</div>
+            </div>
+
+            <div class="equation-block">
+              <span class="label">Utilities &mdash; Retail Chain</span>
+              <p class="explanation">Estimated only on the 1,000 Retail Chain customers. Variables are channel-specific (each price decision applies only inside this channel).</p>
+              $$U^{\text{Retail Chain}}_{\text{Basic Cotton Blend}} = 3.2219 - 0.1614 \cdot P^{\text{Retail Chain}}_{\text{Basic Cotton Blend}}$$
+              $$U^{\text{Retail Chain}}_{100\%\,\text{Cotton}} = 2.5525 - 0.1085 \cdot P^{\text{Retail Chain}}_{100\%\,\text{Cotton}}$$
+              $$U^{\text{Retail Chain}}_{\text{Organic Cotton}} = 2.4886 - 0.0772 \cdot P^{\text{Retail Chain}}_{\text{Organic Cotton}}$$
+            </div>
+
+            <div class="equation-block">
+              <span class="label">Denominator &mdash; Retail Chain</span>
+              <p class="explanation">Normalizing constant for the Retail Chain choice probabilities; the leading 1 is the No Purchase outside option.</p>
+              $$\begin{aligned}
+                D^{\text{Retail Chain}} = \;& 1 + \exp(U^{\text{Retail Chain}}_{\text{Basic Cotton Blend}}) \\
+                + \;& \exp(U^{\text{Retail Chain}}_{100\%\,\text{Cotton}}) + \exp(U^{\text{Retail Chain}}_{\text{Organic Cotton}})
+              \end{aligned}$$
+            </div>
+
+            <div class="equation-block">
+              <span class="label">Choice Probabilities &mdash; Retail Chain</span>
+              <p class="explanation">Choice probabilities computed within the Retail Chain channel.</p>
+              $$\Pr(\text{No Purchase})^{\text{Retail Chain}} = \frac{1}{D^{\text{Retail Chain}}}$$
+              $$\Pr(\text{Basic Cotton Blend})^{\text{Retail Chain}} = \frac{\exp(U^{\text{Retail Chain}}_{\text{Basic Cotton Blend}})}{D^{\text{Retail Chain}}}$$
+              $$\Pr(100\%\,\text{Cotton})^{\text{Retail Chain}} = \frac{\exp(U^{\text{Retail Chain}}_{100\%\,\text{Cotton}})}{D^{\text{Retail Chain}}}$$
+              $$\Pr(\text{Organic Cotton})^{\text{Retail Chain}} = \frac{\exp(U^{\text{Retail Chain}}_{\text{Organic Cotton}})}{D^{\text{Retail Chain}}}$$
+            </div>
+
+            <div class="equation-block">
+              <span class="label">Channel Profit &mdash; Retail Chain</span>
+              <p class="explanation">Per-customer profit is the probability-weighted margin within this channel. Channel-level profit scales by 1,000 customers.</p>
+              $$\begin{aligned}
+                \text{Profit}^{\text{Retail Chain}}_{\text{per Customer}} = \;& \Pr(\text{Basic Cotton Blend})^{\text{Retail Chain}} \cdot (P^{\text{Retail Chain}}_{\text{Basic Cotton Blend}} - 10) \\
+                + \;& \Pr(100\%\,\text{Cotton})^{\text{Retail Chain}} \cdot (P^{\text{Retail Chain}}_{100\%\,\text{Cotton}} - 20) \\
+                + \;& \Pr(\text{Organic Cotton})^{\text{Retail Chain}} \cdot (P^{\text{Retail Chain}}_{\text{Organic Cotton}} - 30)
+              \end{aligned}$$
+              $$\text{Profit}^{\text{Retail Chain}} = 1{,}000 \cdot \text{Profit}^{\text{Retail Chain}}_{\text{per Customer}}$$
+            </div>
+          </div>
+
+          <!-- ====================== Channel 2 ====================== -->
+          <div id="online-store">
+            <div class="channel-hero">
+              <div class="left">
+                <div class="channel-num">Channel 2</div>
+                <h3>Online Store</h3>
+              </div>
+              <div class="size-badge">700 customers</div>
+            </div>
+
+            <div class="equation-block">
+              <span class="label">Utilities &mdash; Online Store</span>
+              <p class="explanation">Estimated only on the 700 Online Store customers. Coefficients differ from the Retail Chain because online shoppers tend to have different preferences and price sensitivities.</p>
+              $$U^{\text{Online Store}}_{\text{Basic Cotton Blend}} = 1.6488 - 0.1202 \cdot P^{\text{Online Store}}_{\text{Basic Cotton Blend}}$$
+              $$U^{\text{Online Store}}_{100\%\,\text{Cotton}} = 2.8434 - 0.0767 \cdot P^{\text{Online Store}}_{100\%\,\text{Cotton}}$$
+              $$U^{\text{Online Store}}_{\text{Organic Cotton}} = 1.6097 - 0.0401 \cdot P^{\text{Online Store}}_{\text{Organic Cotton}}$$
+            </div>
+
+            <div class="equation-block">
+              <span class="label">Denominator &mdash; Online Store</span>
+              <p class="explanation">Normalizing constant for the Online Store choice probabilities.</p>
+              $$\begin{aligned}
+                D^{\text{Online Store}} = \;& 1 + \exp(U^{\text{Online Store}}_{\text{Basic Cotton Blend}}) \\
+                + \;& \exp(U^{\text{Online Store}}_{100\%\,\text{Cotton}}) + \exp(U^{\text{Online Store}}_{\text{Organic Cotton}})
+              \end{aligned}$$
+            </div>
+
+            <div class="equation-block">
+              <span class="label">Choice Probabilities &mdash; Online Store</span>
+              <p class="explanation">Choice probabilities computed within the Online Store channel.</p>
+              $$\Pr(\text{No Purchase})^{\text{Online Store}} = \frac{1}{D^{\text{Online Store}}}$$
+              $$\Pr(\text{Basic Cotton Blend})^{\text{Online Store}} = \frac{\exp(U^{\text{Online Store}}_{\text{Basic Cotton Blend}})}{D^{\text{Online Store}}}$$
+              $$\Pr(100\%\,\text{Cotton})^{\text{Online Store}} = \frac{\exp(U^{\text{Online Store}}_{100\%\,\text{Cotton}})}{D^{\text{Online Store}}}$$
+              $$\Pr(\text{Organic Cotton})^{\text{Online Store}} = \frac{\exp(U^{\text{Online Store}}_{\text{Organic Cotton}})}{D^{\text{Online Store}}}$$
+            </div>
+
+            <div class="equation-block">
+              <span class="label">Channel Profit &mdash; Online Store</span>
+              <p class="explanation">Channel-level profit scales by 700 customers.</p>
+              $$\begin{aligned}
+                \text{Profit}^{\text{Online Store}}_{\text{per Customer}} = \;& \Pr(\text{Basic Cotton Blend})^{\text{Online Store}} \cdot (P^{\text{Online Store}}_{\text{Basic Cotton Blend}} - 10) \\
+                + \;& \Pr(100\%\,\text{Cotton})^{\text{Online Store}} \cdot (P^{\text{Online Store}}_{100\%\,\text{Cotton}} - 20) \\
+                + \;& \Pr(\text{Organic Cotton})^{\text{Online Store}} \cdot (P^{\text{Online Store}}_{\text{Organic Cotton}} - 30)
+              \end{aligned}$$
+              $$\text{Profit}^{\text{Online Store}} = 700 \cdot \text{Profit}^{\text{Online Store}}_{\text{per Customer}}$$
+            </div>
+          </div>
+
+          <!-- ====================== Channel 3 ====================== -->
+          <div id="premium-boutique">
+            <div class="channel-hero">
+              <div class="left">
+                <div class="channel-num">Channel 3</div>
+                <h3>Premium Boutique</h3>
+              </div>
+              <div class="size-badge">400 customers</div>
+            </div>
+
+            <div class="equation-block">
+              <span class="label">Utilities &mdash; Premium Boutique</span>
+              <p class="explanation">Estimated only on the 400 Premium Boutique customers. Lower price-sensitivity slopes typically reflect a less price-elastic, premium clientele.</p>
+              $$U^{\text{Premium Boutique}}_{\text{Basic Cotton Blend}} = 1.0558 - 0.0871 \cdot P^{\text{Premium Boutique}}_{\text{Basic Cotton Blend}}$$
+              $$U^{\text{Premium Boutique}}_{100\%\,\text{Cotton}} = 1.5573 - 0.0552 \cdot P^{\text{Premium Boutique}}_{100\%\,\text{Cotton}}$$
+              $$U^{\text{Premium Boutique}}_{\text{Organic Cotton}} = 1.6808 - 0.0281 \cdot P^{\text{Premium Boutique}}_{\text{Organic Cotton}}$$
+            </div>
+
+            <div class="equation-block">
+              <span class="label">Denominator &mdash; Premium Boutique</span>
+              <p class="explanation">Normalizing constant for the Premium Boutique choice probabilities.</p>
+              $$\begin{aligned}
+                D^{\text{Premium Boutique}} = \;& 1 + \exp(U^{\text{Premium Boutique}}_{\text{Basic Cotton Blend}}) \\
+                + \;& \exp(U^{\text{Premium Boutique}}_{100\%\,\text{Cotton}}) + \exp(U^{\text{Premium Boutique}}_{\text{Organic Cotton}})
+              \end{aligned}$$
+            </div>
+
+            <div class="equation-block">
+              <span class="label">Choice Probabilities &mdash; Premium Boutique</span>
+              <p class="explanation">Choice probabilities computed within the Premium Boutique channel.</p>
+              $$\Pr(\text{No Purchase})^{\text{Premium Boutique}} = \frac{1}{D^{\text{Premium Boutique}}}$$
+              $$\Pr(\text{Basic Cotton Blend})^{\text{Premium Boutique}} = \frac{\exp(U^{\text{Premium Boutique}}_{\text{Basic Cotton Blend}})}{D^{\text{Premium Boutique}}}$$
+              $$\Pr(100\%\,\text{Cotton})^{\text{Premium Boutique}} = \frac{\exp(U^{\text{Premium Boutique}}_{100\%\,\text{Cotton}})}{D^{\text{Premium Boutique}}}$$
+              $$\Pr(\text{Organic Cotton})^{\text{Premium Boutique}} = \frac{\exp(U^{\text{Premium Boutique}}_{\text{Organic Cotton}})}{D^{\text{Premium Boutique}}}$$
+            </div>
+
+            <div class="equation-block">
+              <span class="label">Channel Profit &mdash; Premium Boutique</span>
+              <p class="explanation">Channel-level profit scales by 400 customers.</p>
+              $$\begin{aligned}
+                \text{Profit}^{\text{Premium Boutique}}_{\text{per Customer}} = \;& \Pr(\text{Basic Cotton Blend})^{\text{Premium Boutique}} \cdot (P^{\text{Premium Boutique}}_{\text{Basic Cotton Blend}} - 10) \\
+                + \;& \Pr(100\%\,\text{Cotton})^{\text{Premium Boutique}} \cdot (P^{\text{Premium Boutique}}_{100\%\,\text{Cotton}} - 20) \\
+                + \;& \Pr(\text{Organic Cotton})^{\text{Premium Boutique}} \cdot (P^{\text{Premium Boutique}}_{\text{Organic Cotton}} - 30)
+              \end{aligned}$$
+              $$\text{Profit}^{\text{Premium Boutique}} = 400 \cdot \text{Profit}^{\text{Premium Boutique}}_{\text{per Customer}}$$
+            </div>
+          </div>
+
+          <!-- TOTAL -->
+          <div id="total">
+            <h3 class="subsection-title">Total Profit Across Channels</h3>
+
+            <div class="equation-block">
+              <span class="label">Firm-Level Objective</span>
+              <p class="explanation">Total firm profit is the sum of the three channel profits. Because each channel's prices appear only in its own profit term, the channels are independent &mdash; they can be optimized separately and the optima summed.</p>
+              $$\text{Profit} = \text{Profit}^{\text{Retail Chain}} + \text{Profit}^{\text{Online Store}} + \text{Profit}^{\text{Premium Boutique}}$$
+            </div>
+          </div>
+
+          <div id="code">
+            <div class="code-card">
+              <div class="code-title">Paste into Tool 8: General Purpose Optimizer (9 prices &middot; 3 independent blocks)</div>
+              <button class="copy-btn" onclick="copyBlock('multichannel-code', this)">Copy</button>
+<pre id="multichannel-code"># Setting up the Profit from the Retail Chain (n = 1,000)
+
+U_Basic_Cotton_Blend_Retail_Chain = 3.2219 - 0.1614 * P_Basic_Cotton_Blend_Retail_Chain
+U_100_Cotton_Retail_Chain = 2.5525 - 0.1085 * P_100_Cotton_Retail_Chain
+U_Organic_Cotton_Retail_Chain = 2.4886 - 0.0772 * P_Organic_Cotton_Retail_Chain
+
+Denominator_Retail_Chain = 1 + exp(U_Basic_Cotton_Blend_Retail_Chain) + exp(U_100_Cotton_Retail_Chain) + exp(U_Organic_Cotton_Retail_Chain)
+
+Pr_Basic_Cotton_Blend_Retail_Chain = exp(U_Basic_Cotton_Blend_Retail_Chain) / Denominator_Retail_Chain
+Pr_100_Cotton_Retail_Chain = exp(U_100_Cotton_Retail_Chain) / Denominator_Retail_Chain
+Pr_Organic_Cotton_Retail_Chain = exp(U_Organic_Cotton_Retail_Chain) / Denominator_Retail_Chain
+
+Profit_Per_Customer_Retail_Chain = Pr_Basic_Cotton_Blend_Retail_Chain * (P_Basic_Cotton_Blend_Retail_Chain - 10) + Pr_100_Cotton_Retail_Chain * (P_100_Cotton_Retail_Chain - 20) + Pr_Organic_Cotton_Retail_Chain * (P_Organic_Cotton_Retail_Chain - 30)
+
+Profit_Retail_Chain = Profit_Per_Customer_Retail_Chain * 1000
+
+# Setting up the Profit from the Online Store (n = 700)
+
+U_Basic_Cotton_Blend_Online_Store = 1.6488 - 0.1202 * P_Basic_Cotton_Blend_Online_Store
+U_100_Cotton_Online_Store = 2.8434 - 0.0767 * P_100_Cotton_Online_Store
+U_Organic_Cotton_Online_Store = 1.6097 - 0.0401 * P_Organic_Cotton_Online_Store
+
+Denominator_Online_Store = 1 + exp(U_Basic_Cotton_Blend_Online_Store) + exp(U_100_Cotton_Online_Store) + exp(U_Organic_Cotton_Online_Store)
+
+Pr_Basic_Cotton_Blend_Online_Store = exp(U_Basic_Cotton_Blend_Online_Store) / Denominator_Online_Store
+Pr_100_Cotton_Online_Store = exp(U_100_Cotton_Online_Store) / Denominator_Online_Store
+Pr_Organic_Cotton_Online_Store = exp(U_Organic_Cotton_Online_Store) / Denominator_Online_Store
+
+Profit_Per_Customer_Online_Store = Pr_Basic_Cotton_Blend_Online_Store * (P_Basic_Cotton_Blend_Online_Store - 10) + Pr_100_Cotton_Online_Store * (P_100_Cotton_Online_Store - 20) + Pr_Organic_Cotton_Online_Store * (P_Organic_Cotton_Online_Store - 30)
+
+Profit_Online_Store = Profit_Per_Customer_Online_Store * 700
+
+# Setting up the Profit from the Premium Boutique (n = 400)
+
+U_Basic_Cotton_Blend_Premium_Boutique = 1.0558 - 0.0871 * P_Basic_Cotton_Blend_Premium_Boutique
+U_100_Cotton_Premium_Boutique = 1.5573 - 0.0552 * P_100_Cotton_Premium_Boutique
+U_Organic_Cotton_Premium_Boutique = 1.6808 - 0.0281 * P_Organic_Cotton_Premium_Boutique
+
+Denominator_Premium_Boutique = 1 + exp(U_Basic_Cotton_Blend_Premium_Boutique) + exp(U_100_Cotton_Premium_Boutique) + exp(U_Organic_Cotton_Premium_Boutique)
+
+Pr_Basic_Cotton_Blend_Premium_Boutique = exp(U_Basic_Cotton_Blend_Premium_Boutique) / Denominator_Premium_Boutique
+Pr_100_Cotton_Premium_Boutique = exp(U_100_Cotton_Premium_Boutique) / Denominator_Premium_Boutique
+Pr_Organic_Cotton_Premium_Boutique = exp(U_Organic_Cotton_Premium_Boutique) / Denominator_Premium_Boutique
+
+Profit_Per_Customer_Premium_Boutique = Pr_Basic_Cotton_Blend_Premium_Boutique * (P_Basic_Cotton_Blend_Premium_Boutique - 10) + Pr_100_Cotton_Premium_Boutique * (P_100_Cotton_Premium_Boutique - 20) + Pr_Organic_Cotton_Premium_Boutique * (P_Organic_Cotton_Premium_Boutique - 30)
+
+Profit_Premium_Boutique = Profit_Per_Customer_Premium_Boutique * 400
+
+# Total Profit Across All Channels
+
+Profit = Profit_Retail_Chain + Profit_Online_Store + Profit_Premium_Boutique</pre>
+            </div>
+
+            <div class="cta-block">
+              <div class="cta-eyebrow">Next Step</div>
+              <h4>Find the Profit-Maximizing Prices</h4>
+              <p>Copy either code block above and paste it into Tool 8: General Purpose Optimizer to compute the optimal prices for the pooled or channel-level setup.</p>
+              <a class="cta-btn" href="profit-optimizer.html" target="_blank" rel="noopener">Open Tool 8: General Purpose Optimizer</a>
+            </div>
+          </div>
+        </section>
+
+      </div>
+
+      <p class="footer">Created by Dr. Koray Cosguner &middot; Performance Driven Pricing &middot; M574</p>
+    </div>
+
+  </div>
+</div>
+
+<!-- FLOATING CTA -->
+<a class="floating-cta" id="floatingCta" href="profit-optimizer.html" target="_blank" rel="noopener">
+  Open Tool 8
+</a>
+
+<script>
+  // Copy button
+  function copyBlock(id, btn) {
+    const text = document.getElementById(id).innerText;
+    navigator.clipboard.writeText(text).then(() => {
+      const original = btn.textContent;
+      btn.textContent = '\u2713 Copied';
+      btn.classList.add('copied');
+      setTimeout(() => { btn.textContent = original; btn.classList.remove('copied'); }, 1800);
+    }).catch(() => {
+      btn.textContent = 'Copy failed';
+      setTimeout(() => { btn.textContent = 'Copy'; }, 1800);
+    });
+  }
+
+  // Reading progress bar
+  const progressFill = document.getElementById('progressFill');
+  function updateProgress() {
+    const scrolled = window.scrollY;
+    const total = document.documentElement.scrollHeight - window.innerHeight;
+    const pct = total > 0 ? (scrolled / total) * 100 : 0;
+    progressFill.style.width = Math.min(100, Math.max(0, pct)) + '%';
+  }
+
+  // Floating CTA visibility
+  const floatingCta = document.getElementById('floatingCta');
+  function updateFloatingCta() {
+    if (window.scrollY > 600) floatingCta.classList.add('visible');
+    else floatingCta.classList.remove('visible');
+  }
+
+  // TOC active section tracking via IntersectionObserver
+  const tocLinks = document.querySelectorAll('.toc a');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const id = entry.target.id;
+        tocLinks.forEach(a => {
+          a.classList.toggle('active', a.dataset.section === id);
+        });
+      }
+    });
+  }, { rootMargin: '-15% 0px -75% 0px', threshold: 0 });
+
+  ['overview','pooled','channels','retail-chain','online-store','premium-boutique','total','code']
+    .forEach(id => {
+      const el = document.getElementById(id);
+      if (el) observer.observe(el);
+    });
+
+  // Light syntax highlighting for code blocks
+  function highlight(pre) {
+    let html = pre.innerHTML;
+    // Comments first (lines starting with #)
+    html = html.replace(/^(#.*)$/gm, '<span class="tok-comment">$1</span>');
+    // Numbers (incl. decimals and negatives in subtraction context)
+    html = html.replace(/(\b\d+\.\d+|\b\d+\b)/g, '<span class="tok-num">$1</span>');
+    // exp() function
+    html = html.replace(/\b(exp)(?=\()/g, '<span class="tok-fn">$1</span>');
+    // Operators
+    html = html.replace(/(\s)([\+\-\*\/=])(\s)/g, '$1<span class="tok-op">$2</span>$3');
+    pre.innerHTML = html;
+  }
+  document.querySelectorAll('.code-card pre').forEach(highlight);
+
+  window.addEventListener('scroll', () => { updateProgress(); updateFloatingCta(); }, { passive: true });
+  updateProgress();
+  updateFloatingCta();
+</script>
+</body>
+</html>
