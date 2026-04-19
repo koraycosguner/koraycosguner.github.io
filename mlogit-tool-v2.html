@@ -376,7 +376,7 @@
 
                 <!-- ============================== 4. Model spec ============================== -->
                 <h2 class="section-title mt">4. Specify the Model</h2>
-                <p class="section-hint">Add variables one by one. <strong>Choice-Invariant</strong> = single coefficient applied across alternatives. <strong>Choice-Specific</strong> = separate coefficient per alternative.</p>
+                <p class="section-hint">Add variables one by one. <strong>Choice-Invariant</strong> = single coefficient applied across alternatives. <strong>Choice-Specific</strong> = separate coefficient per alternative. In <strong>wide format</strong>, the dropdown shows the base attribute names (e.g., "Price") derived from the suffixes of the columns you checked under "Alternative-Specific Attribute Columns" above &mdash; so make sure those are checked and the alternative names are filled in first.</p>
                 <div class="var-builder">
                     <div id="varRows"></div>
                     <button type="button" class="add-var-btn" id="addVarBtn">+ Add Variable</button>
@@ -886,7 +886,16 @@
                         `;
                     }).join('');
                 refreshWideReflevel();
-                $('wideChoiceMap').querySelectorAll('input.wide-alt-name').forEach(i => i.addEventListener('input', refreshWideReflevel));
+                // Re-fire on every edit to the alt-name fields, since wideAttrGroups
+                // depends on the alt names (it strips them from the column suffixes
+                // to derive the base attribute name shown in the variable dropdown).
+                $('wideChoiceMap').querySelectorAll('input.wide-alt-name').forEach(i => {
+                    i.addEventListener('input', () => {
+                        refreshWideReflevel();
+                        refreshVarRowChoices();
+                        updateRunEnabled();
+                    });
+                });
                 refreshVarRowChoices();
                 updateRunEnabled();
             });
@@ -1269,7 +1278,6 @@ for (col in names(data)) {
                 { label: 'Log-Likelihood', value: f.ll.toFixed(2) },
                 { label: 'Parameters', value: f.df }
             ];
-            if (f.r2 !== null && f.r2 !== undefined) items.push({ label: 'McFadden R²', value: f.r2.toFixed(4) });
             $('fitStats').innerHTML = items.map(i => `<div class="fit-stat"><div class="label">${i.label}</div><div class="value">${i.value}</div></div>`).join('');
         }
 
