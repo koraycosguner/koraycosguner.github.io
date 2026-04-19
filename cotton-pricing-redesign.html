@@ -77,46 +77,55 @@
     box-shadow: 0 0 8px rgba(153,0,0,0.4);
   }
 
-  /* GRID LAYOUT */
-  .page-wrapper { max-width: 1280px; margin: 0 auto; padding: 24px 24px 60px; }
-  .layout-grid { display: grid; grid-template-columns: 220px minmax(0, 1fr); gap: 36px; align-items: start; }
-
-  /* STICKY TOC */
-  .toc {
-    position: sticky;
-    top: 24px;
-    padding: 28px 0 0 8px;
-  }
-  .toc-eyebrow {
-    font-family: var(--sans);
-    font-size: 10.5px;
-    font-weight: 700;
-    color: var(--text-light);
-    letter-spacing: 1.8px;
-    text-transform: uppercase;
-    margin-bottom: 14px;
-    padding-left: 14px;
-  }
-  .toc ul { list-style: none; }
-  .toc li { margin: 0; }
-  .toc li.nested { padding-left: 14px; }
-  .toc a {
-    display: block;
-    padding: 7px 14px;
-    font-family: var(--sans);
-    font-size: 13.5px;
-    font-weight: 500;
-    color: var(--text-light);
-    text-decoration: none;
-    border-left: 2px solid var(--border);
-    transition: all 0.15s;
-    line-height: 1.4;
-  }
-  .toc a:hover { color: var(--crimson); border-left-color: var(--crimson-light); background: rgba(255,255,255,0.4); }
-  .toc a.active { color: var(--crimson-dark); border-left-color: var(--crimson); font-weight: 600; background: var(--crimson-soft); }
-
-  /* MAIN CONTENT WRAPPER */
+  /* LAYOUT */
+  .page-wrapper { max-width: 1040px; margin: 0 auto; padding: 24px 24px 60px; }
   .main-content { min-width: 0; }
+
+  /* ============ ANIMATIONS ============ */
+  @media (prefers-reduced-motion: no-preference) {
+    /* Reveal-on-scroll: blocks fade up into view */
+    .reveal { opacity: 0; transform: translateY(28px); transition: opacity 0.7s cubic-bezier(.2,.7,.2,1), transform 0.7s cubic-bezier(.2,.7,.2,1); will-change: opacity, transform; }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+
+    /* Stagger children inside .reveal-stagger when parent becomes visible */
+    .reveal-stagger > * { opacity: 0; transform: translateY(14px); transition: opacity 0.55s cubic-bezier(.2,.7,.2,1), transform 0.55s cubic-bezier(.2,.7,.2,1); }
+    .reveal-stagger.visible > * { opacity: 1; transform: translateY(0); }
+    .reveal-stagger.visible > *:nth-child(1) { transition-delay: 0.04s; }
+    .reveal-stagger.visible > *:nth-child(2) { transition-delay: 0.14s; }
+    .reveal-stagger.visible > *:nth-child(3) { transition-delay: 0.24s; }
+
+    /* Page-load entrance for the header */
+    @keyframes header-rise { from { opacity: 0; transform: translateY(-14px); } to { opacity: 1; transform: translateY(0); } }
+    .header .lecture-tag { animation: header-rise 0.6s 0s cubic-bezier(.2,.7,.2,1) both; }
+    .header h1            { animation: header-rise 0.7s 0.08s cubic-bezier(.2,.7,.2,1) both; }
+    .header .sub          { animation: header-rise 0.7s 0.18s cubic-bezier(.2,.7,.2,1) both; }
+
+    /* Subtle drifting shimmer on the header gradient */
+    @keyframes header-shimmer { 0% { background-position: 0% 50%; } 100% { background-position: 100% 50%; } }
+    .header { background-size: 200% 200%; animation: header-shimmer 18s ease-in-out infinite alternate; }
+
+    /* Floating CTA: subtle attention bounce when first shown */
+    @keyframes cta-pop { 0% { opacity: 0; transform: translateY(28px) scale(0.85); } 60% { transform: translateY(-3px) scale(1.04); } 100% { opacity: 1; transform: translateY(0) scale(1); } }
+    .floating-cta.visible { animation: cta-pop 0.5s cubic-bezier(.2,.7,.2,1) both; }
+
+    /* Section number badge gets a tiny pop on reveal */
+    .reveal.visible .section-header .num { animation: badge-pop 0.5s 0.1s cubic-bezier(.4,1.6,.6,1) both; }
+    @keyframes badge-pop { 0% { transform: scale(0.7); } 70% { transform: scale(1.08); } 100% { transform: scale(1); } }
+
+    /* Channel hero shimmer line on reveal */
+    .channel-hero { position: relative; overflow: hidden; }
+    .reveal.visible .channel-hero::after {
+      content: ''; position: absolute; top: 0; left: -120%; height: 100%; width: 60%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.55), transparent);
+      transform: skewX(-20deg);
+      animation: hero-sweep 1.4s 0.2s cubic-bezier(.2,.7,.2,1) both;
+    }
+    @keyframes hero-sweep { from { left: -120%; } to { left: 220%; } }
+
+    /* Equation block: subtle scale on hover */
+    .equation-block { transition: transform 0.18s cubic-bezier(.2,.7,.2,1), box-shadow 0.2s; }
+    .equation-block:hover { transform: translateY(-2px); }
+  }
 
   /* HEADER */
   .header {
@@ -723,27 +732,92 @@
   }
 
   /* RESPONSIVE */
-  @media (max-width: 1080px) {
-    .layout-grid { grid-template-columns: 1fr; gap: 0; }
-    .toc { display: none; }
-  }
-  @media (max-width: 720px) {
-    .portfolio-tiles, .channels-grid { grid-template-columns: 1fr; }
-    .body-card, .header { padding-left: 24px; padding-right: 24px; }
-    .header { padding-top: 36px; padding-bottom: 30px; }
-    .lead .firstchar { font-size: 44px; }
-  }
-  @media (max-width: 600px) {
-    .equation-block { padding: 14px 18px; }
-    .code-card { padding: 16px 18px; }
-    .code-card .code-title { padding-right: 0; padding-top: 36px; }
-    .code-card .copy-btn { top: 12px; right: 12px; }
+  /* ============ RESPONSIVE ============ */
+  /* Tablet & below */
+  @media (max-width: 900px) {
+    .page-wrapper { padding: 16px 14px 50px; }
+    .header { padding: 40px 32px 30px; border-radius: 14px 14px 0 0; }
+    .body-card { padding: 32px 28px 40px; border-radius: 0 0 14px 14px; }
+    .lead { font-size: 16px; }
+    .lead .firstchar { font-size: 48px; padding: 4px 10px 0 0; }
+    .comparison-card { padding: 20px 18px 22px; }
     .channel-hero { padding: 18px 22px; }
-    .section-header { gap: 12px; }
-    .section-header .num { width: 40px; height: 40px; font-size: 19px; }
-    .cta-block { padding: 30px 22px 26px; }
-    .floating-cta { bottom: 16px; right: 16px; padding: 11px 18px; font-size: 13px; }
+    .section-header { gap: 14px; margin: 44px 0 16px; }
   }
+
+  /* Small tablet / large phone */
+  @media (max-width: 720px) {
+    .page-wrapper { padding: 12px 10px 50px; }
+    .overview-grid { grid-template-columns: 1fr; gap: 14px; margin-bottom: 28px; }
+    .portfolio-tiles, .channels-grid { grid-template-columns: repeat(3, 1fr); gap: 6px; }
+    .tier-tile { padding: 12px 6px; }
+    .tier-tile .product-name { font-size: 12.5px; }
+    .tier-tile .cost { font-size: 10.5px; }
+    .tier-tile .cost-value { font-size: 13px; }
+    .channel-stat { padding: 12px 6px; }
+    .channel-stat .num { font-size: 24px; }
+    .channel-stat .label { font-size: 11px; }
+    .channel-stat .meta { font-size: 9px; }
+    .header { padding: 34px 24px 26px; }
+    .header h1 { font-size: 24px; }
+    .header .lecture-tag { font-size: 10px; padding: 5px 10px; margin-bottom: 12px; }
+    .body-card { padding: 28px 20px 36px; }
+    .section-header { gap: 12px; margin: 36px 0 14px; padding-bottom: 12px; }
+    .section-header .num { width: 40px; height: 40px; font-size: 18px; border-radius: 10px; }
+    .section-header h2 { font-size: 19px; }
+    .section-header .meta { font-size: 10px; padding: 5px 10px; }
+    .lead { font-size: 15.5px; line-height: 1.65; margin-bottom: 28px; }
+    .lead .firstchar { font-size: 42px; padding: 2px 8px 0 0; }
+    .equation-block { padding: 14px 16px 16px; border-radius: 0 8px 8px 0; }
+    .equation-block .label { font-size: 9.5px; padding: 3px 9px; }
+    .equation-block .explanation { font-size: 12.5px; }
+    .equation-block mjx-container { font-size: 90% !important; }
+    .channel-hero { padding: 16px 18px; gap: 12px; }
+    .channel-hero h3 { font-size: 21px; }
+    .channel-hero .channel-num { font-size: 10px; }
+    .channel-hero .size-badge { padding: 8px 14px; font-size: 12.5px; }
+    .subsection-title { font-size: 18px; padding-left: 12px; margin: 32px 0 12px; }
+    .compare-table { font-size: 12px; min-width: 480px; }
+    .compare-table th, .compare-table td { padding: 8px 8px; }
+    .compare-table .num-cell { font-size: 11.5px; }
+    .compare-table .row-label { padding-left: 10px; }
+    .code-card { padding: 14px 16px; border-radius: 10px; }
+    .code-card .code-title { font-size: 10.5px; padding-right: 86px; }
+    .code-card pre { font-size: 11.5px; line-height: 1.6; }
+    .code-card .copy-btn { padding: 7px 14px; font-size: 12px; top: 12px; right: 12px; }
+    .cta-block { padding: 28px 22px 24px; border-radius: 14px; }
+    .cta-block h4 { font-size: 21px; }
+    .cta-block p { font-size: 13.5px; margin-bottom: 18px; }
+    .cta-block .cta-btn { padding: 12px 22px; font-size: 13.5px; }
+    .floating-cta { bottom: 16px; right: 16px; padding: 11px 18px; font-size: 12.5px; }
+    .footer { font-size: 11.5px; }
+  }
+
+  /* Phone */
+  @media (max-width: 480px) {
+    .portfolio-tiles, .channels-grid { grid-template-columns: 1fr; gap: 8px; }
+    .tier-tile { padding: 14px 12px; }
+    .tier-tile .product-name { font-size: 15px; }
+    .tier-tile .cost { font-size: 12px; }
+    .channel-stat { padding: 14px 10px; }
+    .channel-stat .num { font-size: 30px; }
+    .channel-stat .label { font-size: 13px; }
+    .header h1 { font-size: 22px; }
+    .header .sub { font-size: 12.5px; }
+    .body-card { padding: 24px 16px 30px; }
+    .section-header h2 { font-size: 17.5px; }
+    .equation-block { padding: 12px 14px 14px; }
+    .equation-block mjx-container { font-size: 85% !important; }
+    .channel-hero { flex-direction: column; align-items: flex-start; padding: 14px 16px; }
+    .channel-hero .size-badge { align-self: flex-start; }
+    .compare-table { min-width: 440px; }
+    .lead .firstchar { font-size: 36px; padding: 0 6px 0 0; }
+    .floating-cta::before { display: none; }
+    .floating-cta { padding: 10px 14px; font-size: 12px; bottom: 12px; right: 12px; }
+  }
+
+  /* Prevent any horizontal page-level overflow on mobile */
+  html, body { overflow-x: hidden; }
 </style>
 </head>
 <body>
@@ -751,24 +825,6 @@
 <div class="progress-bar"><div class="progress-bar-fill" id="progressFill"></div></div>
 
 <div class="page-wrapper">
-  <div class="layout-grid">
-
-    <!-- ============================== TOC SIDEBAR ============================== -->
-    <aside class="toc">
-      <div class="toc-eyebrow">On This Page</div>
-      <ul>
-        <li><a href="#overview" data-section="overview">Overview</a></li>
-        <li><a href="#pooled" data-section="pooled">1 &middot; Pooled Model</a></li>
-        <li><a href="#channels" data-section="channels">2 &middot; Channel-Level Models</a></li>
-        <li class="nested"><a href="#retail-chain" data-section="retail-chain">Retail Chain</a></li>
-        <li class="nested"><a href="#online-store" data-section="online-store">Online Store</a></li>
-        <li class="nested"><a href="#premium-boutique" data-section="premium-boutique">Premium Boutique</a></li>
-        <li><a href="#total" data-section="total">Total Profit</a></li>
-        <li><a href="#code" data-section="code">Code &amp; Optimizer</a></li>
-      </ul>
-    </aside>
-
-    <!-- ============================== MAIN CONTENT ============================== -->
     <div class="main-content">
 
       <div class="header">
@@ -1200,8 +1256,6 @@ Profit = Profit_Retail_Chain + Profit_Online_Store + Profit_Premium_Boutique</pr
 
       <p class="footer">Created by Dr. Koray Cosguner &middot; Performance Driven Pricing &middot; M574</p>
     </div>
-
-  </div>
 </div>
 
 <!-- FLOATING CTA -->
@@ -1240,24 +1294,45 @@ Profit = Profit_Retail_Chain + Profit_Online_Store + Profit_Premium_Boutique</pr
     else floatingCta.classList.remove('visible');
   }
 
-  // TOC active section tracking via IntersectionObserver
-  const tocLinks = document.querySelectorAll('.toc a');
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        const id = entry.target.id;
-        tocLinks.forEach(a => {
-          a.classList.toggle('active', a.dataset.section === id);
-        });
-      }
-    });
-  }, { rootMargin: '-15% 0px -75% 0px', threshold: 0 });
+  // ====== Scroll-reveal animations ======
+  // Auto-tag major content blocks for fade-up reveal on scroll.
+  document.querySelectorAll(
+    '.lead, .overview-card, .comparison-card, .section-header, ' +
+    '.section-intro, .equation-block, .channel-hero, .subsection-title, ' +
+    '.code-card, .cta-block'
+  ).forEach(el => el.classList.add('reveal'));
 
-  ['overview','pooled','channels','retail-chain','online-store','premium-boutique','total','code']
-    .forEach(id => {
-      const el = document.getElementById(id);
-      if (el) observer.observe(el);
+  // Stagger children inside the two grids of tiles.
+  document.querySelectorAll('.portfolio-tiles, .channels-grid')
+    .forEach(el => { el.classList.add('reveal', 'reveal-stagger'); });
+
+  // Count-up animation for the channel-stat numbers (1,000 / 700 / 400).
+  function animateNumber(el) {
+    const target = parseInt(el.textContent.replace(/[^\d]/g, ''), 10);
+    if (isNaN(target) || target === 0) return;
+    const duration = 1100;
+    const start = performance.now();
+    function step(now) {
+      const t = Math.min(1, (now - start) / duration);
+      const eased = 1 - Math.pow(1 - t, 3); // easeOutCubic
+      el.textContent = Math.floor(eased * target).toLocaleString('en-US');
+      if (t < 1) requestAnimationFrame(step);
+      else el.textContent = target.toLocaleString('en-US');
+    }
+    requestAnimationFrame(step);
+  }
+
+  const revealObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (!entry.isIntersecting) return;
+      entry.target.classList.add('visible');
+      // Trigger number count-ups when any reveal containing channel-stat numbers shows.
+      entry.target.querySelectorAll('.channel-stat .num').forEach(animateNumber);
+      revealObserver.unobserve(entry.target);
     });
+  }, { threshold: 0.15, rootMargin: '0px 0px -8% 0px' });
+
+  document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
 
   // Light syntax highlighting for code blocks
   function highlight(pre) {
