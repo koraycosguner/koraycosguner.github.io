@@ -43,8 +43,21 @@
         .loading-text { margin-top: 1rem; font-size: 1.1rem; color: var(--text-light); }
         .loading-stage { margin-top: 0.5rem; font-size: 0.85rem; color: #999; }
 
-        /* Test type cards (Section 1) */
-        .test-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 0.85rem; }
+        /* Test type cards (Section 1) — 3 t-tests on top, 2 others centered below.
+           Use a 6-column grid; each card spans 2 columns. Cards 4 and 5 are
+           shifted (start at col 2 and col 4) so the bottom row sits centered
+           under the top three cards. On phones the grid collapses to one card
+           per row. */
+        .test-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 0.85rem; }
+        .test-card { grid-column: span 2; }
+        .test-card:nth-child(4) { grid-column: 2 / span 2; }
+        .test-card:nth-child(5) { grid-column: 4 / span 2; }
+        @media (max-width: 720px) {
+            .test-grid { grid-template-columns: 1fr; }
+            .test-card,
+            .test-card:nth-child(4),
+            .test-card:nth-child(5) { grid-column: auto; }
+        }
         .test-card {
             border: 2px solid var(--border); border-radius: 10px; padding: 1rem 1rem 0.85rem;
             cursor: pointer; transition: all 0.18s; background: var(--white); position: relative;
@@ -115,6 +128,11 @@
         .verdict.fail-to-reject { background: #f0f9ff; border: 1px solid #bae6fd; color: #075985; }
 
         .results-output { background: #1e1e1e; color: #d4d4d4; font-family: 'Monaco', 'Menlo', 'Courier New', monospace; font-size: 0.85rem; padding: 1.25rem; border-radius: 8px; overflow-x: auto; white-space: pre; line-height: 1.5; max-height: 500px; overflow-y: auto; margin-top: 1rem; }
+
+        /* Data-shape guidance panel shown at the top of Section 3 for each test. */
+        .data-shape-hint { background: #f0f9ff; border: 1px solid #bae6fd; border-left: 4px solid #0369a1; border-radius: 6px; padding: 0.85rem 1rem; margin-bottom: 1rem; font-size: 0.88rem; line-height: 1.55; }
+        .data-shape-hint strong { color: #0369a1; }
+        .data-shape-hint pre { background: var(--white); border: 1px solid var(--border); border-radius: 4px; padding: 0.5rem 0.7rem; margin-top: 0.5rem; font-family: 'Monaco', monospace; font-size: 0.78rem; line-height: 1.5; overflow-x: auto; max-height: 140px; overflow-y: auto; color: var(--text-dark); }
 
         .extra-table { width: 100%; border-collapse: collapse; font-size: 0.88rem; margin-top: 0.75rem; }
         .extra-table th, .extra-table td { padding: 0.45rem 0.75rem; border: 1px solid var(--border); text-align: right; }
@@ -424,11 +442,71 @@
                 cols.map(c => `<option value="${escapeHtml(c)}"${c === selected ? ' selected' : ''}>${escapeHtml(c)}</option>`).join('');
         }
 
+        // Data-shape guidance HTML for each test — a description plus a small
+        // example data preview so the user can see the expected CSV layout.
+        const DATA_HINTS = {
+            'one-sample-t': `
+                <div class="data-shape-hint">
+                    <strong>Expected data:</strong> One numeric column. Each row is a single observation. The test compares the column's mean to a hypothesized value &mu;<sub>0</sub>.
+                    <pre>Score
+75
+82
+68
+90
+77
+84</pre>
+                </div>`,
+            'paired-t': `
+                <div class="data-shape-hint">
+                    <strong>Expected data:</strong> Two numeric columns measured on the same subjects. Each row is one paired observation (same subject, two measurements).
+                    <pre>SubjectID  Before  After
+1          120     115
+2          135     128
+3          142     138
+4          128     124
+5          150     143</pre>
+                </div>`,
+            'independent-t': `
+                <div class="data-shape-hint">
+                    <strong>Expected data:</strong> One numeric column + one grouping column with <strong>exactly 2 levels</strong>. Each row is one independent observation.
+                    <pre>Group  Score
+A      75
+A      82
+A      68
+B      85
+B      90
+B      77</pre>
+                </div>`,
+            'anova': `
+                <div class="data-shape-hint">
+                    <strong>Expected data:</strong> One numeric column + one grouping column with <strong>3 or more levels</strong>. Each row is one independent observation.
+                    <pre>Treatment  Yield
+A          12.3
+A          11.8
+B          14.5
+B          15.1
+C          10.2
+C          9.8</pre>
+                </div>`,
+            'chi-square': `
+                <div class="data-shape-hint">
+                    <strong>Expected data:</strong> Two categorical columns. Each row is one observation. The tool builds the contingency table internally with <code>table(x, y)</code>.
+                    <pre>Gender  Preference
+M       Like
+F       Like
+M       Neutral
+F       Dislike
+M       Dislike
+F       Like</pre>
+                </div>`
+        };
+
         function renderConfig() {
             const c = $('configBody');
+            const hint = DATA_HINTS[selectedTest] || '';
             switch (selectedTest) {
                 case 'one-sample-t':
-                    c.innerHTML = `
+                    c.innerHTML = hint + `
                         <div class="form-row">
                             <div class="form-group">
                                 <label>Numeric Variable</label>
@@ -441,7 +519,7 @@
                         </div>`;
                     break;
                 case 'paired-t':
-                    c.innerHTML = `
+                    c.innerHTML = hint + `
                         <div class="form-row">
                             <div class="form-group">
                                 <label>Variable 1 (e.g., Before) <span class="field-hint">numeric</span></label>
@@ -451,11 +529,10 @@
                                 <label>Variable 2 (e.g., After) <span class="field-hint">numeric</span></label>
                                 <select id="cfg-y">${selectOpts(numericCols())}</select>
                             </div>
-                        </div>
-                        <p class="section-hint">Each row should be a paired observation (e.g., the same subject measured twice).</p>`;
+                        </div>`;
                     break;
                 case 'independent-t':
-                    c.innerHTML = `
+                    c.innerHTML = hint + `
                         <div class="form-row">
                             <div class="form-group">
                                 <label>Numeric Variable</label>
@@ -475,7 +552,7 @@
                         </div>`;
                     break;
                 case 'anova':
-                    c.innerHTML = `
+                    c.innerHTML = hint + `
                         <div class="form-row">
                             <div class="form-group">
                                 <label>Numeric Variable</label>
@@ -495,7 +572,7 @@
                         </div>`;
                     break;
                 case 'chi-square':
-                    c.innerHTML = `
+                    c.innerHTML = hint + `
                         <div class="form-row">
                             <div class="form-group">
                                 <label>Categorical Variable 1</label>
@@ -622,7 +699,16 @@
 for (col in names(data)) {
     nv = suppressWarnings(as.numeric(data[[col]]))
     if (!all(is.na(nv)) && sum(is.na(nv)) <= sum(is.na(data[[col]]))) data[[col]] = nv
-}\n`;
+}
+# JSON-safe number formatter: emits "null" for Inf / -Inf / NA / NaN so
+# one-sided t-test confidence intervals (which legitimately have an
+# infinite bound) don't break JSON.parse on the JS side.
+.jn = function(x) {
+    if (is.null(x) || length(x) == 0) return("null")
+    if (is.na(x) || is.nan(x) || is.infinite(x)) return("null")
+    format(x, digits = 12, scientific = FALSE, trim = TRUE)
+}
+\n`;
 
                 let metaJson = {};
                 let resultsBuilder = '';
@@ -635,9 +721,9 @@ for (col in names(data)) {
 .x = data[["${rEsc(x)}"]]
 .x = .x[!is.na(.x)]
 .fit = t.test(.x, mu = ${mu}, alternative = "${alt}", conf.level = ${conf})
-.json = paste0('RES:{"stat":', .fit$statistic,',"df":', .fit$parameter,',"p":', .fit$p.value,
-               ',"ciLo":', .fit$conf.int[1], ',"ciHi":', .fit$conf.int[2],
-               ',"mean":', .fit$estimate, ',"n":', length(.x), '}:END')
+.json = paste0('RES:{"stat":', .jn(.fit$statistic),',"df":', .jn(.fit$parameter),',"p":', .jn(.fit$p.value),
+               ',"ciLo":', .jn(.fit$conf.int[1]), ',"ciHi":', .jn(.fit$conf.int[2]),
+               ',"mean":', .jn(.fit$estimate), ',"n":', length(.x), '}:END')
 .summary_text = paste(capture.output(print(.fit)), collapse="\\n")
 paste0(.json, "\\n---\\n", .summary_text)`;
                         metaJson = { x, mu, alt, conf, alpha, label: `One-sample t-test on ${x} (μ₀ = ${mu})` };
@@ -650,9 +736,9 @@ paste0(.json, "\\n---\\n", .summary_text)`;
 ok = !is.na(.x) & !is.na(.y); .x = .x[ok]; .y = .y[ok]
 .fit = t.test(.x, .y, paired = TRUE, alternative = "${alt}", conf.level = ${conf})
 .mean1 = mean(.x); .mean2 = mean(.y)
-.json = paste0('RES:{"stat":', .fit$statistic,',"df":', .fit$parameter,',"p":', .fit$p.value,
-               ',"ciLo":', .fit$conf.int[1], ',"ciHi":', .fit$conf.int[2],
-               ',"mean":', .fit$estimate, ',"mean1":', .mean1, ',"mean2":', .mean2,
+.json = paste0('RES:{"stat":', .jn(.fit$statistic),',"df":', .jn(.fit$parameter),',"p":', .jn(.fit$p.value),
+               ',"ciLo":', .jn(.fit$conf.int[1]), ',"ciHi":', .jn(.fit$conf.int[2]),
+               ',"mean":', .jn(.fit$estimate), ',"mean1":', .jn(.mean1), ',"mean2":', .jn(.mean2),
                ',"n":', length(.x), '}:END')
 .summary_text = paste(capture.output(print(.fit)), collapse="\\n")
 paste0(.json, "\\n---\\n", .summary_text)`;
@@ -670,9 +756,9 @@ if (length(levels(.g)) != 2) stop("Grouping variable must have exactly 2 unique 
 .fit = t.test(.x ~ .g, var.equal = ${varEqR}, alternative = "${alt}", conf.level = ${conf})
 .lvls = levels(.g)
 .means = tapply(.x, .g, mean, na.rm=TRUE)
-.json = paste0('RES:{"stat":', .fit$statistic,',"df":', .fit$parameter,',"p":', .fit$p.value,
-               ',"ciLo":', .fit$conf.int[1], ',"ciHi":', .fit$conf.int[2],
-               ',"mean1":', .means[1], ',"mean2":', .means[2],
+.json = paste0('RES:{"stat":', .jn(.fit$statistic),',"df":', .jn(.fit$parameter),',"p":', .jn(.fit$p.value),
+               ',"ciLo":', .jn(.fit$conf.int[1]), ',"ciHi":', .jn(.fit$conf.int[2]),
+               ',"mean1":', .jn(.means[1]), ',"mean2":', .jn(.means[2]),
                ',"n":', length(.x),
                ',"g1":"', .lvls[1], '","g2":"', .lvls[2], '"}:END')
 .summary_text = paste(capture.output(print(.fit)), collapse="\\n")
@@ -696,7 +782,7 @@ ok = !is.na(.x) & !is.na(.g); .x = .x[ok]; .g = .g[ok]
 .means = tapply(.x, .g, mean, na.rm=TRUE)
 .lvls = levels(.g)
 .means_json = paste0('"', paste(.lvls, sapply(.lvls, function(l) format(.means[l], digits=6)), sep='":', collapse=','), '')
-.json = paste0('RES:{"stat":', .fstat, ',"df1":', .df1, ',"df2":', .df2, ',"p":', .p,
+.json = paste0('RES:{"stat":', .jn(.fstat), ',"df1":', .jn(.df1), ',"df2":', .jn(.df2), ',"p":', .jn(.p),
                ',"n":', length(.x), ',"groups":', length(.lvls), '}:END')
 ${tukeyR}
 .summary_text = paste(capture.output(print(.s)), collapse="\\n")
@@ -715,7 +801,7 @@ ok = !is.na(.x) & !is.na(.y) & .x != "" & .y != ""; .x = .x[ok]; .y = .y[ok]
 .tab = table(.x, .y)
 .fit = chisq.test(.tab${simR})
 .df = if (is.null(.fit$parameter)) 0 else .fit$parameter
-.json = paste0('RES:{"stat":', .fit$statistic, ',"df":', .df, ',"p":', .fit$p.value,
+.json = paste0('RES:{"stat":', .jn(.fit$statistic), ',"df":', .jn(.df), ',"p":', .jn(.fit$p.value),
                ',"n":', sum(.tab), ',"simulated":', if ("${chiSim}" == "sim") 'true' else 'false', '}:END')
 .tab_text = paste(capture.output(print(.tab)), collapse="\\n")
 .exp_text = paste(capture.output(print(round(.fit$expected, 2))), collapse="\\n")
@@ -760,6 +846,13 @@ paste0(.json, "\\n---\\n", .summary_text,
         function fmtP(p) {
             if (p === null || p === undefined || isNaN(p)) return '—';
             return p < 0.0001 ? '< 0.0001' : parseFloat(p).toFixed(4);
+        }
+        // CI render: a null bound came back as Inf / -Inf in R (one-sided test).
+        // Show the open side as ∞ so the user can see they got a one-sided CI.
+        function fmtCI(lo, hi) {
+            const loStr = (lo === null || lo === undefined) ? '\u2212\u221E' : fmt(lo);
+            const hiStr = (hi === null || hi === undefined) ? '+\u221E' : fmt(hi);
+            return `[${loStr}, ${hiStr}]`;
         }
 
         // Build the explicit H0 / H1 strings for the chosen test + alternative,
@@ -817,7 +910,7 @@ paste0(.json, "\\n---\\n", .summary_text,
                     stats.push({ label: 'df', value: fmt(s.df, 2) });
                     stats.push({ label: 'p-value', value: fmtP(s.p) });
                     stats.push({ label: 'Sample mean', value: fmt(s.mean), secondary: `n = ${s.n}` });
-                    stats.push({ label: `${(meta.conf*100).toFixed(0)}% CI`, value: `[${fmt(s.ciLo)}, ${fmt(s.ciHi)}]` });
+                    stats.push({ label: `${(meta.conf*100).toFixed(0)}% CI`, value: fmtCI(s.ciLo, s.ciHi) });
                     break;
                 case 'paired-t':
                     stats.push({ label: 't-statistic', value: fmt(s.stat) });
@@ -826,7 +919,7 @@ paste0(.json, "\\n---\\n", .summary_text,
                     stats.push({ label: `Mean 1 (${meta.x})`, value: fmt(s.mean1) });
                     stats.push({ label: `Mean 2 (${meta.y})`, value: fmt(s.mean2) });
                     stats.push({ label: 'Mean diff (1 − 2)', value: fmt(s.mean), secondary: `n = ${s.n} pairs` });
-                    stats.push({ label: `${(meta.conf*100).toFixed(0)}% CI for diff`, value: `[${fmt(s.ciLo)}, ${fmt(s.ciHi)}]` });
+                    stats.push({ label: `${(meta.conf*100).toFixed(0)}% CI for diff`, value: fmtCI(s.ciLo, s.ciHi) });
                     break;
                 case 'independent-t':
                     stats.push({ label: 't-statistic', value: fmt(s.stat) });
@@ -834,7 +927,7 @@ paste0(.json, "\\n---\\n", .summary_text,
                     stats.push({ label: 'p-value', value: fmtP(s.p) });
                     stats.push({ label: `Mean (${s.g1})`, value: fmt(s.mean1) });
                     stats.push({ label: `Mean (${s.g2})`, value: fmt(s.mean2) });
-                    stats.push({ label: `${(meta.conf*100).toFixed(0)}% CI for diff`, value: `[${fmt(s.ciLo)}, ${fmt(s.ciHi)}]` });
+                    stats.push({ label: `${(meta.conf*100).toFixed(0)}% CI for diff`, value: fmtCI(s.ciLo, s.ciHi) });
                     break;
                 case 'anova':
                     stats.push({ label: 'F-statistic', value: fmt(s.stat) });
