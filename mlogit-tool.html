@@ -723,7 +723,7 @@
 
         function populateColumnSelectors() {
             const blank = '<option value="">-- Select --</option>';
-            const opts = columnNames.map(c => `<option value="${escapeHtml(c)}">${escapeHtml(c)}</option>`).join('');
+            const opts = columnNames.map(c => `<option value="${escapeHtml(c)}">${escapeHtml(displayName(c))}</option>`).join('');
             ['chidVar', 'altVar', 'choiceVar', 'wideChidVar'].forEach(id => $(id).innerHTML = blank + opts);
             $('reflevel').innerHTML = '<option value="">-- Pick alternative variable first --</option>';
             $('reflevel').disabled = true;
@@ -759,7 +759,7 @@
             // Annotate each column option with its detected type so the user can tell at a glance.
             const colOpts = columnNames.map(c => {
                 const tag = columnTypes[c] === 'numeric' ? 'numeric' : 'categorical';
-                return `<option value="${escapeHtml(c)}" data-type="${columnTypes[c] || 'text'}">${escapeHtml(c)} — ${tag}</option>`;
+                return `<option value="${escapeHtml(c)}" data-type="${columnTypes[c] || 'text'}">${escapeHtml(displayName(c))} — ${tag}</option>`;
             }).join('');
             row.innerHTML = `
                 <select class="filter-col"><option value="">-- Column --</option>${colOpts}</select>
@@ -912,7 +912,7 @@
             const buildList = (containerId, cls) => {
                 $(containerId).innerHTML = columnNames.map(c => `
                     <label style="display:block; padding:0.2rem 0; font-size:0.9rem;">
-                        <input type="checkbox" class="${cls}" value="${escapeHtml(c)}"> ${escapeHtml(c)}
+                        <input type="checkbox" class="${cls}" value="${escapeHtml(c)}"> ${escapeHtml(displayName(c))}
                     </label>
                 `).join('');
             };
@@ -939,7 +939,7 @@
                         const guess = guessAltFromColumn(c);
                         return `
                             <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.5rem; margin-bottom:0.35rem; align-items:center;">
-                                <span style="font-size:0.85rem; color:var(--text-light);">${escapeHtml(c)} →</span>
+                                <span style="font-size:0.85rem; color:var(--text-light);">${escapeHtml(displayName(c))} →</span>
                                 <input type="text" class="wide-alt-name" data-col="${escapeHtml(c)}" value="${escapeHtml(guess)}" placeholder="Alternative name">
                             </div>
                         `;
@@ -1079,10 +1079,11 @@
                     const checked = csChecked.has(v);
                     const slope = csSlopes[v] || 'single';
                     const safe = escapeHtml(v);
+                    const display = escapeHtml(displayName(v));
                     const radioName = `cs-slope-${safe}`;
                     return `
                         <div class="cs-row" data-var="${safe}">
-                            <label class="cs-var-label"><input type="checkbox" class="cs-var-cb" value="${safe}"${checked ? ' checked' : ''}> ${safe}</label>
+                            <label class="cs-var-label"><input type="checkbox" class="cs-var-cb" value="${safe}"${checked ? ' checked' : ''}> ${display}</label>
                             <span class="cs-slope-picker">
                                 <label class="slope-pill"><input type="radio" name="${radioName}" class="cs-slope-radio" data-var="${safe}" value="single"${slope === 'single' ? ' checked' : ''}> Single slope</label>
                                 <label class="slope-pill"><input type="radio" name="${radioName}" class="cs-slope-radio" data-var="${safe}" value="alt_specific"${slope === 'alt_specific' ? ' checked' : ''}> Per-alt slopes</label>
@@ -1098,7 +1099,8 @@
                 ciBox.innerHTML = ciEligible.map(v => {
                     const checked = ciChecked.has(v);
                     const safe = escapeHtml(v);
-                    return `<label><input type="checkbox" class="ci-var-cb" value="${safe}"${checked ? ' checked' : ''}> ${safe} <span class="slope-fixed">per-alt slope</span></label>`;
+                    const display = escapeHtml(displayName(v));
+                    return `<label><input type="checkbox" class="ci-var-cb" value="${safe}"${checked ? ' checked' : ''}> ${display} <span class="slope-fixed">per-alt slope</span></label>`;
                 }).join('');
             }
 
@@ -1551,7 +1553,7 @@ for (col in names(data)) {
             const blocks = nonBaseAlts.map(alt => {
                 const inputs = allVars.map(v => `
                     <div class="prediction-input-group">
-                        <label>${escapeHtml(v)}</label>
+                        <label>${escapeHtml(displayName(v))}</label>
                         <input type="number" step="any" class="pred-input" data-alt="${escapeHtml(alt)}" data-var="${escapeHtml(v)}" placeholder="value">
                     </div>
                 `).join('');
@@ -1673,6 +1675,12 @@ for (col in names(data)) {
         function round4(x) { return Math.round(x * 10000) / 10000; }
         function escapeRegex(s) { return String(s).replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }
         function escapeHtml(s)  { return String(s).replace(/[&<>"']/g, ch => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch])); }
+        // Display helper: strips underscores from column names for compact UI
+        // labels. The actual column name (with underscores) is still passed as
+        // the value attribute / data attribute / R formula reference. So
+        // "Price_Coke" appears as "PriceCoke" in the dropdown but the model
+        // still references the real Price_Coke column.
+        function displayName(s)  { return String(s).replace(/_/g, ''); }
 
         // ============================================================
         // GO
