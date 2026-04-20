@@ -347,6 +347,12 @@
 
         /* Prevent any horizontal page-level overflow on small screens */
         html, body { overflow-x: hidden; }
+
+        /* Stop iOS Safari (and some Android browsers) from auto-enlarging text on
+           narrow viewports. Without this the body's responsive font-size rules
+           are ignored and everything renders ~150-200% the intended size,
+           which broke the format-card layout on phones. */
+        html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
     </style>
 </head>
 <body>
