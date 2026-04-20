@@ -240,17 +240,89 @@
 
         footer { text-align: center; padding: 2rem; color: var(--text-light); font-size: 0.9rem; }
 
+        /* ============ Mobile: tablet & below ============ */
         @media (max-width: 768px) {
             body { font-size: 16px; }
             main { padding: 1rem; }
-            nav { padding: 0.75rem 1rem; flex-direction: column; gap: 0.5rem; }
             .tool-container { padding: 1.25rem; }
             .hero { padding: 1.5rem 0; }
             .hero h1 { font-size: 1.4rem; }
+            .hero ul { padding-left: 1.25rem; font-size: 0.92rem; line-height: 1.6; }
+            .section-title { font-size: 1.15rem; }
+            .section-title.mt { margin-top: 1.5rem; }
             .button-group { flex-direction: column; }
             .btn { width: 100%; }
             .var-row { grid-template-columns: 1fr; }
+            .form-row { grid-template-columns: 1fr; }
+            /* Back-to-tools link wrapper padding */
+            body > div:first-of-type { padding-left: 1rem !important; padding-right: 1rem !important; }
+            /* Stack the Choice-Specific slope picker under its checkbox on phones */
+            .cs-row { grid-template-columns: 1fr; gap: 0.4rem; padding: 0.5rem 0; }
+            .cs-slope-picker { padding-left: 1.6rem; flex-wrap: wrap; }
+            /* Wide-format alt-name mapping rows: stack to single column */
+            #wideChoiceMap > div { grid-template-columns: 1fr !important; }
+            #wideChoiceMap > div > span { margin-bottom: 0.2rem; }
+            /* Disclaimer compact */
+            .disclaimer { padding: 0.85rem 1rem; }
+            .disclaimer ul { font-size: 0.85rem; }
+            /* Filter rows already collapse at 600px; tighten the value input */
+            .filter-row { gap: 0.4rem; }
+            /* Preview table — horizontal scroll already in .preview-table-container */
+            .preview-table { font-size: 0.82rem; }
+            .preview-table th, .preview-table td { padding: 0.4rem 0.5rem; }
+            /* Coef table */
+            .coef-table { font-size: 0.82rem; }
+            .coef-table th, .coef-table td { padding: 0.45rem 0.6rem; }
+            /* Equation box and code/results outputs */
+            .equation-box { font-size: 0.82rem; padding: 0.85rem 1rem; padding-right: 4rem; }
+            .results-output { font-size: 0.78rem; padding: 0.85rem 1rem; }
+            /* Prediction inputs: smaller minmax so two fit per row */
+            .prediction-inputs { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); }
+            /* Fit stats: smaller cards */
+            .fit-stats { grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 0.5rem; }
+            .fit-stat { padding: 0.6rem 0.75rem; }
+            .fit-stat .value { font-size: 1.05rem; }
+            /* Format cards: tighter padding */
+            .format-card { padding: 0.65rem 0.85rem; }
+            .format-card pre { font-size: 0.7rem; padding: 0.5rem 0.6rem; max-height: 130px; }
+            /* Loading overlay text scale */
+            .loading-text { font-size: 1rem; }
+            .loading-stage { font-size: 0.78rem; }
         }
+
+        /* ============ Mobile: phone-specific tightening ============ */
+        @media (max-width: 480px) {
+            main { padding: 0.6rem; }
+            .tool-container { padding: 1rem; border-radius: 8px; }
+            .hero { padding: 1rem 0 0.75rem; }
+            .hero h1 { font-size: 1.2rem; }
+            .section-title { font-size: 1.05rem; padding-bottom: 0.35rem; }
+            .upload-area { padding: 1.5rem 1rem; }
+            .upload-icon { font-size: 2rem; }
+            .upload-text { font-size: 0.95rem; }
+            .upload-hint { font-size: 0.8rem; }
+            .form-group label { font-size: 0.95rem; }
+            .field-hint { display: block; margin-left: 0; margin-top: 0.15rem; font-size: 0.78rem; }
+            .form-group select, .form-group input[type="text"], .form-group input[type="number"] {
+                padding: 0.55rem 0.6rem; font-size: 0.95rem;
+            }
+            .radio-row label { padding: 0.5rem 0.7rem; font-size: 0.85rem; }
+            .format-shape-radio label { padding: 0.55rem 0.7rem; font-size: 0.85rem; }
+            .var-checkbox-list { padding: 0.6rem 0.75rem; max-height: 200px; }
+            .var-checkbox-list label { font-size: 0.85rem; }
+            .slope-pill { font-size: 0.72rem; padding: 0.18rem 0.4rem; }
+            /* Tabs wrap and shrink */
+            .tab-btn { padding: 0.55rem 0.7rem; font-size: 0.85rem; }
+            /* Format pre even smaller on phones */
+            .format-card pre { font-size: 0.68rem; max-height: 120px; }
+            /* Channel hero / wide multi-select boxes: tighter inner padding */
+            #wideChoiceCols, #wideAttrCols { padding: 0.5rem !important; max-height: 140px !important; }
+            /* Footer */
+            footer { padding: 1.25rem 1rem; font-size: 0.82rem; }
+        }
+
+        /* Prevent any horizontal page-level overflow on small screens */
+        html, body { overflow-x: hidden; }
     </style>
 </head>
 <body>
