@@ -92,7 +92,16 @@
         .radio-row label:has(input:checked) { border-color: var(--iu-crimson); background: rgba(153,0,0,0.04); color: var(--iu-crimson); font-weight: 600; }
         .radio-row input[type="radio"] { accent-color: var(--iu-crimson); }
 
-        .var-builder { border: 1px solid var(--border); border-radius: 8px; padding: 1rem; }
+        /* Two-column-style variable picker (Section 4). Each list mirrors the look of
+           the wide-format Choice / Attribute column pickers in Section 3. Variables
+           checked in one list are auto-disabled in the other (mutex). */
+        .var-checkbox-list { border: 1px solid var(--border); border-radius: 6px; padding: 0.75rem 1rem; max-height: 240px; overflow-y: auto; background: var(--white); }
+        .var-checkbox-list label { display: block; padding: 0.25rem 0; font-size: 0.92rem; cursor: pointer; }
+        .var-checkbox-list label.disabled { color: var(--text-light); cursor: not-allowed; opacity: 0.55; }
+        .var-checkbox-list input[type="checkbox"] { accent-color: var(--iu-crimson); margin-right: 0.5rem; }
+        .var-checkbox-list .var-tag { font-size: 0.75rem; color: var(--text-light); margin-left: 0.4rem; font-style: italic; }
+        .var-list-empty { color: var(--text-light); font-style: italic; font-size: 0.88rem; margin: 0.2rem 0; }
+
         .var-row {
             display: grid; grid-template-columns: 1fr 1fr 80px; gap: 0.75rem;
             align-items: center; padding: 0.5rem 0; border-bottom: 1px dashed var(--border);
@@ -376,10 +385,16 @@
 
                 <!-- ============================== 4. Model spec ============================== -->
                 <h2 class="section-title mt">4. Specify the Model</h2>
-                <p class="section-hint">Add variables one by one. <strong>Choice-Invariant</strong> = single coefficient applied across alternatives. <strong>Choice-Specific</strong> = separate coefficient per alternative. In <strong>wide format</strong>, the dropdown shows the base attribute names (e.g., "Price") derived from the suffixes of the columns you checked under "Alternative-Specific Attribute Columns" above &mdash; so make sure those are checked and the alternative names are filled in first.</p>
-                <div class="var-builder">
-                    <div id="varRows"></div>
-                    <button type="button" class="add-var-btn" id="addVarBtn">+ Add Variable</button>
+                <p class="section-hint">Independent variables are split into two boxes. <strong>Choice-Invariant IVs</strong> get a single slope shared across all alternatives — only variables that vary by alternative within an occasion (e.g., Price) are eligible, since a constant variable would cancel out of the choice probabilities. <strong>Choice-Specific IVs</strong> get a separate slope per alternative — any variable can go here. A variable cannot appear in both boxes at once.</p>
+
+                <div class="form-group">
+                    <label>Choice-Invariant Independent Variables <span class="field-hint">(one slope across alternatives)</span></label>
+                    <div id="ciVars" class="var-checkbox-list"><p class="var-list-empty">No eligible variables yet.</p></div>
+                </div>
+
+                <div class="form-group">
+                    <label>Choice-Specific Independent Variables <span class="field-hint">(separate slope per alternative)</span></label>
+                    <div id="csVars" class="var-checkbox-list"><p class="var-list-empty">No variables available yet.</p></div>
                 </div>
                 <div class="form-group" style="margin-top: 1.25rem;">
                     <label>Intercept</label>
@@ -468,7 +483,6 @@
         let columnNames = [];
         let rows = [];           // parsed CSV rows
         let alternatives = [];   // unique alt names (long) or chosen alt list (wide)
-        let varRowId = 0;
         let lastResult = null;
         let columnTypes = {};    // header -> 'numeric' | 'text'
 
@@ -604,7 +618,7 @@
                 populateWideColumnLists();
                 $('dataFilterSection').classList.add('visible');
                 $('modelConfig').style.display = 'block';
-                addVarRow(); // start with one fresh row
+                refreshVarSections(); // build the two empty checkbox lists
                 showStatus(`Loaded ${parsedRows.length.toLocaleString()} rows × ${headers.length} columns.`, 'success', 3000);
             };
             reader.readAsText(file);
@@ -625,9 +639,10 @@
             if (longRadio) longRadio.checked = true;
             $('longFields').style.display = 'block';
             $('wideFields').style.display = 'none';
-            // Variable builder: clear all rows; a fresh one will be added by handleFile.
-            $('varRows').innerHTML = '';
-            varRowId = 0;
+            // Variable picker: clear both checkbox lists; refreshVarSections() will
+            // rebuild them once the new data populates the candidate selectors.
+            $('ciVars').innerHTML = '<p class="var-list-empty">No eligible variables yet.</p>';
+            $('csVars').innerHTML = '<p class="var-list-empty">No variables available yet.</p>';
             // Reset intercept to default.
             const altIntRadio = document.querySelector('input[name="interceptType"][value="alt_specific"]');
             if (altIntRadio) altIntRadio.checked = true;
@@ -935,52 +950,114 @@
         ['wideChidVar', 'wideReflevel'].forEach(id => $(id).addEventListener('change', () => { refreshVarRowChoices(); updateRunEnabled(); }));
 
         // ============================================================
-        // VAR BUILDER
+        // VAR PICKER (two checkbox lists with mutex)
         // ============================================================
-        $('addVarBtn').addEventListener('click', () => addVarRow());
 
-        function addVarRow() {
-            varRowId++;
-            const id = varRowId;
-            const row = document.createElement('div');
-            row.className = 'var-row';
-            row.dataset.id = id;
-            row.innerHTML = `
-                <select class="var-name" data-id="${id}">
-                    <option value="">-- Select variable --</option>
-                </select>
-                <select class="var-type" data-id="${id}">
-                    <option value="single">Choice-Invariant (one slope)</option>
-                    <option value="alt_specific">Choice-Specific (per-alt slope)</option>
-                </select>
-                <button type="button" class="remove-btn" data-id="${id}">Remove</button>
-            `;
-            $('varRows').appendChild(row);
-            row.querySelector('.remove-btn').addEventListener('click', () => {
-                row.remove(); updateRunEnabled();
-            });
-            row.querySelector('.var-name').addEventListener('change', updateRunEnabled);
-            refreshVarRowChoices();
-            updateRunEnabled();
+        // Decide whether a chosen variable varies by alternative within an occasion
+        // (alt-specific) or is constant across alternatives within an occasion
+        // (individual-specific). Individual-specific variables MUST use a Choice-Specific
+        // (per-alt) slope — a single slope cancels out of the choice probabilities and
+        // the model becomes unidentified.
+        function getVarKind(varName) {
+            if (!varName) return null;
+            const shape = document.querySelector('input[name="dataShape"]:checked').value;
+            if (shape === 'wide') {
+                const used = new Set([
+                    $('wideChidVar').value,
+                    ...Array.from($('wideChoiceCols').querySelectorAll('input.wide-choice-col:checked')).map(i => i.value),
+                    ...Array.from($('wideAttrCols').querySelectorAll('input.wide-attr-col:checked')).map(i => i.value)
+                ].filter(Boolean));
+                // If the variable name matches an original column that wasn't tagged as
+                // chid / choice / alt-specific attr, it's an individual-specific column.
+                // Anything else is a base name derived from the alt-specific attr cols.
+                return (columnNames.includes(varName) && !used.has(varName))
+                    ? 'individual-specific' : 'alt-specific';
+            }
+            // Long format: scan rows and see whether the value varies within any chid.
+            const chidCol = $('chidVar').value;
+            if (!chidCol) return 'unknown';
+            const seen = {};
+            for (const r of rows) {
+                const c = r[chidCol];
+                const v = r[varName];
+                if (c === undefined) continue;
+                if (!(c in seen)) seen[c] = v;
+                else if (String(seen[c]) !== String(v)) return 'alt-specific';
+            }
+            return 'individual-specific';
         }
 
-        function refreshVarRowChoices() {
+        // Compute the universe of candidate IVs given the current data shape and the
+        // user's selections in Section 3. In long mode it's any data column not
+        // serving as chid / alt / choice; in wide mode it's the alt-specific attribute
+        // base names + the individual-specific (untagged) columns.
+        function getCandidateVars() {
             const shape = document.querySelector('input[name="dataShape"]:checked').value;
-            let candidates;
             if (shape === 'long') {
                 const exclude = new Set([$('chidVar').value, $('altVar').value, $('choiceVar').value].filter(Boolean));
-                candidates = columnNames.filter(c => !exclude.has(c));
-            } else {
-                // For wide, the var dropdown should show the attribute "groups" (one per attribute prefix
-                // among the wide-attr-col selection). e.g., if Price_Coke / Price_Pepsi are checked, show "Price".
-                candidates = wideAttrGroups();
+                return columnNames.filter(c => !exclude.has(c));
             }
-            $('varRows').querySelectorAll('.var-name').forEach(sel => {
-                const current = sel.value;
-                sel.innerHTML = '<option value="">-- Select variable --</option>' +
-                    candidates.map(c => `<option value="${escapeHtml(c)}"${c === current ? ' selected' : ''}>${escapeHtml(c)}</option>`).join('');
-            });
+            return wideAttrGroups();
         }
+
+        // Render the two checkbox lists (Choice-Invariant and Choice-Specific) given
+        // the current candidate variables. The Choice-Invariant list filters out
+        // individual-specific variables (a single slope would cancel out and mlogit
+        // can't estimate them). Mutex: checking a variable in one list disables it
+        // in the other. Previously-checked selections are preserved when possible.
+        function refreshVarSections() {
+            const candidates = getCandidateVars();
+            const ciBox = $('ciVars');
+            const csBox = $('csVars');
+            const ciChecked = new Set(Array.from(ciBox.querySelectorAll('input[type="checkbox"]:checked')).map(i => i.value));
+            const csChecked = new Set(Array.from(csBox.querySelectorAll('input[type="checkbox"]:checked')).map(i => i.value));
+
+            const ciEligible = candidates.filter(v => getVarKind(v) !== 'individual-specific');
+            if (ciEligible.length === 0) {
+                ciBox.innerHTML = '<p class="var-list-empty">No alt-specific variables available — Choice-Invariant slopes need variables that vary by alternative within an occasion.</p>';
+            } else {
+                ciBox.innerHTML = ciEligible.map(v => {
+                    const checked = ciChecked.has(v) && !csChecked.has(v);
+                    return `<label><input type="checkbox" class="ci-var-cb" value="${escapeHtml(v)}"${checked ? ' checked' : ''}> ${escapeHtml(v)}</label>`;
+                }).join('');
+            }
+
+            if (candidates.length === 0) {
+                csBox.innerHTML = '<p class="var-list-empty">No variables available yet. Pick the choice / alternative columns above first.</p>';
+            } else {
+                csBox.innerHTML = candidates.map(v => {
+                    const kind = getVarKind(v);
+                    const tag = kind === 'individual-specific' ? '<span class="var-tag">individual-specific</span>' : '';
+                    const checked = csChecked.has(v);
+                    return `<label><input type="checkbox" class="cs-var-cb" value="${escapeHtml(v)}"${checked ? ' checked' : ''}> ${escapeHtml(v)}${tag}</label>`;
+                }).join('');
+            }
+
+            // Wire up mutex: when a var is checked in one box, uncheck/disable in the other.
+            const allCi = ciBox.querySelectorAll('input.ci-var-cb');
+            const allCs = csBox.querySelectorAll('input.cs-var-cb');
+            const refreshDisable = () => {
+                const ciOn = new Set(Array.from(allCi).filter(i => i.checked).map(i => i.value));
+                const csOn = new Set(Array.from(allCs).filter(i => i.checked).map(i => i.value));
+                allCi.forEach(i => {
+                    const lbl = i.closest('label');
+                    if (csOn.has(i.value)) { i.disabled = true; i.checked = false; lbl.classList.add('disabled'); }
+                    else { i.disabled = false; lbl.classList.remove('disabled'); }
+                });
+                allCs.forEach(i => {
+                    const lbl = i.closest('label');
+                    if (ciOn.has(i.value)) { i.disabled = true; i.checked = false; lbl.classList.add('disabled'); }
+                    else { i.disabled = false; lbl.classList.remove('disabled'); }
+                });
+            };
+            allCi.forEach(i => i.addEventListener('change', () => { refreshDisable(); updateRunEnabled(); }));
+            allCs.forEach(i => i.addEventListener('change', () => { refreshDisable(); updateRunEnabled(); }));
+            refreshDisable();
+        }
+
+        // Backwards-compatible alias — every caller in the file still uses
+        // refreshVarRowChoices(), but the implementation is now the two-list refresh.
+        function refreshVarRowChoices() { refreshVarSections(); }
 
         // Variables available in wide-format mode = base names of alt-specific attribute
         // columns (e.g., "Price" from "Price_Coke", "Price_Pepsi") PLUS any other column
@@ -1012,10 +1089,11 @@
 
         function getModelVars() {
             const out = [];
-            $('varRows').querySelectorAll('.var-row').forEach(row => {
-                const name = row.querySelector('.var-name').value;
-                const type = row.querySelector('.var-type').value;
-                if (name) out.push({ name, type });
+            $('ciVars').querySelectorAll('input.ci-var-cb:checked').forEach(i => {
+                if (!i.disabled) out.push({ name: i.value, type: 'single' });
+            });
+            $('csVars').querySelectorAll('input.cs-var-cb:checked').forEach(i => {
+                if (!i.disabled) out.push({ name: i.value, type: 'alt_specific' });
             });
             return out;
         }
@@ -1041,9 +1119,9 @@
             $('dataPreview').classList.remove('visible');
             $('dataFilterSection').classList.remove('visible');
             $('modelConfig').style.display = 'none';
-            $('varRows').innerHTML = '';
+            $('ciVars').innerHTML = '<p class="var-list-empty">No eligible variables yet.</p>';
+            $('csVars').innerHTML = '<p class="var-list-empty">No variables available yet.</p>';
             $('filterRows').innerHTML = '';
-            varRowId = 0;
             $('resultsContainer').classList.remove('visible');
             $('statusMessage').classList.remove('visible');
         });
