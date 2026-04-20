@@ -309,12 +309,12 @@
                     </div>
                     <div class="format-card">
                         <h4>Wide Format</h4>
-                        <p>Each row represents <strong>one choice occasion</strong>. There is a Choice ID column, one binary choice column per alternative, plus alternative-specific attribute columns named with a per-alternative suffix (e.g., <code>Price_Coke</code>, <code>Price_Pepsi</code>).</p>
-<pre>ChoiceID  Price_Coke  Price_Pepsi  Choice_Coke  Choice_Pepsi
-1         0.64        0.85         0            1
-2         0.87        0.63         0            0
-3         0.71        0.79         1            0
-4         0.83        0.69         0            1</pre>
+                        <p>Each row represents <strong>one choice occasion</strong>. There is a Choice ID column, one binary choice column per alternative (including the outside option), plus alternative-specific attribute columns named with a per-alternative suffix (e.g., <code>Price_Coke</code>, <code>Price_Pepsi</code>).</p>
+<pre>ChoiceID  Price_Coke  Price_Pepsi  Price_NoPurchase  Choice_Coke  Choice_Pepsi  Choice_NoPurchase
+1         0.64        0.85         0                 0            1             0
+2         0.87        0.63         0                 0            0             1
+3         0.71        0.79         0                 1            0             0
+4         0.83        0.69         0                 0            1             0</pre>
                         <p class="format-note">The tool automatically reshapes wide data to long before estimation.</p>
                     </div>
                 </div>
