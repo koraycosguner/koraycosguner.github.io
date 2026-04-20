@@ -76,6 +76,14 @@
         @media (max-width: 720px) { .form-row { grid-template-columns: 1fr; } }
         .field-hint { color: #999; font-weight: 400; font-size: 0.85rem; margin-left: 0.4rem; }
 
+        /* Format-shape radio (Long / Wide) sits ABOVE the explainer cards and uses
+           the same 2-column grid + gap so the two pills line up perfectly with the
+           cards underneath. Each label spans its full grid cell (rather than auto-
+           sizing to text content) so left/right widths match the cards exactly. */
+        .format-shape-radio { display: grid !important; grid-template-columns: 1fr 1fr; gap: 0.85rem; }
+        .format-shape-radio label { width: 100%; padding: 0.7rem 1rem; font-size: 0.95rem; }
+        @media (max-width: 760px) { .format-shape-radio { grid-template-columns: 1fr; } }
+
         /* Long-vs-wide explainer cards (mirrors the v1 Shiny tool's format help). */
         .format-explainer { display: grid; grid-template-columns: 1fr 1fr; gap: 0.85rem; margin-top: 0.85rem; }
         @media (max-width: 760px) { .format-explainer { grid-template-columns: 1fr; } }
@@ -101,6 +109,16 @@
         .var-checkbox-list input[type="checkbox"] { accent-color: var(--iu-crimson); margin-right: 0.5rem; }
         .var-checkbox-list .var-tag { font-size: 0.75rem; color: var(--text-light); margin-left: 0.4rem; font-style: italic; }
         .var-list-empty { color: var(--text-light); font-style: italic; font-size: 0.88rem; margin: 0.2rem 0; }
+
+        /* Choice-Specific section row: checkbox on the left, slope-type pill toggle on the right. */
+        .cs-row { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 1rem; padding: 0.3rem 0; }
+        .cs-row .cs-var-label { display: inline-flex; align-items: center; gap: 0.5rem; font-size: 0.92rem; cursor: pointer; }
+        .cs-slope-picker { display: inline-flex; gap: 0.35rem; }
+        .slope-pill { display: inline-flex; align-items: center; gap: 0.3rem; padding: 0.2rem 0.55rem; border-radius: 4px; background: #f5f5f5; font-size: 0.78rem; cursor: pointer; border: 1px solid var(--border); user-select: none; }
+        .slope-pill input { accent-color: var(--iu-crimson); margin: 0; }
+        .slope-pill:has(input:checked) { background: rgba(153,0,0,0.08); color: var(--iu-crimson); font-weight: 600; border-color: var(--iu-crimson); }
+        .slope-pill.disabled { opacity: 0.45; cursor: not-allowed; }
+        .slope-fixed { font-size: 0.75rem; color: var(--text-light); font-style: italic; margin-left: 0.5rem; }
 
         .var-row {
             display: grid; grid-template-columns: 1fr 1fr 80px; gap: 0.75rem;
@@ -273,7 +291,7 @@
             <h2 class="section-title">1. Choose Data Format</h2>
             <p class="section-hint">Pick how your data is laid out before uploading. The required columns and the data preview both depend on this choice.</p>
             <div class="form-group">
-                <div class="radio-row">
+                <div class="radio-row format-shape-radio">
                     <label><input type="radio" name="dataShape" value="long" checked> Long format (one row per alt per occasion)</label>
                     <label><input type="radio" name="dataShape" value="wide"> Wide format (one row per occasion)</label>
                 </div>
@@ -291,10 +309,12 @@
                     </div>
                     <div class="format-card">
                         <h4>Wide Format</h4>
-                        <p>Each row represents <strong>one choice occasion</strong>. There is one binary choice column per alternative, plus alternative-specific attribute columns named with a per-alternative suffix (e.g., <code>Price_Coke</code>, <code>Price_Pepsi</code>).</p>
-<pre>ID  Week  Price_Coke  Price_Pepsi  Choice_Coke  Choice_Pepsi
-1   1     0.64        0.85         0            1
-1   2     0.87        0.63         0            0</pre>
+                        <p>Each row represents <strong>one choice occasion</strong>. There is a Choice ID column, one binary choice column per alternative, plus alternative-specific attribute columns named with a per-alternative suffix (e.g., <code>Price_Coke</code>, <code>Price_Pepsi</code>).</p>
+<pre>ChoiceID  Price_Coke  Price_Pepsi  Choice_Coke  Choice_Pepsi
+1         0.64        0.85         0            1
+2         0.87        0.63         0            0
+3         0.71        0.79         1            0
+4         0.83        0.69         0            1</pre>
                         <p class="format-note">The tool automatically reshapes wide data to long before estimation.</p>
                     </div>
                 </div>
@@ -388,16 +408,16 @@
 
                 <!-- ============================== 5. Model spec ============================== -->
                 <h2 class="section-title mt">5. Specify the Model</h2>
-                <p class="section-hint">Independent variables are split into two boxes. <strong>Choice-Invariant IVs</strong> get a single slope shared across all alternatives — only variables that vary by alternative within an occasion (e.g., Price) are eligible, since a constant variable would cancel out of the choice probabilities. <strong>Choice-Specific IVs</strong> get a separate slope per alternative — any variable can go here. A variable cannot appear in both boxes at once.</p>
+                <p class="section-hint">Independent variables are split into two groups based on whether they vary by alternative within a choice occasion. <strong>Choice-Specific IVs</strong> (e.g., Price) take a different value across alternatives within an occasion — they can use either a <em>single slope</em> across alternatives or a <em>per-alternative slope</em>. <strong>Choice-Invariant IVs</strong> (e.g., Summer, Income) are constant across alternatives within an occasion — they must use a per-alternative slope, because a single slope would cancel out of the choice probabilities.</p>
 
                 <div class="form-group">
-                    <label>Choice-Invariant Independent Variables <span class="field-hint">(one slope across alternatives)</span></label>
-                    <div id="ciVars" class="var-checkbox-list"><p class="var-list-empty">No eligible variables yet.</p></div>
+                    <label>Choice-Specific Independent Variables <span class="field-hint">(value varies by alternative — e.g., Price)</span></label>
+                    <div id="csVars" class="var-checkbox-list"><p class="var-list-empty">No variables available yet.</p></div>
                 </div>
 
                 <div class="form-group">
-                    <label>Choice-Specific Independent Variables <span class="field-hint">(separate slope per alternative)</span></label>
-                    <div id="csVars" class="var-checkbox-list"><p class="var-list-empty">No variables available yet.</p></div>
+                    <label>Choice-Invariant Independent Variables <span class="field-hint">(value constant within an occasion — e.g., Summer)</span></label>
+                    <div id="ciVars" class="var-checkbox-list"><p class="var-list-empty">No variables available yet.</p></div>
                 </div>
                 <div class="form-group" style="margin-top: 1.25rem;">
                     <label>Intercept</label>
@@ -1007,63 +1027,76 @@
             return wideAttrGroups();
         }
 
-        // Render the two checkbox lists (Choice-Invariant and Choice-Specific) given
-        // the current candidate variables. The Choice-Invariant list filters out
-        // individual-specific variables (a single slope would cancel out and mlogit
-        // can't estimate them). Mutex: checking a variable in one list disables it
-        // in the other. Previously-checked selections are preserved when possible.
+        // Render the two checkbox lists. Variables are placed in disjoint sections
+        // by data-kind (no mutex needed — a variable belongs to exactly one section
+        // based on whether it varies by alternative within an occasion):
+        //
+        //   csVars (Choice-Specific) — alt-specific data (e.g., Price). Each row has
+        //     a per-row slope-type picker: Single slope OR Per-alt slopes.
+        //   ciVars (Choice-Invariant) — individual-specific data (e.g., Summer).
+        //     Slope is fixed to per-alt (a single slope cancels out of the choice
+        //     probabilities; mlogit cannot identify it).
         function refreshVarSections() {
             const candidates = getCandidateVars();
-            const ciBox = $('ciVars');
             const csBox = $('csVars');
-            const ciChecked = new Set(Array.from(ciBox.querySelectorAll('input[type="checkbox"]:checked')).map(i => i.value));
-            const csChecked = new Set(Array.from(csBox.querySelectorAll('input[type="checkbox"]:checked')).map(i => i.value));
+            const ciBox = $('ciVars');
 
-            // Only show variables we can confirm are alt-specific. The looser filter
-            // "!= individual-specific" let through 'unknown' (e.g. before the chid
-            // column is set in long mode), which then allowed the user to pick
-            // individual-specific variables here once chid arrived later.
-            const ciEligible = candidates.filter(v => getVarKind(v) === 'alt-specific');
+            // Preserve prior selections (checked state and per-row slope type) so a
+            // re-render triggered by a chid/alt change doesn't wipe the user's choices.
+            const csChecked = new Set(Array.from(csBox.querySelectorAll('input.cs-var-cb:checked')).map(i => i.value));
+            const csSlopes = {};
+            csBox.querySelectorAll('.cs-row').forEach(row => {
+                const v = row.dataset.var;
+                const radio = row.querySelector('.cs-slope-radio:checked');
+                if (radio) csSlopes[v] = radio.value;
+            });
+            const ciChecked = new Set(Array.from(ciBox.querySelectorAll('input.ci-var-cb:checked')).map(i => i.value));
+
+            const csEligible = candidates.filter(v => getVarKind(v) === 'alt-specific');
+            const ciEligible = candidates.filter(v => getVarKind(v) === 'individual-specific');
+
+            if (csEligible.length === 0) {
+                csBox.innerHTML = '<p class="var-list-empty">No alternative-specific variables available — these are columns whose value differs across alternatives within a choice occasion.</p>';
+            } else {
+                csBox.innerHTML = csEligible.map(v => {
+                    const checked = csChecked.has(v);
+                    const slope = csSlopes[v] || 'single';
+                    const safe = escapeHtml(v);
+                    const radioName = `cs-slope-${safe}`;
+                    return `
+                        <div class="cs-row" data-var="${safe}">
+                            <label class="cs-var-label"><input type="checkbox" class="cs-var-cb" value="${safe}"${checked ? ' checked' : ''}> ${safe}</label>
+                            <span class="cs-slope-picker">
+                                <label class="slope-pill"><input type="radio" name="${radioName}" class="cs-slope-radio" data-var="${safe}" value="single"${slope === 'single' ? ' checked' : ''}> Single slope</label>
+                                <label class="slope-pill"><input type="radio" name="${radioName}" class="cs-slope-radio" data-var="${safe}" value="alt_specific"${slope === 'alt_specific' ? ' checked' : ''}> Per-alt slopes</label>
+                            </span>
+                        </div>
+                    `;
+                }).join('');
+            }
+
             if (ciEligible.length === 0) {
-                ciBox.innerHTML = '<p class="var-list-empty">No alt-specific variables available — Choice-Invariant slopes need variables that vary by alternative within an occasion.</p>';
+                ciBox.innerHTML = '<p class="var-list-empty">No individual-specific variables available — these are columns whose value is constant across alternatives within a choice occasion (e.g., demographics, time).</p>';
             } else {
                 ciBox.innerHTML = ciEligible.map(v => {
-                    const checked = ciChecked.has(v) && !csChecked.has(v);
-                    return `<label><input type="checkbox" class="ci-var-cb" value="${escapeHtml(v)}"${checked ? ' checked' : ''}> ${escapeHtml(v)}</label>`;
+                    const checked = ciChecked.has(v);
+                    const safe = escapeHtml(v);
+                    return `<label><input type="checkbox" class="ci-var-cb" value="${safe}"${checked ? ' checked' : ''}> ${safe} <span class="slope-fixed">per-alt slope</span></label>`;
                 }).join('');
             }
 
-            if (candidates.length === 0) {
-                csBox.innerHTML = '<p class="var-list-empty">No variables available yet. Pick the choice / alternative columns above first.</p>';
-            } else {
-                csBox.innerHTML = candidates.map(v => {
-                    const kind = getVarKind(v);
-                    const tag = kind === 'individual-specific' ? '<span class="var-tag">individual-specific</span>' : '';
-                    const checked = csChecked.has(v);
-                    return `<label><input type="checkbox" class="cs-var-cb" value="${escapeHtml(v)}"${checked ? ' checked' : ''}> ${escapeHtml(v)}${tag}</label>`;
-                }).join('');
-            }
-
-            // Wire up mutex: when a var is checked in one box, uncheck/disable in the other.
-            const allCi = ciBox.querySelectorAll('input.ci-var-cb');
-            const allCs = csBox.querySelectorAll('input.cs-var-cb');
-            const refreshDisable = () => {
-                const ciOn = new Set(Array.from(allCi).filter(i => i.checked).map(i => i.value));
-                const csOn = new Set(Array.from(allCs).filter(i => i.checked).map(i => i.value));
-                allCi.forEach(i => {
-                    const lbl = i.closest('label');
-                    if (csOn.has(i.value)) { i.disabled = true; i.checked = false; lbl.classList.add('disabled'); }
-                    else { i.disabled = false; lbl.classList.remove('disabled'); }
-                });
-                allCs.forEach(i => {
-                    const lbl = i.closest('label');
-                    if (ciOn.has(i.value)) { i.disabled = true; i.checked = false; lbl.classList.add('disabled'); }
-                    else { i.disabled = false; lbl.classList.remove('disabled'); }
+            // Disable the slope-type pills on a Choice-Specific row whose checkbox is unchecked.
+            const syncCsRowState = () => {
+                csBox.querySelectorAll('.cs-row').forEach(row => {
+                    const cb = row.querySelector('input.cs-var-cb');
+                    const enabled = cb && cb.checked;
+                    row.querySelectorAll('.slope-pill').forEach(p => p.classList.toggle('disabled', !enabled));
+                    row.querySelectorAll('.cs-slope-radio').forEach(r => r.disabled = !enabled);
                 });
             };
-            allCi.forEach(i => i.addEventListener('change', () => { refreshDisable(); updateRunEnabled(); }));
-            allCs.forEach(i => i.addEventListener('change', () => { refreshDisable(); updateRunEnabled(); }));
-            refreshDisable();
+            csBox.querySelectorAll('input').forEach(i => i.addEventListener('change', () => { syncCsRowState(); updateRunEnabled(); }));
+            ciBox.querySelectorAll('input').forEach(i => i.addEventListener('change', updateRunEnabled));
+            syncCsRowState();
         }
 
         // Backwards-compatible alias — every caller in the file still uses
@@ -1100,10 +1133,18 @@
 
         function getModelVars() {
             const out = [];
-            $('ciVars').querySelectorAll('input.ci-var-cb:checked').forEach(i => {
-                if (!i.disabled) out.push({ name: i.value, type: 'single' });
+            // Choice-Specific (alt-specific data): each row has its own slope-type picker
+            // (Single slope vs Per-alt slopes) — read it per row.
+            $('csVars').querySelectorAll('.cs-row').forEach(row => {
+                const cb = row.querySelector('input.cs-var-cb');
+                if (!cb || !cb.checked) return;
+                const slope = row.querySelector('input.cs-slope-radio:checked');
+                const type  = slope && slope.value === 'alt_specific' ? 'alt_specific' : 'single';
+                out.push({ name: cb.value, type });
             });
-            $('csVars').querySelectorAll('input.cs-var-cb:checked').forEach(i => {
+            // Choice-Invariant (individual-specific data): always per-alt slopes (a
+            // single slope cancels out of the choice probabilities).
+            $('ciVars').querySelectorAll('input.ci-var-cb:checked').forEach(i => {
                 if (!i.disabled) out.push({ name: i.value, type: 'alt_specific' });
             });
             return out;
