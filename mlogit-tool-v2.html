@@ -240,7 +240,6 @@
 
     <main>
         <section class="hero">
-            <span class="badge">Runs entirely in your browser · powered by WebR</span>
             <h1>Multinomial &amp; Conditional Logit Regressions</h1>
             <ul>
                 <li>Estimate discrete-choice models using the <code>mlogit</code> R package &mdash; with no R install required</li>
@@ -268,14 +267,45 @@
 
             <div class="status-message" id="statusMessage"></div>
 
-            <!-- ============================== 1. Upload ============================== -->
-            <h2 class="section-title">1. Upload Your Data</h2>
-            <p class="section-hint">Upload a CSV in either <strong>long format</strong> (one row per alternative per occasion) or <strong>wide format</strong> (one row per occasion, one column per alternative's choice and per attribute).</p>
+            <!-- ============================== 1. Choose Data Format ============================== -->
+            <h2 class="section-title">1. Choose Data Format</h2>
+            <p class="section-hint">Pick how your data is laid out before uploading. The required columns and the data preview both depend on this choice.</p>
+            <div class="form-group">
+                <div class="radio-row">
+                    <label><input type="radio" name="dataShape" value="long" checked> Long format (one row per alt per occasion)</label>
+                    <label><input type="radio" name="dataShape" value="wide"> Wide format (one row per occasion)</label>
+                </div>
+                <div class="format-explainer">
+                    <div class="format-card">
+                        <h4>Long Format <span class="format-recommended">recommended</span></h4>
+                        <p>Each row represents <strong>one alternative within one choice occasion</strong>. If there are 3 alternatives per choice, each occasion has 3 rows. Required columns: a Choice ID, an Alternative name, a binary Choice indicator, and any alternative-specific attributes (e.g., Price).</p>
+<pre>ChoiceID  Alt   Price  Chosen
+1         A     5.99   0
+1         B     4.99   1
+1         C     6.99   0
+2         A     5.49   1
+2         B     5.29   0
+2         C     6.49   0</pre>
+                    </div>
+                    <div class="format-card">
+                        <h4>Wide Format</h4>
+                        <p>Each row represents <strong>one choice occasion</strong>. There is one binary choice column per alternative, plus alternative-specific attribute columns named with a per-alternative suffix (e.g., <code>Price_Coke</code>, <code>Price_Pepsi</code>).</p>
+<pre>ID  Week  Price_Coke  Price_Pepsi  Choice_Coke  Choice_Pepsi
+1   1     0.64        0.85         0            1
+1   2     0.87        0.63         0            0</pre>
+                        <p class="format-note">The tool automatically reshapes wide data to long before estimation.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ============================== 2. Upload ============================== -->
+            <h2 class="section-title mt">2. Upload Your Data</h2>
+            <p class="section-hint" id="uploadHint">Upload a CSV in <strong>long format</strong> (one row per alternative per choice occasion).</p>
             <div class="upload-area" id="uploadArea">
                 <input type="file" id="fileInput" accept=".csv">
                 <div class="upload-icon">📊</div>
                 <p class="upload-text">Click to upload or drag and drop a CSV</p>
-                <p class="upload-hint">Long or wide format · CSV only</p>
+                <p class="upload-hint" id="uploadHintShape">Long format · CSV only</p>
             </div>
             <div class="data-preview" id="dataPreview">
                 <h3 style="margin-bottom: 0.5rem; font-size: 1.05rem; color: var(--text-dark);">Data Preview (first 8 rows)</h3>
@@ -285,9 +315,9 @@
                 <p class="preview-meta" id="previewMeta"></p>
             </div>
 
-            <!-- ============================== 2. Filter (optional) ============================== -->
+            <!-- ============================== 3. Filter (optional) ============================== -->
             <div class="data-filter-section" id="dataFilterSection">
-                <h3>2. Filter Data (Optional)</h3>
+                <h3>3. Filter Data (Optional)</h3>
                 <p style="font-size: 0.9rem; color: var(--text-light); margin-bottom: 0.85rem;">Use the full dataset, or restrict to a subset of rows before estimation. Multiple conditions are combined with AND.</p>
                 <div class="data-choice">
                     <label><input type="radio" name="dataChoice" value="full" checked> Use Full Data</label>
@@ -302,39 +332,10 @@
                 </div>
             </div>
 
-            <!-- ============================== 3. Configure data structure ============================== -->
+            <!-- ============================== 4. Configure data structure ============================== -->
             <div id="modelConfig" style="display: none;">
-                <h2 class="section-title mt">3. Configure Choice Data</h2>
-                <p class="section-hint">Tell <code>mlogit.data()</code> how the columns map to the choice structure. Pick the data shape first.</p>
-
-                <div class="form-group">
-                    <label>Data Shape</label>
-                    <div class="radio-row">
-                        <label><input type="radio" name="dataShape" value="long" checked> Long format (one row per alt per occasion)</label>
-                        <label><input type="radio" name="dataShape" value="wide"> Wide format (one row per occasion)</label>
-                    </div>
-                    <div class="format-explainer">
-                        <div class="format-card">
-                            <h4>Long Format <span class="format-recommended">recommended</span></h4>
-                            <p>Each row represents <strong>one alternative within one choice occasion</strong>. If there are 3 alternatives per choice, each occasion has 3 rows. Required columns: a Choice ID, an Alternative name, a binary Choice indicator, and any alternative-specific attributes (e.g., Price).</p>
-<pre>ChoiceID  Alt   Price  Chosen
-1         A     5.99   0
-1         B     4.99   1
-1         C     6.99   0
-2         A     5.49   1
-2         B     5.29   0
-2         C     6.49   0</pre>
-                        </div>
-                        <div class="format-card">
-                            <h4>Wide Format</h4>
-                            <p>Each row represents <strong>one choice occasion</strong>. There is one binary choice column per alternative, plus alternative-specific attribute columns named with a per-alternative suffix (e.g., <code>Price_Coke</code>, <code>Price_Pepsi</code>).</p>
-<pre>ID  Week  Price_Coke  Price_Pepsi  Choice_Coke  Choice_Pepsi
-1   1     0.64        0.85         0            1
-1   2     0.87        0.63         0            0</pre>
-                            <p class="format-note">The tool automatically reshapes wide data to long before estimation.</p>
-                        </div>
-                    </div>
-                </div>
+                <h2 class="section-title mt">4. Configure Choice Data</h2>
+                <p class="section-hint">Tell <code>mlogit.data()</code> how the columns map to the choice structure.</p>
 
                 <!-- Long-format fields -->
                 <div id="longFields">
@@ -383,8 +384,8 @@
                     </div>
                 </div>
 
-                <!-- ============================== 4. Model spec ============================== -->
-                <h2 class="section-title mt">4. Specify the Model</h2>
+                <!-- ============================== 5. Model spec ============================== -->
+                <h2 class="section-title mt">5. Specify the Model</h2>
                 <p class="section-hint">Independent variables are split into two boxes. <strong>Choice-Invariant IVs</strong> get a single slope shared across all alternatives — only variables that vary by alternative within an occasion (e.g., Price) are eligible, since a constant variable would cancel out of the choice probabilities. <strong>Choice-Specific IVs</strong> get a separate slope per alternative — any variable can go here. A variable cannot appear in both boxes at once.</p>
 
                 <div class="form-group">
@@ -409,9 +410,9 @@
                 </div>
             </div>
 
-            <!-- ============================== 5. Results ============================== -->
+            <!-- ============================== 6. Results ============================== -->
             <div class="results-container" id="resultsContainer">
-                <h2 class="section-title mt">5. Results</h2>
+                <h2 class="section-title mt">6. Results</h2>
 
                 <h3 style="margin-bottom: 0.5rem; color: var(--text-dark); font-size: 1.1rem;">Coefficient Estimates</h3>
                 <div style="overflow-x: auto;">
@@ -826,9 +827,13 @@
                 if (e.target.value === 'long') {
                     $('longFields').style.display = 'block';
                     $('wideFields').style.display = 'none';
+                    $('uploadHint').innerHTML = 'Upload a CSV in <strong>long format</strong> (one row per alternative per choice occasion).';
+                    $('uploadHintShape').textContent = 'Long format · CSV only';
                 } else {
                     $('longFields').style.display = 'none';
                     $('wideFields').style.display = 'block';
+                    $('uploadHint').innerHTML = 'Upload a CSV in <strong>wide format</strong> (one row per choice occasion, with one binary choice column per alternative and per-alt attribute columns).';
+                    $('uploadHintShape').textContent = 'Wide format · CSV only';
                 }
                 refreshVarRowChoices();
                 updateRunEnabled();
@@ -1012,7 +1017,11 @@
             const ciChecked = new Set(Array.from(ciBox.querySelectorAll('input[type="checkbox"]:checked')).map(i => i.value));
             const csChecked = new Set(Array.from(csBox.querySelectorAll('input[type="checkbox"]:checked')).map(i => i.value));
 
-            const ciEligible = candidates.filter(v => getVarKind(v) !== 'individual-specific');
+            // Only show variables we can confirm are alt-specific. The looser filter
+            // "!= individual-specific" let through 'unknown' (e.g. before the chid
+            // column is set in long mode), which then allowed the user to pick
+            // individual-specific variables here once chid arrived later.
+            const ciEligible = candidates.filter(v => getVarKind(v) === 'alt-specific');
             if (ciEligible.length === 0) {
                 ciBox.innerHTML = '<p class="var-list-empty">No alt-specific variables available — Choice-Invariant slopes need variables that vary by alternative within an occasion.</p>';
             } else {
