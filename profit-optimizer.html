@@ -1373,17 +1373,26 @@ Profit = Revenue - Cost * Sales" oninput="parseEquations()"></textarea>
             // Round to 2 decimal places
             xOpt = Math.round(xOpt * 100) / 100;
 
-            // Verify the fit is good by checking a 4th point
-            const x4 = (x1 + x2) / 2;
-            const r4 = evalModel({ [varName]: x4 });
-            if (r4.error) return null;
-            const y4_actual = r4.scope[objVar];
-            const y4_predicted = a * x4 * x4 + b * x4 + c;
-            const relError = Math.abs(y4_actual - y4_predicted) / (Math.abs(y4_actual) + 1e-10);
-
-            if (relError > 0.001) {
-                // Not a good quadratic fit, fall back to grid search
-                return null;
+            // Verify the model is genuinely quadratic by checking multiple points
+            // spread across the range. A true quadratic fits through any 3 points
+            // exactly, so residuals at additional points should be at floating-point
+            // noise. A loose tolerance here (e.g. 1e-3) can be passed by non-quadratic
+            // curves like exp(·)*linear on a narrow range, producing a vertex that is
+            // biased away from the true optimum — so require a tight fit at several
+            // points, and fall back to grid search otherwise.
+            const range = x3 - x1;
+            const scale = Math.max(Math.abs(y1), Math.abs(y2), Math.abs(y3), 1e-10);
+            const verifyFracs = [0.125, 0.25, 0.375, 0.625, 0.75, 0.875];
+            for (const f of verifyFracs) {
+                const xv = x1 + f * range;
+                const rv = evalModel({ [varName]: xv });
+                if (rv.error) return null;
+                const y_actual = rv.scope[objVar];
+                const y_predicted = a * xv * xv + b * xv + c;
+                if (Math.abs(y_actual - y_predicted) / scale > 1e-6) {
+                    // Not a true quadratic, fall back to grid search
+                    return null;
+                }
             }
 
             // Evaluate at optimal point
