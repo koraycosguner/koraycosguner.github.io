@@ -3,2184 +3,1623 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Logistic Regressions - Setup</title>
+    <title>Multinomial &amp; Conditional Logit (Browser) | Koray Cosguner</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary: #2563eb;
-            --primary-dark: #1d4ed8;
-            --success: #16a34a;
-            --danger: #dc2626;
-            --warning: #f59e0b;
-            --bg: #f8fafc;
-            --card-bg: #ffffff;
-            --text-dark: #1e293b;
-            --text-light: #64748b;
-            --border: #e2e8f0;
+            --iu-crimson: #990000;
+            --iu-crimson-dark: #7a0000;
+            --text-dark: #333;
+            --text-light: #666;
+            --bg-light: #f5f5f5;
+            --white: #fff;
+            --border: #ddd;
+            --green: #15803d;
+            --green-bg: #dcfce7;
         }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-size: 18px;
             font-family: 'Outfit', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background: var(--bg);
-            color: var(--text-dark);
             line-height: 1.6;
-            padding: 2rem;
-        }
-
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-        }
-
-        h1 {
-            text-align: center;
-            margin-bottom: 0.5rem;
             color: var(--text-dark);
+            background-color: var(--bg-light);
         }
 
-        .subtitle {
-            text-align: center;
-            color: var(--text-light);
-            margin-bottom: 2rem;
-        }
+        nav { position: sticky; top: 0; background: var(--white); box-shadow: 0 2px 10px rgba(0,0,0,0.1); z-index: 1000; padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; }
+        .nav-brand { font-size: 1.5rem; font-weight: 700; color: var(--iu-crimson); text-decoration: none; }
+        .nav-links { display: flex; gap: 2rem; list-style: none; }
+        .nav-links a { text-decoration: none; color: var(--text-dark); font-weight: 500; transition: color 0.3s; }
+        .nav-links a:hover { color: var(--iu-crimson); }
 
-        .card {
-            background: var(--card-bg);
-            border-radius: 12px;
-            padding: 1.5rem;
-            margin-bottom: 1.5rem;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-        }
+        main { max-width: 1200px; margin: 0 auto; padding: 2rem; }
+        .hero { text-align: center; padding: 3rem 0; }
+        .hero h1 { font-size: 1.8rem; color: var(--text-dark); margin-bottom: 0.5rem; }
+        .hero .badge { display: inline-block; padding: 0.3rem 0.85rem; border-radius: 999px; background: var(--green-bg); color: var(--green); font-size: 0.8rem; font-weight: 600; letter-spacing: 0.4px; margin-bottom: 1rem; }
+        .hero ul { text-align: left; display: inline-block; margin: 0 auto; padding-left: 1.5rem; color: var(--text-light); font-size: 1rem; line-height: 1.8; }
 
-        .card-title {
-            font-size: 1.1rem;
-            font-weight: 600;
-            margin-bottom: 1rem;
-            color: var(--text-dark);
-        }
+        .tool-container { background: var(--white); border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); padding: 2rem; margin-top: 2rem; }
+        .section-title { font-size: 1.3rem; color: var(--iu-crimson); margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 2px solid var(--iu-crimson); }
+        .section-title.mt { margin-top: 2rem; }
+        .section-hint { font-size: 0.9rem; color: var(--text-light); margin-bottom: 1rem; }
 
-        /* Disclaimer */
-        .disclaimer {
-            background: #fef3c7;
-            border: 1px solid #f59e0b;
-            border-radius: 8px;
-            padding: 1rem;
-            margin-bottom: 1.5rem;
-            font-size: 0.9rem;
-        }
+        .disclaimer { background: #fef2f2; border: 1px solid #fecaca; border-radius: 8px; padding: 1rem 1.25rem; margin-bottom: 2rem; }
+        .disclaimer-title { font-weight: 700; color: var(--iu-crimson); margin-bottom: 0.5rem; }
+        .disclaimer ul { margin: 0; padding-left: 1.25rem; color: var(--text-light); font-size: 0.9rem; }
+        .disclaimer li { margin-bottom: 0.25rem; }
 
-        .disclaimer-title {
-            font-weight: 600;
-            color: #92400e;
-            margin-bottom: 0.5rem;
-        }
+        .loading-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.96); display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 9999; }
+        .loading-overlay.hidden { display: none; }
+        .spinner { width: 60px; height: 60px; border: 4px solid var(--border); border-top-color: var(--iu-crimson); border-radius: 50%; animation: spin 1s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .loading-text { margin-top: 1rem; font-size: 1.1rem; color: var(--text-light); }
+        .loading-stage { margin-top: 0.5rem; font-size: 0.85rem; color: #999; }
 
-        .disclaimer ul {
-            margin-left: 1.25rem;
-            color: #78350f;
-        }
+        .upload-area { border: 2px dashed var(--border); border-radius: 8px; padding: 3rem; text-align: center; cursor: pointer; transition: all 0.3s; margin-bottom: 1.5rem; }
+        .upload-area:hover, .upload-area.dragover { border-color: var(--iu-crimson); background: rgba(153, 0, 0, 0.05); }
+        .upload-area input[type="file"] { display: none; }
+        .upload-icon { font-size: 3rem; color: var(--iu-crimson); margin-bottom: 1rem; }
+        .upload-text { font-size: 1.1rem; color: var(--text-dark); }
+        .upload-hint { font-size: 0.9rem; color: var(--text-light); margin-top: 0.5rem; }
 
-        .disclaimer li {
-            margin-bottom: 0.25rem;
+        .form-group { margin-bottom: 1.25rem; }
+        .form-group label { display: block; font-weight: 600; margin-bottom: 0.4rem; color: var(--text-dark); }
+        .form-group select, .form-group input[type="text"], .form-group input[type="number"] {
+            width: 100%; padding: 0.65rem 0.75rem; border: 1px solid var(--border);
+            border-radius: 6px; font-size: 1rem; font-family: inherit; background: var(--white);
         }
+        .form-group select:focus, .form-group input:focus { outline: none; border-color: var(--iu-crimson); }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+        @media (max-width: 720px) { .form-row { grid-template-columns: 1fr; } }
+        .field-hint { color: #999; font-weight: 400; font-size: 0.85rem; margin-left: 0.4rem; }
 
-        /* Requirements */
-        .requirements {
-            background: #dbeafe;
-            border: 1px solid #3b82f6;
-            border-radius: 8px;
-            padding: 1rem;
-            margin-bottom: 1.5rem;
+        /* Long-vs-wide explainer cards (mirrors the v1 Shiny tool's format help). */
+        .format-explainer { display: grid; grid-template-columns: 1fr 1fr; gap: 0.85rem; margin-top: 0.85rem; }
+        @media (max-width: 760px) { .format-explainer { grid-template-columns: 1fr; } }
+        .format-card { background: #fafafa; border: 1px solid var(--border); border-left: 3px solid var(--iu-crimson); border-radius: 6px; padding: 0.85rem 1rem; }
+        .format-card h4 { font-size: 0.95rem; color: var(--iu-crimson-dark); margin-bottom: 0.4rem; display: flex; align-items: center; gap: 0.5rem; }
+        .format-card p { font-size: 0.85rem; color: var(--text-light); line-height: 1.55; margin-bottom: 0.5rem; }
+        .format-card pre { background: var(--white); border: 1px solid var(--border); border-radius: 4px; padding: 0.6rem 0.75rem; font-family: 'Monaco', 'Menlo', 'Courier New', monospace; font-size: 0.78rem; line-height: 1.45; overflow-x: auto; color: var(--text-dark); }
+        .format-card code { font-family: 'Monaco', 'Menlo', 'Courier New', monospace; font-size: 0.8rem; background: var(--white); border: 1px solid var(--border); padding: 0.05rem 0.3rem; border-radius: 3px; }
+        .format-recommended { font-size: 0.65rem; font-weight: 700; letter-spacing: 0.6px; padding: 0.1rem 0.45rem; background: var(--green-bg); color: var(--green); border-radius: 999px; text-transform: uppercase; }
+        .format-note { font-size: 0.78rem !important; color: var(--text-light); font-style: italic; margin-top: 0.5rem !important; margin-bottom: 0 !important; }
+
+        .radio-row { display: flex; gap: 0.65rem; flex-wrap: wrap; }
+        .radio-row label { display: inline-flex; align-items: center; gap: 0.4rem; font-weight: 500; cursor: pointer; padding: 0.4rem 0.85rem; border-radius: 6px; border: 1px solid var(--border); background: var(--white); font-size: 0.9rem; }
+        .radio-row label:has(input:checked) { border-color: var(--iu-crimson); background: rgba(153,0,0,0.04); color: var(--iu-crimson); font-weight: 600; }
+        .radio-row input[type="radio"] { accent-color: var(--iu-crimson); }
+
+        /* Two-column-style variable picker (Section 4). Each list mirrors the look of
+           the wide-format Choice / Attribute column pickers in Section 3. Variables
+           checked in one list are auto-disabled in the other (mutex). */
+        .var-checkbox-list { border: 1px solid var(--border); border-radius: 6px; padding: 0.75rem 1rem; max-height: 240px; overflow-y: auto; background: var(--white); }
+        .var-checkbox-list label { display: block; padding: 0.25rem 0; font-size: 0.92rem; cursor: pointer; }
+        .var-checkbox-list label.disabled { color: var(--text-light); cursor: not-allowed; opacity: 0.55; }
+        .var-checkbox-list input[type="checkbox"] { accent-color: var(--iu-crimson); margin-right: 0.5rem; }
+        .var-checkbox-list .var-tag { font-size: 0.75rem; color: var(--text-light); margin-left: 0.4rem; font-style: italic; }
+        .var-list-empty { color: var(--text-light); font-style: italic; font-size: 0.88rem; margin: 0.2rem 0; }
+
+        .var-row {
+            display: grid; grid-template-columns: 1fr 1fr 80px; gap: 0.75rem;
+            align-items: center; padding: 0.5rem 0; border-bottom: 1px dashed var(--border);
         }
+        .var-row:last-child { border-bottom: none; }
+        .var-row .remove-btn { background: transparent; color: #b91c1c; border: 1px solid #fca5a5; padding: 0.35rem 0.6rem; border-radius: 4px; cursor: pointer; font-size: 0.85rem; font-family: inherit; }
+        .var-row .remove-btn:hover { background: #fef2f2; }
+        .add-var-btn { background: var(--white); color: var(--iu-crimson); border: 2px dashed var(--iu-crimson); border-radius: 6px; padding: 0.6rem 1rem; cursor: pointer; font-weight: 600; font-size: 0.9rem; margin-top: 0.75rem; width: 100%; font-family: inherit; }
+        .add-var-btn:hover { background: rgba(153,0,0,0.04); }
 
-        .requirements-title {
-            font-weight: 600;
-            color: #1e40af;
-            margin-bottom: 0.5rem;
-        }
+        .btn { display: inline-block; padding: 0.75rem 2rem; font-size: 1rem; font-weight: 600; text-align: center; border: none; border-radius: 6px; cursor: pointer; transition: all 0.2s; font-family: inherit; }
+        .btn-primary { background: var(--iu-crimson); color: var(--white); }
+        .btn-primary:hover:not(:disabled) { background: var(--iu-crimson-dark); }
+        .btn-primary:disabled { background: var(--text-light); cursor: not-allowed; opacity: 0.6; }
+        .btn-secondary { background: var(--white); color: var(--iu-crimson); border: 2px solid var(--iu-crimson); }
+        .btn-secondary:hover { background: var(--iu-crimson); color: var(--white); }
+        .button-group { display: flex; gap: 1rem; margin-top: 1.5rem; flex-wrap: wrap; }
 
-        .requirements ul {
-            margin-left: 1.25rem;
-            color: #1e3a8a;
-        }
+        .data-preview { margin-top: 1.5rem; display: none; }
+        .data-preview.visible { display: block; }
+        .preview-table-container { overflow-x: auto; max-height: 280px; border: 1px solid var(--border); border-radius: 6px; }
+        .preview-table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+        .preview-table th, .preview-table td { padding: 0.5rem 0.85rem; text-align: left; border-bottom: 1px solid var(--border); }
+        .preview-table th { background: var(--iu-crimson); color: var(--white); position: sticky; top: 0; z-index: 1; }
+        .preview-table tr:hover { background: rgba(153, 0, 0, 0.04); }
+        .preview-meta { font-size: 0.85rem; color: var(--text-light); margin-top: 0.5rem; }
 
-        /* Steps */
-        .step {
-            display: flex;
-            gap: 1rem;
-            margin-bottom: 1.5rem;
-            padding-bottom: 1.5rem;
-            border-bottom: 1px solid var(--border);
-        }
+        .status-message { padding: 0.85rem 1rem; border-radius: 6px; margin-bottom: 1rem; display: none; font-size: 0.95rem; }
+        .status-message.visible { display: block; }
+        .status-message.error { background: #fee2e2; color: #991b1b; border: 1px solid #fecaca; }
+        .status-message.success { background: #d1fae5; color: #065f46; border: 1px solid #a7f3d0; }
+        .status-message.info { background: #dbeafe; color: #1e40af; border: 1px solid #bfdbfe; }
 
-        .step:last-child {
-            border-bottom: none;
-            margin-bottom: 0;
-            padding-bottom: 0;
-        }
+        /* Filter section — Tool 7 blue panel */
+        .data-filter-section { margin-top: 1.5rem; padding: 1.25rem; background: #f0f9ff; border: 1px solid #bae6fd; border-radius: 8px; display: none; }
+        .data-filter-section.visible { display: block; }
+        .data-filter-section h3 { color: #0369a1; margin-bottom: 0.5rem; font-size: 1.05rem; }
+        .data-choice { display: flex; gap: 1.5rem; margin-bottom: 1rem; flex-wrap: wrap; }
+        .data-choice label { display: inline-flex; align-items: center; gap: 0.5rem; cursor: pointer; font-weight: 500; }
+        .data-choice input[type="radio"] { accent-color: #0369a1; }
+        .filter-conditions { display: none; }
+        .filter-conditions.visible { display: block; }
+        .filter-row { display: grid; grid-template-columns: 1fr 110px 1fr 80px; gap: 0.5rem; align-items: center; margin-bottom: 0.5rem; }
+        .filter-row select, .filter-row input { padding: 0.5rem; border: 1px solid #bae6fd; border-radius: 4px; font-size: 0.9rem; font-family: inherit; }
+        .filter-row .remove-filter-btn { background: transparent; color: #0c4a6e; border: 1px solid #7dd3fc; padding: 0.45rem 0.6rem; border-radius: 4px; cursor: pointer; font-size: 0.8rem; font-family: inherit; }
+        .filter-row .remove-filter-btn:hover { background: #e0f2fe; }
+        .add-filter-btn { background: var(--white); color: #0369a1; border: 1px solid #7dd3fc; border-radius: 4px; padding: 0.4rem 0.8rem; cursor: pointer; font-size: 0.85rem; font-family: inherit; margin-top: 0.4rem; }
+        .add-filter-btn:hover { background: #e0f2fe; }
+        .filter-summary { margin-top: 0.85rem; padding: 0.5rem 0.75rem; background: var(--white); border-radius: 4px; font-size: 0.85rem; color: #0c4a6e; border: 1px solid #bae6fd; }
+        .filter-summary .count { font-weight: 700; color: #0369a1; }
+        @media (max-width: 600px) { .filter-row { grid-template-columns: 1fr; } }
 
-        .step-number {
-            flex-shrink: 0;
-            width: 36px;
-            height: 36px;
-            background: var(--primary);
-            color: white;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 600;
-        }
+        /* Results */
+        .results-container { margin-top: 2rem; display: none; }
+        .results-container.visible { display: block; }
 
-        .step-content {
-            flex: 1;
-        }
+        .coef-table { width: 100%; border-collapse: collapse; font-size: 0.9rem; background: var(--white); margin-top: 0.5rem; }
+        .coef-table th, .coef-table td { padding: 0.55rem 0.9rem; text-align: right; border: 1px solid var(--border); }
+        .coef-table th { background: var(--iu-crimson); color: var(--white); font-weight: 600; }
+        .coef-table td:first-child, .coef-table th:first-child { text-align: left; }
+        .coef-table tr:hover td { background: rgba(153,0,0,0.03); }
+        .coef-sig { color: var(--green); font-weight: 600; }
+        .coef-insig { color: #b91c1c; }
 
-        .step-title {
-            font-weight: 600;
-            margin-bottom: 0.5rem;
-            color: var(--text-dark);
-        }
+        .fit-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 0.75rem; margin: 1rem 0 1.5rem; }
+        .fit-stat { background: #fafafa; border: 1px solid var(--border); border-radius: 8px; padding: 0.85rem 1rem; }
+        .fit-stat .label { font-size: 0.75rem; color: var(--text-light); text-transform: uppercase; letter-spacing: 0.6px; font-weight: 600; }
+        .fit-stat .value { font-size: 1.3rem; color: var(--iu-crimson); font-weight: 700; margin-top: 0.2rem; font-variant-numeric: tabular-nums; }
+        .copy-hint { font-size: 0.8rem; color: var(--text-light); font-style: italic; margin-top: 0.4rem; }
 
-        .step-description {
-            color: var(--text-light);
-            font-size: 0.95rem;
-        }
+        /* Estimated Equation — yellow panel like Tool 7 */
+        .equation-section { margin-top: 1.5rem; padding: 1.25rem; background: #fefce8; border: 1px solid #fde047; border-radius: 8px; }
+        .equation-section h4 { margin-bottom: 0.75rem; color: #854d0e; font-size: 1rem; }
+        .significance-selector { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem; flex-wrap: wrap; }
+        .significance-selector > label { font-size: 0.85rem; color: var(--text-dark); font-weight: 500; }
+        .significance-options { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+        .significance-options input[type="radio"] { display: none; }
+        .significance-options label { padding: 0.4rem 0.75rem; border: 1px solid #fde047; border-radius: 4px; cursor: pointer; font-size: 0.8rem; background: var(--white); color: #854d0e; transition: all 0.2s; }
+        .significance-options label:hover { background: #fef3c7; }
+        .significance-options input[type="radio"]:checked + label { background: #fde047; border-color: #eab308; font-weight: 600; }
+        .equation-box-container { position: relative; }
+        .equation-box { background: var(--white); padding: 1rem 1.25rem; padding-right: 5rem; border-radius: 6px; border: 1px solid #fde047; font-family: 'Courier New', Courier, monospace; font-size: 0.9rem; line-height: 1.65; overflow-x: auto; white-space: pre-wrap; word-break: break-word; max-height: 480px; overflow-y: auto; }
+        .copy-equation-btn { position: absolute; top: 0.5rem; right: 0.5rem; background: #fef3c7; border: 1px solid #fde047; border-radius: 4px; padding: 0.35rem 0.7rem; cursor: pointer; font-size: 0.75rem; color: #854d0e; transition: all 0.2s; font-family: inherit; }
+        .copy-equation-btn:hover { background: #fde047; }
+        .copy-equation-btn.copied { background: #86efac; border-color: #22c55e; color: #166534; }
+        .equation-actions { display: flex; gap: 0.5rem; margin-top: 0.75rem; flex-wrap: wrap; }
 
-        /* Code block */
-        .code-block {
-            background: #1e293b;
-            color: #e2e8f0;
-            padding: 1rem;
-            border-radius: 8px;
-            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
-            font-size: 0.9rem;
-            overflow-x: auto;
-            margin: 0.75rem 0;
-        }
+        .results-output { background: #1e1e1e; color: #d4d4d4; font-family: 'Monaco', 'Menlo', 'Courier New', monospace; font-size: 0.85rem; padding: 1.25rem; border-radius: 8px; overflow-x: auto; white-space: pre; line-height: 1.5; max-height: 500px; overflow-y: auto; }
 
-        .code-block code {
-            color: #4ade80;
-        }
+        /* Prediction Section — Tool 7 light gray panel */
+        .prediction-section { margin-top: 2rem; padding: 1.5rem; background: var(--bg-light); border-radius: 8px; border: 1px solid var(--border); }
+        .prediction-section h3 { color: var(--text-dark); font-size: 1.1rem; margin-bottom: 0.5rem; }
+        .prediction-alt-block { margin-bottom: 1.25rem; padding: 1rem; background: var(--white); border-radius: 6px; border: 1px solid var(--border); }
+        .prediction-alt-block .alt-name { font-weight: 700; color: var(--iu-crimson); font-size: 0.95rem; margin-bottom: 0.65rem; padding-bottom: 0.4rem; border-bottom: 1px solid var(--border); }
+        .prediction-inputs { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 0.85rem; }
+        .prediction-input-group { display: flex; flex-direction: column; gap: 0.25rem; }
+        .prediction-input-group label { font-size: 0.85rem; font-weight: 600; color: var(--text-dark); }
+        .prediction-input-group input { padding: 0.5rem; border: 1px solid var(--border); border-radius: 4px; font-size: 0.9rem; font-family: inherit; }
+        .prediction-input-group input:focus { outline: none; border-color: var(--iu-crimson); }
+        .prediction-result { padding: 1.25rem; background: var(--white); border-radius: 6px; border: 2px solid var(--iu-crimson); margin-top: 1rem; display: none; }
+        .prediction-result.visible { display: block; }
+        .prediction-result .label { font-size: 0.9rem; color: var(--text-light); margin-bottom: 0.75rem; font-weight: 600; }
+        .prediction-pr-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 0.75rem; }
+        .prediction-pr-item { padding: 0.75rem; background: var(--bg-light); border-radius: 4px; text-align: center; }
+        .prediction-pr-item .alt { font-size: 0.8rem; color: var(--text-light); font-weight: 600; margin-bottom: 0.2rem; }
+        .prediction-pr-item .pr { font-size: 1.3rem; color: var(--iu-crimson); font-weight: 700; font-variant-numeric: tabular-nums; }
 
-        /* Links */
-        a {
-            color: var(--primary);
-            text-decoration: none;
-        }
+        footer { text-align: center; padding: 2rem; color: var(--text-light); font-size: 0.9rem; }
 
-        a:hover {
-            text-decoration: underline;
-        }
-
-        /* Download button */
-        .btn {
-            display: inline-block;
-            padding: 0.75rem 1.5rem;
-            background: var(--primary);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-size: 1rem;
-            font-weight: 500;
-            cursor: pointer;
-            text-decoration: none;
-            margin-top: 0.5rem;
-        }
-
-        .btn:hover {
-            background: var(--primary-dark);
-            text-decoration: none;
-        }
-
-        /* Features list */
-        .features {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1rem;
-            margin-top: 1rem;
-        }
-
-        .feature {
-            background: var(--bg);
-            padding: 1rem;
-            border-radius: 8px;
-        }
-
-        .feature-title {
-            font-weight: 600;
-            margin-bottom: 0.25rem;
-            color: var(--text-dark);
-        }
-
-        .feature-desc {
-            font-size: 0.85rem;
-            color: var(--text-light);
-        }
-
-        /* Mobile Responsiveness */
-        @media (max-width: 640px) {
-            body {
-                padding: 1rem;
-                font-size: 16px;
-            }
-            h1 {
-                font-size: 1.3rem;
-            }
-            .subtitle {
-                font-size: 0.85rem;
-            }
-            .card {
-                padding: 1rem;
-            }
-            .step {
-                flex-direction: column;
-                gap: 0.75rem;
-            }
-            .step-number {
-                width: 32px;
-                height: 32px;
-                font-size: 0.9rem;
-            }
-            .btn {
-                width: 100%;
-                text-align: center;
-            }
-            .code-block {
-                font-size: 0.8rem;
-                padding: 0.75rem;
-            }
+        @media (max-width: 768px) {
+            body { font-size: 16px; }
+            main { padding: 1rem; }
+            nav { padding: 0.75rem 1rem; flex-direction: column; gap: 0.5rem; }
+            .tool-container { padding: 1.25rem; }
+            .hero { padding: 1.5rem 0; }
+            .hero h1 { font-size: 1.4rem; }
+            .button-group { flex-direction: column; }
+            .btn { width: 100%; }
+            .var-row { grid-template-columns: 1fr; }
         }
     </style>
-    <link rel="icon" type="image/jpeg" href="KCFavicon.jpg">
 </head>
 <body>
-<!-- Auth check -->
-<div id="loading-screen" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: white; display: flex; align-items: center; justify-content: center; z-index: 9999;">
-    <p style="color: #64748b;">Loading...</p>
-</div>
-<div id="main-content" style="display: none;">
-    <div style="max-width: 800px; margin: 0 auto; padding: 0 0 10px 0;">
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="spinner"></div>
+        <p class="loading-text" id="loadingText">Loading WebR (R in your browser)...</p>
+        <p class="loading-stage" id="loadingStage">First load may take 30-60 seconds</p>
+    </div>
+
+    <!-- Back-to-tools link, matching Tool 7's header pattern (no brand nav). -->
+    <div style="max-width: 1200px; margin: 0 auto; padding: 20px 2rem 0;">
         <a href="tools.html" style="display: inline-flex; align-items: center; gap: 6px; color: #64748b; text-decoration: none; font-size: 0.9rem; font-weight: 500;">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
             Back to Pricing and Analytics Tools
         </a>
     </div>
-    <div class="container">
-        <h1>Logistic Regressions</h1>
-        <p class="subtitle">Estimate discrete choice models using the "mlogit" package in R.</p>
 
-        <!-- Disclaimer -->
+    <main>
+        <section class="hero">
+            <h1>Multinomial &amp; Conditional Logit Regressions</h1>
+            <ul>
+                <li>Estimate discrete-choice models using the <code>mlogit</code> R package &mdash; with no R install required</li>
+                <li>Long- or wide-format CSV upload, with automatic reshape for wide</li>
+                <li>Filter to a subset of rows before estimating</li>
+                <li>Add variables with alternative-invariant or alternative-specific slopes</li>
+                <li>View coefficients, fit statistics, and ready-to-paste prediction equations</li>
+                <li>Compute predicted choice probabilities for any input scenario</li>
+            </ul>
+        </section>
+
         <div class="disclaimer">
             <div class="disclaimer-title">Disclaimer</div>
             <ul>
-                <li><strong>Results may contain errors.</strong> The output from this tool may be inaccurate, incomplete, or incorrect. Users should independently verify all results before relying on them.</li>
-                <li><strong>No warranty.</strong> This tool is provided "as is" without any warranty of any kind.</li>
-                <li><strong>User assumes all risk.</strong> Users assume full and complete responsibility for reviewing, validating, and determining suitability of any output.</li>
+                <li><strong>Results may contain errors.</strong> Output may be inaccurate or incomplete. Verify all results independently.</li>
+                <li><strong>No warranty.</strong> Provided "as is" without any warranty.</li>
+                <li><strong>Privacy:</strong> Data never leaves your browser &mdash; everything runs locally in WebAssembly.</li>
             </ul>
-            <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid rgba(245, 158, 11, 0.3);">
-                <strong>📧 Report issues:</strong> If you encounter any issues, problems, or errors while using this tool, please contact Dr. Cosguner at <a href="mailto:kcosgun@iu.edu" style="color: #92400e; font-weight: 600;">kcosgun@iu.edu</a> so they can be resolved promptly.
+            <div style="margin-top: 0.85rem; padding-top: 0.85rem; border-top: 1px solid rgba(153, 0, 0, 0.2); font-size: 0.9rem;">
+                <strong>📧 Report issues:</strong> Email Dr. Cosguner at <a href="mailto:kcosgun@iu.edu" style="color: var(--iu-crimson); font-weight: 600;">kcosgun@iu.edu</a>.
             </div>
         </div>
 
-        <!-- Requirements -->
-        <div class="requirements">
-            <div class="requirements-title">Requirements</div>
-            <ul>
-                <li><strong>R</strong> - Statistical programming language (<a href="https://cran.r-project.org/" target="_blank">Download R</a>)</li>
-                <li><strong>RStudio</strong> - IDE for R (<a href="https://posit.co/download/rstudio-desktop/" target="_blank">Download RStudio</a>)</li>
-            </ul>
-        </div>
+        <div class="tool-container">
 
-        <!-- Setup Instructions -->
-        <div class="card">
-            <div class="card-title">Setup Instructions</div>
+            <div class="status-message" id="statusMessage"></div>
 
-            <div class="step">
-                <div class="step-number">1</div>
-                <div class="step-content">
-                    <div class="step-title">Install R and RStudio</div>
-                    <div class="step-description">
-                        If you don't have R and RStudio installed, download and install them from the links above. Install R first, then RStudio.
+            <!-- ============================== 1. Choose Data Format ============================== -->
+            <h2 class="section-title">1. Choose Data Format</h2>
+            <p class="section-hint">Pick how your data is laid out before uploading. The required columns and the data preview both depend on this choice.</p>
+            <div class="form-group">
+                <div class="radio-row">
+                    <label><input type="radio" name="dataShape" value="long" checked> Long format (one row per alt per occasion)</label>
+                    <label><input type="radio" name="dataShape" value="wide"> Wide format (one row per occasion)</label>
+                </div>
+                <div class="format-explainer">
+                    <div class="format-card">
+                        <h4>Long Format <span class="format-recommended">recommended</span></h4>
+                        <p>Each row represents <strong>one alternative within one choice occasion</strong>. If there are 3 alternatives per choice, each occasion has 3 rows. Required columns: a Choice ID, an Alternative name, a binary Choice indicator, and any alternative-specific attributes (e.g., Price).</p>
+<pre>ChoiceID  Alt   Price  Chosen
+1         A     5.99   0
+1         B     4.99   1
+1         C     6.99   0
+2         A     5.49   1
+2         B     5.29   0
+2         C     6.49   0</pre>
+                    </div>
+                    <div class="format-card">
+                        <h4>Wide Format</h4>
+                        <p>Each row represents <strong>one choice occasion</strong>. There is one binary choice column per alternative, plus alternative-specific attribute columns named with a per-alternative suffix (e.g., <code>Price_Coke</code>, <code>Price_Pepsi</code>).</p>
+<pre>ID  Week  Price_Coke  Price_Pepsi  Choice_Coke  Choice_Pepsi
+1   1     0.64        0.85         0            1
+1   2     0.87        0.63         0            0</pre>
+                        <p class="format-note">The tool automatically reshapes wide data to long before estimation.</p>
                     </div>
                 </div>
             </div>
 
-            <div class="step">
-                <div class="step-number">2</div>
-                <div class="step-content">
-                    <div class="step-title">Download and Open the App</div>
-                    <div class="step-description">
-                        Download the app file and open it in RStudio:
-                    </div>
-                    <button class="btn" id="downloadBtn">Download Discrete_Choice_Models.R</button>
-                    <div class="step-description" style="margin-top: 0.75rem;">
-                        In RStudio: File &rarr; Open File &rarr; Select the downloaded <code>Discrete_Choice_Models.R</code>
+            <!-- ============================== 2. Upload ============================== -->
+            <h2 class="section-title mt">2. Upload Your Data</h2>
+            <p class="section-hint" id="uploadHint">Upload a CSV in <strong>long format</strong> (one row per alternative per choice occasion).</p>
+            <div class="upload-area" id="uploadArea">
+                <input type="file" id="fileInput" accept=".csv">
+                <div class="upload-icon">📊</div>
+                <p class="upload-text">Click to upload or drag and drop a CSV</p>
+                <p class="upload-hint" id="uploadHintShape">Long format · CSV only</p>
+            </div>
+            <div class="data-preview" id="dataPreview">
+                <h3 style="margin-bottom: 0.5rem; font-size: 1.05rem; color: var(--text-dark);">Data Preview (first 8 rows)</h3>
+                <div class="preview-table-container">
+                    <table class="preview-table" id="previewTable"></table>
+                </div>
+                <p class="preview-meta" id="previewMeta"></p>
+            </div>
+
+            <!-- ============================== 3. Filter (optional) ============================== -->
+            <div class="data-filter-section" id="dataFilterSection">
+                <h3>3. Filter Data (Optional)</h3>
+                <p style="font-size: 0.9rem; color: var(--text-light); margin-bottom: 0.85rem;">Use the full dataset, or restrict to a subset of rows before estimation. Multiple conditions are combined with AND.</p>
+                <div class="data-choice">
+                    <label><input type="radio" name="dataChoice" value="full" checked> Use Full Data</label>
+                    <label><input type="radio" name="dataChoice" value="filtered"> Filter Data (Create a Subset)</label>
+                </div>
+                <div class="filter-conditions" id="filterConditions">
+                    <div id="filterRows"></div>
+                    <button type="button" class="add-filter-btn" id="addFilterBtn">+ Add Filter Condition</button>
+                    <div class="filter-summary" id="filterSummary" style="display: none;">
+                        Filtered: <span class="count" id="filteredCount">0</span> of <span id="originalCount">0</span> rows
                     </div>
                 </div>
             </div>
 
-            <div class="step">
-                <div class="step-number">3</div>
-                <div class="step-content">
-                    <div class="step-title">Run the App</div>
-                    <div class="step-description">
-                        With <code>Discrete_Choice_Models.R</code> open in RStudio, click the <strong>"Run App"</strong> button in the top-right corner of the editor panel. The app will open in a new window or your web browser.
+            <!-- ============================== 4. Configure data structure ============================== -->
+            <div id="modelConfig" style="display: none;">
+                <h2 class="section-title mt">4. Configure Choice Data</h2>
+                <p class="section-hint">Tell <code>mlogit.data()</code> how the columns map to the choice structure.</p>
+
+                <!-- Long-format fields -->
+                <div id="longFields">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="chidVar">Choice ID Variable <span class="field-hint">(groups rows per occasion)</span></label>
+                            <select id="chidVar"><option value="">-- Select --</option></select>
+                        </div>
+                        <div class="form-group">
+                            <label for="altVar">Alternative Variable <span class="field-hint">(names the options)</span></label>
+                            <select id="altVar"><option value="">-- Select --</option></select>
+                        </div>
                     </div>
-                    <div class="step-description" style="margin-top: 0.5rem;">
-                        <strong>Note:</strong> On first run, the app will automatically install the required R packages (<code>shiny</code> and <code>mlogit</code>). This may take a minute.
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="choiceVar">Choice Variable <span class="field-hint">(0/1 indicator)</span></label>
+                            <select id="choiceVar"><option value="">-- Select --</option></select>
+                        </div>
+                        <div class="form-group">
+                            <label for="reflevel">Reference Alternative <span class="field-hint">(baseline)</span></label>
+                            <select id="reflevel" disabled><option value="">-- Pick alternative variable first --</option></select>
+                        </div>
                     </div>
-                    <div class="step-description" style="margin-top: 0.5rem;">
-                        <strong>Tip:</strong> To open in fullscreen/external browser, click the "Open in Browser" button in the app window, or use the dropdown next to "Run App" and select "Run External".
+                </div>
+
+                <!-- Wide-format fields -->
+                <div id="wideFields" style="display: none;">
+                    <div class="form-group">
+                        <label for="wideChidVar">Choice ID Variable <span class="field-hint">(unique per occasion)</span></label>
+                        <select id="wideChidVar"><option value="">-- Select --</option></select>
+                    </div>
+                    <div class="form-group">
+                        <label>Choice Columns <span class="field-hint">(one binary 0/1 per alternative — e.g., Choice_Coke, Choice_Pepsi)</span></label>
+                        <div id="wideChoiceCols" style="border:1px solid var(--border); border-radius:6px; padding:0.75rem; max-height:160px; overflow-y:auto;"></div>
+                        <p style="font-size:0.8rem; color:var(--text-light); margin-top:0.4rem; font-style:italic;">After picking, set the alternative name each column represents (auto-extracted from the column suffix).</p>
+                        <div id="wideChoiceMap" style="margin-top:0.6rem;"></div>
+                    </div>
+                    <div class="form-group">
+                        <label>Alternative-Specific Attribute Columns <span class="field-hint">(e.g., Price_Coke, Price_Pepsi → all "Price_*")</span></label>
+                        <div id="wideAttrCols" style="border:1px solid var(--border); border-radius:6px; padding:0.75rem; max-height:160px; overflow-y:auto;"></div>
+                        <p style="font-size:0.8rem; color:var(--text-light); margin-top:0.4rem; font-style:italic;">Pick all columns that vary by alternative within an occasion. Each column is mapped to (attribute, alternative) by splitting on the last underscore.</p>
+                    </div>
+                    <div class="form-group">
+                        <label for="wideReflevel">Reference Alternative</label>
+                        <select id="wideReflevel" disabled><option value="">-- Pick choice columns first --</option></select>
+                    </div>
+                </div>
+
+                <!-- ============================== 5. Model spec ============================== -->
+                <h2 class="section-title mt">5. Specify the Model</h2>
+                <p class="section-hint">Independent variables are split into two boxes. <strong>Choice-Invariant IVs</strong> get a single slope shared across all alternatives — only variables that vary by alternative within an occasion (e.g., Price) are eligible, since a constant variable would cancel out of the choice probabilities. <strong>Choice-Specific IVs</strong> get a separate slope per alternative — any variable can go here. A variable cannot appear in both boxes at once.</p>
+
+                <div class="form-group">
+                    <label>Choice-Invariant Independent Variables <span class="field-hint">(one slope across alternatives)</span></label>
+                    <div id="ciVars" class="var-checkbox-list"><p class="var-list-empty">No eligible variables yet.</p></div>
+                </div>
+
+                <div class="form-group">
+                    <label>Choice-Specific Independent Variables <span class="field-hint">(separate slope per alternative)</span></label>
+                    <div id="csVars" class="var-checkbox-list"><p class="var-list-empty">No variables available yet.</p></div>
+                </div>
+                <div class="form-group" style="margin-top: 1.25rem;">
+                    <label>Intercept</label>
+                    <div class="radio-row">
+                        <label><input type="radio" name="interceptType" value="alt_specific" checked> Alternative-Specific Intercepts</label>
+                        <label><input type="radio" name="interceptType" value="none"> No Intercept</label>
+                    </div>
+                </div>
+                <div class="button-group">
+                    <button class="btn btn-primary" id="runButton" disabled>Estimate Model</button>
+                    <button class="btn btn-secondary" id="resetButton">Reset</button>
+                </div>
+            </div>
+
+            <!-- ============================== 6. Results ============================== -->
+            <div class="results-container" id="resultsContainer">
+                <h2 class="section-title mt">6. Results</h2>
+
+                <h3 style="margin-bottom: 0.5rem; color: var(--text-dark); font-size: 1.1rem;">Coefficient Estimates</h3>
+                <div style="overflow-x: auto;">
+                    <table class="coef-table" id="coefTable"></table>
+                </div>
+                <p class="copy-hint">Select the table and copy (Ctrl+C / Cmd+C) to paste into Excel.</p>
+
+                <h3 style="margin-top: 1.25rem; margin-bottom: 0.5rem; color: var(--text-dark); font-size: 1.1rem;">Model Fit</h3>
+                <div class="fit-stats" id="fitStats"></div>
+
+                <!-- Yellow Estimated Equation panel -->
+                <div class="equation-section">
+                    <h4>Prediction Equations</h4>
+                    <div class="significance-selector">
+                        <label>Include coefficients with:</label>
+                        <div class="significance-options">
+                            <input type="radio" name="sigLevel" id="sigAll" value="all" checked>
+                            <label for="sigAll">Any p-value</label>
+                            <input type="radio" name="sigLevel" id="sig10" value="0.10">
+                            <label for="sig10">p &lt; 0.10</label>
+                            <input type="radio" name="sigLevel" id="sig05" value="0.05">
+                            <label for="sig05">p &lt; 0.05</label>
+                            <input type="radio" name="sigLevel" id="sig01" value="0.01">
+                            <label for="sig01">p &lt; 0.01</label>
+                        </div>
+                    </div>
+                    <div class="equation-box-container">
+                        <pre class="equation-box" id="equationsBox"></pre>
+                        <button class="copy-equation-btn" id="copyEquationsBtn">Copy</button>
+                    </div>
+                    <div class="equation-actions">
+                        <button class="btn btn-secondary" id="downloadEquationsBtn" style="padding: 0.45rem 1rem; font-size: 0.85rem;">Download as TXT</button>
+                    </div>
+                </div>
+
+                <h3 style="margin-top: 1.5rem; margin-bottom: 0.5rem; color: var(--text-dark); font-size: 1.1rem;">Full R Output</h3>
+                <pre class="results-output" id="rawOutput"></pre>
+                <div style="margin-top: 0.85rem;">
+                    <button class="btn btn-secondary" id="downloadScriptBtn" style="padding: 0.55rem 1.25rem; font-size: 0.9rem;">Download R Script</button>
+                </div>
+
+                <!-- Prediction panel -->
+                <div class="prediction-section" id="predictionSection">
+                    <h3>Make a Prediction</h3>
+                    <p style="font-size: 0.9rem; color: var(--text-light); margin-bottom: 1rem;">Enter values for each non-baseline alternative below to compute predicted choice probabilities (the baseline alternative has utility 0 by definition).</p>
+                    <div id="predictionInputs"></div>
+                    <button class="btn btn-primary" id="predictBtn" style="margin-top: 0.5rem;">Calculate Probabilities</button>
+                    <div class="prediction-result" id="predictionResult">
+                        <div class="label">Predicted choice probabilities</div>
+                        <div class="prediction-pr-grid" id="predictionPrGrid"></div>
                     </div>
                 </div>
             </div>
         </div>
-
-        <!-- Data Format -->
-        <div class="card">
-            <div class="card-title">Data Format</div>
-            <div class="step-description">
-                The app supports both <strong>long format</strong> and <strong>wide format</strong> data. You can select your format when using the app.
-            </div>
-
-            <div style="margin-top: 1rem;">
-                <strong>Long Format</strong> (one row per alternative per choice occasion):
-            </div>
-            <ul style="margin: 0.5rem 0 1rem 1.5rem; color: var(--text-light);">
-                <li><strong>Choice ID</strong> - Identifies each choice occasion</li>
-                <li><strong>Alternative Variable</strong> - Names the alternatives (e.g., Coke, Pepsi)</li>
-                <li><strong>Choice Variable</strong> - Binary (1/0) indicating which alternative was chosen</li>
-                <li><strong>Alternative-specific variables</strong> - Attributes that vary by alternative (e.g., Price)</li>
-            </ul>
-
-            <div>
-                <strong>Wide Format</strong> (one row per choice occasion):
-            </div>
-            <ul style="margin: 0.5rem 0 0 1.5rem; color: var(--text-light);">
-                <li><strong>Choice ID</strong> - Identifies each choice occasion</li>
-                <li><strong>Choice columns</strong> - Separate 0/1 columns for each alternative (e.g., ChoiceCoke, ChoicePepsi)</li>
-                <li><strong>Attribute columns</strong> - Separate columns for each alternative's attributes (e.g., PriceCoke, PricePepsi)</li>
-            </ul>
-        </div>
-
-        <!-- Features -->
-        <div class="card">
-            <div class="card-title">Features</div>
-            <div class="features">
-                <div class="feature">
-                    <div class="feature-title">Long & Wide Format</div>
-                    <div class="feature-desc">Upload data in either format; wide format auto-converts to long</div>
-                </div>
-                <div class="feature">
-                    <div class="feature-title">Dynamic Variable Builder</div>
-                    <div class="feature-desc">Add variables one at a time with alternative-invariant or alternative-specific coefficients</div>
-                </div>
-                <div class="feature">
-                    <div class="feature-title">Reference Level</div>
-                    <div class="feature-desc">Select the reference alternative (e.g., NoPurchase)</div>
-                </div>
-                <div class="feature">
-                    <div class="feature-title">Intercept Options</div>
-                    <div class="feature-desc">Alternative-specific or no intercept</div>
-                </div>
-                <div class="feature">
-                    <div class="feature-title">Model Estimates</div>
-                    <div class="feature-desc">View coefficients, std. errors, and p-values</div>
-                </div>
-                <div class="feature">
-                    <div class="feature-title">Model Fit Statistics</div>
-                    <div class="feature-desc">AIC and Log-Likelihood</div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Troubleshooting -->
-        <div class="card">
-            <div class="card-title">Troubleshooting</div>
-
-            <div style="margin-bottom: 1rem;">
-                <strong>App doesn't open</strong>
-                <div class="step-description">Make sure you have the <code>Discrete_Choice_Models.R</code> file open in RStudio's editor (not just in the file browser), then click "Run App".</div>
-            </div>
-
-            <div style="margin-bottom: 1rem;">
-                <strong>Package installation fails</strong>
-                <div class="step-description">Try running these commands manually in the Console:</div>
-                <div class="code-block">
-<code>install.packages("shiny")</code>
-<code>install.packages("mlogit")</code>
-                </div>
-            </div>
-
-            <div style="margin-bottom: 1rem;">
-                <strong>Model fails to estimate</strong>
-                <div class="step-description">Ensure the choice variable is binary (0/1) and exactly one alternative is chosen per choice occasion. For wide format, make sure alternative names match the suffixes in your column names.</div>
-            </div>
-
-            <div>
-                <strong>"Run App" button not visible</strong>
-                <div class="step-description">Make sure the file is saved with a <code>.R</code> extension. RStudio only shows the "Run App" button for R files that contain Shiny code.</div>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        document.getElementById('downloadBtn').addEventListener('click', function() {
-            const rCode = `# Multinomial and Conditional Logistic Regressions - Shiny App
-#
-# TO RUN THIS APP:
-#   1. Open this file in RStudio
-#   2. Click "Run App" button (top right of editor)
-#   OR run in console: shiny::runApp()
-#
-# TIP: To run in fullscreen/external browser, use:
-#   options(shiny.launch.browser = TRUE)
-#   shiny::runApp()
-
-# Auto-install required packages if missing
-if (!require("shiny", quietly = TRUE)) {
-  install.packages("shiny", repos = "https://cloud.r-project.org")
-}
-if (!require("mlogit", quietly = TRUE)) {
-  install.packages("mlogit", repos = "https://cloud.r-project.org")
-}
-
-library(shiny)
-library(mlogit)
-
-# Increase max upload size to 100MB
-options(shiny.maxRequestSize = 100 * 1024^2)
-
-ui = fluidPage(
-  # Custom CSS
-  tags$head(
-    tags$style(HTML("
-      body {
-        font-family: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-        background: #f8fafc;
-        padding: 20px;
-      }
-      .container-fluid {
-        max-width: 900px;
-        margin: 0 auto;
-        padding: 0 20px;
-      }
-      h1 {
-        text-align: center;
-        color: #1e293b;
-        margin-bottom: 5px;
-      }
-      .subtitle {
-        text-align: center;
-        color: #64748b;
-        margin-bottom: 30px;
-      }
-      .card {
-        background: white;
-        border-radius: 12px;
-        padding: 20px;
-        margin-bottom: 20px;
-        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-      }
-      .card-title {
-        font-size: 1.1rem;
-        font-weight: 600;
-        margin-bottom: 15px;
-        color: #1e293b;
-      }
-      .btn-primary {
-        background: #2563eb;
-        border: none;
-        padding: 10px 20px;
-        border-radius: 8px;
-      }
-      .btn-primary:hover {
-        background: #1d4ed8;
-      }
-      .btn-success {
-        background: #16a34a;
-        border: none;
-        padding: 10px 20px;
-        border-radius: 8px;
-      }
-      .btn-success:hover {
-        background: #15803d;
-      }
-      .btn-secondary {
-        background: #64748b;
-        border: none;
-        padding: 8px 16px;
-        border-radius: 8px;
-        color: white;
-      }
-      .btn-secondary:hover {
-        background: #475569;
-      }
-      .btn-danger {
-        background: #dc2626;
-        border: none;
-        padding: 6px 12px;
-        border-radius: 6px;
-        color: white;
-        font-size: 0.85rem;
-      }
-      .btn-danger:hover {
-        background: #b91c1c;
-      }
-      .stat-box {
-        background: #f8fafc;
-        border-radius: 8px;
-        padding: 15px;
-        text-align: center;
-        margin-bottom: 10px;
-      }
-      .stat-value {
-        font-size: 1.5rem;
-        font-weight: 700;
-        color: #2563eb;
-      }
-      .stat-label {
-        font-size: 0.85rem;
-        color: #64748b;
-      }
-      .disclaimer {
-        background: #fef3c7;
-        border: 1px solid #f59e0b;
-        border-radius: 8px;
-        padding: 15px;
-        margin-bottom: 20px;
-        font-size: 1rem;
-      }
-      .disclaimer-title {
-        font-weight: 600;
-        color: #92400e;
-        margin-bottom: 8px;
-      }
-      .disclaimer ul {
-        margin-left: 20px;
-        color: #78350f;
-        margin-bottom: 0;
-      }
-      .table {
-        font-size: 0.9rem;
-      }
-      .nav-tabs .nav-link.active {
-        background: #2563eb;
-        color: white;
-        border: none;
-      }
-      .nav-tabs .nav-link {
-        color: #64748b;
-        border: none;
-        border-radius: 6px;
-        margin-right: 5px;
-      }
-      .help-text {
-        font-size: 0.85rem;
-        color: #64748b;
-        margin-top: 5px;
-      }
-      .info-box {
-        background: #dbeafe;
-        border: 1px solid #3b82f6;
-        border-radius: 8px;
-        padding: 12px 15px;
-        margin-bottom: 15px;
-        font-size: 0.9rem;
-        color: #1e40af;
-      }
-      .coef-header {
-        background: #2563eb;
-        color: white;
-        padding: 10px 15px;
-        border-radius: 8px 8px 0 0;
-        font-weight: 600;
-      }
-      .coef-body {
-        background: #f8fafc;
-        border: 1px solid #e2e8f0;
-        border-top: none;
-        border-radius: 0 0 8px 8px;
-        padding: 15px;
-        margin-bottom: 15px;
-      }
-      pre.r-script {
-        background: #1e293b;
-        color: #e2e8f0;
-        padding: 15px;
-        border-radius: 8px;
-        font-size: 0.85rem;
-        overflow-x: auto;
-      }
-      .var-row {
-        background: #f8fafc;
-        border: 1px solid #e2e8f0;
-        border-radius: 8px;
-        padding: 12px 15px;
-        margin-bottom: 10px;
-      }
-      .var-row .form-group {
-        margin-bottom: 0;
-      }
-      .form-group {
-        max-width: 500px;
-        margin-left: auto;
-        margin-right: auto;
-      }
-      .shiny-input-container {
-        width: 100% !important;
-      }
-      .center-content {
-        max-width: 500px;
-        margin-left: auto;
-        margin-right: auto;
-      }
-      .format-option {
-        background: #f8fafc;
-        border: 1px solid #e2e8f0;
-        border-radius: 8px;
-        padding: 15px;
-        margin-bottom: 10px;
-      }
-      .format-option h5 {
-        margin-bottom: 8px;
-        color: #1e293b;
-      }
-      .format-option p {
-        font-size: 0.9rem;
-        color: #64748b;
-        margin-bottom: 8px;
-      }
-      .format-option pre {
-        background: #1e293b;
-        color: #e2e8f0;
-        padding: 10px;
-        border-radius: 6px;
-        font-size: 0.8rem;
-        overflow-x: auto;
-        margin: 0;
-      }
-      .data-preview {
-        background: #f8fafc;
-        border: 1px solid #e2e8f0;
-        border-radius: 8px;
-        padding: 15px;
-        margin-top: 15px;
-        overflow-x: auto;
-      }
-      .data-preview h5 {
-        margin-bottom: 10px;
-        color: #1e293b;
-      }
-      .data-preview table {
-        font-size: 0.85rem;
-        width: 100%;
-      }
-    "))
-  ),
-
-  # Title
-  h1("Shiny App for Logistic Regressions"),
-  p(class = "subtitle", "Estimate discrete choice models using the \\"mlogit\\" package in R."),
-
-  # Disclaimer
-  div(class = "disclaimer",
-    div(class = "disclaimer-title", "Disclaimer"),
-    tags$ul(
-      tags$li(tags$strong("Results may contain errors."), " The output from this tool may be inaccurate, incomplete, or incorrect. Users should independently verify all results."),
-      tags$li(tags$strong("No warranty."), " This tool is provided \\"as is\\" without any warranty of any kind."),
-      tags$li(tags$strong("User assumes all risk."), " Users assume full responsibility for reviewing and validating any output.")
-    ),
-    div(style = "margin-top: 1rem; padding-top: 1rem; border-top: 1px solid rgba(245, 158, 11, 0.3);",
-      tags$strong("📧 Report issues:"), " If you encounter any issues, problems, or errors while using this tool, please contact Dr. Cosguner at ",
-      tags$a(href = "mailto:kcosgun@iu.edu", style = "color: #92400e; font-weight: 600;", "kcosgun@iu.edu"),
-      " so they can be resolved promptly."
-    )
-  ),
-
-  # Process Summary
-  uiOutput("process_summary"),
-
-  # Top-to-bottom layout
-  # Step 1: Data Format Selection
-  div(class = "card",
-    div(class = "card-title", "1. Data Format"),
-    div(class = "center-content",
-      radioButtons("data_format", "What format is your data in?",
-        choices = c(
-          "Long Format" = "long",
-          "Wide Format" = "wide"
-        ),
-        selected = "long"
-      )
-    ),
-
-    # Format explanations
-    div(class = "format-option",
-      h5("Long Format (Recommended)"),
-      p("Each row represents one alternative within a choice occasion. If there are 4 alternatives per choice, each choice has 4 rows."),
-      tags$pre("ID  ChoiceID  Alt     Price  Chosen
-1   1         A       5.99   0
-1   1         B       4.99   1
-1   1         C       6.99   0
-1   2         A       5.49   1
-1   2         B       5.29   0
-1   2         C       6.49   0")
-    ),
-
-    div(class = "format-option",
-      h5("Wide Format"),
-      p("Each row represents one choice occasion. Alternative attributes are in separate columns with suffixes (e.g., PriceCoke, PricePepsi, ChoiceCoke, ChoicePepsi)."),
-      tags$pre("ID  Weeks  PriceCoke  PricePepsi  ChoiceCoke  ChoicePepsi
-1   1      0.64       0.85        0           1
-1   2      0.87       0.63        0           0")
-    )
-  ),
-
-  # Step 2: Data Upload (conditional)
-  uiOutput("upload_card"),
-
-  # Data Filter (conditional - after upload)
-  uiOutput("filter_card"),
-
-  # Wide format structure (conditional)
-  uiOutput("wide_structure_card"),
-
-  # Data Structure (conditional)
-  uiOutput("data_structure_card"),
-
-  # Model Setup (conditional)
-  uiOutput("model_setup_card"),
-
-  # Run button (conditional)
-  uiOutput("run_card"),
-
-  # Results
-  uiOutput("results_card")
-)
-
-server = function(input, output, session) {
-
-  # Sanitize alternative names for use as identifiers in R/Python/Excel
-  # (replaces spaces with underscores and removes "%")
-  sanitize_alt = function(x) gsub("%", "", gsub(" ", "_", x))
-
-  # Process Summary
-  output$process_summary = renderUI({
-    req(input$data_format)
-
-    if (input$data_format == "long") {
-      div(class = "info-box",
-        tags$strong("Process Summary"),
-        tags$ul(style = "margin-top: 8px; margin-bottom: 0;",
-          tags$li("Your data will be transformed into an estimable format by the ", tags$code("mlogit"), " package in R."),
-          tags$li("Once the data transformation is complete, the model will be estimated based on your choice of slope specifications (choice-invariant vs. choice-specific) for each independent variable.")
-        )
-      )
-    } else {
-      div(class = "info-box",
-        tags$strong("Process Summary"),
-        tags$ul(style = "margin-top: 8px; margin-bottom: 0;",
-          tags$li("Your wide-format data will first be transformed into long format (one row per alternative per choice occasion)."),
-          tags$li("The long-format data will then be transformed into an estimable format by the ", tags$code("mlogit"), " package in R."),
-          tags$li("Once the data transformation is complete, the model will be estimated based on your choice of slope specifications (choice-invariant vs. choice-specific) for each independent variable.")
-        )
-      )
-    }
-  })
-
-  # Reactive values
-  data = reactiveVal(NULL)
-  mlogit_data = reactiveVal(NULL)
-  model_result = reactiveVal(NULL)
-
-  # Reactive for wide format raw data
-  wide_data = reactiveVal(NULL)
-
-  # Reactive for filtering
-  use_filtered_data = reactiveVal(FALSE)
-  filtered_data = reactiveVal(NULL)
-  filter_conditions = reactiveVal(list())
-
-  # Clear data when format changes
-  observeEvent(input$data_format, {
-    data(NULL)
-    wide_data(NULL)
-    mlogit_data(NULL)
-    model_result(NULL)
-    use_filtered_data(FALSE)
-    filtered_data(NULL)
-    filter_conditions(list())
-  }, ignoreInit = TRUE)
-
-  # Upload card (for both formats)
-  output$upload_card = renderUI({
-    req(input$data_format)
-
-    format_type = input$data_format
-
-    help_text = if (format_type == "long") {
-      "Upload a CSV file in long format (one row per alternative per choice occasion)."
-    } else {
-      "Upload a CSV file in wide format (one row per choice occasion)."
-    }
-
-    div(class = "card",
-      div(class = "card-title", "2. Upload Data"),
-      div(class = "center-content",
-        fileInput("file", "Choose CSV File",
-          accept = c("text/csv", "text/comma-separated-values", ".csv")
-        ),
-        p(class = "help-text", help_text)
-      ),
-      # Data preview
-      uiOutput("data_preview")
-    )
-  })
-
-  # Data preview
-  output$data_preview = renderUI({
-    req(input$data_format)
-
-    # Show preview for either format
-    df = if (input$data_format == "long") data() else wide_data()
-    if (is.null(df)) return(NULL)
-
-    div(class = "data-preview",
-      h5(paste0("Data Preview (", nrow(df), " rows, ", ncol(df), " columns)")),
-      tableOutput("preview_table")
-    )
-  })
-
-  # Preview table (first 10 rows)
-  output$preview_table = renderTable({
-    req(input$data_format)
-
-    df = if (input$data_format == "long") data() else wide_data()
-    if (is.null(df)) return(NULL)
-    head(df, 10)
-  }, rownames = FALSE)
-
-  # Load data
-  observeEvent(input$file, {
-    req(input$file)
-    tryCatch({
-      df = read.csv(input$file$datapath, stringsAsFactors = FALSE)
-
-      if (input$data_format == "long") {
-        data(df)
-        wide_data(NULL)
-      } else {
-        wide_data(df)
-        data(NULL)  # Will be set after conversion
-      }
-
-      mlogit_data(NULL)
-      model_result(NULL)
-      use_filtered_data(FALSE)
-      filtered_data(NULL)
-      filter_conditions(list())
-      showNotification(paste("Loaded", nrow(df), "rows and", ncol(df), "columns."), type = "message")
-    }, error = function(e) {
-      showNotification(paste("Error loading file:", e$message), type = "error")
-    })
-  })
-
-  # Filter card
-  output$filter_card = renderUI({
-    req(input$data_format)
-
-    # Get the appropriate data based on format
-    df = if (input$data_format == "long") data() else wide_data()
-    if (is.null(df)) return(NULL)
-
-    cols = names(df)
-    n_total = nrow(df)
-
-    # Determine column types
-    col_types = sapply(df, function(x) {
-      if (is.numeric(x)) "numeric" else "categorical"
-    })
-
-    # Build unique values for categorical columns (for dropdowns)
-    cat_values = lapply(cols, function(col) {
-      if (col_types[col] == "categorical") {
-        sort(unique(as.character(df[[col]])))
-      } else {
-        NULL
-      }
-    })
-    names(cat_values) = cols
-
-    div(class = "card",
-      div(class = "card-title", "Data Filter (Optional)"),
-      div(class = "center-content",
-        radioButtons("use_filter", "Which data to use?",
-          choices = c(
-            "Use full data" = "full",
-            "Filter data" = "filtered"
-          ),
-          selected = "full",
-          inline = TRUE
-        ),
-        p(style = "font-size: 0.85rem; color: #64748b;",
-          paste0("Full data: ", n_total, " rows")
-        ),
-
-        # Filter conditions (shown only when "Filter data" selected)
-        conditionalPanel(
-          condition = "input.use_filter == 'filtered'",
-          div(id = "filter_rows",
-            uiOutput("filter_rows_ui")
-          ),
-          div(style = "margin-top: 10px;",
-            actionButton("add_filter", "+ Add Filter Condition", class = "btn-secondary", style = "font-size: 0.85rem;")
-          ),
-          div(id = "filter_summary", style = "margin-top: 10px; padding: 8px; background: #e0f2fe; border-radius: 6px;",
-            textOutput("filter_summary_text")
-          )
-        )
-      )
-    )
-  })
-
-  # Dynamic filter rows
-  output$filter_rows_ui = renderUI({
-    req(input$data_format)
-    df = if (input$data_format == "long") data() else wide_data()
-    if (is.null(df)) return(NULL)
-
-    conditions = filter_conditions()
-    if (length(conditions) == 0) return(NULL)
-
-    cols = names(df)
-    col_types = sapply(df, function(x) if (is.numeric(x)) "numeric" else "categorical")
-
-    lapply(seq_along(conditions), function(i) {
-      cond = conditions[[i]]
-      selected_col = cond$column
-      selected_type = col_types[selected_col]
-
-      # Get unique values for categorical
-      unique_vals = if (selected_type == "categorical") {
-        sort(unique(as.character(df[[selected_col]])))
-      } else NULL
-
-      div(class = "filter-row", style = "display: flex; gap: 8px; align-items: center; margin-bottom: 8px; flex-wrap: wrap;",
-        selectInput(paste0("filter_col_", i), NULL,
-          choices = cols,
-          selected = selected_col,
-          width = "150px"
-        ),
-        selectInput(paste0("filter_op_", i), NULL,
-          choices = if (selected_type == "numeric") {
-            c("=" = "eq", "≠" = "neq", ">" = "gt", ">=" = "gte", "<" = "lt", "<=" = "lte")
-          } else {
-            c("=" = "eq", "≠" = "neq")
-          },
-          selected = cond$operator,
-          width = "80px"
-        ),
-        if (selected_type == "categorical") {
-          selectInput(paste0("filter_val_", i), NULL,
-            choices = unique_vals,
-            selected = cond$value,
-            width = "150px"
-          )
-        } else {
-          textInput(paste0("filter_val_", i), NULL,
-            value = cond$value,
-            width = "150px",
-            placeholder = "Value"
-          )
-        },
-        actionButton(paste0("remove_filter_", i), "×",
-          class = "btn-danger",
-          style = "padding: 4px 10px; font-size: 1rem; min-width: 35px;"
-        )
-      )
-    })
-  })
-
-  # Add filter condition
-  observeEvent(input$add_filter, {
-    req(input$data_format)
-    df = if (input$data_format == "long") data() else wide_data()
-    if (is.null(df)) return()
-
-    cols = names(df)
-    conditions = filter_conditions()
-    conditions[[length(conditions) + 1]] = list(
-      column = cols[1],
-      operator = "eq",
-      value = ""
-    )
-    filter_conditions(conditions)
-  })
-
-  # Observe filter column changes to update operator and value
-
-  observe({
-    req(input$data_format)
-    df = if (input$data_format == "long") data() else wide_data()
-    if (is.null(df)) return()
-
-    conditions = filter_conditions()
-    if (length(conditions) == 0) return()
-
-    for (i in seq_along(conditions)) {
-      local({
-        idx = i
-        col_input = paste0("filter_col_", idx)
-        op_input = paste0("filter_op_", idx)
-        val_input = paste0("filter_val_", idx)
-        remove_input = paste0("remove_filter_", idx)
-
-        # Update condition when inputs change
-        observeEvent(input[[col_input]], {
-          conditions = filter_conditions()
-          if (idx <= length(conditions)) {
-            conditions[[idx]]$column = input[[col_input]]
-            conditions[[idx]]$value = ""  # Reset value when column changes
-            filter_conditions(conditions)
-          }
-        }, ignoreInit = TRUE)
-
-        observeEvent(input[[op_input]], {
-          conditions = filter_conditions()
-          if (idx <= length(conditions)) {
-            conditions[[idx]]$operator = input[[op_input]]
-            filter_conditions(conditions)
-          }
-        }, ignoreInit = TRUE)
-
-        observeEvent(input[[val_input]], {
-          conditions = filter_conditions()
-          if (idx <= length(conditions)) {
-            conditions[[idx]]$value = input[[val_input]]
-            filter_conditions(conditions)
-          }
-        }, ignoreInit = TRUE)
-
-        # Remove filter
-        observeEvent(input[[remove_input]], {
-          conditions = filter_conditions()
-          if (idx <= length(conditions)) {
-            conditions[[idx]] = NULL
-            filter_conditions(conditions)
-          }
-        }, ignoreInit = TRUE)
-      })
-    }
-  })
-
-  # Apply filters and update filtered_data
-  observe({
-    req(input$data_format)
-    df = if (input$data_format == "long") data() else wide_data()
-    if (is.null(df)) return()
-
-    if (!isTRUE(input$use_filter == "filtered")) {
-      use_filtered_data(FALSE)
-      filtered_data(NULL)
-      return()
-    }
-
-    use_filtered_data(TRUE)
-    conditions = filter_conditions()
-
-    if (length(conditions) == 0) {
-      filtered_data(df)
-      return()
-    }
-
-    result = df
-    for (cond in conditions) {
-      if (is.null(cond) || cond$value == "") next
-
-      col = cond$column
-      op = cond$operator
-      val = cond$value
-
-      col_is_numeric = is.numeric(df[[col]])
-      if (col_is_numeric) val = as.numeric(val)
-
-      result = switch(op,
-        "eq" = result[result[[col]] == val, , drop = FALSE],
-        "neq" = result[result[[col]] != val, , drop = FALSE],
-        "gt" = result[result[[col]] > val, , drop = FALSE],
-        "gte" = result[result[[col]] >= val, , drop = FALSE],
-        "lt" = result[result[[col]] < val, , drop = FALSE],
-        "lte" = result[result[[col]] <= val, , drop = FALSE],
-        result
-      )
-    }
-
-    filtered_data(result)
-  })
-
-  # Filter summary text
-  output$filter_summary_text = renderText({
-    if (!isTRUE(input$use_filter == "filtered")) return("")
-
-    df = if (input$data_format == "long") data() else wide_data()
-    fdf = filtered_data()
-
-    if (is.null(df)) return("")
-    if (is.null(fdf)) return(paste0("Filtered: ", nrow(df), " of ", nrow(df), " rows"))
-
-    paste0("Filtered: ", nrow(fdf), " of ", nrow(df), " rows")
-  })
-
-  # Helper function to get the working data (filtered or full)
-  working_data = reactive({
-    if (isTRUE(use_filtered_data())) {
-      fdf = filtered_data()
-      if (!is.null(fdf)) return(fdf)
-    }
-    if (input$data_format == "long") data() else wide_data()
-  })
-
-  # Wide format structure card
-  output$wide_structure_card = renderUI({
-    if (input$data_format != "wide") return(NULL)
-    df = working_data()
-    if (is.null(df)) return(NULL)
-
-    cols = names(df)
-
-    div(class = "card",
-      div(class = "card-title", "4. Wide Format Structure"),
-      div(class = "center-content",
-        selectInput("wide_chid_var", "Choice ID Variable",
-          choices = cols,
-          selected = if ("Observation" %in% cols) "Observation" else if ("ChoiceID" %in% cols) "ChoiceID" else cols[1]
-        ),
-        p(class = "help-text", "Variable that identifies each choice occasion (row)."),
-
-        selectizeInput("wide_choice_cols", "Choice Indicator Columns",
-          choices = cols,
-          multiple = TRUE,
-          options = list(placeholder = "Select columns like ChoiceCoke, ChoicePepsi...")
-        ),
-        p(class = "help-text", "Select ALL columns that indicate which alternative was chosen (0/1 for each alternative)."),
-
-        selectizeInput("wide_varying_cols", "Choice-Specific IVs",
-          choices = cols,
-          multiple = TRUE,
-          options = list(placeholder = "Select columns like PriceCoke, PricePepsi...")
-        ),
-        p(class = "help-text", "Select columns with alternative-specific attributes (e.g., prices)."),
-
-        textInput("wide_alt_prefix", "Alternative Names (comma-separated)",
-          value = "",
-          placeholder = "NoPurchase, Coke, Pepsi, Sprite, Fanta, StoreBrand"
-        ),
-        p(class = "help-text", "Enter the alternative names that appear as suffixes in your column names."),
-
-        actionButton("convert_wide", "Convert to Long Format", class = "btn-primary", style = "width: 100%; margin-top: 10px;")
-      )
-    )
-  })
-
-  # Convert wide to long format
-  observeEvent(input$convert_wide, {
-    df_wide = wide_data()
-    req(df_wide, input$wide_chid_var, input$wide_choice_cols)
-
-    tryCatch({
-      withProgress(message = "Converting to long format...", {
-
-        # Get alternative names from user input or extract from column names
-        alt_names = trimws(unlist(strsplit(input$wide_alt_prefix, ",")))
-
-        if (length(alt_names) == 0 || all(alt_names == "")) {
-          # Try to extract from choice column names
-          choice_cols = input$wide_choice_cols
-          # Remove common prefixes like "Choice"
-          alt_names = gsub("^Choice", "", choice_cols)
-          alt_names = gsub("^choice", "", alt_names)
+    </main>
+
+    <footer>
+        <p>&copy; 2026 Koray Cosguner. All Rights Reserved.</p>
+    </footer>
+
+    <script type="module">
+        import { WebR } from 'https://webr.r-wasm.org/latest/webr.mjs';
+
+        // ============================================================
+        // STATE
+        // ============================================================
+        let webR = null;
+        let csvText = '';
+        let columnNames = [];
+        let rows = [];           // parsed CSV rows
+        let alternatives = [];   // unique alt names (long) or chosen alt list (wide)
+        let lastResult = null;
+        let columnTypes = {};    // header -> 'numeric' | 'text'
+
+        // ============================================================
+        // DOM
+        // ============================================================
+        const $ = (id) => document.getElementById(id);
+
+        // ============================================================
+        // STATUS / LOADING
+        // ============================================================
+        function showStatus(msg, type = 'info', autoHideMs = 0) {
+            const el = $('statusMessage');
+            el.textContent = msg;
+            el.className = `status-message visible ${type}`;
+            if (autoHideMs > 0) setTimeout(() => el.classList.remove('visible'), autoHideMs);
+        }
+        function setLoadingStage(stage) { $('loadingStage').textContent = stage; }
+        function setLoadingText(text)   { $('loadingText').textContent = text; }
+
+        // ============================================================
+        // INIT WEBR + INSTALL MLOGIT
+        // ============================================================
+        async function initWebR() {
+            try {
+                setLoadingText('Loading WebR…');
+                webR = new WebR();
+                await webR.init();
+                setLoadingText('Installing mlogit package and dependencies…');
+                setLoadingStage('Downloading ~6 MB of compiled R packages (cached after first load)');
+                await webR.installPackages(['mlogit'], { quiet: true });
+                setLoadingText('Preparing R session…');
+                await webR.evalR('suppressPackageStartupMessages(library(mlogit))');
+                $('loadingOverlay').classList.add('hidden');
+                showStatus('Ready. Upload a CSV to begin.', 'success', 4000);
+            } catch (err) {
+                $('loadingOverlay').innerHTML = `
+                    <div style="text-align:center; padding:2rem; max-width:520px;">
+                        <p style="color:#991b1b; font-size:1.2rem; font-weight:600;">Failed to load WebR / mlogit</p>
+                        <p style="color:#666; margin-top:1rem; font-size:0.9rem;">${err.message}</p>
+                        <p style="color:#666; margin-top:0.5rem; font-size:0.85rem;">Reload the page to try again.</p>
+                    </div>
+                `;
+            }
         }
 
-        n_alts = length(alt_names)
-        if (n_alts < 2) {
-          showNotification("Please specify at least 2 alternatives.", type = "error")
-          return()
+        // ============================================================
+        // CSV PARSING (supports quoted fields)
+        // ============================================================
+        function parseCSV(text) {
+            const lines = text.replace(/\r\n/g, '\n').replace(/\r/g, '\n').split('\n').filter(l => l.length > 0);
+            if (lines.length < 2) return { headers: [], rows: [] };
+            const headers = splitCSVLine(lines[0]);
+            const rows = [];
+            for (let i = 1; i < lines.length; i++) {
+                const cells = splitCSVLine(lines[i]);
+                if (cells.length === 0) continue;
+                const obj = {};
+                headers.forEach((h, idx) => { obj[h] = cells[idx] !== undefined ? cells[idx] : ''; });
+                rows.push(obj);
+            }
+            return { headers, rows };
         }
-
-        # Build long format data
-        chid_var = input$wide_chid_var
-        choice_cols = input$wide_choice_cols
-        varying_cols = input$wide_varying_cols
-
-        # Create empty long format data frame
-        n_rows = nrow(df_wide)
-        long_list = list()
-
-        for (i in 1:n_rows) {
-          row_data = df_wide[i, ]
-          chid_val = row_data[[chid_var]]
-
-          for (j in 1:n_alts) {
-            alt = alt_names[j]
-
-            # Find choice column for this alternative
-            choice_col = choice_cols[j]
-            chosen = as.numeric(row_data[[choice_col]])
-
-            new_row = data.frame(
-              ChoiceID = chid_val,
-              Alternative = alt,
-              Chosen = chosen,
-              stringsAsFactors = FALSE
-            )
-
-            # Add varying attributes
-            if (length(varying_cols) > 0) {
-              # Group varying columns by attribute prefix
-              for (vcol in varying_cols) {
-                # Check if this column corresponds to this alternative
-                if (grepl(paste0(alt, "$"), vcol, ignore.case = TRUE)) {
-                  # Extract attribute name (everything before the alternative suffix)
-                  attr_name = sub(paste0(alt, "$"), "", vcol, ignore.case = TRUE)
-                  if (attr_name == "") attr_name = "Value"
-                  new_row[[attr_name]] = row_data[[vcol]]
+        function splitCSVLine(line) {
+            const result = []; let cur = ''; let inQuotes = false;
+            for (let i = 0; i < line.length; i++) {
+                const c = line[i];
+                if (inQuotes) {
+                    if (c === '"' && line[i + 1] === '"') { cur += '"'; i++; }
+                    else if (c === '"') { inQuotes = false; }
+                    else { cur += c; }
+                } else {
+                    if (c === ',') { result.push(cur); cur = ''; }
+                    else if (c === '"') { inQuotes = true; }
+                    else { cur += c; }
                 }
-              }
+            }
+            result.push(cur);
+            return result.map(s => s.trim());
+        }
+        function detectColumnTypes() {
+            columnTypes = {};
+            for (const h of columnNames) {
+                let numCount = 0, total = 0;
+                const sample = rows.slice(0, Math.min(rows.length, 200));
+                for (const r of sample) {
+                    const v = r[h];
+                    if (v === undefined || v === null || v === '') continue;
+                    total++;
+                    if (!isNaN(parseFloat(v)) && isFinite(v)) numCount++;
+                }
+                columnTypes[h] = (total > 0 && numCount / total >= 0.8) ? 'numeric' : 'text';
+            }
+        }
+
+        // ============================================================
+        // UPLOAD
+        // ============================================================
+        const uploadArea = $('uploadArea');
+        const fileInput  = $('fileInput');
+        uploadArea.addEventListener('click', () => fileInput.click());
+        uploadArea.addEventListener('dragover', (e) => { e.preventDefault(); uploadArea.classList.add('dragover'); });
+        uploadArea.addEventListener('dragleave', () => uploadArea.classList.remove('dragover'));
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.classList.remove('dragover');
+            if (e.dataTransfer.files.length > 0) handleFile(e.dataTransfer.files[0]);
+        });
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) handleFile(e.target.files[0]);
+        });
+
+        function handleFile(file) {
+            if (!file.name.toLowerCase().endsWith('.csv')) {
+                showStatus('Please upload a .csv file.', 'error', 4000);
+                return;
+            }
+            const reader = new FileReader();
+            reader.onload = (ev) => {
+                csvText = ev.target.result;
+                const { headers, rows: parsedRows } = parseCSV(csvText);
+                if (headers.length === 0 || parsedRows.length === 0) {
+                    showStatus('Could not parse CSV. Is it empty or malformed?', 'error', 5000);
+                    return;
+                }
+                // Full reset of all derived UI state — new data invalidates every prior selection.
+                resetForNewData();
+                columnNames = headers;
+                rows = parsedRows;
+                detectColumnTypes();
+                renderPreview();
+                populateColumnSelectors();
+                populateWideColumnLists();
+                $('dataFilterSection').classList.add('visible');
+                $('modelConfig').style.display = 'block';
+                refreshVarSections(); // build the two empty checkbox lists
+                showStatus(`Loaded ${parsedRows.length.toLocaleString()} rows × ${headers.length} columns.`, 'success', 3000);
+            };
+            reader.readAsText(file);
+        }
+
+        // Wipe every piece of UI state that depends on the previously-uploaded CSV.
+        function resetForNewData() {
+            alternatives = [];
+            lastResult = null;
+            // Filter section: revert to "Use Full Data", clear any rows.
+            $('filterRows').innerHTML = '';
+            $('filterSummary').style.display = 'none';
+            $('filterConditions').classList.remove('visible');
+            const fullRadio = document.querySelector('input[name="dataChoice"][value="full"]');
+            if (fullRadio) fullRadio.checked = true;
+            // Shape selector: revert to long.
+            const longRadio = document.querySelector('input[name="dataShape"][value="long"]');
+            if (longRadio) longRadio.checked = true;
+            $('longFields').style.display = 'block';
+            $('wideFields').style.display = 'none';
+            // Variable picker: clear both checkbox lists; refreshVarSections() will
+            // rebuild them once the new data populates the candidate selectors.
+            $('ciVars').innerHTML = '<p class="var-list-empty">No eligible variables yet.</p>';
+            $('csVars').innerHTML = '<p class="var-list-empty">No variables available yet.</p>';
+            // Reset intercept to default.
+            const altIntRadio = document.querySelector('input[name="interceptType"][value="alt_specific"]');
+            if (altIntRadio) altIntRadio.checked = true;
+            // Reset significance filter and prediction inputs/result.
+            const sigAll = document.getElementById('sigAll');
+            if (sigAll) sigAll.checked = true;
+            $('predictionInputs').innerHTML = '';
+            $('predictionResult').classList.remove('visible');
+            $('predictionPrGrid').innerHTML = '';
+            // Hide stale results.
+            $('resultsContainer').classList.remove('visible');
+            $('coefTable').innerHTML = '';
+            $('fitStats').innerHTML = '';
+            $('equationsBox').textContent = '';
+            $('rawOutput').textContent = '';
+            // Wide-format mapping panels:
+            $('wideChoiceMap').innerHTML = '';
+            // Reset run button label/state.
+            $('runButton').textContent = 'Estimate Model';
+            $('runButton').disabled = true;
+        }
+
+        function renderPreview(rowsToShow) {
+            const data = rowsToShow || rows;
+            let html = '<thead><tr>';
+            columnNames.forEach(h => { html += `<th>${escapeHtml(h)}</th>`; });
+            html += '</tr></thead><tbody>';
+            data.slice(0, 8).forEach(row => {
+                html += '<tr>';
+                columnNames.forEach(h => { html += `<td>${escapeHtml(row[h] ?? '')}</td>`; });
+                html += '</tr>';
+            });
+            html += '</tbody>';
+            $('previewTable').innerHTML = html;
+            $('previewMeta').textContent = `${data.length.toLocaleString()} total rows · ${columnNames.length} columns`;
+            $('dataPreview').classList.add('visible');
+        }
+
+        function populateColumnSelectors() {
+            const blank = '<option value="">-- Select --</option>';
+            const opts = columnNames.map(c => `<option value="${escapeHtml(c)}">${escapeHtml(c)}</option>`).join('');
+            ['chidVar', 'altVar', 'choiceVar', 'wideChidVar'].forEach(id => $(id).innerHTML = blank + opts);
+            $('reflevel').innerHTML = '<option value="">-- Pick alternative variable first --</option>';
+            $('reflevel').disabled = true;
+            $('wideReflevel').innerHTML = '<option value="">-- Pick choice columns first --</option>';
+            $('wideReflevel').disabled = true;
+            updateRunEnabled();
+        }
+
+        // ============================================================
+        // FILTER SECTION
+        // ============================================================
+        function populateFilterColumns() {
+            // (filter dropdowns are built per-row inside addFilterRow)
+        }
+        document.querySelectorAll('input[name="dataChoice"]').forEach(r => {
+            r.addEventListener('change', (e) => {
+                if (e.target.value === 'filtered') {
+                    $('filterConditions').classList.add('visible');
+                    if ($('filterRows').children.length === 0) addFilterRow();
+                    updateFilterSummary();
+                } else {
+                    $('filterConditions').classList.remove('visible');
+                    $('filterSummary').style.display = 'none';
+                    renderPreview(rows);
+                }
+            });
+        });
+        $('addFilterBtn').addEventListener('click', addFilterRow);
+
+        function addFilterRow() {
+            const row = document.createElement('div');
+            row.className = 'filter-row';
+            // Annotate each column option with its detected type so the user can tell at a glance.
+            const colOpts = columnNames.map(c => {
+                const tag = columnTypes[c] === 'numeric' ? 'numeric' : 'categorical';
+                return `<option value="${escapeHtml(c)}" data-type="${columnTypes[c] || 'text'}">${escapeHtml(c)} — ${tag}</option>`;
+            }).join('');
+            row.innerHTML = `
+                <select class="filter-col"><option value="">-- Column --</option>${colOpts}</select>
+                <select class="filter-op">
+                    <option value="==">=</option>
+                    <option value="!=">≠</option>
+                    <option value=">">&gt;</option>
+                    <option value=">=">&ge;</option>
+                    <option value="<">&lt;</option>
+                    <option value="<=">&le;</option>
+                </select>
+                <span class="filter-val-wrap"><input type="text" class="filter-val" placeholder="value"></span>
+                <button type="button" class="remove-filter-btn">Remove</button>
+            `;
+            $('filterRows').appendChild(row);
+            row.querySelector('.remove-filter-btn').addEventListener('click', () => {
+                row.remove();
+                updateFilterSummary();
+            });
+            // When the column changes, swap the value input between text/number and select-of-unique-values
+            // based on the detected type. Categorical → dropdown; numeric → number input.
+            const colSel = row.querySelector('.filter-col');
+            const opSel  = row.querySelector('.filter-op');
+            colSel.addEventListener('change', () => {
+                rebuildFilterValueInput(row);
+                updateFilterSummary();
+            });
+            opSel.addEventListener('change', updateFilterSummary);
+            row.querySelector('.filter-val').addEventListener('input', updateFilterSummary);
+        }
+
+        // Replace the value input inside a filter row to match the picked column's type.
+        function rebuildFilterValueInput(row) {
+            const col = row.querySelector('.filter-col').value;
+            const wrap = row.querySelector('.filter-val-wrap');
+            if (!col) {
+                wrap.innerHTML = '<input type="text" class="filter-val" placeholder="value">';
+                wrap.querySelector('.filter-val').addEventListener('input', updateFilterSummary);
+                return;
+            }
+            if (columnTypes[col] === 'numeric') {
+                wrap.innerHTML = '<input type="number" step="any" class="filter-val" placeholder="value">';
+            } else {
+                // Categorical: collect unique values (limit to keep the dropdown sensible) and offer a select.
+                const seen = new Set();
+                for (const r of rows) {
+                    const v = r[col];
+                    if (v !== undefined && v !== null && v !== '') seen.add(String(v));
+                    if (seen.size > 500) break; // safety cap
+                }
+                const uniq = Array.from(seen).sort((a, b) => a.localeCompare(b, undefined, { numeric: true }));
+                if (uniq.length <= 500) {
+                    wrap.innerHTML = '<select class="filter-val"><option value="">-- Value --</option>' +
+                        uniq.map(v => `<option value="${escapeHtml(v)}">${escapeHtml(v)}</option>`).join('') + '</select>';
+                } else {
+                    wrap.innerHTML = '<input type="text" class="filter-val" placeholder="value (too many uniques to list)">';
+                }
+            }
+            wrap.querySelector('.filter-val').addEventListener('input', updateFilterSummary);
+            wrap.querySelector('.filter-val').addEventListener('change', updateFilterSummary);
+        }
+
+        function getFilteredRows() {
+            const choice = document.querySelector('input[name="dataChoice"]:checked')?.value;
+            if (choice !== 'filtered') return rows;
+            const conds = [];
+            $('filterRows').querySelectorAll('.filter-row').forEach(r => {
+                const col = r.querySelector('.filter-col').value;
+                const op  = r.querySelector('.filter-op').value;
+                const val = r.querySelector('.filter-val').value;
+                if (col && val !== '') conds.push({ col, op, val });
+            });
+            if (conds.length === 0) return rows;
+            return rows.filter(row => conds.every(c => {
+                const cell = row[c.col];
+                if (cell === undefined) return false;
+                const isNum = !isNaN(parseFloat(c.val)) && !isNaN(parseFloat(cell));
+                const a = isNum ? parseFloat(cell) : String(cell);
+                const b = isNum ? parseFloat(c.val) : String(c.val);
+                switch (c.op) {
+                    case '==': return a === b;
+                    case '!=': return a !== b;
+                    case '>':  return a >  b;
+                    case '>=': return a >= b;
+                    case '<':  return a <  b;
+                    case '<=': return a <= b;
+                }
+                return true;
+            }));
+        }
+        function updateFilterSummary() {
+            const filtered = getFilteredRows();
+            $('filteredCount').textContent = filtered.length.toLocaleString();
+            $('originalCount').textContent = rows.length.toLocaleString();
+            $('filterSummary').style.display = 'block';
+            renderPreview(filtered);
+        }
+
+        // ============================================================
+        // SHAPE TOGGLE (long vs wide)
+        // ============================================================
+        document.querySelectorAll('input[name="dataShape"]').forEach(r => {
+            r.addEventListener('change', (e) => {
+                if (e.target.value === 'long') {
+                    $('longFields').style.display = 'block';
+                    $('wideFields').style.display = 'none';
+                    $('uploadHint').innerHTML = 'Upload a CSV in <strong>long format</strong> (one row per alternative per choice occasion).';
+                    $('uploadHintShape').textContent = 'Long format · CSV only';
+                } else {
+                    $('longFields').style.display = 'none';
+                    $('wideFields').style.display = 'block';
+                    $('uploadHint').innerHTML = 'Upload a CSV in <strong>wide format</strong> (one row per choice occasion, with one binary choice column per alternative and per-alt attribute columns).';
+                    $('uploadHintShape').textContent = 'Wide format · CSV only';
+                }
+                refreshVarRowChoices();
+                updateRunEnabled();
+            });
+        });
+
+        // ============================================================
+        // LONG-FORMAT FIELD HANDLERS
+        // ============================================================
+        $('altVar').addEventListener('change', () => {
+            const col = $('altVar').value;
+            if (!col) {
+                $('reflevel').innerHTML = '<option value="">-- Pick alternative variable first --</option>';
+                $('reflevel').disabled = true;
+                alternatives = [];
+            } else {
+                const seen = new Set();
+                rows.forEach(r => { if (r[col] !== undefined && r[col] !== '') seen.add(r[col]); });
+                alternatives = Array.from(seen);
+                $('reflevel').innerHTML = '<option value="">-- Select reference --</option>' +
+                    alternatives.map(a => `<option value="${escapeHtml(a)}">${escapeHtml(a)}</option>`).join('');
+                $('reflevel').disabled = false;
+            }
+            refreshVarRowChoices();
+            updateRunEnabled();
+        });
+        ['chidVar', 'choiceVar', 'reflevel'].forEach(id => $(id).addEventListener('change', () => {
+            refreshVarRowChoices();
+            updateRunEnabled();
+        }));
+
+        // ============================================================
+        // WIDE-FORMAT FIELD HANDLERS
+        // ============================================================
+        function populateWideColumnLists() {
+            // multi-checkbox list for choice columns and attribute columns
+            const buildList = (containerId, cls) => {
+                $(containerId).innerHTML = columnNames.map(c => `
+                    <label style="display:block; padding:0.2rem 0; font-size:0.9rem;">
+                        <input type="checkbox" class="${cls}" value="${escapeHtml(c)}"> ${escapeHtml(c)}
+                    </label>
+                `).join('');
+            };
+            buildList('wideChoiceCols', 'wide-choice-col');
+            buildList('wideAttrCols',   'wide-attr-col');
+            $('wideChoiceMap').innerHTML = '';
+            $('wideReflevel').innerHTML = '<option value="">-- Pick choice columns first --</option>';
+            $('wideReflevel').disabled = true;
+
+            // When choice cols change, build the alt-name mapping UI + populate reflevel
+            $('wideChoiceCols').addEventListener('change', () => {
+                const cols = Array.from($('wideChoiceCols').querySelectorAll('input.wide-choice-col:checked')).map(i => i.value);
+                if (cols.length === 0) {
+                    $('wideChoiceMap').innerHTML = '';
+                    $('wideReflevel').innerHTML = '<option value="">-- Pick choice columns first --</option>';
+                    $('wideReflevel').disabled = true;
+                    alternatives = [];
+                    refreshVarRowChoices();
+                    updateRunEnabled();
+                    return;
+                }
+                $('wideChoiceMap').innerHTML = '<p style="font-size:0.8rem; font-weight:600; color:var(--text-dark); margin-bottom:0.4rem;">Alternative name for each column:</p>' +
+                    cols.map((c, i) => {
+                        const guess = guessAltFromColumn(c);
+                        return `
+                            <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.5rem; margin-bottom:0.35rem; align-items:center;">
+                                <span style="font-size:0.85rem; color:var(--text-light);">${escapeHtml(c)} →</span>
+                                <input type="text" class="wide-alt-name" data-col="${escapeHtml(c)}" value="${escapeHtml(guess)}" placeholder="Alternative name">
+                            </div>
+                        `;
+                    }).join('');
+                refreshWideReflevel();
+                // Re-fire on every edit to the alt-name fields, since wideAttrGroups
+                // depends on the alt names (it strips them from the column suffixes
+                // to derive the base attribute name shown in the variable dropdown).
+                $('wideChoiceMap').querySelectorAll('input.wide-alt-name').forEach(i => {
+                    i.addEventListener('input', () => {
+                        refreshWideReflevel();
+                        refreshVarRowChoices();
+                        updateRunEnabled();
+                    });
+                });
+                refreshVarRowChoices();
+                updateRunEnabled();
+            });
+            $('wideAttrCols').addEventListener('change', () => { refreshVarRowChoices(); updateRunEnabled(); });
+        }
+
+        // Pull the alt name from a column like "Choice_Coke", "ChoiceCoke", "Choice.Coke",
+        // or "Price-Pepsi". Strategy:
+        //   1. If the column has a separator (underscore / dot / dash), split on the LAST
+        //      occurrence and return everything after it. e.g. "Choice_Coke" -> "Coke".
+        //   2. Otherwise look for a camelCase boundary (lowercase then uppercase) and split
+        //      there. e.g. "ChoiceCoke" -> "Coke".
+        //   3. Fall back to returning the column name unchanged so the user can edit it.
+        // The previous regex was greedy and gobbled all but the last letter, producing
+        // single-character "alt names" like "e" for "ChoiceCoke".
+        function guessAltFromColumn(col) {
+            const sep = col.match(/^(.+)[_.\-]([^_.\-]+)$/);
+            if (sep && sep[2]) return sep[2];
+            const camel = col.match(/^([a-z]+|[A-Z][a-z]+)([A-Z][A-Za-z]*)$/);
+            if (camel && camel[2]) return camel[2];
+            return col;
+        }
+
+        function refreshWideReflevel() {
+            const inputs = Array.from($('wideChoiceMap').querySelectorAll('input.wide-alt-name'));
+            const altNames = inputs.map(i => i.value).filter(Boolean);
+            alternatives = altNames;
+            if (altNames.length === 0) {
+                $('wideReflevel').innerHTML = '<option value="">-- Pick choice columns first --</option>';
+                $('wideReflevel').disabled = true;
+            } else {
+                $('wideReflevel').innerHTML = '<option value="">-- Select reference --</option>' +
+                    altNames.map(a => `<option value="${escapeHtml(a)}">${escapeHtml(a)}</option>`).join('');
+                $('wideReflevel').disabled = false;
+            }
+        }
+        ['wideChidVar', 'wideReflevel'].forEach(id => $(id).addEventListener('change', () => { refreshVarRowChoices(); updateRunEnabled(); }));
+
+        // ============================================================
+        // VAR PICKER (two checkbox lists with mutex)
+        // ============================================================
+
+        // Decide whether a chosen variable varies by alternative within an occasion
+        // (alt-specific) or is constant across alternatives within an occasion
+        // (individual-specific). Individual-specific variables MUST use a Choice-Specific
+        // (per-alt) slope — a single slope cancels out of the choice probabilities and
+        // the model becomes unidentified.
+        function getVarKind(varName) {
+            if (!varName) return null;
+            const shape = document.querySelector('input[name="dataShape"]:checked').value;
+            if (shape === 'wide') {
+                const used = new Set([
+                    $('wideChidVar').value,
+                    ...Array.from($('wideChoiceCols').querySelectorAll('input.wide-choice-col:checked')).map(i => i.value),
+                    ...Array.from($('wideAttrCols').querySelectorAll('input.wide-attr-col:checked')).map(i => i.value)
+                ].filter(Boolean));
+                // If the variable name matches an original column that wasn't tagged as
+                // chid / choice / alt-specific attr, it's an individual-specific column.
+                // Anything else is a base name derived from the alt-specific attr cols.
+                return (columnNames.includes(varName) && !used.has(varName))
+                    ? 'individual-specific' : 'alt-specific';
+            }
+            // Long format: scan rows and see whether the value varies within any chid.
+            const chidCol = $('chidVar').value;
+            if (!chidCol) return 'unknown';
+            const seen = {};
+            for (const r of rows) {
+                const c = r[chidCol];
+                const v = r[varName];
+                if (c === undefined) continue;
+                if (!(c in seen)) seen[c] = v;
+                else if (String(seen[c]) !== String(v)) return 'alt-specific';
+            }
+            return 'individual-specific';
+        }
+
+        // Compute the universe of candidate IVs given the current data shape and the
+        // user's selections in Section 3. In long mode it's any data column not
+        // serving as chid / alt / choice; in wide mode it's the alt-specific attribute
+        // base names + the individual-specific (untagged) columns.
+        function getCandidateVars() {
+            const shape = document.querySelector('input[name="dataShape"]:checked').value;
+            if (shape === 'long') {
+                const exclude = new Set([$('chidVar').value, $('altVar').value, $('choiceVar').value].filter(Boolean));
+                return columnNames.filter(c => !exclude.has(c));
+            }
+            return wideAttrGroups();
+        }
+
+        // Render the two checkbox lists (Choice-Invariant and Choice-Specific) given
+        // the current candidate variables. The Choice-Invariant list filters out
+        // individual-specific variables (a single slope would cancel out and mlogit
+        // can't estimate them). Mutex: checking a variable in one list disables it
+        // in the other. Previously-checked selections are preserved when possible.
+        function refreshVarSections() {
+            const candidates = getCandidateVars();
+            const ciBox = $('ciVars');
+            const csBox = $('csVars');
+            const ciChecked = new Set(Array.from(ciBox.querySelectorAll('input[type="checkbox"]:checked')).map(i => i.value));
+            const csChecked = new Set(Array.from(csBox.querySelectorAll('input[type="checkbox"]:checked')).map(i => i.value));
+
+            // Only show variables we can confirm are alt-specific. The looser filter
+            // "!= individual-specific" let through 'unknown' (e.g. before the chid
+            // column is set in long mode), which then allowed the user to pick
+            // individual-specific variables here once chid arrived later.
+            const ciEligible = candidates.filter(v => getVarKind(v) === 'alt-specific');
+            if (ciEligible.length === 0) {
+                ciBox.innerHTML = '<p class="var-list-empty">No alt-specific variables available — Choice-Invariant slopes need variables that vary by alternative within an occasion.</p>';
+            } else {
+                ciBox.innerHTML = ciEligible.map(v => {
+                    const checked = ciChecked.has(v) && !csChecked.has(v);
+                    return `<label><input type="checkbox" class="ci-var-cb" value="${escapeHtml(v)}"${checked ? ' checked' : ''}> ${escapeHtml(v)}</label>`;
+                }).join('');
             }
 
-            # Add other non-varying columns (excluding choice and varying cols)
-            other_cols = setdiff(names(df_wide), c(chid_var, choice_cols, varying_cols))
-            for (ocol in other_cols) {
-              new_row[[ocol]] = row_data[[ocol]]
+            if (candidates.length === 0) {
+                csBox.innerHTML = '<p class="var-list-empty">No variables available yet. Pick the choice / alternative columns above first.</p>';
+            } else {
+                csBox.innerHTML = candidates.map(v => {
+                    const kind = getVarKind(v);
+                    const tag = kind === 'individual-specific' ? '<span class="var-tag">individual-specific</span>' : '';
+                    const checked = csChecked.has(v);
+                    return `<label><input type="checkbox" class="cs-var-cb" value="${escapeHtml(v)}"${checked ? ' checked' : ''}> ${escapeHtml(v)}${tag}</label>`;
+                }).join('');
             }
 
-            long_list[[length(long_list) + 1]] = new_row
-          }
+            // Wire up mutex: when a var is checked in one box, uncheck/disable in the other.
+            const allCi = ciBox.querySelectorAll('input.ci-var-cb');
+            const allCs = csBox.querySelectorAll('input.cs-var-cb');
+            const refreshDisable = () => {
+                const ciOn = new Set(Array.from(allCi).filter(i => i.checked).map(i => i.value));
+                const csOn = new Set(Array.from(allCs).filter(i => i.checked).map(i => i.value));
+                allCi.forEach(i => {
+                    const lbl = i.closest('label');
+                    if (csOn.has(i.value)) { i.disabled = true; i.checked = false; lbl.classList.add('disabled'); }
+                    else { i.disabled = false; lbl.classList.remove('disabled'); }
+                });
+                allCs.forEach(i => {
+                    const lbl = i.closest('label');
+                    if (ciOn.has(i.value)) { i.disabled = true; i.checked = false; lbl.classList.add('disabled'); }
+                    else { i.disabled = false; lbl.classList.remove('disabled'); }
+                });
+            };
+            allCi.forEach(i => i.addEventListener('change', () => { refreshDisable(); updateRunEnabled(); }));
+            allCs.forEach(i => i.addEventListener('change', () => { refreshDisable(); updateRunEnabled(); }));
+            refreshDisable();
         }
 
-        # Combine all rows
-        df_long = do.call(rbind, long_list)
+        // Backwards-compatible alias — every caller in the file still uses
+        // refreshVarRowChoices(), but the implementation is now the two-list refresh.
+        function refreshVarRowChoices() { refreshVarSections(); }
 
-        # Store the converted data
-        data(df_long)
+        // Variables available in wide-format mode = base names of alt-specific attribute
+        // columns (e.g., "Price" from "Price_Coke", "Price_Pepsi") PLUS any other column
+        // that wasn't claimed as the chid, a choice column, or an attribute column. The
+        // "other" columns are individual-specific (constant within an occasion, like a
+        // customer demographic) and become candidates for either Choice-Invariant or
+        // Choice-Specific slopes after reshape.
+        function wideAttrGroups() {
+            const attrCols   = Array.from($('wideAttrCols').querySelectorAll('input.wide-attr-col:checked')).map(i => i.value);
+            const choiceCols = Array.from($('wideChoiceCols').querySelectorAll('input.wide-choice-col:checked')).map(i => i.value);
+            const chid       = $('wideChidVar').value;
+            const knownAlts  = Array.from($('wideChoiceMap').querySelectorAll('input.wide-alt-name')).map(i => i.value).filter(Boolean);
 
-        showNotification(paste("Converted to long format:", nrow(df_long), "rows,", ncol(df_long), "columns."), type = "message")
-      })
-
-    }, error = function(e) {
-      showNotification(paste("Error converting data:", e$message), type = "error")
-    })
-  })
-
-  # Data structure card (shows for long format OR after wide conversion)
-  output$data_structure_card = renderUI({
-    # For long format, use working_data (which respects filtering)
-    # For wide format, use data() which is set after conversion
-    df = if (input$data_format == "long") working_data() else data()
-    if (is.null(df)) return(NULL)
-
-    # For wide format, only show after conversion
-    if (input$data_format == "wide" && is.null(wide_data())) return(NULL)
-
-    cols = names(df)
-
-    # Determine step number based on format
-    step_num = if (input$data_format == "long") "4" else "5"
-    step_title = if (input$data_format == "long") "4. Data Structure" else "5. Verify Converted Data"
-
-    div(class = "card",
-      div(class = "card-title", step_title),
-
-      # Show preview of converted data for wide format
-      if (input$data_format == "wide") {
-        div(class = "data-preview", style = "margin-bottom: 15px;",
-          h5(paste0("Converted Long Format (", nrow(df), " rows, ", ncol(df), " columns)")),
-          tableOutput("converted_preview_table")
-        )
-      },
-
-      div(class = "center-content",
-        selectInput("choice_var", "Choice Variable (0/1)",
-          choices = cols,
-          selected = if ("Chosen" %in% cols) "Chosen" else cols[1]
-        ),
-        p(class = "help-text", "Binary variable indicating which alternative was chosen (1) or not (0)."),
-
-        selectInput("alt_var", "Alternative Variable",
-          choices = cols,
-          selected = if ("Alternative" %in% cols) "Alternative" else if ("Product" %in% cols) "Product" else cols[1]
-        ),
-        p(class = "help-text", "Variable that identifies the alternatives (e.g., Product, Brand)."),
-
-        selectInput("chid_var", "Choice ID Variable",
-          choices = cols,
-          selected = if ("ChoiceID" %in% cols) "ChoiceID" else cols[1]
-        ),
-        p(class = "help-text", "Variable that identifies each choice occasion."),
-
-        actionButton("create_mlogit_data", "Create mlogit Data", class = "btn-primary", style = "width: 100%; margin-top: 10px;")
-      )
-    )
-  })
-
-  # Converted data preview table
-  output$converted_preview_table = renderTable({
-    df = data()
-    if (is.null(df)) return(NULL)
-    head(df, 12)
-  }, rownames = FALSE)
-
-  # Create mlogit data
-  observeEvent(input$create_mlogit_data, {
-    # Use working_data for long format, data() for wide (after conversion)
-    df = if (input$data_format == "long") working_data() else data()
-    req(df, input$choice_var, input$alt_var, input$chid_var)
-
-    # Store input values in local variables to avoid reactive issues
-    choice_var = input$choice_var
-    alt_var = input$alt_var
-    chid_var = input$chid_var
-
-    tryCatch({
-      # Build mlogit.data
-      mdata = mlogit.data(
-        data = df,
-        choice = choice_var,
-        shape = "long",
-        chid.var = chid_var,
-        alt.var = alt_var
-      )
-
-      mlogit_data(mdata)
-      model_result(NULL)
-      num_vars(1)  # Reset to 1 variable
-
-      # Get alternatives for reference level selection
-      alts = unique(df[[input$alt_var]])
-      updateSelectInput(session, "reflevel", choices = alts,
-        selected = if ("No_Purchase" %in% alts) "No_Purchase" else alts[1])
-
-      showNotification("mlogit data created successfully!", type = "message")
-
-    }, error = function(e) {
-      showNotification(paste("Error creating mlogit data:", e$message), type = "error")
-    })
-  })
-
-  # Reactive value for number of variables
-  num_vars = reactiveVal(1)
-
-  # Model setup card
-  output$model_setup_card = renderUI({
-    mdata = mlogit_data()
-    if (is.null(mdata)) return(NULL)
-
-    df = data()
-    cols = names(df)
-    alts = unique(df[[input$alt_var]])
-
-    # Exclude structural variables from IV selection
-    exclude_vars = c(input$choice_var, input$alt_var, input$chid_var)
-    iv_choices = setdiff(cols, exclude_vars)
-
-    # Store iv_choices for use in observers
-    session$userData$iv_choices = iv_choices
-
-    # Dynamic step number
-    step_num = if (input$data_format == "long") "5" else "6"
-
-    div(class = "card",
-      div(class = "card-title", paste0(step_num, ". Model Specification")),
-      div(class = "center-content",
-        # 1. Reference Alternative
-        selectInput("reflevel", "Reference Alternative",
-          choices = alts,
-          selected = if ("No_Purchase" %in% alts) "No_Purchase" else alts[1]
-        ),
-        p(class = "help-text", "The base alternative. All coefficients are interpreted relative to this choice."),
-
-        hr(),
-
-        # 2. Intercept
-        selectInput("intercept_type", "Intercept",
-          choices = c(
-            "Alternative-Specific Intercepts" = "alt_specific",
-            "No Intercept" = "none"
-          ),
-          selected = "alt_specific"
-        ),
-        p(class = "help-text", "Alternative-specific intercepts (ASCs) capture intrinsic preferences for each alternative."),
-
-        hr(),
-
-        # 3. Variables - dynamic
-        h5("Independent Variables", style = "margin-top: 15px; margin-bottom: 10px;"),
-
-        # Dynamic variable UI
-        uiOutput("variables_ui"),
-
-        # Add variable button
-        div(style = "margin-top: 15px;",
-          actionButton("add_var", "+ Add Variable", class = "btn-secondary")
-        ),
-
-        p(class = "help-text", style = "margin-top: 15px;",
-          tags$strong("Choice-Invariant:"), " One coefficient estimated across all alternatives (e.g., Price effect).", tags$br(),
-          tags$strong("Choice-Specific:"), " Different coefficient for each alternative (relative to reference)."
-        )
-      )
-    )
-  })
-
-  # Render dynamic variable inputs
-  output$variables_ui = renderUI({
-    n = num_vars()
-    iv_choices = session$userData$iv_choices
-    if (is.null(iv_choices)) return(NULL)
-
-    lapply(1:n, function(i) {
-      div(class = "var-row",
-        fluidRow(
-          column(5,
-            selectInput(paste0("var", i), paste("Variable", i),
-              choices = c("(Select)" = "", iv_choices),
-              selected = isolate(input[[paste0("var", i)]])
-            )
-          ),
-          column(5,
-            selectInput(paste0("var", i, "_type"), "Slope Type",
-              choices = c(
-                "Choice-Invariant" = "single",
-                "Choice-Specific" = "alt_specific"
-              ),
-              selected = isolate(input[[paste0("var", i, "_type")]])
-            )
-          ),
-          column(2,
-            if (i > 1) {
-              div(style = "margin-top: 25px;",
-                actionButton(paste0("remove_var", i), "Remove", class = "btn-danger")
-              )
+            const attrBases = new Set();
+            for (const c of attrCols) {
+                let base = c;
+                for (const alt of knownAlts) {
+                    const re = new RegExp(`[_.\\\\-]?${escapeRegex(alt)}$`);
+                    if (re.test(c)) { base = c.replace(re, ''); break; }
+                }
+                attrBases.add(base);
             }
-          )
-        )
-      )
-    })
-  })
 
-  # Add variable
-  observeEvent(input$add_var, {
-    current = num_vars()
-    if (current < 10) {
-      num_vars(current + 1)
-    } else {
-      showNotification("Maximum 10 variables allowed.", type = "warning")
-    }
-  })
+            const used = new Set([chid, ...choiceCols, ...attrCols].filter(Boolean));
+            const individualCols = columnNames.filter(c => !used.has(c));
 
-  # Remove variable observers (create for each possible index)
-  lapply(2:10, function(i) {
-    observeEvent(input[[paste0("remove_var", i)]], {
-      current = num_vars()
-      if (current > 1) {
-        num_vars(current - 1)
-      }
-    }, ignoreInit = TRUE)
-  })
-
-  # Run card
-  output$run_card = renderUI({
-    mdata = mlogit_data()
-    if (is.null(mdata)) return(NULL)
-
-    # Dynamic step number
-    step_num = if (input$data_format == "long") "6" else "7"
-
-    div(class = "card",
-      div(class = "card-title", paste0(step_num, ". Run Model")),
-      div(class = "center-content",
-        actionButton("run_model", "Run mlogit Model", class = "btn-success", style = "width: 100%;")
-      )
-    )
-  })
-
-  # Run model
-  observeEvent(input$run_model, {
-    mdata = mlogit_data()
-    req(mdata, input$reflevel)
-
-    # Collect variables and their types dynamically
-    vars_single = c()  # Variables with alternative-invariant coefficient
-    vars_alt = c()     # Variables with alternative-specific coefficients
-
-    n = num_vars()
-    for (i in 1:n) {
-      var_name = input[[paste0("var", i)]]
-      var_type = input[[paste0("var", i, "_type")]]
-
-      if (!is.null(var_name) && var_name != "") {
-        if (var_type == "single") {
-          vars_single = c(vars_single, var_name)
-        } else {
-          vars_alt = c(vars_alt, var_name)
-        }
-      }
-    }
-
-    # Check that at least one variable is selected
-    if (length(vars_single) == 0 && length(vars_alt) == 0) {
-      showNotification("Please select at least one variable for the model.", type = "error")
-      return()
-    }
-
-    tryCatch({
-      withProgress(message = "Estimating model...", {
-
-        # Store intercept type
-        intercept_type = input$intercept_type
-
-        # Build formula parts
-        # Part 1: variables with single coefficient
-        part1 = if (length(vars_single) > 0) {
-          paste(vars_single, collapse = " + ")
-        } else {
-          "0"
+            return [...attrBases, ...individualCols];
         }
 
-        # Part 2: variables with alternative-specific coefficients + intercept handling
-        if (intercept_type == "alt_specific") {
-          # Alternative-specific intercepts (default)
-          part2 = if (length(vars_alt) > 0) {
-            paste(vars_alt, collapse = " + ")
-          } else {
-            "1"
-          }
-        } else {
-          # No intercept
-          part2 = if (length(vars_alt) > 0) {
-            paste("0 +", paste(vars_alt, collapse = " + "))
-          } else {
-            "0"
-          }
-          # Make sure part1 has no intercept
-          if (part1 != "0") {
-            part1 = paste("0 +", part1)
-          }
+        function getModelVars() {
+            const out = [];
+            $('ciVars').querySelectorAll('input.ci-var-cb:checked').forEach(i => {
+                if (!i.disabled) out.push({ name: i.value, type: 'single' });
+            });
+            $('csVars').querySelectorAll('input.cs-var-cb:checked').forEach(i => {
+                if (!i.disabled) out.push({ name: i.value, type: 'alt_specific' });
+            });
+            return out;
         }
 
-        # Build formula: choice ~ part1 | part2
-        formula_str = paste(input$choice_var, "~", part1, "|", part2)
-        model_formula = as.formula(formula_str)
-
-        # Run model
-        fit = mlogit(
-          model_formula,
-          data = mdata,
-          reflevel = input$reflevel
-        )
-
-        # Get alternatives from the mlogit data
-        alts = levels(index(mdata)$alt)
-
-        # Store filter info for R script
-        filter_info = list(
-          use_filter = isTRUE(input$use_filter == "filtered"),
-          conditions = filter_conditions()
-        )
-
-        # Store result
-        model_result(list(
-          fit = fit,
-          formula = formula_str,
-          reflevel = input$reflevel,
-          choice_var = input$choice_var,
-          alt_var = input$alt_var,
-          chid_var = input$chid_var,
-          vars_single = vars_single,
-          vars_alt = vars_alt,
-          intercept_type = intercept_type,
-          alternatives = alts,
-          filter_info = filter_info
-        ))
-
-        showNotification("Model estimated successfully!", type = "message")
-      })
-
-    }, error = function(e) {
-      showNotification(paste("Error:", e$message), type = "error")
-    })
-  })
-
-  # Results card
-  output$results_card = renderUI({
-    result = model_result()
-    if (is.null(result)) {
-      return(
-        div(class = "card",
-          div(class = "card-title", "Results"),
-          div(style = "text-align: center; padding: 60px; color: #64748b;",
-            "Upload data, set up data structure, and run a model to see results here."
-          )
-        )
-      )
-    }
-
-    div(class = "card",
-      div(class = "card-title", "Results"),
-      tabsetPanel(
-        tabPanel("Model Estimates",
-          div(style = "margin-top: 15px;",
-            uiOutput("model_estimates")
-          )
-        ),
-        tabPanel("Prediction Equations",
-          div(style = "margin-top: 15px;",
-            uiOutput("prediction_equations")
-          )
-        ),
-        tabPanel("Model Summary",
-          div(style = "margin-top: 15px;",
-            verbatimTextOutput("model_summary")
-          )
-        ),
-        tabPanel("R Script",
-          div(style = "margin-top: 15px;",
-            p(style = "color: #64748b;", "Use this R script to reproduce the analysis:"),
-            verbatimTextOutput("r_script"),
-            downloadButton("download_script", "Download R Script", class = "btn-secondary")
-          )
-        )
-      )
-    )
-  })
-
-  # Model estimates
-  output$model_estimates = renderUI({
-    result = model_result()
-    if (is.null(result)) return(NULL)
-
-    fit = result$fit
-    summ = summary(fit)
-
-    # Get fit statistics
-    ll = as.numeric(logLik(fit))
-    aic_val = AIC(fit)
-
-    tagList(
-      # Coefficient table
-      div(style = "margin-bottom: 20px;",
-        div(class = "coef-header", "Coefficient Estimates"),
-        div(class = "coef-body",
-          tableOutput("coef_table")
-        )
-      ),
-
-      # Model fit stats
-      h4("Model Fit Statistics", style = "margin-bottom: 15px;"),
-      fluidRow(
-        column(6, div(class = "stat-box",
-          div(class = "stat-value", format(round(aic_val, 2), big.mark = ",")),
-          div(class = "stat-label", "AIC")
-        )),
-        column(6, div(class = "stat-box",
-          div(class = "stat-value", format(round(ll, 2), big.mark = ",")),
-          div(class = "stat-label", "Log-Likelihood")
-        ))
-      ),
-      p(style = "font-size: 0.85rem; color: #64748b; margin: 10px 0;",
-        "Lower AIC values indicate better model fit.")
-    )
-  })
-
-  # Coefficient table
-  output$coef_table = renderTable({
-    result = model_result()
-    if (is.null(result)) return(NULL)
-
-    fit = result$fit
-    summ = summary(fit)
-    coefs = summ$CoefTable
-
-    data.frame(
-      Variable = rownames(coefs),
-      Estimate = round(coefs[, 1], 4),
-      Std.Error = round(coefs[, 2], 4),
-      P.Value = round(coefs[, 4], 4)
-    )
-  }, rownames = FALSE)
-
-  # Prediction equations
-  output$prediction_equations = renderUI({
-    result = model_result()
-    if (is.null(result)) return(NULL)
-
-    # Get alternatives (excluding baseline)
-    reflevel = result$reflevel
-    all_alts = result$alternatives
-    non_base_alts = setdiff(all_alts, reflevel)
-
-    tagList(
-      div(style = "margin-bottom: 15px;",
-        p(style = "color: #64748b; font-size: 0.9rem;",
-          "Utility and probability equations for use in optimization tools.",
-          br(),
-          "Copy the text below to use in other applications."
-        )
-      ),
-
-      # Significance filter
-      div(style = "margin-bottom: 15px; padding: 10px; background: #f1f5f9; border-radius: 8px;",
-        radioButtons("sig_level", "Include coefficients with:",
-          choices = c(
-            "Any p-value" = "all",
-            "p-value < 0.05" = "0.05",
-            "p-value < 0.10" = "0.10"
-          ),
-          selected = "all",
-          inline = TRUE
-        )
-      ),
-
-      div(style = "background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 15px;",
-        tags$pre(id = "equations_text", style = "color: #1e293b; font-family: 'Courier New', monospace; font-size: 0.9rem; margin: 0; white-space: pre-wrap; word-wrap: break-word;",
-          textOutput("equations_output", inline = TRUE)
-        )
-      ),
-      div(style = "margin-top: 10px;",
-        downloadButton("download_equations", "Download as TXT", class = "btn-secondary"),
-        tags$button(
-          "Copy to Clipboard",
-          type = "button",
-          class = "btn btn-secondary",
-          style = "margin-left: 10px;",
-          onclick = "navigator.clipboard.writeText(document.getElementById('equations_text').innerText)"
-        )
-      )
-    )
-  })
-
-  # Generate equations text based on significance level
-  output$equations_output = renderText({
-    result = model_result()
-    if (is.null(result)) return("")
-
-    fit = result$fit
-    summ = summary(fit)
-    coefs = summ$CoefTable
-    coef_names = rownames(coefs)
-    coef_estimates = coefs[, 1]  # Estimates
-    coef_pvals = coefs[, 4]      # P-values
-
-    # Get significance threshold
-    sig_level = input$sig_level
-    if (is.null(sig_level)) sig_level = "all"
-
-    sig_threshold = if (sig_level == "all") 1 else as.numeric(sig_level)
-
-    # Apply significance filter - set insignificant to 0
-    coef_vals = ifelse(coef_pvals < sig_threshold, coef_estimates, 0)
-    names(coef_vals) = coef_names
-
-    # Get alternatives (excluding baseline)
-    reflevel = result$reflevel
-    all_alts = result$alternatives
-    non_base_alts = setdiff(all_alts, reflevel)
-
-    # Build utility equations text for each non-baseline alternative
-    utility_lines = c()
-    utility_lines = c(utility_lines, "# Utility Equations")
-    utility_lines = c(utility_lines, paste0("# Baseline: U_", sanitize_alt(reflevel), " = 0"))
-    utility_lines = c(utility_lines, "")
-
-    # First, identify generic (alternative-invariant) coefficients that apply to ALL alternatives
-    generic_terms = list()
-    generic_intercept = NULL
-
-    for (i in seq_along(coef_names)) {
-      name = coef_names[i]
-      val = round(coef_vals[i], 4)
-
-      # Skip if zero (insignificant)
-      if (val == 0) next
-
-      # Check for generic intercept (no colon, is intercept)
-      if (!grepl(":", name) && grepl("intercept", name, ignore.case = TRUE)) {
-        generic_intercept = val
-      }
-      # Generic coefficients have no colon and are not intercepts
-      else if (!grepl(":", name)) {
-        generic_terms[[name]] = val
-      }
-    }
-
-    for (alt in non_base_alts) {
-      alt_clean = sanitize_alt(alt)
-      terms = c()
-
-      # Check for alternative-specific intercept first
-      alt_intercept_found = FALSE
-      for (i in seq_along(coef_names)) {
-        name = coef_names[i]
-        val = round(coef_vals[i], 4)
-
-        # Skip if zero (insignificant)
-        if (val == 0) next
-
-        # Check if this is an intercept for this alternative
-        if (grepl("intercept", name, ignore.case = TRUE) && grepl(alt, name, fixed = TRUE)) {
-          terms = c(terms, as.character(val))
-          alt_intercept_found = TRUE
-          break
-        }
-      }
-
-      # If no alternative-specific intercept, use generic intercept if available
-      if (!alt_intercept_found && !is.null(generic_intercept)) {
-        terms = c(terms, as.character(generic_intercept))
-      }
-
-      # Go through all coefficients and find alternative-specific ones
-      for (i in seq_along(coef_names)) {
-        name = coef_names[i]
-        val = round(coef_vals[i], 4)
-
-        # Skip if zero (insignificant)
-        if (val == 0) next
-
-        # Check if this is an alternative-specific coefficient (alt:var format)
-        if (grepl(":", name) && grepl(alt, name, fixed = TRUE)) {
-          # Extract variable name (remove alternative prefix/suffix)
-          var_name = gsub(paste0("^", alt, ":"), "", name)
-          var_name = gsub(paste0(":", alt, "$"), "", var_name)
-          if (!grepl("intercept", var_name, ignore.case = TRUE)) {
-            sign = if (val >= 0 && length(terms) > 0) " + " else if (val < 0) " - " else ""
-            terms = c(terms, paste0(sign, abs(val), " * ", var_name))
-          }
-        }
-      }
-
-      # Add generic (alternative-invariant) coefficients - these apply to all alternatives
-      for (var_name in names(generic_terms)) {
-        val = generic_terms[[var_name]]
-        sign = if (val >= 0 && length(terms) > 0) " + " else if (val < 0) " - " else ""
-        terms = c(terms, paste0(sign, abs(val), " * ", var_name))
-      }
-
-      # Build equation
-      eq_str = paste(terms, collapse = "")
-      if (eq_str == "") eq_str = "0"
-      # Clean up leading " + " or " - " at start
-      eq_str = sub("^\\\\s*\\\\+\\\\s*", "", eq_str)
-      utility_lines = c(utility_lines, paste0("U_", alt_clean, " = ", eq_str))
-    }
-
-    # Build probability equations
-    utility_lines = c(utility_lines, "")
-    utility_lines = c(utility_lines, "# Choice Probabilities")
-
-    # Denominator: 1 + exp(U_1) + exp(U_2) + ...
-    denom_terms = c("1")  # baseline exp(0) = 1
-    for (alt in non_base_alts) {
-      alt_clean = sanitize_alt(alt)
-      denom_terms = c(denom_terms, paste0("exp(U_", alt_clean, ")"))
-    }
-    denom_str = paste(denom_terms, collapse = " + ")
-
-    # Define denominator once and reuse
-    utility_lines = c(utility_lines, paste0("Denominator = ", denom_str))
-
-    # Baseline probability
-    utility_lines = c(utility_lines, paste0("Pr_", sanitize_alt(reflevel), " = 1 / Denominator"))
-
-    # Other probabilities
-    for (alt in non_base_alts) {
-      alt_clean = sanitize_alt(alt)
-      utility_lines = c(utility_lines, paste0("Pr_", alt_clean, " = exp(U_", alt_clean, ") / Denominator"))
-    }
-
-    # Combine all lines
-    paste(utility_lines, collapse = "\\n")
-  })
-
-  # Download equations as TXT
-  output$download_equations = downloadHandler(
-    filename = function() {
-      "prediction_equations.txt"
-    },
-    content = function(file) {
-      result = model_result()
-      if (is.null(result)) return()
-
-      fit = result$fit
-      summ = summary(fit)
-      coefs = summ$CoefTable
-      coef_names = rownames(coefs)
-      coef_estimates = coefs[, 1]
-      coef_pvals = coefs[, 4]
-
-      sig_level = input$sig_level
-      if (is.null(sig_level)) sig_level = "all"
-      sig_threshold = if (sig_level == "all") 1 else as.numeric(sig_level)
-
-      coef_vals = ifelse(coef_pvals < sig_threshold, coef_estimates, 0)
-      names(coef_vals) = coef_names
-
-      reflevel = result$reflevel
-      all_alts = result$alternatives
-      non_base_alts = setdiff(all_alts, reflevel)
-
-      utility_lines = c()
-      utility_lines = c(utility_lines, "# Utility Equations")
-      utility_lines = c(utility_lines, paste0("# Baseline: U_", sanitize_alt(reflevel), " = 0"))
-      utility_lines = c(utility_lines, "")
-
-      generic_terms = list()
-      generic_intercept = NULL
-
-      for (i in seq_along(coef_names)) {
-        name = coef_names[i]
-        val = round(coef_vals[i], 4)
-        if (val == 0) next
-        if (!grepl(":", name) && grepl("intercept", name, ignore.case = TRUE)) {
-          generic_intercept = val
-        } else if (!grepl(":", name)) {
-          generic_terms[[name]] = val
-        }
-      }
-
-      for (alt in non_base_alts) {
-        alt_clean = sanitize_alt(alt)
-        terms = c()
-
-        alt_intercept_found = FALSE
-        for (i in seq_along(coef_names)) {
-          name = coef_names[i]
-          val = round(coef_vals[i], 4)
-          if (val == 0) next
-          if (grepl("intercept", name, ignore.case = TRUE) && grepl(alt, name, fixed = TRUE)) {
-            terms = c(terms, as.character(val))
-            alt_intercept_found = TRUE
-            break
-          }
-        }
-
-        if (!alt_intercept_found && !is.null(generic_intercept)) {
-          terms = c(terms, as.character(generic_intercept))
-        }
-
-        for (i in seq_along(coef_names)) {
-          name = coef_names[i]
-          val = round(coef_vals[i], 4)
-          if (val == 0) next
-          if (grepl(":", name) && grepl(alt, name, fixed = TRUE)) {
-            var_name = gsub(paste0("^", alt, ":"), "", name)
-            var_name = gsub(paste0(":", alt, "$"), "", var_name)
-            if (!grepl("intercept", var_name, ignore.case = TRUE)) {
-              sign = if (val >= 0 && length(terms) > 0) " + " else if (val < 0) " - " else ""
-              terms = c(terms, paste0(sign, abs(val), " * ", var_name))
+        function updateRunEnabled() {
+            const shape = document.querySelector('input[name="dataShape"]:checked').value;
+            let configOk;
+            if (shape === 'long') {
+                configOk = $('chidVar').value && $('altVar').value && $('choiceVar').value && $('reflevel').value;
+            } else {
+                const choiceCols = $('wideChoiceCols').querySelectorAll('input.wide-choice-col:checked').length;
+                configOk = $('wideChidVar').value && choiceCols >= 2 && $('wideReflevel').value;
             }
-          }
+            $('runButton').disabled = !(configOk && getModelVars().length > 0);
         }
 
-        for (var_name in names(generic_terms)) {
-          val = generic_terms[[var_name]]
-          sign = if (val >= 0 && length(terms) > 0) " + " else if (val < 0) " - " else ""
-          terms = c(terms, paste0(sign, abs(val), " * ", var_name))
-        }
+        // ============================================================
+        // RESET
+        // ============================================================
+        $('resetButton').addEventListener('click', () => {
+            csvText = ''; columnNames = []; rows = []; alternatives = []; lastResult = null;
+            fileInput.value = '';
+            $('dataPreview').classList.remove('visible');
+            $('dataFilterSection').classList.remove('visible');
+            $('modelConfig').style.display = 'none';
+            $('ciVars').innerHTML = '<p class="var-list-empty">No eligible variables yet.</p>';
+            $('csVars').innerHTML = '<p class="var-list-empty">No variables available yet.</p>';
+            $('filterRows').innerHTML = '';
+            $('resultsContainer').classList.remove('visible');
+            $('statusMessage').classList.remove('visible');
+        });
 
-        eq_str = paste(terms, collapse = "")
-        if (eq_str == "") eq_str = "0"
-        eq_str = sub("^\\\\s*\\\\+\\\\s*", "", eq_str)
-        utility_lines = c(utility_lines, paste0("U_", alt_clean, " = ", eq_str))
-      }
+        // ============================================================
+        // RUN ESTIMATION
+        // ============================================================
+        $('runButton').addEventListener('click', runEstimation);
 
-      utility_lines = c(utility_lines, "")
-      utility_lines = c(utility_lines, "# Choice Probabilities")
+        async function runEstimation() {
+            try {
+                $('runButton').disabled = true;
+                $('runButton').textContent = 'Estimating…';
+                showStatus('Sending data and formula to R…', 'info');
 
-      denom_terms = c("1")
-      for (alt in non_base_alts) {
-        alt_clean = sanitize_alt(alt)
-        denom_terms = c(denom_terms, paste0("exp(U_", alt_clean, ")"))
-      }
-      denom_str = paste(denom_terms, collapse = " + ")
+                const shape = document.querySelector('input[name="dataShape"]:checked').value;
+                const interceptType = document.querySelector('input[name="interceptType"]:checked').value;
+                const modelVars = getModelVars();
+                const varsSingle = modelVars.filter(v => v.type === 'single').map(v => v.name);
+                const varsAlt    = modelVars.filter(v => v.type === 'alt_specific').map(v => v.name);
 
-      utility_lines = c(utility_lines, paste0("Denominator = ", denom_str))
+                // Apply filter
+                const dataRows = getFilteredRows();
+                if (dataRows.length === 0) throw new Error('No rows after filter — adjust your filter conditions.');
 
-      utility_lines = c(utility_lines, paste0("Pr_", sanitize_alt(reflevel), " = 1 / Denominator"))
+                // For wide format: reshape to long format in JS, then send to R as long.
+                let chidVar, altVar, choiceVar, reflevel, longRows, longHeaders;
+                if (shape === 'long') {
+                    chidVar   = $('chidVar').value;
+                    altVar    = $('altVar').value;
+                    choiceVar = $('choiceVar').value;
+                    reflevel  = $('reflevel').value;
+                    longRows = dataRows;
+                    longHeaders = columnNames;
+                } else {
+                    // Use letter-prefixed names. read.csv() defaults to check.names=TRUE
+                    // which prepends "X" to any column name that isn't a valid R identifier
+                    // (anything starting with "_" gets mangled), so underscore-prefixed names
+                    // disappear by the time the formula references them.
+                    const reshape = reshapeWideToLong(dataRows);
+                    chidVar = 'mlogit_chid'; altVar = 'mlogit_alt'; choiceVar = 'mlogit_choice';
+                    reflevel = $('wideReflevel').value;
+                    longRows = reshape.rows;
+                    longHeaders = reshape.headers;
+                }
 
-      for (alt in non_base_alts) {
-        alt_clean = sanitize_alt(alt)
-        utility_lines = c(utility_lines, paste0("Pr_", alt_clean, " = exp(U_", alt_clean, ") / Denominator"))
-      }
+                // Build mlogit formula parts (same logic as the original Shiny tool).
+                let part1 = varsSingle.length > 0 ? varsSingle.join(' + ') : '0';
+                let part2;
+                if (interceptType === 'alt_specific') {
+                    part2 = varsAlt.length > 0 ? varsAlt.join(' + ') : '1';
+                } else {
+                    part2 = varsAlt.length > 0 ? '0 + ' + varsAlt.join(' + ') : '0';
+                    if (part1 !== '0') part1 = '0 + ' + part1;
+                }
+                const formulaStr = `${choiceVar} ~ ${part1} | ${part2}`;
 
-      writeLines(utility_lines, file)
-    }
-  )
+                // Write the (possibly reshaped) CSV to WebR's filesystem.
+                const csvOut = serializeCSV(longHeaders, longRows);
+                const csvBytes = new TextEncoder().encode(csvOut);
+                await webR.FS.writeFile('/tmp/mlogit_data.csv', csvBytes);
 
-  # Model summary (raw output)
-  output$model_summary = renderPrint({
-    result = model_result()
-    if (is.null(result)) return(NULL)
-
-    summary(result$fit)
-  })
-
-  # R Script
-  output$r_script = renderText({
-    result = model_result()
-    if (is.null(result)) return("")
-
-    # Build filter code if filtering was used
-    filter_code = ""
-    if (!is.null(result$filter_info) && result$filter_info$use_filter) {
-      conditions = result$filter_info$conditions
-      if (length(conditions) > 0) {
-        filter_lines = c("# Apply data filters")
-        for (cond in conditions) {
-          if (is.null(cond) || cond$value == "") next
-
-          col = cond$column
-          op = cond$operator
-          val = cond$value
-
-          # Build R filter expression
-          op_r = switch(op,
-            "eq" = "==",
-            "neq" = "!=",
-            "gt" = ">",
-            "gte" = ">=",
-            "lt" = "<",
-            "lte" = "<=",
-            "=="
-          )
-
-          # Check if value is numeric or string
-          val_r = if (suppressWarnings(!is.na(as.numeric(val)))) val else paste0('\\"', val, '\\"')
-
-          filter_lines = c(filter_lines, paste0('data = data[data$', col, ' ', op_r, ' ', val_r, ', ]'))
-        }
-        filter_lines = c(filter_lines, "")
-        filter_code = paste(filter_lines, collapse = "\\n")
-      }
-    }
-
-    script = paste0(
-      "# Multinomial Logistic Regression\\n",
-      "# Generated by Shiny App created by Dr. Cosguner with the help of Claude AI\\n\\n",
-      "# Install and load required packages\\n",
-      "if (!require(mlogit)) install.packages(\\"mlogit\\")\\n",
-      "library(mlogit)\\n\\n",
-      "# Load data\\n",
-      "data = read.csv(\\"your_data.csv\\")\\n\\n",
-      filter_code,
-      "# Create mlogit data\\n",
-      "choice_data = mlogit.data(\\n",
-      "  data = data,\\n",
-      "  choice = \\"", result$choice_var, "\\",\\n",
-      "  shape = \\"long\\",\\n",
-      "  chid.var = \\"", result$chid_var, "\\",\\n",
-      "  alt.var = \\"", result$alt_var, "\\"\\n",
-      ")\\n\\n",
-      "# Run model\\n",
-      "model = mlogit(\\n",
-      "  ", result$formula, ",\\n",
-      "  data = choice_data,\\n",
-      "  reflevel = \\"", result$reflevel, "\\"\\n",
-      ")\\n\\n",
-      "# View results\\n",
-      "summary(model)\\n\\n",
-      "# Model fit statistics\\n",
-      "cat(\\"AIC:\\", AIC(model), \\"\\\\n\\")\\n",
-      "cat(\\"BIC:\\", BIC(model), \\"\\\\n\\")\\n",
-      "cat(\\"Log-Likelihood:\\", logLik(model), \\"\\\\n\\")\\n"
-    )
-
-    script
-  })
-
-  # Download R script
-  output$download_script = downloadHandler(
-    filename = function() {
-      "Discrete_Choice_Models.R"
-    },
-    content = function(file) {
-      result = model_result()
-      if (is.null(result)) return()
-
-      script = paste0(
-        "# Multinomial Logistic Regression\\n",
-        "# Generated by Shiny App created by Dr. Cosguner with the help of Claude AI\\n\\n",
-        "if (!require(mlogit)) install.packages(\\"mlogit\\")\\n",
-        "library(mlogit)\\n\\n",
-        "data = read.csv(\\"your_data.csv\\")\\n\\n",
-        "choice_data = mlogit.data(\\n",
-        "  data = data,\\n",
-        "  choice = \\"", result$choice_var, "\\",\\n",
-        "  shape = \\"long\\",\\n",
-        "  chid.var = \\"", result$chid_var, "\\",\\n",
-        "  alt.var = \\"", result$alt_var, "\\"\\n",
-        ")\\n\\n",
-        "model = mlogit(\\n",
-        "  ", result$formula, ",\\n",
-        "  data = choice_data,\\n",
-        "  reflevel = \\"", result$reflevel, "\\"\\n",
-        ")\\n\\n",
-        "summary(model)\\n"
-      )
-
-      writeLines(script, file)
-    }
-  )
+                const rScript = buildRScript({ chidVar, altVar, choiceVar, reflevel, formulaStr });
+                const rCode = `${rScript}
+.coef_summary = summary(.fit)$CoefTable
+.coef_rows = c()
+for (i in 1:nrow(.coef_summary)) {
+    nm  = gsub('"', '\\\\"', rownames(.coef_summary)[i])
+    est = .coef_summary[i, 1]
+    se  = .coef_summary[i, 2]
+    pv  = .coef_summary[i, 4]
+    .coef_rows = c(.coef_rows, paste0('{"name":"', nm, '","est":', est, ',"se":', se, ',"p":', pv, '}'))
 }
+.coef_json = paste0('COEFS_JSON:[', paste(.coef_rows, collapse = ','), ']:END')
 
-shinyApp(ui = ui, server = server)
+.fit_summary = summary(.fit)
+.aic = AIC(.fit); .ll = as.numeric(logLik(.fit)); .df = attr(logLik(.fit), 'df')
+.r2  = if (!is.null(.fit_summary$mfR2)) as.numeric(.fit_summary$mfR2) else NA
+.alt_levels = levels(index(.mldata)$alt)
+.alts_json  = paste0('ALTS_JSON:["', paste(.alt_levels, collapse = '","'), '"]:END')
+.fit_json   = paste0('FIT_JSON:{"aic":', .aic, ',"ll":', .ll, ',"df":', .df, ',"r2":', if (is.na(.r2)) 'null' else .r2, ',"n":', nrow(index(.mldata)) / length(.alt_levels), '}:END')
+.summary_text = paste(capture.output(print(.fit_summary)), collapse = '\\n')
+.summary_marker = paste0('SUMMARY:', .summary_text, ':END_SUMMARY')
+
+paste(c(.coef_json, .alts_json, .fit_json, .summary_marker), collapse = '\\n---MARK---\\n')
 `;
 
-            const blob = new Blob([rCode], { type: 'text/plain' });
+                const result = await webR.evalR(rCode);
+                const outObj = await result.toJs();
+                let outStr;
+                if (typeof outObj === 'string') outStr = outObj;
+                else if (outObj && outObj.values) outStr = Array.isArray(outObj.values) ? outObj.values.join('\n') : outObj.values;
+                else if (Array.isArray(outObj)) outStr = outObj.join('\n');
+                else outStr = String(outObj);
+
+                const coefMatch = outStr.match(/COEFS_JSON:(\[.*?\]):END/);
+                const altsMatch = outStr.match(/ALTS_JSON:(\[.*?\]):END/);
+                const fitMatch  = outStr.match(/FIT_JSON:({.*?}):END/);
+                const sumMatch  = outStr.match(/SUMMARY:([\s\S]*?):END_SUMMARY/);
+                if (!coefMatch || !altsMatch || !fitMatch) throw new Error('Could not parse R output. Raw: ' + outStr.slice(0, 500));
+
+                lastResult = {
+                    coefs: JSON.parse(coefMatch[1]),
+                    alts:  JSON.parse(altsMatch[1]),
+                    reflevel,
+                    interceptType,
+                    varsSingle, varsAlt,
+                    choiceVar, altVar, chidVar,
+                    formula: formulaStr,
+                    fit: JSON.parse(fitMatch[1]),
+                    rawSummary: sumMatch ? sumMatch[1] : '(no summary captured)',
+                    rScript
+                };
+                renderResults();
+                $('resultsContainer').classList.add('visible');
+                showStatus(`Model estimated. n = ${lastResult.fit.n.toLocaleString()} occasions, ${lastResult.alts.length} alts.`, 'success', 5000);
+                $('resultsContainer').scrollIntoView({ behavior: 'smooth', block: 'start' });
+            } catch (err) {
+                console.error(err);
+                showStatus('Error: ' + err.message, 'error');
+            } finally {
+                $('runButton').disabled = false;
+                $('runButton').textContent = 'Estimate Model';
+            }
+        }
+
+        // ============================================================
+        // WIDE → LONG RESHAPE (in JS, before sending to R)
+        // ============================================================
+        function reshapeWideToLong(wideRows) {
+            const chidVar = $('wideChidVar').value;
+            const choiceCols = Array.from($('wideChoiceCols').querySelectorAll('input.wide-choice-col:checked')).map(i => i.value);
+            // Map choice column → alt name
+            const colToAlt = {};
+            $('wideChoiceMap').querySelectorAll('input.wide-alt-name').forEach(i => {
+                colToAlt[i.dataset.col] = i.value;
+            });
+            const attrCols = Array.from($('wideAttrCols').querySelectorAll('input.wide-attr-col:checked')).map(i => i.value);
+            const altNames = choiceCols.map(c => colToAlt[c]).filter(Boolean);
+
+            // For each attr col, determine which alt it belongs to (by suffix match)
+            // and what the base attribute name is.
+            const attrColInfo = attrCols.map(c => {
+                for (const alt of altNames) {
+                    const re = new RegExp(`[_.\\-]?${escapeRegex(alt)}$`);
+                    if (re.test(c)) {
+                        const base = c.replace(re, '');
+                        return { col: c, alt, base };
+                    }
+                }
+                return { col: c, alt: null, base: c };
+            }).filter(x => x.alt !== null);
+
+            const baseAttrs = Array.from(new Set(attrColInfo.map(x => x.base)));
+            // Individual-specific columns: the user didn't tag them as chid, choice, or
+            // alt-specific attr, so they're constant within an occasion. We replicate
+            // them across every alt row so they're available as IVs after reshape.
+            const usedCols = new Set([chidVar, ...choiceCols, ...attrCols]);
+            const indivCols = columnNames.filter(c => !usedCols.has(c));
+
+            const longRows = [];
+            for (const wr of wideRows) {
+                for (const cc of choiceCols) {
+                    const alt = colToAlt[cc];
+                    if (!alt) continue;
+                    const longRow = {
+                        mlogit_chid: wr[chidVar],
+                        mlogit_alt: alt,
+                        mlogit_choice: (parseFloat(wr[cc]) || 0) ? 1 : 0
+                    };
+                    for (const ba of baseAttrs) {
+                        const colInfo = attrColInfo.find(x => x.base === ba && x.alt === alt);
+                        // Fill missing alt-specific values with 0 instead of '' / NA so
+                        // mlogit doesn't drop the whole choice occasion. A baseline
+                        // outside-option (e.g. "No Purchase") with no Price_NoPurchase
+                        // column gets Price = 0 — which is the conventional treatment.
+                        longRow[ba] = colInfo ? wr[colInfo.col] : 0;
+                    }
+                    for (const ic of indivCols) {
+                        longRow[ic] = wr[ic];
+                    }
+                    longRows.push(longRow);
+                }
+            }
+            const headers = ['mlogit_chid', 'mlogit_alt', 'mlogit_choice', ...baseAttrs, ...indivCols];
+            return { headers, rows: longRows };
+        }
+
+        function serializeCSV(headers, rows) {
+            const escape = (v) => {
+                const s = v === undefined || v === null ? '' : String(v);
+                if (/[",\n\r]/.test(s)) return '"' + s.replace(/"/g, '""') + '"';
+                return s;
+            };
+            const lines = [headers.map(escape).join(',')];
+            for (const r of rows) lines.push(headers.map(h => escape(r[h])).join(','));
+            return lines.join('\n');
+        }
+
+        function rEsc(s) {
+            return String(s).replace(/\\/g, '\\\\').replace(/"/g, '\\"');
+        }
+
+        function buildRScript({ chidVar, altVar, choiceVar, reflevel, formulaStr }) {
+            return `# Multinomial / Conditional Logit estimation in WebR
+suppressPackageStartupMessages(library(mlogit))
+
+# === Load data ===
+data = read.csv("/tmp/mlogit_data.csv", stringsAsFactors = FALSE)
+
+# Coerce numeric columns where possible
+for (col in names(data)) {
+    nv = suppressWarnings(as.numeric(data[[col]]))
+    if (!all(is.na(nv)) && sum(is.na(nv)) <= sum(is.na(data[[col]]))) {
+        data[[col]] = nv
+    }
+}
+
+# === Build mlogit data ===
+.mldata = mlogit.data(
+    data,
+    choice   = "${rEsc(choiceVar)}",
+    shape    = "long",
+    alt.var  = "${rEsc(altVar)}",
+    chid.var = "${rEsc(chidVar)}"
+)
+
+# === Fit ===
+.formula = as.formula("${rEsc(formulaStr)}")
+.fit = mlogit(.formula, data = .mldata, reflevel = "${rEsc(reflevel)}")
+`;
+        }
+
+        // ============================================================
+        // RESULTS RENDERING
+        // ============================================================
+        function renderResults() {
+            renderCoefTable();
+            renderFitStats();
+            $('rawOutput').textContent = lastResult.rawSummary;
+            renderEquations();
+            setupPredictionUI();
+        }
+
+        function renderCoefTable() {
+            const tbody = lastResult.coefs.map(c => {
+                const sigClass = c.p < 0.05 ? 'coef-sig' : (c.p < 0.10 ? '' : 'coef-insig');
+                return `<tr>
+                    <td>${escapeHtml(c.name)}</td>
+                    <td class="${sigClass}">${c.est.toFixed(4)}</td>
+                    <td>${c.se.toFixed(4)}</td>
+                    <td class="${sigClass}">${formatP(c.p)}</td>
+                </tr>`;
+            }).join('');
+            $('coefTable').innerHTML = `
+                <thead><tr><th>Variable</th><th>Estimate</th><th>Std. Error</th><th>p-value</th></tr></thead>
+                <tbody>${tbody}</tbody>
+            `;
+        }
+
+        function renderFitStats() {
+            const f = lastResult.fit;
+            const items = [
+                { label: 'Observations', value: Math.round(f.n).toLocaleString() },
+                { label: 'AIC', value: f.aic.toFixed(2) },
+                { label: 'Log-Likelihood', value: f.ll.toFixed(2) },
+                { label: 'Parameters', value: f.df }
+            ];
+            $('fitStats').innerHTML = items.map(i => `<div class="fit-stat"><div class="label">${i.label}</div><div class="value">${i.value}</div></div>`).join('');
+        }
+
+        function formatP(p) { return p < 0.0001 ? '< 0.0001' : p.toFixed(4); }
+
+        // ============================================================
+        // PREDICTION EQUATIONS
+        // ============================================================
+        document.querySelectorAll('input[name="sigLevel"]').forEach(r => r.addEventListener('change', () => {
+            if (lastResult) renderEquations();
+        }));
+
+        function sanitizeAlt(x) { return String(x).replace(/%/g, '').replace(/ /g, '_'); }
+
+        function renderEquations() {
+            if (!lastResult) return;
+            const sigLevel = document.querySelector('input[name="sigLevel"]:checked').value;
+            const threshold = sigLevel === 'all' ? 1 : parseFloat(sigLevel);
+            const { coefs, alts, reflevel: ref, interceptType } = lastResult;
+            const nonBaseAlts = alts.filter(a => a !== ref);
+            const eff = coefs.map(c => ({ name: c.name, val: c.p < threshold ? c.est : 0 }));
+
+            const genericTerms = {};
+            let genericIntercept = null;
+            for (const c of eff) {
+                if (c.val === 0) continue;
+                if (!c.name.includes(':') && /intercept/i.test(c.name)) genericIntercept = c.val;
+                else if (!c.name.includes(':')) genericTerms[c.name] = c.val;
+            }
+
+            const lines = [];
+            lines.push('# Utility Equations');
+            lines.push(`# Baseline: U_${sanitizeAlt(ref)} = 0`);
+            lines.push('');
+            for (const alt of nonBaseAlts) {
+                const altClean = sanitizeAlt(alt);
+                const terms = [];
+                let altInterceptFound = false;
+                for (const c of eff) {
+                    if (c.val === 0) continue;
+                    if (/intercept/i.test(c.name) && c.name.includes(':') && c.name.includes(alt)) {
+                        terms.push(round4(c.val).toString()); altInterceptFound = true; break;
+                    }
+                }
+                if (!altInterceptFound && genericIntercept !== null && interceptType === 'alt_specific') {
+                    terms.push(round4(genericIntercept).toString());
+                }
+                for (const c of eff) {
+                    if (c.val === 0) continue;
+                    if (c.name.includes(':') && c.name.includes(alt)) {
+                        let varName = c.name.replace(new RegExp(`^${escapeRegex(alt)}:`), '').replace(new RegExp(`:${escapeRegex(alt)}$`), '');
+                        if (/intercept/i.test(varName)) continue;
+                        const v = round4(c.val);
+                        const sign = v >= 0 && terms.length > 0 ? ' + ' : (v < 0 ? ' - ' : '');
+                        terms.push(`${sign}${Math.abs(v)} * ${varName}`);
+                    }
+                }
+                for (const [varName, val] of Object.entries(genericTerms)) {
+                    const v = round4(val);
+                    const sign = v >= 0 && terms.length > 0 ? ' + ' : (v < 0 ? ' - ' : '');
+                    terms.push(`${sign}${Math.abs(v)} * ${varName}`);
+                }
+                let eq = terms.join('');
+                if (eq === '') eq = '0';
+                eq = eq.replace(/^\s*\+\s*/, '');
+                lines.push(`U_${altClean} = ${eq}`);
+            }
+            lines.push('');
+            lines.push('# Choice Probabilities');
+            const denomTerms = ['1', ...nonBaseAlts.map(a => `exp(U_${sanitizeAlt(a)})`)];
+            const denomStr = denomTerms.join(' + ');
+            lines.push(`Denominator = ${denomStr}`);
+            lines.push(`Pr_${sanitizeAlt(ref)} = 1 / Denominator`);
+            for (const alt of nonBaseAlts) {
+                const a = sanitizeAlt(alt);
+                lines.push(`Pr_${a} = exp(U_${a}) / Denominator`);
+            }
+            $('equationsBox').textContent = lines.join('\n');
+        }
+
+        // ============================================================
+        // INTERACTIVE PREDICTION
+        // ============================================================
+        function setupPredictionUI() {
+            const { coefs, alts, reflevel: ref, varsSingle, varsAlt } = lastResult;
+            const nonBaseAlts = alts.filter(a => a !== ref);
+            const allVars = [...varsSingle, ...varsAlt];
+
+            // Build inputs: for each non-base alt, one input per variable.
+            const blocks = nonBaseAlts.map(alt => {
+                const inputs = allVars.map(v => `
+                    <div class="prediction-input-group">
+                        <label>${escapeHtml(v)}</label>
+                        <input type="number" step="any" class="pred-input" data-alt="${escapeHtml(alt)}" data-var="${escapeHtml(v)}" placeholder="value">
+                    </div>
+                `).join('');
+                return `
+                    <div class="prediction-alt-block">
+                        <div class="alt-name">${escapeHtml(alt)}</div>
+                        <div class="prediction-inputs">${inputs}</div>
+                    </div>
+                `;
+            }).join('');
+            $('predictionInputs').innerHTML = blocks;
+            $('predictionResult').classList.remove('visible');
+        }
+
+        $('predictBtn').addEventListener('click', computePrediction);
+
+        function computePrediction() {
+            if (!lastResult) return;
+            const { coefs, alts, reflevel: ref, varsSingle, varsAlt, interceptType } = lastResult;
+            const nonBaseAlts = alts.filter(a => a !== ref);
+
+            // Pre-process coefs into a lookup by (alt, var) and generic.
+            const altIntercept = {};         // alt -> value
+            const altSlope = {};              // "alt::var" -> value
+            const genericSlope = {};          // var -> value
+            let genericIntercept = null;
+            for (const c of coefs) {
+                if (!c.name.includes(':')) {
+                    if (/intercept/i.test(c.name)) genericIntercept = c.est;
+                    else genericSlope[c.name] = c.est;
+                    continue;
+                }
+                // Either "(intercept):AltName" or "AltName:Var" or "Var:AltName"
+                const parts = c.name.split(':');
+                if (/intercept/i.test(parts[0]) || /intercept/i.test(parts[1])) {
+                    const alt = /intercept/i.test(parts[0]) ? parts[1] : parts[0];
+                    altIntercept[alt] = c.est;
+                } else {
+                    // Identify which side is the alt (it should match one of the alt names).
+                    const alt = alts.includes(parts[0]) ? parts[0] : parts[1];
+                    const v   = alt === parts[0] ? parts[1] : parts[0];
+                    altSlope[`${alt}::${v}`] = c.est;
+                }
+            }
+
+            // Read user inputs.
+            const inputs = {};
+            $('predictionInputs').querySelectorAll('.pred-input').forEach(el => {
+                const alt = el.dataset.alt;
+                const v   = el.dataset.var;
+                const num = parseFloat(el.value);
+                inputs[`${alt}::${v}`] = isNaN(num) ? 0 : num;
+            });
+
+            // Compute utilities for each non-base alt.
+            const utilities = {};
+            for (const alt of nonBaseAlts) {
+                let U = 0;
+                if (interceptType === 'alt_specific') {
+                    U += altIntercept[alt] !== undefined ? altIntercept[alt] : (genericIntercept || 0);
+                }
+                for (const v of varsSingle) {
+                    if (genericSlope[v] !== undefined) U += genericSlope[v] * inputs[`${alt}::${v}`];
+                }
+                for (const v of varsAlt) {
+                    const beta = altSlope[`${alt}::${v}`];
+                    if (beta !== undefined) U += beta * inputs[`${alt}::${v}`];
+                }
+                utilities[alt] = U;
+            }
+
+            // Probabilities.
+            const expU = nonBaseAlts.map(a => Math.exp(utilities[a]));
+            const denom = 1 + expU.reduce((a, b) => a + b, 0);
+            const probs = {};
+            probs[ref] = 1 / denom;
+            nonBaseAlts.forEach((a, i) => probs[a] = expU[i] / denom);
+
+            const orderedAlts = [ref, ...nonBaseAlts];
+            $('predictionPrGrid').innerHTML = orderedAlts.map(a => `
+                <div class="prediction-pr-item">
+                    <div class="alt">${escapeHtml(a)}</div>
+                    <div class="pr">${(probs[a] * 100).toFixed(2)}%</div>
+                </div>
+            `).join('');
+            $('predictionResult').classList.add('visible');
+        }
+
+        // ============================================================
+        // EQUATION ACTIONS
+        // ============================================================
+        $('copyEquationsBtn').addEventListener('click', (e) => {
+            navigator.clipboard.writeText($('equationsBox').textContent).then(() => {
+                const orig = e.target.textContent;
+                e.target.textContent = '✓ Copied';
+                e.target.classList.add('copied');
+                setTimeout(() => { e.target.textContent = orig; e.target.classList.remove('copied'); }, 1500);
+            });
+        });
+        $('downloadEquationsBtn').addEventListener('click', () => {
+            downloadBlob($('equationsBox').textContent, 'prediction_equations.txt', 'text/plain');
+        });
+        $('downloadScriptBtn').addEventListener('click', () => {
+            if (!lastResult) return;
+            downloadBlob(lastResult.rScript, 'mlogit_analysis.R', 'text/plain');
+        });
+        function downloadBlob(text, filename, type) {
+            const blob = new Blob([text], { type });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
-            a.href = url;
-            a.download = 'Discrete_Choice_Models.R';
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
-        });
-    </script>
-
-</div> <!-- end main-content -->
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
-<script>
-    const firebaseConfig = {
-        apiKey: "AIzaSyBg3LJDwVIRGWtFZb_mM_CSRJMNCJUta20",
-        authDomain: "iu-pricing-tools.firebaseapp.com",
-        projectId: "iu-pricing-tools",
-        storageBucket: "iu-pricing-tools.firebasestorage.app",
-        messagingSenderId: "659335573790",
-        appId: "1:659335573790:web:00013a166787efecb3d90f",
-        measurementId: "G-NGKNY08XWP"
-    };
-    firebase.initializeApp(firebaseConfig);
-    firebase.auth().onAuthStateChanged(function(user) {
-        if (user) {
-            document.getElementById('loading-screen').style.display = 'none';
-            document.getElementById('main-content').style.display = 'block';
-        } else {
-            window.location.href = 'login.html';
+            a.href = url; a.download = filename;
+            document.body.appendChild(a); a.click();
+            document.body.removeChild(a); URL.revokeObjectURL(url);
         }
-    });
-</script>
+
+        // ============================================================
+        // UTILITIES
+        // ============================================================
+        function round4(x) { return Math.round(x * 10000) / 10000; }
+        function escapeRegex(s) { return String(s).replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }
+        function escapeHtml(s)  { return String(s).replace(/[&<>"']/g, ch => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch])); }
+
+        // ============================================================
+        // GO
+        // ============================================================
+        initWebR();
+    </script>
 </body>
 </html>
