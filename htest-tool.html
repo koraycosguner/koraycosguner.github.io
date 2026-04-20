@@ -649,9 +649,11 @@ paste0(.json, "\\n---\\n", .summary_text)`;
 .x = data[["${rEsc(x)}"]]; .y = data[["${rEsc(y)}"]]
 ok = !is.na(.x) & !is.na(.y); .x = .x[ok]; .y = .y[ok]
 .fit = t.test(.x, .y, paired = TRUE, alternative = "${alt}", conf.level = ${conf})
+.mean1 = mean(.x); .mean2 = mean(.y)
 .json = paste0('RES:{"stat":', .fit$statistic,',"df":', .fit$parameter,',"p":', .fit$p.value,
                ',"ciLo":', .fit$conf.int[1], ',"ciHi":', .fit$conf.int[2],
-               ',"mean":', .fit$estimate, ',"n":', length(.x), '}:END')
+               ',"mean":', .fit$estimate, ',"mean1":', .mean1, ',"mean2":', .mean2,
+               ',"n":', length(.x), '}:END')
 .summary_text = paste(capture.output(print(.fit)), collapse="\\n")
 paste0(.json, "\\n---\\n", .summary_text)`;
                         metaJson = { x, y, alt, conf, alpha, label: `Paired t-test on (${x}, ${y})` };
@@ -760,8 +762,53 @@ paste0(.json, "\\n---\\n", .summary_text,
             return p < 0.0001 ? '< 0.0001' : parseFloat(p).toFixed(4);
         }
 
+        // Build the explicit H0 / H1 strings for the chosen test + alternative,
+        // so the user can verify the tool is actually running the right or
+        // left tail rather than the default two-sided.
+        function hypothesisText(meta) {
+            const altSym = (alt) => alt === 'two.sided' ? '\u2260' : (alt === 'greater' ? '>' : '<');
+            switch (selectedTest) {
+                case 'one-sample-t': {
+                    return {
+                        H0: `\u03BC = ${meta.mu}`,
+                        H1: `\u03BC ${altSym(meta.alt)} ${meta.mu}`
+                    };
+                }
+                case 'paired-t': {
+                    return {
+                        H0: `\u03BC<sub>${meta.x}</sub> = \u03BC<sub>${meta.y}</sub>  (mean difference = 0)`,
+                        H1: `\u03BC<sub>${meta.x}</sub> ${altSym(meta.alt)} \u03BC<sub>${meta.y}</sub>`
+                    };
+                }
+                case 'independent-t': {
+                    return {
+                        H0: 'Mean<sub>1</sub> = Mean<sub>2</sub>',
+                        H1: `Mean<sub>1</sub> ${altSym(meta.alt)} Mean<sub>2</sub>`
+                    };
+                }
+                case 'anova': {
+                    return {
+                        H0: 'All group means are equal',
+                        H1: 'At least one group mean differs (two-tailed by construction)'
+                    };
+                }
+                case 'chi-square': {
+                    return {
+                        H0: `${meta.x} and ${meta.y} are independent`,
+                        H1: `${meta.x} and ${meta.y} are associated (two-tailed by construction)`
+                    };
+                }
+            }
+            return { H0: '', H1: '' };
+        }
+
         function renderResults(s, summary, meta) {
-            $('resultsHeader').textContent = meta.label;
+            const h = hypothesisText(meta);
+            $('resultsHeader').innerHTML = `<div style="font-weight:600;color:var(--text-dark);margin-bottom:0.4rem;">${escapeHtml(meta.label)}</div>
+                <div style="display:grid;grid-template-columns:auto 1fr;gap:0.4rem 0.8rem;font-size:0.9rem;line-height:1.5;">
+                    <div style="font-weight:700;color:var(--iu-crimson);">H<sub>0</sub>:</div><div>${h.H0}</div>
+                    <div style="font-weight:700;color:var(--iu-crimson);">H<sub>1</sub>:</div><div>${h.H1}</div>
+                </div>`;
             const stats = [];
             const extras = [];
             switch (selectedTest) {
@@ -776,8 +823,10 @@ paste0(.json, "\\n---\\n", .summary_text,
                     stats.push({ label: 't-statistic', value: fmt(s.stat) });
                     stats.push({ label: 'df', value: fmt(s.df, 2) });
                     stats.push({ label: 'p-value', value: fmtP(s.p) });
-                    stats.push({ label: 'Mean diff', value: fmt(s.mean), secondary: `n = ${s.n} pairs` });
-                    stats.push({ label: `${(meta.conf*100).toFixed(0)}% CI`, value: `[${fmt(s.ciLo)}, ${fmt(s.ciHi)}]` });
+                    stats.push({ label: `Mean 1 (${meta.x})`, value: fmt(s.mean1) });
+                    stats.push({ label: `Mean 2 (${meta.y})`, value: fmt(s.mean2) });
+                    stats.push({ label: 'Mean diff (1 − 2)', value: fmt(s.mean), secondary: `n = ${s.n} pairs` });
+                    stats.push({ label: `${(meta.conf*100).toFixed(0)}% CI for diff`, value: `[${fmt(s.ciLo)}, ${fmt(s.ciHi)}]` });
                     break;
                 case 'independent-t':
                     stats.push({ label: 't-statistic', value: fmt(s.stat) });
