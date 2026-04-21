@@ -1400,6 +1400,34 @@
                     longHeaders = reshape.headers;
                 }
 
+                // Ground-truth reclassification: inspect the post-reshape long rows and
+                // move any per-alt-slope variable whose values are actually constant
+                // across alternatives within each occasion into the CI bucket. This
+                // covers the case where a user marked a choice-invariant column (e.g.,
+                // Summer) as Choice-Specific in the picker — the prediction UI should
+                // still ask for its value once per occasion, not once per alternative.
+                const isConstantAcrossAlts = (v) => {
+                    const seen = Object.create(null);
+                    for (const r of longRows) {
+                        const c = r[chidVar];
+                        if (c === undefined || c === '') continue;
+                        const val = r[v];
+                        if (!(c in seen)) seen[c] = val;
+                        else if (String(seen[c]) !== String(val)) return false;
+                    }
+                    return true;
+                };
+                {
+                    const truePerAltCS = [];
+                    const reclassifiedCI = [];
+                    for (const v of varsAltCS) {
+                        if (isConstantAcrossAlts(v)) reclassifiedCI.push(v);
+                        else truePerAltCS.push(v);
+                    }
+                    varsAltCS.length = 0; varsAltCS.push(...truePerAltCS);
+                    varsAltCI.push(...reclassifiedCI);
+                }
+
                 // Build mlogit formula parts (same logic as the original Shiny tool).
                 let part1 = varsSingle.length > 0 ? varsSingle.join(' + ') : '0';
                 let part2;
