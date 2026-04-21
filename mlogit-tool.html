@@ -816,6 +816,20 @@
             $('rawOutput').textContent = '';
             // Wide-format mapping panels:
             $('wideChoiceMap').innerHTML = '';
+            // Wide-format column selections. When user uploaded long data, ran a
+            // model, then uploads new data and tries to switch to wide, the wide
+            // panels would otherwise retain the previous file's checked columns
+            // (or references to columns that no longer exist) — uncheck everything
+            // and reset the reflevel dropdown so the wide flow starts clean.
+            $('wideChoiceCols').querySelectorAll('input[type="checkbox"]').forEach(cb => { cb.checked = false; });
+            $('wideAttrCols').querySelectorAll('input[type="checkbox"]').forEach(cb => { cb.checked = false; });
+            $('wideChidVar').value = '';
+            $('wideReflevel').innerHTML = '<option value="">-- Pick choice columns first --</option>';
+            $('wideReflevel').disabled = true;
+            // Long-format selections.
+            ['chidVar', 'altVar', 'choiceVar', 'reflevel'].forEach(id => { const el = $(id); if (el) el.value = ''; });
+            $('reflevel').innerHTML = '<option value="">-- Pick alternative variable first --</option>';
+            $('reflevel').disabled = true;
             // Reset run button label/state.
             $('runButton').textContent = 'Estimate Model';
             $('runButton').disabled = true;
@@ -1324,11 +1338,38 @@
                 $('runButton').textContent = 'Estimating…';
                 showStatus('Sending data and formula to R…', 'info');
 
+                // Clear any stale results from a prior run so the UI never mixes old
+                // equations or prediction state with freshly-estimated coefficients.
+                $('equationsBox').textContent = '';
+                $('predictionInputs').innerHTML = '';
+                $('predictionPrGrid').innerHTML = '';
+                $('predictionResult').classList.remove('visible');
+                lastResult = null;
+
                 const shape = document.querySelector('input[name="dataShape"]:checked').value;
                 const interceptType = document.querySelector('input[name="interceptType"]:checked').value;
-                const modelVars = getModelVars();
-                const varsSingle = modelVars.filter(v => v.type === 'single').map(v => v.name);
-                const varsAlt    = modelVars.filter(v => v.type === 'alt_specific').map(v => v.name);
+
+                // Split model variables by source: CS (alt-varying data) vs CI
+                // (choice-invariant data). Both are needed to build the R formula,
+                // but prediction UI treats CI vars as one shared input per var
+                // instead of one input per alternative (the value doesn't vary by
+                // alt within an occasion).
+                const csSelected = [];
+                $('csVars').querySelectorAll('.cs-row').forEach(row => {
+                    const cb = row.querySelector('input.cs-var-cb');
+                    if (!cb || !cb.checked) return;
+                    const slope = row.querySelector('input.cs-slope-radio:checked');
+                    const type  = slope && slope.value === 'alt_specific' ? 'alt_specific' : 'single';
+                    csSelected.push({ name: cb.value, type });
+                });
+                const ciSelected = [];
+                $('ciVars').querySelectorAll('input.ci-var-cb:checked').forEach(i => {
+                    if (!i.disabled) ciSelected.push({ name: i.value });
+                });
+                const varsSingle  = csSelected.filter(v => v.type === 'single').map(v => v.name);        // generic coef, per-alt data
+                const varsAltCS   = csSelected.filter(v => v.type === 'alt_specific').map(v => v.name);  // per-alt coef, per-alt data
+                const varsAltCI   = ciSelected.map(v => v.name);                                          // per-alt coef, shared data
+                const varsAlt     = [...varsAltCS, ...varsAltCI];                                         // combined for R formula
 
                 // Apply filter
                 const dataRows = getFilteredRows();
@@ -1415,7 +1456,7 @@ paste(c(.coef_json, .alts_json, .fit_json, .summary_marker), collapse = '\\n---M
                     alts:  JSON.parse(altsMatch[1]),
                     reflevel,
                     interceptType,
-                    varsSingle, varsAlt,
+                    varsSingle, varsAlt, varsAltCS, varsAltCI,
                     choiceVar, altVar, chidVar,
                     formula: formulaStr,
                     fit: JSON.parse(fitMatch[1]),
@@ -1661,26 +1702,51 @@ for (col in names(data)) {
         // INTERACTIVE PREDICTION
         // ============================================================
         function setupPredictionUI() {
-            const { coefs, alts, reflevel: ref, varsSingle, varsAlt } = lastResult;
+            const { alts, reflevel: ref, varsSingle, varsAltCS = [], varsAltCI = [] } = lastResult;
             const nonBaseAlts = alts.filter(a => a !== ref);
-            const allVars = [...varsSingle, ...varsAlt];
 
-            // Build inputs: for each non-base alt, one input per variable.
-            const blocks = nonBaseAlts.map(alt => {
-                const inputs = allVars.map(v => `
+            // Per-alt inputs: variables whose value varies across alternatives within
+            // an occasion (varsSingle = CS single-slope, varsAltCS = CS per-alt slope).
+            const perAltVars = [...varsSingle, ...varsAltCS];
+
+            let html = '';
+
+            // Shared inputs: choice-invariant variables have the same value for every
+            // alternative within an occasion, so the user should enter each value once.
+            if (varsAltCI.length > 0) {
+                const sharedInputs = varsAltCI.map(v => `
                     <div class="prediction-input-group">
                         <label>${escapeHtml(displayName(v))}</label>
-                        <input type="number" step="any" class="pred-input" data-alt="${escapeHtml(alt)}" data-var="${escapeHtml(v)}" placeholder="value">
+                        <input type="number" step="any" class="pred-input-shared" data-var="${escapeHtml(v)}" placeholder="value">
                     </div>
                 `).join('');
-                return `
+                html += `
                     <div class="prediction-alt-block">
-                        <div class="alt-name">${escapeHtml(alt)}</div>
-                        <div class="prediction-inputs">${inputs}</div>
+                        <div class="alt-name">Shared across alternatives <span style="font-weight:400; color:var(--text-light); font-size:0.85rem;">(choice-invariant)</span></div>
+                        <div class="prediction-inputs">${sharedInputs}</div>
                     </div>
                 `;
-            }).join('');
-            $('predictionInputs').innerHTML = blocks;
+            }
+
+            // Per-alt blocks for variables that genuinely vary by alternative.
+            if (perAltVars.length > 0) {
+                html += nonBaseAlts.map(alt => {
+                    const inputs = perAltVars.map(v => `
+                        <div class="prediction-input-group">
+                            <label>${escapeHtml(displayName(v))}</label>
+                            <input type="number" step="any" class="pred-input" data-alt="${escapeHtml(alt)}" data-var="${escapeHtml(v)}" placeholder="value">
+                        </div>
+                    `).join('');
+                    return `
+                        <div class="prediction-alt-block">
+                            <div class="alt-name">${escapeHtml(alt)}</div>
+                            <div class="prediction-inputs">${inputs}</div>
+                        </div>
+                    `;
+                }).join('');
+            }
+
+            $('predictionInputs').innerHTML = html;
             $('predictionResult').classList.remove('visible');
         }
 
@@ -1688,7 +1754,7 @@ for (col in names(data)) {
 
         function computePrediction() {
             if (!lastResult) return;
-            const { coefs, alts, reflevel: ref, varsSingle, varsAlt, interceptType } = lastResult;
+            const { coefs, alts, reflevel: ref, varsSingle, varsAltCS = [], varsAltCI = [], interceptType } = lastResult;
             const nonBaseAlts = alts.filter(a => a !== ref);
 
             // Pre-process coefs into a lookup by (alt, var) and generic.
@@ -1715,13 +1781,20 @@ for (col in names(data)) {
                 }
             }
 
-            // Read user inputs.
-            const inputs = {};
+            // Read user inputs: per-alt fields for alt-varying vars, shared fields
+            // for choice-invariant vars.
+            const perAltInputs = {};
             $('predictionInputs').querySelectorAll('.pred-input').forEach(el => {
                 const alt = el.dataset.alt;
                 const v   = el.dataset.var;
                 const num = parseFloat(el.value);
-                inputs[`${alt}::${v}`] = isNaN(num) ? 0 : num;
+                perAltInputs[`${alt}::${v}`] = isNaN(num) ? 0 : num;
+            });
+            const sharedInputs = {};
+            $('predictionInputs').querySelectorAll('.pred-input-shared').forEach(el => {
+                const v = el.dataset.var;
+                const num = parseFloat(el.value);
+                sharedInputs[v] = isNaN(num) ? 0 : num;
             });
 
             // Compute utilities for each non-base alt.
@@ -1731,12 +1804,19 @@ for (col in names(data)) {
                 if (interceptType === 'alt_specific') {
                     U += altIntercept[alt] !== undefined ? altIntercept[alt] : (genericIntercept || 0);
                 }
+                // varsSingle: generic coef, per-alt data.
                 for (const v of varsSingle) {
-                    if (genericSlope[v] !== undefined) U += genericSlope[v] * inputs[`${alt}::${v}`];
+                    if (genericSlope[v] !== undefined) U += genericSlope[v] * (perAltInputs[`${alt}::${v}`] || 0);
                 }
-                for (const v of varsAlt) {
+                // varsAltCS: per-alt coef, per-alt data.
+                for (const v of varsAltCS) {
                     const beta = altSlope[`${alt}::${v}`];
-                    if (beta !== undefined) U += beta * inputs[`${alt}::${v}`];
+                    if (beta !== undefined) U += beta * (perAltInputs[`${alt}::${v}`] || 0);
+                }
+                // varsAltCI: per-alt coef, shared data — reuse the single shared input.
+                for (const v of varsAltCI) {
+                    const beta = altSlope[`${alt}::${v}`];
+                    if (beta !== undefined) U += beta * (sharedInputs[v] || 0);
                 }
                 utilities[alt] = U;
             }
