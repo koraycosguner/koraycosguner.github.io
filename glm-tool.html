@@ -1130,6 +1130,28 @@
                         </p>
                     </div>
                 </div>
+
+                <!-- Batch Prediction Section -->
+                <div class="prediction-section" id="batchPredictionSection" style="display: none;">
+                    <h3 style="margin-bottom: 1rem; color: var(--text-dark);">Batch Prediction from CSV</h3>
+                    <p style="font-size: 0.85rem; color: var(--text-light); margin-bottom: 1rem;">
+                        Upload a CSV whose columns include the model's independent variables. One prediction is computed per row; extra columns (e.g., row labels) are preserved in the download.
+                    </p>
+                    <div style="display: flex; gap: 0.75rem; align-items: center; flex-wrap: wrap; margin-bottom: 1rem;">
+                        <input type="file" id="batchPredictFile" accept=".csv" style="font-size: 0.9rem;">
+                        <button class="btn btn-primary" id="batchPredictButton">Run Batch Prediction</button>
+                    </div>
+                    <div id="batchPredictStatus" style="font-size: 0.85rem; margin-bottom: 0.75rem;"></div>
+                    <div id="batchPredictPreview" style="display: none;">
+                        <p style="font-size: 0.85rem; color: var(--text-light); margin-bottom: 0.5rem;" id="batchPredictSummary"></p>
+                        <div class="preview-table-container" style="max-height: 400px; overflow: auto;">
+                            <table class="preview-table" id="batchPredictTable"></table>
+                        </div>
+                        <div style="margin-top: 1rem;">
+                            <button class="btn btn-secondary" id="downloadBatchPredictions">Download Predictions CSV</button>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </main>
@@ -1155,6 +1177,8 @@
         let lastPredictionValues = null; // Store prediction input values for R script
         let lastInteractions = null; // Store interaction terms for prediction
         let lastDvTransform = null; // Store DV transform for back-transformation in prediction
+        let lastBatchPredictionRows = null; // Parsed uploaded rows + computed predictions for download
+        let lastBatchPredictionHeaders = null; // Column order for download CSV
 
         // DOM Elements
         const loadingOverlay = document.getElementById('loadingOverlay');
@@ -2645,6 +2669,13 @@ summary(model)
             `;
 
             predictionSection.style.display = 'block';
+            document.getElementById('batchPredictionSection').style.display = 'block';
+            // Reset any previous batch-prediction UI state
+            document.getElementById('batchPredictStatus').textContent = '';
+            document.getElementById('batchPredictPreview').style.display = 'none';
+            document.getElementById('batchPredictFile').value = '';
+            lastBatchPredictionRows = null;
+            lastBatchPredictionHeaders = null;
         }
 
         // Calculate prediction
@@ -2846,6 +2877,210 @@ ${predictCall}
             const a = document.createElement('a');
             a.href = url;
             a.download = 'regression_with_prediction.R';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        });
+
+        // ---------- Batch prediction from CSV ----------
+
+        // Compute a single prediction for one uploaded row, given an already-built
+        // coefLookup and the intercept. Mirrors the single-row handler's math so
+        // predictions stay consistent between the two paths.
+        function computeBatchPrediction(row, coefLookup, intercept) {
+            let xBeta = intercept;
+            const rowValues = {}; // for interaction terms
+
+            for (const iv of lastIndepVarsData) {
+                const isNumeric = csvData.columnTypes[iv.name] === 'numeric';
+                const rawVal = row[iv.name];
+
+                if (isNumeric) {
+                    let val = parseFloat(rawVal);
+                    if (isNaN(val) || rawVal === '' || rawVal === undefined || rawVal === null) {
+                        // Mirror the single-row UI: fall back to the training mean.
+                        val = calculateMean(iv.name);
+                    }
+                    rowValues[iv.name] = val;
+
+                    if (iv.transform === 'log') {
+                        const coef = coefLookup[`log(\`${iv.name}\`)`] || coefLookup[`log(${iv.name})`] || 0;
+                        xBeta += coef * Math.log(val);
+                    } else if (iv.transform === 'log1p') {
+                        const coef = coefLookup[`log(\`${iv.name}\` + 1)`] || coefLookup[`log(${iv.name} + 1)`] || 0;
+                        xBeta += coef * Math.log(val + 1);
+                    } else if (iv.transform === 'quadratic') {
+                        const coefLinear = coefLookup[`\`${iv.name}\``] || coefLookup[iv.name] || 0;
+                        const coefSquared = coefLookup[`I(\`${iv.name}\`^2)`] || coefLookup[`I(${iv.name}^2)`] || 0;
+                        xBeta += coefLinear * val + coefSquared * val * val;
+                    } else {
+                        const coef = coefLookup[`\`${iv.name}\``] || coefLookup[iv.name] || 0;
+                        xBeta += coef * val;
+                    }
+                } else {
+                    const selectedVal = (rawVal !== undefined && rawVal !== '' && rawVal !== null)
+                        ? rawVal : calculateMode(iv.name);
+                    rowValues[iv.name] = selectedVal;
+                    const coef = coefLookup[`factor(\`${iv.name}\`)${selectedVal}`]
+                        || coefLookup[`factor(${iv.name})${selectedVal}`] || 0;
+                    xBeta += coef;
+                }
+            }
+
+            if (lastInteractions && lastInteractions.length > 0) {
+                lastInteractions.forEach(int => {
+                    const v1 = rowValues[int.var1], v2 = rowValues[int.var2];
+                    if (v1 === undefined || v2 === undefined) return;
+                    const t1 = int.transform1 === 'log' ? Math.log(v1)
+                        : int.transform1 === 'log1p' ? Math.log(v1 + 1) : v1;
+                    const t2 = int.transform2 === 'log' ? Math.log(v2)
+                        : int.transform2 === 'log1p' ? Math.log(v2 + 1) : v2;
+                    const term1 = int.transform1 === 'log' ? `log(${int.var1})`
+                        : int.transform1 === 'log1p' ? `log(${int.var1} + 1)` : int.var1;
+                    const term2 = int.transform2 === 'log' ? `log(${int.var2})`
+                        : int.transform2 === 'log1p' ? `log(${int.var2} + 1)` : int.var2;
+                    const coef = coefLookup[`I(${term1} * ${term2})`]
+                        || coefLookup[`I(${term2} * ${term1})`] || 0;
+                    xBeta += coef * t1 * t2;
+                });
+            }
+
+            if (lastModelType === 'linear') {
+                if (lastDvTransform === 'log') return Math.exp(xBeta);
+                if (lastDvTransform === 'log1p') return Math.exp(xBeta) - 1;
+                return xBeta;
+            }
+            if (lastModelType === 'poisson') return Math.exp(xBeta);
+            if (lastModelType === 'binomial') return Math.exp(xBeta) / (1 + Math.exp(xBeta));
+            return xBeta;
+        }
+
+        // Column name for the appended prediction in batch output.
+        function batchPredictionColumnName() {
+            if (lastModelType === 'binomial') return `Pred_Prob_${lastDepVar}`;
+            if (lastModelType === 'poisson') return `Pred_Mean_${lastDepVar}`;
+            return `Pred_${lastDepVar}`;
+        }
+
+        function csvEscape(v) {
+            if (v === null || v === undefined) return '';
+            const s = String(v);
+            return /[",\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
+        }
+
+        document.getElementById('batchPredictButton').addEventListener('click', () => {
+            const statusEl = document.getElementById('batchPredictStatus');
+            const previewEl = document.getElementById('batchPredictPreview');
+            const fileInput = document.getElementById('batchPredictFile');
+
+            if (!lastModelCoefs || !lastIndepVarsData) {
+                statusEl.style.color = 'var(--iu-crimson)';
+                statusEl.textContent = 'Fit a model first, then upload a CSV to score.';
+                previewEl.style.display = 'none';
+                return;
+            }
+            if (!fileInput.files || fileInput.files.length === 0) {
+                statusEl.style.color = 'var(--iu-crimson)';
+                statusEl.textContent = 'Choose a CSV file to score.';
+                previewEl.style.display = 'none';
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                let headers, rows;
+                try {
+                    const parsed = parseCSV(e.target.result);
+                    headers = parsed.headers;
+                    rows = parsed.data;
+                } catch (err) {
+                    statusEl.style.color = 'var(--iu-crimson)';
+                    statusEl.textContent = 'Could not parse CSV: ' + err.message;
+                    previewEl.style.display = 'none';
+                    return;
+                }
+
+                // Validate that every IV the model uses is present as a column.
+                const missing = lastIndepVarsData.map(iv => iv.name).filter(n => !headers.includes(n));
+                if (missing.length > 0) {
+                    statusEl.style.color = 'var(--iu-crimson)';
+                    statusEl.textContent = 'CSV is missing required column(s): ' + missing.join(', ');
+                    previewEl.style.display = 'none';
+                    return;
+                }
+                if (rows.length === 0) {
+                    statusEl.style.color = 'var(--iu-crimson)';
+                    statusEl.textContent = 'CSV has no data rows.';
+                    previewEl.style.display = 'none';
+                    return;
+                }
+
+                // Build the coefficient lookup once, at the current significance level.
+                const adjustedCoefs = getAdjustedCoefficients(lastModelCoefs, currentSignificanceLevel);
+                const interceptRow = adjustedCoefs.find(r => r.Variable === '(Intercept)');
+                const intercept = interceptRow ? interceptRow.adjustedEstimate : 0;
+                const coefLookup = {};
+                adjustedCoefs.forEach(r => { coefLookup[r.Variable] = r.adjustedEstimate; });
+
+                const predColName = batchPredictionColumnName();
+                const outRows = rows.map(row => {
+                    const pred = computeBatchPrediction(row, coefLookup, intercept);
+                    return { ...row, [predColName]: isFinite(pred) ? pred.toFixed(6) : '' };
+                });
+
+                // Preserve original column order and append the prediction column at the end.
+                const outHeaders = headers.includes(predColName) ? headers : [...headers, predColName];
+
+                lastBatchPredictionRows = outRows;
+                lastBatchPredictionHeaders = outHeaders;
+
+                // Build the preview table (first 10 rows).
+                const preview = outRows.slice(0, 10);
+                let html = '<thead><tr>';
+                outHeaders.forEach(h => { html += `<th>${h}</th>`; });
+                html += '</tr></thead><tbody>';
+                preview.forEach(r => {
+                    html += '<tr>';
+                    outHeaders.forEach(h => { html += `<td>${r[h] !== undefined ? r[h] : ''}</td>`; });
+                    html += '</tr>';
+                });
+                html += '</tbody>';
+                document.getElementById('batchPredictTable').innerHTML = html;
+
+                const sigNote = currentSignificanceLevel === 'all'
+                    ? 'using coefficients at any p-value'
+                    : `using only coefficients with p-value < ${currentSignificanceLevel}`;
+                document.getElementById('batchPredictSummary').textContent =
+                    `Scored ${outRows.length} row${outRows.length === 1 ? '' : 's'} (${sigNote}). Showing first ${preview.length}.`;
+
+                statusEl.style.color = 'var(--text-light)';
+                statusEl.textContent = '';
+                previewEl.style.display = 'block';
+            };
+            reader.onerror = () => {
+                statusEl.style.color = 'var(--iu-crimson)';
+                statusEl.textContent = 'Could not read file.';
+                previewEl.style.display = 'none';
+            };
+            reader.readAsText(fileInput.files[0]);
+        });
+
+        document.getElementById('downloadBatchPredictions').addEventListener('click', () => {
+            if (!lastBatchPredictionRows || !lastBatchPredictionHeaders) {
+                showStatus('Run the batch prediction first.', 'error');
+                return;
+            }
+            const headers = lastBatchPredictionHeaders;
+            const lines = [headers.map(csvEscape).join(',')];
+            lastBatchPredictionRows.forEach(r => {
+                lines.push(headers.map(h => csvEscape(r[h] !== undefined ? r[h] : '')).join(','));
+            });
+            const blob = new Blob([lines.join('\n')], { type: 'text/csv' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'predictions.csv';
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
