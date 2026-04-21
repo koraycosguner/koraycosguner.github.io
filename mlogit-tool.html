@@ -562,6 +562,18 @@
                     <table class="coef-table" id="coefTable"></table>
                 </div>
                 <p class="copy-hint">Select the table and copy (Ctrl+C / Cmd+C) to paste into Excel.</p>
+                <div style="margin-top: 0.75rem; display: flex; gap: 0.75rem; align-items: center; flex-wrap: wrap;">
+                    <label for="coefCsvDecimals" style="font-size: 0.9rem; color: var(--text-dark);">Decimals:</label>
+                    <select id="coefCsvDecimals" style="padding: 0.35rem 0.5rem; font-size: 0.9rem; border: 1px solid var(--border); border-radius: 6px; background: var(--white);">
+                        <option value="full">Full (R output)</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option value="4" selected>4</option>
+                        <option value="6">6</option>
+                        <option value="8">8</option>
+                    </select>
+                    <button class="btn btn-secondary" id="downloadCoefCsvBtn" style="padding: 0.45rem 1rem; font-size: 0.85rem;">Download Estimates CSV</button>
+                </div>
 
                 <h3 style="margin-top: 1.25rem; margin-bottom: 0.5rem; color: var(--text-dark); font-size: 1.1rem;">Model Fit</h3>
                 <div class="fit-stats" id="fitStats"></div>
@@ -1763,6 +1775,36 @@ for (col in names(data)) {
         $('downloadScriptBtn').addEventListener('click', () => {
             if (!lastResult) return;
             downloadBlob(lastResult.rScript, 'mlogit_analysis.R', 'text/plain');
+        });
+        $('downloadCoefCsvBtn').addEventListener('click', () => {
+            if (!lastResult || !lastResult.coefs || lastResult.coefs.length === 0) {
+                showStatus('No estimates to download. Estimate a model first.', 'error', 4000);
+                return;
+            }
+            const decSel = $('coefCsvDecimals').value;
+            const fmt = (v) => {
+                if (v === null || v === undefined) return '';
+                const n = Number(v);
+                if (!isFinite(n)) return String(v);
+                if (decSel === 'full') return String(n);
+                return n.toFixed(parseInt(decSel, 10));
+            };
+            const csvEsc = (v) => {
+                if (v === null || v === undefined) return '';
+                const s = String(v);
+                return /[",\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
+            };
+            const headers = ['Variable', 'Estimate', 'Std. Error', 'p-value'];
+            const lines = [headers.map(csvEsc).join(',')];
+            lastResult.coefs.forEach(c => {
+                lines.push([
+                    csvEsc(c.name),
+                    csvEsc(fmt(c.est)),
+                    csvEsc(fmt(c.se)),
+                    csvEsc(fmt(c.p))
+                ].join(','));
+            });
+            downloadBlob(lines.join('\n'), 'mlogit_coefficient_estimates.csv', 'text/csv');
         });
         function downloadBlob(text, filename, type) {
             const blob = new Blob([text], { type });
