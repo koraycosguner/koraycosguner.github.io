@@ -790,11 +790,15 @@
             $('filterConditions').classList.remove('visible');
             const fullRadio = document.querySelector('input[name="dataChoice"][value="full"]');
             if (fullRadio) fullRadio.checked = true;
-            // Shape selector: revert to long.
-            const longRadio = document.querySelector('input[name="dataShape"][value="long"]');
-            if (longRadio) longRadio.checked = true;
-            $('longFields').style.display = 'block';
-            $('wideFields').style.display = 'none';
+            // Shape selector: keep the user's current choice. Forcing it back to
+            // long on every upload makes it impossible to load wide data — the
+            // radio flips and the wide config panel is hidden before the user
+            // can map columns. Whatever shape they picked before uploading is
+            // what they want applied to this file.
+            const currentShape = document.querySelector('input[name="dataShape"]:checked');
+            const shapeVal = currentShape ? currentShape.value : 'long';
+            $('longFields').style.display = shapeVal === 'long' ? 'block' : 'none';
+            $('wideFields').style.display = shapeVal === 'wide' ? 'block' : 'none';
             // Variable picker: clear both checkbox lists; refreshVarSections() will
             // rebuild them once the new data populates the candidate selectors.
             $('ciVars').innerHTML = '<p class="var-list-empty">No eligible variables yet.</p>';
