@@ -1076,6 +1076,18 @@
                     <table class="coef-table" id="coefTable"></table>
                 </div>
                 <p class="copy-hint">Select the table and copy (Ctrl+C / Cmd+C) to paste into Excel.</p>
+                <div style="margin-top: 0.75rem; display: flex; gap: 0.75rem; align-items: center; flex-wrap: wrap;">
+                    <label for="coefCsvDecimals" style="font-size: 0.9rem; color: var(--text-dark);">Decimals:</label>
+                    <select id="coefCsvDecimals" style="padding: 0.35rem 0.5rem; font-size: 0.9rem; border: 1px solid var(--border, #cbd5e1); border-radius: 6px; background: white;">
+                        <option value="full">Full (R output)</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option value="4" selected>4</option>
+                        <option value="6">6</option>
+                        <option value="8">8</option>
+                    </select>
+                    <button class="btn btn-secondary" id="downloadCoefCsv">Download Estimates CSV</button>
+                </div>
 
                 <!-- Estimated Equation -->
                 <div class="equation-section" id="equationSection">
@@ -3064,6 +3076,43 @@ ${predictCall}
                 previewEl.style.display = 'none';
             };
             reader.readAsText(fileInput.files[0]);
+        });
+
+        // Download coefficient estimates as CSV
+        document.getElementById('downloadCoefCsv').addEventListener('click', () => {
+            if (!lastModelCoefs || lastModelCoefs.length === 0) {
+                showStatus('No estimates to download. Run a regression first.', 'error');
+                return;
+            }
+            const decSel = document.getElementById('coefCsvDecimals').value;
+            const fmt = (v) => {
+                if (v === null || v === undefined || v === '') return '';
+                if (decSel === 'full') return String(v);
+                const n = parseFloat(v);
+                if (!isFinite(n)) return String(v);
+                return n.toFixed(parseInt(decSel, 10));
+            };
+            // Build header list: Variable first, then all other keys in the order they appear
+            const keySet = new Set();
+            lastModelCoefs.forEach(r => Object.keys(r).forEach(k => keySet.add(k)));
+            keySet.delete('Variable');
+            const headers = ['Variable', ...keySet];
+            const lines = [headers.map(csvEscape).join(',')];
+            lastModelCoefs.forEach(r => {
+                lines.push(headers.map(h => {
+                    if (h === 'Variable') return csvEscape(r[h] !== undefined ? r[h] : '');
+                    return csvEscape(fmt(r[h]));
+                }).join(','));
+            });
+            const blob = new Blob([lines.join('\n')], { type: 'text/csv' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'coefficient_estimates.csv';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
         });
 
         document.getElementById('downloadBatchPredictions').addEventListener('click', () => {
