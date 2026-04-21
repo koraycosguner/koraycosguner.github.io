@@ -1948,7 +1948,7 @@ Profit = Revenue - Cost * Sales" oninput="parseEquations()"></textarea>
                 decVars.forEach((dv, i) => {
                     code += `cat("  ${dv.name} =", result$par[${i + 1}], "\\n")\n`;
                 });
-                code += `cat("${goal === 'maximize' ? 'Maximum' : 'Minimum'} ${objVar} =", ${goal === 'maximize' ? '-' : ''}result$value, "\\n")\n`;
+                code += `cat("${goal === 'maximize' ? 'Maximum' : 'Minimum'} ${objVar} =", result$value, "\\n")\n`;
             }
 
             document.getElementById('rCodeOutput').textContent = code;
