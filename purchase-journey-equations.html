@@ -1,0 +1,1584 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>FashionNext &mdash; Consumer Purchase Journey</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;800&family=Source+Serif+4:opsz,wght@8..60,300;8..60,400;8..60,600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<script>
+  // Default MathJax delimiters: \( \) for inline, $$ $$ for display.
+  // Do NOT enable $...$ as inline math — dollar signs in plain text would
+  // otherwise be parsed as math, and the % character that follows would
+  // be read as a TeX comment marker, eating the rest of the line.
+  window.MathJax = {
+    tex: { displayMath: [['$$', '$$']] },
+    svg: { fontCache: 'global' }
+  };
+</script>
+<script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+<style>
+  :root {
+    --crimson: #990000;
+    --crimson-bright: #b30000;
+    --crimson-dark: #4a0000;
+    --crimson-deep: #2d0000;
+    --crimson-light: #d4a8a8;
+    --crimson-soft: #fbf3f3;
+    --crimson-tint: #f6e8e8;
+    --gold: #b8941f;
+    --bg: #faf6f6;
+    --paper: #fdfbfb;
+    --card: #ffffff;
+    --text: #2a2225;
+    --text-dark: #1a1010;
+    --text-light: #8a7d7d;
+    --text-muted: #b8a8a8;
+    --border: #ede4e4;
+    --border-strong: #d8c5c5;
+    --green: #2d6a2e;
+    --green-bg: #f0f7f0;
+    --serif: 'Source Serif 4', Georgia, 'Times New Roman', serif;
+    --display: 'Playfair Display', Georgia, serif;
+    --sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    --mono: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+    --shadow-sm: 0 1px 3px rgba(74,0,0,0.04), 0 1px 2px rgba(74,0,0,0.03);
+    --shadow-md: 0 4px 12px rgba(74,0,0,0.06), 0 2px 4px rgba(74,0,0,0.04);
+    --shadow-lg: 0 12px 32px rgba(74,0,0,0.10), 0 4px 8px rgba(74,0,0,0.05);
+    --shadow-xl: 0 20px 48px rgba(74,0,0,0.14), 0 6px 12px rgba(74,0,0,0.08);
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; scroll-padding-top: 80px; }
+  body {
+    font-family: var(--serif);
+    background: #f0e9e9;
+    background-image:
+      radial-gradient(ellipse 800px 600px at 10% -10%, rgba(153,0,0,0.06) 0%, transparent 50%),
+      radial-gradient(ellipse 600px 500px at 95% 110%, rgba(74,0,0,0.07) 0%, transparent 50%);
+    background-attachment: fixed;
+    color: var(--text);
+    font-size: 16px;
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  /* READING PROGRESS BAR */
+  .progress-bar {
+    position: fixed; top: 0; left: 0; right: 0;
+    height: 3px;
+    background: rgba(74,0,0,0.08);
+    z-index: 100;
+  }
+  .progress-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--crimson), var(--crimson-bright), var(--crimson));
+    width: 0%;
+    transition: width 0.1s ease-out;
+    box-shadow: 0 0 8px rgba(153,0,0,0.4);
+  }
+
+  /* LAYOUT */
+  .page-wrapper { max-width: 1040px; margin: 0 auto; padding: 24px 24px 60px; }
+  .main-content { min-width: 0; }
+
+  /* ============ ANIMATIONS ============ */
+  @media (prefers-reduced-motion: no-preference) {
+    /* Reveal-on-scroll: blocks fade up into view */
+    .reveal { opacity: 0; transform: translateY(28px); transition: opacity 0.7s cubic-bezier(.2,.7,.2,1), transform 0.7s cubic-bezier(.2,.7,.2,1); will-change: opacity, transform; }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+
+    /* Stagger children inside .reveal-stagger when parent becomes visible */
+    .reveal-stagger > * { opacity: 0; transform: translateY(14px); transition: opacity 0.55s cubic-bezier(.2,.7,.2,1), transform 0.55s cubic-bezier(.2,.7,.2,1); }
+    .reveal-stagger.visible > * { opacity: 1; transform: translateY(0); }
+    .reveal-stagger.visible > *:nth-child(1) { transition-delay: 0.04s; }
+    .reveal-stagger.visible > *:nth-child(2) { transition-delay: 0.14s; }
+    .reveal-stagger.visible > *:nth-child(3) { transition-delay: 0.24s; }
+
+    /* Page-load entrance for the header */
+    @keyframes header-rise { from { opacity: 0; transform: translateY(-14px); } to { opacity: 1; transform: translateY(0); } }
+    .header .lecture-tag { animation: header-rise 0.6s 0s cubic-bezier(.2,.7,.2,1) both; }
+    .header h1            { animation: header-rise 0.7s 0.08s cubic-bezier(.2,.7,.2,1) both; }
+    .header .sub          { animation: header-rise 0.7s 0.18s cubic-bezier(.2,.7,.2,1) both; }
+
+    /* Subtle drifting shimmer on the header gradient */
+    @keyframes header-shimmer { 0% { background-position: 0% 50%; } 100% { background-position: 100% 50%; } }
+    .header { background-size: 200% 200%; animation: header-shimmer 18s ease-in-out infinite alternate; }
+
+    /* Floating CTA: subtle attention bounce when first shown */
+    @keyframes cta-pop { 0% { opacity: 0; transform: translateY(28px) scale(0.85); } 60% { transform: translateY(-3px) scale(1.04); } 100% { opacity: 1; transform: translateY(0) scale(1); } }
+    .floating-cta.visible { animation: cta-pop 0.5s cubic-bezier(.2,.7,.2,1) both; }
+
+    /* Section number badge gets a tiny pop on reveal */
+    .reveal.visible .section-header .num { animation: badge-pop 0.5s 0.1s cubic-bezier(.4,1.6,.6,1) both; }
+    @keyframes badge-pop { 0% { transform: scale(0.7); } 70% { transform: scale(1.08); } 100% { transform: scale(1); } }
+
+    /* Channel hero shimmer line on reveal */
+    .channel-hero { position: relative; overflow: hidden; }
+    .reveal.visible .channel-hero::after {
+      content: ''; position: absolute; top: 0; left: -120%; height: 100%; width: 60%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.55), transparent);
+      transform: skewX(-20deg);
+      animation: hero-sweep 1.4s 0.2s cubic-bezier(.2,.7,.2,1) both;
+    }
+    @keyframes hero-sweep { from { left: -120%; } to { left: 220%; } }
+
+    /* Equation block: subtle scale on hover */
+    .equation-block { transition: transform 0.18s cubic-bezier(.2,.7,.2,1), box-shadow 0.2s; }
+    .equation-block:hover { transform: translateY(-2px); }
+  }
+
+  /* HEADER */
+  .header {
+    background: linear-gradient(135deg, var(--crimson) 0%, var(--crimson-dark) 70%, var(--crimson-deep) 100%);
+    padding: 56px 48px 44px;
+    border-radius: 16px 16px 0 0;
+    position: relative;
+    overflow: hidden;
+    box-shadow: var(--shadow-lg);
+  }
+  .header::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image:
+      radial-gradient(circle at 88% 18%, rgba(255,255,255,0.10) 0%, transparent 40%),
+      radial-gradient(circle at 12% 88%, rgba(255,255,255,0.06) 0%, transparent 40%);
+    pointer-events: none;
+  }
+  .header::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
+  }
+  .header-inner { position: relative; }
+  .header .lecture-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--crimson-light);
+    font-family: var(--sans);
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    font-weight: 700;
+    margin-bottom: 14px;
+    padding: 6px 12px;
+    border: 1px solid rgba(212,168,168,0.3);
+    border-radius: 20px;
+    background: rgba(255,255,255,0.04);
+  }
+  .header .lecture-tag::before {
+    content: '';
+    width: 6px; height: 6px;
+    background: var(--crimson-light);
+    border-radius: 50%;
+    box-shadow: 0 0 8px var(--crimson-light);
+  }
+  .header h1 {
+    font-family: var(--display);
+    color: #fff;
+    font-size: clamp(22px, 3.2vw, 34px);
+    font-weight: 700;
+    line-height: 1.1;
+    margin-bottom: 14px;
+    letter-spacing: -0.02em;
+    white-space: nowrap;
+    /* Mobile breakpoints below allow this to wrap so it doesn't overflow
+       on phone widths. */
+  }
+  .header .sub {
+    color: rgba(255,255,255,0.7);
+    font-family: var(--sans);
+    font-size: clamp(13px, 1.5vw, 15px);
+    font-weight: 400;
+    letter-spacing: 0.2px;
+  }
+
+  /* BODY */
+  .body-card {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-top: none;
+    border-radius: 0 0 16px 16px;
+    padding: 44px 48px 56px;
+    box-shadow: var(--shadow-md);
+  }
+
+  /* CONTEXT - editorial style */
+  .lead {
+    font-family: var(--serif);
+    font-size: 17.5px;
+    line-height: 1.7;
+    color: #3a2f30;
+    margin-bottom: 36px;
+    padding: 8px 0 4px;
+    font-weight: 400;
+  }
+  .lead strong { color: var(--crimson-dark); font-weight: 600; }
+  .lead .firstchar {
+    font-family: var(--display);
+    float: left;
+    font-size: 64px;
+    line-height: 0.85;
+    margin: 8px 14px -2px 0;
+    padding: 0;
+    color: var(--crimson);
+    font-weight: 700;
+    /* Pull the cap up so its top aligns with the cap-height of the first text
+       line, not the ascender (Playfair has a tall ascender that otherwise
+       creates a visual gap above the cap). */
+  }
+
+  /* OVERVIEW CARDS */
+  .overview-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-bottom: 36px; }
+  @media (max-width: 720px) { .overview-grid { grid-template-columns: 1fr; } }
+  .overview-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 22px 22px 24px;
+    box-shadow: var(--shadow-sm);
+    position: relative;
+  }
+  .overview-card .card-header {
+    font-family: var(--sans);
+    font-size: 10.5px;
+    color: var(--text-light);
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    font-weight: 700;
+    margin-bottom: 16px;
+  }
+
+  /* PRODUCT TILES */
+  .portfolio-tiles { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .tier-tile {
+    padding: 14px 10px 14px;
+    border-radius: 10px;
+    text-align: center;
+    position: relative;
+    border: 1px solid var(--border);
+    transition: transform 0.18s, box-shadow 0.18s;
+    /* Flex column so product names can center in a fixed-height area
+       and cost stays pinned at the bottom across all three tiles. */
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+  }
+  .tier-tile:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
+  .tier-icon { width: 30px; height: 30px; margin: 0 auto 8px; display: block; opacity: 0.85; transition: transform 0.3s, opacity 0.2s; }
+  .tier-tile:hover .tier-icon { transform: scale(1.08); opacity: 1; }
+  .tier-good .tier-icon { color: #786555; }
+  .tier-better .tier-icon { color: #8a3a00; }
+  .tier-best .tier-icon { color: var(--green); }
+  .tier-tile .tier-name {
+    font-family: var(--sans);
+    font-size: 9.5px;
+    font-weight: 800;
+    letter-spacing: 1.8px;
+    margin-bottom: 8px;
+  }
+  .tier-tile .product-name {
+    font-family: var(--display);
+    font-size: 14.5px;
+    font-weight: 700;
+    color: var(--text-dark);
+    line-height: 1.2;
+    /* Reserve room for two lines so single-line names still align with the
+       wrapping "Basic Cotton Blend". Vertically centered inside this slot. */
+    min-height: 2.4em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 8px;
+    flex: 1;
+  }
+  .tier-tile .cost {
+    font-family: var(--sans);
+    font-size: 11px;
+    color: var(--text-light);
+    margin-top: auto;
+  }
+  .tier-tile .cost-value { color: var(--crimson-dark); font-weight: 700; font-size: 14px; }
+  .tier-good { background: linear-gradient(180deg, #faf7f5, #fff); border-top: 3px solid #a89181; }
+  .tier-good .tier-name { color: #786555; }
+  .tier-better { background: linear-gradient(180deg, #fff7ee, #fff); border-top: 3px solid #c68142; }
+  .tier-better .tier-name { color: #8a3a00; }
+  .tier-best { background: linear-gradient(180deg, #f5f9f5, #fff); border-top: 3px solid var(--green); }
+  .tier-best .tier-name { color: var(--green); }
+
+  /* CHANNEL STATS */
+  .channels-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .channel-stat {
+    text-align: center;
+    padding: 14px 8px;
+    border-radius: 10px;
+    background: linear-gradient(180deg, var(--crimson-soft), #fff);
+    border: 1px solid var(--crimson-tint);
+  }
+  .channel-stat .num {
+    font-family: var(--display);
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--crimson);
+    line-height: 1;
+    letter-spacing: -0.02em;
+  }
+  .channel-stat .label {
+    font-family: var(--sans);
+    font-size: 12px;
+    color: var(--text-dark);
+    margin-top: 6px;
+    font-weight: 600;
+  }
+  .channel-stat .meta {
+    font-family: var(--sans);
+    font-size: 9.5px;
+    color: var(--text-light);
+    margin-top: 3px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-weight: 700;
+  }
+
+  /* Total customers strip — sits below the 3 channel squares to balance the
+     visual height of the right card with the left (Product Portfolio) card. */
+  .channel-total-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    margin-top: 10px;
+    padding: 16px 20px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, var(--crimson), var(--crimson-dark));
+    color: #fff;
+    box-shadow: 0 4px 14px rgba(153,0,0,0.22);
+    position: relative;
+    overflow: hidden;
+  }
+  .channel-total-row::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: radial-gradient(circle at 90% 30%, rgba(255,255,255,0.12) 0%, transparent 40%);
+    pointer-events: none;
+  }
+  .channel-total-row .total-label {
+    font-family: var(--sans);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1.6px;
+    color: rgba(255,255,255,0.72);
+    position: relative;
+  }
+  .channel-total-row .total-num {
+    font-family: var(--display);
+    font-size: 26px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    line-height: 1;
+    position: relative;
+  }
+  .channel-total-row .total-meta {
+    font-family: var(--sans);
+    font-size: 13px;
+    color: rgba(255,255,255,0.88);
+    font-weight: 500;
+    position: relative;
+  }
+
+  /* COEFFICIENT COMPARISON TABLE */
+  .comparison-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 24px 28px 28px;
+    margin-bottom: 36px;
+    box-shadow: var(--shadow-sm);
+    overflow-x: auto;
+  }
+  .comparison-card .card-header {
+    font-family: var(--sans);
+    font-size: 10.5px;
+    color: var(--text-light);
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+  .comparison-card h3 {
+    font-family: var(--display);
+    font-size: 19px;
+    color: var(--crimson-dark);
+    margin-bottom: 6px;
+    font-weight: 700;
+  }
+  .comparison-card .desc {
+    font-size: 13.5px;
+    color: var(--text-light);
+    margin-bottom: 20px;
+    font-style: italic;
+  }
+  .compare-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: var(--sans);
+    font-size: 13.5px;
+    min-width: 540px;
+    table-layout: fixed;
+  }
+  /* Equal widths for the four numeric columns + a wider first column for labels. */
+  .compare-table col.col-label { width: 32%; }
+  .compare-table col.col-num { width: 17%; }
+  .compare-table th, .compare-table td {
+    padding: 11px 14px;
+    text-align: center;
+  }
+  .compare-table thead th {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: var(--text-light);
+    font-weight: 700;
+    border-bottom: 2px solid var(--crimson);
+  }
+  .compare-table thead th:first-child {
+    text-align: left;
+    color: var(--crimson-dark);
+  }
+  .compare-table tbody tr { border-bottom: 1px solid var(--border); }
+  .compare-table tbody tr:last-child { border-bottom: none; }
+  .compare-table tbody tr.section-row td {
+    background: var(--crimson-soft);
+    color: var(--crimson-dark);
+    font-weight: 700;
+    font-size: 11.5px;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    padding: 8px 14px;
+    text-align: left;
+  }
+  .compare-table .row-label {
+    text-align: left;
+    color: var(--text-dark);
+    font-weight: 600;
+    padding-left: 14px;
+  }
+  .compare-table .num-cell {
+    font-family: var(--mono);
+    font-size: 12.5px;
+    color: var(--text-dark);
+    font-weight: 500;
+    text-align: center;
+    font-variant-numeric: tabular-nums;
+  }
+  .compare-table .pooled-col { background: rgba(184,148,31,0.04); }
+  .compare-table tbody .pooled-col { color: var(--text); font-weight: 600; }
+  .compare-table thead .pooled-col { color: var(--gold); }
+
+  /* SLOPE CHART */
+  .slope-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 24px 28px 28px;
+    margin-bottom: 36px;
+    box-shadow: var(--shadow-sm);
+  }
+  .slope-card .card-header {
+    font-family: var(--sans);
+    font-size: 10.5px;
+    color: var(--text-light);
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+  .slope-card h3 {
+    font-family: var(--display);
+    font-size: 19px;
+    color: var(--crimson-dark);
+    margin-bottom: 6px;
+    font-weight: 700;
+  }
+  .slope-card .desc {
+    font-size: 13.5px;
+    color: var(--text-light);
+    margin-bottom: 22px;
+    font-style: italic;
+  }
+  .slope-charts { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+  .slope-chart h4 {
+    font-family: var(--display);
+    font-size: 14.5px;
+    color: var(--crimson-dark);
+    font-weight: 700;
+    margin-bottom: 14px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border);
+    text-align: center;
+  }
+  .slope-row { display: grid; grid-template-columns: 92px 1fr 60px; align-items: center; gap: 10px; margin-bottom: 8px; }
+  .slope-label {
+    font-family: var(--sans);
+    font-size: 10.5px;
+    color: var(--text-light);
+    font-weight: 600;
+    text-align: right;
+    line-height: 1.2;
+  }
+  .slope-bar-wrap { background: rgba(153,0,0,0.05); border-radius: 4px; height: 22px; position: relative; overflow: hidden; }
+  .slope-bar {
+    height: 100%;
+    border-radius: 4px;
+    width: 0;
+    transition: width 1.1s cubic-bezier(.2,.7,.2,1);
+    box-shadow: inset 0 -1px 0 rgba(0,0,0,0.08);
+  }
+  .reveal.visible .slope-bar { width: var(--bar-width); }
+  .slope-val {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--text-dark);
+    font-weight: 600;
+    text-align: right;
+    opacity: 0;
+    transition: opacity 0.4s 0.7s;
+    font-variant-numeric: tabular-nums;
+  }
+  .reveal.visible .slope-val { opacity: 1; }
+  .bar-pooled   { background: linear-gradient(90deg, #d4ad3a, var(--gold)); }
+  .bar-retail   { background: linear-gradient(90deg, var(--crimson), var(--crimson-dark)); }
+  .bar-online   { background: linear-gradient(90deg, #c45050, #993030); }
+  .bar-premium  { background: linear-gradient(90deg, #d99090, #b56565); }
+
+  /* SECTION HEADER */
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    margin: 56px 0 18px;
+    padding-bottom: 16px;
+    border-bottom: 2px solid var(--crimson);
+  }
+  .section-header .num {
+    width: 48px; height: 48px;
+    background: linear-gradient(135deg, var(--crimson), var(--crimson-dark));
+    color: #fff;
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--display);
+    font-size: 24px; font-weight: 700;
+    flex-shrink: 0;
+    box-shadow: 0 4px 14px rgba(153,0,0,0.28);
+  }
+  .section-header h2 {
+    font-family: var(--display);
+    font-size: clamp(22px, 2.8vw, 30px);
+    color: var(--crimson-dark);
+    margin: 0;
+    flex: 1;
+    line-height: 1.15;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+  }
+  .section-header .meta {
+    font-family: var(--sans);
+    font-size: 11.5px;
+    color: var(--text-light);
+    font-weight: 700;
+    letter-spacing: 0.6px;
+    text-transform: uppercase;
+    white-space: nowrap;
+    background: var(--crimson-soft);
+    padding: 7px 14px;
+    border-radius: 16px;
+    border: 1px solid var(--crimson-tint);
+  }
+  .section-intro {
+    font-size: 15px;
+    color: #4d4042;
+    margin: 0 0 22px;
+    line-height: 1.75;
+  }
+
+  /* CHANNEL HERO */
+  .channel-hero {
+    background: linear-gradient(135deg, #fff, var(--crimson-soft));
+    border: 1px solid var(--border);
+    border-left: 5px solid var(--crimson);
+    border-radius: 14px;
+    padding: 22px 28px;
+    margin: 36px 0 16px;
+    box-shadow: var(--shadow-sm);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+  .channel-hero .left { flex: 1; min-width: 200px; }
+  .channel-hero .channel-num {
+    font-family: var(--sans);
+    font-size: 11px;
+    color: var(--text-light);
+    letter-spacing: 1.8px;
+    text-transform: uppercase;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+  .channel-hero h3 {
+    font-family: var(--display);
+    color: var(--crimson-dark);
+    font-size: 26px;
+    font-weight: 700;
+    margin: 0;
+    line-height: 1.15;
+    letter-spacing: -0.01em;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .channel-icon { width: 28px; height: 28px; flex-shrink: 0; color: var(--crimson); opacity: 0.9; transition: transform 0.3s; }
+  .channel-hero:hover .channel-icon { transform: scale(1.08); }
+  .channel-hero .size-badge {
+    background: linear-gradient(135deg, var(--crimson), var(--crimson-dark));
+    color: #fff;
+    padding: 11px 20px;
+    border-radius: 24px;
+    font-family: var(--sans);
+    font-weight: 700;
+    font-size: 14px;
+    white-space: nowrap;
+    box-shadow: 0 4px 12px rgba(153,0,0,0.25);
+    letter-spacing: 0.3px;
+  }
+
+  /* SUBSECTION TITLE */
+  .subsection-title {
+    font-family: var(--display);
+    font-size: 22px;
+    color: var(--crimson-dark);
+    margin: 44px 0 16px;
+    font-weight: 700;
+    padding-left: 16px;
+    border-left: 4px solid var(--crimson);
+    line-height: 1.2;
+    letter-spacing: -0.01em;
+  }
+
+  /* EQUATION BLOCKS */
+  .equation-block {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-left: 4px solid var(--crimson);
+    border-radius: 0 12px 12px 0;
+    padding: 20px 28px 22px;
+    margin: 12px 0;
+    box-shadow: var(--shadow-sm);
+    overflow-x: auto;
+    transition: box-shadow 0.18s;
+  }
+  .equation-block:hover { box-shadow: var(--shadow-md); }
+  .equation-block .label {
+    display: inline-block;
+    font-family: var(--sans);
+    color: var(--crimson);
+    font-size: 10.5px;
+    letter-spacing: 0.9px;
+    text-transform: uppercase;
+    font-weight: 700;
+    margin-bottom: 6px;
+    padding: 4px 11px;
+    background: var(--crimson-soft);
+    border-radius: 5px;
+    border: 1px solid var(--crimson-tint);
+  }
+  .equation-block .explanation {
+    font-style: italic;
+    color: #6c5d5d;
+    font-size: 13.5px;
+    line-height: 1.7;
+    margin: 10px 0 16px;
+  }
+  .equation-block .explanation code {
+    font-family: var(--mono);
+    background: #f5ecec;
+    color: var(--crimson-dark);
+    padding: 1.5px 6px;
+    border-radius: 4px;
+    font-size: 12.5px;
+    font-style: normal;
+  }
+  .equation-block + .equation-block { margin-top: 8px; }
+  .equation-block mjx-container { margin: 6px 0 !important; }
+
+  /* CODE CARD */
+  .code-card {
+    position: relative;
+    background: linear-gradient(180deg, #2c2326, #1a1416);
+    color: #e8dede;
+    border-radius: 12px;
+    padding: 20px 24px;
+    margin: 26px 0 32px;
+    box-shadow: var(--shadow-lg);
+    border: 1px solid #1a1010;
+  }
+  .code-card .code-title {
+    font-family: var(--sans);
+    font-size: 11.5px;
+    color: #b8a8a8;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    margin-bottom: 14px;
+    padding-right: 110px;
+    font-weight: 700;
+  }
+  .code-card .copy-btn {
+    position: absolute;
+    top: 16px; right: 16px;
+    background: linear-gradient(135deg, var(--crimson), var(--crimson-bright));
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 9px 18px;
+    font-family: var(--sans);
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    letter-spacing: 0.3px;
+    transition: all 0.15s;
+    box-shadow: 0 3px 10px rgba(153,0,0,0.4);
+  }
+  .code-card .copy-btn:hover { transform: translateY(-1px); box-shadow: 0 5px 14px rgba(153,0,0,0.5); }
+  .code-card .copy-btn.copied {
+    background: linear-gradient(135deg, var(--green), #1f4f1f);
+    box-shadow: 0 3px 10px rgba(45,106,46,0.4);
+  }
+  .code-card pre {
+    font-family: var(--mono);
+    font-size: 12.5px;
+    line-height: 1.7;
+    white-space: pre-wrap;
+    word-break: break-word;
+    color: #e8dede;
+    max-height: 520px;
+    overflow-y: auto;
+  }
+  /* Light syntax highlighting via spans (added by JS) */
+  .code-card .tok-comment { color: #8a7676; font-style: italic; }
+  .code-card .tok-num { color: #f0c674; }
+  .code-card .tok-op { color: #d4a8a8; }
+  .code-card .tok-fn { color: #c5e478; }
+
+  /* CTA */
+  .cta-block {
+    background: linear-gradient(135deg, var(--crimson) 0%, var(--crimson-dark) 70%, var(--crimson-deep) 100%);
+    color: #fff;
+    border-radius: 16px;
+    padding: 40px 36px 36px;
+    margin: 44px 0 0;
+    text-align: center;
+    box-shadow: var(--shadow-xl);
+    position: relative;
+    overflow: hidden;
+  }
+  .cta-block::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image:
+      radial-gradient(circle at 88% 18%, rgba(255,255,255,0.10) 0%, transparent 40%),
+      radial-gradient(circle at 12% 82%, rgba(255,255,255,0.06) 0%, transparent 40%);
+    pointer-events: none;
+  }
+  .cta-block .cta-eyebrow {
+    font-family: var(--sans);
+    font-size: 11px;
+    color: var(--crimson-light);
+    letter-spacing: 1.8px;
+    text-transform: uppercase;
+    font-weight: 700;
+    margin-bottom: 8px;
+    position: relative;
+  }
+  .cta-block h4 {
+    font-family: var(--display);
+    font-size: 26px;
+    font-weight: 700;
+    margin-bottom: 10px;
+    position: relative;
+    letter-spacing: -0.01em;
+  }
+  .cta-block p {
+    color: rgba(255,255,255,0.82);
+    font-size: 15px;
+    margin-bottom: 22px;
+    position: relative;
+    max-width: 560px;
+    margin-left: auto;
+    margin-right: auto;
+    line-height: 1.6;
+  }
+  .cta-block .cta-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: #fff;
+    color: var(--crimson-dark);
+    text-decoration: none;
+    padding: 15px 30px;
+    border-radius: 10px;
+    font-family: var(--sans);
+    font-weight: 700;
+    font-size: 15px;
+    letter-spacing: 0.3px;
+    transition: all 0.2s;
+    position: relative;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.22);
+  }
+  .cta-block .cta-btn:hover {
+    background: var(--bg);
+    transform: translateY(-2px);
+    box-shadow: 0 10px 24px rgba(0,0,0,0.28);
+  }
+  .cta-block .cta-btn::after { content: '\2192'; font-size: 18px; line-height: 1; }
+
+  /* FLOATING CTA */
+  .floating-cta {
+    position: fixed;
+    bottom: 28px;
+    right: 28px;
+    background: linear-gradient(135deg, var(--crimson), var(--crimson-dark));
+    color: #fff;
+    text-decoration: none;
+    padding: 13px 22px;
+    border-radius: 30px;
+    font-family: var(--sans);
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+    box-shadow: 0 8px 24px rgba(74,0,0,0.35);
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.25s, transform 0.25s, box-shadow 0.18s;
+    pointer-events: none;
+    z-index: 50;
+  }
+  .floating-cta.visible { opacity: 1; transform: translateY(0); pointer-events: auto; }
+  .floating-cta:hover { box-shadow: 0 12px 32px rgba(74,0,0,0.45); }
+  .floating-cta::before { content: ''; width: 8px; height: 8px; background: var(--crimson-light); border-radius: 50%; box-shadow: 0 0 8px var(--crimson-light); animation: pulse 2s infinite; }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+  }
+
+  /* FOOTER */
+  .footer {
+    text-align: center;
+    margin-top: 36px;
+    font-family: var(--sans);
+    font-size: 12.5px;
+    color: rgba(74,0,0,0.45);
+    letter-spacing: 0.3px;
+  }
+
+
+  /* RESULTS CARDS (Section 3) */
+  .result-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+    margin-bottom: 10px;
+  }
+  .result-stat {
+    text-align: center;
+    padding: 18px 12px 16px;
+    border-radius: 10px;
+    background: linear-gradient(180deg, var(--crimson-soft), #fff);
+    border: 1px solid var(--crimson-tint);
+  }
+  .result-num {
+    font-family: var(--display);
+    font-size: 30px;
+    font-weight: 700;
+    color: var(--crimson);
+    line-height: 1;
+    letter-spacing: -0.02em;
+    font-variant-numeric: tabular-nums;
+  }
+  .result-label {
+    font-family: var(--sans);
+    font-size: 12px;
+    color: var(--text-dark);
+    margin-top: 8px;
+    font-weight: 600;
+    line-height: 1.35;
+  }
+  .result-meta {
+    font-family: var(--sans);
+    font-size: 10px;
+    color: var(--text-light);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-weight: 700;
+    display: inline-block;
+    margin-top: 2px;
+  }
+  .result-footer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    margin-top: 10px;
+    padding: 14px 18px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, var(--crimson), var(--crimson-dark));
+    color: #fff;
+    box-shadow: 0 4px 14px rgba(153,0,0,0.22);
+    flex-wrap: wrap;
+  }
+  .result-footer-muted {
+    background: linear-gradient(135deg, #8a7d7d, #4d4042);
+    box-shadow: 0 4px 14px rgba(74,64,66,0.22);
+  }
+  .result-footer-label {
+    font-family: var(--sans);
+    font-size: 10.5px;
+    font-weight: 700;
+    letter-spacing: 1.6px;
+    color: rgba(255,255,255,0.72);
+  }
+  .result-footer-main {
+    font-family: var(--display);
+    font-size: 17px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    line-height: 1.1;
+  }
+  .result-footer-sub {
+    font-family: var(--sans);
+    font-size: 12.5px;
+    color: rgba(255,255,255,0.85);
+    font-weight: 500;
+  }
+  @media (max-width: 720px) {
+    .result-num { font-size: 24px; }
+    .result-stat { padding: 14px 8px; }
+    .result-footer { padding: 12px 14px; flex-direction: column; gap: 4px; }
+    .result-footer-main { font-size: 15px; }
+  }
+
+  /* RESPONSIVE */
+  /* ============ RESPONSIVE ============ */
+  /* Tablet & below */
+  @media (max-width: 900px) {
+    .page-wrapper { padding: 16px 14px 50px; }
+    .header { padding: 40px 32px 30px; border-radius: 14px 14px 0 0; }
+    .body-card { padding: 32px 28px 40px; border-radius: 0 0 14px 14px; }
+    .lead { font-size: 16px; }
+    .lead .firstchar { font-size: 48px; padding: 4px 10px 0 0; }
+    .comparison-card { padding: 20px 18px 22px; }
+    .channel-hero { padding: 18px 22px; }
+    .section-header { gap: 14px; margin: 44px 0 16px; }
+  }
+
+  /* Small tablet / large phone */
+  @media (max-width: 720px) {
+    .page-wrapper { padding: 12px 10px 50px; }
+    .overview-grid { grid-template-columns: 1fr; gap: 14px; margin-bottom: 28px; }
+    .portfolio-tiles, .channels-grid { grid-template-columns: repeat(3, 1fr); gap: 6px; }
+    .tier-tile { padding: 12px 6px; }
+    .tier-tile .product-name { font-size: 12.5px; }
+    .tier-tile .cost { font-size: 10.5px; }
+    .tier-tile .cost-value { font-size: 13px; }
+    .channel-stat { padding: 12px 6px; }
+    .channel-stat .num { font-size: 24px; }
+    .channel-stat .label { font-size: 11px; }
+    .channel-stat .meta { font-size: 9px; }
+    .header { padding: 34px 24px 26px; }
+    .header h1 { font-size: 24px; white-space: normal; }
+    .header .lecture-tag { font-size: 10px; padding: 5px 10px; margin-bottom: 12px; }
+    .body-card { padding: 28px 20px 36px; }
+    .section-header { gap: 12px; margin: 36px 0 14px; padding-bottom: 12px; }
+    .section-header .num { width: 40px; height: 40px; font-size: 18px; border-radius: 10px; }
+    .section-header h2 { font-size: 19px; }
+    .section-header .meta { font-size: 10px; padding: 5px 10px; }
+    .lead { font-size: 15.5px; line-height: 1.65; margin-bottom: 28px; }
+    .lead .firstchar { font-size: 42px; padding: 2px 8px 0 0; }
+    .equation-block { padding: 14px 16px 16px; border-radius: 0 8px 8px 0; }
+    .equation-block .label { font-size: 9.5px; padding: 3px 9px; }
+    .equation-block .explanation { font-size: 12.5px; }
+    .equation-block mjx-container { font-size: 90% !important; }
+    .channel-hero { padding: 16px 18px; gap: 12px; }
+    .channel-hero h3 { font-size: 21px; }
+    .channel-hero .channel-num { font-size: 10px; }
+    .channel-hero .size-badge { padding: 8px 14px; font-size: 12.5px; }
+    .subsection-title { font-size: 18px; padding-left: 12px; margin: 32px 0 12px; }
+    .compare-table { font-size: 12px; min-width: 480px; }
+    .slope-charts { grid-template-columns: 1fr; gap: 18px; }
+    .slope-card { padding: 18px 18px 22px; }
+    .slope-row { grid-template-columns: 76px 1fr; }
+    .slope-label { font-size: 10px; }
+    .compare-table th, .compare-table td { padding: 8px 8px; }
+    .compare-table .num-cell { font-size: 11.5px; }
+    .compare-table .row-label { padding-left: 10px; }
+    .code-card { padding: 14px 16px; border-radius: 10px; }
+    .code-card .code-title { font-size: 10.5px; padding-right: 86px; }
+    .code-card pre { font-size: 11.5px; line-height: 1.6; }
+    .code-card .copy-btn { padding: 7px 14px; font-size: 12px; top: 12px; right: 12px; }
+    .cta-block { padding: 28px 22px 24px; border-radius: 14px; }
+    .cta-block h4 { font-size: 21px; }
+    .cta-block p { font-size: 13.5px; margin-bottom: 18px; }
+    .cta-block .cta-btn { padding: 12px 22px; font-size: 13.5px; }
+    .floating-cta { bottom: 16px; right: 16px; padding: 11px 18px; font-size: 12.5px; }
+    .footer { font-size: 11.5px; }
+  }
+
+  /* Phone */
+  @media (max-width: 480px) {
+    .portfolio-tiles, .channels-grid { grid-template-columns: 1fr; gap: 8px; }
+    .tier-tile { padding: 14px 12px; }
+    .tier-tile .product-name { font-size: 15px; }
+    .tier-tile .cost { font-size: 12px; }
+    .channel-stat { padding: 14px 10px; }
+    .channel-stat .num { font-size: 30px; }
+    .channel-stat .label { font-size: 13px; }
+    .header h1 { font-size: 22px; }
+    .header .sub { font-size: 12.5px; }
+    .body-card { padding: 24px 16px 30px; }
+    .section-header h2 { font-size: 17.5px; }
+    .equation-block { padding: 12px 14px 14px; }
+    .equation-block mjx-container { font-size: 85% !important; }
+    .channel-hero { flex-direction: column; align-items: flex-start; padding: 14px 16px; }
+    .channel-hero .size-badge { align-self: flex-start; }
+    .compare-table { min-width: 440px; }
+    .lead .firstchar { font-size: 36px; padding: 0 6px 0 0; }
+    .floating-cta::before { display: none; }
+    .floating-cta { padding: 10px 14px; font-size: 12px; bottom: 12px; right: 12px; }
+  }
+
+  /* Prevent any horizontal page-level overflow on mobile */
+  html, body { overflow-x: hidden; }
+</style>
+</head>
+<body>
+
+<div class="progress-bar"><div class="progress-bar-fill" id="progressFill"></div></div>
+
+<div class="page-wrapper">
+    <div class="main-content">
+
+      <div class="header">
+        <div class="header-inner">
+          <span class="lecture-tag">FashionNext &middot; M574</span>
+          <h1>Consumer Purchase Journey</h1>
+          <p class="sub">Aggregate Revenue vs. Consumer Journey Decomposition &middot; Performance Driven Pricing</p>
+        </div>
+      </div>
+
+      <div class="body-card">
+
+        <!-- LEAD / OVERVIEW -->
+        <section id="overview">
+          <p class="lead">
+            <span class="firstchar">F</span><strong>ashionNext</strong> is an online clothing retailer running weekly discount events to drive consumer visits and spending. A consumer typically makes multiple decisions on each trip &mdash; whether to visit the store, how many product categories to buy, and how much to spend in each category &mdash; and a single marketing lever like a discount can have <em>different</em> effects at each stage. We compare two approaches on the same 448-consumer &times; 25-week panel: <strong>(1) an aggregate benchmark</strong> that regresses total pre-discount revenue on the discount, and <strong>(2) a purchase-journey decomposition</strong> that models each stage separately and then recombines them. Each setup is shown in standard equation form, with code blocks ready to paste into <strong>Tool 8: General Purpose Optimizer</strong> to find the profit-maximizing discount.
+          </p>
+
+          <!-- TWO OVERVIEW CARDS SIDE-BY-SIDE -->
+          <div class="overview-grid">
+            <div class="overview-card">
+              <div class="card-header">The Purchase Funnel</div>
+              <div class="portfolio-tiles">
+                <div class="tier-tile tier-good">
+                  <svg class="tier-icon" viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round" aria-hidden="true">
+                    <!-- Storefront / visit icon -->
+                    <path d="M4 10 L6 5 L22 5 L24 10"/>
+                    <path d="M5 10 L5 23 L23 23 L23 10"/>
+                    <path d="M4 10 L24 10"/>
+                    <path d="M11 16 L11 23 L17 23 L17 16 Z"/>
+                  </svg>
+                  <div class="tier-name">STAGE 1</div>
+                  <div class="product-name">Visit<br>the Store</div>
+                  <div class="cost"><span class="cost-value">Binary</span> logit</div>
+                </div>
+                <div class="tier-tile tier-better">
+                  <svg class="tier-icon" viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round" aria-hidden="true">
+                    <!-- Category grid icon -->
+                    <rect x="4" y="4" width="8" height="8" rx="1.2"/>
+                    <rect x="16" y="4" width="8" height="8" rx="1.2"/>
+                    <rect x="4" y="16" width="8" height="8" rx="1.2"/>
+                    <rect x="16" y="16" width="8" height="8" rx="1.2"/>
+                  </svg>
+                  <div class="tier-name">STAGE 2</div>
+                  <div class="product-name">Category<br>Count</div>
+                  <div class="cost"><span class="cost-value">Poisson</span> count</div>
+                </div>
+                <div class="tier-tile tier-best">
+                  <svg class="tier-icon" viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round" aria-hidden="true">
+                    <!-- Receipt / spending icon -->
+                    <path d="M7 3 L21 3 L21 25 L18 23 L15 25 L12 23 L9 25 L7 23 Z"/>
+                    <line x1="10" y1="9" x2="18" y2="9"/>
+                    <line x1="10" y1="13" x2="18" y2="13"/>
+                    <line x1="10" y1="17" x2="15" y2="17"/>
+                  </svg>
+                  <div class="tier-name">STAGE 3</div>
+                  <div class="product-name">Per-Category<br>Spending</div>
+                  <div class="cost"><span class="cost-value">Linear</span> regression</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="overview-card">
+              <div class="card-header">Dataset &amp; Setup</div>
+              <div class="channels-grid">
+                <div class="channel-stat">
+                  <div class="num">448</div>
+                  <div class="label">Consumers</div>
+                  <div class="meta">N</div>
+                </div>
+                <div class="channel-stat">
+                  <div class="num">25</div>
+                  <div class="label">Weeks</div>
+                  <div class="meta">T</div>
+                </div>
+                <div class="channel-stat">
+                  <div class="num">11,200</div>
+                  <div class="label">Observations</div>
+                  <div class="meta">N &times; T</div>
+                </div>
+              </div>
+              <div class="channel-total-row">
+                <span class="total-label">DECISION</span>
+                <span class="total-num">Discount</span>
+                <span class="total-meta">0&ndash;100 (%)</span>
+              </div>
+            </div>
+          </div>
+
+        </section>
+
+        <!-- ============================================== -->
+        <!-- SCENARIO 1: AGGREGATE BENCHMARK -->
+        <!-- ============================================== -->
+        <section id="benchmark">
+          <div class="section-header">
+            <div class="num">1</div>
+            <h2>Aggregate Benchmark</h2>
+            <span class="meta">1 regression</span>
+          </div>
+          <p class="section-intro">Treat each consumer-week as a single aggregate outcome and regress <em>pre-discount total revenue</em> directly on the discount. This is the simplest approach and collapses the entire purchase decision into one equation.</p>
+
+          <!-- COEFFICIENTS SUMMARY -->
+          <div class="comparison-card">
+            <div class="card-header">Linear Regression Estimates</div>
+            <h3>Coefficients (DV: Pre-Discount Total Revenue)</h3>
+            <p class="desc">Estimated in Tool 7 by running a linear regression of per-consumer-week pre-discount total revenue on the discount level.</p>
+            <table class="compare-table">
+              <colgroup>
+                <col style="width: 50%" />
+                <col style="width: 50%" />
+              </colgroup>
+              <thead>
+                <tr>
+                  <th>Term</th>
+                  <th>Estimate</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="row-label">Intercept</td>
+                  <td class="num-cell">0.7121</td>
+                </tr>
+                <tr>
+                  <td class="row-label">Discount</td>
+                  <td class="num-cell">0.3638</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="equation-block">
+            <span class="label">Pre-Discount Total Revenue</span>
+            <p class="explanation">A single linear equation in the discount. The intercept is the expected pre-discount revenue per consumer-week at zero discount; the slope says each additional percentage point of discount raises pre-discount revenue by <code>0.3638</code>.</p>
+            $$\text{Pre-Discount Total Revenue} = 0.7121 + 0.3638 \cdot \text{Discount}$$
+          </div>
+
+          <div class="equation-block">
+            <span class="label">Profit</span>
+            <p class="explanation">FashionNext's sticker prices embed a 1/3 gross margin, so the cost of goods is 2/3 of the pre-discount revenue. Subtracting the discount given back to the shopper yields: <code>Profit = Pre-Discount Revenue &times; (1/3) &minus; Pre-Discount Revenue &times; (Discount / 100)</code>.</p>
+            $$\text{Profit} = \text{Pre-Discount Total Revenue} \cdot \tfrac{1}{3} \;-\; \text{Pre-Discount Total Revenue} \cdot \tfrac{\text{Discount}}{100}$$
+          </div>
+
+          <div class="code-card">
+            <div class="code-title">Paste into Tool 8: General Purpose Optimizer (decision: Discount)</div>
+            <button class="copy-btn" onclick="copyBlock('benchmark-code', this)">Copy</button>
+<pre id="benchmark-code"># Aggregate Benchmark
+# Decision variable: Discount  (search range: 0 to 100)
+
+Pre_Discount_Total_Revenue = 0.7121 + 0.3638 * Discount
+
+Profit = Pre_Discount_Total_Revenue * (1/3) - Pre_Discount_Total_Revenue * (Discount / 100)</pre>
+          </div>
+        </section>
+
+        <!-- ============================================== -->
+        <!-- SCENARIO 2: PURCHASE-JOURNEY DECOMPOSITION -->
+        <!-- ============================================== -->
+        <section id="journey">
+          <div class="section-header">
+            <div class="num">2</div>
+            <h2>Purchase-Journey Decomposition</h2>
+            <span class="meta">3 regressions</span>
+          </div>
+          <p class="section-intro">Instead of one aggregate regression, model each stage of the consumer trip separately &mdash; whether the consumer visits, how many categories they buy given a visit, and how much they spend per category given a purchase &mdash; and recombine the three pieces to get pre-discount total revenue.</p>
+
+          <!-- COEFFICIENTS SUMMARY -->
+          <div class="comparison-card">
+            <div class="card-header">Stage-Level Estimates</div>
+            <h3>Coefficients by Journey Stage <span style="color: var(--text-light); font-weight: 400; font-size: 14px;">&middot; with Benchmark for reference</span></h3>
+            <p class="desc">The Benchmark column from Section 1 is repeated on the left so the journey-stage estimates can be read as a direct contrast. Note the <em>opposite signs</em> on the discount coefficient across stages.</p>
+            <table class="compare-table">
+              <colgroup>
+                <col class="col-label" />
+                <col class="col-num" />
+                <col class="col-num" />
+                <col class="col-num" />
+                <col class="col-num" />
+              </colgroup>
+              <thead>
+                <tr>
+                  <th>Term</th>
+                  <th class="pooled-col">Benchmark</th>
+                  <th>Visit</th>
+                  <th>Categories</th>
+                  <th>Spending</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr class="section-row"><td colspan="5">Model family</td></tr>
+                <tr>
+                  <td class="row-label">&nbsp;</td>
+                  <td class="num-cell pooled-col">Linear Regression</td>
+                  <td class="num-cell">Binary Logit Regression</td>
+                  <td class="num-cell">Poisson Regression</td>
+                  <td class="num-cell">Linear Regression</td>
+                </tr>
+                <tr class="section-row"><td colspan="5">Coefficients</td></tr>
+                <tr>
+                  <td class="row-label">Intercept</td>
+                  <td class="num-cell pooled-col">0.7121</td>
+                  <td class="num-cell">&minus;4.4262</td>
+                  <td class="num-cell">0.4213</td>
+                  <td class="num-cell">44.0025</td>
+                </tr>
+                <tr>
+                  <td class="row-label">Discount</td>
+                  <td class="num-cell pooled-col">0.3638</td>
+                  <td class="num-cell">0.1374</td>
+                  <td class="num-cell">&minus;0.0153</td>
+                  <td class="num-cell">0.3504</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- ====================== Stage 1: Visit ====================== -->
+          <div id="stage-visit">
+            <div class="channel-hero">
+              <div class="left">
+                <div class="channel-num">Stage 1</div>
+                <h3><svg class="channel-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 9 L5 4 L19 4 L21 9"/><path d="M4 9 L4 20 L20 20 L20 9"/><path d="M3 9 L21 9"/><path d="M10 14 L10 20 L14 20 L14 14 Z"/></svg>Visit the Store</h3>
+              </div>
+              <div class="size-badge">Binary Logit Regression</div>
+            </div>
+
+            <div class="equation-block">
+              <span class="label">Visit Probability</span>
+              <p class="explanation">A binary logistic regression estimates the probability that a consumer visits the store in a given week. The discount coefficient is <em>positive</em>: bigger discounts attract more store visits.</p>
+              $$\Pr(\text{Visit}) = \frac{\exp(-4.4262 + 0.1374 \cdot \text{Discount})}{1 + \exp(-4.4262 + 0.1374 \cdot \text{Discount})}$$
+            </div>
+          </div>
+
+          <!-- ====================== Stage 2: Category Count ====================== -->
+          <div id="stage-categories">
+            <div class="channel-hero">
+              <div class="left">
+                <div class="channel-num">Stage 2</div>
+                <h3><svg class="channel-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="8" height="8" rx="1"/><rect x="13" y="3" width="8" height="8" rx="1"/><rect x="3" y="13" width="8" height="8" rx="1"/><rect x="13" y="13" width="8" height="8" rx="1"/></svg>Categories Purchased</h3>
+              </div>
+              <div class="size-badge">Poisson Regression</div>
+            </div>
+
+            <div class="equation-block">
+              <span class="label">Mean Category Count (conditional on visit)</span>
+              <p class="explanation">A Poisson regression estimates the expected number of product categories a consumer buys, given that they visited. Because this is a <em>conditional</em> model, the panel is first filtered to rows where <code>visit == 1</code> and the regression is estimated only on those observations. The discount coefficient is <em>negative</em>: with a discount in hand, consumers tend to focus on fewer categories (e.g., budget constraints, preplanned purchases).</p>
+              $$E[\,\text{Category Count} \mid \text{Visit}\,] = \exp(0.4213 - 0.0153 \cdot \text{Discount})$$
+            </div>
+          </div>
+
+          <!-- ====================== Stage 3: Per-Category Spending ====================== -->
+          <div id="stage-spending">
+            <div class="channel-hero">
+              <div class="left">
+                <div class="channel-num">Stage 3</div>
+                <h3><svg class="channel-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 3 L21 3 L21 25 L18 23 L15 25 L12 23 L9 25 L7 23 Z"/><line x1="10" y1="9" x2="18" y2="9"/><line x1="10" y1="13" x2="18" y2="13"/><line x1="10" y1="17" x2="15" y2="17"/></svg>Per-Category Spending</h3>
+              </div>
+              <div class="size-badge">Linear Regression</div>
+            </div>
+
+            <div class="equation-block">
+              <span class="label">Pre-Discount Per-Category Revenue (conditional on purchase)</span>
+              <p class="explanation">A linear regression estimates pre-discount dollars spent <em>per category</em>, conditional on buying something in that category. Because this is a <em>conditional</em> model, the panel is first filtered to rows where <code>numofcategories &gt; 0</code> and the regression is estimated only on those observations. The discount coefficient is <em>positive</em>: once a consumer is buying, larger discounts lead them to spend more per category.</p>
+              $$\text{Pre-Discount Per-Category Revenue} = 44.0025 + 0.3504 \cdot \text{Discount}$$
+            </div>
+          </div>
+
+          <!-- TOTAL -->
+          <div id="total">
+            <h3 class="subsection-title">Recombining the Three Stages</h3>
+
+            <div class="equation-block">
+              <span class="label">Pre-Discount Total Revenue</span>
+              <p class="explanation">Expected pre-discount total revenue is the product of the three stage components: visit probability &times; mean categories per visit &times; revenue per category.</p>
+              $$\text{Pre-Discount Total Revenue} = \Pr(\text{Visit}) \cdot E[\,\text{Category Count} \mid \text{Visit}\,] \cdot \text{Pre-Discount Per-Category Revenue}$$
+            </div>
+
+            <div class="equation-block">
+              <span class="label">Profit</span>
+              <p class="explanation">Same profit formula as the benchmark: 1/3 gross margin on pre-discount revenue, minus the discount given back to the shopper.</p>
+              $$\text{Profit} = \text{Pre-Discount Total Revenue} \cdot \tfrac{1}{3} \;-\; \text{Pre-Discount Total Revenue} \cdot \tfrac{\text{Discount}}{100}$$
+            </div>
+          </div>
+
+          <div id="code">
+            <div class="code-card">
+              <div class="code-title">Paste into Tool 8: General Purpose Optimizer (decision: Discount)</div>
+              <button class="copy-btn" onclick="copyBlock('journey-code', this)">Copy</button>
+<pre id="journey-code"># Purchase-Journey Decomposition
+# Decision variable: Discount  (search range: 0 to 100)
+
+# Stage 1 — Visit (binary logit)
+Prob_Visit = exp(-4.4262 + 0.1374 * Discount) / (1 + exp(-4.4262 + 0.1374 * Discount))
+
+# Stage 2 — Category count | visit (Poisson)
+Mean_Category_Count = exp(0.4213 - 0.0153 * Discount)
+
+# Stage 3 — Per-category revenue | purchase (linear)
+Pre_Discount_Per_Category_Revenue = 44.0025 + 0.3504 * Discount
+
+# Recombine the three stages
+Pre_Discount_Total_Revenue = Prob_Visit * Mean_Category_Count * Pre_Discount_Per_Category_Revenue
+
+# Profit (1/3 gross margin; discount given back to shopper)
+Profit = Pre_Discount_Total_Revenue * (1/3) - Pre_Discount_Total_Revenue * (Discount / 100)</pre>
+            </div>
+
+            <div class="cta-block">
+              <div class="cta-eyebrow">Next Step</div>
+              <h4>Find the Profit-Maximizing Discount</h4>
+              <p>Copy either code block above and paste it into Tool 8: General Purpose Optimizer. Set the decision variable to <code>discount</code> with a search range of 0&ndash;100 to compute the profit-maximizing discount.</p>
+              <a class="cta-btn" href="profit-optimizer.html" target="_blank" rel="noopener">Open Tool 8: General Purpose Optimizer</a>
+            </div>
+          </div>
+        </section>
+
+        <!-- ============================================== -->
+        <!-- SECTION 3: SIDE-BY-SIDE RESULTS -->
+        <!-- ============================================== -->
+        <section id="results">
+          <div class="section-header">
+            <div class="num">3</div>
+            <h2>Side-by-Side Results</h2>
+            <span class="meta">Benchmark vs. Full Model</span>
+          </div>
+          <p class="section-intro">Running Tool 8 on each formulation produces the profit-maximizing discount shown below. Both profits are reported on the same footing: each discount is plugged into the <em>full-model</em> profit equation to see what the firm actually realizes in the true purchase journey. The benchmark&apos;s recommendation leaves real money on the table.</p>
+
+          <div class="overview-grid">
+            <div class="overview-card">
+              <div class="card-header">Benchmark Optimum</div>
+              <div class="result-grid">
+                <div class="result-stat">
+                  <div class="result-num">15.69%</div>
+                  <div class="result-label">Optimal Discount</div>
+                </div>
+                <div class="result-stat">
+                  <div class="result-num">0.9799</div>
+                  <div class="result-label">Realized Profit<br><span class="result-meta">under full model &middot; per consumer-week</span></div>
+                </div>
+              </div>
+              <div class="result-footer result-footer-muted">
+                <span class="result-footer-label">MODEL</span>
+                <span class="result-footer-main">1 linear regression</span>
+                <span class="result-footer-sub">aggregate benchmark</span>
+              </div>
+            </div>
+
+            <div class="overview-card">
+              <div class="card-header">Full Model Optimum</div>
+              <div class="result-grid">
+                <div class="result-stat">
+                  <div class="result-num">23.14%</div>
+                  <div class="result-label">Optimal Discount</div>
+                </div>
+                <div class="result-stat">
+                  <div class="result-num">1.2684</div>
+                  <div class="result-label">Realized Profit<br><span class="result-meta">under full model &middot; per consumer-week</span></div>
+                </div>
+              </div>
+              <div class="result-footer">
+                <span class="result-footer-label">MODEL</span>
+                <span class="result-footer-main">3 stage regressions</span>
+                <span class="result-footer-sub">purchase-journey</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="equation-block">
+            <span class="label">Differential Effects Across the Journey</span>
+            <p class="explanation">Why does the benchmark mis-optimize? Because a discount does not move all three stages in the same direction. Looking at the estimated discount coefficients stage by stage:</p>
+            <ul style="line-height: 1.8; color: #4d4042; font-size: 14px; padding-left: 22px; margin: 8px 0 12px;">
+              <li style="margin-bottom: 4px;"><strong>Visit</strong> &mdash; coefficient <strong>+0.1374</strong>: a larger discount makes consumers <em>more likely</em> to visit the store.</li>
+              <li style="margin-bottom: 4px;"><strong>Category count (given visit)</strong> &mdash; coefficient <strong>&minus;0.0153</strong>: once in the store, a discount <em>lowers</em> the average number of categories they buy (they focus on fewer items).</li>
+              <li><strong>Per-category revenue (given purchase)</strong> &mdash; coefficient <strong>+0.3504</strong>: within the categories they do buy, a discount <em>raises</em> the average spend per category.</li>
+            </ul>
+            <p class="explanation">The benchmark collapses these three offsetting forces into a single slope on aggregate revenue, which is positive but mis-scaled. It cannot see, for example, that the optimal discount is a trade-off between drawing more shoppers in versus pulling down the basket size per shopper.</p>
+          </div>
+
+          <div class="equation-block">
+            <span class="label">The Takeaway</span>
+            <p class="explanation">Treating the full model as the true data-generating process, both cards above report profit evaluated under the same full-model profit equation. The benchmark&apos;s recommended discount of 15.69% delivers only <strong>0.9799</strong> per consumer-week &mdash; roughly <strong>23% lower</strong> than the 1.2684 the full model achieves at its own optimal discount of 23.14%. Modeling the purchase journey stage by stage lets each discount coefficient carry its own sign and magnitude, which is what makes the decomposed model more profitable in practice.</p>
+          </div>
+        </section>
+
+        <!-- ============================================== -->
+        <!-- SECTION 4: EXTENSIONS -->
+        <!-- ============================================== -->
+        <section id="extensions">
+          <div class="section-header">
+            <div class="num">4</div>
+            <h2>Extending the Framework</h2>
+            <span class="meta">What we built this semester</span>
+          </div>
+          <p class="section-intro">The three-stage decomposition shown here is a clean starting point. Several of the techniques we covered earlier this semester can be embedded inside it to make it richer and more realistic. For example, you can enrich your decision support system (DSS) by:</p>
+          <ul style="line-height: 1.8; color: #4d4042; font-size: 14.5px; padding-left: 22px; margin: 0 0 8px;">
+            <li style="margin-bottom: 8px;"><strong>Consumer heterogeneity at each stage</strong> &mdash; <em>observed</em> heterogeneity (demographics, RFM, past purchase behavior) and <em>unobserved</em> heterogeneity (latent-class / mixture models) can be added to each of the three regressions. This lets visit, category-count, and spending responses vary across customer segments rather than assuming one average effect.</li>
+            <li style="margin-bottom: 8px;"><strong>Channel and market effects</strong> &mdash; channel-level and market-level intercepts and discount slopes can be estimated separately, as in the Tailor &amp; Co. case, so the optimal discount can differ by sales venue or geography.</li>
+            <li><strong>Dynamic discounting</strong> &mdash; demand, supply, and competitive shifters (seasonality, inventory levels, competitor prices, promotional calendars) can be added as controls so the optimal discount moves over time rather than being static.</li>
+          </ul>
+
+          <div class="equation-block" style="margin-top: 24px; border-left-color: var(--crimson-dark);">
+            <span class="label">And Finally &mdash; Keep It Alive</span>
+            <p class="explanation">Whatever form of the model you end up with, it is only as useful as the data behind it. <strong>Re-estimate the stage equations regularly as new transaction data comes in.</strong> Discount elasticities are not constants: the true parameters drift as consumers learn the retailer&apos;s promotional patterns, competitors adjust their own pricing, and preferences shift with macroeconomic conditions. A decision support system built once and never refreshed starts drifting away from reality the moment it is deployed. Budgeting for continuous re-estimation is what separates a working pricing system from a static snapshot.</p>
+          </div>
+        </section>
+
+      </div>
+
+      <p class="footer">Created by Dr. Koray Cosguner &middot; Performance Driven Pricing &middot; M574</p>
+    </div>
+</div>
+
+<!-- FLOATING CTA -->
+<a class="floating-cta" id="floatingCta" href="profit-optimizer.html" target="_blank" rel="noopener">
+  Open Tool 8
+</a>
+
+<script>
+  // Copy button
+  function copyBlock(id, btn) {
+    const text = document.getElementById(id).innerText;
+    navigator.clipboard.writeText(text).then(() => {
+      const original = btn.textContent;
+      btn.textContent = '\u2713 Copied';
+      btn.classList.add('copied');
+      setTimeout(() => { btn.textContent = original; btn.classList.remove('copied'); }, 1800);
+    }).catch(() => {
+      btn.textContent = 'Copy failed';
+      setTimeout(() => { btn.textContent = 'Copy'; }, 1800);
+    });
+  }
+
+  // Reading progress bar
+  const progressFill = document.getElementById('progressFill');
+  function updateProgress() {
+    const scrolled = window.scrollY;
+    const total = document.documentElement.scrollHeight - window.innerHeight;
+    const pct = total > 0 ? (scrolled / total) * 100 : 0;
+    progressFill.style.width = Math.min(100, Math.max(0, pct)) + '%';
+  }
+
+  // Floating CTA visibility
+  const floatingCta = document.getElementById('floatingCta');
+  function updateFloatingCta() {
+    if (window.scrollY > 600) floatingCta.classList.add('visible');
+    else floatingCta.classList.remove('visible');
+  }
+
+  // ====== Scroll-reveal animations ======
+  // Auto-tag major content blocks for fade-up reveal on scroll.
+  document.querySelectorAll(
+    '.lead, .overview-card, .comparison-card, .slope-card, .section-header, ' +
+    '.section-intro, .equation-block, .channel-hero, .subsection-title, ' +
+    '.code-card, .cta-block'
+  ).forEach(el => el.classList.add('reveal'));
+
+  // Stagger children inside the two grids of tiles.
+  document.querySelectorAll('.portfolio-tiles, .channels-grid')
+    .forEach(el => { el.classList.add('reveal', 'reveal-stagger'); });
+
+  // Count-up animation for the channel-stat numbers (1,000 / 700 / 400).
+  function animateNumber(el) {
+    const target = parseInt(el.textContent.replace(/[^\d]/g, ''), 10);
+    if (isNaN(target) || target === 0) return;
+    const duration = 1100;
+    const start = performance.now();
+    function step(now) {
+      const t = Math.min(1, (now - start) / duration);
+      const eased = 1 - Math.pow(1 - t, 3); // easeOutCubic
+      el.textContent = Math.floor(eased * target).toLocaleString('en-US');
+      if (t < 1) requestAnimationFrame(step);
+      else el.textContent = target.toLocaleString('en-US');
+    }
+    requestAnimationFrame(step);
+  }
+
+  const revealObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (!entry.isIntersecting) return;
+      entry.target.classList.add('visible');
+      // Trigger number count-ups when any reveal containing channel-stat numbers shows.
+      entry.target.querySelectorAll('.channel-stat .num').forEach(animateNumber);
+      revealObserver.unobserve(entry.target);
+    });
+  }, { threshold: 0.15, rootMargin: '0px 0px -8% 0px' });
+
+  document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+
+  // Light syntax highlighting for code blocks
+  function highlight(pre) {
+    let html = pre.innerHTML;
+    // Comments first (lines starting with #)
+    html = html.replace(/^(#.*)$/gm, '<span class="tok-comment">$1</span>');
+    // Numbers (incl. decimals and negatives in subtraction context)
+    html = html.replace(/(\b\d+\.\d+|\b\d+\b)/g, '<span class="tok-num">$1</span>');
+    // exp() function
+    html = html.replace(/\b(exp)(?=\()/g, '<span class="tok-fn">$1</span>');
+    // Operators
+    html = html.replace(/(\s)([\+\-\*\/=])(\s)/g, '$1<span class="tok-op">$2</span>$3');
+    pre.innerHTML = html;
+  }
+  document.querySelectorAll('.code-card pre').forEach(highlight);
+
+  window.addEventListener('scroll', () => { updateProgress(); updateFloatingCta(); }, { passive: true });
+  updateProgress();
+  updateFloatingCta();
+</script>
+</body>
+</html>
