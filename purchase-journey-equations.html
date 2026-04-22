@@ -1441,19 +1441,21 @@ Profit = Pre_Discount_Total_Revenue * (1/3) - Pre_Discount_Total_Revenue * (Disc
           </div>
 
           <div class="equation-block">
-            <span class="label">Differential Effects Across the Journey</span>
-            <p class="explanation">Why does the benchmark mis-optimize? Because a discount does not move all three stages in the same direction. Looking at the estimated discount coefficients stage by stage:</p>
-            <ul style="line-height: 1.8; color: #4d4042; font-size: 14px; padding-left: 22px; margin: 8px 0 12px;">
-              <li style="margin-bottom: 4px;"><strong>Visit</strong> &mdash; coefficient <strong>+0.1374</strong>: a larger discount makes consumers <em>more likely</em> to visit the store.</li>
-              <li style="margin-bottom: 4px;"><strong>Category count (given visit)</strong> &mdash; coefficient <strong>&minus;0.0153</strong>: once in the store, a discount <em>lowers</em> the average number of categories they buy (they focus on fewer items).</li>
-              <li><strong>Per-category revenue (given purchase)</strong> &mdash; coefficient <strong>+0.3504</strong>: within the categories they do buy, a discount <em>raises</em> the average spend per category.</li>
+            <span class="label">Discussion of the Benchmark vs. Full Model</span>
+            <ul style="line-height: 1.8; color: #4d4042; font-size: 14px; padding-left: 22px; margin: 4px 0 0;">
+              <li style="margin-bottom: 10px;">The benchmark model has a very low R&sup2;, making it unsuitable for price optimization.</li>
+              <li style="margin-bottom: 10px;">While the benchmark indicates that discounts increase revenue, the relationship is more complex. Looking at the three stages separately, we find that:
+                <ul style="line-height: 1.8; color: #4d4042; font-size: 14px; padding-left: 22px; margin: 6px 0 0;">
+                  <li style="margin-bottom: 6px;"><strong>Discounts attract consumers to the retailer</strong> (visit slope <strong>+0.1374</strong>) and <strong>increase spending conditional on a purchase</strong> (per-category spending slope <strong>+0.3504</strong>).</li>
+                  <li style="margin-bottom: 6px;"><strong>However, discounts also reduce the number of categories purchased</strong> (category-count slope <strong>&minus;0.0153</strong>).
+                    <ul style="line-height: 1.7; color: #4d4042; font-size: 13.5px; padding-left: 22px; margin: 4px 0 0;">
+                      <li>This may be due to budget and time constraints, encouraging consumers to focus on more expensive categories or preplanned purchases (e.g., waiting for the right price to buy a specific item).</li>
+                    </ul>
+                  </li>
+                </ul>
+              </li>
+              <li>The benchmark model suggests an optimal discount rate of <strong>15.69%</strong>, which results in approximately <strong>23% lower profit</strong> compared to the full model specification (0.9799 vs. 1.2684). The full model identifies an optimal discount rate of <strong>23.14%</strong>, reflecting a more accurate and profitable pricing strategy.</li>
             </ul>
-            <p class="explanation">The benchmark collapses these three offsetting forces into a single slope on aggregate revenue, which is positive but mis-scaled. It cannot see, for example, that the optimal discount is a trade-off between drawing more shoppers in versus pulling down the basket size per shopper.</p>
-          </div>
-
-          <div class="equation-block">
-            <span class="label">The Takeaway</span>
-            <p class="explanation">Treating the full model as the true data-generating process, both cards above report profit evaluated under the same full-model profit equation. The benchmark&apos;s recommended discount of 15.69% delivers only <strong>0.9799</strong> per consumer-week &mdash; roughly <strong>23% lower</strong> than the 1.2684 the full model achieves at its own optimal discount of 23.14%. Modeling the purchase journey stage by stage lets each discount coefficient carry its own sign and magnitude, which is what makes the decomposed model more profitable in practice.</p>
           </div>
         </section>
 
@@ -1475,7 +1477,19 @@ Profit = Pre_Discount_Total_Revenue * (1/3) - Pre_Discount_Total_Revenue * (Disc
 
           <div class="equation-block" style="margin-top: 24px; border-left-color: var(--crimson-dark);">
             <span class="label">And Finally &mdash; Keep It Alive</span>
-            <p class="explanation">Whatever form of the model you end up with, it is only as useful as the data behind it. <strong>Re-estimate the stage equations regularly as new transaction data comes in.</strong> Discount elasticities are not constants: the true parameters drift as consumers learn the retailer&apos;s promotional patterns, competitors adjust their own pricing, and preferences shift with macroeconomic conditions. A decision support system built once and never refreshed starts drifting away from reality the moment it is deployed. Budgeting for continuous re-estimation is what separates a working pricing system from a static snapshot.</p>
+            <ul style="line-height: 1.8; color: #4d4042; font-size: 14px; padding-left: 22px; margin: 4px 0 0;">
+              <li style="margin-bottom: 8px;">Whatever form of the model you end up with, it is only as useful as the data behind it.</li>
+              <li style="margin-bottom: 8px;"><strong>Re-estimate the stage equations regularly as new transaction data comes in.</strong></li>
+              <li style="margin-bottom: 8px;">Discount elasticities are not constants &mdash; the true parameters drift as:
+                <ul style="line-height: 1.7; color: #4d4042; font-size: 13.5px; padding-left: 22px; margin: 4px 0 0;">
+                  <li>consumers learn the retailer&apos;s promotional patterns,</li>
+                  <li>competitors adjust their own pricing, and</li>
+                  <li>preferences shift with macroeconomic conditions.</li>
+                </ul>
+              </li>
+              <li style="margin-bottom: 8px;">A decision support system built once and never refreshed starts drifting away from reality the moment it is deployed.</li>
+              <li>Budgeting for continuous re-estimation is what separates a working pricing system from a static snapshot.</li>
+            </ul>
           </div>
         </section>
 
