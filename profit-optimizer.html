@@ -1302,14 +1302,14 @@ Profit = Revenue - Cost * Sales" oninput="parseEquations()"></textarea>
                 ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[ch]);
         }
 
-        // Fixed 3-decimal formatting for the optimal-solution table. Falls back to
-        // scientific notation only for values outside what 3 decimals can sensibly show.
+        // Fixed 5-decimal formatting for the optimal-solution table. Falls back to
+        // scientific notation only for values outside what 5 decimals can sensibly show.
         function format3(num) {
             if (!Number.isFinite(num)) return '—';
-            if (Math.abs(num) >= 1e6 || (Math.abs(num) < 1e-3 && num !== 0)) {
-                return num.toExponential(3);
+            if (Math.abs(num) >= 1e6 || (Math.abs(num) < 1e-5 && num !== 0)) {
+                return num.toExponential(5);
             }
-            return num.toFixed(3);
+            return num.toFixed(5);
         }
 
         function normalizeFormula(f) {
