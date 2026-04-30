@@ -225,6 +225,111 @@
             text-align: center;
         }
 
+        /* Click-to-add variable pills (quick picker for decision/control vars) */
+        .var-pills-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.4rem;
+            margin-bottom: 0.6rem;
+        }
+
+        .var-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+            color: var(--iu-crimson);
+            padding: 0.35rem 0.7rem;
+            border-radius: 999px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-weight: 600;
+            font-family: inherit;
+            transition: background 0.15s, transform 0.1s, box-shadow 0.15s;
+        }
+
+        .var-pill:hover {
+            background: #fde7e7;
+            transform: translateY(-1px);
+            box-shadow: 0 2px 4px rgba(153, 0, 0, 0.15);
+        }
+
+        .var-pill.control {
+            background: #ecfdf5;
+            border-color: #a7f3d0;
+            color: var(--success);
+        }
+
+        .var-pill.control:hover {
+            background: #d1fae5;
+            box-shadow: 0 2px 4px rgba(5, 150, 105, 0.15);
+        }
+
+        .var-pill .plus {
+            font-size: 1rem;
+            line-height: 1;
+            opacity: 0.7;
+        }
+
+        .var-pills-empty {
+            font-size: 0.82rem;
+            color: var(--text-light);
+            font-style: italic;
+        }
+
+        /* "Set bounds for all" / "Set value for all" helper bar */
+        .bulk-bounds-row {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 0.7rem;
+            padding: 0.55rem 0.8rem;
+            background: #f9fafb;
+            border-radius: 8px;
+            border: 1px dashed var(--border);
+            font-size: 0.85rem;
+            color: var(--text-light);
+        }
+
+        .bulk-bounds-row input {
+            width: 75px;
+            padding: 0.35rem 0.4rem;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            text-align: center;
+            font-size: 0.85rem;
+        }
+
+        .bulk-bounds-row button {
+            padding: 0.35rem 0.8rem;
+            background: var(--text-dark);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.82rem;
+            font-weight: 600;
+            font-family: inherit;
+        }
+
+        .bulk-bounds-row button:hover {
+            background: black;
+        }
+
+        .var-row-name {
+            flex: 1;
+            font-weight: 600;
+            color: var(--iu-crimson);
+            font-family: 'Monaco', 'Menlo', monospace;
+            font-size: 0.92rem;
+        }
+
+        .var-row-name.control {
+            color: var(--success);
+        }
+
         /* Control Variable Row */
         .control-var-row {
             display: flex;
@@ -901,15 +1006,17 @@ Profit = Revenue - Cost * Sales" oninput="parseEquations()"></textarea>
 
             <!-- Decision Variables -->
             <div class="section-label">Decision Variables</div>
-            <p class="section-hint">Variables to optimize (e.g., Price, Discount) - specify search bounds</p>
-            <div id="decisionVarsContainer"></div>
-            <button class="add-btn" onclick="addDecisionVar()" style="margin-top: 0.5rem; margin-bottom: 1.5rem;">+ Add Decision Variable</button>
+            <p class="section-hint">Click an unassigned variable to add it as a decision variable. Set bounds inline or use the bulk helper.</p>
+            <div id="decisionVarPills" class="var-pills-row"></div>
+            <div id="decisionVarBulk"></div>
+            <div id="decisionVarsContainer" style="margin-bottom: 1.5rem;"></div>
 
             <!-- Control Variables -->
             <div class="section-label">Control Variables</div>
-            <p class="section-hint">Fixed inputs for the model (e.g., Temperature, Income, HH_Size)</p>
+            <p class="section-hint">Click an unassigned variable to fix it as a control input.</p>
+            <div id="controlVarPills" class="var-pills-row"></div>
+            <div id="controlVarBulk"></div>
             <div id="controlVarsContainer"></div>
-            <button class="add-btn" onclick="addControlVar()" style="margin-top: 0.5rem;">+ Add Control Variable</button>
             <div id="errorMessage" class="error-message"></div>
             <button class="optimize-btn" onclick="optimize()">Find Optimal Solution</button>
 
@@ -1007,8 +1114,10 @@ Profit = Revenue - Cost * Sales" oninput="parseEquations()"></textarea>
 
         document.addEventListener('DOMContentLoaded', () => {
             initChart();
-            addDecisionVar('', '', '');
-            addControlVar('', '');
+            // Pills + rows are populated as the user enters equations and clicks.
+            // No need to seed empty rows up front.
+            renderDecisionVars();
+            renderControlVars();
             renderPredictionInputs();
         });
 
@@ -1064,17 +1173,18 @@ Profit = Revenue - Cost * Sales" oninput="parseEquations()"></textarea>
                 }
             }
 
-            updateDropdowns();
-            hidePredictionResults();
-
-            // Reset all downstream state
+            // Reset downstream state BEFORE updateDropdowns so the pill renderers see
+            // the cleared decision/control arrays and rebuild the "Available" pills
+            // from scratch against the freshly parsed equations.
             decisionVars = [];
             decisionVarId = 0;
             controlVars = [];
             controlVarId = 0;
             lastResult = null;
-            document.getElementById('decisionVarsContainer').innerHTML = '';
-            document.getElementById('controlVarsContainer').innerHTML = '';
+
+            updateDropdowns();
+            hidePredictionResults();
+
             document.getElementById('resultsSection').style.display = 'none';
             document.getElementById('goalType').selectedIndex = 0;
             if (mainChart) {
@@ -1127,14 +1237,35 @@ Profit = Revenue - Cost * Sales" oninput="parseEquations()"></textarea>
             }
         }
 
+        // Variables referenced in equations but not yet classified as decision OR
+        // control. These are the candidates for both pill pickers — clicking moves
+        // the variable into one section and removes it from the other's "Available"
+        // list.
+        function getUnclassifiedVars() {
+            const undefinedVars = getUndefinedVars();
+            const taken = new Set([
+                ...decisionVars.map(d => d.name).filter(Boolean),
+                ...controlVars.map(c => c.name).filter(Boolean)
+            ]);
+            return undefinedVars.filter(v => !taken.has(v));
+        }
+
         function addDecisionVar(name = '', min = '', max = '') {
             decisionVars.push({ id: decisionVarId++, name, min, max });
             renderDecisionVars();
+            renderControlVars();
+        }
+
+        // Pill click → add this variable as a decision variable with empty bounds
+        // (user fills bounds inline or via the bulk helper).
+        function addDecisionVarFromPill(name) {
+            addDecisionVar(name, '', '');
         }
 
         function removeDecisionVar(id) {
             decisionVars = decisionVars.filter(d => d.id !== id);
             renderDecisionVars();
+            renderControlVars(); // pill returns to the available list
         }
 
         function updateDecisionVar(id, field, value) {
@@ -1142,32 +1273,73 @@ Profit = Revenue - Cost * Sales" oninput="parseEquations()"></textarea>
             if (dv) dv[field] = value;
         }
 
+        // "Set bounds for all" Apply button. Whichever fields are filled get
+        // applied to every decision variable; empty fields are left alone so
+        // partial applies (e.g., set min only) work too.
+        function applyBulkDecisionBounds() {
+            const minEl = document.getElementById('bulkDecisionMin');
+            const maxEl = document.getElementById('bulkDecisionMax');
+            const min = minEl ? minEl.value : '';
+            const max = maxEl ? maxEl.value : '';
+            if (min === '' && max === '') return;
+            decisionVars.forEach(dv => {
+                if (min !== '') dv.min = min;
+                if (max !== '') dv.max = max;
+            });
+            renderDecisionVars();
+        }
+
         function renderDecisionVars() {
-            const availableVars = getUndefinedVars();
+            const unclassified = getUnclassifiedVars();
+
+            const pillsHtml = unclassified.length === 0
+                ? '<span class="var-pills-empty">No unassigned variables. Define equations above to populate.</span>'
+                : unclassified.map(v =>
+                    `<button type="button" class="var-pill" onclick="addDecisionVarFromPill('${escapeHtml(v)}')"><span class="plus">+</span>${escapeHtml(v)}</button>`
+                ).join('');
+            document.getElementById('decisionVarPills').innerHTML = pillsHtml;
+
+            // Bulk-bounds bar only appears once at least one decision variable is selected.
+            document.getElementById('decisionVarBulk').innerHTML = decisionVars.length === 0 ? '' : `
+                <div class="bulk-bounds-row">
+                    <span>Set bounds for all:</span>
+                    <span>from</span>
+                    <input type="number" id="bulkDecisionMin" placeholder="min" step="any">
+                    <span>to</span>
+                    <input type="number" id="bulkDecisionMax" placeholder="max" step="any">
+                    <button type="button" onclick="applyBulkDecisionBounds()">Apply to all</button>
+                </div>
+            `;
+
+            // Per-row inputs: name is fixed (already chosen via the pill), so we show
+            // it as a label instead of a dropdown.
             document.getElementById('decisionVarsContainer').innerHTML = decisionVars.map(dv => `
                 <div class="decision-var-row">
-                    <select onchange="updateDecisionVar(${dv.id}, 'name', this.value); renderControlVars();">
-                        <option value="">-- Select --</option>
-                        ${availableVars.map(v => `<option value="${v}" ${dv.name === v ? 'selected' : ''}>${v}</option>`).join('')}
-                    </select>
+                    <span class="var-row-name">${escapeHtml(dv.name)}</span>
                     <span style="font-size: 0.85rem; color: var(--text-light);">from</span>
-                    <input type="number" value="${dv.min}" placeholder="min" onchange="updateDecisionVar(${dv.id}, 'min', this.value)">
+                    <input type="number" value="${dv.min}" placeholder="min" step="any" onchange="updateDecisionVar(${dv.id}, 'min', this.value)">
                     <span style="font-size: 0.85rem; color: var(--text-light);">to</span>
-                    <input type="number" value="${dv.max}" placeholder="max" onchange="updateDecisionVar(${dv.id}, 'max', this.value)">
-                    ${decisionVars.length > 1 ? `<button class="remove-btn" onclick="removeDecisionVar(${dv.id})">✕</button>` : ''}
+                    <input type="number" value="${dv.max}" placeholder="max" step="any" onchange="updateDecisionVar(${dv.id}, 'max', this.value)">
+                    <button class="remove-btn" onclick="removeDecisionVar(${dv.id})">✕</button>
                 </div>
             `).join('');
         }
 
-        // Control Variables
+        // Control Variables — same pattern, single value field instead of min/max.
         function addControlVar(name = '', value = '') {
             controlVars.push({ id: controlVarId++, name, value });
             renderControlVars();
+            renderDecisionVars();
+        }
+
+        function addControlVarFromPill(name) {
+            addControlVar(name, '');
         }
 
         function removeControlVar(id) {
             controlVars = controlVars.filter(c => c.id !== id);
             renderControlVars();
+            renderDecisionVars();
         }
 
         function updateControlVar(id, field, val) {
@@ -1175,17 +1347,38 @@ Profit = Revenue - Cost * Sales" oninput="parseEquations()"></textarea>
             if (cv) cv[field] = val;
         }
 
+        function applyBulkControlValue() {
+            const el = document.getElementById('bulkControlValue');
+            const val = el ? el.value : '';
+            if (val === '') return;
+            controlVars.forEach(cv => { cv.value = val; });
+            renderControlVars();
+        }
+
         function renderControlVars() {
-            const availableVars = getControlVarOptions();
+            const unclassified = getUnclassifiedVars();
+
+            const pillsHtml = unclassified.length === 0
+                ? '<span class="var-pills-empty">No unassigned variables.</span>'
+                : unclassified.map(v =>
+                    `<button type="button" class="var-pill control" onclick="addControlVarFromPill('${escapeHtml(v)}')"><span class="plus">+</span>${escapeHtml(v)}</button>`
+                ).join('');
+            document.getElementById('controlVarPills').innerHTML = pillsHtml;
+
+            document.getElementById('controlVarBulk').innerHTML = controlVars.length === 0 ? '' : `
+                <div class="bulk-bounds-row">
+                    <span>Set value for all:</span>
+                    <input type="number" id="bulkControlValue" placeholder="value" step="any">
+                    <button type="button" onclick="applyBulkControlValue()">Apply to all</button>
+                </div>
+            `;
+
             document.getElementById('controlVarsContainer').innerHTML = controlVars.map(cv => `
                 <div class="control-var-row">
-                    <select onchange="updateControlVar(${cv.id}, 'name', this.value)">
-                        <option value="">-- Select --</option>
-                        ${availableVars.map(v => `<option value="${v}" ${cv.name === v ? 'selected' : ''}>${v}</option>`).join('')}
-                    </select>
+                    <span class="var-row-name control">${escapeHtml(cv.name)}</span>
                     <span style="font-size: 0.85rem; color: var(--text-light);">=</span>
                     <input type="number" value="${cv.value}" placeholder="value" step="any" onchange="updateControlVar(${cv.id}, 'value', this.value)">
-                    ${controlVars.length > 1 ? `<button class="remove-btn" onclick="removeControlVar(${cv.id})">✕</button>` : ''}
+                    <button class="remove-btn" onclick="removeControlVar(${cv.id})">✕</button>
                 </div>
             `).join('');
         }
