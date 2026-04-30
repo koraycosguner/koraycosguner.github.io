@@ -437,6 +437,20 @@
             background: var(--iu-crimson-dark);
         }
 
+        .optimize-btn.secondary {
+            background: #555;
+            margin-top: 0.5rem;
+        }
+
+        .optimize-btn.secondary:hover {
+            background: #333;
+        }
+
+        .optimize-btn:disabled {
+            background: #999;
+            cursor: not-allowed;
+        }
+
         /* Error Message */
         .error-message {
             color: var(--error);
@@ -827,6 +841,10 @@ Profit = Revenue - Cost * Sales" oninput="parseEquations()"></textarea>
             <button class="add-btn" onclick="addControlVar()" style="margin-top: 0.5rem;">+ Add Control Variable</button>
             <div id="errorMessage" class="error-message"></div>
             <button class="optimize-btn" onclick="optimize()">Find Optimal Solution</button>
+            <button class="optimize-btn secondary" id="optimizeWebrBtn" onclick="optimizeWithWebR()">Optimize with R (webR &middot; L-BFGS-B)</button>
+            <p class="section-hint" style="margin-top: 0.5rem;">
+                Runs R's <code>optim()</code> in the browser via webR (R compiled to WebAssembly). ~30&nbsp;MB one-time download; first boot takes ~5&ndash;10&nbsp;s, then results are near-instant.
+            </p>
 
             <!-- Prediction Section -->
             <div class="prediction-section">
@@ -1920,6 +1938,188 @@ Profit = Revenue - Cost * Sales" oninput="parseEquations()"></textarea>
             generateExcelPreview();
         }
 
+        // ---------------- webR integration ----------------
+        // Lazy-loaded R-in-the-browser optimizer. Uses R's native optim() with method
+        // L-BFGS-B (quasi-Newton with box constraints — same bounds users already set in
+        // the decision-variable inputs). Pedagogically nice because students see the
+        // in-browser tool agree with what they'd run in RStudio.
+        //
+        // First click pays a ~30 MB / ~5-10 s cold-boot cost (cached via IndexedDB after).
+        // Subsequent clicks are near-instant. Communication runs in webR's internal worker
+        // so the UI stays responsive.
+        let _webR = null;
+        let _webRBootPromise = null;
+
+        async function getWebR(progressCb) {
+            if (_webR) return _webR;
+            if (_webRBootPromise) return _webRBootPromise;
+
+            _webRBootPromise = (async () => {
+                if (progressCb) progressCb('Loading webR module…');
+                const mod = await import('https://webr.r-wasm.org/latest/webr.mjs');
+                if (progressCb) progressCb('Initializing R session…');
+                const webR = new mod.WebR({ interactive: false });
+                await webR.init();
+                _webR = webR;
+                return webR;
+            })();
+            try {
+                return await _webRBootPromise;
+            } finally {
+                _webRBootPromise = null;
+            }
+        }
+
+        // math.js syntax → R syntax. After normalizeFormula(), function names are already
+        // lowercased (exp, log, sqrt, abs) which matches R. The `^` operator and arithmetic
+        // also work identically. The one math.js-only construct we translate is pow(a, b),
+        // which R writes as a^b. Anything more exotic (matrix ops, math.js-specific funcs)
+        // is left as-is and will surface as an R error if used.
+        function formulaToR(formula) {
+            let f = normalizeFormula(formula);
+            // Replace pow(a, b) with (a)^(b). Only handles non-nested args; nested pow()
+            // would need a parser, which the tool doesn't currently use.
+            f = f.replace(/\bpow\s*\(\s*([^,()]+?)\s*,\s*([^()]+?)\s*\)/g, '(($1)^($2))');
+            return f;
+        }
+
+        async function optimizeWithWebR() {
+            const errorEl = document.getElementById('errorMessage');
+            errorEl.classList.remove('visible');
+
+            const goal = document.getElementById('goalType').value;
+            const objVar = document.getElementById('objectiveVar').value;
+            const activeDecVars = decisionVars.filter(dv => dv.name && dv.min !== '' && dv.max !== '');
+            const activeControlVars = controlVars.filter(cv => cv.name && cv.value !== '');
+
+            if (!objVar) {
+                errorEl.textContent = 'Select an objective variable.';
+                errorEl.classList.add('visible'); return;
+            }
+            if (activeDecVars.length === 0) {
+                errorEl.textContent = 'Add at least one decision variable with range.';
+                errorEl.classList.add('visible'); return;
+            }
+            const undefinedVars = getUndefinedVars();
+            const assignedVars = new Set([
+                ...activeDecVars.map(dv => dv.name),
+                ...activeControlVars.map(cv => cv.name)
+            ]);
+            const unassignedVars = undefinedVars.filter(v => !assignedVars.has(v));
+            if (unassignedVars.length > 0) {
+                errorEl.textContent = `Missing values for: ${unassignedVars.join(', ')}.`;
+                errorEl.classList.add('visible'); return;
+            }
+
+            // Quick sanity check the model evaluates at midpoints before invoking R.
+            const testVals = {};
+            activeDecVars.forEach(dv => testVals[dv.name] = (parseFloat(dv.min) + parseFloat(dv.max)) / 2);
+            const testResult = evalModel(testVals);
+            if (testResult.error) {
+                errorEl.textContent = testResult.error;
+                errorEl.classList.add('visible'); return;
+            }
+
+            const order = getEvalOrder();
+            if (!order) {
+                errorEl.textContent = 'Circular dependency in equations.';
+                errorEl.classList.add('visible'); return;
+            }
+
+            const btn = document.getElementById('optimizeWebrBtn');
+            const originalText = btn.textContent;
+            btn.disabled = true;
+            const setStatus = (msg) => { btn.textContent = msg; };
+
+            try {
+                const webR = await getWebR(setStatus);
+                setStatus('Running optim()…');
+
+                // Build R objective function from the user's equations.
+                const decNames = activeDecVars.map(d => d.name);
+                const lower = activeDecVars.map(d => parseFloat(d.min));
+                const upper = activeDecVars.map(d => parseFloat(d.max));
+                const init = activeDecVars.map(d => (parseFloat(d.min) + parseFloat(d.max)) / 2);
+
+                const decAssigns = decNames.map((n, i) => `  ${n} <- par[${i + 1}]`).join('\n');
+                const ctrlAssigns = activeControlVars
+                    .map(c => `  ${c.name} <- ${parseFloat(c.value)}`)
+                    .join('\n');
+                const eqLines = order
+                    .map(eq => `  ${eq.varName} <- ${formulaToR(eq.formula)}`)
+                    .join('\n');
+
+                // optim() minimizes by default — negate the objective for "maximize".
+                const sign = goal === 'maximize' ? '-1 * ' : '';
+                const valueOut = goal === 'maximize' ? '-res$value' : 'res$value';
+
+                const script = `
+fn <- function(par) {
+${decAssigns}
+${ctrlAssigns ? ctrlAssigns + '\n' : ''}${eqLines}
+  ${sign}${objVar}
+}
+res <- optim(
+  par = c(${init.join(', ')}),
+  fn = fn,
+  method = "L-BFGS-B",
+  lower = c(${lower.join(', ')}),
+  upper = c(${upper.join(', ')})
+)
+c(${valueOut}, res$par, res$convergence)
+`;
+
+                const rResult = await webR.evalR(script);
+                let arr;
+                try {
+                    arr = await rResult.toArray();
+                } finally {
+                    webR.destroy(rResult);
+                }
+
+                if (!arr || arr.length < 1 + decNames.length + 1) {
+                    throw new Error('Unexpected response from webR.');
+                }
+                const finalValue = arr[0];
+                const par = arr.slice(1, 1 + decNames.length);
+                const convergence = arr[1 + decNames.length];
+
+                if (par.some(v => !Number.isFinite(v)) || !Number.isFinite(finalValue)) {
+                    throw new Error('webR returned non-finite values.');
+                }
+
+                // Compute __scope by re-evaluating in JS (so the "All values at optimum"
+                // panel works the same as the JS optimizer's results).
+                _compiledModel = prepareModel();
+                if (!_compiledModel) throw new Error('Could not compile equations for display.');
+                const valsForScope = {};
+                decNames.forEach((n, i) => valsForScope[n] = par[i]);
+                const evalResult = evalModel(valsForScope);
+                _compiledModel = null;
+                if (evalResult.error) throw new Error(evalResult.error);
+
+                const best = { ...valsForScope, __objective: finalValue, __scope: evalResult.scope, __method: 'webr-lbfgsb' };
+                lastResult = { goal, objVar, decVars: activeDecVars, best };
+                displayResults(goal, objVar, activeDecVars, best, best.__method);
+                updateChart(objVar, activeDecVars, best, goal);
+                generateRCode(goal, objVar, activeDecVars);
+                generateExcelPreview();
+
+                if (convergence !== 0) {
+                    // Non-zero is a warning, not necessarily a failure — surface it but
+                    // still display the result (which is usually fine).
+                    console.warn(`webR optim convergence code: ${convergence} (0 = success).`);
+                }
+            } catch (e) {
+                errorEl.textContent = `webR optim failed: ${e.message || e}`;
+                errorEl.classList.add('visible');
+            } finally {
+                btn.disabled = false;
+                btn.textContent = originalText;
+            }
+        }
+        // -------------- end webR integration --------------
+
         function displayResults(goal, objVar, decVars, best, method) {
             document.getElementById('resultsSection').style.display = 'block';
 
@@ -1928,6 +2128,7 @@ Profit = Revenue - Cost * Sales" oninput="parseEquations()"></textarea>
                 : method === 'coordinate' ? ' (Coordinate-wise)'
                 : method === 'coordinate-iter' ? ' (Iterated Coord. Descent, Multi-start)'
                 : method === 'block' ? ' (Block Decomposition)'
+                : method === 'webr-lbfgsb' ? ' (R optim L-BFGS-B via webR)'
                 : ' (Grid Search)';
             document.getElementById('solutionTitle').textContent =
                 `${goal === 'maximize' ? 'Maximum' : 'Minimum'} Found${methodLabel}`;
