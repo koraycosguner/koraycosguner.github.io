@@ -437,19 +437,34 @@
             background: var(--iu-crimson-dark);
         }
 
-        .optimize-btn.secondary {
-            background: #555;
-            margin-top: 0.5rem;
-        }
-
-        .optimize-btn.secondary:hover {
-            background: #333;
-        }
-
         .optimize-btn:disabled {
             background: #999;
             cursor: not-allowed;
         }
+
+        /* Verification status subtitle (R cross-check) */
+        .solution-status {
+            font-size: 0.85rem;
+            margin-top: 0.4rem;
+            margin-bottom: 0.6rem;
+            display: none;
+            align-items: center;
+            gap: 0.4rem;
+        }
+        .solution-status.visible { display: inline-flex; }
+        .solution-status.verifying { color: var(--text-light); }
+        .solution-status.verified { color: var(--success); }
+        .solution-status.improved { color: var(--success); }
+        .solution-status.failed { color: #b45309; }
+        .solution-status .spinner {
+            width: 0.8rem; height: 0.8rem;
+            border: 2px solid var(--border);
+            border-top-color: var(--text-light);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            display: inline-block;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
 
         /* Error Message */
         .error-message {
@@ -523,32 +538,67 @@
         }
 
         .solution-grid {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 1.5rem;
+            margin-top: 0.25rem;
         }
 
-        .solution-item {
-            text-align: center;
+        .solution-table {
+            width: 100%;
+            max-width: 520px;
+            border-collapse: collapse;
             background: white;
-            padding: 1rem 1.25rem;
             border-radius: 8px;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            font-size: 0.95rem;
         }
 
-        .solution-item .label {
-            font-size: 0.75rem;
-            color: var(--text-light);
+        .solution-table thead th {
+            text-align: left;
+            background: rgba(0,0,0,0.04);
+            padding: 0.65rem 1rem;
+            font-weight: 600;
+            font-size: 0.72rem;
             text-transform: uppercase;
             letter-spacing: 0.5px;
-            margin-bottom: 0.25rem;
+            color: var(--text-light);
+            border-bottom: 1px solid var(--border);
         }
 
-        .solution-item .value {
-            font-size: 1.5rem;
+        .solution-table th.num,
+        .solution-table td.num {
+            text-align: right;
+            font-variant-numeric: tabular-nums;
+            font-family: 'Monaco', 'Menlo', monospace;
+        }
+
+        .solution-table td {
+            padding: 0.55rem 1rem;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .solution-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .solution-table tbody td.var-name {
+            font-weight: 600;
+            color: var(--text-dark);
+            font-family: 'Monaco', 'Menlo', monospace;
+            font-size: 0.9rem;
+        }
+
+        .solution-table tfoot td {
+            background: var(--success-light);
+            border-top: 2px solid var(--success);
+            padding: 0.75rem 1rem;
             font-weight: 700;
-            font-family: 'Monaco', monospace;
             color: var(--success);
+            font-size: 1.05rem;
+        }
+
+        .solution-table tfoot td.var-name {
+            color: var(--text-dark);
+            font-family: 'Monaco', 'Menlo', monospace;
         }
 
         .all-values {
@@ -841,9 +891,10 @@ Profit = Revenue - Cost * Sales" oninput="parseEquations()"></textarea>
             <button class="add-btn" onclick="addControlVar()" style="margin-top: 0.5rem;">+ Add Control Variable</button>
             <div id="errorMessage" class="error-message"></div>
             <button class="optimize-btn" onclick="optimize()">Find Optimal Solution</button>
-            <button class="optimize-btn secondary" id="optimizeWebrBtn" onclick="optimizeWithWebR()">Optimize with R (webR &middot; L-BFGS-B)</button>
             <p class="section-hint" style="margin-top: 0.5rem;">
-                Runs R's <code>optim()</code> in the browser via webR (R compiled to WebAssembly). ~30&nbsp;MB one-time download; first boot takes ~5&ndash;10&nbsp;s, then results are near-instant.
+                Each click runs the in-browser solver and cross-checks the answer against R's
+                <code>optim()</code> / <code>optimize()</code> (via webR &mdash; R compiled to WebAssembly).
+                First click downloads webR (~30&nbsp;MB, ~5&ndash;10&nbsp;s); subsequent clicks are near-instant.
             </p>
 
             <!-- Prediction Section -->
@@ -876,6 +927,7 @@ Profit = Revenue - Cost * Sales" oninput="parseEquations()"></textarea>
         <div id="resultsSection" style="display: none;">
             <div class="solution-box">
                 <h3 id="solutionTitle">Optimal Solution</h3>
+                <div class="solution-status" id="solutionStatus"></div>
                 <div class="solution-grid" id="solutionGrid"></div>
                 <div class="all-values">
                     <div style="font-size: 0.8rem; color: var(--text-light); margin-bottom: 0.4rem;">All values at optimum:</div>
@@ -1243,6 +1295,21 @@ Profit = Revenue - Cost * Sales" oninput="parseEquations()"></textarea>
                 minimumFractionDigits: 0,
                 maximumFractionDigits: 4
             });
+        }
+
+        function escapeHtml(s) {
+            return String(s).replace(/[&<>"']/g, ch =>
+                ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[ch]);
+        }
+
+        // Fixed 3-decimal formatting for the optimal-solution table. Falls back to
+        // scientific notation only for values outside what 3 decimals can sensibly show.
+        function format3(num) {
+            if (!Number.isFinite(num)) return '—';
+            if (Math.abs(num) >= 1e6 || (Math.abs(num) < 1e-3 && num !== 0)) {
+                return num.toExponential(3);
+            }
+            return num.toFixed(3);
         }
 
         function normalizeFormula(f) {
@@ -1866,7 +1933,12 @@ Profit = Revenue - Cost * Sales" oninput="parseEquations()"></textarea>
             return null;
         }
 
-        function optimize() {
+        // Each optimize() click bumps this. webR runs asynchronously, so when its callback
+        // finally fires we use this counter to ignore stale results from a prior click.
+        let _optimizeRequestId = 0;
+
+        async function optimize() {
+            const myId = ++_optimizeRequestId;
             const errorEl = document.getElementById('errorMessage');
             errorEl.classList.remove('visible');
 
@@ -1918,24 +1990,57 @@ Profit = Revenue - Cost * Sales" oninput="parseEquations()"></textarea>
                 return;
             }
 
-            let best;
+            let jsBest;
             try {
-                best = findOptimum(objVar, activeDecVars, goal);
+                jsBest = findOptimum(objVar, activeDecVars, goal);
             } finally {
                 _compiledModel = null;
             }
 
-            if (!best) {
-                errorEl.textContent = 'Optimization failed.';
-                errorEl.classList.add('visible');
-                return;
-            }
+            // Two paths:
+            // (a) JS optimizer succeeded: show its result instantly and cross-check with R.
+            // (b) JS path returned null (high-dim coupled problem, grid search skipped):
+            //     fall back to webR alone.
+            if (jsBest) {
+                lastResult = { goal, objVar, decVars: activeDecVars, best: jsBest };
+                displayResults(goal, objVar, activeDecVars, jsBest, jsBest.__method);
+                setVerificationStatus('verifying', 'Cross-checking with R…');
+                updateChart(objVar, activeDecVars, jsBest, goal);
+                generateRCode(goal, objVar, activeDecVars);
+                generateExcelPreview();
 
-            lastResult = { goal, objVar, decVars: activeDecVars, best };
-            displayResults(goal, objVar, activeDecVars, best, best.__method);
-            updateChart(objVar, activeDecVars, best, goal);
-            generateRCode(goal, objVar, activeDecVars);
-            generateExcelPreview();
+                // Background R verification — promise intentionally not awaited so the UI
+                // returns immediately. The handler stale-checks _optimizeRequestId before
+                // touching the DOM.
+                runWebRVerification(myId, goal, objVar, activeDecVars, activeControlVars, jsBest);
+            } else {
+                // JS unfeasible — go straight to webR.
+                setVerificationStatus('verifying', 'JS path skipped (high dimensionality). Solving with R…');
+                document.getElementById('resultsSection').style.display = 'block';
+                document.getElementById('solutionTitle').textContent = 'Solving…';
+                try {
+                    const webrBest = await runAndBuildWebRBest(goal, objVar, activeDecVars, activeControlVars,
+                        msg => { if (myId === _optimizeRequestId) setVerificationStatus('verifying', msg); });
+                    if (myId !== _optimizeRequestId) return;
+                    if (!webrBest) {
+                        errorEl.textContent = 'Optimization failed (both JS and R paths).';
+                        errorEl.classList.add('visible');
+                        setVerificationStatus(null);
+                        return;
+                    }
+                    lastResult = { goal, objVar, decVars: activeDecVars, best: webrBest };
+                    displayResults(goal, objVar, activeDecVars, webrBest, webrBest.__method);
+                    setVerificationStatus('verified', '✓ Solved with R (JS path skipped due to dimensionality)');
+                    updateChart(objVar, activeDecVars, webrBest, goal);
+                    generateRCode(goal, objVar, activeDecVars);
+                    generateExcelPreview();
+                } catch (e) {
+                    if (myId !== _optimizeRequestId) return;
+                    errorEl.textContent = `Optimization failed: ${e.message || e}`;
+                    errorEl.classList.add('visible');
+                    setVerificationStatus(null);
+                }
+            }
         }
 
         // ---------------- webR integration ----------------
@@ -1983,92 +2088,88 @@ Profit = Revenue - Cost * Sales" oninput="parseEquations()"></textarea>
             return f;
         }
 
-        async function optimizeWithWebR() {
-            const errorEl = document.getElementById('errorMessage');
-            errorEl.classList.remove('visible');
-
-            const goal = document.getElementById('goalType').value;
-            const objVar = document.getElementById('objectiveVar').value;
-            const activeDecVars = decisionVars.filter(dv => dv.name && dv.min !== '' && dv.max !== '');
-            const activeControlVars = controlVars.filter(cv => cv.name && cv.value !== '');
-
-            if (!objVar) {
-                errorEl.textContent = 'Select an objective variable.';
-                errorEl.classList.add('visible'); return;
+        // Update the verification subtitle on the result card. State is one of:
+        //   'verifying' (gray + spinner), 'verified' (green check),
+        //   'improved' (green — R found a higher objective and we updated the answer),
+        //   'failed' (amber warning — R verification skipped, JS answer kept).
+        // Pass null/'' as state to hide.
+        function setVerificationStatus(state, message) {
+            const el = document.getElementById('solutionStatus');
+            if (!el) return;
+            if (!state) {
+                el.className = 'solution-status';
+                el.innerHTML = '';
+                return;
             }
-            if (activeDecVars.length === 0) {
-                errorEl.textContent = 'Add at least one decision variable with range.';
-                errorEl.classList.add('visible'); return;
-            }
-            const undefinedVars = getUndefinedVars();
-            const assignedVars = new Set([
-                ...activeDecVars.map(dv => dv.name),
-                ...activeControlVars.map(cv => cv.name)
-            ]);
-            const unassignedVars = undefinedVars.filter(v => !assignedVars.has(v));
-            if (unassignedVars.length > 0) {
-                errorEl.textContent = `Missing values for: ${unassignedVars.join(', ')}.`;
-                errorEl.classList.add('visible'); return;
-            }
+            el.className = `solution-status visible ${state}`;
+            const spinner = state === 'verifying' ? '<span class="spinner"></span>' : '';
+            el.innerHTML = `${spinner}<span>${message || ''}</span>`;
+        }
 
-            // Quick sanity check the model evaluates at midpoints before invoking R.
-            const testVals = {};
-            activeDecVars.forEach(dv => testVals[dv.name] = (parseFloat(dv.min) + parseFloat(dv.max)) / 2);
-            const testResult = evalModel(testVals);
-            if (testResult.error) {
-                errorEl.textContent = testResult.error;
-                errorEl.classList.add('visible'); return;
-            }
-
+        // Pure helper: run R's optim() (multi-var) or optimize() (single-var) on the
+        // user's equations and return { value, par, convergence, decNames }.
+        // Returns null on any failure (caller decides what to do).
+        async function runWebROptim({ goal, objVar, decVars, controlVars, statusCb }) {
             const order = getEvalOrder();
-            if (!order) {
-                errorEl.textContent = 'Circular dependency in equations.';
-                errorEl.classList.add('visible'); return;
+            if (!order) return null;
+
+            if (statusCb) statusCb('Loading webR…');
+            const webR = await getWebR(statusCb);
+            if (statusCb) statusCb(decVars.length === 1 ? 'Running optimize()…' : 'Running optim() L-BFGS-B…');
+
+            const decNames = decVars.map(d => d.name);
+            const lower = decVars.map(d => parseFloat(d.min));
+            const upper = decVars.map(d => parseFloat(d.max));
+            const init = decVars.map(d => (parseFloat(d.min) + parseFloat(d.max)) / 2);
+
+            const isOneD = decNames.length === 1;
+            const isMaximize = goal === 'maximize';
+
+            // Function signature & decision-var assignment differ between the two paths.
+            // optimize() takes a single scalar argument; optim() takes a vector `par`.
+            const fnSig = isOneD ? `function(${decNames[0]})` : 'function(par)';
+            const decAssigns = isOneD
+                ? '' // 1D: argument IS the decision var, no assignment needed
+                : decNames.map((n, i) => `  ${n} <- par[${i + 1}]`).join('\n') + '\n';
+
+            // For optim() (which only minimizes), negate inside fn for "maximize" and
+            // negate the returned value back when extracting. optimize() has its own
+            // `maximum = TRUE/FALSE` flag, so no negation needed there.
+            const returnExpr = (!isOneD && isMaximize) ? `-(${objVar})` : objVar;
+
+            const ctrlAssigns = controlVars
+                .map(c => `  ${c.name} <- ${parseFloat(c.value)}`)
+                .join('\n');
+            const eqLines = order
+                .map(eq => `  ${eq.varName} <- ${formulaToR(eq.formula)}`)
+                .join('\n');
+
+            // Optimizer call + how to package the result. We always return a flat numeric
+            // vector of length (decNames.length + 2): [objective_value, par1, par2, ..., convergence_code].
+            // For optimize(), there's no convergence code so we return 0 as a placeholder.
+            let optCall, valueExpr, parExpr, convExpr;
+            if (isOneD) {
+                optCall = `res <- optimize(fn, interval = c(${lower[0]}, ${upper[0]}), maximum = ${isMaximize ? 'TRUE' : 'FALSE'})`;
+                valueExpr = 'res$objective';
+                parExpr = isMaximize ? 'res$maximum' : 'res$minimum';
+                convExpr = '0';
+            } else {
+                optCall = `res <- optim(par = c(${init.join(', ')}), fn = fn, method = "L-BFGS-B", lower = c(${lower.join(', ')}), upper = c(${upper.join(', ')}))`;
+                valueExpr = isMaximize ? '-res$value' : 'res$value';
+                parExpr = 'res$par';
+                convExpr = 'res$convergence';
             }
 
-            const btn = document.getElementById('optimizeWebrBtn');
-            const originalText = btn.textContent;
-            btn.disabled = true;
-            const setStatus = (msg) => { btn.textContent = msg; };
-
-            try {
-                const webR = await getWebR(setStatus);
-                setStatus('Running optim()…');
-
-                // Build R objective function from the user's equations.
-                const decNames = activeDecVars.map(d => d.name);
-                const lower = activeDecVars.map(d => parseFloat(d.min));
-                const upper = activeDecVars.map(d => parseFloat(d.max));
-                const init = activeDecVars.map(d => (parseFloat(d.min) + parseFloat(d.max)) / 2);
-
-                const decAssigns = decNames.map((n, i) => `  ${n} <- par[${i + 1}]`).join('\n');
-                const ctrlAssigns = activeControlVars
-                    .map(c => `  ${c.name} <- ${parseFloat(c.value)}`)
-                    .join('\n');
-                const eqLines = order
-                    .map(eq => `  ${eq.varName} <- ${formulaToR(eq.formula)}`)
-                    .join('\n');
-
-                // optim() minimizes by default — negate the objective for "maximize".
-                const sign = goal === 'maximize' ? '-1 * ' : '';
-                const valueOut = goal === 'maximize' ? '-res$value' : 'res$value';
-
-                const script = `
-fn <- function(par) {
-${decAssigns}
-${ctrlAssigns ? ctrlAssigns + '\n' : ''}${eqLines}
-  ${sign}${objVar}
+            const script = `
+fn <- ${fnSig} {
+${decAssigns}${ctrlAssigns ? ctrlAssigns + '\n' : ''}${eqLines}
+  ${returnExpr}
 }
-res <- optim(
-  par = c(${init.join(', ')}),
-  fn = fn,
-  method = "L-BFGS-B",
-  lower = c(${lower.join(', ')}),
-  upper = c(${upper.join(', ')})
-)
-c(${valueOut}, res$par, res$convergence)
+${optCall}
+c(${valueExpr}, ${parExpr}, ${convExpr})
 `;
 
+            try {
                 const rResult = await webR.evalR(script);
                 let arr;
                 try {
@@ -2076,46 +2177,77 @@ c(${valueOut}, res$par, res$convergence)
                 } finally {
                     webR.destroy(rResult);
                 }
-
-                if (!arr || arr.length < 1 + decNames.length + 1) {
-                    throw new Error('Unexpected response from webR.');
-                }
-                const finalValue = arr[0];
+                if (!arr || arr.length < 1 + decNames.length + 1) return null;
+                const value = arr[0];
                 const par = arr.slice(1, 1 + decNames.length);
                 const convergence = arr[1 + decNames.length];
+                if (par.some(v => !Number.isFinite(v)) || !Number.isFinite(value)) return null;
+                return { value, par, convergence, decNames };
+            } catch (e) {
+                console.warn('webR optim failed:', e);
+                return null;
+            }
+        }
 
-                if (par.some(v => !Number.isFinite(v)) || !Number.isFinite(finalValue)) {
-                    throw new Error('webR returned non-finite values.');
+        // Convenience wrapper: run R, then re-evaluate the model in JS at R's solution to
+        // populate __scope (so the "All values at optimum" panel renders correctly).
+        async function runAndBuildWebRBest(goal, objVar, decVars, controlVars, statusCb) {
+            const r = await runWebROptim({ goal, objVar, decVars, controlVars, statusCb });
+            if (!r) return null;
+            _compiledModel = prepareModel();
+            if (!_compiledModel) return null;
+            try {
+                const valsForScope = {};
+                r.decNames.forEach((n, i) => valsForScope[n] = r.par[i]);
+                const evalResult = evalModel(valsForScope);
+                if (evalResult.error) return null;
+                return {
+                    ...valsForScope,
+                    __objective: r.value,
+                    __scope: evalResult.scope,
+                    __method: 'webr-lbfgsb',
+                    __convergence: r.convergence
+                };
+            } finally {
+                _compiledModel = null;
+            }
+        }
+
+        // Run R in the background to verify a JS solution. If R finds a meaningfully
+        // higher objective, swap the displayed answer to R's; otherwise mark the JS
+        // answer "✓ Cross-checked with R". Stale-checks via _optimizeRequestId so a
+        // new click cancels in-flight verification cleanly.
+        async function runWebRVerification(requestId, goal, objVar, decVars, controlVars, jsBest) {
+            const stale = () => requestId !== _optimizeRequestId;
+            try {
+                const webrBest = await runAndBuildWebRBest(goal, objVar, decVars, controlVars,
+                    msg => { if (!stale()) setVerificationStatus('verifying', msg); });
+                if (stale()) return;
+                if (!webrBest) {
+                    setVerificationStatus('failed', 'R verification unavailable (offline / load error)');
+                    return;
                 }
 
-                // Compute __scope by re-evaluating in JS (so the "All values at optimum"
-                // panel works the same as the JS optimizer's results).
-                _compiledModel = prepareModel();
-                if (!_compiledModel) throw new Error('Could not compile equations for display.');
-                const valsForScope = {};
-                decNames.forEach((n, i) => valsForScope[n] = par[i]);
-                const evalResult = evalModel(valsForScope);
-                _compiledModel = null;
-                if (evalResult.error) throw new Error(evalResult.error);
+                // Use a small relative tolerance to avoid flapping on floating-point noise.
+                const scale = Math.max(Math.abs(jsBest.__objective), Math.abs(webrBest.__objective), 1e-10);
+                const tol = 1e-6 * scale;
+                const rIsBetter = goal === 'maximize'
+                    ? webrBest.__objective > jsBest.__objective + tol
+                    : webrBest.__objective < jsBest.__objective - tol;
 
-                const best = { ...valsForScope, __objective: finalValue, __scope: evalResult.scope, __method: 'webr-lbfgsb' };
-                lastResult = { goal, objVar, decVars: activeDecVars, best };
-                displayResults(goal, objVar, activeDecVars, best, best.__method);
-                updateChart(objVar, activeDecVars, best, goal);
-                generateRCode(goal, objVar, activeDecVars);
-                generateExcelPreview();
-
-                if (convergence !== 0) {
-                    // Non-zero is a warning, not necessarily a failure — surface it but
-                    // still display the result (which is usually fine).
-                    console.warn(`webR optim convergence code: ${convergence} (0 = success).`);
+                if (rIsBetter) {
+                    // R found a meaningfully better solution — replace the displayed answer.
+                    lastResult = { goal, objVar, decVars, best: webrBest };
+                    displayResults(goal, objVar, decVars, webrBest, webrBest.__method);
+                    setVerificationStatus('improved',
+                        `✓ Updated to R's solution (better objective: ${jsBest.__objective.toFixed(6)} → ${webrBest.__objective.toFixed(6)})`);
+                    updateChart(objVar, decVars, webrBest, goal);
+                } else {
+                    setVerificationStatus('verified', '✓ Cross-checked with R — results agree');
                 }
             } catch (e) {
-                errorEl.textContent = `webR optim failed: ${e.message || e}`;
-                errorEl.classList.add('visible');
-            } finally {
-                btn.disabled = false;
-                btn.textContent = originalText;
+                if (stale()) return;
+                setVerificationStatus('failed', `R verification skipped: ${e.message || e}`);
             }
         }
         // -------------- end webR integration --------------
@@ -2133,21 +2265,24 @@ c(${valueOut}, res$par, res$convergence)
             document.getElementById('solutionTitle').textContent =
                 `${goal === 'maximize' ? 'Maximum' : 'Minimum'} Found${methodLabel}`;
 
-            let html = '';
-            decVars.forEach(dv => {
-                html += `<div class="solution-item">
-                    <div class="label">Optimal ${dv.name}</div>
-                    <div class="value">${best[dv.name].toFixed(2)}</div>
-                </div>`;
-            });
-            html += `<div class="solution-item">
-                <div class="label">${goal === 'maximize' ? 'Max' : 'Min'} ${objVar}</div>
-                <div class="value">${formatNumber(best.__objective)}</div>
-            </div>`;
-            document.getElementById('solutionGrid').innerHTML = html;
+            // Decision variables go in the body; the objective lives in the footer
+            // (visually separated, highlighted as the punchline of the result).
+            const bodyRows = decVars.map(dv =>
+                `<tr><td class="var-name">${escapeHtml(dv.name)}</td><td class="num">${format3(best[dv.name])}</td></tr>`
+            ).join('');
+            const footRow = `<tr><td class="var-name">${escapeHtml(objVar)} (${goal === 'maximize' ? 'max' : 'min'})</td><td class="num">${format3(best.__objective)}</td></tr>`;
+            document.getElementById('solutionGrid').innerHTML = `
+                <table class="solution-table">
+                    <thead>
+                        <tr><th>Variable</th><th class="num">Optimal Value</th></tr>
+                    </thead>
+                    <tbody>${bodyRows}</tbody>
+                    <tfoot>${footRow}</tfoot>
+                </table>
+            `;
 
             document.getElementById('allValues').innerHTML = Object.entries(best.__scope)
-                .map(([k, v]) => `<span class="value-chip"><b>${k}</b>=${formatNumber(v)}</span>`).join('');
+                .map(([k, v]) => `<span class="value-chip"><b>${escapeHtml(k)}</b>=${format3(v)}</span>`).join('');
         }
 
         function updateChart(objVar, decVars, best, goal) {
