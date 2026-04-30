@@ -1864,7 +1864,7 @@ for (col in names(data)) {
             $('predictionPrGrid').innerHTML = orderedAlts.map(a => `
                 <div class="prediction-pr-item">
                     <div class="alt">${escapeHtml(a)}</div>
-                    <div class="pr">${(probs[a] * 100).toFixed(2)}%</div>
+                    <div class="pr">${probs[a].toFixed(3)}</div>
                 </div>
             `).join('');
             $('predictionResult').classList.add('visible');
