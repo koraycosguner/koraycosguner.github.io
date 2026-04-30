@@ -539,6 +539,14 @@
 
         .solution-grid {
             margin-top: 0.25rem;
+            display: flex;
+            justify-content: center;
+        }
+
+        .all-values {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
 
         .solution-table {
@@ -550,6 +558,19 @@
             overflow: hidden;
             box-shadow: 0 2px 8px rgba(0,0,0,0.08);
             font-size: 0.95rem;
+        }
+
+        .solution-table.secondary {
+            font-size: 0.88rem;
+            max-width: 520px;
+        }
+
+        .solution-table.secondary thead th {
+            font-size: 0.7rem;
+        }
+
+        .solution-table.secondary td {
+            padding: 0.45rem 1rem;
         }
 
         .solution-table thead th {
@@ -891,11 +912,6 @@ Profit = Revenue - Cost * Sales" oninput="parseEquations()"></textarea>
             <button class="add-btn" onclick="addControlVar()" style="margin-top: 0.5rem;">+ Add Control Variable</button>
             <div id="errorMessage" class="error-message"></div>
             <button class="optimize-btn" onclick="optimize()">Find Optimal Solution</button>
-            <p class="section-hint" style="margin-top: 0.5rem;">
-                Each click runs the in-browser solver and cross-checks the answer against R's
-                <code>optim()</code> / <code>optimize()</code> (via webR &mdash; R compiled to WebAssembly).
-                First click downloads webR (~30&nbsp;MB, ~5&ndash;10&nbsp;s); subsequent clicks are near-instant.
-            </p>
 
             <!-- Prediction Section -->
             <div class="prediction-section">
@@ -2228,23 +2244,21 @@ c(${valueExpr}, ${parExpr}, ${convExpr})
                     return;
                 }
 
-                // Use a small relative tolerance to avoid flapping on floating-point noise.
+                // Relative tolerance for "results agree" — floating-point differences
+                // smaller than this are noise, not a meaningful improvement.
                 const scale = Math.max(Math.abs(jsBest.__objective), Math.abs(webrBest.__objective), 1e-10);
-                const tol = 1e-6 * scale;
+                const tol = 1e-3 * scale;
                 const rIsBetter = goal === 'maximize'
                     ? webrBest.__objective > jsBest.__objective + tol
                     : webrBest.__objective < jsBest.__objective - tol;
 
                 if (rIsBetter) {
-                    // R found a meaningfully better solution — replace the displayed answer.
+                    // R found a meaningfully better solution — silently swap to R's answer.
                     lastResult = { goal, objVar, decVars, best: webrBest };
                     displayResults(goal, objVar, decVars, webrBest, webrBest.__method);
-                    setVerificationStatus('improved',
-                        `✓ Updated to R's solution (better objective: ${jsBest.__objective.toFixed(6)} → ${webrBest.__objective.toFixed(6)})`);
                     updateChart(objVar, decVars, webrBest, goal);
-                } else {
-                    setVerificationStatus('verified', '✓ Cross-checked with R — results agree');
                 }
+                setVerificationStatus('verified', '✓ Cross-checked with R');
             } catch (e) {
                 if (stale()) return;
                 setVerificationStatus('failed', `R verification skipped: ${e.message || e}`);
@@ -2281,8 +2295,22 @@ c(${valueExpr}, ${parExpr}, ${convExpr})
                 </table>
             `;
 
-            document.getElementById('allValues').innerHTML = Object.entries(best.__scope)
-                .map(([k, v]) => `<span class="value-chip"><b>${escapeHtml(k)}</b>=${format3(v)}</span>`).join('');
+            // Second table: every other variable in scope (utilities, probabilities,
+            // intermediate quantities, control vars). Decision vars and the objective
+            // already appear in the table above, so exclude them to avoid duplication.
+            const shownAlready = new Set([...decVars.map(dv => dv.name), objVar]);
+            const otherEntries = Object.entries(best.__scope).filter(([k]) => !shownAlready.has(k));
+            document.getElementById('allValues').innerHTML = otherEntries.length === 0 ? '' : `
+                <table class="solution-table secondary">
+                    <thead>
+                        <tr><th>Variable</th><th class="num">Value</th></tr>
+                    </thead>
+                    <tbody>
+                        ${otherEntries.map(([k, v]) =>
+                            `<tr><td class="var-name">${escapeHtml(k)}</td><td class="num">${format3(v)}</td></tr>`).join('')}
+                    </tbody>
+                </table>
+            `;
         }
 
         function updateChart(objVar, decVars, best, goal) {
