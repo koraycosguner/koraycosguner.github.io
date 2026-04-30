@@ -1569,6 +1569,112 @@ Profit = Revenue - Cost * Sales" oninput="parseEquations()"></textarea>
             return best;
         }
 
+        // Iterated coordinate descent (Gauss-Seidel) from a given starting point.
+        // Repeatedly sweeps each decision variable to its conditional optimum until the
+        // objective stops improving. Works on coupled smooth problems (e.g., MNL pricing
+        // with shared denominator) where a single coord-wise sweep is not enough but
+        // grid search blows up dimensionally.
+        function iteratedCoordinateDescent(objVar, decVars, goal, startVals, maxIters = 50, tol = 1e-9) {
+            const current = { ...startVals };
+            const savedControlVars = [...controlVars];
+            let prevObj = goal === 'maximize' ? -Infinity : Infinity;
+            let stalledIters = 0;
+
+            try {
+                for (let iter = 0; iter < maxIters; iter++) {
+                    for (const dv of decVars) {
+                        // Fix every other dec var as a temporary control var at its current value,
+                        // then solve the 1D sub-problem in dv.
+                        const tempControls = decVars
+                            .filter(o => o.name !== dv.name)
+                            .map((o, idx) => ({ id: 70000 + idx, name: o.name, value: String(current[o.name]) }));
+                        controlVars = [...savedControlVars, ...tempControls];
+
+                        let newVal;
+                        const analytical = tryAnalyticalSolution(objVar, dv, goal);
+                        if (analytical) {
+                            newVal = analytical[dv.name];
+                        } else {
+                            const single = gridSearch(objVar, [dv], goal);
+                            if (single) newVal = single[dv.name];
+                        }
+                        if (newVal !== undefined && Number.isFinite(newVal)) {
+                            current[dv.name] = newVal;
+                        }
+                    }
+
+                    // Restore original control vars before evaluating the joint objective.
+                    controlVars = savedControlVars;
+                    const result = evalModel(current);
+                    if (result.error) return null;
+                    const obj = result.scope[objVar];
+                    if (!Number.isFinite(obj)) return null;
+
+                    const improved = goal === 'maximize' ? obj > prevObj : obj < prevObj;
+                    const scale = Math.max(Math.abs(obj), Math.abs(prevObj), 1e-10);
+                    const relChange = Math.abs(obj - prevObj) / scale;
+
+                    if (iter > 0 && relChange < tol) {
+                        stalledIters++;
+                        if (stalledIters >= 2) break; // two consecutive stalls = converged
+                    } else {
+                        stalledIters = 0;
+                    }
+                    if (!improved && iter > 0 && relChange < tol) break;
+                    prevObj = obj;
+                }
+            } finally {
+                controlVars = savedControlVars;
+            }
+
+            const result = evalModel(current);
+            if (result.error) return null;
+            const obj = result.scope[objVar];
+            if (!Number.isFinite(obj)) return null;
+            return { ...current, __objective: obj, __scope: result.scope };
+        }
+
+        // Multi-start iterated coordinate descent: midpoint + (numStarts-1) random starts.
+        // Returns the best result across all starts. Robust against local optima for
+        // mildly non-convex objectives; standard practice for coordinate-descent methods.
+        function multiStartCoordinateDescent(objVar, decVars, goal, numStarts = 5) {
+            const starts = [];
+
+            // Start 1: midpoints (deterministic, gives reproducible results when the
+            // problem is well-behaved).
+            const mid = {};
+            decVars.forEach(dv => {
+                mid[dv.name] = (parseFloat(dv.min) + parseFloat(dv.max)) / 2;
+            });
+            starts.push(mid);
+
+            // Additional starts: uniform random within bounds.
+            for (let s = 1; s < numStarts; s++) {
+                const start = {};
+                decVars.forEach(dv => {
+                    const min = parseFloat(dv.min), max = parseFloat(dv.max);
+                    start[dv.name] = min + Math.random() * (max - min);
+                });
+                starts.push(start);
+            }
+
+            let best = null;
+            let bestVal = goal === 'maximize' ? -Infinity : Infinity;
+            for (const start of starts) {
+                const result = iteratedCoordinateDescent(objVar, decVars, goal, start);
+                if (!result) continue;
+                const val = result.__objective;
+                if ((goal === 'maximize' && val > bestVal) || (goal === 'minimize' && val < bestVal)) {
+                    bestVal = val;
+                    best = result;
+                }
+            }
+
+            if (!best) return null;
+            best.__method = 'coordinate-iter';
+            return best;
+        }
+
         // Group decision variables into independent blocks using the same cross-partial
         // test that checkSeparability uses, but pairwise — vars with non-zero cross-partial
         // go in the same block (union-find). Returns an array of arrays of decision vars,
@@ -1710,8 +1816,36 @@ Profit = Revenue - Cost * Sales" oninput="parseEquations()"></textarea>
                 if (coordResult) return coordResult;
             }
 
-            // Fall back to grid search
-            return gridSearch(objVar, decVars, goal);
+            // Coupled, non-separable problems with ≥2 decision vars: multi-start iterated
+            // coordinate descent. Handles cases like MNL pricing where every price interacts
+            // through a shared denominator (no block split, separability test fails) but the
+            // FOCs converge fast under Gauss-Seidel sweeps. For ≥4 dims this avoids the
+            // grid-search blowup (50^d explodes past ~3 dims).
+            if (decVars.length >= 2) {
+                const cdResult = multiStartCoordinateDescent(objVar, decVars, goal);
+                if (cdResult) {
+                    // For low-dim problems, also run grid search and keep the better answer
+                    // (cheap insurance against coord descent stalling at a saddle/local optimum).
+                    if (decVars.length <= 3) {
+                        const gridResult = gridSearch(objVar, decVars, goal);
+                        if (gridResult) {
+                            const cdBetter = goal === 'maximize'
+                                ? cdResult.__objective >= gridResult.__objective
+                                : cdResult.__objective <= gridResult.__objective;
+                            return cdBetter ? cdResult : { ...gridResult, __method: 'grid' };
+                        }
+                    }
+                    return cdResult;
+                }
+            }
+
+            // Fall back to grid search — only practical for ≤3 dims.
+            if (decVars.length <= 3) {
+                const gridResult = gridSearch(objVar, decVars, goal);
+                if (gridResult) return { ...gridResult, __method: gridResult.__method || 'grid' };
+            }
+
+            return null;
         }
 
         function optimize() {
@@ -1790,7 +1924,11 @@ Profit = Revenue - Cost * Sales" oninput="parseEquations()"></textarea>
             document.getElementById('resultsSection').style.display = 'block';
 
             // Show method used
-            const methodLabel = method === 'analytical' ? ' (Exact Solution)' : method === 'coordinate' ? ' (Coordinate-wise)' : method === 'block' ? ' (Block Decomposition)' : ' (Grid Search)';
+            const methodLabel = method === 'analytical' ? ' (Exact Solution)'
+                : method === 'coordinate' ? ' (Coordinate-wise)'
+                : method === 'coordinate-iter' ? ' (Iterated Coord. Descent, Multi-start)'
+                : method === 'block' ? ' (Block Decomposition)'
+                : ' (Grid Search)';
             document.getElementById('solutionTitle').textContent =
                 `${goal === 'maximize' ? 'Maximum' : 'Minimum'} Found${methodLabel}`;
 
