@@ -2437,13 +2437,15 @@ c(${valueExpr}, ${parExpr}, ${convExpr})
                     return;
                 }
 
-                // Relative tolerance for "results agree" — floating-point differences
-                // smaller than this are noise, not a meaningful improvement.
+                // Whichever path produced the better objective wins, modulo true
+                // floating-point noise. JS's analytical/coord paths sometimes round
+                // intermediate values to 2 decimals, so R's full-precision answer is
+                // typically a hair better — and we want to show R's answer in that case.
                 const scale = Math.max(Math.abs(jsBest.__objective), Math.abs(webrBest.__objective), 1e-10);
-                const tol = 1e-3 * scale;
+                const eps = 1e-10 * scale;
                 const rIsBetter = goal === 'maximize'
-                    ? webrBest.__objective > jsBest.__objective + tol
-                    : webrBest.__objective < jsBest.__objective - tol;
+                    ? webrBest.__objective > jsBest.__objective + eps
+                    : webrBest.__objective < jsBest.__objective - eps;
 
                 if (rIsBetter) {
                     // R found a meaningfully better solution — silently swap to R's answer.
