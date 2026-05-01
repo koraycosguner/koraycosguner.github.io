@@ -2451,7 +2451,10 @@ c(${valueExpr}, ${parExpr}, ${convExpr})
                     displayResults(goal, objVar, decVars, webrBest, webrBest.__method);
                     updateChart(objVar, decVars, webrBest, goal);
                 }
-                setVerificationStatus('verified', '✓ Cross-checked with R');
+                // Show both objectives in the status so it's clear R actually ran and
+                // produced its own value, not just rubber-stamped the JS answer.
+                setVerificationStatus('verified',
+                    `✓ Cross-checked with R — JS: ${format3(jsBest.__objective)}, R: ${format3(webrBest.__objective)}`);
             } catch (e) {
                 if (stale()) return;
                 setVerificationStatus('failed', `R verification skipped: ${e.message || e}`);
