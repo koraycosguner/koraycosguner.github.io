@@ -2527,14 +2527,25 @@ c(${valueExpr}, ${parExpr}, ${convExpr})
 
             const dv = decVars[0];
             const optVal = best[dv.name];
-            const range = optVal * 0.25; // 25% of optimal value
             const minBound = parseFloat(dv.min), maxBound = parseFloat(dv.max);
-            const plotMin = Math.max(minBound, optVal - range);
-            const plotMax = Math.min(maxBound, optVal + range);
+            const boundsRange = maxBound - minBound;
+            // Half-window: 25% of |optimum|, with a 10%-of-bounds floor so a zero or
+            // tiny optimum doesn't collapse the window (which previously caused
+            // step=0 and an infinite loop in the plotting loop below).
+            const halfWindow = Math.max(Math.abs(optVal) * 0.25, boundsRange * 0.1);
+            let plotMin = Math.max(minBound, optVal - halfWindow);
+            let plotMax = Math.min(maxBound, optVal + halfWindow);
+            // If the window still collapsed (e.g., degenerate bounds), fall back to
+            // the full user-supplied range so we always have something to plot.
+            if (!(plotMax > plotMin)) {
+                plotMin = minBound;
+                plotMax = maxBound;
+            }
 
             const labels = [], data = [];
-            const step = (plotMax - plotMin) / 100;
-            for (let x = plotMin; x <= plotMax; x += step) {
+            const numPoints = 101;
+            for (let i = 0; i < numPoints; i++) {
+                const x = plotMin + (i / (numPoints - 1)) * (plotMax - plotMin);
                 labels.push(x.toFixed(2));
                 const r = evalModel({ [dv.name]: x });
                 data.push(r.scope ? r.scope[objVar] : null);
