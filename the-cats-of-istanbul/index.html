@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="A polished picture-book website for Hakan: Hakan and the Cats of Istanbul."
+    />
+    <title>Hakan and the Cats of Istanbul</title>
+    <link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
+    <link rel="preload" as="image" href="assets/page-01.webp" />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="paw-field" aria-hidden="true">
+      <span class="paw paw-one"></span>
+      <span class="paw paw-two"></span>
+      <span class="paw paw-three"></span>
+      <span class="paw paw-four"></span>
+      <span class="paw paw-five"></span>
+      <span class="paw paw-six"></span>
+    </div>
+
+    <header class="site-header">
+      <p class="kicker">A magical Istanbul bedtime story</p>
+      <h1>Hakan and the Cats of Istanbul</h1>
+    </header>
+
+    <main class="storybook" aria-live="polite">
+      <section class="book-card" aria-labelledby="story-title">
+        <div class="progress-wrap" aria-label="Story progress">
+          <div class="progress-track">
+            <div class="progress-bar" id="progressBar"></div>
+          </div>
+          <span id="progressLabel">Page 1 of 10</span>
+        </div>
+
+        <article class="page-turn" id="page">
+          <figure class="illustration-frame">
+            <img
+              id="storyImage"
+              src="assets/page-01.webp"
+              alt="Hakan looking out at an Istanbul sunrise from his bedroom window"
+              width="1182"
+              height="1330"
+              decoding="async"
+              fetchpriority="high"
+            />
+          </figure>
+
+          <section class="story-panel" aria-labelledby="story-title">
+            <p class="page-number" id="pageNumber">Page 1</p>
+            <h2 id="story-title">Morning Over Istanbul</h2>
+            <div class="story-copy" id="storyText"></div>
+          </section>
+        </article>
+
+        <div class="controls" aria-label="Story controls">
+          <button type="button" class="nav-button ghost" id="backButton">
+            Back
+          </button>
+          <p class="control-note">Use arrows or swipe to turn pages.</p>
+          <button type="button" class="nav-button" id="nextButton">Next</button>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <p>Made for Hakan, friend of the Cats of Istanbul.</p>
+    </footer>
+
+    <script src="script.js"></script>
+  </body>
+</html>
