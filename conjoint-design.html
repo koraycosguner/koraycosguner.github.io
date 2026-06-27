@@ -3,1262 +3,973 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Conjoint Analysis Design Tool - Setup</title>
+    <title>Conjoint Fractional Factorial Design (Browser) | Koray Cosguner</title>
+    <meta name="description" content="Generate fractional factorial designs for conjoint analysis interactively in your browser, powered by R (AlgDesign) via WebR. Created by Dr. Koray Cosguner.">
+    <link rel="icon" type="image/jpeg" href="KCFavicon.jpg">
+
+    <!-- Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-CTZ8G4EYLR"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-CTZ8G4EYLR');
+    </script>
+
+    <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
     <style>
+        html { scroll-behavior: smooth; }
         :root {
-            --primary: #2563eb;
-            --primary-dark: #1d4ed8;
-            --success: #16a34a;
-            --danger: #dc2626;
-            --warning: #f59e0b;
-            --bg: #f8fafc;
-            --card-bg: #ffffff;
+            --primary: #990000;
+            --primary-light: #fdf2f2;
+            --primary-hover: #7a0000;
+            --iu-crimson: #990000;
+            --iu-crimson-dark: #7a0000;
+            --accent: #1a1a9e;
+
+            --text-main: #111827;
             --text-dark: #1e293b;
-            --text-light: #64748b;
+            --text-sub:  #374151;
+            --text-light: #4b5563;
+            --text-muted: #9ca3af;
+
+            --bg: #ffffff;
+            --bg-light: #f5f5f5;
+            --white: #fff;
+            --surface: #f9fafb;
             --border: #e2e8f0;
+            --border-strong: #cbd5e1;
+
+            --shadow-sm:    0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+            --shadow-md:    0 4px 12px rgba(0,0,0,0.08), 0 2px 4px rgba(0,0,0,0.04);
+            --shadow-lg:    0 12px 32px rgba(0,0,0,0.10), 0 4px 8px rgba(0,0,0,0.06);
+
+            --radius-sm:    6px;
+            --radius-md:    12px;
+            --radius-lg:    18px;
+            --radius-full:  9999px;
+
+            --transition-fast: 0.15s ease;
+            --transition-base: 0.25s ease;
         }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+        html, body { overflow-x: hidden; }
         body {
-            font-size: 18px;
             font-family: 'Outfit', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            font-size: 18px;
             background: var(--bg);
-            color: var(--text-dark);
+            color: var(--text-main);
             line-height: 1.6;
-            padding: 1rem;
+            -webkit-font-smoothing: antialiased;
         }
 
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-        }
-
-        /* Mobile responsiveness */
-        @media (max-width: 600px) {
-            body {
-                padding: 0.75rem;
-            }
-            h1 {
-                font-size: 1.4rem;
-            }
-            .subtitle {
-                font-size: 0.85rem;
-                margin-bottom: 1rem;
-            }
-            .card {
-                padding: 0.875rem;
-                margin-bottom: 1rem;
-                overflow: hidden;
-            }
-            .card-title {
-                font-size: 1rem;
-            }
-            .disclaimer {
-                padding: 0.75rem;
-                margin-bottom: 1rem;
-            }
-            .disclaimer ul {
-                margin-left: 1rem;
-            }
-            .requirements {
-                padding: 0.75rem;
-                margin-bottom: 1rem;
-            }
-            .requirements ul {
-                margin-left: 1rem;
-            }
-            .step {
-                flex-direction: column;
-                gap: 0.5rem;
-            }
-            .step-number {
-                width: 28px;
-                height: 28px;
-                font-size: 0.9rem;
-            }
-            .step-title {
-                font-size: 0.95rem;
-            }
-            .step-description {
-                font-size: 0.85rem;
-                word-wrap: break-word;
-                overflow-wrap: break-word;
-            }
-            .step-description code {
-                word-break: break-all;
-                font-size: 0.75rem;
-            }
-            .btn {
-                width: 100%;
-                text-align: center;
-                padding: 0.6rem 1rem;
-                font-size: 0.85rem;
-                word-break: break-word;
-            }
-            .code-block {
-                font-size: 0.75rem;
-                padding: 0.75rem;
-                word-break: break-all;
-                overflow-x: auto;
-            }
-            .features {
-                grid-template-columns: 1fr;
-            }
-            .feature {
-                padding: 0.75rem;
-            }
-            .feature-title {
-                font-size: 0.9rem;
-            }
-            .feature-desc {
-                font-size: 0.8rem;
-            }
-        }
-
-        h1 {
-            text-align: center;
-            margin-bottom: 0.5rem;
-            color: var(--text-dark);
-        }
-
-        .subtitle {
-            text-align: center;
-            color: var(--text-light);
-            margin-bottom: 2rem;
-        }
-
-        .card {
-            background: var(--card-bg);
-            border-radius: 12px;
-            padding: 1.5rem;
-            margin-bottom: 1.5rem;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-            overflow: hidden;
-        }
-
-        .card-title {
-            font-size: 1.1rem;
-            font-weight: 600;
-            margin-bottom: 1rem;
-            color: var(--text-dark);
-        }
-
-        /* Disclaimer */
-        .disclaimer {
-            background: #fef3c7;
-            border: 1px solid #f59e0b;
-            border-radius: 8px;
-            padding: 1rem;
-            margin-bottom: 1.5rem;
-            font-size: 0.9rem;
-        }
-
-        .disclaimer-title {
-            font-weight: 600;
-            color: #92400e;
-            margin-bottom: 0.5rem;
-        }
-
-        .disclaimer ul {
-            margin-left: 1.25rem;
-            color: #78350f;
-        }
-
-        .disclaimer li {
-            margin-bottom: 0.25rem;
-        }
-
-        /* Requirements */
-        .requirements {
-            background: #dbeafe;
-            border: 1px solid #3b82f6;
-            border-radius: 8px;
-            padding: 1rem;
-            margin-bottom: 1.5rem;
-        }
-
-        .requirements-title {
-            font-weight: 600;
-            color: #1e40af;
-            margin-bottom: 0.5rem;
-        }
-
-        .requirements ul {
-            margin-left: 1.25rem;
-            color: #1e3a8a;
-        }
-
-        /* Steps */
-        .step {
-            display: flex;
-            gap: 1rem;
-            margin-bottom: 1.5rem;
-            padding-bottom: 1.5rem;
+        /* ===================== Navigation (matches tools.html) ===================== */
+        nav {
+            background: rgba(255, 255, 255, 0.88);
             border-bottom: 1px solid var(--border);
+            padding: 14px 0;
+            position: sticky;
+            top: 0;
+            z-index: 200;
+            backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
         }
-
-        .step:last-child {
-            border-bottom: none;
-            margin-bottom: 0;
-            padding-bottom: 0;
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
-
-        .step-number {
-            flex-shrink: 0;
-            width: 36px;
-            height: 36px;
+        .brand {
+            font-weight: 800;
+            font-size: 1.2rem;
+            color: var(--text-main);
+            text-decoration: none;
+            letter-spacing: -0.03em;
+        }
+        .nav-links { display: flex; align-items: center; }
+        .font-size-controls.font-size-mobile { display: none; }
+        .nav-links a {
+            margin-left: 28px;
+            text-decoration: none;
+            color: var(--text-sub);
+            font-weight: 600;
+            font-size: 0.9rem;
+            letter-spacing: -0.01em;
+            transition: color var(--transition-fast);
+            position: relative;
+        }
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 0;
+            height: 2px;
             background: var(--primary);
-            color: white;
-            border-radius: 50%;
+            transition: width var(--transition-base);
+            border-radius: 2px;
+        }
+        .nav-links a:hover::after,
+        .nav-links a.active::after { width: 100%; }
+        .nav-links a:hover, .nav-links a.active { color: var(--primary); }
+
+        .nav-toggle {
+            display: none;
+            flex-direction: column;
+            cursor: pointer;
+            padding: 4px;
+        }
+        .nav-toggle span {
+            width: 24px;
+            height: 2px;
+            background: var(--text-main);
+            margin: 3px 0;
+            transition: 0.3s;
+        }
+
+        .font-size-controls {
+            display: flex;
+            align-items: center;
+            gap: 2px;
+            margin-right: 10px;
+            border: 1px solid rgba(153,0,0,0.12);
+            border-radius: var(--radius-full);
+            padding: 3px;
+            background: linear-gradient(135deg, rgba(249,250,251,0.9), rgba(243,244,246,0.9));
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            box-shadow: 0 1px 4px rgba(0,0,0,0.06), inset 0 1px 0 rgba(255,255,255,0.8);
+        }
+        .font-size-btn {
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            font-weight: 800;
+            color: var(--text-light);
+            border-radius: var(--radius-full);
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            font-family: inherit;
+            line-height: 1;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-weight: 600;
+            width: 32px;
+            height: 32px;
+            position: relative;
+            user-select: none;
         }
+        .font-size-btn:hover { color: var(--primary); background: rgba(153,0,0,0.08); }
+        .font-size-btn:active { transform: scale(0.9); background: rgba(153,0,0,0.15); color: var(--primary); }
+        .font-size-btn.at-limit { opacity: 0.3; cursor: default; }
+        .font-size-btn.at-limit:hover { background: transparent; color: var(--text-light); }
+        .font-size-btn.at-limit:active { transform: none; background: transparent; }
+        .font-size-btn.decrease-a { font-size: 0.7rem; }
+        .font-size-btn.increase-a { font-size: 1.1rem; }
 
-        .step-content {
-            flex: 1;
-        }
+        /* ===================== Page chrome ===================== */
+        main { max-width: 1000px; margin: 0 auto; padding: 2rem; }
+        .back-link { display: inline-flex; align-items: center; gap: 6px; color: #64748b; text-decoration: none; font-size: 0.9rem; font-weight: 500; }
+        .back-link:hover { color: var(--primary); }
 
-        .step-title {
-            font-weight: 600;
-            margin-bottom: 0.5rem;
-            color: var(--text-dark);
-        }
+        .hero { text-align: center; padding: 2rem 0 1rem; }
+        .hero h1 { font-size: 1.8rem; color: var(--text-dark); margin-bottom: 0.5rem; letter-spacing: -0.02em; }
+        .hero ul { text-align: left; display: inline-block; margin: 0 auto; padding-left: 1.5rem; color: var(--text-light); font-size: 1rem; line-height: 1.8; }
 
-        .step-description {
-            color: var(--text-light);
-            font-size: 0.95rem;
-            word-wrap: break-word;
-            overflow-wrap: break-word;
-        }
+        .disclaimer { background: #fef2f2; border: 1px solid #fecaca; border-radius: 8px; padding: 1rem 1.25rem; margin-bottom: 2rem; }
+        .disclaimer-title { font-weight: 700; color: var(--iu-crimson); margin-bottom: 0.5rem; }
+        .disclaimer ul { margin: 0; padding-left: 1.25rem; color: var(--text-light); font-size: 0.9rem; }
 
-        .step-description code {
-            word-break: break-all;
-        }
+        .tool-container { background: var(--white); border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); padding: 2rem; margin-top: 2rem; }
+        .section-title { font-size: 1.3rem; color: var(--iu-crimson); margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 2px solid var(--iu-crimson); }
+        .section-title.mt { margin-top: 2rem; }
+        .section-hint { font-size: 0.9rem; color: var(--text-light); margin-bottom: 1rem; }
 
-        /* Code block */
-        .code-block {
-            background: #1e293b;
-            color: #e2e8f0;
-            padding: 1rem;
-            border-radius: 8px;
-            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
-            font-size: 0.9rem;
-            overflow-x: auto;
-            margin: 0.75rem 0;
-        }
+        /* Loading overlay (WebR boot) */
+        .loading-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.96); display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 9999; }
+        .loading-overlay.hidden { display: none; }
+        .spinner { width: 60px; height: 60px; border: 4px solid var(--border); border-top-color: var(--iu-crimson); border-radius: 50%; animation: spin 1s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .loading-text { margin-top: 1rem; font-size: 1.1rem; color: var(--text-light); }
+        .loading-stage { margin-top: 0.5rem; font-size: 0.85rem; color: #999; text-align: center; max-width: 420px; padding: 0 1rem; }
 
-        .code-block code {
-            color: #4ade80;
-        }
+        /* Status message */
+        .status-message { padding: 0.85rem 1rem; border-radius: 6px; margin-bottom: 1rem; display: none; font-size: 0.95rem; }
+        .status-message.visible { display: block; }
+        .status-message.error { background: #fee2e2; color: #991b1b; border: 1px solid #fecaca; }
+        .status-message.success { background: #d1fae5; color: #065f46; border: 1px solid #a7f3d0; }
+        .status-message.info { background: #dbeafe; color: #1e40af; border: 1px solid #bfdbfe; }
 
-        /* Links */
-        a {
-            color: var(--primary);
-            text-decoration: none;
-        }
-
-        a:hover {
-            text-decoration: underline;
-        }
-
-        /* Download button */
-        .btn {
-            display: inline-block;
-            padding: 0.75rem 1.5rem;
-            background: var(--primary);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-size: 1rem;
-            font-weight: 500;
-            cursor: pointer;
-            text-decoration: none;
-            margin-top: 0.5rem;
-        }
-
-        .btn:hover {
-            background: var(--primary-dark);
-            text-decoration: none;
-        }
-
-        /* Features list */
-        .features {
+        /* Attribute builder */
+        .attr-table { width: 100%; }
+        .attr-row {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1rem;
-            margin-top: 1rem;
+            grid-template-columns: minmax(150px, 1fr) minmax(220px, 2fr) auto;
+            gap: 0.75rem;
+            align-items: start;
+            padding: 0.85rem;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            margin-bottom: 0.85rem;
+            background: var(--surface);
+        }
+        .attr-row .field-label { display: block; font-weight: 600; font-size: 0.78rem; color: var(--text-light); text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 0.3rem; }
+        .attr-row input[type="text"] {
+            width: 100%; padding: 0.6rem 0.7rem; border: 1px solid var(--border);
+            border-radius: 6px; font-size: 0.95rem; font-family: inherit; background: var(--white);
+        }
+        .attr-row input[type="text"]:focus { outline: none; border-color: var(--iu-crimson); }
+        .attr-row .remove-col { display: flex; align-items: flex-end; height: 100%; padding-top: 1.25rem; }
+        .levels-count { font-size: 0.78rem; color: var(--text-muted); margin-top: 0.35rem; }
+        .row-error { grid-column: 1 / -1; color: #991b1b; font-size: 0.82rem; margin-top: 0.2rem; display: none; }
+        .row-error.visible { display: block; }
+
+        .btn { display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; padding: 0.75rem 1.6rem; font-size: 1rem; font-weight: 600; text-align: center; border: none; border-radius: 6px; cursor: pointer; transition: all 0.2s; font-family: inherit; }
+        .btn-primary { background: var(--iu-crimson); color: var(--white); }
+        .btn-primary:hover:not(:disabled) { background: var(--iu-crimson-dark); }
+        .btn-primary:disabled { background: var(--text-light); cursor: not-allowed; opacity: 0.6; }
+        .btn-secondary { background: var(--white); color: var(--iu-crimson); border: 2px solid var(--iu-crimson); }
+        .btn-secondary:hover { background: var(--iu-crimson); color: var(--white); }
+        .btn-remove { background: #fff; color: #991b1b; border: 1px solid #fecaca; padding: 0.5rem 0.85rem; font-size: 0.85rem; border-radius: 6px; }
+        .btn-remove:hover { background: #fee2e2; }
+        .btn-sm { padding: 0.55rem 1rem; font-size: 0.9rem; }
+        .button-group { display: flex; gap: 1rem; margin-top: 1.5rem; flex-wrap: wrap; }
+
+        /* Stats */
+        .stat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 0.75rem; margin-top: 1rem; }
+        .stat { background: #fafafa; border: 1px solid var(--border); border-radius: 8px; padding: 0.85rem 1rem; }
+        .stat .label { font-size: 0.72rem; color: var(--text-light); text-transform: uppercase; letter-spacing: 0.6px; font-weight: 600; }
+        .stat .value { font-size: 1.5rem; color: var(--iu-crimson); font-weight: 700; margin-top: 0.2rem; font-variant-numeric: tabular-nums; }
+
+        /* Results */
+        .results-container { display: none; margin-top: 2rem; }
+        .results-container.visible { display: block; }
+        .summary-line { margin-top: 1rem; padding: 1rem 1.25rem; border-radius: 8px; background: #f0f9ff; border: 1px solid #bae6fd; color: #075985; font-size: 0.95rem; line-height: 1.6; }
+
+        .result-table-wrap { overflow-x: auto; border: 1px solid var(--border); border-radius: 6px; margin-top: 0.75rem; max-height: 520px; overflow-y: auto; }
+        .result-table { width: 100%; border-collapse: collapse; font-size: 0.88rem; }
+        .result-table th, .result-table td { padding: 0.5rem 0.85rem; text-align: left; border-bottom: 1px solid var(--border); white-space: nowrap; }
+        .result-table th { background: var(--iu-crimson); color: var(--white); position: sticky; top: 0; z-index: 1; font-size: 0.82rem; font-weight: 600; }
+        .result-table tbody tr:nth-child(even) { background: #fafafa; }
+        .result-table td.num { text-align: right; font-variant-numeric: tabular-nums; }
+
+        details.r-code { margin-top: 1.5rem; border: 1px solid var(--border); border-radius: 8px; padding: 0.5rem 1rem; background: var(--surface); }
+        details.r-code summary { cursor: pointer; font-weight: 600; color: var(--text-sub); font-size: 0.92rem; padding: 0.4rem 0; }
+        details.r-code pre { background: #1e1e1e; color: #d4d4d4; font-family: 'Monaco', 'Menlo', 'Courier New', monospace; font-size: 0.8rem; padding: 1.1rem; border-radius: 8px; overflow-x: auto; white-space: pre; line-height: 1.5; margin: 0.5rem 0; }
+
+        footer { text-align: center; padding: 2rem; color: var(--text-light); font-size: 0.9rem; background: var(--surface); border-top: 1px solid var(--border); margin-top: 3rem; }
+
+        @media (max-width: 768px) {
+            body { font-size: 16px; }
+            main { padding: 1rem; }
+            .tool-container { padding: 1.25rem; }
+            .hero { padding: 1.5rem 0; }
+            .hero h1 { font-size: 1.4rem; }
+            .button-group { flex-direction: column; }
+            .button-group .btn { width: 100%; }
+            .attr-row { grid-template-columns: 1fr; }
+            .attr-row .remove-col { padding-top: 0; }
+            .btn-remove { width: 100%; }
         }
 
-        .feature {
-            background: var(--bg);
-            padding: 1rem;
-            border-radius: 8px;
-        }
-
-        .feature-title {
-            font-weight: 600;
-            margin-bottom: 0.25rem;
-            color: var(--text-dark);
-        }
-
-        .feature-desc {
-            font-size: 0.85rem;
-            color: var(--text-light);
-        }
-
-        /* Screenshot placeholder */
-        .screenshot {
-            background: var(--bg);
-            border: 2px dashed var(--border);
-            border-radius: 8px;
-            padding: 3rem;
-            text-align: center;
-            color: var(--text-light);
-            margin-top: 1rem;
+        @media (max-width: 640px) {
+            .nav-toggle { display: flex; }
+            .font-size-controls.font-size-mobile { display: flex; }
+            .font-size-controls.font-size-desktop { display: none; }
+            .nav-links {
+                display: none;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                right: 0;
+                background: white;
+                flex-direction: column;
+                padding: 16px 24px;
+                border-bottom: 1px solid var(--border);
+                box-shadow: var(--shadow-lg);
+            }
+            .nav-links.active { display: flex; }
+            .nav-links a {
+                margin-left: 0;
+                padding: 12px 0;
+                font-size: 1rem;
+                border-bottom: 1px solid var(--border);
+            }
+            .nav-links a::after { display: none; }
+            .nav-links a:last-child { border-bottom: none; }
+            .nav-container { position: relative; }
+            .font-size-controls { margin-right: 4px; }
         }
     </style>
-    <link rel="icon" type="image/jpeg" href="KCFavicon.jpg">
 </head>
 <body>
-<!-- Auth check -->
-<div id="loading-screen" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: white; display: flex; align-items: center; justify-content: center; z-index: 9999;">
-    <p style="color: #64748b;">Loading...</p>
-</div>
-<div id="main-content" style="display: none;">
-    <div style="max-width: 800px; margin: 0 auto; padding: 0 0 10px 0;">
-        <a href="tools.html" style="display: inline-flex; align-items: center; gap: 6px; color: #64748b; text-decoration: none; font-size: 0.9rem; font-weight: 500;">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
-            Back to Pricing and Analytics Tools
-        </a>
+    <!-- Auth check - redirect to login if not signed in -->
+    <div id="loading-screen" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: var(--bg); display: flex; align-items: center; justify-content: center; z-index: 99999;">
+        <p style="color: var(--text-light);">Loading...</p>
     </div>
-    <div class="container">
-        <h1>Conjoint Analysis Design Tool</h1>
-        <p class="subtitle">Create fractional factorial designs for conjoint studies</p>
 
-        <!-- Disclaimer -->
+    <div id="main-content" style="display: none;">
+
+    <nav>
+        <div class="nav-container">
+            <div style="display: flex; align-items: center; gap: 18px;">
+                <span style="display: flex; align-items: center; gap: 10px;">
+                    <a href="https://robinson.gsu.edu/" target="_blank" rel="noopener" title="J. Mack Robinson College of Business, Georgia State University" style="line-height: 0;">
+                        <img src="gsu-logo.png" alt="Robinson College of Business, Georgia State University" style="height: 24px; filter: grayscale(1); opacity: 0.55;">
+                    </a>
+                    <a href="https://kelley.iu.edu/" target="_blank" rel="noopener" title="Kelley School of Business, Indiana University" style="line-height: 0;">
+                        <img src="iu-logo.png" alt="Kelley School of Business, Indiana University" style="height: 38px;">
+                    </a>
+                    <a href="https://sc.edu/study/colleges_schools/moore/" target="_blank" rel="noopener" title="Darla Moore School of Business, University of South Carolina" style="line-height: 0;">
+                        <img src="usc-logo.png" alt="Darla Moore School of Business, University of South Carolina" style="height: 24px; filter: grayscale(1); opacity: 0.55;">
+                    </a>
+                </span>
+                <span style="width: 1px; height: 26px; background: rgba(0,0,0,0.14);"></span>
+                <a href="index.html" class="brand">Koray Cosguner</a>
+            </div>
+            <div style="display: flex; align-items: center;">
+                <div class="font-size-controls font-size-mobile" role="group" aria-label="Text size">
+                    <button class="font-size-btn decrease-a" onclick="adjustFontSize(-1)" title="Decrease text size" aria-label="Decrease text size">A</button>
+                    <button class="font-size-btn increase-a" onclick="adjustFontSize(1)" title="Increase text size" aria-label="Increase text size">A</button>
+                </div>
+                <div class="nav-toggle" role="button" tabindex="0" aria-label="Toggle navigation menu" onclick="document.querySelector('.nav-links').classList.toggle('active')">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            </div>
+            <div class="nav-links">
+                <div class="font-size-controls font-size-desktop" role="group" aria-label="Text size">
+                    <button class="font-size-btn decrease-a" onclick="adjustFontSize(-1)" title="Decrease text size" aria-label="Decrease text size">A</button>
+                    <button class="font-size-btn increase-a" onclick="adjustFontSize(1)" title="Increase text size" aria-label="Increase text size">A</button>
+                </div>
+                <a href="index.html">Home</a>
+                <a href="research.html">Research</a>
+                <a href="teaching.html">Teaching</a>
+                <a href="https://koraycosguner.github.io/miaow-consulting/" target="_blank">Consulting</a>
+                <a href="tools.html" class="active">Pricing and Analytics Tools</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- WebR boot overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="spinner"></div>
+        <p class="loading-text" id="loadingText">Loading WebR (R in your browser)...</p>
+        <p class="loading-stage" id="loadingStage">First load may take 30 to 60 seconds. Everything runs locally in your browser.</p>
+    </div>
+
+    <main>
+        <div style="margin-bottom: 0.5rem;">
+            <a href="tools.html" class="back-link">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+                Back to Pricing and Analytics Tools
+            </a>
+        </div>
+
+        <section class="hero">
+            <h1>Conjoint Fractional Factorial Design</h1>
+            <ul>
+                <li>Define attributes and their levels, then generate an efficient fractional factorial design</li>
+                <li>See full factorial profile count vs the reduced (fractional) number of profiles</li>
+                <li>Export the design profiles and a dummy-coded design matrix as CSV files</li>
+                <li>Powered by R (<code>AlgDesign::optFederov</code>) running entirely in your browser via WebR</li>
+            </ul>
+        </section>
+
         <div class="disclaimer">
             <div class="disclaimer-title">Disclaimer</div>
             <ul>
-                <li><strong>Results may contain errors.</strong> The output from this tool may be inaccurate, incomplete, or incorrect. Users should independently verify all results.</li>
-                <li><strong>No warranty.</strong> This tool is provided "as is" without any warranty of any kind.</li>
-                <li><strong>User assumes all risk.</strong> Users assume full responsibility for reviewing and validating any output.</li>
+                <li><strong>Verify all results.</strong> Output may be inaccurate or incomplete; check important conclusions independently.</li>
+                <li><strong>No warranty.</strong> Provided "as is" without warranty of any kind.</li>
+                <li><strong>Privacy:</strong> Your inputs never leave your browser, everything runs locally in WebAssembly.</li>
             </ul>
-        </div>
-
-        <!-- Requirements -->
-        <div class="requirements">
-            <div class="requirements-title">Requirements</div>
-            <ul>
-                <li><strong>R</strong> - Statistical programming language (<a href="https://cran.r-project.org/" target="_blank">Download R</a>)</li>
-                <li><strong>RStudio</strong> - IDE for R (<a href="https://posit.co/download/rstudio-desktop/" target="_blank">Download RStudio</a>)</li>
-            </ul>
-        </div>
-
-        <!-- Setup Instructions -->
-        <div class="card">
-            <div class="card-title">Setup Instructions</div>
-
-            <div class="step">
-                <div class="step-number">1</div>
-                <div class="step-content">
-                    <div class="step-title">Install R and RStudio</div>
-                    <div class="step-description">
-                        If you don't have R and RStudio installed, download and install them from the links above. Install R first, then RStudio.
-                    </div>
-                </div>
-            </div>
-
-            <div class="step">
-                <div class="step-number">2</div>
-                <div class="step-content">
-                    <div class="step-title">Download and Open the App</div>
-                    <div class="step-description">
-                        Download the app file and open it in RStudio:
-                    </div>
-                    <button class="btn" id="downloadBtn">Download R App File</button>
-                    <div class="step-description" style="margin-top: 0.75rem;">
-                        In RStudio: File → Open File → Select the downloaded file
-                    </div>
-                </div>
-            </div>
-
-            <div class="step">
-                <div class="step-number">3</div>
-                <div class="step-content">
-                    <div class="step-title">Run the App</div>
-                    <div class="step-description">
-                        With the file open in RStudio, click the <strong>"Run App"</strong> button in the top-right corner. The app will open in a new window or your browser.
-                    </div>
-                    <div class="step-description" style="margin-top: 0.5rem;">
-                        <strong>Note:</strong> On first run, the app will automatically install the required R packages (<code>shiny</code>, <code>conjoint</code>, and <code>readxl</code>). This may take a minute.
-                    </div>
-                </div>
+            <div style="margin-top: 0.85rem; padding-top: 0.85rem; border-top: 1px solid rgba(153, 0, 0, 0.2); font-size: 0.9rem;">
+                <strong>Report issues:</strong> Email Dr. Cosguner at <a href="mailto:kcosgun@iu.edu" style="color: var(--iu-crimson); font-weight: 600;">kcosgun@iu.edu</a>.
             </div>
         </div>
 
-        <!-- Features -->
-        <div class="card">
-            <div class="card-title">Features</div>
-            <div class="features">
-                <div class="feature">
-                    <div class="feature-title">Add Attributes</div>
-                    <div class="feature-desc">Define attributes and their levels manually or upload from Excel</div>
+        <div class="tool-container">
+
+            <div class="status-message" id="statusMessage"></div>
+
+            <!-- ============================== 1. Define Attributes ============================== -->
+            <h2 class="section-title">1. Define Attributes</h2>
+            <p class="section-hint">Add at least 2 attributes, each with 2 or more levels. Enter the levels for each attribute as a comma-separated list. The first level of each attribute is treated as the reference (baseline) level in dummy coding.</p>
+
+            <div class="attr-table" id="attrTable"></div>
+
+            <div class="button-group">
+                <button class="btn btn-secondary btn-sm" id="addAttrBtn" type="button">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                    Add attribute
+                </button>
+                <button class="btn btn-secondary btn-sm" id="resetBtn" type="button">Reset to example</button>
+            </div>
+
+            <!-- ============================== 2. Design Statistics ============================== -->
+            <h2 class="section-title mt">2. Design Statistics</h2>
+            <p class="section-hint">The full factorial count is the product of the number of levels across all attributes. The fractional design selects an efficient subset.</p>
+            <div class="stat-grid" id="statGrid"></div>
+
+            <div class="button-group">
+                <button class="btn btn-primary" id="generateBtn" type="button" disabled>Generate Fractional Design</button>
+            </div>
+
+            <!-- ============================== 3. Results ============================== -->
+            <div class="results-container" id="resultsContainer">
+                <h2 class="section-title mt">3. Design Profiles</h2>
+                <div class="summary-line" id="summaryLine"></div>
+
+                <h3 style="margin-top: 1.5rem; margin-bottom: 0.25rem; color: var(--text-dark); font-size: 1.05rem;">Fractional Design Profiles</h3>
+                <div class="result-table-wrap"><table class="result-table" id="profilesTable"></table></div>
+                <div class="button-group">
+                    <button class="btn btn-primary btn-sm" id="downloadProfilesBtn" type="button">Download profiles (CSV)</button>
                 </div>
-                <div class="feature">
-                    <div class="feature-title">Full Factorial Count</div>
-                    <div class="feature-desc">See total combinations before reducing</div>
+
+                <h3 style="margin-top: 1.75rem; margin-bottom: 0.25rem; color: var(--text-dark); font-size: 1.05rem;">Dummy-Coded Design Matrix</h3>
+                <p class="section-hint" style="margin-bottom: 0.5rem;">Reference levels (the first level of each attribute) are omitted; each remaining level becomes a 0/1 indicator column.</p>
+                <div class="result-table-wrap"><table class="result-table" id="dummyTable"></table></div>
+                <div class="button-group">
+                    <button class="btn btn-primary btn-sm" id="downloadDummyBtn" type="button">Download dummy-coded (CSV)</button>
                 </div>
-                <div class="feature">
-                    <div class="feature-title">Fractional Design</div>
-                    <div class="feature-desc">Generate reduced profiles using R's conjoint package</div>
-                </div>
-                <div class="feature">
-                    <div class="feature-title">Copy to Excel</div>
-                    <div class="feature-desc">Profiles table ready to copy and paste</div>
-                </div>
-                <div class="feature">
-                    <div class="feature-title">Dummy Coding</div>
-                    <div class="feature-desc">View dummy-coded design matrix</div>
-                </div>
-                <div class="feature">
-                    <div class="feature-title">R Script Export</div>
-                    <div class="feature-desc">Download reproducible R script</div>
-                </div>
-                <div class="feature">
-                    <div class="feature-title">Excel Upload</div>
-                    <div class="feature-desc">Upload attribute/level definitions from Excel or CSV files</div>
-                </div>
+
+                <details class="r-code">
+                    <summary>Show R code</summary>
+                    <pre id="rCodeBlock"></pre>
+                </details>
             </div>
         </div>
+    </main>
 
-        <!-- Troubleshooting -->
-        <div class="card">
-            <div class="card-title">Troubleshooting</div>
+    <footer>
+        <p>&copy; <span class="year"></span> Koray Cosguner &middot; All Rights Reserved</p>
+    </footer>
 
-            <div style="margin-bottom: 1rem;">
-                <strong>App doesn't open</strong>
-                <div class="step-description">Make sure the R file is open in RStudio's editor (not just the file browser), then click "Run App".</div>
-            </div>
+    </div> <!-- end main-content -->
 
-            <div style="margin-bottom: 1rem;">
-                <strong>Package installation fails</strong>
-                <div class="step-description">Try running these commands manually in the Console:</div>
-                <div class="code-block">
-<code>install.packages("shiny")</code>
-<code>install.packages("conjoint")</code>
-<code>install.packages("readxl")</code>
-                </div>
-            </div>
+    <!-- WebR tool logic -->
+    <script type="module">
+        import { WebR } from 'https://webr.r-wasm.org/latest/webr.mjs';
 
-            <div>
-                <strong>"Run App" button not visible</strong>
-                <div class="step-description">Make sure the file is saved with a <code>.R</code> extension. RStudio only shows the "Run App" button for R files that contain Shiny code.</div>
-            </div>
-        </div>
-    </div>
+        // ==================== STATE ====================
+        let webR = null;
+        let webrReady = false;
+        // attrs: array of { name: string, levels: string[] } (levels = parsed view of the text field)
+        let attrs = [];
+        // Last generated result, kept for CSV downloads.
+        let lastProfilesCSV = '';
+        let lastDummyCSV = '';
 
-    <script>
-        document.getElementById('downloadBtn').addEventListener('click', function() {
-            const rCode = `# Conjoint Analysis Design Tool - Shiny App
-#
-# TO RUN THIS APP:
-#   1. Open this file in RStudio
-#   2. Click "Run App" button (top right of editor)
-#   OR run in console: shiny::runApp()
+        const EXAMPLE = [
+            { name: 'Brand', levelsText: 'A, B, C' },
+            { name: 'Price', levelsText: 'Low, Mid, High' },
+            { name: 'Size',  levelsText: 'Small, Large' }
+        ];
 
-# Auto-install required packages if missing
-if (!require("shiny", quietly = TRUE)) {
-  install.packages("shiny", repos = "https://cloud.r-project.org")
-}
-if (!require("conjoint", quietly = TRUE)) {
-  install.packages("conjoint", repos = "https://cloud.r-project.org")
-}
-if (!require("readxl", quietly = TRUE)) {
-  install.packages("readxl", repos = "https://cloud.r-project.org")
-}
+        const $ = (id) => document.getElementById(id);
 
-library(shiny)
-library(conjoint)
-library(readxl)
-
-ui <- fluidPage(
-  # Custom CSS
-  tags$head(
-    tags$style(HTML("
-      body {
-        font-family: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-        background: #f8fafc;
-        padding: 20px;
-      }
-      .container-fluid {
-        max-width: 1000px;
-        margin: 0 auto;
-      }
-      h1 {
-        text-align: center;
-        color: #1e293b;
-        margin-bottom: 5px;
-      }
-      .subtitle {
-        text-align: center;
-        color: #64748b;
-        margin-bottom: 30px;
-      }
-      .card {
-        background: white;
-        border-radius: 12px;
-        padding: 20px;
-        margin-bottom: 20px;
-        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-      }
-      .card-title {
-        font-size: 1.1rem;
-        font-weight: 600;
-        margin-bottom: 15px;
-        color: #1e293b;
-      }
-      .btn-primary {
-        background: #2563eb;
-        border: none;
-        padding: 10px 20px;
-        border-radius: 8px;
-      }
-      .btn-primary:hover {
-        background: #1d4ed8;
-      }
-      .btn-success {
-        background: #16a34a;
-        border: none;
-        padding: 10px 20px;
-        border-radius: 8px;
-      }
-      .btn-success:hover {
-        background: #15803d;
-      }
-      .btn-danger {
-        background: #dc2626;
-        border: none;
-        padding: 5px 10px;
-        border-radius: 6px;
-        font-size: 0.875rem;
-      }
-      .stat-box {
-        background: #f8fafc;
-        border-radius: 8px;
-        padding: 15px;
-        text-align: center;
-        margin-bottom: 10px;
-      }
-      .stat-value {
-        font-size: 1.5rem;
-        font-weight: 700;
-        color: #2563eb;
-      }
-      .stat-label {
-        font-size: 0.85rem;
-        color: #64748b;
-      }
-      .attribute-item {
-        background: #f8fafc;
-        border-radius: 8px;
-        padding: 12px;
-        margin-bottom: 10px;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-      }
-      .attribute-name {
-        font-weight: 600;
-        color: #1e293b;
-      }
-      .attribute-levels {
-        font-size: 0.9rem;
-        color: #64748b;
-      }
-      .level-badge {
-        background: #2563eb;
-        color: white;
-        padding: 2px 8px;
-        border-radius: 4px;
-        font-size: 0.75rem;
-        margin-left: 8px;
-      }
-      .disclaimer {
-        background: #fef3c7;
-        border: 1px solid #f59e0b;
-        border-radius: 8px;
-        padding: 15px;
-        margin-bottom: 20px;
-        font-size: 0.9rem;
-      }
-      .disclaimer-title {
-        font-weight: 600;
-        color: #92400e;
-        margin-bottom: 8px;
-      }
-      .disclaimer ul {
-        margin-left: 20px;
-        color: #78350f;
-        margin-bottom: 0;
-      }
-      .table {
-        font-size: 0.9rem;
-      }
-      .nav-tabs .nav-link.active {
-        background: #2563eb;
-        color: white;
-        border: none;
-      }
-      .nav-tabs .nav-link {
-        color: #64748b;
-        border: none;
-        border-radius: 6px;
-        margin-right: 5px;
-      }
-      .help-text {
-        font-size: 0.85rem;
-        color: #64748b;
-        margin-top: 5px;
-      }
-      pre.r-script {
-        background: #1e293b;
-        color: #e2e8f0;
-        padding: 15px;
-        border-radius: 8px;
-        font-size: 0.85rem;
-        overflow-x: auto;
-      }
-      .method-toggle {
-        display: flex;
-        gap: 10px;
-        margin-bottom: 15px;
-      }
-      .method-btn {
-        flex: 1;
-        padding: 12px;
-        border: 2px solid #e2e8f0;
-        border-radius: 8px;
-        background: white;
-        cursor: pointer;
-        text-align: center;
-        transition: all 0.2s;
-        font-size: 0.9rem;
-      }
-      .method-btn:hover {
-        border-color: #cbd5e1;
-      }
-      .method-btn.active {
-        border-color: #2563eb;
-        background: #eff6ff;
-        color: #2563eb;
-        font-weight: 600;
-      }
-      .upload-info {
-        background: #f0fdf4;
-        border: 1px solid #86efac;
-        border-radius: 8px;
-        padding: 12px;
-        margin-top: 10px;
-        font-size: 0.85rem;
-        color: #166534;
-      }
-      .upload-hint {
-        background: #f8fafc;
-        border-radius: 8px;
-        padding: 12px;
-        margin-top: 10px;
-        font-size: 0.85rem;
-        color: #64748b;
-      }
-    "))
-  ),
-
-  # Title
-  h1("Conjoint Analysis Design Tool"),
-  p(class = "subtitle", "Create fractional factorial designs for conjoint studies"),
-
-  # Disclaimer
-  div(class = "disclaimer",
-    div(class = "disclaimer-title", "Disclaimer"),
-    tags$ul(
-      tags$li(tags$strong("Results may contain errors."), " The output from this tool may be inaccurate, incomplete, or incorrect. Users should independently verify all results."),
-      tags$li(tags$strong("No warranty."), " This tool is provided \\"as is\\" without any warranty of any kind."),
-      tags$li(tags$strong("User assumes all risk."), " Users assume full responsibility for reviewing and validating any output.")
-    )
-  ),
-
-  # Step 1: Define Attributes
-  div(class = "card",
-    div(class = "card-title", "1. Define Attributes"),
-
-    # Method toggle
-    div(class = "method-toggle",
-      tags$button(id = "btn_manual", class = "method-btn active",
-        onclick = "
-          document.getElementById('btn_manual').className = 'method-btn active';
-          document.getElementById('btn_upload').className = 'method-btn';
-          document.getElementById('panel_manual').style.display = 'block';
-          document.getElementById('panel_upload').style.display = 'none';
-        ",
-        "Define Manually"
-      ),
-      tags$button(id = "btn_upload", class = "method-btn",
-        onclick = "
-          document.getElementById('btn_upload').className = 'method-btn active';
-          document.getElementById('btn_manual').className = 'method-btn';
-          document.getElementById('panel_upload').style.display = 'block';
-          document.getElementById('panel_manual').style.display = 'none';
-        ",
-        "Upload from Excel"
-      )
-    ),
-
-    # Manual panel
-    div(id = "panel_manual",
-      fluidRow(
-        column(4,
-          textInput("attr_name", "Attribute Name", placeholder = "e.g., Brand")
-        ),
-        column(6,
-          textInput("attr_levels", "Levels (comma-separated)", placeholder = "e.g., Apple, Samsung, Google, Sony")
-        ),
-        column(2,
-          div(style = "margin-top: 25px;",
-            actionButton("add_attr", "Add", class = "btn-primary")
-          )
-        )
-      ),
-      p(class = "help-text", "Enter at least 2 levels per attribute, separated by commas."),
-      div(style = "margin-top: 20px;",
-        uiOutput("attributes_list")
-      )
-    ),
-
-    # Upload panel
-    div(id = "panel_upload", style = "display: none;",
-      fileInput("upload_profiles", "Upload Excel or CSV file with profiles",
-        accept = c(".xlsx", ".xls", ".csv"),
-        placeholder = "No file selected"
-      ),
-      div(class = "upload-hint",
-        tags$strong("Expected format:"),
-        " Each column is an attribute (e.g., Number of Channels, Movie Channels, Price).",
-        " Each row lists one level per attribute. Attributes can have different numbers of levels",
-        " — leave cells empty for attributes with fewer levels.",
-        " The first row should contain the attribute names as column headers."
-      ),
-      uiOutput("upload_status"),
-      uiOutput("upload_preview")
-    )
-  ),
-
-  # Step 2: Design Statistics (conditional)
-  uiOutput("stats_card"),
-
-  # Step 3: Results (conditional)
-  uiOutput("results_card")
-)
-
-server <- function(input, output, session) {
-
-  # Reactive values to store attributes
-  attributes <- reactiveVal(list())
-  design_result <- reactiveVal(NULL)
-
-  # Add attribute
-  observeEvent(input$add_attr, {
-    name <- trimws(input$attr_name)
-    levels_str <- trimws(input$attr_levels)
-
-    if (name == "") {
-      showNotification("Please enter an attribute name.", type = "error")
-      return()
-    }
-
-    levels <- trimws(unlist(strsplit(levels_str, ",")))
-    levels <- levels[levels != ""]
-
-    if (length(levels) < 2) {
-      showNotification("Please enter at least 2 levels, separated by commas.", type = "error")
-      return()
-    }
-
-    # Check for duplicates
-    current <- attributes()
-    if (tolower(name) %in% tolower(names(current))) {
-      showNotification("An attribute with this name already exists.", type = "error")
-      return()
-    }
-
-    # Add attribute
-    current[[name]] <- levels
-    attributes(current)
-
-    # Clear inputs
-    updateTextInput(session, "attr_name", value = "")
-    updateTextInput(session, "attr_levels", value = "")
-
-    # Clear previous design
-    design_result(NULL)
-  })
-
-  # Remove attribute
-  observeEvent(input$remove_attr, {
-    idx <- as.integer(input$remove_attr)
-    current <- attributes()
-    if (idx <= length(current)) {
-      current <- current[-idx]
-      attributes(current)
-      design_result(NULL)
-    }
-  })
-
-  # Clear all
-  observeEvent(input$clear_all, {
-    attributes(list())
-    design_result(NULL)
-  })
-
-  # Handle file upload
-  # Expected format: columns = attributes, rows = levels
-  # Each attribute can have a different number of levels (empty cells are ignored)
-  observeEvent(input$upload_profiles, {
-    req(input$upload_profiles)
-    file <- input$upload_profiles
-
-    tryCatch({
-      # Read file based on extension
-      ext <- tools::file_ext(file$name)
-      if (ext %in% c("xlsx", "xls")) {
-        df <- readxl::read_excel(file$datapath, col_types = "text")
-      } else if (ext == "csv") {
-        df <- read.csv(file$datapath, stringsAsFactors = FALSE, colClasses = "character")
-      } else {
-        showNotification("Unsupported file format. Please upload .xlsx, .xls, or .csv", type = "error")
-        return()
-      }
-
-      if (ncol(df) < 2) {
-        showNotification("File must have at least 2 attribute columns.", type = "error")
-        return()
-      }
-
-      # Extract attributes and their levels from each column
-      # Each column is an attribute; rows are its levels
-      # Empty/NA cells are ignored (attributes can have different numbers of levels)
-      uploaded_attrs <- list()
-      for (col_name in names(df)) {
-        col_values <- df[[col_name]]
-        # Remove NA, empty, and whitespace-only values
-        levels <- trimws(col_values)
-        levels <- levels[!is.na(levels) & levels != ""]
-        if (length(levels) >= 2) {
-          uploaded_attrs[[col_name]] <- levels
+        function showStatus(msg, type = 'info', autoHideMs = 0) {
+            const el = $('statusMessage');
+            el.textContent = msg;
+            el.className = `status-message visible ${type}`;
+            if (autoHideMs > 0) setTimeout(() => el.classList.remove('visible'), autoHideMs);
         }
-      }
+        function hideStatus() { $('statusMessage').classList.remove('visible'); }
 
-      if (length(uploaded_attrs) < 2) {
-        showNotification("Need at least 2 attributes with 2+ levels each.", type = "error")
-        return()
-      }
-
-      # Set attributes (this populates the stats card and enables Generate)
-      attributes(uploaded_attrs)
-
-      # Clear any previous design so user can click Generate
-      design_result(NULL)
-
-      # Build summary message
-      attr_summary <- paste(
-        sapply(names(uploaded_attrs), function(n) paste0(n, " (", length(uploaded_attrs[[n]]), ")")),
-        collapse = ", "
-      )
-      showNotification(
-        paste("Loaded", length(uploaded_attrs), "attributes from", file$name, ":", attr_summary),
-        type = "message",
-        duration = 8
-      )
-
-    }, error = function(e) {
-      showNotification(paste("Error reading file:", e$message), type = "error")
-    })
-  })
-
-  # Upload status
-  output$upload_status <- renderUI({
-    req(input$upload_profiles)
-    attrs <- attributes()
-    if (length(attrs) == 0) return(NULL)
-
-    attr_summary <- paste(
-      sapply(names(attrs), function(n) paste0(n, " (", length(attrs[[n]]), " levels)")),
-      collapse = ", "
-    )
-    div(class = "upload-info",
-      paste("Loaded", length(attrs), "attributes:", attr_summary),
-      div(style = "margin-top: 8px; font-style: italic;",
-        "Click \\"Generate Fractional Design\\" below to create the design."
-      )
-    )
-  })
-
-  # Upload preview
-  output$upload_preview <- renderUI({
-    req(input$upload_profiles)
-    attrs <- attributes()
-    if (length(attrs) == 0) return(NULL)
-
-    div(style = "margin-top: 15px;",
-      p(style = "font-weight: 600; margin-bottom: 8px;", "Uploaded Attributes and Levels:"),
-      tableOutput("upload_preview_table")
-    )
-  })
-
-  output$upload_preview_table <- renderTable({
-    attrs <- attributes()
-    if (length(attrs) == 0) return(NULL)
-    # Build a display table: each column is an attribute, rows are levels
-    max_levels <- max(sapply(attrs, length))
-    preview_df <- data.frame(lapply(attrs, function(lvls) {
-      c(lvls, rep("", max_levels - length(lvls)))
-    }), stringsAsFactors = FALSE, check.names = FALSE)
-    preview_df
-  }, rownames = FALSE)
-
-  # Render attributes list
-  output$attributes_list <- renderUI({
-    attrs <- attributes()
-
-    if (length(attrs) == 0) {
-      return(div(style = "text-align: center; padding: 30px; color: #64748b;",
-        "No attributes added yet. Add your first attribute above."
-      ))
-    }
-
-    attr_items <- lapply(seq_along(attrs), function(i) {
-      name <- names(attrs)[i]
-      levels <- attrs[[i]]
-      div(class = "attribute-item",
-        div(
-          span(class = "attribute-name", name),
-          span(class = "level-badge", paste(length(levels), "levels")),
-          div(class = "attribute-levels", paste(levels, collapse = ", "))
-        ),
-        actionButton(
-          inputId = "remove_attr",
-          label = "Remove",
-          class = "btn-danger",
-          onclick = sprintf("Shiny.setInputValue('remove_attr', %d, {priority: 'event'})", i)
-        )
-      )
-    })
-
-    do.call(tagList, attr_items)
-  })
-
-  # Stats card
-  output$stats_card <- renderUI({
-    attrs <- attributes()
-    if (length(attrs) == 0) return(NULL)
-
-    # Calculate stats
-    num_attrs <- length(attrs)
-    full_factorial <- prod(sapply(attrs, length))
-
-    div(class = "card",
-      div(class = "card-title", "2. Design Statistics"),
-      fluidRow(
-        column(4,
-          div(class = "stat-box",
-            div(class = "stat-value", num_attrs),
-            div(class = "stat-label", "Attributes")
-          )
-        ),
-        column(4,
-          div(class = "stat-box",
-            div(class = "stat-value", format(full_factorial, big.mark = ",")),
-            div(class = "stat-label", "Full Factorial Profiles")
-          )
-        ),
-        column(4,
-          div(class = "stat-box",
-            div(class = "stat-value",
-              if (!is.null(design_result())) nrow(design_result()$profiles) else "-"
-            ),
-            div(class = "stat-label", "Fractional Design Profiles")
-          )
-        )
-      ),
-      div(style = "margin-top: 15px;",
-        actionButton("generate", "Generate Fractional Design", class = "btn-success"),
-        actionButton("clear_all", "Clear All Attributes", class = "btn-secondary", style = "margin-left: 10px;")
-      )
-    )
-  })
-
-  # Generate design
-  observeEvent(input$generate, {
-    attrs <- attributes()
-
-    if (length(attrs) < 2) {
-      showNotification("Please add at least 2 attributes.", type = "error")
-      return()
-    }
-
-    tryCatch({
-      # Create full factorial
-      fullprofiles <- expand.grid(attrs, stringsAsFactors = FALSE)
-
-      # Generate fractional design
-      reducedprofiles <- caFactorialDesign(data = fullprofiles, type = "fractional")
-
-      # Store result
-      design_result(list(
-        profiles = reducedprofiles,
-        attributes = attrs
-      ))
-
-      showNotification(
-        paste("Design generated with", nrow(reducedprofiles), "profiles."),
-        type = "message"
-      )
-
-    }, error = function(e) {
-      showNotification(paste("Error:", e$message), type = "error")
-    })
-  })
-
-  # Results card
-  output$results_card <- renderUI({
-    result <- design_result()
-    if (is.null(result)) return(NULL)
-
-    div(class = "card",
-      div(class = "card-title", "3. Design Profiles"),
-      tabsetPanel(
-        tabPanel("Profiles",
-          div(style = "margin-top: 15px;",
-            tableOutput("profiles_table"),
-            div(style = "display: flex; align-items: center; gap: 15px; margin-top: 10px;",
-              downloadButton("download_profiles", "Download as CSV", class = "btn-primary"),
-              p(style = "font-size: 0.85rem; color: #64748b; font-style: italic; margin: 0;",
-                "Or select the table and copy (Ctrl+C / Cmd+C) to paste into Excel.")
-            )
-          )
-        ),
-        tabPanel("Dummy Coded",
-          div(style = "margin-top: 15px;",
-            tableOutput("dummy_table"),
-            div(style = "display: flex; align-items: center; gap: 15px; margin-top: 10px;",
-              downloadButton("download_dummy", "Download as CSV", class = "btn-primary"),
-              p(style = "font-size: 0.85rem; color: #64748b; font-style: italic; margin: 0;",
-                "Reference levels (first level of each attribute) are omitted.")
-            )
-          )
-        ),
-        tabPanel("R Script",
-          div(style = "margin-top: 15px;",
-            p(style = "color: #64748b;", "Use this R script to reproduce the design:"),
-            verbatimTextOutput("r_script"),
-            downloadButton("download_script", "Download R Script", class = "btn-secondary")
-          )
-        )
-      )
-    )
-  })
-
-  # Profiles table
-  output$profiles_table <- renderTable({
-    result <- design_result()
-    if (is.null(result)) return(NULL)
-
-    profiles <- result$profiles
-    profiles <- cbind(Profile = 1:nrow(profiles), profiles)
-    profiles
-  }, rownames = FALSE)
-
-  # Dummy coded table
-  output$dummy_table <- renderTable({
-    result <- design_result()
-    if (is.null(result)) return(NULL)
-
-    profiles <- result$profiles
-    attrs <- result$attributes
-
-    # Create dummy variables
-    dummy_df <- data.frame(Profile = 1:nrow(profiles))
-
-    for (attr_name in names(attrs)) {
-      levels <- attrs[[attr_name]]
-      # Skip first level (reference)
-      for (i in 2:length(levels)) {
-        col_name <- paste0(attr_name, "_", gsub(" ", "_", levels[i]))
-        dummy_df[[col_name]] <- as.integer(profiles[[attr_name]] == levels[i])
-      }
-    }
-
-    dummy_df
-  }, rownames = FALSE)
-
-  # R Script
-  output$r_script <- renderText({
-    result <- design_result()
-    if (is.null(result)) return("")
-
-    attrs <- result$attributes
-
-    # Build attribute definitions
-    attr_defs <- sapply(names(attrs), function(name) {
-      clean_name <- gsub(" ", "_", name)
-      levels_str <- paste0('"', attrs[[name]], '"', collapse = ", ")
-      paste0(clean_name, " = c(", levels_str, ")")
-    })
-
-    attr_names <- gsub(" ", "_", names(attrs))
-
-    script <- paste0(
-      "# Conjoint Analysis Fractional Factorial Design\\n",
-      "# Generated by Conjoint Design Tool\\n\\n",
-      "# Install and load required packages\\n",
-      "if (!require(conjoint)) install.packages(\\"conjoint\\")\\n",
-      "library(conjoint)\\n\\n",
-      "# Define attributes and levels\\n",
-      paste(attr_defs, collapse = "\\n"), "\\n\\n",
-      "# Create full factorial profiles\\n",
-      "fullprofiles = expand.grid(", paste(attr_names, collapse = ", "), ")\\n\\n",
-      "# Generate fractional factorial design\\n",
-      "reducedprofiles = caFactorialDesign(data = fullprofiles, type = \\"fractional\\")\\n\\n",
-      "# View the design\\n",
-      "print(reducedprofiles)\\n\\n",
-      "# Number of profiles\\n",
-      "cat(\\"Number of profiles:\\", nrow(reducedprofiles), \\"\\\\n\\")\\n"
-    )
-
-    script
-  })
-
-  # Download R script
-  output$download_script <- downloadHandler(
-    filename = function() {
-      "conjoint_design.R"
-    },
-    content = function(file) {
-      result <- design_result()
-      if (is.null(result)) return()
-
-      attrs <- result$attributes
-
-      attr_defs <- sapply(names(attrs), function(name) {
-        clean_name <- gsub(" ", "_", name)
-        levels_str <- paste0('"', attrs[[name]], '"', collapse = ", ")
-        paste0(clean_name, " = c(", levels_str, ")")
-      })
-
-      attr_names <- gsub(" ", "_", names(attrs))
-
-      script <- paste0(
-        "# Conjoint Analysis Fractional Factorial Design\\n",
-        "# Generated by Conjoint Design Tool\\n\\n",
-        "if (!require(conjoint)) install.packages(\\"conjoint\\")\\n",
-        "library(conjoint)\\n\\n",
-        paste(attr_defs, collapse = "\\n"), "\\n\\n",
-        "fullprofiles = expand.grid(", paste(attr_names, collapse = ", "), ")\\n\\n",
-        "reducedprofiles = caFactorialDesign(data = fullprofiles, type = \\"fractional\\")\\n\\n",
-        "print(reducedprofiles)\\n",
-        "cat(\\"Number of profiles:\\", nrow(reducedprofiles), \\"\\\\n\\")\\n"
-      )
-
-      writeLines(script, file)
-    }
-  )
-
-  # Download profiles as CSV
-  output$download_profiles <- downloadHandler(
-    filename = function() {
-      "conjoint_profiles.csv"
-    },
-    content = function(file) {
-      result <- design_result()
-      if (is.null(result)) return()
-      profiles <- result$profiles
-      profiles <- cbind(Profile = 1:nrow(profiles), profiles)
-      write.csv(profiles, file, row.names = FALSE)
-    }
-  )
-
-  # Download dummy-coded profiles as CSV
-  output$download_dummy <- downloadHandler(
-    filename = function() {
-      "conjoint_profiles_dummy_coded.csv"
-    },
-    content = function(file) {
-      result <- design_result()
-      if (is.null(result)) return()
-
-      profiles <- result$profiles
-      attrs <- result$attributes
-
-      dummy_df <- data.frame(Profile = 1:nrow(profiles))
-      for (attr_name in names(attrs)) {
-        levels <- attrs[[attr_name]]
-        for (i in 2:length(levels)) {
-          col_name <- paste0(attr_name, "_", gsub(" ", "_", levels[i]))
-          dummy_df[[col_name]] <- as.integer(profiles[[attr_name]] == levels[i])
+        function escapeHtml(s) {
+            return String(s).replace(/[&<>"']/g, ch => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
         }
-      }
 
-      write.csv(dummy_df, file, row.names = FALSE)
-    }
-  )
+        // Parse a comma-separated levels string into a trimmed, de-blanked array.
+        function parseLevels(text) {
+            return String(text || '')
+                .split(',')
+                .map(s => s.trim())
+                .filter(s => s.length > 0);
+        }
+
+        // ==================== ATTRIBUTE BUILDER UI ====================
+        // Internal model stores raw text in each row; we read inputs on demand.
+        function renderAttrTable() {
+            const tbl = $('attrTable');
+            tbl.innerHTML = attrs.map((a, i) => {
+                const levels = parseLevels(a.levelsText);
+                return `
+                <div class="attr-row" data-idx="${i}">
+                    <div>
+                        <label class="field-label" for="attrName${i}">Attribute name</label>
+                        <input type="text" id="attrName${i}" class="attr-name" data-idx="${i}"
+                               value="${escapeHtml(a.name)}" placeholder="e.g., Brand" autocomplete="off">
+                    </div>
+                    <div>
+                        <label class="field-label" for="attrLevels${i}">Levels (comma-separated)</label>
+                        <input type="text" id="attrLevels${i}" class="attr-levels" data-idx="${i}"
+                               value="${escapeHtml(a.levelsText)}" placeholder="e.g., Low, Mid, High" autocomplete="off">
+                        <div class="levels-count">${levels.length} level${levels.length === 1 ? '' : 's'}${levels.length ? ': ' + escapeHtml(levels.join(' · ')) : ''}</div>
+                    </div>
+                    <div class="remove-col">
+                        <button class="btn-remove" type="button" data-remove="${i}" aria-label="Remove attribute ${i + 1}">Remove</button>
+                    </div>
+                    <div class="row-error" id="rowError${i}"></div>
+                </div>`;
+            }).join('');
+
+            // Wire inputs: update model on input and refresh derived UI.
+            tbl.querySelectorAll('.attr-name').forEach(el => {
+                el.addEventListener('input', e => {
+                    const idx = parseInt(e.target.dataset.idx, 10);
+                    attrs[idx].name = e.target.value;
+                    afterEdit();
+                });
+            });
+            tbl.querySelectorAll('.attr-levels').forEach(el => {
+                el.addEventListener('input', e => {
+                    const idx = parseInt(e.target.dataset.idx, 10);
+                    attrs[idx].levelsText = e.target.value;
+                    // Update the live level count for just this row without a full re-render
+                    const levels = parseLevels(e.target.value);
+                    const countEl = e.target.parentElement.querySelector('.levels-count');
+                    if (countEl) {
+                        countEl.innerHTML = `${levels.length} level${levels.length === 1 ? '' : 's'}${levels.length ? ': ' + escapeHtml(levels.join(' · ')) : ''}`;
+                    }
+                    afterEdit(false);
+                });
+            });
+            tbl.querySelectorAll('[data-remove]').forEach(el => {
+                el.addEventListener('click', e => {
+                    const idx = parseInt(e.currentTarget.dataset.remove, 10);
+                    attrs.splice(idx, 1);
+                    renderAttrTable();
+                    afterEdit();
+                });
+            });
+        }
+
+        // Validate the current attribute model. Returns { ok, parsed, errorsByRow, message }.
+        function validate() {
+            const errorsByRow = {};
+            const parsed = attrs.map(a => ({ name: (a.name || '').trim(), levels: parseLevels(a.levelsText) }));
+
+            parsed.forEach((p, i) => {
+                if (!p.name) errorsByRow[i] = 'Attribute name is required.';
+                else if (p.levels.length < 2) errorsByRow[i] = 'Enter at least 2 levels, separated by commas.';
+            });
+
+            // Unique attribute names (case-insensitive)
+            const seen = {};
+            parsed.forEach((p, i) => {
+                if (!p.name) return;
+                const key = p.name.toLowerCase();
+                if (seen[key] !== undefined) {
+                    errorsByRow[i] = 'Duplicate attribute name. Names must be unique.';
+                    errorsByRow[seen[key]] = errorsByRow[seen[key]] || 'Duplicate attribute name. Names must be unique.';
+                } else {
+                    seen[key] = i;
+                }
+            });
+
+            // Duplicate levels within an attribute
+            parsed.forEach((p, i) => {
+                if (errorsByRow[i]) return;
+                const lset = {};
+                for (const lv of p.levels) {
+                    const k = lv.toLowerCase();
+                    if (lset[k]) { errorsByRow[i] = 'Levels within an attribute must be unique.'; break; }
+                    lset[k] = true;
+                }
+            });
+
+            let message = '';
+            const validAttrs = parsed.filter((p, i) => !errorsByRow[i] && p.name && p.levels.length >= 2);
+            if (validAttrs.length < 2) {
+                message = 'You need at least 2 valid attributes, each with 2 or more levels.';
+            }
+
+            const ok = Object.keys(errorsByRow).length === 0 && parsed.length >= 2 &&
+                       parsed.every(p => p.name && p.levels.length >= 2);
+
+            return { ok, parsed, errorsByRow, message };
+        }
+
+        function showRowErrors(errorsByRow) {
+            attrs.forEach((_, i) => {
+                const el = $('rowError' + i);
+                if (!el) return;
+                if (errorsByRow[i]) {
+                    el.textContent = errorsByRow[i];
+                    el.classList.add('visible');
+                } else {
+                    el.textContent = '';
+                    el.classList.remove('visible');
+                }
+            });
+        }
+
+        // Recompute stats + enable/disable the Generate button. fullRender controls
+        // whether we re-render the table (only needed when rows are added/removed).
+        function afterEdit() {
+            const v = validate();
+            showRowErrors(v.errorsByRow);
+            renderStats(v);
+            $('generateBtn').disabled = !(v.ok && webrReady);
+        }
+
+        function fullFactorial(parsed) {
+            // Product of level counts across valid attributes.
+            let prod = 1;
+            let any = false;
+            for (const p of parsed) {
+                if (p.levels.length >= 2) { prod *= p.levels.length; any = true; }
+            }
+            return any ? prod : 0;
+        }
+
+        function renderStats(v) {
+            const parsed = v.parsed;
+            const nAttrs = parsed.filter(p => p.name && p.levels.length >= 2).length;
+            const full = fullFactorial(parsed);
+            $('statGrid').innerHTML = `
+                <div class="stat">
+                    <div class="label">Attributes</div>
+                    <div class="value">${nAttrs}</div>
+                </div>
+                <div class="stat">
+                    <div class="label">Full Factorial Profiles</div>
+                    <div class="value">${full ? full.toLocaleString() : '-'}</div>
+                </div>
+                <div class="stat">
+                    <div class="label">Fractional Profiles</div>
+                    <div class="value" id="fractionalStat">-</div>
+                </div>`;
+        }
+
+        // ==================== BUTTON WIRING ====================
+        $('addAttrBtn').addEventListener('click', () => {
+            attrs.push({ name: '', levelsText: '' });
+            renderAttrTable();
+            afterEdit();
+            const last = document.querySelector(`#attrName${attrs.length - 1}`);
+            if (last) last.focus();
+        });
+        $('resetBtn').addEventListener('click', () => {
+            attrs = EXAMPLE.map(e => ({ name: e.name, levelsText: e.levelsText }));
+            renderAttrTable();
+            afterEdit();
+            $('resultsContainer').classList.remove('visible');
+            hideStatus();
+        });
+
+        // ==================== INIT WEBR ====================
+        async function initWebR() {
+            try {
+                webR = new WebR();
+                await webR.init();
+                $('loadingText').textContent = 'Installing the design package (AlgDesign)...';
+                $('loadingStage').textContent = 'Downloading the R package, this can take a few seconds.';
+                await webR.installPackages(['AlgDesign']);
+                webrReady = true;
+                $('loadingOverlay').classList.add('hidden');
+                showStatus('Ready. Define your attributes, then click Generate Fractional Design.', 'success', 4000);
+                afterEdit();
+            } catch (err) {
+                $('loadingOverlay').innerHTML = `<div style="text-align:center; padding:2rem; max-width:520px;">
+                    <p style="color:#991b1b; font-size:1.2rem; font-weight:600;">Failed to load WebR</p>
+                    <p style="color:#666; margin-top:1rem; font-size:0.9rem;">${escapeHtml(err.message || String(err))}</p>
+                    <p style="color:#666; margin-top:0.5rem; font-size:0.85rem;">Reload the page to try again.</p>
+                </div>`;
+            }
+        }
+
+        // ==================== R ESCAPING ====================
+        // Escape a JS string so it is safe inside an R double-quoted string literal.
+        function rStr(s) {
+            return '"' + String(s).replace(/\\/g, '\\\\').replace(/"/g, '\\"') + '"';
+        }
+        // Escape an attribute name for backtick quoting in R (escape backslash + backtick).
+        function rBacktick(s) {
+            return '`' + String(s).replace(/\\/g, '\\\\').replace(/`/g, '\\`') + '`';
+        }
+
+        // Build the R `attrs <- list(...)` literal from the validated attribute model.
+        function buildAttrsR(parsed) {
+            const valid = parsed.filter(p => p.name && p.levels.length >= 2);
+            const parts = valid.map(p => {
+                const lvls = p.levels.map(rStr).join(', ');
+                return `${rBacktick(p.name)} = c(${lvls})`;
+            });
+            return `list(${parts.join(', ')})`;
+        }
+
+        // The fixed R helper functions (the locally-validated algorithm).
+        const R_HELPERS = `options(contrasts = c("contr.treatment","contr.poly"))
+suppressMessages(library(AlgDesign))
+
+generate_design <- function(attrs, seed=123) {
+  attrs <- lapply(attrs, function(x) factor(x, levels=x))
+  full  <- expand.grid(attrs)
+  set.seed(seed)
+  # Fractional (D-optimal) design; for very small factorials that cannot be
+  # reduced, fall back to the full factorial.
+  prof  <- tryCatch({
+    des <- optFederov(~., data=full, approximate=FALSE, nullify=1)
+    des$design
+  }, error = function(e) full)
+  prof  <- prof[do.call(order, prof), , drop=FALSE]
+  rownames(prof) <- NULL
+  list(full_n=nrow(full), profiles=prof)
 }
 
-shinyApp(ui = ui, server = server)
-`;
+dummy_code <- function(profiles, attrs) {
+  out <- data.frame(Profile=seq_len(nrow(profiles)))
+  for (nm in names(attrs)) {
+    lv <- attrs[[nm]]
+    for (i in 2:length(lv)) {
+      col <- paste0(nm, "_", gsub(" ", "_", lv[i]))
+      out[[col]] <- as.integer(as.character(profiles[[nm]]) == lv[i])
+    }
+  }
+  out
+}`;
 
-            const blob = new Blob([rCode], { type: 'text/plain' });
+        // Build the full R program for a generation run.
+        function buildRProgram(parsed) {
+            const attrsLiteral = buildAttrsR(parsed);
+            return `${R_HELPERS}
+
+attrs <- ${attrsLiteral}
+
+res <- tryCatch({
+  d <- generate_design(attrs)
+  prof <- d$profiles
+  prof_out <- cbind(Profile = seq_len(nrow(prof)), prof)
+  dummy <- dummy_code(prof, attrs)
+  profiles_csv <- paste(capture.output(write.csv(prof_out, row.names = FALSE)), collapse = "\\n")
+  dummy_csv    <- paste(capture.output(write.csv(dummy, row.names = FALSE)), collapse = "\\n")
+  paste0("OK\\n", d$full_n, "\\n", nrow(prof),
+         "\\n<<<PROFILES>>>\\n", profiles_csv,
+         "\\n<<<DUMMY>>>\\n", dummy_csv)
+}, error = function(e) {
+  paste0("ERR\\n", conditionMessage(e))
+})
+res`;
+        }
+
+        // The display version of the R code (with the user's literal attributes), for the
+        // collapsible "Show R code" section. Mirrors what actually runs.
+        function buildDisplayR(parsed) {
+            const attrsLiteral = buildAttrsR(parsed);
+            return `${R_HELPERS}
+
+# Attributes defined in the tool:
+attrs <- ${attrsLiteral}
+
+d     <- generate_design(attrs)
+prof  <- d$profiles
+prof  <- cbind(Profile = seq_len(nrow(prof)), prof)
+dummy <- dummy_code(d$profiles, attrs)
+
+cat("Full factorial profiles:", d$full_n, "\\n")
+cat("Fractional profiles:    ", nrow(prof), "\\n")
+
+# write.csv(prof,  "conjoint_profiles.csv", row.names = FALSE)
+# write.csv(dummy, "conjoint_profiles_dummy_coded.csv", row.names = FALSE)`;
+        }
+
+        // ==================== CSV PARSING (for rendering tables) ====================
+        // R's write.csv quotes character fields; parse robustly.
+        function parseCSV(text) {
+            const lines = String(text).replace(/\r\n/g, '\n').replace(/\r/g, '\n').split('\n').filter(l => l.length > 0);
+            return lines.map(splitCSVLine);
+        }
+        function splitCSVLine(line) {
+            const result = []; let cur = ''; let inQ = false;
+            for (let i = 0; i < line.length; i++) {
+                const c = line[i];
+                if (inQ) {
+                    if (c === '"' && line[i + 1] === '"') { cur += '"'; i++; }
+                    else if (c === '"') { inQ = false; }
+                    else { cur += c; }
+                } else {
+                    if (c === ',') { result.push(cur); cur = ''; }
+                    else if (c === '"') { inQ = true; }
+                    else { cur += c; }
+                }
+            }
+            result.push(cur);
+            return result;
+        }
+
+        // Render a parsed CSV (array of rows) into a table element.
+        // numericCols: set of column indexes to right-align (numbers).
+        function renderTable(tableEl, parsedRows, numericFromCol) {
+            if (!parsedRows.length) { tableEl.innerHTML = ''; return; }
+            const header = parsedRows[0];
+            let html = '<thead><tr>';
+            header.forEach(h => { html += `<th>${escapeHtml(h)}</th>`; });
+            html += '</tr></thead><tbody>';
+            for (let r = 1; r < parsedRows.length; r++) {
+                html += '<tr>';
+                parsedRows[r].forEach((cell, ci) => {
+                    const isNum = numericFromCol !== undefined && ci >= numericFromCol && cell !== '' && !isNaN(cell);
+                    const cls = (ci === 0 || isNum) ? ' class="num"' : '';
+                    html += `<td${cls}>${escapeHtml(cell)}</td>`;
+                });
+                html += '</tr>';
+            }
+            html += '</tbody>';
+            tableEl.innerHTML = html;
+        }
+
+        // ==================== GENERATE ====================
+        $('generateBtn').addEventListener('click', generateDesign);
+
+        async function generateDesign() {
+            const v = validate();
+            showRowErrors(v.errorsByRow);
+            if (!v.ok) {
+                showStatus(v.message || 'Please fix the highlighted attribute rows.', 'error', 5000);
+                return;
+            }
+            if (!webrReady) { showStatus('WebR is still loading, please wait.', 'info', 3000); return; }
+
+            const btn = $('generateBtn');
+            const originalLabel = btn.textContent;
+            try {
+                btn.disabled = true;
+                btn.textContent = 'Generating...';
+                showStatus('Running the design generation in R...', 'info');
+
+                const program = buildRProgram(v.parsed);
+                const result = await webR.evalR(program);
+                const obj = await result.toJs();
+                let out;
+                if (typeof obj === 'string') out = obj;
+                else if (obj && obj.values) out = Array.isArray(obj.values) ? obj.values.join('\n') : obj.values;
+                else if (Array.isArray(obj)) out = obj.join('\n');
+                else out = String(obj);
+
+                if (out.startsWith('ERR')) {
+                    const msg = out.slice(4).trim();
+                    throw new Error(msg || 'R returned an error.');
+                }
+                if (!out.startsWith('OK')) {
+                    throw new Error('Unexpected R output: ' + out.slice(0, 300));
+                }
+
+                // Parse the structured output.
+                const profMarker = '<<<PROFILES>>>\n';
+                const dummyMarker = '\n<<<DUMMY>>>\n';
+                const headerEnd = out.indexOf(profMarker);
+                const dummyStart = out.indexOf(dummyMarker);
+                if (headerEnd === -1 || dummyStart === -1) {
+                    throw new Error('Could not parse R output structure.');
+                }
+                const headerBlock = out.slice(0, headerEnd).split('\n'); // ["OK", fullN, fracN]
+                const fullN = parseInt(headerBlock[1], 10);
+                const fracN = parseInt(headerBlock[2], 10);
+                lastProfilesCSV = out.slice(headerEnd + profMarker.length, dummyStart).trim();
+                lastDummyCSV = out.slice(dummyStart + dummyMarker.length).trim();
+
+                // Summary
+                const pct = fullN > 0 ? ((fracN / fullN) * 100).toFixed(1) : '0';
+                $('summaryLine').innerHTML =
+                    `Full factorial design has <strong>${fullN.toLocaleString()}</strong> profiles. ` +
+                    `The fractional design selects <strong>${fracN.toLocaleString()}</strong> profiles ` +
+                    `(${pct}% of the full factorial).`;
+                const fracStat = $('fractionalStat');
+                if (fracStat) fracStat.textContent = fracN.toLocaleString();
+
+                // Tables (column 0 = Profile is numeric; for profiles the rest are labels;
+                // for dummy coding the rest are 0/1 numerics).
+                renderTable($('profilesTable'), parseCSV(lastProfilesCSV), undefined);
+                renderTable($('dummyTable'), parseCSV(lastDummyCSV), 1);
+
+                // R code display
+                $('rCodeBlock').textContent = buildDisplayR(v.parsed);
+
+                $('resultsContainer').classList.add('visible');
+                showStatus('Done. Design generated with ' + fracN.toLocaleString() + ' profiles.', 'success', 4000);
+                $('resultsContainer').scrollIntoView({ behavior: 'smooth', block: 'start' });
+            } catch (err) {
+                console.error(err);
+                showStatus('Error: ' + (err.message || String(err)), 'error');
+            } finally {
+                btn.textContent = originalLabel;
+                afterEdit(); // re-evaluates disabled state
+            }
+        }
+
+        // ==================== DOWNLOADS ====================
+        function downloadCSV(csvText, filename) {
+            if (!csvText) { showStatus('Generate a design first.', 'info', 3000); return; }
+            const blob = new Blob([csvText + '\n'], { type: 'text/csv;charset=utf-8;' });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = 'Conjoint_Fractional_Factorial_Design.R';
+            a.download = filename;
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
             URL.revokeObjectURL(url);
-        });
+        }
+        $('downloadProfilesBtn').addEventListener('click', () => downloadCSV(lastProfilesCSV, 'conjoint_profiles.csv'));
+        $('downloadDummyBtn').addEventListener('click', () => downloadCSV(lastDummyCSV, 'conjoint_profiles_dummy_coded.csv'));
+
+        // ==================== GO ====================
+        attrs = EXAMPLE.map(e => ({ name: e.name, levelsText: e.levelsText }));
+        renderAttrTable();
+        afterEdit();
+        initWebR();
     </script>
 
-</div> <!-- end main-content -->
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
-<script>
-    const firebaseConfig = {
-        apiKey: "AIzaSyBg3LJDwVIRGWtFZb_mM_CSRJMNCJUta20",
-        authDomain: "iu-pricing-tools.firebaseapp.com",
-        projectId: "iu-pricing-tools",
-        storageBucket: "iu-pricing-tools.firebasestorage.app",
-        messagingSenderId: "659335573790",
-        appId: "1:659335573790:web:00013a166787efecb3d90f",
-        measurementId: "G-NGKNY08XWP"
-    };
-    firebase.initializeApp(firebaseConfig);
-    firebase.auth().onAuthStateChanged(function(user) {
-        if (user) {
-            document.getElementById('loading-screen').style.display = 'none';
-            document.getElementById('main-content').style.display = 'block';
-        } else {
-            window.location.href = 'login.html';
+    <!-- Firebase auth -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyBg3LJDwVIRGWtFZb_mM_CSRJMNCJUta20",
+            authDomain: "iu-pricing-tools.firebaseapp.com",
+            projectId: "iu-pricing-tools",
+            storageBucket: "iu-pricing-tools.firebasestorage.app",
+            messagingSenderId: "659335573790",
+            appId: "1:659335573790:web:00013a166787efecb3d90f",
+            measurementId: "G-NGKNY08XWP"
+        };
+        firebase.initializeApp(firebaseConfig);
+        firebase.auth().onAuthStateChanged(function(user) {
+            if (user) {
+                document.getElementById('loading-screen').style.display = 'none';
+                document.getElementById('main-content').style.display = 'block';
+            } else {
+                window.location.href = 'login.html';
+            }
+        });
+
+        // Font size controls (matches tools.html)
+        const fontSizes = [14, 16, 18, 20, 22];
+        let currentStep = 2;
+        function adjustFontSize(delta) {
+            currentStep = Math.max(0, Math.min(fontSizes.length - 1, currentStep + delta));
+            applyFontSize(currentStep);
         }
-    });
-</script>
+        function applyFontSize(step) {
+            document.documentElement.style.fontSize = fontSizes[step] + 'px';
+            document.querySelectorAll('.decrease-a').forEach(b => b.classList.toggle('at-limit', step === 0));
+            document.querySelectorAll('.increase-a').forEach(b => b.classList.toggle('at-limit', step === fontSizes.length - 1));
+        }
+        window.adjustFontSize = adjustFontSize;
+
+        // Auto-update copyright year
+        document.querySelectorAll('.year').forEach(el => el.textContent = new Date().getFullYear());
+    </script>
 </body>
 </html>
