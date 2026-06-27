@@ -264,6 +264,10 @@
         details.r-code { margin-top: 1.5rem; border: 1px solid var(--border); border-radius: 8px; padding: 0.5rem 1rem; background: var(--surface); }
         details.r-code summary { cursor: pointer; font-weight: 600; color: var(--text-sub); font-size: 0.92rem; padding: 0.4rem 0; }
         details.r-code pre { background: #1e1e1e; color: #d4d4d4; font-family: 'Monaco', 'Menlo', 'Courier New', monospace; font-size: 0.8rem; padding: 1.1rem; border-radius: 8px; overflow-x: auto; white-space: pre; line-height: 1.5; margin: 0.5rem 0; }
+        .code-wrap { position: relative; }
+        .copy-btn { position: absolute; top: 14px; right: 14px; display: inline-flex; align-items: center; gap: 5px; background: rgba(255,255,255,0.12); color: #d4d4d4; border: 1px solid rgba(255,255,255,0.25); border-radius: 6px; padding: 5px 10px; font-size: 0.78rem; font-weight: 600; font-family: inherit; cursor: pointer; transition: background 0.15s, color 0.15s, border-color 0.15s; }
+        .copy-btn:hover { background: rgba(255,255,255,0.22); color: #fff; }
+        .copy-btn.copied { background: #16a34a; border-color: #16a34a; color: #fff; }
 
         footer { text-align: center; padding: 2rem; color: var(--text-light); font-size: 0.9rem; background: var(--surface); border-top: 1px solid var(--border); margin-top: 3rem; }
 
@@ -444,7 +448,13 @@
 
                 <details class="r-code">
                     <summary>Show R code</summary>
-                    <pre id="rCodeBlock"></pre>
+                    <div class="code-wrap">
+                        <button type="button" class="copy-btn" id="copyRBtn" aria-label="Copy R code">
+                            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                            <span>Copy</span>
+                        </button>
+                        <pre id="rCodeBlock"></pre>
+                    </div>
                 </details>
             </div>
         </div>
@@ -699,7 +709,7 @@
             return '`' + String(s).replace(/\\/g, '\\\\').replace(/`/g, '\\`') + '`';
         }
 
-        // Build the R `attrs <- list(...)` literal from the validated attribute model.
+        // Build the R `attrs = list(...)` literal from the validated attribute model.
         function buildAttrsR(parsed) {
             const valid = parsed.filter(p => p.name && p.levels.length >= 2);
             const parts = valid.map(p => {
@@ -713,28 +723,28 @@
         const R_HELPERS = `options(contrasts = c("contr.treatment","contr.poly"))
 suppressMessages(library(AlgDesign))
 
-generate_design <- function(attrs, seed=123) {
+generate_design = function(attrs, seed=123) {
   # expand.grid turns the levels into factors and builds the full factorial.
-  full  <- expand.grid(attrs)
+  full  = expand.grid(attrs)
   set.seed(seed)
   # Fractional (D-optimal) design; for very small factorials that cannot be
   # reduced, fall back to the full factorial.
-  prof  <- tryCatch({
-    des <- optFederov(~., data=full, approximate=FALSE, nullify=1)
+  prof  = tryCatch({
+    des = optFederov(~., data=full, approximate=FALSE, nullify=1)
     des$design
   }, error = function(e) full)
-  prof  <- prof[do.call(order, prof), , drop=FALSE]
-  rownames(prof) <- NULL
+  prof  = prof[do.call(order, prof), , drop=FALSE]
+  rownames(prof) = NULL
   list(full_n=nrow(full), profiles=prof)
 }
 
-dummy_code <- function(profiles, attrs) {
-  out <- data.frame(Profile=seq_len(nrow(profiles)))
+dummy_code = function(profiles, attrs) {
+  out = data.frame(Profile=seq_len(nrow(profiles)))
   for (nm in names(attrs)) {
-    lv <- attrs[[nm]]
+    lv = attrs[[nm]]
     for (i in 2:length(lv)) {
-      col <- paste0(nm, "_", gsub(" ", "_", lv[i]))
-      out[[col]] <- as.integer(as.character(profiles[[nm]]) == lv[i])
+      col = paste0(nm, "_", gsub(" ", "_", lv[i]))
+      out[[col]] = as.integer(as.character(profiles[[nm]]) == lv[i])
     }
   }
   out
@@ -745,15 +755,15 @@ dummy_code <- function(profiles, attrs) {
             const attrsLiteral = buildAttrsR(parsed);
             return `${R_HELPERS}
 
-attrs <- ${attrsLiteral}
+attrs = ${attrsLiteral}
 
-res <- tryCatch({
-  d <- generate_design(attrs)
-  prof <- d$profiles
-  prof_out <- cbind(Profile = seq_len(nrow(prof)), prof)
-  dummy <- dummy_code(prof, attrs)
-  profiles_csv <- paste(capture.output(write.csv(prof_out, row.names = FALSE)), collapse = "\\n")
-  dummy_csv    <- paste(capture.output(write.csv(dummy, row.names = FALSE)), collapse = "\\n")
+res = tryCatch({
+  d = generate_design(attrs)
+  prof = d$profiles
+  prof_out = cbind(Profile = seq_len(nrow(prof)), prof)
+  dummy = dummy_code(prof, attrs)
+  profiles_csv = paste(capture.output(write.csv(prof_out, row.names = FALSE)), collapse = "\\n")
+  dummy_csv    = paste(capture.output(write.csv(dummy, row.names = FALSE)), collapse = "\\n")
   paste0("OK\\n", d$full_n, "\\n", nrow(prof),
          "\\n<<<PROFILES>>>\\n", profiles_csv,
          "\\n<<<DUMMY>>>\\n", dummy_csv)
@@ -776,7 +786,7 @@ res`;
                 used[v] = true;
                 return v;
             });
-            const defs = valid.map((p, i) => `${vars[i]} <- c(${p.levels.map(rStr).join(', ')})`).join('\n');
+            const defs = valid.map((p, i) => `${vars[i]} = c(${p.levels.map(rStr).join(', ')})`).join('\n');
             const egArgs = valid.map((p, i) => `${vars[i]} = ${vars[i]}`).join(', ');
             return `# Conjoint Fractional Factorial Design
 # Paste this into R or RStudio to reproduce the design on your own machine.
@@ -788,24 +798,40 @@ library(AlgDesign)
 # 2. Define each attribute and its levels
 ${defs}
 
-# 3. Build the full factorial design (every possible profile)
-full_profiles <- expand.grid(${egArgs})
-nrow(full_profiles)   # number of profiles in the full design
+# 3. Build the full factorial design: every possible combination of levels
+full_profiles = expand.grid(${egArgs})
+nrow(full_profiles)   # how many profiles the full design has
 
-# 4. Reduce to an efficient fractional (D-optimal) design
-set.seed(123)                                    # makes the selection reproducible
-design   <- optFederov(~ ., data = full_profiles,
-                       approximate = FALSE, nullify = 1)
-profiles <- design$design                        # the chosen profiles
-profiles <- profiles[do.call(order, profiles), ] # sort the rows for readability
+# 4. Pick an efficient subset of those profiles with optFederov().
+#
+#    Showing every full-factorial profile to respondents is usually too many.
+#    optFederov() (from the AlgDesign package) searches for a smaller set of
+#    profiles that still lets you estimate the effect of each attribute level.
+#    It looks for a "D-optimal" design: of all subsets of a given size, it
+#    keeps the one that makes the estimated effects as precise as possible.
+#
+#    The arguments:
+#      ~ .                  the model. "~ ." means "use every attribute as a
+#                           main effect" (the dot stands for all columns).
+#      data = full_profiles the pool of candidate profiles to choose from.
+#      approximate = FALSE  return actual whole profiles (an exact design),
+#                           not fractional weights.
+#      nullify = 1          let the function seed the search and choose a
+#                           sensible number of profiles automatically.
+#    (To choose the count yourself, add e.g. nTrials = 16.)
+set.seed(123)               # makes the search reproducible
+design   = optFederov(~ ., data = full_profiles,
+                      approximate = FALSE, nullify = 1)
+profiles = design$design                          # the chosen profiles
+profiles = profiles[do.call(order, profiles), ]   # sort the rows for readability
 profiles
 
 # 5. Save the profiles to a CSV file
 write.csv(profiles, "conjoint_profiles.csv", row.names = FALSE)
 
 # 6. (Optional) dummy-code the design for regression.
-#    The first level of each attribute is the baseline.
-dummy <- model.matrix(~ ., data = profiles)[, -1]
+#    The first level of each attribute is the baseline (coded 0).
+dummy = model.matrix(~ ., data = profiles)[, -1]
 write.csv(dummy, "conjoint_profiles_dummy_coded.csv", row.names = FALSE)`;
         }
 
@@ -948,6 +974,27 @@ write.csv(dummy, "conjoint_profiles_dummy_coded.csv", row.names = FALSE)`;
         }
         $('downloadProfilesBtn').addEventListener('click', () => downloadCSV(lastProfilesCSV, 'conjoint_profiles.csv'));
         $('downloadDummyBtn').addEventListener('click', () => downloadCSV(lastDummyCSV, 'conjoint_profiles_dummy_coded.csv'));
+
+        // ==================== COPY R CODE ====================
+        const ICON_COPY = '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg><span>Copy</span>';
+        const ICON_DONE = '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg><span>Copied</span>';
+        const copyRBtn = $('copyRBtn');
+        if (copyRBtn) {
+            copyRBtn.addEventListener('click', async () => {
+                const code = $('rCodeBlock').textContent;
+                try {
+                    await navigator.clipboard.writeText(code);
+                } catch (e) {
+                    const r = document.createRange(); r.selectNode($('rCodeBlock'));
+                    const sel = window.getSelection(); sel.removeAllRanges(); sel.addRange(r);
+                    try { document.execCommand('copy'); } catch (_) {}
+                    sel.removeAllRanges();
+                }
+                copyRBtn.classList.add('copied');
+                copyRBtn.innerHTML = ICON_DONE;
+                setTimeout(() => { copyRBtn.classList.remove('copied'); copyRBtn.innerHTML = ICON_COPY; }, 1800);
+            });
+        }
 
         // ==================== GO ====================
         attrs = EXAMPLE.map(e => ({ name: e.name, levelsText: e.levelsText }));
