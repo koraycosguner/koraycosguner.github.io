@@ -714,7 +714,7 @@
 suppressMessages(library(AlgDesign))
 
 generate_design <- function(attrs, seed=123) {
-  attrs <- lapply(attrs, function(x) factor(x, levels=x))
+  # expand.grid turns the levels into factors and builds the full factorial.
   full  <- expand.grid(attrs)
   set.seed(seed)
   # Fractional (D-optimal) design; for very small factorials that cannot be
@@ -763,25 +763,50 @@ res <- tryCatch({
 res`;
         }
 
-        // The display version of the R code (with the user's literal attributes), for the
-        // collapsible "Show R code" section. Mirrors what actually runs.
+        // The display version of the R code, written as a clean, student-friendly
+        // script that reproduces the design in a normal R/RStudio session.
         function buildDisplayR(parsed) {
-            const attrsLiteral = buildAttrsR(parsed);
-            return `${R_HELPERS}
+            const valid = parsed.filter(p => p.name && p.levels.length >= 2);
+            // Build safe R variable names from the attribute names.
+            const used = {};
+            const vars = valid.map(p => {
+                let v = String(p.name).trim().replace(/[^A-Za-z0-9]+/g, '_').replace(/^_+|_+$/g, '');
+                if (!v || /^[0-9]/.test(v)) v = 'Att_' + v;
+                while (used[v]) v = v + '_';
+                used[v] = true;
+                return v;
+            });
+            const defs = valid.map((p, i) => `${vars[i]} <- c(${p.levels.map(rStr).join(', ')})`).join('\n');
+            const egArgs = valid.map((p, i) => `${vars[i]} = ${vars[i]}`).join(', ');
+            return `# Conjoint Fractional Factorial Design
+# Paste this into R or RStudio to reproduce the design on your own machine.
 
-# Attributes defined in the tool:
-attrs <- ${attrsLiteral}
+# 1. Install the design package once, then load it each session
+install.packages("AlgDesign")   # run once; skip if already installed
+library(AlgDesign)
 
-d     <- generate_design(attrs)
-prof  <- d$profiles
-prof  <- cbind(Profile = seq_len(nrow(prof)), prof)
-dummy <- dummy_code(d$profiles, attrs)
+# 2. Define each attribute and its levels
+${defs}
 
-cat("Full factorial profiles:", d$full_n, "\\n")
-cat("Fractional profiles:    ", nrow(prof), "\\n")
+# 3. Build the full factorial design (every possible profile)
+full_profiles <- expand.grid(${egArgs})
+nrow(full_profiles)   # number of profiles in the full design
 
-# write.csv(prof,  "conjoint_profiles.csv", row.names = FALSE)
-# write.csv(dummy, "conjoint_profiles_dummy_coded.csv", row.names = FALSE)`;
+# 4. Reduce to an efficient fractional (D-optimal) design
+set.seed(123)                                    # makes the selection reproducible
+design   <- optFederov(~ ., data = full_profiles,
+                       approximate = FALSE, nullify = 1)
+profiles <- design$design                        # the chosen profiles
+profiles <- profiles[do.call(order, profiles), ] # sort the rows for readability
+profiles
+
+# 5. Save the profiles to a CSV file
+write.csv(profiles, "conjoint_profiles.csv", row.names = FALSE)
+
+# 6. (Optional) dummy-code the design for regression.
+#    The first level of each attribute is the baseline.
+dummy <- model.matrix(~ ., data = profiles)[, -1]
+write.csv(dummy, "conjoint_profiles_dummy_coded.csv", row.names = FALSE)`;
         }
 
         // ==================== CSV PARSING (for rendering tables) ====================
