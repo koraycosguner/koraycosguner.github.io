@@ -323,6 +323,38 @@
         }
         .card-instructor .link-text { color: #166534; }
 
+        /* Category sections + filter chips */
+        .filter-bar { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin-bottom: 40px; }
+        .chip {
+            font-family: inherit; font-size: 0.85rem; font-weight: 700;
+            color: var(--text-sub); background: var(--surface);
+            border: 1px solid var(--border-strong); padding: 8px 16px;
+            border-radius: var(--radius-full); cursor: pointer;
+            display: inline-flex; align-items: center; gap: 7px;
+            transition: all var(--transition-fast);
+        }
+        .chip:hover { border-color: var(--primary); color: var(--primary); }
+        .chip.active { background: var(--primary); border-color: var(--primary); color: #fff; }
+        .chip .count { font-size: 0.72rem; font-weight: 700; opacity: 0.7; }
+        .tool-group { margin-bottom: 48px; }
+        .tool-group:last-child { margin-bottom: 0; }
+        .tool-group[hidden] { display: none; }
+        .group-title {
+            font-size: 1.3rem; font-weight: 800; letter-spacing: -0.02em;
+            color: var(--text-main); margin: 0 0 22px;
+            display: flex; align-items: center; gap: 14px;
+        }
+        .group-title::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+        /* Data Analysis cards: blue accent (vs crimson Pricing) */
+        .tool-label-data { color: var(--accent); background: #eef0fb; border-color: #d6d9f5; }
+        .card-data::after { background: linear-gradient(145deg, var(--border) 0%, rgba(26,26,158,0.10) 50%, var(--border) 100%); }
+        .card-data:hover::after { background: linear-gradient(145deg, var(--accent) 0%, #4f46e5 50%, var(--accent) 100%); }
+        .card-data::before { background: linear-gradient(90deg, var(--accent) 0%, #4f46e5 100%); }
+        .card-data .icon-box { background: #eef0fb; border-color: #d6d9f5; color: var(--accent); }
+        .card-data:hover .icon-box { background: linear-gradient(135deg, var(--accent) 0%, #12126e 100%); color: #fff; border-color: #12126e; box-shadow: 0 8px 32px rgba(26,26,158,0.25); }
+        .card-data .link-text { color: var(--accent); }
+
         footer {
             text-align: center;
             padding: 48px 24px;
@@ -386,6 +418,8 @@
             .card p { font-size: 0.92rem; }
             .icon-box { width: 42px; height: 42px; }
             .back-to-top { bottom: 20px; right: 20px; width: 40px; height: 40px; }
+            .group-title { font-size: 1.1rem; }
+            .filter-bar { margin-bottom: 28px; }
         }
 
         /* Font size controls */
@@ -510,13 +544,13 @@
         <div class="nav-container">
             <div style="display: flex; align-items: center; gap: 18px;">
                 <span style="display: flex; align-items: center; gap: 10px;">
-                    <a href="https://robinson.gsu.edu/" target="_blank" rel="noopener" title="J. Mack Robinson College of Business — Georgia State University" style="line-height: 0;">
+                    <a href="https://robinson.gsu.edu/" target="_blank" rel="noopener" title="J. Mack Robinson College of Business, Georgia State University" style="line-height: 0;">
                         <img src="gsu-logo.png" alt="Robinson College of Business, Georgia State University" style="height: 24px; filter: grayscale(1); opacity: 0.55;">
                     </a>
-                    <a href="https://kelley.iu.edu/" target="_blank" rel="noopener" title="Kelley School of Business — Indiana University" style="line-height: 0;">
+                    <a href="https://kelley.iu.edu/" target="_blank" rel="noopener" title="Kelley School of Business, Indiana University" style="line-height: 0;">
                         <img src="iu-logo.png" alt="Kelley School of Business, Indiana University" style="height: 38px;">
                     </a>
-                    <a href="https://sc.edu/study/colleges_schools/moore/" target="_blank" rel="noopener" title="Darla Moore School of Business — University of South Carolina" style="line-height: 0;">
+                    <a href="https://sc.edu/study/colleges_schools/moore/" target="_blank" rel="noopener" title="Darla Moore School of Business, University of South Carolina" style="line-height: 0;">
                         <img src="usc-logo.png" alt="Darla Moore School of Business, University of South Carolina" style="height: 24px; filter: grayscale(1); opacity: 0.55;">
                     </a>
                 </span>
@@ -524,20 +558,20 @@
                 <a href="index.html" class="brand">Koray Cosguner</a>
             </div>
             <div style="display: flex; align-items: center;">
-                <div class="font-size-controls font-size-mobile">
-                    <button class="font-size-btn decrease-a" onclick="adjustFontSize(-1)" title="Decrease text size">A</button>
-                    <button class="font-size-btn increase-a" onclick="adjustFontSize(1)" title="Increase text size">A</button>
+                <div class="font-size-controls font-size-mobile" role="group" aria-label="Text size">
+                    <button class="font-size-btn decrease-a" onclick="adjustFontSize(-1)" title="Decrease text size" aria-label="Decrease text size">A</button>
+                    <button class="font-size-btn increase-a" onclick="adjustFontSize(1)" title="Increase text size" aria-label="Increase text size">A</button>
                 </div>
-                <div class="nav-toggle" onclick="document.querySelector('.nav-links').classList.toggle('active')">
+                <div class="nav-toggle" role="button" tabindex="0" aria-label="Toggle navigation menu" onclick="document.querySelector('.nav-links').classList.toggle('active')">
                     <span></span>
                     <span></span>
                     <span></span>
                 </div>
             </div>
             <div class="nav-links">
-                <div class="font-size-controls font-size-desktop">
-                    <button class="font-size-btn decrease-a" onclick="adjustFontSize(-1)" title="Decrease text size">A</button>
-                    <button class="font-size-btn increase-a" onclick="adjustFontSize(1)" title="Increase text size">A</button>
+                <div class="font-size-controls font-size-desktop" role="group" aria-label="Text size">
+                    <button class="font-size-btn decrease-a" onclick="adjustFontSize(-1)" title="Decrease text size" aria-label="Decrease text size">A</button>
+                    <button class="font-size-btn increase-a" onclick="adjustFontSize(1)" title="Increase text size" aria-label="Increase text size">A</button>
                 </div>
                 <a href="index.html">Home</a>
                 <a href="research.html">Research</a>
@@ -569,180 +603,196 @@
 
     <div class="tools-section">
     <div class="container">
-        <div class="grid">
+        <div class="filter-bar">
+            <button class="chip active" data-filter="all" onclick="filterTools('all', this)">All <span class="count">19</span></button>
+            <button class="chip" data-filter="pricing" onclick="filterTools('pricing', this)">Pricing <span class="count">12</span></button>
+            <button class="chip" data-filter="data" onclick="filterTools('data', this)">Data Analysis <span class="count">7</span></button>
+        </div>
 
-            <a href="htest-tool.html" class="card">
-                <span class="tool-label">Tool 0</span>
-                <div class="icon-box"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 17V9"/><path d="M12 17V5"/><path d="M17 17v-6"/></svg></div>
-                <h3>Hypothesis Tests &mdash; t-tests, ANOVA, Chi-square</h3>
-                <p>Run one-sample, paired, and independent-samples t-tests, one-way ANOVA (F-test), and chi-square test of independence. All powered by base R running in your browser.</p>
-                <div class="citation">Created by Dr. Koray Cosguner with the help of Claude.</div>
-                <span class="link-text">Launch Tool &rarr;</span>
-            </a>
+        <section class="tool-group" data-group="pricing">
+            <h2 class="group-title">Pricing Tools</h2>
+            <div class="grid">
 
-            <a href="PEM.html" class="card">
-                <span class="tool-label">Tool 1</span>
+            <a href="PEM.html" class="card fade-in">
+                <span class="tool-label">Pricing</span>
                 <div class="icon-box"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg></div>
                 <h3>Pricing Effectiveness Matrix</h3>
                 <p>A diagnostic scorecard to evaluate organizational pricing maturity across strategy, execution, and analytics dimensions.</p>
-                <div class="citation">Created by Dr. Koray Cosguner with the help of Gemini 3.0. Adapted from Rockney Walters, Professor of Marketing, Stephen Brown, MBA, and Will Charron, MBA.</div>
+                <div class="citation">Built with Gemini 3.0. Adapted from Rockney Walters (Professor of Marketing), Stephen Brown (MBA), and Will Charron (MBA).</div>
                 <span class="link-text">Launch Tool &rarr;</span>
             </a>
 
-            <a href="QEAT.html" class="card">
-                <span class="tool-label">Tool 2</span>
+            <a href="QEAT.html" class="card fade-in">
+                <span class="tool-label">Pricing</span>
                 <div class="icon-box"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="m7 16 4-8 4 4 4-8"/></svg></div>
                 <h3>Qualitative Elasticity Assessment</h3>
                 <p>Assess price sensitivity based on qualitative market factors (e.g., uniqueness, switching costs).</p>
-                <div class="citation">Created by Dr. Koray Cosguner with the help of Gemini 3.0.</div>
+                <div class="citation">Built with Gemini 3.0.</div>
                 <span class="link-text">Launch Tool &rarr;</span>
             </a>
 
-            <a href="PED_Calculation.html" class="card">
-                <span class="tool-label">Tool 3</span>
+            <a href="PED_Calculation.html" class="card fade-in">
+                <span class="tool-label">Pricing</span>
                 <div class="icon-box"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 17 13.5 8.5 8.5 13.5 2 7"/><polyline points="16 17 22 17 22 11"/></svg></div>
                 <h3>Price Elasticity Calculator</h3>
                 <p>Calculate Price Elasticities using direct price/quantity changes.</p>
-                <div class="citation">Created by Dr. Koray Cosguner with the help of Gemini 3.0.</div>
+                <div class="citation">Built with Gemini 3.0.</div>
                 <span class="link-text">Launch Tool &rarr;</span>
             </a>
 
-            <a href="YED_Calculation.html" class="card">
-                <span class="tool-label">Tool 4</span>
+            <a href="YED_Calculation.html" class="card fade-in">
+                <span class="tool-label">Pricing</span>
                 <div class="icon-box"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div>
                 <h3>Income Elasticity (YED)</h3>
                 <p>Calculate Income Elasticity of Demand to categorize products as Necessities, Luxuries, or Inferior goods.</p>
-                <div class="citation">Created by Dr. Koray Cosguner with the help of Gemini 3.0.</div>
+                <div class="citation">Built with Gemini 3.0.</div>
                 <span class="link-text">Launch Tool &rarr;</span>
             </a>
 
-            <a href="optimizer.html" class="card">
-                <span class="tool-label">Tool 5</span>
-                <div class="icon-box"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg></div>
-                <h3>Price Optimizer (Linear)</h3>
-                <p>Solver for Linear Demand (Q = A + BP). Calculates optimal price for Revenue vs. Profit maximization.</p>
-                <div class="citation">Created by Dr. Koray Cosguner with the help of Gemini 3.0.</div>
-                <span class="link-text">Launch Tool &rarr;</span>
-            </a>
-
-            <a href="constant_elasticity.html" class="card">
-                <span class="tool-label">Tool 6</span>
-                <div class="icon-box"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></div>
-                <h3>Single-Point Price Optimizer</h3>
-                <p>Optimize price when you lack historical data. Extrapolates a full demand curve from a single price/quantity point.</p>
-                <div class="citation">Created by Dr. Koray Cosguner with the help of Gemini 3.0.</div>
-                <span class="link-text">Launch Tool &rarr;</span>
-            </a>
-
-            <a href="glm-tool.html" class="card">
-                <span class="tool-label">Tool 7</span>
-                <div class="icon-box"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg></div>
-                <h3>Linear, Poisson, Binary Logistic Regressions</h3>
-                <p>Preview data, view statistics, filter subsets. Run regressions with variable transformations. Filter by significance level, view equations, and make predictions.</p>
-                <div class="citation">Created by Dr. Koray Cosguner with the help of Claude.</div>
-                <span class="link-text">Launch Tool &rarr;</span>
-            </a>
-
-            <a href="profit-optimizer.html" class="card">
-                <span class="tool-label">Tool 8</span>
-                <div class="icon-box"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></div>
-                <h3>General Purpose Optimizer</h3>
-                <p>Define custom equations with decision and control variables. Optimize single or multiple variables, generate R code, and visualize objective functions.</p>
-                <div class="citation">Created by Dr. Koray Cosguner with the help of Claude.</div>
-                <span class="link-text">Launch Tool &rarr;</span>
-            </a>
-
-            <a href="model-elasticity.html" class="card">
-                <span class="tool-label">Tool 9</span>
+            <a href="model-elasticity.html" class="card fade-in">
+                <span class="tool-label">Pricing</span>
                 <div class="icon-box"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg></div>
                 <h3>Model-Based Price Elasticity Calculator</h3>
                 <p>Enter your estimated regression equation and the values of your control variables.</p>
-                <div class="citation">Created by Dr. Koray Cosguner with the help of Claude.</div>
+                <div class="citation">Built with Claude.</div>
                 <span class="link-text">Launch Tool &rarr;</span>
             </a>
 
-            <a href="channel-pricing.html" class="card">
-                <span class="tool-label">Tool 10</span>
+            <a href="optimizer.html" class="card fade-in">
+                <span class="tool-label">Pricing</span>
+                <div class="icon-box"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg></div>
+                <h3>Price Optimizer (Linear)</h3>
+                <p>Solver for Linear Demand (Q = A + BP). Calculates optimal price for Revenue vs. Profit maximization.</p>
+                <div class="citation">Built with Gemini 3.0.</div>
+                <span class="link-text">Launch Tool &rarr;</span>
+            </a>
+
+            <a href="constant_elasticity.html" class="card fade-in">
+                <span class="tool-label">Pricing</span>
+                <div class="icon-box"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></div>
+                <h3>Single-Point Price Optimizer</h3>
+                <p>Optimize price when you lack historical data. Extrapolates a full demand curve from a single price/quantity point.</p>
+                <div class="citation">Built with Gemini 3.0.</div>
+                <span class="link-text">Launch Tool &rarr;</span>
+            </a>
+
+            <a href="channel-pricing.html" class="card fade-in">
+                <span class="tool-label">Pricing</span>
                 <div class="icon-box"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg></div>
                 <h3>Channel Pricing Optimizer</h3>
                 <p>Optimize producer pricing in vertical channels with three retailer types: vertically integrated, cost-plus markup, and strategic (Stackelberg). Compares double marginalization effects.</p>
-                <div class="citation">Created by Dr. Koray Cosguner with the help of Claude.</div>
+                <div class="citation">Built with Claude.</div>
                 <span class="link-text">Launch Tool &rarr;</span>
             </a>
 
-            <a href="competitive-channel.html" class="card">
-                <span class="tool-label">Tool 11</span>
+            <a href="competitive-channel.html" class="card fade-in">
+                <span class="tool-label">Pricing</span>
                 <div class="icon-box"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg></div>
                 <h3>Pricing with Substitute or Complementary Products</h3>
                 <p>Compare optimal pricing under collusion vs. competition, with or without a common retailer. Supports manual parameter entry or regression from uploaded data.</p>
-                <div class="citation">Created by Dr. Koray Cosguner with the help of Claude.</div>
+                <div class="citation">Built with Claude.</div>
                 <span class="link-text">Launch Tool &rarr;</span>
             </a>
 
-            <a href="van-westendorp.html" class="card">
-                <span class="tool-label">Tool 12</span>
+            <a href="van-westendorp.html" class="card fade-in">
+                <span class="tool-label">Pricing</span>
                 <div class="icon-box"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg></div>
                 <h3>Van Westendorp Price Sensitivity Meter</h3>
                 <p>Discover optimal pricing and acceptable price ranges using customer survey data. Upload responses to four price sensitivity questions and get key price points instantly.</p>
-                <div class="citation">Created by Dr. Koray Cosguner with the help of Claude.</div>
+                <div class="citation">Built with Claude.</div>
                 <span class="link-text">Launch Tool &rarr;</span>
             </a>
 
-            <a href="gabor-granger.html" class="card">
-                <span class="tool-label">Tool 13</span>
+            <a href="gabor-granger.html" class="card fade-in">
+                <span class="tool-label">Pricing</span>
                 <div class="icon-box"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg></div>
                 <h3>Gabor-Granger Price Analysis</h3>
                 <p>Determine optimal price points by analyzing purchase intent at different price levels. Upload survey data to find the revenue-maximizing price.</p>
-                <div class="citation">Created by Dr. Koray Cosguner with the help of Claude.</div>
+                <div class="citation">Built with Claude.</div>
                 <span class="link-text">Launch Tool &rarr;</span>
             </a>
 
-            <a href="conjoint-design.html" class="card">
-                <span class="tool-label">Tool 14</span>
-                <div class="icon-box"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2v7.527a2 2 0 0 1-.211.896L4.72 20.55a1 1 0 0 0 .9 1.45h12.76a1 1 0 0 0 .9-1.45l-5.069-10.127A2 2 0 0 1 14 9.527V2"/><path d="M8.5 2h7"/></svg></div>
-                <h3>Conjoint Fractional Factorial Design</h3>
-                <p>Generate fractional factorial designs for conjoint analysis. Define attributes and levels, then export profiles with dummy coding.</p>
-                <div class="citation">Created by Dr. Koray Cosguner with the help of Claude.</div>
-                <span class="link-text">Launch Tool &rarr;</span>
-            </a>
-
-            <a href="conjoint-analysis.html" class="card">
-                <span class="tool-label">Tool 15</span>
-                <div class="icon-box"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><rect x="7" y="10" width="3" height="8" rx="1"/><rect x="14" y="6" width="3" height="12" rx="1"/></svg></div>
-                <h3>Conjoint Analysis Tool</h3>
-                <p>Analyze conjoint survey data: estimate part-worth utilities via OLS regression, compute attribute importance, segment respondents, and simulate market shares.</p>
-                <div class="citation">Created by Dr. Koray Cosguner with the help of Claude.</div>
-                <span class="link-text">Launch Tool &rarr;</span>
-            </a>
-
-            <a href="latent-class.html" class="card">
-                <span class="tool-label">Tool 16</span>
-                <div class="icon-box"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg></div>
-                <h3>Latent Class Regression</h3>
-                <p>Estimate segment-level regression models using finite mixture modeling ("flexmix") package in R. Supports Linear, Poisson, and Binary Logistic models.</p>
-                <div class="citation">Created by Dr. Koray Cosguner with the help of Claude.</div>
-                <span class="link-text">Launch Tool &rarr;</span>
-            </a>
-
-            <a href="mlogit-tool.html" class="card">
-                <span class="tool-label">Tool 17</span>
-                <div class="icon-box"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m16 3 4 4-4 4"/><path d="M20 7H4"/><path d="m8 21-4-4 4-4"/><path d="M4 17h16"/></svg></div>
-                <h3>Multinomial and Conditional Logistic Regressions</h3>
-                <p>Estimate multinomial and conditional logit models using the "mlogit" package in R. Analyze consumer choice data with alternative-specific attributes.</p>
-                <div class="citation">Created by Dr. Koray Cosguner with the help of Claude.</div>
-                <span class="link-text">Launch Tool &rarr;</span>
-            </a>
-
-            <a href="survey-admin.html" class="card card-instructor">
+            <a href="survey-admin.html" class="card card-instructor fade-in">
                 <span class="tool-label">Instructor Only</span>
                 <div class="icon-box"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></div>
                 <h3>Pricing Survey Builder</h3>
                 <p>Designed for instructors to create and manage pricing surveys. Supports both Van Westendorp (PSM) and Gabor-Granger (price ladder) surveys with real-time response collection.</p>
-                <div class="citation">Created by Dr. Koray Cosguner with the help of Claude. Uses Firebase for response storage.</div>
+                <div class="citation">Built with Claude. Uses Firebase for response storage.</div>
                 <span class="link-text">Launch Survey Admin &rarr;</span>
             </a>
 
-        </div>
+            </div>
+        </section>
+
+        <section class="tool-group" data-group="data">
+            <h2 class="group-title">Data Analysis Tools</h2>
+            <div class="grid">
+
+            <a href="htest-tool.html" class="card card-data fade-in">
+                <span class="tool-label tool-label-data">Data Analysis</span>
+                <div class="icon-box"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 17V9"/><path d="M12 17V5"/><path d="M17 17v-6"/></svg></div>
+                <h3>Hypothesis Tests: t-tests, ANOVA, Chi-square</h3>
+                <p>Run one-sample, paired, and independent-samples t-tests, one-way ANOVA (F-test), and chi-square test of independence. All powered by base R running in your browser.</p>
+                <div class="citation">Built with Claude.</div>
+                <span class="link-text">Launch Tool &rarr;</span>
+            </a>
+
+            <a href="glm-tool.html" class="card card-data fade-in">
+                <span class="tool-label tool-label-data">Data Analysis</span>
+                <div class="icon-box"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg></div>
+                <h3>Linear, Poisson, Binary Logistic Regressions</h3>
+                <p>Preview data, view statistics, filter subsets. Run regressions with variable transformations. Filter by significance level, view equations, and make predictions.</p>
+                <div class="citation">Built with Claude.</div>
+                <span class="link-text">Launch Tool &rarr;</span>
+            </a>
+
+            <a href="profit-optimizer.html" class="card card-data fade-in">
+                <span class="tool-label tool-label-data">Data Analysis</span>
+                <div class="icon-box"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></div>
+                <h3>General Purpose Optimizer</h3>
+                <p>Define custom equations with decision and control variables. Optimize single or multiple variables, generate R code, and visualize objective functions.</p>
+                <div class="citation">Built with Claude.</div>
+                <span class="link-text">Launch Tool &rarr;</span>
+            </a>
+
+            <a href="conjoint-design.html" class="card card-data fade-in">
+                <span class="tool-label tool-label-data">Data Analysis</span>
+                <div class="icon-box"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2v7.527a2 2 0 0 1-.211.896L4.72 20.55a1 1 0 0 0 .9 1.45h12.76a1 1 0 0 0 .9-1.45l-5.069-10.127A2 2 0 0 1 14 9.527V2"/><path d="M8.5 2h7"/></svg></div>
+                <h3>Conjoint Fractional Factorial Design</h3>
+                <p>Generate fractional factorial designs for conjoint analysis. Define attributes and levels, then export profiles with dummy coding.</p>
+                <div class="citation">Built with Claude.</div>
+                <span class="link-text">Launch Tool &rarr;</span>
+            </a>
+
+            <a href="conjoint-analysis.html" class="card card-data fade-in">
+                <span class="tool-label tool-label-data">Data Analysis</span>
+                <div class="icon-box"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><rect x="7" y="10" width="3" height="8" rx="1"/><rect x="14" y="6" width="3" height="12" rx="1"/></svg></div>
+                <h3>Conjoint Analysis Tool</h3>
+                <p>Analyze conjoint survey data: estimate part-worth utilities via OLS regression, compute attribute importance, segment respondents, and simulate market shares.</p>
+                <div class="citation">Built with Claude.</div>
+                <span class="link-text">Launch Tool &rarr;</span>
+            </a>
+
+            <a href="mlogit-tool.html" class="card card-data fade-in">
+                <span class="tool-label tool-label-data">Data Analysis</span>
+                <div class="icon-box"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m16 3 4 4-4 4"/><path d="M20 7H4"/><path d="m8 21-4-4 4-4"/><path d="M4 17h16"/></svg></div>
+                <h3>Multinomial and Conditional Logistic Regressions</h3>
+                <p>Estimate multinomial and conditional logit models using the "mlogit" package in R. Analyze consumer choice data with alternative-specific attributes.</p>
+                <div class="citation">Built with Claude.</div>
+                <span class="link-text">Launch Tool &rarr;</span>
+            </a>
+
+            <a href="latent-class.html" class="card card-data fade-in">
+                <span class="tool-label tool-label-data">Data Analysis</span>
+                <div class="icon-box"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg></div>
+                <h3>Latent Class Regression</h3>
+                <p>Estimate segment-level regression models using finite mixture modeling ("flexmix") package in R. Supports Linear, Poisson, and Binary Logistic models.</p>
+                <div class="citation">Built with Claude.</div>
+                <span class="link-text">Launch Tool &rarr;</span>
+            </a>
+
+            </div>
+        </section>
     </div>
     </div> <!-- end tools-section -->
 
@@ -821,6 +871,17 @@
             });
         }, { threshold: 0.1 });
         document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+        // Tool category filter
+        function filterTools(filter, btn) {
+            document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+            btn.classList.add('active');
+            document.querySelectorAll('.tool-group').forEach(g => {
+                const show = (filter === 'all' || g.dataset.group === filter);
+                g.hidden = !show;
+                if (show) g.querySelectorAll('.fade-in').forEach(el => el.classList.add('visible'));
+            });
+        }
 
         // Back-to-top button visibility
         const backBtn = document.getElementById('backToTop');
