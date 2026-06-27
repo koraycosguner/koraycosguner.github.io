@@ -1,0 +1,29 @@
+User-agent: *
+Allow: /
+
+# Sign-in and auth-gated interactive tools (no useful content for crawlers)
+Disallow: /login.html
+Disallow: /tools.html
+Disallow: /survey-admin.html
+Disallow: /descriptive-stats.html
+Disallow: /htest-tool.html
+Disallow: /glm-tool.html
+Disallow: /mlogit-tool.html
+Disallow: /mlogit-tool-shiny.html
+Disallow: /profit-optimizer.html
+Disallow: /conjoint-design.html
+Disallow: /conjoint-analysis.html
+Disallow: /latent-class.html
+Disallow: /PEM.html
+Disallow: /QEAT.html
+Disallow: /PED_Calculation.html
+Disallow: /YED_Calculation.html
+Disallow: /model-elasticity.html
+Disallow: /optimizer.html
+Disallow: /constant_elasticity.html
+Disallow: /channel-pricing.html
+Disallow: /competitive-channel.html
+Disallow: /van-westendorp.html
+Disallow: /gabor-granger.html
+
+Sitemap: https://koraycosguner.github.io/sitemap.xml

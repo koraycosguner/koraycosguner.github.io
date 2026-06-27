@@ -5,6 +5,25 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Koray Cosguner | Indiana University</title>
     <meta name="description" content="Koray Cosguner – Associate Professor of Marketing at Indiana University Kelley School of Business. Research in pricing strategy, quantitative marketing, and consumer decision-making.">
+
+    <!-- Canonical -->
+    <link rel="canonical" href="https://koraycosguner.github.io/">
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="profile">
+    <meta property="og:site_name" content="Koray Cosguner">
+    <meta property="og:title" content="Koray Cosguner | Indiana University">
+    <meta property="og:description" content="Koray Cosguner – Associate Professor of Marketing at Indiana University Kelley School of Business. Research in pricing strategy, quantitative marketing, and consumer decision-making.">
+    <meta property="og:url" content="https://koraycosguner.github.io/">
+    <meta property="og:image" content="https://koraycosguner.github.io/photo.jpg">
+    <meta property="og:image:alt" content="Koray Cosguner">
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Koray Cosguner | Indiana University">
+    <meta name="twitter:description" content="Koray Cosguner – Associate Professor of Marketing at Indiana University Kelley School of Business. Research in pricing strategy, quantitative marketing, and consumer decision-making.">
+    <meta name="twitter:image" content="https://koraycosguner.github.io/photo.jpg">
+
     <link rel="icon" type="image/jpeg" href="KCFavicon.jpg">
 
     <!-- Google Analytics -->
@@ -23,6 +42,8 @@
 
     <style>
         html { scroll-behavior: smooth; }
+        html, body { overflow-x: hidden; }
+        :focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
         :root {
             --primary: #990000;
             --primary-light: #fdf2f2;
@@ -32,7 +53,7 @@
             --text-main: #111827;
             --text-sub:  #374151;
             --text-light: #4b5563;
-            --text-muted: #9ca3af;
+            --text-muted: #6b7280;
 
             --bg: #ffffff;
             --surface: #f9fafb;
@@ -452,11 +473,17 @@
         }
 
         /* Mobile Navigation */
+        @media (max-width: 640px) {
+            .school-logos, .nav-divider { display: none; }
+            .brand { font-size: 1.05rem; }
+        }
         .nav-toggle {
             display: none;
             flex-direction: column;
             cursor: pointer;
             padding: 4px;
+            background: none;
+            border: 0;
         }
         .nav-toggle span {
             width: 24px;
@@ -623,13 +650,33 @@
             to { opacity: 1; transform: translateY(0); }
         }
     </style>
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Person",
+      "name": "Koray Cosguner",
+      "jobTitle": "Associate Professor of Marketing",
+      "affiliation": {
+        "@type": "CollegeOrUniversity",
+        "name": "Indiana University, Kelley School of Business"
+      },
+      "url": "https://koraycosguner.github.io/",
+      "image": "https://koraycosguner.github.io/photo.jpg",
+      "sameAs": [
+        "https://scholar.google.com/citations?user=eqZezL8AAAAJ&hl=en",
+        "https://www.linkedin.com/in/koray-cosguner/",
+        "https://www.researchgate.net/profile/Koray-Cosguner-2"
+      ]
+    }
+    </script>
 </head>
 <body>
 
     <nav>
         <div class="nav-container">
             <div style="display: flex; align-items: center; gap: 18px;">
-                <span style="display: flex; align-items: center; gap: 10px;">
+                <span class="school-logos" style="display: flex; align-items: center; gap: 10px;">
                     <a href="https://robinson.gsu.edu/" target="_blank" rel="noopener" title="J. Mack Robinson College of Business, Georgia State University" style="line-height: 0;">
                         <img src="gsu-logo.png" alt="Robinson College of Business, Georgia State University" style="height: 24px; filter: grayscale(1); opacity: 0.55;">
                     </a>
@@ -640,7 +687,7 @@
                         <img src="usc-logo.png" alt="Darla Moore School of Business, University of South Carolina" style="height: 24px; filter: grayscale(1); opacity: 0.55;">
                     </a>
                 </span>
-                <span style="width: 1px; height: 26px; background: rgba(0,0,0,0.14);"></span>
+                <span class="nav-divider" style="width: 1px; height: 26px; background: rgba(0,0,0,0.14);"></span>
                 <a href="index.html" class="brand">Koray Cosguner</a>
             </div>
             <div style="display: flex; align-items: center;">
@@ -648,11 +695,11 @@
                     <button class="font-size-btn decrease-a" onclick="adjustFontSize(-1)" title="Decrease text size">A</button>
                     <button class="font-size-btn increase-a" onclick="adjustFontSize(1)" title="Increase text size">A</button>
                 </div>
-                <div class="nav-toggle" onclick="document.querySelector('.nav-links').classList.toggle('active')">
+                <button type="button" class="nav-toggle" aria-label="Toggle navigation menu" aria-expanded="false" onclick="var n=document.querySelector('.nav-links');var open=n.classList.toggle('active');this.setAttribute('aria-expanded', open);">
                     <span></span>
                     <span></span>
                     <span></span>
-                </div>
+                </button>
             </div>
             <div class="nav-links">
                 <div class="font-size-controls font-size-desktop">
@@ -670,7 +717,7 @@
 
     <div class="hero">
             <div class="profile-wrapper">
-                <img src="photo.jpg" alt="Koray Cosguner" class="profile-img">
+                <img src="photo.jpg" alt="Koray Cosguner" class="profile-img" width="172" height="172">
             </div>
 
             <h1>Koray Cosguner</h1>
@@ -791,7 +838,7 @@
     </div>
 
     <footer>
-        <p>&copy; 2026 Koray Cosguner &middot; All Rights Reserved</p>
+        <p>&copy; <span class="year"></span> Koray Cosguner &middot; All Rights Reserved</p>
     </footer>
 
     <button class="back-to-top" id="backToTop" title="Back to top" onclick="window.scrollTo({ top: 0, behavior: 'smooth' })">

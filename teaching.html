@@ -5,6 +5,23 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Teaching | Koray Cosguner</title>
     <meta name="description" content="Teaching experience and student testimonials for Dr. Koray Cosguner – Associate Professor of Marketing at Indiana University Kelley School of Business.">
+
+    <!-- Canonical -->
+    <link rel="canonical" href="https://koraycosguner.github.io/teaching.html">
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://koraycosguner.github.io/teaching.html">
+    <meta property="og:title" content="Teaching | Koray Cosguner">
+    <meta property="og:description" content="Teaching experience and student testimonials for Dr. Koray Cosguner – Associate Professor of Marketing at Indiana University Kelley School of Business.">
+    <meta property="og:image" content="https://koraycosguner.github.io/photo.jpg">
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Teaching | Koray Cosguner">
+    <meta name="twitter:description" content="Teaching experience and student testimonials for Dr. Koray Cosguner – Associate Professor of Marketing at Indiana University Kelley School of Business.">
+    <meta name="twitter:image" content="https://koraycosguner.github.io/photo.jpg">
+
     <link rel="icon" type="image/jpeg" href="KCFavicon.jpg">
 
     <!-- Google Analytics -->
@@ -31,7 +48,7 @@
             --text-main: #111827;
             --text-sub:  #374151;
             --text-light: #4b5563;
-            --text-muted: #9ca3af;
+            --text-muted: #6b7280;
 
             --bg: #ffffff;
             --surface: #f9fafb;
@@ -56,6 +73,7 @@
             --transition-base: 0.25s ease;
         }
 
+        html, body { overflow-x: hidden; }
         body {
             font-family: 'Outfit', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             font-size: 18px;
@@ -66,6 +84,8 @@
             line-height: 1.6;
             -webkit-font-smoothing: antialiased;
         }
+
+        :focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
 
         /* Navigation */
         html { scroll-behavior: smooth; }
@@ -302,7 +322,7 @@
             margin-left: 4px;
         }
         .course-level::before {
-            content: '\2014\00a0';
+            content: ',\00a0';
         }
         .level-mba, .level-undergrad, .level-phd, .level-lecture {
             background: none;
@@ -466,6 +486,8 @@
             flex-direction: column;
             cursor: pointer;
             padding: 4px;
+            background: none;
+            border: 0;
         }
         .nav-toggle span {
             width: 24px;
@@ -496,6 +518,8 @@
 
         /* Mobile */
         @media (max-width: 640px) {
+            .school-logos, .nav-divider { display: none; }
+            .brand { font-size: 1.05rem; }
             .nav-toggle {
                 display: flex;
             }
@@ -684,7 +708,7 @@
     <nav>
         <div class="nav-container">
             <div style="display: flex; align-items: center; gap: 18px;">
-                <span style="display: flex; align-items: center; gap: 10px;">
+                <span class="school-logos" style="display: flex; align-items: center; gap: 10px;">
                     <a href="https://robinson.gsu.edu/" target="_blank" rel="noopener" title="J. Mack Robinson College of Business, Georgia State University" style="line-height: 0;">
                         <img src="gsu-logo.png" alt="Robinson College of Business, Georgia State University" style="height: 24px; filter: grayscale(1); opacity: 0.55;">
                     </a>
@@ -695,7 +719,7 @@
                         <img src="usc-logo.png" alt="Darla Moore School of Business, University of South Carolina" style="height: 24px; filter: grayscale(1); opacity: 0.55;">
                     </a>
                 </span>
-                <span style="width: 1px; height: 26px; background: rgba(0,0,0,0.14);"></span>
+                <span class="nav-divider" style="width: 1px; height: 26px; background: rgba(0,0,0,0.14);"></span>
                 <a href="index.html" class="brand">Koray Cosguner</a>
             </div>
             <div style="display: flex; align-items: center;">
@@ -703,11 +727,11 @@
                     <button class="font-size-btn decrease-a" onclick="adjustFontSize(-1)" title="Decrease text size">A</button>
                     <button class="font-size-btn increase-a" onclick="adjustFontSize(1)" title="Increase text size">A</button>
                 </div>
-                <div class="nav-toggle" onclick="document.querySelector('.nav-links').classList.toggle('active')">
+                <button type="button" class="nav-toggle" aria-label="Toggle navigation menu" aria-expanded="false" onclick="var n=document.querySelector('.nav-links');var open=n.classList.toggle('active');this.setAttribute('aria-expanded', open);">
                     <span></span>
                     <span></span>
                     <span></span>
-                </div>
+                </button>
             </div>
             <div class="nav-links">
                 <div class="font-size-controls font-size-desktop">
@@ -744,7 +768,7 @@
 
             <!-- Indiana University -->
             <div class="course-group">
-                <div class="course-group-label">Indiana University &mdash; Kelley School of Business</div>
+                <div class="course-group-label">Indiana University: Kelley School of Business</div>
 
                 <div class="course-card fade-in">
                     <div class="course-info">
@@ -809,7 +833,7 @@
 
             <!-- Georgia State University -->
             <div class="course-group">
-                <div class="course-group-label">Georgia State University &mdash; J. Mack Robinson College of Business</div>
+                <div class="course-group-label">Georgia State University: J. Mack Robinson College of Business</div>
 
                 <div class="course-card fade-in">
                     <div class="course-info">
@@ -844,7 +868,7 @@
 
             <!-- Washington University -->
             <div class="course-group">
-                <div class="course-group-label">Washington University in St. Louis &mdash; Olin Business School</div>
+                <div class="course-group-label">Washington University in St. Louis: Olin Business School</div>
 
                 <div class="course-card fade-in">
                     <div class="course-info">

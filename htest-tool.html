@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Hypothesis Tests (Browser) | Koray Cosguner</title>
+    <meta name="robots" content="noindex,nofollow">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -157,6 +158,8 @@
            narrow viewports — without this, body font-size rules are overridden
            and everything renders 1.5-2x too big. */
         html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+    
+        :focus-visible { outline: 2px solid currentColor; outline-offset: 2px; }
     </style>
 </head>
 <body>

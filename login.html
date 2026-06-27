@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sign In | Pricing and Analytics Tools</title>
-    <meta name="description" content="Sign in to access Pricing and Analytics Tools by Dr. Koray Cosguner.">
+    <title>Sign In | Analytics and Pricing Tools</title>
+    <meta name="robots" content="noindex,nofollow">
+    <meta name="description" content="Sign in to access Analytics and Pricing Tools by Dr. Koray Cosguner.">
     <link rel="icon" type="image/jpeg" href="KCFavicon.jpg">
 
     <!-- Google Fonts -->
@@ -14,6 +15,8 @@
 
     <style>
         html { scroll-behavior: smooth; }
+        html, body { overflow-x: hidden; }
+        :focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
         :root {
             --primary: #990000;
             --text-main: #111827;
@@ -170,6 +173,20 @@
             height: 20px;
         }
 
+        .back-link {
+            display: inline-block;
+            margin-top: 24px;
+            color: var(--text-light);
+            font-size: 0.9rem;
+            font-weight: 500;
+            text-decoration: none;
+            transition: color var(--transition-base);
+        }
+        .back-link:hover {
+            color: var(--primary);
+            text-decoration: underline;
+        }
+
         .error-message {
             margin-top: 20px;
             padding: 15px;
@@ -228,7 +245,7 @@
                 <img src="iu-logo.png" alt="Indiana University" style="height: 42px;">
                 <span>Kelley School of Business</span>
             </div>
-            <h1>Pricing and Analytics Tools</h1>
+            <h1>Analytics and Pricing Tools</h1>
             <p class="subtitle">Interactive tools for pricing strategy, demand analysis, and marketing analytics.</p>
             <div class="creator-info">
                 <p>Created by Dr. Koray Cosguner</p>
@@ -246,6 +263,8 @@
 
             <div class="error-message" id="error-message"></div>
             <div class="loading" id="loading">Signing in...</div>
+
+            <a class="back-link" href="index.html">&larr; Back to koraycosguner.github.io</a>
         </div>
     </div>
 
