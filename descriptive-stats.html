@@ -654,11 +654,18 @@
   if (ncol(num) == 0) {
     paste0("NONUM\\n", nrows, "\\n", ncols)
   } else {
+    get_mode = function(v) {
+      ux = unique(v)
+      if (length(ux) == length(v)) return(NA)   # all values distinct: no mode
+      tab = tabulate(match(v, ux))
+      min(ux[tab == max(tab)])                   # most frequent value (smallest if tied)
+    }
     describe_one = function(x) {
       miss = sum(is.na(x)); x = x[!is.na(x)]; n = length(x); m = mean(x); s = sd(x)
       q = quantile(x, c(.25, .5, .75))
-      c(N = n, Missing = miss, Mean = m, SD = s, SE = s / sqrt(n), Min = min(x),
-        Q1 = q[[1]], Median = q[[2]], Q3 = q[[3]], Max = max(x),
+      c(N = n, Missing = miss, Mean = m, Median = q[[2]], Mode = get_mode(x),
+        SD = s, Variance = var(x), SE = s / sqrt(n),
+        Min = min(x), Q1 = q[[1]], Q3 = q[[3]], Max = max(x),
         Range = max(x) - min(x), IQR = q[[3]] - q[[1]])
     }
     stats = t(sapply(num, describe_one))
@@ -915,8 +922,19 @@ df = read.csv("your_data.csv", stringsAsFactors = FALSE, check.names = TRUE)
 #    that R read as numbers; we use that flag to subset the data frame.
 num = df[, sapply(df, is.numeric), drop = FALSE]
 
-# 3. A helper that summarizes one numeric vector.
-#    It drops missing values (NA), then reports count, spread, and quartiles.
+# 3a. A helper for the mode (the most frequent value). R has no built-in
+#     mode, so we count how often each value occurs and return the most
+#     common one. If every value is unique there is no mode (NA); if two
+#     or more values tie, we return the smallest.
+get_mode = function(v) {
+  ux = unique(v)
+  if (length(ux) == length(v)) return(NA)
+  tab = tabulate(match(v, ux))
+  min(ux[tab == max(tab)])
+}
+
+# 3b. A helper that summarizes one numeric vector.
+#     It drops missing values (NA), then reports the center and the spread.
 describe_one = function(x) {
   miss = sum(is.na(x))           # how many values are missing
   x = x[!is.na(x)]               # keep only the non-missing values
@@ -924,8 +942,9 @@ describe_one = function(x) {
   m = mean(x)                    # average
   s = sd(x)                      # standard deviation
   q = quantile(x, c(.25, .5, .75))  # 25th, 50th (median), 75th percentiles
-  c(N = n, Missing = miss, Mean = m, SD = s, SE = s / sqrt(n), Min = min(x),
-    Q1 = q[[1]], Median = q[[2]], Q3 = q[[3]], Max = max(x),
+  c(N = n, Missing = miss, Mean = m, Median = q[[2]], Mode = get_mode(x),
+    SD = s, Variance = var(x), SE = s / sqrt(n),
+    Min = min(x), Q1 = q[[1]], Q3 = q[[3]], Max = max(x),
     Range = max(x) - min(x), IQR = q[[3]] - q[[1]])
 }
 
