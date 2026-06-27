@@ -1,0 +1,10 @@
+# OS / editor junk
+.DS_Store
+.Rhistory
+
+# Claude Code local worktrees and state
+.claude/
+
+# Personal / non-public documents
+*.docx
+Assignment_1_Solution_Manual.html
