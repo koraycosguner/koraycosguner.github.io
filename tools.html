@@ -604,10 +604,80 @@
     <div class="tools-section">
     <div class="container">
         <div class="filter-bar">
-            <button class="chip active" data-filter="all" onclick="filterTools('all', this)">All <span class="count">19</span></button>
-            <button class="chip" data-filter="pricing" onclick="filterTools('pricing', this)">Pricing <span class="count">12</span></button>
             <button class="chip" data-filter="data" onclick="filterTools('data', this)">Data Analysis <span class="count">7</span></button>
+            <button class="chip" data-filter="pricing" onclick="filterTools('pricing', this)">Pricing <span class="count">12</span></button>
+            <button class="chip active" data-filter="all" onclick="filterTools('all', this)">All <span class="count">19</span></button>
         </div>
+
+        <section class="tool-group" data-group="data">
+            <h2 class="group-title">Data Analysis Tools</h2>
+            <div class="grid">
+
+            <a href="htest-tool.html" class="card card-data fade-in">
+                <span class="tool-label tool-label-data">Data Analysis</span>
+                <div class="icon-box"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 17V9"/><path d="M12 17V5"/><path d="M17 17v-6"/></svg></div>
+                <h3>Hypothesis Tests: t-tests, ANOVA, Chi-square</h3>
+                <p>Run one-sample, paired, and independent-samples t-tests, one-way ANOVA (F-test), and chi-square test of independence. All powered by base R running in your browser.</p>
+                <div class="citation">Built with Claude.</div>
+                <span class="link-text">Launch Tool &rarr;</span>
+            </a>
+
+            <a href="glm-tool.html" class="card card-data fade-in">
+                <span class="tool-label tool-label-data">Data Analysis</span>
+                <div class="icon-box"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg></div>
+                <h3>Linear, Poisson, Binary Logistic Regressions</h3>
+                <p>Preview data, view statistics, filter subsets. Run regressions with variable transformations. Filter by significance level, view equations, and make predictions.</p>
+                <div class="citation">Built with Claude.</div>
+                <span class="link-text">Launch Tool &rarr;</span>
+            </a>
+
+            <a href="profit-optimizer.html" class="card card-data fade-in">
+                <span class="tool-label tool-label-data">Data Analysis</span>
+                <div class="icon-box"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></div>
+                <h3>General Purpose Optimizer</h3>
+                <p>Define custom equations with decision and control variables. Optimize single or multiple variables, generate R code, and visualize objective functions.</p>
+                <div class="citation">Built with Claude.</div>
+                <span class="link-text">Launch Tool &rarr;</span>
+            </a>
+
+            <a href="conjoint-design.html" class="card card-data fade-in">
+                <span class="tool-label tool-label-data">Data Analysis</span>
+                <div class="icon-box"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2v7.527a2 2 0 0 1-.211.896L4.72 20.55a1 1 0 0 0 .9 1.45h12.76a1 1 0 0 0 .9-1.45l-5.069-10.127A2 2 0 0 1 14 9.527V2"/><path d="M8.5 2h7"/></svg></div>
+                <h3>Conjoint Fractional Factorial Design</h3>
+                <p>Generate fractional factorial designs for conjoint analysis. Define attributes and levels, then export profiles with dummy coding.</p>
+                <div class="citation">Built with Claude.</div>
+                <span class="link-text">Launch Tool &rarr;</span>
+            </a>
+
+            <a href="conjoint-analysis.html" class="card card-data fade-in">
+                <span class="tool-label tool-label-data">Data Analysis</span>
+                <div class="icon-box"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><rect x="7" y="10" width="3" height="8" rx="1"/><rect x="14" y="6" width="3" height="12" rx="1"/></svg></div>
+                <h3>Conjoint Analysis Tool</h3>
+                <p>Analyze conjoint survey data: estimate part-worth utilities via OLS regression, compute attribute importance, segment respondents, and simulate market shares.</p>
+                <div class="citation">Built with Claude.</div>
+                <span class="link-text">Launch Tool &rarr;</span>
+            </a>
+
+            <a href="mlogit-tool.html" class="card card-data fade-in">
+                <span class="tool-label tool-label-data">Data Analysis</span>
+                <div class="icon-box"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m16 3 4 4-4 4"/><path d="M20 7H4"/><path d="m8 21-4-4 4-4"/><path d="M4 17h16"/></svg></div>
+                <h3>Multinomial and Conditional Logistic Regressions</h3>
+                <p>Estimate multinomial and conditional logit models using the "mlogit" package in R. Analyze consumer choice data with alternative-specific attributes.</p>
+                <div class="citation">Built with Claude.</div>
+                <span class="link-text">Launch Tool &rarr;</span>
+            </a>
+
+            <a href="latent-class.html" class="card card-data fade-in">
+                <span class="tool-label tool-label-data">Data Analysis</span>
+                <div class="icon-box"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg></div>
+                <h3>Latent Class Regression</h3>
+                <p>Estimate segment-level regression models using finite mixture modeling ("flexmix") package in R. Supports Linear, Poisson, and Binary Logistic models.</p>
+                <div class="citation">Built with Claude.</div>
+                <span class="link-text">Launch Tool &rarr;</span>
+            </a>
+
+            </div>
+        </section>
 
         <section class="tool-group" data-group="pricing">
             <h2 class="group-title">Pricing Tools</h2>
@@ -719,76 +789,6 @@
                 <p>Designed for instructors to create and manage pricing surveys. Supports both Van Westendorp (PSM) and Gabor-Granger (price ladder) surveys with real-time response collection.</p>
                 <div class="citation">Built with Claude. Uses Firebase for response storage.</div>
                 <span class="link-text">Launch Survey Admin &rarr;</span>
-            </a>
-
-            </div>
-        </section>
-
-        <section class="tool-group" data-group="data">
-            <h2 class="group-title">Data Analysis Tools</h2>
-            <div class="grid">
-
-            <a href="htest-tool.html" class="card card-data fade-in">
-                <span class="tool-label tool-label-data">Data Analysis</span>
-                <div class="icon-box"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 17V9"/><path d="M12 17V5"/><path d="M17 17v-6"/></svg></div>
-                <h3>Hypothesis Tests: t-tests, ANOVA, Chi-square</h3>
-                <p>Run one-sample, paired, and independent-samples t-tests, one-way ANOVA (F-test), and chi-square test of independence. All powered by base R running in your browser.</p>
-                <div class="citation">Built with Claude.</div>
-                <span class="link-text">Launch Tool &rarr;</span>
-            </a>
-
-            <a href="glm-tool.html" class="card card-data fade-in">
-                <span class="tool-label tool-label-data">Data Analysis</span>
-                <div class="icon-box"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg></div>
-                <h3>Linear, Poisson, Binary Logistic Regressions</h3>
-                <p>Preview data, view statistics, filter subsets. Run regressions with variable transformations. Filter by significance level, view equations, and make predictions.</p>
-                <div class="citation">Built with Claude.</div>
-                <span class="link-text">Launch Tool &rarr;</span>
-            </a>
-
-            <a href="profit-optimizer.html" class="card card-data fade-in">
-                <span class="tool-label tool-label-data">Data Analysis</span>
-                <div class="icon-box"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></div>
-                <h3>General Purpose Optimizer</h3>
-                <p>Define custom equations with decision and control variables. Optimize single or multiple variables, generate R code, and visualize objective functions.</p>
-                <div class="citation">Built with Claude.</div>
-                <span class="link-text">Launch Tool &rarr;</span>
-            </a>
-
-            <a href="conjoint-design.html" class="card card-data fade-in">
-                <span class="tool-label tool-label-data">Data Analysis</span>
-                <div class="icon-box"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2v7.527a2 2 0 0 1-.211.896L4.72 20.55a1 1 0 0 0 .9 1.45h12.76a1 1 0 0 0 .9-1.45l-5.069-10.127A2 2 0 0 1 14 9.527V2"/><path d="M8.5 2h7"/></svg></div>
-                <h3>Conjoint Fractional Factorial Design</h3>
-                <p>Generate fractional factorial designs for conjoint analysis. Define attributes and levels, then export profiles with dummy coding.</p>
-                <div class="citation">Built with Claude.</div>
-                <span class="link-text">Launch Tool &rarr;</span>
-            </a>
-
-            <a href="conjoint-analysis.html" class="card card-data fade-in">
-                <span class="tool-label tool-label-data">Data Analysis</span>
-                <div class="icon-box"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><rect x="7" y="10" width="3" height="8" rx="1"/><rect x="14" y="6" width="3" height="12" rx="1"/></svg></div>
-                <h3>Conjoint Analysis Tool</h3>
-                <p>Analyze conjoint survey data: estimate part-worth utilities via OLS regression, compute attribute importance, segment respondents, and simulate market shares.</p>
-                <div class="citation">Built with Claude.</div>
-                <span class="link-text">Launch Tool &rarr;</span>
-            </a>
-
-            <a href="mlogit-tool.html" class="card card-data fade-in">
-                <span class="tool-label tool-label-data">Data Analysis</span>
-                <div class="icon-box"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m16 3 4 4-4 4"/><path d="M20 7H4"/><path d="m8 21-4-4 4-4"/><path d="M4 17h16"/></svg></div>
-                <h3>Multinomial and Conditional Logistic Regressions</h3>
-                <p>Estimate multinomial and conditional logit models using the "mlogit" package in R. Analyze consumer choice data with alternative-specific attributes.</p>
-                <div class="citation">Built with Claude.</div>
-                <span class="link-text">Launch Tool &rarr;</span>
-            </a>
-
-            <a href="latent-class.html" class="card card-data fade-in">
-                <span class="tool-label tool-label-data">Data Analysis</span>
-                <div class="icon-box"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg></div>
-                <h3>Latent Class Regression</h3>
-                <p>Estimate segment-level regression models using finite mixture modeling ("flexmix") package in R. Supports Linear, Poisson, and Binary Logistic models.</p>
-                <div class="citation">Built with Claude.</div>
-                <span class="link-text">Launch Tool &rarr;</span>
             </a>
 
             </div>
