@@ -8,3 +8,11 @@
 # Personal / non-public documents
 *.docx
 Assignment_1_Solution_Manual.html
+
+# local pre-redesign snapshot
+_backup_*/
+
+# stale backup/preview pages
+*.backup.html
+font-preview.html
+elegance-preview.html
