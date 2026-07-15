@@ -3,8 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex,nofollow">
     <title>Price Equilibrium Calculator | Koray Cosguner</title>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <!-- Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-CTZ8G4EYLR"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-CTZ8G4EYLR');
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js" integrity="sha384-9nhczxUqK87bcKHh20fSQcTGD4qq5GhayNYSYWqwBkINBhOfQLg/P5HG5lF1urn4" crossorigin="anonymous"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -285,6 +294,25 @@
 
         .calculate-btn:hover {
             background: var(--iu-crimson-dark);
+        }
+
+        /* Secondary (Load example) Button */
+        .example-btn {
+            width: 100%;
+            padding: 0.7rem;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--iu-crimson);
+            background: var(--white);
+            border: 1px solid var(--iu-crimson);
+            border-radius: 8px;
+            cursor: pointer;
+            margin-top: 1rem;
+            transition: background 0.2s;
+        }
+
+        .example-btn:hover {
+            background: #fdf0f0;
         }
 
         /* Error Message */
@@ -608,19 +636,19 @@
                             Brand 1
                         </div>
                         <div class="input-row">
-                            <label>a<sub>1</sub> (base demand)</label>
+                            <label for="a1">a<sub>1</sub> (base demand)</label>
                             <input type="number" id="a1" value="100" step="any">
                         </div>
                         <div class="input-row">
-                            <label>b<sub>1</sub> (own-price effect)</label>
+                            <label for="b1">b<sub>1</sub> (own-price effect)</label>
                             <input type="number" id="b1" value="2" step="any">
                         </div>
                         <div class="input-row">
-                            <label>c<sub>1</sub> (cross-price effect)</label>
+                            <label for="c1">c<sub>1</sub> (cross-price effect)</label>
                             <input type="number" id="c1" value="1" step="any">
                         </div>
                         <div class="input-row">
-                            <label>MC<sub>1</sub> (marginal cost)</label>
+                            <label for="mc1">MC<sub>1</sub> (marginal cost)</label>
                             <input type="number" id="mc1" value="10" step="any">
                         </div>
                     </div>
@@ -631,19 +659,19 @@
                             Brand 2
                         </div>
                         <div class="input-row">
-                            <label>a<sub>2</sub> (base demand)</label>
+                            <label for="a2">a<sub>2</sub> (base demand)</label>
                             <input type="number" id="a2" value="100" step="any">
                         </div>
                         <div class="input-row">
-                            <label>b<sub>2</sub> (own-price effect)</label>
+                            <label for="b2">b<sub>2</sub> (own-price effect)</label>
                             <input type="number" id="b2" value="2" step="any">
                         </div>
                         <div class="input-row">
-                            <label>c<sub>2</sub> (cross-price effect)</label>
+                            <label for="c2">c<sub>2</sub> (cross-price effect)</label>
                             <input type="number" id="c2" value="1" step="any">
                         </div>
                         <div class="input-row">
-                            <label>MC<sub>2</sub> (marginal cost)</label>
+                            <label for="mc2">MC<sub>2</sub> (marginal cost)</label>
                             <input type="number" id="mc2" value="10" step="any">
                         </div>
                     </div>
@@ -667,9 +695,9 @@
                     </div>
                 </div>
 
-                <textarea class="equations-textarea" id="equationsTextarea" placeholder="Q1 = 100 - 2*P1 + 1*P2&#10;Q2 = 100 - 2*P2 + 1*P1" oninput="parseEquationsLive()"></textarea>
+                <textarea class="equations-textarea" id="equationsTextarea" aria-label="Linear demand equations for Q1 and Q2" placeholder="Q1 = 100 - 2*P1 + 1*P2&#10;Q2 = 100 - 2*P2 + 1*P1" oninput="parseEquationsLive()"></textarea>
 
-                <div id="parseStatus" class="parse-status"></div>
+                <div id="parseStatus" class="parse-status" aria-live="polite"></div>
 
                 <div class="params-grid" style="margin-top: 1.25rem;">
                     <div class="brand-section brand1">
@@ -678,7 +706,7 @@
                             Brand 1 Cost
                         </div>
                         <div class="input-row">
-                            <label>MC<sub>1</sub> (marginal cost)</label>
+                            <label for="mc1_eq">MC<sub>1</sub> (marginal cost)</label>
                             <input type="number" id="mc1_eq" value="10" step="any">
                         </div>
                     </div>
@@ -688,19 +716,20 @@
                             Brand 2 Cost
                         </div>
                         <div class="input-row">
-                            <label>MC<sub>2</sub> (marginal cost)</label>
+                            <label for="mc2_eq">MC<sub>2</sub> (marginal cost)</label>
                             <input type="number" id="mc2_eq" value="10" step="any">
                         </div>
                     </div>
                 </div>
             </div>
 
-            <div id="errorMessage" class="error-message"></div>
-            <button class="calculate-btn" onclick="calculateEquilibrium()">Find Price Equilibrium</button>
+            <div id="errorMessage" class="error-message" aria-live="polite"></div>
+            <button class="example-btn" type="button" onclick="loadExample()">Load example</button>
+            <button class="calculate-btn" type="button" onclick="calculateEquilibrium()">Find Price Equilibrium</button>
         </div>
 
         <!-- Results -->
-        <div id="resultsSection">
+        <div id="resultsSection" aria-live="polite">
             <div class="solution-box">
                 <h3>Nash Equilibrium Found</h3>
                 <div class="results-grid">
@@ -742,7 +771,7 @@
                     <div class="br-equation" id="br2Equation"></div>
                     <p style="font-size: 0.85rem; color: var(--text-light); margin-top: 0.75rem;">
                         Each best response function shows the profit-maximizing price for one brand, given the competitor's price.
-                        The Nash equilibrium occurs where both functions intersect—neither brand can improve profits by unilaterally changing its price.
+                        The Nash equilibrium occurs where both functions intersect: neither brand can improve profits by unilaterally changing its price.
                     </p>
                 </div>
 
@@ -773,18 +802,20 @@
                     <p style="color: var(--text-light); margin-bottom: 1rem;">
                         Comparison between Nash equilibrium (competition) and joint profit maximization (collusion).
                     </p>
-                    <table class="comparison-table">
-                        <thead>
-                            <tr>
-                                <th>Metric</th>
-                                <th>Nash Equilibrium</th>
-                                <th>Collusion</th>
-                                <th>Difference</th>
-                            </tr>
-                        </thead>
-                        <tbody id="comparisonBody">
-                        </tbody>
-                    </table>
+                    <div style="overflow-x: auto;">
+                        <table class="comparison-table">
+                            <thead>
+                                <tr>
+                                    <th>Metric</th>
+                                    <th>Nash Equilibrium</th>
+                                    <th>Collusion</th>
+                                    <th>Difference</th>
+                                </tr>
+                            </thead>
+                            <tbody id="comparisonBody">
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
@@ -806,6 +837,8 @@
             document.getElementById('manualInputSection').style.display = mode === 'manual' ? 'block' : 'none';
             document.getElementById('equationInputSection').style.display = mode === 'equation' ? 'block' : 'none';
             document.getElementById('errorMessage').classList.remove('visible');
+            // Hide results from the previous mode so they cannot be mistaken for the new mode's inputs.
+            document.getElementById('resultsSection').style.display = 'none';
         }
 
         // --- Equation Parsing ---
@@ -898,9 +931,35 @@
 
         document.addEventListener('DOMContentLoaded', () => {
             initChart();
+            // Enter-to-calculate on any numeric input
+            document.querySelectorAll('input[type=number]').forEach(inp => {
+                inp.addEventListener('keydown', e => {
+                    if (e.key === 'Enter') { e.preventDefault(); calculateEquilibrium(); }
+                });
+            });
         });
 
+        function loadExample() {
+            if (inputMode === 'manual') {
+                document.getElementById('a1').value = 100;
+                document.getElementById('b1').value = 2;
+                document.getElementById('c1').value = 1;
+                document.getElementById('mc1').value = 10;
+                document.getElementById('a2').value = 90;
+                document.getElementById('b2').value = 2;
+                document.getElementById('c2').value = 1;
+                document.getElementById('mc2').value = 12;
+            } else {
+                document.getElementById('equationsTextarea').value = 'Q1 = 100 - 2*P1 + 1*P2\nQ2 = 90 - 2*P2 + 1*P1';
+                document.getElementById('mc1_eq').value = 10;
+                document.getElementById('mc2_eq').value = 12;
+                parseEquationsLive();
+            }
+            calculateEquilibrium();
+        }
+
         function initChart() {
+            if (typeof Chart === 'undefined') { return; } // Chart.js CDN blocked; updateChart shows a fallback message
             const ctx = document.getElementById('brChart').getContext('2d');
             brChart = new Chart(ctx, {
                 type: 'scatter',
@@ -964,11 +1023,17 @@
             if (Object.values(p).some(v => isNaN(v))) {
                 return 'All parameters must be valid numbers.';
             }
+            if (p.a1 <= 0 || p.a2 <= 0) {
+                return 'Base demand (a₁, a₂) must be positive.';
+            }
             if (p.b1 <= 0 || p.b2 <= 0) {
                 return 'Own-price effects (b₁, b₂) must be positive.';
             }
             if (p.c1 < 0 || p.c2 < 0) {
                 return 'Cross-price effects (c₁, c₂) should be non-negative for substitutes.';
+            }
+            if (p.mc1 < 0 || p.mc2 < 0) {
+                return 'Marginal costs (MC₁, MC₂) cannot be negative.';
             }
             return null;
         }
@@ -977,16 +1042,21 @@
             const errorEl = document.getElementById('errorMessage');
             errorEl.classList.remove('visible');
 
+            // Show a hard error and hide any stale results so the two never appear together.
+            function showError(msg) {
+                errorEl.textContent = msg;
+                errorEl.classList.add('visible');
+                document.getElementById('resultsSection').style.display = 'none';
+            }
+
             const p = getParams();
             if (p.__parseError) {
-                errorEl.textContent = p.__parseError;
-                errorEl.classList.add('visible');
+                showError(p.__parseError);
                 return;
             }
             const error = validateParams(p);
             if (error) {
-                errorEl.textContent = error;
-                errorEl.classList.add('visible');
+                showError(error);
                 return;
             }
 
@@ -1013,10 +1083,12 @@
             // P1 = br1_intercept + br1_slope * br2_intercept + br1_slope * br2_slope * P1
             // P1 * (1 - br1_slope * br2_slope) = br1_intercept + br1_slope * br2_intercept
 
+            // A stable, unique interior equilibrium requires denom > 0, which is equivalent to
+            // c1*c2 < 4*b1*b2. If denom <= 0 the best response functions do not cross at a stable
+            // point (prices would diverge), so the closed-form solution is not a valid equilibrium.
             const denom = 1 - br1_slope * br2_slope;
-            if (Math.abs(denom) < 1e-10) {
-                errorEl.textContent = 'No unique equilibrium exists (parallel best response functions).';
-                errorEl.classList.add('visible');
+            if (denom <= 1e-10) {
+                showError('No stable equilibrium exists: the cross-price effects are too strong relative to the own-price effects (a stable equilibrium requires c1*c2 < 4*b1*b2). Reduce the cross-price values or increase the own-price values.');
                 return;
             }
 
@@ -1072,8 +1144,11 @@
             const E = p.a1 + p.b1 * p.mc1 - p.c2 * p.mc2;
             const F = p.a2 + p.b2 * p.mc2 - p.c1 * p.mc1;
 
+            // Joint profit maximization has an interior solution only when the Hessian is negative
+            // definite, i.e. det = 4*b1*b2 - (c1+c2)^2 > 0. If det <= 0 the joint profit is unbounded
+            // (no finite collusive optimum), so return null and let the caller show "not available".
             const det = A * D - B * C;
-            if (Math.abs(det) < 1e-10) {
+            if (det <= 1e-10) {
                 return null;
             }
 
@@ -1131,9 +1206,10 @@
             // Markup analysis
             const markup1 = r.p1Star - p.mc1;
             const markup2 = r.p2Star - p.mc2;
-            const markupPct1 = ((markup1 / p.mc1) * 100).toFixed(1);
-            const markupPct2 = ((markup2 / p.mc2) * 100).toFixed(1);
-            interpretation.push(`Brand 1's markup is $${markup1.toFixed(2)} (${markupPct1}% over cost), Brand 2's markup is $${markup2.toFixed(2)} (${markupPct2}% over cost).`);
+            // Guard against division by zero when a marginal cost is 0 (percentage over cost is undefined).
+            const mkPct1 = p.mc1 > 0 ? ` (${((markup1 / p.mc1) * 100).toFixed(1)}% over cost)` : '';
+            const mkPct2 = p.mc2 > 0 ? ` (${((markup2 / p.mc2) * 100).toFixed(1)}% over cost)` : '';
+            interpretation.push(`Brand 1's markup is $${markup1.toFixed(2)}${mkPct1}, Brand 2's markup is $${markup2.toFixed(2)}${mkPct2}.`);
 
             // Profit comparison
             if (Math.abs(r.profit1Star - r.profit2Star) < 0.01) {
@@ -1165,11 +1241,23 @@
         }
 
         function updateChart() {
+            // If Chart.js failed to load (CDN blocked), show a message instead of throwing.
+            if (!brChart) {
+                const cc = document.querySelector('.chart-container');
+                if (cc) {
+                    cc.innerHTML = '<p style="color: var(--text-light); text-align: center; padding: 2rem;">The chart library could not be loaded (check your connection and reload). The numeric results above are still valid.</p>';
+                }
+                return;
+            }
+
             const r = lastResult;
 
-            // Determine price range for plotting
-            const priceMax = Math.max(r.p1Star, r.p2Star) * 1.5;
+            // Determine price range for plotting. Guard against a zero/negative or non-finite
+            // range, which would make the step size 0 and cause an infinite loop below.
+            let priceMax = Math.max(r.p1Star, r.p2Star) * 1.5;
+            if (!isFinite(priceMax) || priceMax <= 0) priceMax = 100;
             const priceMin = 0;
+            const step = priceMax / 100;
 
             // Generate BR1 line: P1 as function of P2
             // We plot this as P2 on x-axis would need to invert, but let's plot P1 on x-axis
@@ -1178,10 +1266,13 @@
 
             const br1Data = [];
             const br2Data = [];
+            // When c1 = 0, br1_slope = 0 and BR1 cannot be inverted: it is a vertical line at
+            // P1 = br1_intercept (Brand 1's optimal price does not depend on P2).
+            const br1Vertical = Math.abs(r.br1_slope) <= 1e-10;
 
-            for (let p1 = priceMin; p1 <= priceMax; p1 += priceMax / 100) {
+            for (let p1 = priceMin; p1 <= priceMax; p1 += step) {
                 // BR1 inverted: given P1, what P2 makes Brand 1 choose this P1?
-                if (Math.abs(r.br1_slope) > 1e-10) {
+                if (!br1Vertical) {
                     const p2_for_br1 = (p1 - r.br1_intercept) / r.br1_slope;
                     if (p2_for_br1 >= priceMin && p2_for_br1 <= priceMax) {
                         br1Data.push({ x: p1, y: p2_for_br1 });
@@ -1193,6 +1284,12 @@
                 if (p2_for_br2 >= priceMin && p2_for_br2 <= priceMax) {
                     br2Data.push({ x: p1, y: p2_for_br2 });
                 }
+            }
+
+            // Draw the vertical BR1 line explicitly (two endpoints spanning the plotted range).
+            if (br1Vertical && r.br1_intercept >= priceMin && r.br1_intercept <= priceMax) {
+                br1Data.push({ x: r.br1_intercept, y: priceMin });
+                br1Data.push({ x: r.br1_intercept, y: priceMax });
             }
 
             brChart.data.datasets = [
@@ -1278,8 +1375,8 @@
     </script>
 
 </div> <!-- end main-content -->
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js" integrity="sha384-yuGdyIzzYtOBlBG6JOWn+Ey9kpq7HocusNuxEGyyohr1eEyXpeEyehIIXC/hznw4" crossorigin="anonymous"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js" integrity="sha384-lI+CxEx/bCvWP1b0OK13j5HTrTZP7yf1xle8TVOFq2smz6KC1RChTarRV/RHP5PP" crossorigin="anonymous"></script>
 <script>
     const firebaseConfig = {
         apiKey: "AIzaSyBg3LJDwVIRGWtFZb_mM_CSRJMNCJUta20",
@@ -1290,15 +1387,28 @@
         appId: "1:659335573790:web:00013a166787efecb3d90f",
         measurementId: "G-NGKNY08XWP"
     };
-    firebase.initializeApp(firebaseConfig);
-    firebase.auth().onAuthStateChanged(function(user) {
-        if (user) {
-            document.getElementById('loading-screen').style.display = 'none';
-            document.getElementById('main-content').style.display = 'block';
-        } else {
-            window.location.href = 'login.html';
+    // If the sign-in service cannot be reached (Firebase CDN blocked, offline, or auth never
+    // resolves), stop showing "Loading..." forever and tell the user what to do.
+    const authTimeout = setTimeout(function() {
+        var ls = document.getElementById('loading-screen');
+        if (ls && ls.style.display !== 'none') {
+            ls.innerHTML = '<p style="color: #64748b; text-align: center; max-width: 420px; padding: 1rem;">Could not reach the sign-in service. Check your connection and reload this page.</p>';
         }
-    });
+    }, 12000);
+    try {
+        firebase.initializeApp(firebaseConfig);
+        firebase.auth().onAuthStateChanged(function(user) {
+            clearTimeout(authTimeout);
+            if (user) {
+                document.getElementById('loading-screen').style.display = 'none';
+                document.getElementById('main-content').style.display = 'block';
+            } else {
+                window.location.href = 'login.html?next=' + encodeURIComponent(window.location.pathname.split('/').pop());
+            }
+        });
+    } catch (e) {
+        // Firebase library failed to load; the timeout above reveals the fallback message.
+    }
 </script>
 </body>
 </html>

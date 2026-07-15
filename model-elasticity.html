@@ -3,9 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Model-Based Price Elasticity Calculator</title>
+    <title>Model-Based Price Elasticity Calculator | Koray Cosguner</title>
     <meta name="robots" content="noindex,nofollow">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/11.11.0/math.min.js"></script>
+    <!-- Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-CTZ8G4EYLR"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-CTZ8G4EYLR');
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/11.11.0/math.min.js" integrity="sha384-4V7XiQrelKbkSsjfkFjNgJ1nxS5w1502z7Xd5ivrHYnLn/bdjulL1TZ3HyPo8tW7" crossorigin="anonymous"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -295,6 +303,30 @@
             color: #1d4ed8;
         }
 
+        /* Horizontal scroll wrapper for wide tables */
+        .table-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; margin-bottom: 10px; }
+        .levels-table { min-width: 560px; }
+        .levels-table th, .levels-table td { white-space: nowrap; }
+
+        /* Secondary button (Load example) */
+        .btn-secondary {
+            background: var(--surface);
+            color: var(--primary);
+            border: 1px solid var(--primary);
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        .btn-secondary:hover { background: #fef2f2; }
+
+        /* Metric card caption */
+        .metric-caption { font-size: 0.72rem; color: var(--text-light); margin-top: 6px; }
+
+        /* Predicted quantity warning */
+        .qty-warning { margin-top: 0.6rem; font-size: 0.82rem; color: var(--error); }
+
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
         @media (max-width: 768px) { .grid-3, .metrics-grid, .guide-grid { grid-template-columns: 1fr; } }
@@ -328,10 +360,12 @@
     <div class="card">
         <h2 class="section-title"><span class="step-number">1</span> Define Sales Response Model</h2>
         <p style="color: var(--text-light); margin-bottom: 1rem;">Enter your estimated demand/sales equation. Use <code>Price</code> as the price variable.</p>
-        <textarea class="equation-textarea" id="demandEquation" placeholder="Example: Quantity = 97.6029 - 9.2465 * Price + 0.1744 * Temperature" oninput="parseEquation()"></textarea>
+        <textarea class="equation-textarea" id="demandEquation" aria-label="Demand or sales response equation" placeholder="Example: Quantity = 97.6029 - 9.2465 * Price + 0.1744 * Temperature" oninput="parseEquation()"></textarea>
+        <div id="equationHint" class="error-message" role="alert"></div>
         <p class="help-text">
             Supported operators: <code>+</code> <code>-</code> <code>*</code> <code>/</code> <code>^</code> <code>exp()</code> <code>ln()</code> <code>sqrt()</code>
         </p>
+        <button type="button" class="btn-secondary" onclick="loadExample()" style="margin-top: 0.5rem;">Load example</button>
 
         <!-- Control Variables -->
         <div class="control-var-container">
@@ -352,6 +386,7 @@
                 <span class="qty-label">Q at New Price:</span>
                 <span class="qty-value" id="predictedQ2">--</span>
             </div>
+            <div class="qty-warning" id="predictedWarning" style="display: none;"></div>
         </div>
     </div>
 
@@ -362,7 +397,7 @@
             <div>
                 <div class="section-label">Initial Price</div>
                 <div class="input-group">
-                    <label>Initial Price ($)</label>
+                    <label for="p1">Initial Price ($)</label>
                     <input type="number" id="p1" placeholder="e.g. 10.00" step="0.01" oninput="updatePredictions()">
                 </div>
             </div>
@@ -370,7 +405,7 @@
             <div>
                 <div class="section-label">New Price</div>
                 <div class="input-group">
-                    <label>New Price ($)</label>
+                    <label for="p2">New Price ($)</label>
                     <input type="number" id="p2" placeholder="e.g. 11.00" step="0.01" oninput="updatePredictions()">
                 </div>
             </div>
@@ -378,7 +413,7 @@
             <div>
                 <div class="section-label">Cost Structure</div>
                 <div class="input-group">
-                    <label>Variable Cost per Unit ($)</label>
+                    <label for="vc">Variable Cost per Unit ($)</label>
                     <input type="number" id="vc" placeholder="e.g. 6.00" step="0.01">
                 </div>
             </div>
@@ -389,24 +424,28 @@
     </div>
 
     <!-- Results -->
-    <div id="results">
+    <div id="results" aria-live="polite">
         <div class="metrics-grid">
             <div class="metric-card">
                 <div class="metric-title">Price Elasticity of Demand</div>
                 <div class="metric-value" id="ped-value">--</div>
+                <div class="metric-caption">% change, Initial to New</div>
             </div>
             <div class="metric-card">
                 <div class="metric-title">Price Elasticity of Revenue</div>
                 <div class="metric-value" id="per-value">--</div>
+                <div class="metric-caption">% change, Initial to New</div>
             </div>
             <div class="metric-card">
                 <div class="metric-title">Price Elasticity of Profit</div>
                 <div class="metric-value" id="pep-value">--</div>
+                <div class="metric-caption">% change, Initial to New</div>
             </div>
         </div>
 
         <div class="card">
             <div class="section-label">Financial Levels (Before & After)</div>
+            <div class="table-scroll">
             <table class="levels-table">
                 <thead>
                     <tr>
@@ -455,6 +494,7 @@
                     </tr>
                 </tbody>
             </table>
+            </div>
         </div>
 
         <div class="analysis-box">
@@ -503,7 +543,7 @@
                 <strong>Profit Elasticity</strong>
                 <br>Measures bottom-line leverage.
                 <ul class="guide-list">
-                    <li>E > 1: <strong>High Leverage.</strong> A 1% price hike boosts profit by > 1%.</li>
+                    <li>|E| > 1: <strong>High Leverage.</strong> A 1% price change moves profit by more than 1%.</li>
                     <li>E > 0: <strong>Positive.</strong> Profit moves with price.</li>
                     <li>E < 0: <strong>Negative.</strong> Profit moves against price.</li>
                 </ul>
@@ -525,7 +565,28 @@
 
     document.addEventListener('DOMContentLoaded', () => {
         addControlVar('', '');
+        // Enter-to-calculate on the numeric inputs (textarea keeps normal Enter behavior)
+        ['p1', 'p2', 'vc'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) {
+                el.addEventListener('keydown', e => {
+                    if (e.key === 'Enter') { e.preventDefault(); calculate(); }
+                });
+            }
+        });
     });
+
+    function setEquationHint(msg) {
+        const hint = document.getElementById('equationHint');
+        if (!hint) return;
+        if (msg) {
+            hint.textContent = msg;
+            hint.classList.add('visible');
+        } else {
+            hint.textContent = '';
+            hint.classList.remove('visible');
+        }
+    }
 
     function parseEquation() {
         const textarea = document.getElementById('demandEquation');
@@ -533,7 +594,9 @@
 
         if (!text) {
             parsedEquation = null;
+            setEquationHint('');
             updateControlVarDropdowns();
+            updatePredictions();
             return;
         }
 
@@ -542,6 +605,13 @@
             quantityVarName = text.substring(0, eqIndex).trim();
             const formula = text.substring(eqIndex + 1).trim();
             parsedEquation = { varName: quantityVarName, formula };
+            setEquationHint('');
+            updateControlVarDropdowns();
+            updatePredictions();
+        } else {
+            // Non-empty text with no usable '=' : do not keep computing with the old model.
+            parsedEquation = null;
+            setEquationHint('Equation must contain =, for example: Quantity = 97.6029 - 9.2465 * Price + 0.1744 * Temperature');
             updateControlVarDropdowns();
             updatePredictions();
         }
@@ -551,10 +621,13 @@
         if (!parsedEquation) return [];
 
         const mathFuncs = ['exp', 'log', 'ln', 'sqrt', 'abs', 'sin', 'cos', 'tan', 'pow', 'min', 'max'];
+        // Built-in mathjs constants must not be treated as control variables.
+        const mathConsts = ['e', 'pi'];
         const used = new Set();
 
         (parsedEquation.formula.match(/[a-zA-Z_][a-zA-Z0-9_]*/g) || []).forEach(m => {
-            if (!mathFuncs.includes(m.toLowerCase())) used.add(m);
+            const lower = m.toLowerCase();
+            if (!mathFuncs.includes(lower) && !mathConsts.includes(lower)) used.add(m);
         });
 
         // Exclude 'Price' as it's the decision variable
@@ -564,11 +637,13 @@
     function addControlVar(name = '', value = '') {
         controlVars.push({ id: controlVarId++, name, value });
         renderControlVars();
+        updatePredictions();
     }
 
     function removeControlVar(id) {
         controlVars = controlVars.filter(c => c.id !== id);
         renderControlVars();
+        updatePredictions();
     }
 
     function updateControlVar(id, field, val) {
@@ -592,13 +667,13 @@
 
         container.innerHTML = controlVars.map(cv => `
             <div class="control-var-row">
-                <select onchange="updateControlVar(${cv.id}, 'name', this.value)">
+                <select aria-label="Control variable name" onchange="updateControlVar(${cv.id}, 'name', this.value)">
                     <option value="">-- Select Variable --</option>
                     ${availableVars.map(v => `<option value="${v}" ${cv.name === v ? 'selected' : ''}>${v}</option>`).join('')}
                 </select>
                 <span style="font-size: 0.85rem; color: var(--text-light);">=</span>
-                <input type="number" value="${cv.value}" placeholder="value" step="any" onchange="updateControlVar(${cv.id}, 'value', this.value)">
-                ${controlVars.length > 1 ? `<button class="remove-btn" onclick="removeControlVar(${cv.id})">✕</button>` : ''}
+                <input type="number" aria-label="Control variable value" value="${cv.value}" placeholder="value" step="any" onchange="updateControlVar(${cv.id}, 'value', this.value)">
+                ${controlVars.length > 1 ? `<button class="remove-btn" aria-label="Remove control variable" onclick="removeControlVar(${cv.id})">✕</button>` : ''}
             </div>
         `).join('');
     }
@@ -606,7 +681,9 @@
     function normalizeFormula(f) {
         return f.replace(/\bEXP\b/gi, 'exp').replace(/\bLOG\b/gi, 'log')
             .replace(/\bLN\b/gi, 'log').replace(/\bSQRT\b/gi, 'sqrt')
-            .replace(/\bABS\b/gi, 'abs').replace(/\bPOW\b/gi, 'pow');
+            .replace(/\bABS\b/gi, 'abs').replace(/\bPOW\b/gi, 'pow')
+            // Normalize any case variant of the price token (PRICE, Price, price) to one form.
+            .replace(/\bprice\b/gi, 'Price');
     }
 
     function evaluateQuantity(price) {
@@ -623,6 +700,9 @@
 
         try {
             const result = math.evaluate(normalizeFormula(parsedEquation.formula), scope);
+            // Reject non-real results (mathjs Complex objects from sqrt/ln of negatives)
+            // and non-finite results (NaN, Infinity) so downstream math stays meaningful.
+            if (typeof result !== 'number' || !isFinite(result)) return null;
             return result;
         } catch (e) {
             console.error('Evaluation error:', e);
@@ -634,21 +714,35 @@
         const p1 = parseFloat(document.getElementById('p1').value);
         const p2 = parseFloat(document.getElementById('p2').value);
         const predictedDiv = document.getElementById('predictedQuantities');
+        const warnEl = document.getElementById('predictedWarning');
 
         if (!parsedEquation) {
             predictedDiv.style.display = 'none';
+            if (warnEl) warnEl.style.display = 'none';
             return;
         }
 
-        const q1 = p1 ? evaluateQuantity(p1) : null;
-        const q2 = p2 ? evaluateQuantity(p2) : null;
+        // Only evaluate at economically valid (positive) prices.
+        const q1 = (p1 > 0) ? evaluateQuantity(p1) : null;
+        const q2 = (p2 > 0) ? evaluateQuantity(p2) : null;
 
         if (q1 !== null || q2 !== null) {
             predictedDiv.style.display = 'block';
             document.getElementById('predictedQ1').textContent = q1 !== null ? q1.toFixed(4) : '--';
             document.getElementById('predictedQ2').textContent = q2 !== null ? q2.toFixed(4) : '--';
+
+            const nonPositive = (q1 !== null && q1 <= 0) || (q2 !== null && q2 <= 0);
+            if (warnEl) {
+                if (nonPositive) {
+                    warnEl.textContent = 'The model predicts non-positive demand (Q <= 0) at one of these prices, so the results are not economically meaningful. Try a lower price or recheck your equation.';
+                    warnEl.style.display = 'block';
+                } else {
+                    warnEl.style.display = 'none';
+                }
+            }
         } else {
             predictedDiv.style.display = 'none';
+            if (warnEl) warnEl.style.display = 'none';
         }
     }
 
@@ -668,8 +762,14 @@
         const p2 = parseFloat(document.getElementById('p2').value);
         const vc = parseFloat(document.getElementById('vc').value);
 
-        if (!p1 || !p2 || isNaN(vc)) {
+        if (isNaN(p1) || isNaN(p2) || isNaN(vc)) {
             errorEl.textContent = 'Please fill in all price and cost fields.';
+            errorEl.classList.add('visible');
+            return;
+        }
+
+        if (p1 <= 0 || p2 <= 0) {
+            errorEl.textContent = 'Initial and New Price must both be greater than 0.';
             errorEl.classList.add('visible');
             return;
         }
@@ -701,6 +801,21 @@
             return;
         }
 
+        if (q1 <= 0 || q2 <= 0) {
+            errorEl.textContent = 'The model predicts non-positive demand (Q <= 0) at one of your prices, so revenue, profit, and elasticity are not economically meaningful. Lower your price(s) or recheck your equation.';
+            errorEl.classList.add('visible');
+            return;
+        }
+
+        // Point elasticity at the initial price via a central numerical derivative.
+        const h = Math.max(Math.abs(p1) * 1e-4, 1e-4);
+        const qUp = evaluateQuantity(p1 + h);
+        const qDown = evaluateQuantity(p1 - h);
+        let pointEd = null;
+        if (qUp !== null && qDown !== null) {
+            pointEd = ((qUp - qDown) / (2 * h)) * (p1 / q1);
+        }
+
         // Calculate Financials
         const r1 = p1 * q1;
         const r2 = p2 * q2;
@@ -712,16 +827,18 @@
         const profit2 = m2 * q2;
 
         // Calculate % Changes
+        // Bases divide by Math.abs so a change is not sign-flipped when the base is negative.
+        // When a base is 0 the percentage is undefined (null), rendered as 'n/a' downstream.
         const pctP = (p2 - p1) / p1;
         const pctQ = (q2 - q1) / q1;
         const pctR = (r2 - r1) / r1;
-        const pctM = (m2 - m1) / m1;
-        const pctProfit = (profit2 - profit1) / Math.abs(profit1);
+        const pctM = (m1 !== 0) ? (m2 - m1) / Math.abs(m1) : null;
+        const pctProfit = (profit1 !== 0) ? (profit2 - profit1) / Math.abs(profit1) : null;
 
         // Calculate Elasticities
         const ped = pctQ / pctP;
         const per = pctR / pctP;
-        const pep = pctProfit / pctP;
+        const pep = (pctProfit !== null) ? pctProfit / pctP : null;
 
         // Display Results
         document.getElementById('results').style.display = 'block';
@@ -734,12 +851,15 @@
         // Elasticity Cards
         document.getElementById('ped-value').innerText = fmt(ped);
         document.getElementById('per-value').innerText = fmt(per);
-        document.getElementById('pep-value').innerText = fmt(pep);
+        document.getElementById('pep-value').innerText = (pep === null) ? 'n/a' : fmt(pep);
 
         // Color Logic
+        // Revenue and Profit cards key off the actual outcome (levels rose or fell),
+        // not the sign of the elasticity, which alone is neither good nor bad.
+        const outcomeColor = (after, before) => after > before ? "#059669" : (after < before ? "#dc2626" : "var(--text-main)");
         document.getElementById('ped-value').style.color = Math.abs(ped) > 1 ? "#dc2626" : "#059669";
-        document.getElementById('per-value').style.color = per > 0 ? "#059669" : "#dc2626";
-        document.getElementById('pep-value').style.color = pep > 0 ? "#059669" : "#dc2626";
+        document.getElementById('per-value').style.color = outcomeColor(r2, r1);
+        document.getElementById('pep-value').style.color = (pep === null) ? "var(--text-main)" : outcomeColor(profit2, profit1);
 
         // Levels Table
         document.getElementById('lvl-p1').innerText = fmtCur(p1);
@@ -762,6 +882,11 @@
 
         const setPct = (id, val) => {
             const el = document.getElementById(id);
+            if (val === null || !isFinite(val)) {
+                el.innerText = 'n/a';
+                el.className = '';
+                return;
+            }
             el.innerText = fmtPct(val);
             el.className = val >= 0 ? "diff-pos" : "diff-neg";
         };
@@ -783,11 +908,21 @@
 
         // Demand Insight
         let pedText = "";
-        if (Math.abs(ped) > 1) {
+        const absPed = Math.abs(ped);
+        if (ped > 0) {
+            pedText = `<strong>Positive elasticity (${fmt(ped)}):</strong> Demand appears to rise as price rises. This usually indicates a sign error in your price coefficient. Double-check that the coefficient on Price is negative.`;
+        } else if (absPed > 1 + 1e-9) {
             pedText = `<strong>Elastic Demand (|E| > 1):</strong> Customers are highly sensitive. A 1% price change causes a <em>greater than</em> 1% change in volume.`;
-        } else {
+        } else if (absPed < 1 - 1e-9) {
             pedText = `<strong>Inelastic Demand (|E| < 1):</strong> Customers are relatively insensitive. A 1% price change causes a <em>less than</em> 1% change in volume.`;
+        } else {
+            pedText = `<strong>Unit-Elastic Demand (|E| = 1):</strong> Volume changes by about the same percentage as price.`;
         }
+        pedText += `<br><br><span style="font-size: 0.85rem;">The headline elasticity above is the percentage-change elasticity measured from the Initial to the New price.`;
+        if (pointEd !== null) {
+            pedText += ` The point elasticity at the initial price is <strong>${fmt(pointEd)}</strong>, a local measure at $${fmt(p1)}. Point and percentage-change elasticities differ more when the two prices are far apart.`;
+        }
+        pedText += `</span>`;
         document.getElementById('insight-ped').innerHTML = pedText;
 
         // Revenue Tension
@@ -814,10 +949,15 @@
         // Profit Tension
         let pepText = "";
 
-        if (pep > 1) {
-            pepText += `<strong>High Leverage Situation:</strong> A 1% price increase boosted profit by more than 1%. <br><br>`;
-        } else if (pep < -1 && !isPriceIncrease) {
-            pepText += `<strong>High Downside Leverage:</strong> A 1% price cut crashed profit by more than 1%. <br><br>`;
+        // Leverage headline conditions on the actual price direction AND profit direction.
+        // The elasticity sign alone only says whether profit moved with or against price.
+        if (pep !== null && Math.abs(pep) > 1) {
+            const priceWord = isPriceIncrease ? 'price increase' : 'price cut';
+            if (profit2 > profit1) {
+                pepText += `<strong>High Leverage Situation:</strong> A 1% ${priceWord} boosted profit by more than 1%. <br><br>`;
+            } else if (profit2 < profit1) {
+                pepText += `<strong>High Downside Leverage:</strong> A 1% ${priceWord} crashed profit by more than 1%. <br><br>`;
+            }
         }
 
         if (profit2 > profit1) {
@@ -843,11 +983,23 @@
         // Scroll to results
         document.getElementById('results').scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
+
+    function loadExample() {
+        // Fills a worked example: a linear demand model with one control variable,
+        // then runs the full analysis so students can see the workflow end to end.
+        document.getElementById('demandEquation').value = 'Quantity = 97.6029 - 9.2465 * Price + 0.1744 * Temperature';
+        controlVars = [{ id: controlVarId++, name: 'Temperature', value: '30' }];
+        document.getElementById('p1').value = '10';
+        document.getElementById('p2').value = '11';
+        document.getElementById('vc').value = '6';
+        parseEquation();   // sets parsedEquation, renders the Temperature control row, updates predictions
+        calculate();
+    }
 </script>
 
 </div> <!-- end main-content -->
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js" integrity="sha384-yuGdyIzzYtOBlBG6JOWn+Ey9kpq7HocusNuxEGyyohr1eEyXpeEyehIIXC/hznw4" crossorigin="anonymous"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js" integrity="sha384-lI+CxEx/bCvWP1b0OK13j5HTrTZP7yf1xle8TVOFq2smz6KC1RChTarRV/RHP5PP" crossorigin="anonymous"></script>
 <script>
     const firebaseConfig = {
         apiKey: "AIzaSyBg3LJDwVIRGWtFZb_mM_CSRJMNCJUta20",
@@ -858,15 +1010,32 @@
         appId: "1:659335573790:web:00013a166787efecb3d90f",
         measurementId: "G-NGKNY08XWP"
     };
-    firebase.initializeApp(firebaseConfig);
-    firebase.auth().onAuthStateChanged(function(user) {
-        if (user) {
-            document.getElementById('loading-screen').style.display = 'none';
-            document.getElementById('main-content').style.display = 'block';
-        } else {
-            window.location.href = 'login.html';
+    // If the sign-in service cannot load (blocked CDN, offline), do not hang on "Loading..." forever.
+    var authResolved = false;
+    var authTimeout = setTimeout(function() {
+        if (!authResolved) {
+            var ls = document.getElementById('loading-screen');
+            if (ls) {
+                ls.innerHTML = '<p style="color: #64748b; max-width: 420px; text-align: center; padding: 20px;">Could not reach the sign-in service. Check your connection and reload this page.</p>';
+            }
         }
-    });
+    }, 12000);
+    try {
+        firebase.initializeApp(firebaseConfig);
+        firebase.auth().onAuthStateChanged(function(user) {
+            authResolved = true;
+            clearTimeout(authTimeout);
+            if (user) {
+                document.getElementById('loading-screen').style.display = 'none';
+                document.getElementById('main-content').style.display = 'block';
+            } else {
+                window.location.href = 'login.html?next=' + encodeURIComponent(window.location.pathname.split('/').pop());
+            }
+        });
+    } catch (e) {
+        // firebase is undefined when its CDN is blocked; the timeout above shows the message.
+        console.error('Auth init failed:', e);
+    }
 </script>
 
 </body>

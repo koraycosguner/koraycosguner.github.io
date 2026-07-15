@@ -5,6 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gabor-Granger Price Analysis | Koray Cosguner</title>
     <meta name="robots" content="noindex,nofollow">
+    <!-- Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-CTZ8G4EYLR"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-CTZ8G4EYLR');
+    </script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -766,7 +774,8 @@
             position: relative;
         }
 
-        .help-icon:hover::after {
+        .help-icon:hover::after,
+        .help-icon:focus-visible::after {
             content: attr(data-tooltip);
             position: absolute;
             bottom: 100%;
@@ -950,18 +959,24 @@
         </div>
 
         <!-- Status Message -->
-        <div class="status-message" id="statusMessage"></div>
+        <div class="status-message" id="statusMessage" role="status" aria-live="polite"></div>
+
+        <!-- Survey handoff banner (shown when data arrives from survey-admin.html) -->
+        <div id="handoffBanner" class="status-message info" style="display:none; position:relative; padding-right:2.5rem;" role="status" aria-live="polite">
+            <span id="handoffBannerText"></span>
+            <button type="button" id="handoffBannerClose" aria-label="Dismiss this message" style="position:absolute; top:0.5rem; right:0.75rem; background:none; border:none; font-size:1.25rem; line-height:1; color:inherit; cursor:pointer;">&times;</button>
+        </div>
 
         <!-- Input Section -->
         <div class="tool-container" id="inputCard">
-            <h2 class="section-title">Enter Price Data
-                <span class="help-icon" data-tooltip="Gabor-Granger analysis helps find the optimal price by measuring how demand changes at different price points. The revenue-maximizing price balances higher prices with lower purchase intent.">?</span>
+            <h2 class="section-title">Enter Willingness-to-Pay Data
+                <span class="help-icon" tabindex="0" role="button" aria-label="What is Gabor-Granger analysis?" data-tooltip="Gabor-Granger analysis helps find the optimal price by measuring how demand changes at different price points. The revenue-maximizing price balances higher prices with lower purchase intent.">?</span>
             </h2>
-            <p class="section-subtitle">Enter the prices you tested and the percentage of customers willing to buy at each price</p>
+            <p class="section-subtitle">Enter each respondent's maximum willingness-to-pay (one value per respondent). The tool builds the demand curve and finds the optimal price for you.</p>
 
             <div class="info-box">
                 <strong>How Gabor-Granger Works</strong>
-                Survey respondents are shown a price and asked if they would buy. By testing multiple prices, you can build a demand curve and find the price that maximizes revenue (Price × Purchase Intent). Typically 5-10 price points are tested.
+                Each survey respondent gives the highest price they would pay (their willingness-to-pay, or WTP). From these individual values the tool builds a demand curve: the share of respondents willing to buy at each price. It then finds the price that maximizes revenue (Price × Purchase Intent). You can paste the WTP values below or upload a CSV.
             </div>
 
             <!-- Removed: Aggregated Data Section -->
@@ -1170,13 +1185,14 @@
                 <!-- WTP Manual Entry Section -->
                 <div class="wtp-manual-section visible" id="wtpManualSection">
                     <div class="form-group">
-                        <textarea id="wtpTextarea" class="wtp-textarea" placeholder="Enter WTP values (one per line or comma-separated):
+                        <label for="wtpTextarea" style="display:block; font-weight:600; margin-bottom:0.5rem; font-size:0.95rem;">Willingness-to-pay values</label>
+                        <textarea id="wtpTextarea" class="wtp-textarea" aria-label="Willingness-to-pay values, one per line or comma-separated" placeholder="Enter WTP values (one per line or comma-separated):
 30
 45
 50
 35
 40"></textarea>
-                        <p class="form-hint">Enter numeric values only. Currency symbols will be ignored.</p>
+                        <p class="form-hint">Enter numeric values only (currency symbols are ignored). Enter 0 for a respondent who would not buy at any price. Press Ctrl+Enter (Cmd+Enter on Mac) to run the analysis.</p>
                     </div>
 
                     <div style="display: flex; gap: 1.5rem; flex-wrap: wrap; margin: 1.5rem 0;">
@@ -1286,7 +1302,7 @@
         </div>
 
         <!-- Results Section -->
-        <div class="results-container" id="resultsContainer">
+        <div class="results-container" id="resultsContainer" aria-live="polite">
             <div class="tool-container">
                 <h2 class="section-title">Analysis Results</h2>
                 <p class="section-subtitle">Your best price point based on the balance between price and customer demand</p>
@@ -1332,10 +1348,10 @@
                 <!-- Charts -->
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
                     <div class="chart-container">
-                        <canvas id="demandChart"></canvas>
+                        <canvas id="demandChart" role="img" aria-label="Demand curve: purchase intent percentage falls as price rises. See the results table below for the underlying numbers."></canvas>
                     </div>
                     <div class="chart-container">
-                        <canvas id="revenueChart"></canvas>
+                        <canvas id="revenueChart" role="img" aria-label="Revenue and profit index by price point, with the optimal price marked. See the results table below for the underlying numbers."></canvas>
                     </div>
                 </div>
 
@@ -1389,15 +1405,15 @@
 
     </div> <!-- end main-content -->
 
-    <!-- Chart.js -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Chart.js (pinned) -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js" integrity="sha384-9nhczxUqK87bcKHh20fSQcTGD4qq5GhayNYSYWqwBkINBhOfQLg/P5HG5lF1urn4" crossorigin="anonymous"></script>
 
     <!-- Papa Parse for CSV -->
-    <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js" integrity="sha384-D/t0ZMqQW31H3az8ktEiNb39wyKnS82iFY52QPACM+IjKW3jDUhyIgh2PApRqJZs" crossorigin="anonymous"></script>
 
     <!-- Firebase SDK -->
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js" integrity="sha384-yuGdyIzzYtOBlBG6JOWn+Ey9kpq7HocusNuxEGyyohr1eEyXpeEyehIIXC/hznw4" crossorigin="anonymous"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js" integrity="sha384-lI+CxEx/bCvWP1b0OK13j5HTrTZP7yf1xle8TVOFq2smz6KC1RChTarRV/RHP5PP" crossorigin="anonymous"></script>
 
     <script>
         // Firebase configuration
@@ -1411,18 +1427,34 @@
             measurementId: "G-NGKNY08XWP"
         };
 
+        // Fallback: if the sign-in service cannot be reached (e.g. Firebase CDN blocked),
+        // show a message instead of hanging on the loading screen forever.
+        // Scheduled BEFORE initializeApp so it still fires when the Firebase scripts
+        // fail to load (in which case the initializeApp call below throws).
+        const authTimeout = setTimeout(function() {
+            const ls = document.getElementById('loading-screen');
+            if (ls && ls.style.display !== 'none') {
+                ls.innerHTML = '<p style="color:#64748b; text-align:center; max-width:420px; padding:1rem;">Could not reach the sign-in service. Check your connection and reload this page.</p>';
+            }
+        }, 12000);
+
         // Initialize Firebase
         firebase.initializeApp(firebaseConfig);
 
         // Check authentication state
         firebase.auth().onAuthStateChanged(function(user) {
+            clearTimeout(authTimeout);
             if (user) {
                 // User is signed in - show main content
                 document.getElementById('loading-screen').style.display = 'none';
                 document.getElementById('main-content').style.display = 'block';
+                // If we arrived here from the survey admin ("Load GG into Tool"), load that data.
+                if (typeof handleSurveyHandoff === 'function') {
+                    handleSurveyHandoff();
+                }
             } else {
-                // User is not signed in - redirect to login
-                window.location.href = 'login.html';
+                // User is not signed in - redirect to login, remembering this page.
+                window.location.href = 'login.html?next=' + encodeURIComponent(window.location.pathname.split('/').pop());
             }
         });
     </script>
@@ -1458,12 +1490,18 @@
         }
 
         // Data type toggle (aggregated vs raw WTP)
+        // Note: the aggregated data mode is currently retired (no toggle buttons in markup).
+        // The null-guards below keep this safe if the toggle is ever re-enabled.
         function setDataType(type) {
             currentDataType = type;
-            document.getElementById('aggregatedBtn').classList.toggle('active', type === 'aggregated');
-            document.getElementById('rawWtpBtn').classList.toggle('active', type === 'raw');
-            document.getElementById('aggregatedSection').style.display = type === 'aggregated' ? 'block' : 'none';
-            document.getElementById('rawWtpSection').classList.toggle('visible', type === 'raw');
+            const aggBtn = document.getElementById('aggregatedBtn');
+            const rawBtn = document.getElementById('rawWtpBtn');
+            const aggSection = document.getElementById('aggregatedSection');
+            const rawSection = document.getElementById('rawWtpSection');
+            if (aggBtn) aggBtn.classList.toggle('active', type === 'aggregated');
+            if (rawBtn) rawBtn.classList.toggle('active', type === 'raw');
+            if (aggSection) aggSection.style.display = type === 'aggregated' ? 'block' : 'none';
+            if (rawSection) rawSection.classList.toggle('visible', type === 'raw');
             resultsContainer.classList.remove('visible');
         }
 
@@ -1696,10 +1734,13 @@
                     }
 
                     // Extract WTP values
+                    // Keep zero (and any below-minimum) values: these are "never-buyers" who
+                    // reject every offered price. They must stay in the denominator so purchase
+                    // intent is not overstated. They never count as buyers at any positive price.
                     const wtpValues = [];
                     results.data.forEach(row => {
                         const val = parseFloat(row[wtpColumn]);
-                        if (!isNaN(val) && val > 0) {
+                        if (!isNaN(val) && val >= 0) {
                             wtpValues.push(val);
                         }
                     });
@@ -1861,7 +1902,8 @@
                 const price = parseFloat(row[colPrice.value]);
                 const intent = parseFloat(row[colIntent.value]);
 
-                if (!isNaN(price) && !isNaN(intent) && price > 0) {
+                // Purchase intent must be a percentage between 0 and 100 (matches manual entry).
+                if (!isNaN(price) && !isNaN(intent) && price > 0 && intent >= 0 && intent <= 100) {
                     data.push({ price, intent });
                 }
             });
@@ -1892,27 +1934,15 @@
 
             setTimeout(() => {
             // Calculate revenue and profit index for each price point
-            const results = data.map((item, index) => {
+            const results = data.map((item) => {
                 const revenueIndex = item.price * (item.intent / 100);
                 const profitIndex = cost !== null ? (item.price - cost) * (item.intent / 100) : null;
-
-                // Calculate price elasticity (between adjacent points)
-                let elasticity = null;
-                if (index > 0) {
-                    const prevItem = data[index - 1];
-                    const pctChangeQ = (item.intent - prevItem.intent) / prevItem.intent;
-                    const pctChangeP = (item.price - prevItem.price) / prevItem.price;
-                    if (pctChangeP !== 0) {
-                        elasticity = pctChangeQ / pctChangeP;
-                    }
-                }
 
                 return {
                     price: item.price,
                     intent: item.intent,
                     revenueIndex,
-                    profitIndex,
-                    elasticity
+                    profitIndex
                 };
             });
 
@@ -2187,7 +2217,8 @@
                         tooltip: {
                             callbacks: {
                                 label: function(context) {
-                                    return 'Revenue Index: ' + context.parsed.y.toFixed(2);
+                                    const name = context.dataset.label || 'Index';
+                                    return name + ': ' + context.parsed.y.toFixed(2);
                                 }
                             }
                         }
@@ -2225,8 +2256,11 @@
             parts.forEach(part => {
                 // Remove currency symbols and whitespace
                 const cleaned = part.replace(/[$€£¥₹\s]/g, '').trim();
+                if (cleaned === '') return;
                 const num = parseFloat(cleaned);
-                if (!isNaN(num) && num > 0) {
+                // Keep zero: a WTP of 0 marks a "never-buyer" who rejects every offered price.
+                // These count in the denominator so purchase intent is not overstated.
+                if (!isNaN(num) && num >= 0) {
                     values.push(num);
                 }
             });
@@ -2329,15 +2363,26 @@
             setTimeout(() => {
                 // Sort WTP values
                 const sortedWtp = [...wtpValues].sort((a, b) => a - b);
-                const n = sortedWtp.length;
+                const n = sortedWtp.length; // total respondents, including never-buyers
 
-                // Get unique WTP values for the step function
-                const uniqueWtps = [...new Set(sortedWtp)].sort((a, b) => a - b);
+                // Never-buyers reject every offered price (WTP of 0). They stay in the
+                // denominator n above but are never candidate prices to charge.
+                const neverBuyers = sortedWtp.filter(w => w <= 0).length;
+
+                // Candidate prices are the distinct positive WTP values (the step-function
+                // corners). Purchase intent at price p = count(WTP >= p) / n.
+                const uniqueWtps = [...new Set(sortedWtp.filter(w => w > 0))].sort((a, b) => a - b);
+
+                if (uniqueWtps.length === 0) {
+                    loadingOverlay.classList.add('hidden');
+                    showStatus('Every respondent would not buy at any offered price, so there is no price to optimize.', 'error');
+                    return;
+                }
 
                 // Calculate demand at various price points using LINEAR INTERPOLATION
                 // This allows finding optimal prices between observed WTP values
                 const minPrice = 0; // Start at $0
-                const maxPrice = Math.max(...sortedWtp); // End at max WTP
+                const maxPrice = Math.max(...uniqueWtps); // End at max WTP
 
                 // Create many price points for smooth curve and optimization
                 const numPoints = 500;
@@ -2411,6 +2456,11 @@
                 const normalizedRevenue = maxRevenue;
                 const normalizedProfit = cost !== null ? maxProfit : null;
 
+                // If no tested price covers the unit cost, every profit index is negative.
+                // Flag this so the results present the least-loss price with a clear warning
+                // instead of showing it as a genuine profit optimum.
+                const profitViable = cost !== null ? (maxProfit > 0) : null;
+
                 // Build results data (sample some price points for table display)
                 const samplePrices = [];
                 const step = Math.max(1, Math.floor(uniqueWtps.length / 15));
@@ -2426,26 +2476,12 @@
                 }
                 samplePrices.sort((a, b) => a - b);
 
-                const tableData = samplePrices.map((price, index) => {
+                const tableData = samplePrices.map((price) => {
                     const willBuy = wtpValues.filter(wtp => wtp >= price).length;
                     const intent = (willBuy / n) * 100;
                     const revenueIndex = price * (intent / 100);
                     const profitIndex = cost !== null ? (price - cost) * (intent / 100) : null;
-
-                    // Calculate elasticity
-                    let elasticity = null;
-                    if (index > 0) {
-                        const prevPrice = samplePrices[index - 1];
-                        const prevWillBuy = wtpValues.filter(wtp => wtp >= prevPrice).length;
-                        const prevIntent = (prevWillBuy / n) * 100;
-                        const pctChangeQ = (intent - prevIntent) / prevIntent;
-                        const pctChangeP = (price - prevPrice) / prevPrice;
-                        if (pctChangeP !== 0 && prevIntent !== 0) {
-                            elasticity = pctChangeQ / pctChangeP;
-                        }
-                    }
-
-                    return { price, intent, revenueIndex, profitIndex, elasticity };
+                    return { price, intent, revenueIndex, profitIndex };
                 });
 
                 // Find indices
@@ -2460,26 +2496,28 @@
                     cost,
                     rawWtpMode: true,
                     sampleSize: n,
+                    neverBuyers,
                     optimalRevenuePrice,
                     optimalRevenueIntent,
                     normalizedRevenue,
                     optimalProfitPrice,
                     optimalProfitIntent,
                     normalizedProfit,
+                    profitViable,
                     demandCurve: demandData
                 };
 
                 displayResultsRaw();
                 loadingOverlay.classList.add('hidden');
-                showStatus(`Analysis completed! Analyzed ${n} WTP values. Optimal price found using continuous optimization.`, 'success');
+                showStatus(`Analysis complete: ${n} respondents analyzed. The optimum is evaluated at every observed WTP, which is exact for the empirical demand curve.`, 'success');
             }, 500);
         }
 
         function displayResultsRaw() {
             const {
                 data, revenueOptimalIndex, profitOptimalIndex, currency, cost,
-                sampleSize, optimalRevenuePrice, optimalRevenueIntent, normalizedRevenue,
-                optimalProfitPrice, optimalProfitIntent, normalizedProfit, demandCurve
+                sampleSize, neverBuyers, optimalRevenuePrice, optimalRevenueIntent, normalizedRevenue,
+                optimalProfitPrice, optimalProfitIntent, normalizedProfit, profitViable, demandCurve
             } = analysisResults;
 
             // Update revenue metrics
@@ -2489,10 +2527,22 @@
 
             // Update profit metrics (if cost provided)
             const profitMetrics = document.getElementById('profitMetrics');
+            const profitPriceLabel = document.querySelector('#profitMetrics .metric-card:first-child .metric-label');
+            const profitPriceDesc = document.querySelector('#profitMetrics .metric-card:first-child .metric-desc');
             if (cost !== null && profitOptimalIndex !== null) {
                 document.getElementById('profitOptimalPrice').textContent = formatPrice(optimalProfitPrice, currency);
                 document.getElementById('maxProfit').textContent = normalizedProfit.toFixed(2);
                 document.getElementById('displayCost').textContent = formatPrice(cost, currency);
+                // F10 guard: if no tested price covers the unit cost, there is no profitable
+                // price. Present the least-loss price honestly instead of as a profit optimum.
+                if (profitViable === false) {
+                    if (profitPriceLabel) profitPriceLabel.textContent = 'Least-Loss Price';
+                    if (profitPriceDesc) profitPriceDesc.textContent = 'No tested price covers the unit cost';
+                    showStatus(`No tested price covers the unit cost of ${formatPrice(cost, currency)}, so no price is profitable. The price shown (${formatPrice(optimalProfitPrice, currency)}) is the least-loss option.`, 'error');
+                } else {
+                    if (profitPriceLabel) profitPriceLabel.textContent = 'Profit-Maximizing Price';
+                    if (profitPriceDesc) profitPriceDesc.textContent = 'Best price for profit';
+                }
                 profitMetrics.style.display = 'grid';
             } else {
                 profitMetrics.style.display = 'none';
@@ -2561,12 +2611,17 @@
                 }
             }).join('');
 
-            // Update footnote
+            // Update footnote, including a note about never-buyers when present.
             const footnote = document.getElementById('tableFootnote');
+            const profitMarkerLabel = (cost !== null && profitViable === false) ? 'Least-loss price' : 'Profit-maximizing price';
+            let sampleNote = `Based on ${sampleSize} respondents`;
+            if (neverBuyers > 0) {
+                sampleNote += `, including ${neverBuyers} who would not buy at any offered price`;
+            }
             if (cost !== null) {
-                footnote.textContent = `* Revenue-maximizing price | † Profit-maximizing price | ★ Both optimal | Based on ${sampleSize} respondents (continuous optimization)`;
+                footnote.textContent = `* Revenue-maximizing price | † ${profitMarkerLabel} | ★ Both optimal | ${sampleNote}`;
             } else {
-                footnote.textContent = `* Indicates revenue-maximizing price point | Based on ${sampleSize} respondents (continuous optimization)`;
+                footnote.textContent = `* Indicates revenue-maximizing price point | ${sampleNote}`;
             }
 
             // Update interpretation
@@ -2587,9 +2642,22 @@
             const revenueData = sampled.map(d => d.revenueIndex);
             const profitData = cost !== null ? sampled.map(d => d.profitIndex) : null;
 
-            // Find optimal indices in sampled data
-            const revenueOptimalIdx = sampled.findIndex(d => Math.abs(d.price - revenueOptimal) < 0.01);
-            const profitOptimalIdx = cost !== null ? sampled.findIndex(d => Math.abs(d.price - profitOptimal) < 0.01) : -1;
+            // Find the sampled grid point nearest each optimal price. An exact match rarely
+            // lands on the sampled grid (spacing ~ maxWTP/30), so pick the closest index.
+            function nearestSampledIdx(target) {
+                let best = -1, bestDiff = Infinity;
+                sampled.forEach((d, i) => {
+                    const diff = Math.abs(d.price - target);
+                    if (diff < bestDiff) { bestDiff = diff; best = i; }
+                });
+                return best;
+            }
+            const revenueOptimalIdx = nearestSampledIdx(revenueOptimal);
+            const profitOptimalIdx = cost !== null ? nearestSampledIdx(profitOptimal) : -1;
+
+            // Helper: an array of nulls with one marker value, so a scatter dataset can
+            // highlight a single point on top of a category-axis line chart.
+            const markerAt = (idx, value) => labels.map((_, i) => (i === idx ? value : null));
 
             // Destroy existing charts
             if (demandChart) demandChart.destroy();
@@ -2610,6 +2678,17 @@
                         fill: true,
                         tension: 0.4,
                         pointRadius: 0
+                    }, {
+                        label: 'Revenue-optimal price',
+                        data: markerAt(revenueOptimalIdx, intentData[revenueOptimalIdx]),
+                        borderColor: '#990000',
+                        backgroundColor: '#ffffff',
+                        pointRadius: 6,
+                        pointHoverRadius: 7,
+                        pointBorderColor: '#990000',
+                        pointBorderWidth: 3,
+                        showLine: false,
+                        fill: false
                     }]
                 },
                 options: {
@@ -2670,6 +2749,34 @@
                 });
             }
 
+            // Highlight the revenue optimum (and profit optimum, if any) on the chart.
+            datasets.push({
+                label: 'Revenue optimum',
+                data: markerAt(revenueOptimalIdx, revenueData[revenueOptimalIdx]),
+                borderColor: '#990000',
+                backgroundColor: '#ffffff',
+                pointRadius: 7,
+                pointHoverRadius: 8,
+                pointBorderColor: '#990000',
+                pointBorderWidth: 3,
+                showLine: false,
+                fill: false
+            });
+            if (cost !== null && profitData && profitOptimalIdx >= 0) {
+                datasets.push({
+                    label: 'Profit optimum',
+                    data: markerAt(profitOptimalIdx, profitData[profitOptimalIdx]),
+                    borderColor: '#065f46',
+                    backgroundColor: '#ffffff',
+                    pointRadius: 7,
+                    pointHoverRadius: 8,
+                    pointBorderColor: '#065f46',
+                    pointBorderWidth: 3,
+                    showLine: false,
+                    fill: false
+                });
+            }
+
             revenueChart = new Chart(revenueCtx, {
                 type: 'line',
                 data: { labels, datasets },
@@ -2679,7 +2786,7 @@
                     plugins: {
                         title: {
                             display: true,
-                            text: cost !== null ? 'Revenue & Profit Index (Continuous)' : 'Revenue Index (Continuous)',
+                            text: cost !== null ? 'Revenue & Profit Index by Price' : 'Revenue Index by Price',
                             font: { size: 16, weight: '600' },
                             color: '#990000',
                             padding: { bottom: 20 }
@@ -2715,14 +2822,14 @@
                     <li><strong>Revenue-Maximizing Price:</strong> The price that generates the most potential revenue by balancing what you charge with how many customers will buy.</li>
                     <li><strong>Profit-Maximizing Price:</strong> The price that maximizes profit after subtracting unit cost. This may differ from the revenue-maximizing price because higher margins can offset lower demand.</li>
                     <li><strong>Revenue Index:</strong> Shows relative revenue potential at each price (Price × Purchase Intent).</li>
-                    <li><strong>Profit Index:</strong> Shows relative profit potential at each price ((Price − Cost) × Purchase Intent).</li>
-                    ${isRawWtp ? '<li><strong>Continuous Optimization:</strong> The demand curve is smoothed using linear interpolation between observed WTP values, enabling the tool to identify optimal prices that may fall between discrete survey responses.</li>' : ''}
+                    <li><strong>Profit Index:</strong> Shows relative profit potential at each price ((Price - Cost) × Purchase Intent).</li>
+                    ${isRawWtp ? '<li><strong>Optimal price:</strong> The optimum is evaluated at every observed WTP value, which is exact for the empirical (step-function) demand curve: revenue rises within each price interval, so the best price always lands on an observed WTP. The line chart smooths the curve for readability only.</li>' : ''}
                 `;
             } else {
                 list.innerHTML = `
                     <li><strong>Optimal Price:</strong> The price that generates the most potential revenue by balancing what you charge with how many customers will buy.</li>
                     <li><strong>Revenue Index:</strong> Shows relative revenue potential at each price. Higher numbers mean better combinations of price and demand.</li>
-                    ${isRawWtp ? '<li><strong>Continuous Optimization:</strong> The demand curve is smoothed using linear interpolation between observed WTP values, enabling the tool to identify optimal prices that may fall between discrete survey responses.</li>' : ''}
+                    ${isRawWtp ? '<li><strong>Optimal price:</strong> The optimum is evaluated at every observed WTP value, which is exact for the empirical (step-function) demand curve: revenue rises within each price interval, so the best price always lands on an observed WTP. The line chart smooths the curve for readability only.</li>' : ''}
                 `;
             }
         }
@@ -2733,13 +2840,18 @@
 
             const { data, revenueOptimalIndex, profitOptimalIndex, currency, cost } = analysisResults;
 
-            let csv = 'Gabor-Granger Price Analysis Results\n\n';
+            // Keep all price and index columns numeric so the file round-trips back into
+            // the tool and into Excel. The currency is stated once in a header row.
+            const currencyLabel = currency ? currency : '(none)';
+
+            let csv = 'Gabor-Granger Price Analysis Results\n';
+            csv += `Currency,${currencyLabel}\n\n`;
             csv += 'Key Findings\n';
-            csv += `Revenue-Maximizing Price,${currency}${data[revenueOptimalIndex].price.toFixed(2)}\n`;
+            csv += `Revenue-Maximizing Price,${data[revenueOptimalIndex].price.toFixed(2)}\n`;
             csv += `Maximum Revenue Index,${data[revenueOptimalIndex].revenueIndex.toFixed(2)}\n`;
-            csv += `Purchase Intent at Optimal,${data[revenueOptimalIndex].intent.toFixed(1)}%\n`;
+            csv += `Purchase Intent at Optimal (%),${data[revenueOptimalIndex].intent.toFixed(1)}\n`;
             if (cost !== null && profitOptimalIndex !== null) {
-                csv += `Profit-Maximizing Price,${currency}${data[profitOptimalIndex].price.toFixed(2)}\n`;
+                csv += `Profit-Maximizing Price,${data[profitOptimalIndex].price.toFixed(2)}\n`;
                 csv += `Maximum Profit Index,${data[profitOptimalIndex].profitIndex.toFixed(2)}\n`;
             }
             csv += '\nDetailed Results\n';
@@ -2751,9 +2863,9 @@
 
             data.forEach((item, idx) => {
                 if (cost !== null) {
-                    csv += `${currency}${item.price.toFixed(2)},${item.intent.toFixed(1)},${item.revenueIndex.toFixed(2)},${item.profitIndex.toFixed(2)},${idx === revenueOptimalIndex ? 'Yes' : 'No'},${idx === profitOptimalIndex ? 'Yes' : 'No'}\n`;
+                    csv += `${item.price.toFixed(2)},${item.intent.toFixed(1)},${item.revenueIndex.toFixed(2)},${item.profitIndex.toFixed(2)},${idx === revenueOptimalIndex ? 'Yes' : 'No'},${idx === profitOptimalIndex ? 'Yes' : 'No'}\n`;
                 } else {
-                    csv += `${currency}${item.price.toFixed(2)},${item.intent.toFixed(1)},${item.revenueIndex.toFixed(2)},${idx === revenueOptimalIndex ? 'Yes' : 'No'}\n`;
+                    csv += `${item.price.toFixed(2)},${item.intent.toFixed(1)},${item.revenueIndex.toFixed(2)},${idx === revenueOptimalIndex ? 'Yes' : 'No'}\n`;
                 }
             });
 
@@ -2791,6 +2903,86 @@
             link.href = canvas.toDataURL('image/png');
             link.click();
         }
+
+        // ============================================
+        // Survey handoff receiver
+        // survey-admin.html "Load GG into Tool" writes the raw responses to
+        // sessionStorage['surveyData'] (a JSON array of {maxWtp, startingPrice, steps, ...})
+        // plus sessionStorage['surveyType']='gg', then navigates here with ?fromSurvey=true.
+        // ============================================
+        function showHandoffBanner(text, isError) {
+            const banner = document.getElementById('handoffBanner');
+            const textEl = document.getElementById('handoffBannerText');
+            if (!banner || !textEl) return;
+            textEl.textContent = text;
+            banner.className = 'status-message ' + (isError ? 'error' : 'info');
+            banner.style.display = 'block';
+        }
+
+        function handleSurveyHandoff() {
+            const params = new URLSearchParams(window.location.search);
+            if (params.get('fromSurvey') !== 'true') return;
+
+            let responses = null;
+            try {
+                const surveyType = sessionStorage.getItem('surveyType');
+                const raw = sessionStorage.getItem('surveyData');
+                if (surveyType !== 'gg' || !raw) {
+                    showHandoffBanner('No survey data was found to load. You can enter or upload willingness-to-pay values below.', true);
+                    return;
+                }
+                responses = JSON.parse(raw);
+            } catch (e) {
+                showHandoffBanner('The survey data could not be read. You can enter or upload willingness-to-pay values below.', true);
+                return;
+            }
+
+            if (!Array.isArray(responses) || responses.length === 0) {
+                showHandoffBanner('No survey responses were found to load. You can enter or upload willingness-to-pay values below.', true);
+                return;
+            }
+
+            // Extract maxWtp for every respondent, keeping never-buyers (maxWtp = 0) so they
+            // count in the demand denominator.
+            const wtpValues = responses
+                .map(r => (r && typeof r.maxWtp === 'number' ? r.maxWtp : parseFloat(r && r.maxWtp)))
+                .filter(v => typeof v === 'number' && !isNaN(v) && v >= 0);
+
+            if (wtpValues.length === 0) {
+                showHandoffBanner('The survey responses did not contain any usable willingness-to-pay values.', true);
+                return;
+            }
+
+            // Make sure the WTP manual-entry mode is showing, then prefill the textarea.
+            setWtpInputMode('manual');
+            document.getElementById('wtpTextarea').value = wtpValues.join('\n');
+
+            const neverBuyers = wtpValues.filter(v => v <= 0).length;
+            let msg = `Loaded ${wtpValues.length} survey responses`;
+            if (neverBuyers > 0) {
+                msg += ` (including ${neverBuyers} who would not buy at any offered price)`;
+            }
+
+            if (wtpValues.length < 10) {
+                showHandoffBanner(`${msg}. At least 10 responses are needed to run the analysis, so the values are ready in the box below for review.`, true);
+            } else {
+                showHandoffBanner(`${msg}. Running the analysis now.`, false);
+                analyzeRawWtpData();
+            }
+        }
+
+        // Run the analysis with Ctrl+Enter (Cmd+Enter on Mac) from the WTP textarea.
+        document.getElementById('wtpTextarea').addEventListener('keydown', function(e) {
+            if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+                e.preventDefault();
+                analyzeRawWtpData();
+            }
+        });
+
+        // Dismiss the survey handoff banner.
+        document.getElementById('handoffBannerClose').addEventListener('click', function() {
+            document.getElementById('handoffBanner').style.display = 'none';
+        });
     </script>
 </body>
 </html>

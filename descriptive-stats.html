@@ -200,7 +200,7 @@
         .spinner { width: 60px; height: 60px; border: 4px solid var(--border); border-top-color: var(--iu-crimson); border-radius: 50%; animation: spin 1s linear infinite; }
         @keyframes spin { to { transform: rotate(360deg); } }
         .loading-text { margin-top: 1rem; font-size: 1.1rem; color: var(--text-light); }
-        .loading-stage { margin-top: 0.5rem; font-size: 0.85rem; color: #999; text-align: center; max-width: 420px; padding: 0 1rem; }
+        .loading-stage { margin-top: 0.5rem; font-size: 0.85rem; color: var(--text-light); text-align: center; max-width: 420px; padding: 0 1rem; }
 
         /* Status message */
         .status-message { padding: 0.85rem 1rem; border-radius: 6px; margin-bottom: 1rem; display: none; font-size: 0.95rem; }
@@ -233,7 +233,8 @@
         .form-group select:focus, .form-group input:focus { outline: none; border-color: var(--iu-crimson); }
         .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
         @media (max-width: 720px) { .form-row { grid-template-columns: 1fr; } }
-        .field-hint { color: #999; font-weight: 400; font-size: 0.85rem; margin-left: 0.4rem; }
+        .field-hint { color: var(--text-light); font-weight: 400; font-size: 0.85rem; margin-left: 0.4rem; }
+        .field-msg { display: block; margin-top: 0.35rem; font-size: 0.82rem; font-weight: 600; color: var(--iu-crimson); }
 
         .radio-row { display: flex; gap: 0.65rem; flex-wrap: wrap; }
         .radio-row label { display: inline-flex; align-items: center; gap: 0.4rem; font-weight: 500; cursor: pointer; padding: 0.45rem 0.85rem; border-radius: 6px; border: 1px solid var(--border); background: var(--white); font-size: 0.9rem; }
@@ -361,7 +362,7 @@
                     <button class="font-size-btn decrease-a" onclick="adjustFontSize(-1)" title="Decrease text size" aria-label="Decrease text size">A</button>
                     <button class="font-size-btn increase-a" onclick="adjustFontSize(1)" title="Increase text size" aria-label="Increase text size">A</button>
                 </div>
-                <div class="nav-toggle" role="button" tabindex="0" aria-label="Toggle navigation menu" onclick="document.querySelector('.nav-links').classList.toggle('active')">
+                <div class="nav-toggle" role="button" tabindex="0" aria-label="Toggle navigation menu" aria-expanded="false" onclick="toggleNav()" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();toggleNav();}">
                     <span></span>
                     <span></span>
                     <span></span>
@@ -420,16 +421,21 @@
 
         <div class="tool-container">
 
-            <div class="status-message" id="statusMessage"></div>
+            <div class="status-message" id="statusMessage" role="status" aria-live="polite"></div>
 
             <!-- ============================== 1. Upload Data ============================== -->
             <h2 class="section-title">1. Upload Your Data</h2>
             <p class="section-hint">Upload a CSV file with a header row. The tool reads it locally and computes statistics for every numeric column.</p>
-            <div class="upload-area" id="uploadArea">
+            <div class="upload-area" id="uploadArea" role="button" tabindex="0" aria-label="Upload a CSV file. Activate to choose a file, or drag and drop one here.">
                 <input type="file" id="fileInput" accept=".csv" aria-label="Upload CSV file">
                 <div class="upload-icon">&#128202;</div>
                 <p class="upload-text">Click to upload or drag and drop a CSV</p>
                 <p class="upload-hint">CSV files only, with a header row</p>
+            </div>
+
+            <div style="display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap; margin-bottom: 1rem;">
+                <button type="button" class="btn btn-secondary btn-sm" id="loadExampleBtn">Try example data</button>
+                <span class="section-hint" style="margin-bottom: 0;">Loads a small sample sales CSV so you can explore the tool before you have your own data.</span>
             </div>
 
             <div class="preview-note" id="previewNote" style="display: none;"></div>
@@ -444,6 +450,7 @@
                 <h2 class="section-title mt">2. Descriptive Statistics</h2>
                 <p class="section-hint">One row per numeric variable. N is the count of non-missing values; Missing is the count of NA values.</p>
                 <div class="result-table-wrap"><table class="result-table" id="statsTable"></table></div>
+                <p class="section-hint" style="margin-top: 0.5rem;"><strong>Mode:</strong> the most frequent value. When two or more values tie for most frequent, the smallest is shown. A dash (-) means there is no single mode because every value occurs equally often. TRUE/FALSE columns are treated as 1/0.</p>
                 <div class="button-group">
                     <button class="btn btn-primary btn-sm" id="downloadStatsBtn" type="button">Download statistics (CSV)</button>
                 </div>
@@ -468,10 +475,11 @@
                     </div>
                     <div class="form-group" id="customLevelWrap" style="display: none; margin-top: 1rem; margin-bottom: 0;">
                         <label for="ciLevelCustom">Custom Confidence Level (%) <span class="field-hint">between 50 and 99.99</span></label>
-                        <input type="number" id="ciLevelCustom" min="50" max="99.99" step="0.01" value="95" aria-label="Custom confidence level in percent">
+                        <input type="number" id="ciLevelCustom" min="50" max="99.99" step="0.01" value="95" aria-label="Custom confidence level in percent" aria-describedby="ciLevelMsg">
+                        <span class="field-msg" id="ciLevelMsg" style="display: none;"></span>
                     </div>
 
-                    <div class="ci-headline" id="ciHeadline" style="display: none;"></div>
+                    <div class="ci-headline" id="ciHeadline" style="display: none;" aria-live="polite"></div>
                     <div class="ci-warn" id="ciWarn" style="display: none;"></div>
                     <div class="stat-grid" id="ciStats" style="display: none;"></div>
                 </div>
@@ -533,14 +541,24 @@
         }
 
         // ==================== NUMBER FORMATTING ====================
-        // 4 significant digits for general statistics, but show integers (N, Missing, df)
-        // as whole numbers.
-        function fmtSig(x, sig = 4) {
+        // Up to 6 significant digits for general statistics, with thousands
+        // separators. Locale formatting keeps dollar-scale values readable
+        // (45231.75 shows as "45,231.8", not "4.523e+4"); scientific notation is
+        // reserved for genuinely extreme magnitudes only.
+        function fmtSig(x, sig = 6) {
             if (x === null || x === undefined || x === '' || isNaN(x)) return '-';
             const v = Number(x);
             if (v === 0) return '0';
-            if (Number.isInteger(v) && Math.abs(v) < 1e6) return String(v);
-            // toPrecision then strip trailing zeros for readability.
+            const av = Math.abs(v);
+            // Whole numbers in a sane range: show with grouping, no decimals.
+            if (Number.isInteger(v) && av < 1e15) {
+                return v.toLocaleString('en-US');
+            }
+            // Normal-magnitude decimals: bounded significant digits, no e-notation.
+            if (av >= 1e-4 && av < 1e15) {
+                return v.toLocaleString('en-US', { maximumSignificantDigits: sig });
+            }
+            // Extreme magnitudes only: fall back to scientific notation.
             let s = v.toPrecision(sig);
             if (s.indexOf('e') === -1 && s.indexOf('.') !== -1) {
                 s = s.replace(/\.?0+$/, '');
@@ -549,36 +567,49 @@
         }
         function fmtInt(x) {
             if (x === null || x === undefined || x === '' || isNaN(x)) return '-';
-            return String(Math.round(Number(x)));
+            return Math.round(Number(x)).toLocaleString('en-US');
         }
 
         // ==================== CSV PARSING (quote-aware, for rendering) ====================
+        // Scan the whole text character by character so that quoted fields
+        // containing commas or embedded newlines stay in one cell, matching how
+        // read.csv parses the same file.
         function parseCSV(text) {
-            const lines = String(text).replace(/\r\n/g, '\n').replace(/\r/g, '\n').split('\n').filter(l => l.length > 0);
-            return lines.map(splitCSVLine);
-        }
-        function splitCSVLine(line) {
-            const result = []; let cur = ''; let inQ = false;
-            for (let i = 0; i < line.length; i++) {
-                const c = line[i];
+            const s = String(text).replace(/\r\n/g, '\n').replace(/\r/g, '\n');
+            const rows = [];
+            let row = [], cur = '', inQ = false;
+            for (let i = 0; i < s.length; i++) {
+                const c = s[i];
                 if (inQ) {
-                    if (c === '"' && line[i + 1] === '"') { cur += '"'; i++; }
+                    if (c === '"' && s[i + 1] === '"') { cur += '"'; i++; }
                     else if (c === '"') { inQ = false; }
                     else { cur += c; }
-                } else {
-                    if (c === ',') { result.push(cur); cur = ''; }
-                    else if (c === '"') { inQ = true; }
-                    else { cur += c; }
-                }
+                } else if (c === '"') { inQ = true; }
+                else if (c === ',') { row.push(cur); cur = ''; }
+                else if (c === '\n') { row.push(cur); rows.push(row); row = []; cur = ''; }
+                else { cur += c; }
             }
-            result.push(cur);
-            return result;
+            if (cur !== '' || row.length > 0) { row.push(cur); rows.push(row); }
+            // Drop blank lines (a single empty field), matching read.csv.
+            return rows.filter(r => !(r.length === 1 && r[0] === ''));
         }
 
         // ==================== UPLOAD ====================
         const uploadArea = $('uploadArea');
         const fileInput  = $('fileInput');
+        // True once csvText has been written to the WebR filesystem, so repeat
+        // CI runs on the same data do not rewrite and re-parse the whole file.
+        let dataWrittenForCsv = false;
+        async function ensureDataWritten() {
+            if (dataWrittenForCsv) return;
+            await webR.FS.writeFile('/tmp/ds_data.csv', new TextEncoder().encode(csvText));
+            dataWrittenForCsv = true;
+        }
+
         uploadArea.addEventListener('click', () => fileInput.click());
+        uploadArea.addEventListener('keydown', e => {
+            if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); fileInput.click(); }
+        });
         uploadArea.addEventListener('dragover', e => { e.preventDefault(); uploadArea.classList.add('dragover'); });
         uploadArea.addEventListener('dragleave', () => uploadArea.classList.remove('dragover'));
         uploadArea.addEventListener('drop', e => {
@@ -586,7 +617,22 @@
             uploadArea.classList.remove('dragover');
             if (e.dataTransfer.files.length) handleFile(e.dataTransfer.files[0]);
         });
-        fileInput.addEventListener('change', e => { if (e.target.files.length) handleFile(e.target.files[0]); });
+        fileInput.addEventListener('change', e => {
+            if (e.target.files.length) handleFile(e.target.files[0]);
+            // Reset so re-selecting a corrected file with the same name still fires 'change'.
+            e.target.value = '';
+        });
+
+        function loadCsvText(text) {
+            csvText = text;
+            dataWrittenForCsv = false;
+            if (!csvText || !csvText.trim()) {
+                showStatus('That file looks empty.', 'error', 5000);
+                return;
+            }
+            renderPreview();
+            computeStats();
+        }
 
         function handleFile(file) {
             if (!file.name.toLowerCase().endsWith('.csv')) {
@@ -598,18 +644,33 @@
                 return;
             }
             const reader = new FileReader();
-            reader.onload = ev => {
-                csvText = ev.target.result;
-                if (!csvText || !csvText.trim()) {
-                    showStatus('That file looks empty.', 'error', 5000);
-                    return;
-                }
-                renderPreview();
-                computeStats();
-            };
+            reader.onload = ev => loadCsvText(ev.target.result);
             reader.onerror = () => showStatus('Could not read that file.', 'error', 5000);
             reader.readAsText(file);
         }
+
+        // ==================== EXAMPLE DATA ====================
+        // A small sample sales CSV so students can explore before they have data.
+        // "Unit Price" / "Units Sold" / "In Stock" show column renaming and the
+        // TRUE/FALSE-to-1/0 handling; Revenue is dollar-scale on purpose.
+        const EXAMPLE_CSV = `Region,Unit Price,Units Sold,Revenue,In Stock
+North,19.99,2400,47976.00,TRUE
+South,34.50,1500,51750.00,TRUE
+East,12.75,3900,49725.00,FALSE
+West,89.00,520,46280.00,TRUE
+Central,45.25,1050,47512.50,TRUE
+Northeast,29.95,1800,53910.00,TRUE
+Southwest,64.00,780,49920.00,FALSE
+Midwest,15.50,3100,48050.00,TRUE
+Pacific,120.00,410,49200.00,TRUE
+Mountain,52.30,940,49162.00,FALSE`;
+        $('loadExampleBtn').addEventListener('click', () => {
+            if (!webrReady) {
+                showStatus('WebR is still loading, please wait a moment and try again.', 'info', 4000);
+                return;
+            }
+            loadCsvText(EXAMPLE_CSV);
+        });
 
         // Render the first 8 rows so the user can confirm the upload parsed correctly.
         function renderPreview() {
@@ -652,6 +713,13 @@
         function buildStatsProgram() {
             return `res = tryCatch({
   df = read.csv("/tmp/ds_data.csv", stringsAsFactors = FALSE, check.names = TRUE)
+  # Record which column names R had to rewrite to valid names.
+  orig_names = names(read.csv("/tmp/ds_data.csv", stringsAsFactors = FALSE, check.names = FALSE, nrows = 0))
+  syn_names = names(df)
+  changed = which(orig_names != syn_names)
+  renamed_csv = if (length(changed)) paste(paste0(orig_names[changed], "\\t", syn_names[changed]), collapse = "\\n") else ""
+  # Treat TRUE/FALSE columns as 1/0 so binary variables get statistics too.
+  df[] = lapply(df, function(col) if (is.logical(col)) as.numeric(col) else col)
   nrows = nrow(df); ncols = ncol(df)
   num = df[, sapply(df, is.numeric), drop = FALSE]
   if (ncol(num) == 0) {
@@ -659,8 +727,8 @@
   } else {
     get_mode = function(v) {
       ux = unique(v)
-      if (length(ux) == length(v)) return(NA)   # all values distinct: no mode
       tab = tabulate(match(v, ux))
+      if (max(tab) == min(tab)) return(NA)       # all values equally frequent: no single mode
       min(ux[tab == max(tab)])                   # most frequent value (smallest if tied)
     }
     describe_one = function(x) {
@@ -678,6 +746,7 @@
     vars_csv = paste(colnames(num), collapse = "\\t")
     paste0("OK\\n", nrows, "\\n", ncols,
            "\\n<<<VARS>>>\\n", vars_csv,
+           "\\n<<<RENAMED>>>\\n", renamed_csv,
            "\\n<<<STATS>>>\\n", stats_csv)
   }
 }, error = function(e) {
@@ -689,7 +758,7 @@ res`;
         async function computeStats() {
             try {
                 showStatus('Computing descriptive statistics in R...', 'info');
-                await webR.FS.writeFile('/tmp/ds_data.csv', new TextEncoder().encode(csvText));
+                await ensureDataWritten();
 
                 const result = await webR.evalR(buildStatsProgram());
                 const out = await toText(result);
@@ -715,24 +784,35 @@ res`;
 
                 // Parse the sentinel-delimited payload.
                 const varsMarker = '<<<VARS>>>\n';
+                const renamedMarker = '\n<<<RENAMED>>>\n';
                 const statsMarker = '\n<<<STATS>>>\n';
                 const varsStart = out.indexOf(varsMarker);
+                const renamedStart = out.indexOf(renamedMarker);
                 const statsStart = out.indexOf(statsMarker);
-                if (varsStart === -1 || statsStart === -1) throw new Error('Could not parse R output structure.');
+                if (varsStart === -1 || renamedStart === -1 || statsStart === -1) throw new Error('Could not parse R output structure.');
 
                 const headerBlock = out.slice(0, varsStart).split('\n'); // ["OK", nrows, ncols]
                 const nrows = parseInt(headerBlock[1], 10);
                 const ncols = parseInt(headerBlock[2], 10);
-                const varsRaw = out.slice(varsStart + varsMarker.length, statsStart).trim();
+                const varsRaw = out.slice(varsStart + varsMarker.length, renamedStart).trim();
                 numericVars = varsRaw.length ? varsRaw.split('\t') : [];
+                const renamedRaw = out.slice(renamedStart + renamedMarker.length, statsStart).trim();
                 lastStatsCSV = out.slice(statsStart + statsMarker.length).trim();
 
                 // Preview note: dimensions + which columns are numeric.
                 const pills = numericVars.map(v => `<span class="var-pill num">${escapeHtml(v)}</span>`).join(' ');
-                $('previewNote').style.display = 'block';
-                $('previewNote').innerHTML =
+                let noteHtml =
                     `Loaded <strong>${nrows.toLocaleString()}</strong> rows &times; <strong>${ncols.toLocaleString()}</strong> columns. ` +
                     `<strong>${numericVars.length}</strong> numeric variable${numericVars.length === 1 ? '' : 's'} detected:<br>${pills}`;
+                if (renamedRaw.length) {
+                    const pairs = renamedRaw.split('\n').map(line => {
+                        const [orig, syn] = line.split('\t');
+                        return `"${escapeHtml(orig)}" became "${escapeHtml(syn)}"`;
+                    });
+                    noteHtml += `<br><span style="font-size:0.85rem;">Note: R renamed some columns to valid names, so the preview above and the results below can differ: ${pairs.join(', ')}. The statistics table and the variable menu use the renamed versions.</span>`;
+                }
+                $('previewNote').style.display = 'block';
+                $('previewNote').innerHTML = noteHtml;
 
                 renderStatsTable(lastStatsCSV);
                 populateCiSelect();
@@ -743,6 +823,13 @@ res`;
                 $('resultsContainer').scrollIntoView({ behavior: 'smooth', block: 'start' });
             } catch (err) {
                 console.error(err);
+                // Clear any stale results from a previous file so they cannot sit
+                // under the new file's preview.
+                numericVars = [];
+                lastStatsCSV = '';
+                $('resultsContainer').classList.remove('visible');
+                $('previewNote').style.display = 'none';
+                $('previewNote').innerHTML = '';
                 showStatus('Error: ' + (err.message || String(err)), 'error');
             }
         }
@@ -813,6 +900,7 @@ res`;
     c(Mean = m, SE = se, df = n - 1, t = tcrit, Lower = m - tcrit * se, Upper = m + tcrit * se)
   }
   df = read.csv("/tmp/ds_data.csv", stringsAsFactors = FALSE, check.names = TRUE)
+  df[] = lapply(df, function(col) if (is.logical(col)) as.numeric(col) else col)
   x = df[[${rStr(varName)}]]
   x = x[!is.na(x)]
   n = length(x)
@@ -835,7 +923,28 @@ res`;
 res`;
         }
 
+        // Show an inline note when the typed custom level is empty or out of range
+        // and was adjusted, instead of silently clamping.
+        function updateCustomLevelMsg() {
+            const msgEl = $('ciLevelMsg');
+            if (!msgEl) return;
+            if ($('ciLevelSelect').value !== 'custom') { msgEl.style.display = 'none'; return; }
+            const raw = String($('ciLevelCustom').value).trim();
+            const parsed = parseFloat(raw);
+            if (raw === '' || isNaN(parsed)) {
+                msgEl.textContent = 'No value entered, using 95%.';
+                msgEl.style.display = 'block';
+            } else if (parsed < 50 || parsed > 99.99) {
+                const adj = Math.min(99.99, Math.max(50, parsed));
+                msgEl.textContent = `Adjusted to ${adj}%. Enter a value between 50 and 99.99.`;
+                msgEl.style.display = 'block';
+            } else {
+                msgEl.style.display = 'none';
+            }
+        }
+
         async function runCI() {
+            updateCustomLevelMsg();
             if (!webrReady || !numericVars.length) return;
             const varName = $('ciVar').value;
             if (!varName) return;
@@ -844,7 +953,7 @@ res`;
 
             const token = ++ciRunToken;
             try {
-                await webR.FS.writeFile('/tmp/ds_data.csv', new TextEncoder().encode(csvText));
+                await ensureDataWritten();
                 const result = await webR.evalR(buildCiProgram(varName, levelFraction));
                 const out = await toText(result);
                 if (token !== ciRunToken) return; // a newer request superseded this one
@@ -869,9 +978,16 @@ res`;
                     if (eq !== -1) vals[line.slice(0, eq)] = parseFloat(line.slice(eq + 1));
                 });
 
-                $('ciWarn').style.display = 'none';
                 $('ciHeadline').style.display = 'block';
                 $('ciStats').style.display = 'grid';
+                // Constant column: SE is 0, the interval collapses to a point, and
+                // t.test() would refuse it. Show the point interval plus a warning.
+                if (vals.SE === 0 || vals.Lower === vals.Upper) {
+                    $('ciWarn').style.display = 'block';
+                    $('ciWarn').innerHTML = `All values of <strong>${escapeHtml(varName)}</strong> are identical, so the standard error is 0 and the interval collapses to a single point. R's <code>t.test()</code> would refuse this case (data are essentially constant).`;
+                } else {
+                    $('ciWarn').style.display = 'none';
+                }
 
                 const lvlLabel = (Number.isInteger(levelPct) ? levelPct.toFixed(0) : String(levelPct));
                 $('ciHeadline').innerHTML =
@@ -903,14 +1019,21 @@ res`;
         }
 
         // CI control wiring.
+        let ciDebounceTimer = null;
         $('ciVar').addEventListener('change', runCI);
         $('ciLevelSelect').addEventListener('change', () => {
             const isCustom = $('ciLevelSelect').value === 'custom';
             $('customLevelWrap').style.display = isCustom ? 'block' : 'none';
+            updateCustomLevelMsg();
             runCI();
         });
-        $('ciLevelCustom').addEventListener('input', runCI);
-        $('ciLevelCustom').addEventListener('change', runCI);
+        // Update the inline hint immediately, but debounce the R recompute so
+        // typing "97.5" does not queue a full-file re-parse on every keystroke.
+        $('ciLevelCustom').addEventListener('input', () => {
+            updateCustomLevelMsg();
+            clearTimeout(ciDebounceTimer);
+            ciDebounceTimer = setTimeout(runCI, 300);
+        });
 
         // ==================== DISPLAY R (student-friendly) ====================
         function buildDisplayR() {
@@ -921,18 +1044,22 @@ res`;
 # 1. Read the data. check.names = TRUE makes column names valid R names.
 df = read.csv("your_data.csv", stringsAsFactors = FALSE, check.names = TRUE)
 
-# 2. Keep only the numeric columns. sapply(df, is.numeric) flags each column
-#    that R read as numbers; we use that flag to subset the data frame.
+# 2a. Treat TRUE/FALSE columns as 1/0 so binary variables get statistics too.
+df[] = lapply(df, function(col) if (is.logical(col)) as.numeric(col) else col)
+
+# 2b. Keep only the numeric columns. sapply(df, is.numeric) flags each column
+#     that R read as numbers; we use that flag to subset the data frame.
 num = df[, sapply(df, is.numeric), drop = FALSE]
 
 # 3a. A helper for the mode (the most frequent value). R has no built-in
 #     mode, so we count how often each value occurs and return the most
-#     common one. If every value is unique there is no mode (NA); if two
-#     or more values tie, we return the smallest.
+#     common one. If every value occurs equally often there is no single
+#     mode (NA); if two or more values tie for most frequent, we return the
+#     smallest.
 get_mode = function(v) {
   ux = unique(v)
-  if (length(ux) == length(v)) return(NA)
   tab = tabulate(match(v, ux))
+  if (max(tab) == min(tab)) return(NA)
   min(ux[tab == max(tab)])
 }
 
@@ -1018,8 +1145,8 @@ t.test(df[[${rStr(firstVar)}]], conf.level = 0.95)$conf.int`;
     </script>
 
     <!-- Firebase auth -->
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js" integrity="sha384-yuGdyIzzYtOBlBG6JOWn+Ey9kpq7HocusNuxEGyyohr1eEyXpeEyehIIXC/hznw4" crossorigin="anonymous"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js" integrity="sha384-lI+CxEx/bCvWP1b0OK13j5HTrTZP7yf1xle8TVOFq2smz6KC1RChTarRV/RHP5PP" crossorigin="anonymous"></script>
     <script>
         const firebaseConfig = {
             apiKey: "AIzaSyBg3LJDwVIRGWtFZb_mM_CSRJMNCJUta20",
@@ -1030,15 +1157,37 @@ t.test(df[[${rStr(firstVar)}]], conf.level = 0.95)$conf.int`;
             appId: "1:659335573790:web:00013a166787efecb3d90f",
             measurementId: "G-NGKNY08XWP"
         };
+        // If the sign-in service cannot be reached, do not leave the page stuck
+        // on "Loading..." forever: after 12s, show a clear message instead.
+        // Scheduled BEFORE initializeApp so it still fires if the Firebase CDN is blocked
+        // (in which case the initializeApp call below throws).
+        var authTimeout = setTimeout(function() {
+            var ls = document.getElementById('loading-screen');
+            if (ls) {
+                ls.innerHTML = '<p style="color: var(--text-light); max-width: 360px; text-align: center; padding: 0 1rem;">Could not reach the sign-in service. Check your connection and reload this page.</p>';
+            }
+        }, 12000);
+
         firebase.initializeApp(firebaseConfig);
+
         firebase.auth().onAuthStateChanged(function(user) {
+            clearTimeout(authTimeout);
             if (user) {
                 document.getElementById('loading-screen').style.display = 'none';
                 document.getElementById('main-content').style.display = 'block';
             } else {
-                window.location.href = 'login.html';
+                window.location.href = 'login.html?next=' + encodeURIComponent(window.location.pathname.split('/').pop());
             }
         });
+
+        // Navigation toggle (keyboard operable, tracks aria-expanded).
+        function toggleNav() {
+            var links = document.querySelector('.nav-links');
+            var open = links.classList.toggle('active');
+            var toggle = document.querySelector('.nav-toggle');
+            if (toggle) toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+        }
+        window.toggleNav = toggleNav;
 
         // Font size controls (matches tools.html)
         const fontSizes = [14, 16, 18, 20, 22];

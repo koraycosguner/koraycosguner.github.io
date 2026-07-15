@@ -5,8 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Channel Pricing Optimizer | Koray Cosguner</title>
     <meta name="robots" content="noindex,nofollow">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/11.11.0/math.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <!-- Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-CTZ8G4EYLR"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-CTZ8G4EYLR');
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/11.11.0/math.min.js" integrity="sha384-4V7XiQrelKbkSsjfkFjNgJ1nxS5w1502z7Xd5ivrHYnLn/bdjulL1TZ3HyPo8tW7" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js" integrity="sha384-9nhczxUqK87bcKHh20fSQcTGD4qq5GhayNYSYWqwBkINBhOfQLg/P5HG5lF1urn4" crossorigin="anonymous"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -633,22 +641,22 @@
             </div>
 
             <div class="input-group">
-                <label>Demand Function Q(P)</label>
+                <label for="demandFunction">Demand Function Q(P)</label>
                 <input type="text" id="demandFunction" value="100 - 2*P" placeholder="e.g., 100 - 2*P">
                 <div class="hint">Enter demand as a function of P. Use: +, -, *, /, ^, exp(), log(), sqrt()</div>
             </div>
 
             <div class="input-row">
                 <div class="input-group">
-                    <label>Producer's Marginal Cost (C)</label>
+                    <label for="producerCost">Producer's Marginal Cost (C)</label>
                     <input type="number" id="producerCost" value="10" step="any">
                 </div>
                 <div class="input-group">
-                    <label>Price Range (for optimization)</label>
+                    <label id="priceRangeLabel">Price Range (for optimization)</label>
                     <div style="display: flex; gap: 0.5rem; align-items: center;">
-                        <input type="number" id="priceMin" value="0" step="any" style="width: 80px;">
+                        <input type="number" id="priceMin" value="0" step="any" style="width: 80px;" aria-label="Minimum price for optimization">
                         <span>to</span>
-                        <input type="number" id="priceMax" value="50" step="any" style="width: 80px;">
+                        <input type="number" id="priceMax" value="50" step="any" style="width: 80px;" aria-label="Maximum price for optimization">
                     </div>
                 </div>
             </div>
@@ -658,18 +666,18 @@
         <div class="tool-container">
             <h2 class="section-title"><span class="step-number">2</span> Retailer Type</h2>
 
-            <div class="channel-types">
-                <div class="channel-type selected" data-type="integrated" onclick="selectChannelType('integrated')">
+            <div class="channel-types" role="radiogroup" aria-label="Retailer type">
+                <div class="channel-type selected" data-type="integrated" role="radio" aria-checked="true" tabindex="0" onclick="selectChannelType('integrated')" onkeydown="handleCardKey(event, 'integrated')">
                     <div class="icon">🏭</div>
                     <h4>Vertically Integrated</h4>
                     <p>Producer sets retail price P directly. No separate retailer margin.</p>
                 </div>
-                <div class="channel-type" data-type="costplus" onclick="selectChannelType('costplus')">
+                <div class="channel-type" data-type="costplus" role="radio" aria-checked="false" tabindex="0" onclick="selectChannelType('costplus')" onkeydown="handleCardKey(event, 'costplus')">
                     <div class="icon">📊</div>
                     <h4>Cost-Plus Retailer</h4>
                     <p>Retailer applies fixed markup to wholesale price: P = W × (1 + markup)</p>
                 </div>
-                <div class="channel-type" data-type="strategic" onclick="selectChannelType('strategic')">
+                <div class="channel-type" data-type="strategic" role="radio" aria-checked="false" tabindex="0" onclick="selectChannelType('strategic')" onkeydown="handleCardKey(event, 'strategic')">
                     <div class="icon">🎯</div>
                     <h4>Strategic Retailer</h4>
                     <p>Retailer optimizes own profit given W. Producer anticipates this response.</p>
@@ -677,7 +685,7 @@
             </div>
 
             <div id="markupInput" class="markup-input">
-                <label>Retailer Markup (%)</label>
+                <label for="retailerMarkup">Retailer Markup (%)</label>
                 <input type="number" id="retailerMarkup" value="50" step="any">
                 <span style="margin-left: 0.5rem; color: var(--text-light);">e.g., 50 means P = W × 1.5</span>
             </div>
@@ -688,7 +696,7 @@
 
         <!-- Results -->
         <div id="resultsSection">
-            <div class="solution-box">
+            <div class="solution-box" aria-live="polite">
                 <h3 id="solutionTitle">Optimal Solution Found</h3>
                 <div class="results-grid">
                     <div class="result-card producer">
@@ -733,40 +741,42 @@
             </div>
 
             <div class="tool-container">
-                <div class="tabs">
-                    <div class="tab active" onclick="switchTab('chart')">Profit Chart</div>
-                    <div class="tab" onclick="switchTab('comparison')">Compare All Types</div>
-                    <div class="tab" onclick="switchTab('rcode')">R Code</div>
+                <div class="tabs" role="tablist" aria-label="Result views">
+                    <div class="tab active" id="tab-chart" role="tab" aria-selected="true" aria-controls="chartTab" tabindex="0" onclick="switchTab('chart')" onkeydown="handleTabKey(event, 'chart')">Profit Chart</div>
+                    <div class="tab" id="tab-comparison" role="tab" aria-selected="false" aria-controls="comparisonTab" tabindex="0" onclick="switchTab('comparison')" onkeydown="handleTabKey(event, 'comparison')">Compare All Types</div>
+                    <div class="tab" id="tab-rcode" role="tab" aria-selected="false" aria-controls="rcodeTab" tabindex="0" onclick="switchTab('rcode')" onkeydown="handleTabKey(event, 'rcode')">R Code</div>
                 </div>
 
-                <div id="chartTab" class="tab-content active">
+                <div id="chartTab" class="tab-content active" role="tabpanel" aria-labelledby="tab-chart">
                     <p style="color: var(--text-light); margin-bottom: 1rem; font-size: 0.9rem;" id="chartDescription">
                         Producer profit as a function of the decision variable.
                     </p>
                     <div class="chart-container">
-                        <canvas id="profitChart"></canvas>
+                        <canvas id="profitChart" aria-label="Line chart of producer, retailer, and total channel profit versus the decision variable, with the optimum marked" role="img"></canvas>
                     </div>
                 </div>
 
-                <div id="comparisonTab" class="tab-content">
+                <div id="comparisonTab" class="tab-content" role="tabpanel" aria-labelledby="tab-comparison">
                     <p style="color: var(--text-light); margin-bottom: 1rem;">
                         Comparison of optimal outcomes across all three retailer types.
                     </p>
-                    <table class="comparison-table">
-                        <thead>
-                            <tr>
-                                <th>Metric</th>
-                                <th>Integrated</th>
-                                <th>Cost-Plus</th>
-                                <th>Strategic</th>
-                            </tr>
-                        </thead>
-                        <tbody id="comparisonBody">
-                        </tbody>
-                    </table>
+                    <div style="overflow-x: auto;">
+                        <table class="comparison-table">
+                            <thead>
+                                <tr>
+                                    <th>Metric</th>
+                                    <th>Integrated</th>
+                                    <th>Cost-Plus</th>
+                                    <th>Strategic</th>
+                                </tr>
+                            </thead>
+                            <tbody id="comparisonBody">
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
 
-                <div id="rcodeTab" class="tab-content">
+                <div id="rcodeTab" class="tab-content" role="tabpanel" aria-labelledby="tab-rcode">
                     <div class="r-code-section">
                         <h4>
                             <span>R Code for Channel Pricing Optimization</span>
@@ -793,35 +803,79 @@
         let allResults = {};
         let isLinearDemand = false;
         let linearParams = null; // {a, b} for Q = a - b*P
+        let compiledDemand = null; // math.compile() result, refreshed each optimize()
+        let lastInputs = null; // inputs captured at optimize() time (keeps results, chart, and R code in sync)
 
         document.addEventListener('DOMContentLoaded', () => {
             initChart();
+            // Enter-to-calculate on any input field
+            ['demandFunction', 'producerCost', 'priceMin', 'priceMax', 'retailerMarkup'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) {
+                    el.addEventListener('keydown', (e) => {
+                        if (e.key === 'Enter') {
+                            e.preventDefault();
+                            optimize();
+                        }
+                    });
+                }
+            });
         });
 
-        // Check if demand is linear (Q = a - b*P) and extract parameters
+        // Escape a string for safe insertion into innerHTML
+        function escapeHtml(str) {
+            return String(str)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;');
+        }
+
+        // Normalize a demand string so math.js recognizes the function names
+        function normalizeDemand(demandStr) {
+            return demandStr.replace(/\bEXP\b/gi, 'exp')
+                .replace(/\bLOG\b/gi, 'log')
+                .replace(/\bLN\b/gi, 'log')
+                .replace(/\bSQRT\b/gi, 'sqrt');
+        }
+
+        // Keyboard activation for the channel-type radio cards (Enter or Space)
+        function handleCardKey(event, type) {
+            if (event.key === 'Enter' || event.key === ' ' || event.key === 'Spacebar') {
+                event.preventDefault();
+                selectChannelType(type);
+            }
+        }
+
+        // Keyboard activation for the result tabs (Enter or Space)
+        function handleTabKey(event, tab) {
+            if (event.key === 'Enter' || event.key === ' ' || event.key === 'Spacebar') {
+                event.preventDefault();
+                switchTab(tab);
+            }
+        }
+
+        // Check if demand is linear (Q = a - b*P) and extract parameters.
+        // Handles an implicit coefficient of 1 (e.g., "100 - P") and the reversed
+        // form (e.g., "-P + 100"). The slope b must be strictly positive.
         function parseLinearDemand(demandStr) {
-            // Normalize the string
             const normalized = demandStr.replace(/\s+/g, '').toLowerCase();
 
-            // Pattern: a - b*P or a - b*p or a-bP etc.
-            // Match patterns like: 100-2*P, 100-2P, 100 - 2 * P, etc.
-            const patterns = [
-                /^([\d.]+)-([\d.]+)\*?p$/i,      // 100-2*P or 100-2P
-                /^([\d.]+)-([\d.]+)p$/i,          // 100-2P
-                /^-([\d.]+)\*?p\+([\d.]+)$/i,     // -2*P+100
-                /^([\d.]+)-([\d.]+)\*p$/i,        // 100-2*P
-            ];
+            // Form: a - b*P  (the b digits are optional, meaning b = 1)
+            let match = normalized.match(/^([\d.]+)-([\d.]*)\*?p$/);
+            if (match) {
+                const a = parseFloat(match[1]);
+                const b = match[2] === '' ? 1 : parseFloat(match[2]);
+                if (isFinite(a) && isFinite(b) && b > 0) return { a: a, b: b };
+            }
 
-            for (const pattern of patterns) {
-                const match = normalized.match(pattern);
-                if (match) {
-                    if (pattern.source.startsWith('^-')) {
-                        // Pattern like -2*P+100
-                        return { a: parseFloat(match[2]), b: parseFloat(match[1]) };
-                    } else {
-                        return { a: parseFloat(match[1]), b: parseFloat(match[2]) };
-                    }
-                }
+            // Form: -b*P + a  (the b digits are optional, meaning b = 1)
+            match = normalized.match(/^-([\d.]*)\*?p\+([\d.]+)$/);
+            if (match) {
+                const b = match[1] === '' ? 1 : parseFloat(match[1]);
+                const a = parseFloat(match[2]);
+                if (isFinite(a) && isFinite(b) && b > 0) return { a: a, b: b };
             }
 
             return null;
@@ -863,9 +917,10 @@
         function selectChannelType(type) {
             selectedType = type;
             document.querySelectorAll('.channel-type').forEach(el => {
-                el.classList.remove('selected');
+                const isSel = el.getAttribute('data-type') === type;
+                el.classList.toggle('selected', isSel);
+                el.setAttribute('aria-checked', isSel ? 'true' : 'false');
             });
-            document.querySelector(`.channel-type[data-type="${type}"]`).classList.add('selected');
 
             // Show/hide markup input
             const markupInput = document.getElementById('markupInput');
@@ -874,16 +929,25 @@
             } else {
                 markupInput.classList.remove('visible');
             }
+
+            // If results already exist, refresh them for the newly selected type so
+            // the header, cards, chart, and interpretation do not go stale.
+            if (lastInputs && allResults && allResults[type]) {
+                lastResult = allResults[type];
+                displayResults();
+                updateChart(lastInputs.C, lastInputs.priceMin, lastInputs.priceMax, lastInputs.markup);
+                generateRCode();
+            }
         }
 
         function evalDemand(P) {
-            const demandStr = document.getElementById('demandFunction').value;
             try {
-                const normalized = demandStr.replace(/\bEXP\b/gi, 'exp')
-                    .replace(/\bLOG\b/gi, 'log')
-                    .replace(/\bLN\b/gi, 'log')
-                    .replace(/\bSQRT\b/gi, 'sqrt');
-                return math.evaluate(normalized, { P: P });
+                if (compiledDemand) {
+                    return compiledDemand.evaluate({ P: P });
+                }
+                // Fallback: read and parse the current field (used before optimize()).
+                const demandStr = document.getElementById('demandFunction').value;
+                return math.evaluate(normalizeDemand(demandStr), { P: P });
             } catch (e) {
                 return NaN;
             }
@@ -897,22 +961,29 @@
             // FOC: a - 2bP + bC = 0  =>  P* = (a + bC) / (2b)
             if (isLinearDemand && linearParams) {
                 const { a, b } = linearParams;
-                let bestP = (a + b * C) / (2 * b);
+                const rawBestP = (a + b * C) / (2 * b);
 
                 // Constrain to price range
-                bestP = Math.max(priceMin, Math.min(priceMax, bestP));
+                const bestP = Math.max(priceMin, Math.min(priceMax, rawBestP));
 
-                const Q = a - b * bestP;
+                // Use clamped quantity so a choke price below marginal cost (or a
+                // price range that forces demand negative) reports zero, not a
+                // spurious positive profit from multiplying two negatives.
+                const Q = Math.max(0, a - b * bestP);
                 const profit = (bestP - C) * Q;
+                const nonViable = Q <= 0;
+                const corner = !nonViable && (rawBestP < priceMin - 1e-9 || rawBestP > priceMax + 1e-9);
 
                 return {
                     W: C,
                     P: bestP,
-                    Q: Math.max(0, Q),
+                    Q: Q,
                     producerProfit: profit,
                     retailerProfit: 0,
                     totalProfit: profit,
-                    method: 'analytical'
+                    method: 'analytical',
+                    nonViable: nonViable,
+                    corner: corner
                 };
             }
 
@@ -943,7 +1014,17 @@
                 }
             }
 
+            // No profitable price found (non-viable market or empty range)
+            if (!isFinite(bestProfit)) {
+                return {
+                    W: C, P: bestP, Q: 0,
+                    producerProfit: 0, retailerProfit: 0, totalProfit: 0,
+                    method: 'grid_search', nonViable: true, corner: false
+                };
+            }
+
             const Q = evalDemand(bestP);
+            const corner = Math.abs(bestP - priceMin) < step || Math.abs(bestP - priceMax) < step;
             return {
                 W: C,
                 P: bestP,
@@ -951,7 +1032,9 @@
                 producerProfit: bestProfit,
                 retailerProfit: 0,
                 totalProfit: bestProfit,
-                method: 'grid_search'
+                method: 'grid_search',
+                nonViable: false,
+                corner: corner
             };
         }
 
@@ -965,26 +1048,32 @@
 
             if (isLinearDemand && linearParams) {
                 const { a, b } = linearParams;
-                let bestW = (a + b * m * C) / (2 * b * m);
+                const rawBestW = (a + b * m * C) / (2 * b * m);
 
                 // Constrain
                 const wMin = Math.max(C, priceMin / m);
                 const wMax = priceMax / m;
-                bestW = Math.max(wMin, Math.min(wMax, bestW));
+                const bestW = Math.max(wMin, Math.min(wMax, rawBestW));
 
                 const P = bestW * m;
-                const Q = a - b * P;
+                // Clamp quantity so a non-viable market reports zero rather than a
+                // negative-Q artifact (e.g., retailer profit of a negative number).
+                const Q = Math.max(0, a - b * P);
                 const producerProfit = (bestW - C) * Q;
                 const retailerProfit = (P - bestW) * Q;
+                const nonViable = Q <= 0;
+                const corner = !nonViable && (rawBestW < wMin - 1e-9 || rawBestW > wMax + 1e-9);
 
                 return {
                     W: bestW,
                     P: P,
-                    Q: Math.max(0, Q),
+                    Q: Q,
                     producerProfit: producerProfit,
                     retailerProfit: retailerProfit,
                     totalProfit: producerProfit + retailerProfit,
-                    method: 'analytical'
+                    method: 'analytical',
+                    nonViable: nonViable,
+                    corner: corner
                 };
             }
 
@@ -995,6 +1084,25 @@
             const wMax = priceMax / m;
 
             const step = (wMax - wMin) / 200;
+
+            // Guard against a degenerate wholesale range whose width is numerically
+            // negligible (wMax == wMin, e.g. priceMax == C*m). A zero or sub-ULP step
+            // would spin the grid loops forever and freeze the tab, so evaluate the
+            // single feasible wholesale price directly instead.
+            if (wMax >= wMin && (wMax - wMin) <= Math.abs(wMax) * 1e-9) {
+                const W0 = wMin;
+                const P0 = W0 * m;
+                const Q0 = evalDemand(P0);
+                const viable = Q0 > 0;
+                const pp = viable ? (W0 - C) * Q0 : 0;
+                const rp = viable ? (P0 - W0) * Q0 : 0;
+                return {
+                    W: W0, P: P0, Q: viable ? Q0 : 0,
+                    producerProfit: pp, retailerProfit: rp, totalProfit: pp + rp,
+                    method: 'grid_search', nonViable: !viable, corner: viable
+                };
+            }
+
             for (let W = wMin; W <= wMax; W += step) {
                 const P = W * m;
                 const Q = evalDemand(P);
@@ -1020,9 +1128,19 @@
                 }
             }
 
+            // No profitable wholesale price found (non-viable market or empty range)
+            if (!isFinite(bestProfit)) {
+                return {
+                    W: wMin, P: wMin * m, Q: 0,
+                    producerProfit: 0, retailerProfit: 0, totalProfit: 0,
+                    method: 'grid_search', nonViable: true, corner: false
+                };
+            }
+
             const P = bestW * m;
             const Q = evalDemand(P);
             const retailerProfit = (P - bestW) * Q;
+            const corner = Math.abs(bestW - wMin) < step || Math.abs(bestW - wMax) < step;
 
             return {
                 W: bestW,
@@ -1031,7 +1149,9 @@
                 producerProfit: bestProfit,
                 retailerProfit: retailerProfit,
                 totalProfit: bestProfit + retailerProfit,
-                method: 'grid_search'
+                method: 'grid_search',
+                nonViable: false,
+                corner: corner
             };
         }
 
@@ -1048,9 +1168,19 @@
             }
 
             // Grid search for non-linear demand
+            const step = (priceMax - W) / 100;
+
+            // If there is no meaningful room for the retailer to raise the price
+            // above W within the range (W at or numerically indistinguishable from
+            // priceMax), the only feasible response is P = W. This guards the loops
+            // below against a zero or sub-ULP step that would never advance P and
+            // would otherwise spin forever, freezing the browser tab.
+            if (!(step > 0) || (priceMax - W) <= Math.abs(priceMax) * 1e-9) {
+                return W;
+            }
+
             let bestP = W, bestProfit = -Infinity;
 
-            const step = (priceMax - W) / 100;
             for (let P = W; P <= priceMax; P += step) {
                 const Q = evalDemand(P);
                 if (Q < 0 || isNaN(Q)) continue;
@@ -1094,32 +1224,61 @@
             //         = (2a + a + bC) / (4b) = (3a + bC) / (4b)
             if (isLinearDemand && linearParams) {
                 const { a, b } = linearParams;
-                let bestW = (a + b * C) / (2 * b);
 
-                // Constrain W
-                const wMax = priceMax * 0.9;
-                bestW = Math.max(C, Math.min(wMax, bestW));
+                // Retailer's clamped best response to a given W, and the resulting
+                // producer profit. P is clamped to [W, priceMax] exactly as
+                // retailerBestResponse does, so the reported point lies on the
+                // plotted profit curve and never exceeds the declared price range.
+                const evalW = (W) => {
+                    let P = (a + b * W) / (2 * b);
+                    P = Math.min(priceMax, Math.max(W, P));
+                    const Q = Math.max(0, a - b * P);
+                    return { P: P, Q: Q, producerProfit: (W - C) * Q };
+                };
 
-                const bestP = (a + b * bestW) / (2 * b);
-                const Q = a - b * bestP;
-                const producerProfit = (bestW - C) * Q;
+                // The producer maximizes over W in [C, priceMax]. The profit is
+                // concave on the interior regime and linear once the retailer's
+                // price hits priceMax, so the maximum is at one of these breakpoints.
+                const candidates = [
+                    (a + b * C) / (2 * b),      // interior first-order condition
+                    (2 * b * priceMax - a) / b, // W where the interior P hits priceMax
+                    C,                          // lower bound
+                    priceMax                    // upper bound
+                ].map(W => Math.max(C, Math.min(priceMax, W)));
+
+                let bestW = C, best = evalW(C);
+                for (const W of candidates) {
+                    const cand = evalW(W);
+                    if (cand.producerProfit > best.producerProfit) {
+                        best = cand;
+                        bestW = W;
+                    }
+                }
+
+                const bestP = best.P;
+                const Q = best.Q;
+                const producerProfit = best.producerProfit;
                 const retailerProfit = (bestP - bestW) * Q;
+                const nonViable = Q <= 0;
+                const corner = !nonViable && (Math.abs(bestP - priceMax) < 1e-6 || Math.abs(bestW - priceMax) < 1e-6);
 
                 return {
                     W: bestW,
                     P: bestP,
-                    Q: Math.max(0, Q),
+                    Q: Q,
                     producerProfit: producerProfit,
                     retailerProfit: retailerProfit,
                     totalProfit: producerProfit + retailerProfit,
-                    method: 'analytical'
+                    method: 'analytical',
+                    nonViable: nonViable,
+                    corner: corner
                 };
             }
 
             // Grid search for non-linear demand
             let bestW = C, bestProducerProfit = -Infinity, bestP = 0;
 
-            const wMax = priceMax * 0.9;
+            const wMax = priceMax;
             const step = (wMax - C) / 100;
 
             for (let W = C; W <= wMax; W += step) {
@@ -1149,8 +1308,18 @@
                 }
             }
 
+            // No profitable wholesale price found (non-viable market or empty range)
+            if (!isFinite(bestProducerProfit)) {
+                return {
+                    W: C, P: C, Q: 0,
+                    producerProfit: 0, retailerProfit: 0, totalProfit: 0,
+                    method: 'grid_search', nonViable: true, corner: false
+                };
+            }
+
             const Q = evalDemand(bestP);
             const retailerProfit = (bestP - bestW) * Q;
+            const corner = Math.abs(bestW - C) < step || Math.abs(bestW - wMax) < step || Math.abs(bestP - priceMax) < 1e-6;
 
             return {
                 W: bestW,
@@ -1159,7 +1328,9 @@
                 producerProfit: bestProducerProfit,
                 retailerProfit: retailerProfit,
                 totalProfit: bestProducerProfit + retailerProfit,
-                method: 'grid_search'
+                method: 'grid_search',
+                nonViable: false,
+                corner: corner
             };
         }
 
@@ -1173,24 +1344,54 @@
             const markup = parseFloat(document.getElementById('retailerMarkup').value);
             const demandStr = document.getElementById('demandFunction').value;
 
-            // Validate
-            if (isNaN(C) || isNaN(priceMin) || isNaN(priceMax)) {
-                errorEl.textContent = 'Please enter valid numbers for cost and price range.';
+            const showError = (msg) => {
+                errorEl.textContent = msg;
                 errorEl.classList.add('visible');
+            };
+
+            // Validate numbers
+            if (isNaN(C) || isNaN(priceMin) || isNaN(priceMax)) {
+                showError('Please enter valid numbers for cost and price range.');
+                return;
+            }
+            // Price range must be ordered
+            if (priceMin >= priceMax) {
+                showError('The minimum price must be less than the maximum price.');
+                return;
+            }
+            // A positive margin requires the price ceiling to exceed marginal cost
+            if (priceMax <= C) {
+                showError('The maximum price must be greater than the marginal cost (C) so a positive margin is possible.');
+                return;
+            }
+            // The comparison always computes the cost-plus regime, so a usable markup is required
+            if (!isFinite(markup) || markup <= -100) {
+                showError('Please enter a valid retailer markup greater than -100%.');
+                return;
+            }
+
+            // Compile the demand expression once (used by every grid-search call).
+            try {
+                compiledDemand = math.compile(normalizeDemand(demandStr));
+            } catch (e) {
+                compiledDemand = null;
+                showError('Invalid demand function. Check your syntax.');
                 return;
             }
 
             // Test demand function
             const testQ = evalDemand((priceMin + priceMax) / 2);
             if (isNaN(testQ)) {
-                errorEl.textContent = 'Invalid demand function. Check your syntax.';
-                errorEl.classList.add('visible');
+                showError('Invalid demand function. Check your syntax.');
                 return;
             }
 
             // Check if demand is linear
             linearParams = parseLinearDemand(demandStr);
             isLinearDemand = linearParams !== null;
+
+            // Capture the inputs used for this run so results, chart, and R code stay in sync
+            lastInputs = { C: C, priceMin: priceMin, priceMax: priceMax, markup: markup, demandStr: demandStr };
 
             // Run all optimizations for comparison
             allResults = {
@@ -1217,7 +1418,13 @@
                 strategic: 'Strategic Retailer'
             };
 
-            const methodLabel = r.method === 'analytical' ? ' (Exact)' : ' (Approximate)';
+            let methodLabel = r.method === 'analytical' ? ' (Exact)' : ' (Approximate)';
+            if (r.nonViable) {
+                methodLabel = ' (Market Not Viable)';
+            } else if (r.corner) {
+                // A range-imposed corner is not the unconstrained first-order optimum
+                methodLabel = ' (Boundary Solution)';
+            }
             document.getElementById('solutionTitle').textContent = `Optimal Solution (${typeNames[selectedType]})${methodLabel}`;
 
             document.getElementById('optW').textContent = selectedType === 'integrated' ? 'N/A' : r.W.toFixed(2);
@@ -1243,19 +1450,43 @@
                 html += `<p style="color: #92400e; font-style: italic; margin-bottom: 0.75rem;">≈ Approximate solution via grid search (non-linear demand)</p>`;
             }
 
+            // Non-viable market: no positive-margin quantity exists at these inputs
+            if (r.nonViable) {
+                html += `<p style="color: #92400e;"><strong>This market is not viable at these inputs.</strong> The demand choke price is at or below the marginal cost (or your price range forces quantity to zero), so the optimal quantity and profit are both zero.</p>`;
+                document.getElementById('interpretationText').innerHTML = html;
+                return;
+            }
+
+            // Boundary note: the optimum sits on the price-range limit, not the interior optimum
+            if (r.corner) {
+                html += `<p style="color: #92400e;"><strong>Boundary solution:</strong> the optimum is limited by your price range, not the unconstrained first-order condition. Widen the price range to see the interior optimum.</p>`;
+            }
+
+            // Efficiency loss is only meaningful when the integrated channel earns a positive profit
+            const canCompare = int && int.totalProfit > 0 && !int.nonViable;
+            const efficiencyLoss = canCompare
+                ? Math.max(0, (int.totalProfit - r.totalProfit) / int.totalProfit * 100).toFixed(1)
+                : null;
+
             if (selectedType === 'integrated') {
                 html += `<p>In the vertically integrated channel, the producer controls the retail price directly, eliminating double marginalization. The optimal retail price is $${r.P.toFixed(2)}, yielding maximum channel profit of $${r.totalProfit.toFixed(2)}.</p>`;
             } else if (selectedType === 'costplus') {
-                const markup = parseFloat(document.getElementById('retailerMarkup').value);
-                const efficiencyLoss = ((int.totalProfit - r.totalProfit) / int.totalProfit * 100).toFixed(1);
+                const markup = lastInputs ? lastInputs.markup : parseFloat(document.getElementById('retailerMarkup').value);
                 html += `<p>With a ${markup}% cost-plus markup, the retailer sets P = $${r.P.toFixed(2)} when W = $${r.W.toFixed(2)}.</p>`;
                 html += `<p>The producer earns $${r.producerProfit.toFixed(2)} and the retailer earns $${r.retailerProfit.toFixed(2)}.</p>`;
-                html += `<p>Total channel profit ($${r.totalProfit.toFixed(2)}) is ${efficiencyLoss}% lower than integrated due to double marginalization.</p>`;
+                if (efficiencyLoss !== null) {
+                    html += `<p>Total channel profit ($${r.totalProfit.toFixed(2)}) is ${efficiencyLoss}% lower than integrated due to double marginalization.</p>`;
+                } else {
+                    html += `<p>Total channel profit is $${r.totalProfit.toFixed(2)}.</p>`;
+                }
             } else {
-                const efficiencyLoss = ((int.totalProfit - r.totalProfit) / int.totalProfit * 100).toFixed(1);
                 html += `<p>With a strategic retailer, the producer sets W = $${r.W.toFixed(2)}, anticipating the retailer's optimal response of P = $${r.P.toFixed(2)}.</p>`;
                 html += `<p>The producer earns $${r.producerProfit.toFixed(2)} and the retailer earns $${r.retailerProfit.toFixed(2)}.</p>`;
-                html += `<p>This Stackelberg equilibrium results in ${efficiencyLoss}% efficiency loss compared to vertical integration.</p>`;
+                if (efficiencyLoss !== null) {
+                    html += `<p>This Stackelberg equilibrium results in ${efficiencyLoss}% efficiency loss compared to vertical integration.</p>`;
+                } else {
+                    html += `<p>Total channel profit is $${r.totalProfit.toFixed(2)}.</p>`;
+                }
             }
 
             document.getElementById('interpretationText').innerHTML = html;
@@ -1263,6 +1494,7 @@
 
         function updateChart(C, priceMin, priceMax, markup) {
             const labels = [];
+            const xVals = [];
             const producerData = [];
             const retailerData = [];
             const totalData = [];
@@ -1276,7 +1508,7 @@
                 for (let P = priceMin; P <= priceMax; P += step) {
                     const Q = evalDemand(P);
                     if (Q < 0 || isNaN(Q)) continue;
-                    labels.push(P.toFixed(1));
+                    xVals.push(P);
                     producerData.push((P - C) * Q);
                     retailerData.push(0);
                     totalData.push((P - C) * Q);
@@ -1288,29 +1520,50 @@
                 const wMin = Math.max(C, priceMin / m);
                 const wMax = priceMax / m;
                 const step = (wMax - wMin) / 50;
-                for (let W = wMin; W <= wMax; W += step) {
-                    const P = W * m;
+                if (wMax >= wMin && (wMax - wMin) <= Math.abs(wMax) * 1e-9) {
+                    // Degenerate wholesale range (priceMax == C*m): plot the single
+                    // feasible point rather than spinning on a zero or sub-ULP step.
+                    const P = wMin * m;
                     const Q = evalDemand(P);
-                    if (Q < 0 || isNaN(Q)) continue;
-                    labels.push(W.toFixed(1));
-                    producerData.push((W - C) * Q);
-                    retailerData.push((P - W) * Q);
-                    totalData.push((W - C) * Q + (P - W) * Q);
+                    if (!(Q < 0) && !isNaN(Q)) {
+                        xVals.push(wMin);
+                        producerData.push((wMin - C) * Q);
+                        retailerData.push((P - wMin) * Q);
+                        totalData.push((wMin - C) * Q + (P - wMin) * Q);
+                    }
+                } else {
+                    for (let W = wMin; W <= wMax; W += step) {
+                        const P = W * m;
+                        const Q = evalDemand(P);
+                        if (Q < 0 || isNaN(Q)) continue;
+                        xVals.push(W);
+                        producerData.push((W - C) * Q);
+                        retailerData.push((P - W) * Q);
+                        totalData.push((W - C) * Q + (P - W) * Q);
+                    }
                 }
             } else {
                 xVar = 'W';
                 xLabel = 'Wholesale Price (W)';
-                const wMax = priceMax * 0.9;
+                const wMax = priceMax;
                 const step = (wMax - C) / 50;
                 for (let W = C; W <= wMax; W += step) {
                     const P = retailerBestResponse(W, priceMin, priceMax);
                     const Q = evalDemand(P);
                     if (Q < 0 || isNaN(Q)) continue;
-                    labels.push(W.toFixed(1));
+                    xVals.push(W);
                     producerData.push((W - C) * Q);
                     retailerData.push((P - W) * Q);
                     totalData.push((W - C) * Q + (P - W) * Q);
                 }
+            }
+
+            // Choose axis-label precision so adjacent labels stay distinct even for a small price range
+            const span = xVals.length > 1 ? Math.abs(xVals[xVals.length - 1] - xVals[0]) : 1;
+            const gap = xVals.length > 1 ? span / (xVals.length - 1) : 1;
+            const decimals = gap >= 1 ? 1 : (gap >= 0.1 ? 2 : (gap >= 0.01 ? 3 : 4));
+            for (let i = 0; i < xVals.length; i++) {
+                labels.push(xVals[i].toFixed(decimals));
             }
 
             document.getElementById('chartDescription').textContent =
@@ -1351,13 +1604,18 @@
                 }
             ];
 
-            // Add optimal point
+            // Add optimal point: snap the marker to the nearest grid label but plot the
+            // exact analytic profit as its height (never off by a grid step, never missing).
             const optValue = selectedType === 'integrated' ? lastResult.P : lastResult.W;
-            const optIdx = labels.findIndex(l => Math.abs(parseFloat(l) - optValue) < (parseFloat(labels[1]) - parseFloat(labels[0])));
-            if (optIdx >= 0) {
+            let optIdx = -1, bestDist = Infinity;
+            for (let i = 0; i < xVals.length; i++) {
+                const d = Math.abs(xVals[i] - optValue);
+                if (d < bestDist) { bestDist = d; optIdx = i; }
+            }
+            if (optIdx >= 0 && !lastResult.nonViable) {
                 profitChart.data.datasets.push({
                     label: 'Optimum',
-                    data: [{x: labels[optIdx], y: producerData[optIdx]}],
+                    data: [{x: labels[optIdx], y: lastResult.producerProfit}],
                     borderColor: '#dc2626',
                     backgroundColor: '#dc2626',
                     pointRadius: 8,
@@ -1405,9 +1663,16 @@
         }
 
         function switchTab(tab) {
-            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab').forEach(t => {
+                t.classList.remove('active');
+                t.setAttribute('aria-selected', 'false');
+            });
             document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
-            document.querySelector(`.tab[onclick="switchTab('${tab}')"]`).classList.add('active');
+            const activeTab = document.getElementById('tab-' + tab);
+            if (activeTab) {
+                activeTab.classList.add('active');
+                activeTab.setAttribute('aria-selected', 'true');
+            }
             document.getElementById(tab + 'Tab').classList.add('active');
 
             // Generate R code when switching to R code tab
@@ -1417,14 +1682,23 @@
         }
 
         function generateRCode() {
-            const demandStr = document.getElementById('demandFunction').value;
-            const C = parseFloat(document.getElementById('producerCost').value);
-            const markup = parseFloat(document.getElementById('retailerMarkup').value);
-            const priceMin = parseFloat(document.getElementById('priceMin').value);
-            const priceMax = parseFloat(document.getElementById('priceMax').value);
+            // Prefer the values captured at optimize() time so the exported R code always
+            // matches the displayed results, even if the user edits a field afterward.
+            const src = lastInputs || {
+                demandStr: document.getElementById('demandFunction').value,
+                C: parseFloat(document.getElementById('producerCost').value),
+                markup: parseFloat(document.getElementById('retailerMarkup').value),
+                priceMin: parseFloat(document.getElementById('priceMin').value),
+                priceMax: parseFloat(document.getElementById('priceMax').value)
+            };
+            const demandStr = src.demandStr;
+            const C = src.C;
+            const markup = src.markup;
+            const priceMin = src.priceMin;
+            const priceMax = src.priceMax;
 
-            // Convert demand function to R syntax
-            const demandR = demandStr.replace(/\^/g, '^').replace(/\bP\b/g, 'P');
+            // Escape the user-supplied demand string before it lands in innerHTML (prevents self-XSS).
+            const demandR = escapeHtml(demandStr);
 
             let code = `<span class="comment"># ============================================</span>
 <span class="comment"># Channel Pricing Optimizer</span>
@@ -1544,7 +1818,7 @@ retailer_profit_cp = (P_costplus - W_costplus) * Q_costplus
 
 <span class="comment"># Optimize</span>
 result_strategic = <span class="function">optimize</span>(producer_profit_strategic,
-                            <span class="function">c</span>(C, price_max * <span class="number">0.9</span>),
+                            <span class="function">c</span>(C, price_max),
                             maximum = <span class="keyword">TRUE</span>)
 
 W_strategic = result_strategic$maximum
@@ -1591,19 +1865,38 @@ summary_df = <span class="function">data.frame</span>(
 
         function copyRCode() {
             const codeBox = document.getElementById('rCodeOutput');
+            const btn = document.querySelector('.copy-btn');
             // Get text content without HTML tags
             const text = codeBox.innerText || codeBox.textContent;
-            navigator.clipboard.writeText(text).then(() => {
-                const btn = document.querySelector('.copy-btn');
-                btn.textContent = 'Copied!';
-                setTimeout(() => btn.textContent = 'Copy', 2000);
-            });
+
+            // Fallback used when the clipboard API is unavailable or blocked:
+            // select the code so the user can copy it manually.
+            const selectFallback = () => {
+                try {
+                    const range = document.createRange();
+                    range.selectNodeContents(codeBox);
+                    const sel = window.getSelection();
+                    sel.removeAllRanges();
+                    sel.addRange(range);
+                } catch (e) { /* selection not possible; nothing more to do */ }
+                btn.textContent = 'Press Ctrl+C';
+                setTimeout(() => btn.textContent = 'Copy', 3000);
+            };
+
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(text).then(() => {
+                    btn.textContent = 'Copied!';
+                    setTimeout(() => btn.textContent = 'Copy', 2000);
+                }).catch(selectFallback);
+            } else {
+                selectFallback();
+            }
         }
     </script>
 
 </div> <!-- end main-content -->
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js" integrity="sha384-yuGdyIzzYtOBlBG6JOWn+Ey9kpq7HocusNuxEGyyohr1eEyXpeEyehIIXC/hznw4" crossorigin="anonymous"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js" integrity="sha384-lI+CxEx/bCvWP1b0OK13j5HTrTZP7yf1xle8TVOFq2smz6KC1RChTarRV/RHP5PP" crossorigin="anonymous"></script>
 <script>
     const firebaseConfig = {
         apiKey: "AIzaSyBg3LJDwVIRGWtFZb_mM_CSRJMNCJUta20",
@@ -1614,15 +1907,31 @@ summary_df = <span class="function">data.frame</span>(
         appId: "1:659335573790:web:00013a166787efecb3d90f",
         measurementId: "G-NGKNY08XWP"
     };
-    firebase.initializeApp(firebaseConfig);
-    firebase.auth().onAuthStateChanged(function(user) {
-        if (user) {
-            document.getElementById('loading-screen').style.display = 'none';
-            document.getElementById('main-content').style.display = 'block';
-        } else {
-            window.location.href = 'login.html';
+    let authResolved = false;
+    // Fallback: if Firebase cannot be reached within 12s, show a message instead of hanging on "Loading...".
+    const authTimeout = setTimeout(function() {
+        if (!authResolved) {
+            const ls = document.getElementById('loading-screen');
+            if (ls) {
+                ls.innerHTML = '<p style="color: #64748b; max-width: 420px; text-align: center; padding: 0 1rem;">Could not reach the sign-in service. Check your connection and reload this page.</p>';
+            }
         }
-    });
+    }, 12000);
+    try {
+        firebase.initializeApp(firebaseConfig);
+        firebase.auth().onAuthStateChanged(function(user) {
+            authResolved = true;
+            clearTimeout(authTimeout);
+            if (user) {
+                document.getElementById('loading-screen').style.display = 'none';
+                document.getElementById('main-content').style.display = 'block';
+            } else {
+                window.location.href = 'login.html?next=' + encodeURIComponent(window.location.pathname.split('/').pop());
+            }
+        });
+    } catch (e) {
+        // Firebase failed to load or initialize; the timeout above will surface a message.
+    }
 </script>
 </body>
 </html>

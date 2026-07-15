@@ -3,9 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Price Optimizer | Revenue vs. Profit</title>
+    <title>Price Optimizer | Revenue vs. Profit | Koray Cosguner</title>
     <meta name="robots" content="noindex,nofollow">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-CTZ8G4EYLR"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-CTZ8G4EYLR');
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js" integrity="sha384-9nhczxUqK87bcKHh20fSQcTGD4qq5GhayNYSYWqwBkINBhOfQLg/P5HG5lF1urn4" crossorigin="anonymous"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -77,6 +85,12 @@
             cursor: pointer; width: 100%; transition: background 0.2s; margin-top: 10px;
         }
         .btn-calc:hover { background: black; }
+
+        .btn-example {
+            background: var(--surface); color: var(--text-main); border: 1px solid var(--border); padding: 12px 28px; border-radius: 8px; font-size: 0.95rem; font-weight: 600;
+            cursor: pointer; width: 100%; transition: background 0.2s, border-color 0.2s; margin-top: 10px;
+        }
+        .btn-example:hover { background: var(--bg); border-color: var(--text-light); }
 
         /* Results Area */
         .results-area { display: none; animation: fadeIn 0.5s ease-out; }
@@ -174,30 +188,35 @@
         
         <div class="sidebar">
             <h3 style="margin-top:0;">Parameters</h3>
-            
-            <div class="input-group">
-                <label>Intercept (A)</label>
-                <input type="number" id="val-a" placeholder="e.g. 1000">
-                <div class="input-hint">Base demand when Price is 0.</div>
-            </div>
 
-            <div class="input-group">
-                <label>Slope (B)</label>
-                <input type="number" id="val-b" placeholder="e.g. -2.5">
-                <div class="input-hint">Must be negative (e.g. -2).</div>
-            </div>
+            <form id="param-form" onsubmit="optimize(); return false;">
+                <div class="input-group">
+                    <label for="val-a">Intercept (A)</label>
+                    <input type="number" id="val-a" placeholder="e.g. 1000" step="any">
+                    <div class="input-hint">Base demand when Price is 0.</div>
+                </div>
 
-            <div class="input-group">
-                <label>Variable Cost (C)</label>
-                <input type="number" id="val-c" placeholder="e.g. 15.00" step="0.01">
-                <div class="input-hint">Cost per unit.</div>
-            </div>
+                <div class="input-group">
+                    <label for="val-b">Slope (B)</label>
+                    <input type="number" id="val-b" placeholder="e.g. -2.5" step="any">
+                    <div class="input-hint">Must be negative (e.g. -2).</div>
+                </div>
 
-            <button class="btn-calc" onclick="optimize()">Run Solver</button>
+                <div class="input-group">
+                    <label for="val-c">Variable Cost (C)</label>
+                    <input type="number" id="val-c" placeholder="e.g. 15.00" step="any">
+                    <div class="input-hint">Cost per unit.</div>
+                </div>
+
+                <div id="input-error" role="alert" aria-live="assertive" style="display:none; background:#fdf2f2; border:1px solid var(--primary); color:var(--primary); border-radius:6px; padding:10px 12px; font-size:0.85rem; margin-bottom:14px;"></div>
+
+                <button type="submit" class="btn-calc">Run Solver</button>
+                <button type="button" class="btn-example" onclick="loadExample()">Load example</button>
+            </form>
         </div>
 
-        <div class="results-area" id="results">
-            
+        <div class="results-area" id="results" aria-live="polite">
+
             <div class="comparison-grid">
                 
                 <div class="result-card card-revenue">
@@ -224,36 +243,46 @@
 
                 <div class="result-card card-profit">
                     <span class="card-title">Strategy 2: Maximize Profit</span>
-                    
-                    <div class="metric-row">
-                        <span class="metric-label">Optimal Price</span>
-                        <span class="metric-val" id="prof-p">--</span>
-                    </div>
-                    <div class="metric-row">
-                        <span class="metric-label">Quantity Sold</span>
-                        <span class="metric-val" id="prof-q">--</span>
-                    </div>
-                    
-                    <div style="margin-top: 15px;">
-                        <span class="metric-label" style="display:block; font-size:0.8rem;">Resulting Profit</span>
-                        <span class="highlight-val" id="prof-pi">--</span>
+
+                    <div id="prof-metrics">
+                        <div class="metric-row">
+                            <span class="metric-label">Optimal Price</span>
+                            <span class="metric-val" id="prof-p">--</span>
+                        </div>
+                        <div class="metric-row">
+                            <span class="metric-label">Quantity Sold</span>
+                            <span class="metric-val" id="prof-q">--</span>
+                        </div>
+
+                        <div style="margin-top: 15px;">
+                            <span class="metric-label" style="display:block; font-size:0.8rem;">Resulting Profit</span>
+                            <span class="highlight-val" id="prof-pi">--</span>
+                        </div>
+
+                        <div style="margin-top: 10px; font-size: 0.9rem; color: #6b7280;">
+                            Revenue Generated: <span id="prof-revenue" style="font-weight:700;">--</span>
+                        </div>
                     </div>
 
-                    <div style="margin-top: 10px; font-size: 0.9rem; color: #6b7280;">
-                        Revenue Generated: <span id="prof-revenue" style="font-weight:700;">--</span>
-                    </div>
+                    <div id="prof-message" style="display:none; margin-top: 20px; font-size: 0.95rem; color: var(--primary); font-weight: 600; line-height: 1.5;"></div>
                 </div>
 
             </div>
 
-            <div class="chart-container">
-                <canvas id="optimizerChart"></canvas>
+            <div id="gap-summary" style="display:none; background:#fdf2f2; border-left:4px solid var(--primary); border-radius:8px; padding:14px 18px; margin-bottom:20px; font-size:0.95rem; color:var(--text-main); line-height:1.5;"></div>
+
+            <div id="round-note" style="display:none; text-align:center; font-size:0.8rem; color:var(--text-light); margin-bottom:20px;">
+                Prices and dollar figures are rounded to cents and quantities to two decimals for display; each profit figure is computed from unrounded values, so a hand check of the displayed numbers may differ by a few cents.
             </div>
-            
+
+            <div class="chart-container">
+                <canvas id="optimizerChart" role="img" aria-label="Line chart of revenue and profit versus price. Both curves are parabolas; the blue dot marks the revenue-maximizing price and the crimson dot marks the profit-maximizing price. The key figures are listed in the cards above."></canvas>
+            </div>
+
             <div style="margin-top: 15px; text-align: center; font-size: 0.9rem; color: var(--text-light);">
                 <span style="display:inline-block; width: 10px; height: 10px; background: #2563eb; margin-right: 5px; border-radius: 50%;"></span> Rev Max
                 <span style="display:inline-block; width: 10px; height: 10px; background: #990000; margin-left: 15px; margin-right: 5px; border-radius: 50%;"></span> Profit Max
-                <span style="display:inline-block; width: 10px; height: 10px; background: transparent; border: 2px solid #ef4444; margin-left: 15px; margin-right: 5px; border-radius: 50%;"></span> Profit Gap
+                <span style="display:inline-block; width: 10px; height: 10px; background: transparent; border: 2px solid #ef4444; margin-left: 15px; margin-right: 5px; border-radius: 50%;"></span> Profit at Rev-Max Price
             </div>
 
         </div>
@@ -269,68 +298,125 @@
 <script>
     let myChart = null;
 
+    function showError(msg) {
+        const el = document.getElementById('input-error');
+        el.textContent = msg;
+        el.style.display = 'block';
+    }
+
+    function clearError() {
+        const el = document.getElementById('input-error');
+        el.textContent = '';
+        el.style.display = 'none';
+    }
+
+    function loadExample() {
+        document.getElementById('val-a').value = 1000;
+        document.getElementById('val-b').value = -2.5;
+        document.getElementById('val-c').value = 15;
+        optimize();
+    }
+
     function optimize() {
         // 1. Get Inputs
         const A = parseFloat(document.getElementById('val-a').value);
         const B = parseFloat(document.getElementById('val-b').value);
         const C = parseFloat(document.getElementById('val-c').value);
 
-        // Validation
+        // Validation (inline messages, no alert popups)
         if (isNaN(A) || isNaN(B) || isNaN(C)) {
-            alert("Please provide A, B, and Variable Cost.");
+            showError("Please enter values for A, B, and Variable Cost.");
+            return;
+        }
+        if (A <= 0) {
+            showError("Intercept (A) must be greater than 0 (demand must be positive at some price).");
             return;
         }
         if (B >= 0) {
-            alert("Slope (B) should be negative (e.g., -2.5).");
+            showError("Slope (B) must be negative (e.g., -2.5).");
             return;
         }
+        if (C < 0) {
+            showError("Variable Cost (C) cannot be negative.");
+            return;
+        }
+        clearError();
 
         // --- SOLVER LOGIC ---
 
-        // 1. Revenue Maximization (MR = 0)
+        // Choke price: the price at which demand falls to zero (Q = A + B*P = 0).
+        const chokePrice = -A / B;
+
+        // Formatters
+        const fmt = (num) => "$" + num.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
+        const fmtQty = (num) => num.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
+        const fmtPct = (num) => num.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2}) + "%";
+
+        // 1. Revenue Maximization (MR = 0). Cost-independent, always valid for A > 0, B < 0.
         const priceRevMax = -A / (2 * B);
         const qtyRevMax = A + (B * priceRevMax);
         const revMaxTotal = priceRevMax * qtyRevMax;
-        const profitAtRevMax = (priceRevMax - C) * qtyRevMax; // This is the 'Gap' point
+        const profitAtRevMax = (priceRevMax - C) * qtyRevMax;
 
-        // 2. Profit Maximization (MR = MC)
-        const priceProfMax = (C - (A/B)) / 2;
+        // 2. Profit Maximization (MR = MC). An interior optimum with positive quantity
+        //    exists only when the unit cost is below the choke price.
+        const noProfit = C >= chokePrice;
+        const priceProfMax = (C - (A / B)) / 2;
         const qtyProfMax = A + (B * priceProfMax);
         const revAtProfMax = priceProfMax * qtyProfMax;
         const profitMaxTotal = (priceProfMax - C) * qtyProfMax;
 
         // --- UPDATE UI ---
-        
         document.getElementById('results').style.display = 'block';
-        
-        const fmt = (num) => "$" + num.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
-        const fmtNum = (num) => num.toLocaleString(undefined, {minimumFractionDigits: 0, maximumFractionDigits: 0});
 
-        // Revenue Card
+        // Revenue Card (always shown; revenue maximization does not depend on cost)
         document.getElementById('rev-p').innerText = fmt(priceRevMax);
-        document.getElementById('rev-q').innerText = fmtNum(qtyRevMax);
+        document.getElementById('rev-q').innerText = fmtQty(qtyRevMax);
         document.getElementById('rev-r').innerText = fmt(revMaxTotal);
         document.getElementById('rev-profit').innerText = fmt(profitAtRevMax);
 
         // Profit Card
-        document.getElementById('prof-p').innerText = fmt(priceProfMax);
-        document.getElementById('prof-q').innerText = fmtNum(qtyProfMax);
-        document.getElementById('prof-pi').innerText = fmt(profitMaxTotal);
-        document.getElementById('prof-revenue').innerText = fmt(revAtProfMax);
+        const metricsBox = document.getElementById('prof-metrics');
+        const messageBox = document.getElementById('prof-message');
+        const gapBox = document.getElementById('gap-summary');
+        const roundNote = document.getElementById('round-note');
+
+        if (noProfit) {
+            // No price yields positive profit: the correct action is to not sell.
+            metricsBox.style.display = 'none';
+            messageBox.style.display = 'block';
+            messageBox.innerText = "At this unit cost, no price earns positive profit (the cost is at or above the choke price of " + fmt(chokePrice) + "). The firm should not sell: the optimal quantity is 0 and the optimal profit is $0.00.";
+            gapBox.style.display = 'none';
+            roundNote.style.display = 'none';
+        } else {
+            metricsBox.style.display = 'block';
+            messageBox.style.display = 'none';
+            document.getElementById('prof-p').innerText = fmt(priceProfMax);
+            document.getElementById('prof-q').innerText = fmtQty(qtyProfMax);
+            document.getElementById('prof-pi').innerText = fmt(profitMaxTotal);
+            document.getElementById('prof-revenue').innerText = fmt(revAtProfMax);
+
+            // Gap summary: the profit sacrificed by pricing for revenue instead of profit.
+            const gapDollars = profitMaxTotal - profitAtRevMax;
+            const gapPct = profitMaxTotal !== 0 ? (gapDollars / profitMaxTotal) * 100 : 0;
+            gapBox.style.display = 'block';
+            gapBox.innerHTML = "<strong>The cost of chasing revenue:</strong> pricing for maximum revenue (" + fmt(priceRevMax) + ") instead of maximum profit (" + fmt(priceProfMax) + ") sacrifices <strong>" + fmt(gapDollars) + "</strong> in profit, about <strong>" + fmtPct(gapPct) + "</strong> of the achievable maximum profit.";
+            roundNote.style.display = 'block';
+        }
 
         // --- CHARTING ---
-        drawChart(A, B, C, priceRevMax, revMaxTotal, profitAtRevMax, priceProfMax, profitMaxTotal);
+        drawChart(A, B, C, priceRevMax, revMaxTotal, profitAtRevMax, priceProfMax, profitMaxTotal, chokePrice, noProfit);
     }
 
-    function drawChart(A, B, C, pRev, revMax, piAtRevMax, pProf, piMax) {
+    function drawChart(A, B, C, pRev, revMax, piAtRevMax, pProf, piMax, chokePrice, noProfit) {
         const ctx = document.getElementById('optimizerChart').getContext('2d');
-        
-        // Determine Range
-        const maxP = -A/B; 
-        const startP = 0;
-        const endP = maxP * 0.8; 
 
-        const steps = 50;
+        // Determine Range. Extend far enough that both optima lie on the drawn curves,
+        // but never past the choke price (where demand hits zero).
+        const startP = 0;
+        const endP = Math.min(chokePrice, Math.max(0.8 * chokePrice, 1.1 * pProf));
+
+        const steps = 120;
         const stepSize = (endP - startP) / steps;
 
         let labels = [];
@@ -354,62 +440,68 @@
             myChart.destroy();
         }
 
+        // Curves are always drawn. The profit-max and profit-at-rev-max markers are
+        // only meaningful when a positive-profit interior optimum exists.
+        const datasets = [
+            {
+                label: 'Revenue Curve',
+                data: revenueData,
+                borderColor: '#2563eb', // Blue
+                backgroundColor: 'rgba(37, 99, 235, 0.05)',
+                borderWidth: 2,
+                tension: 0,
+                pointRadius: 0,
+                pointHoverRadius: 6,
+                fill: true
+            },
+            {
+                label: 'Profit Curve',
+                data: profitData,
+                borderColor: '#990000', // Crimson
+                backgroundColor: 'rgba(153, 0, 0, 0.1)',
+                borderWidth: 3,
+                tension: 0,
+                pointRadius: 0,
+                pointHoverRadius: 6,
+                fill: true
+            },
+            {
+                label: 'Max Revenue',
+                data: [{x: pRev, y: revMax}],
+                backgroundColor: '#2563eb',
+                borderColor: '#ffffff',
+                borderWidth: 2,
+                pointRadius: 8,
+                type: 'scatter'
+            }
+        ];
+
+        if (!noProfit) {
+            datasets.push({
+                label: 'Max Profit',
+                data: [{x: pProf, y: piMax}],
+                backgroundColor: '#990000',
+                borderColor: '#ffffff',
+                borderWidth: 2,
+                pointRadius: 8,
+                type: 'scatter'
+            });
+            datasets.push({
+                label: 'Profit at Rev-Max Price',
+                data: [{x: pRev, y: piAtRevMax}],
+                backgroundColor: '#ffffff',
+                borderColor: '#ef4444', // Red border, white fill
+                borderWidth: 2,
+                pointRadius: 6,
+                type: 'scatter'
+            });
+        }
+
         myChart = new Chart(ctx, {
             type: 'line',
             data: {
                 labels: labels,
-                datasets: [
-                    {
-                        label: 'Revenue Curve',
-                        data: revenueData,
-                        borderColor: '#2563eb', // Blue
-                        backgroundColor: 'rgba(37, 99, 235, 0.05)',
-                        borderWidth: 2,
-                        tension: 0.4,
-                        pointRadius: 0,
-                        pointHoverRadius: 6,
-                        fill: true
-                    },
-                    {
-                        label: 'Profit Curve',
-                        data: profitData,
-                        borderColor: '#990000', // Crimson
-                        backgroundColor: 'rgba(153, 0, 0, 0.1)',
-                        borderWidth: 3,
-                        tension: 0.4,
-                        pointRadius: 0,
-                        pointHoverRadius: 6,
-                        fill: true
-                    },
-                    // --- OPTIMAL POINTS ---
-                    {
-                        label: 'Max Revenue',
-                        data: [{x: pRev, y: revMax}], 
-                        backgroundColor: '#2563eb',
-                        borderColor: '#ffffff',
-                        borderWidth: 2,
-                        pointRadius: 8,
-                        type: 'scatter'
-                    },
-                    {
-                        label: 'Max Profit',
-                        data: [{x: pProf, y: piMax}], 
-                        backgroundColor: '#990000',
-                        borderColor: '#ffffff',
-                        borderWidth: 2,
-                        pointRadius: 8,
-                        type: 'scatter'
-                    },
-                    {
-                        label: 'Profit Gap (At Rev Max)',
-                        data: [{x: pRev, y: piAtRevMax}], 
-                        backgroundColor: '#ffffff',
-                        borderColor: '#ef4444', // Red border, white fill
-                        borderWidth: 2,
-                        pointRadius: 6,
-                        type: 'scatter'
-                    }
-                ]
+                datasets: datasets
             },
             options: {
                 responsive: true,
@@ -455,27 +547,46 @@
 </script>
 
 </div> <!-- end main-content -->
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js" integrity="sha384-yuGdyIzzYtOBlBG6JOWn+Ey9kpq7HocusNuxEGyyohr1eEyXpeEyehIIXC/hznw4" crossorigin="anonymous"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js" integrity="sha384-lI+CxEx/bCvWP1b0OK13j5HTrTZP7yf1xle8TVOFq2smz6KC1RChTarRV/RHP5PP" crossorigin="anonymous"></script>
 <script>
-    const firebaseConfig = {
-        apiKey: "AIzaSyBg3LJDwVIRGWtFZb_mM_CSRJMNCJUta20",
-        authDomain: "iu-pricing-tools.firebaseapp.com",
-        projectId: "iu-pricing-tools",
-        storageBucket: "iu-pricing-tools.firebasestorage.app",
-        messagingSenderId: "659335573790",
-        appId: "1:659335573790:web:00013a166787efecb3d90f",
-        measurementId: "G-NGKNY08XWP"
-    };
-    firebase.initializeApp(firebaseConfig);
-    firebase.auth().onAuthStateChanged(function(user) {
-        if (user) {
-            document.getElementById('loading-screen').style.display = 'none';
-            document.getElementById('main-content').style.display = 'block';
-        } else {
-            window.location.href = 'login.html';
+    // Fallback: if the Firebase CDN is blocked or auth never resolves, do not hang
+    // on the loading overlay forever. Show a clear message after ~12 seconds.
+    var authResolved = false;
+    var authTimeout = setTimeout(function() {
+        if (!authResolved) {
+            var screen = document.getElementById('loading-screen');
+            if (screen) {
+                screen.innerHTML = '<p style="color:#374151; max-width:420px; text-align:center; padding:0 20px;">Could not reach the sign-in service. Check your connection and reload this page.</p>';
+            }
         }
-    });
+    }, 12000);
+
+    try {
+        const firebaseConfig = {
+            apiKey: "AIzaSyBg3LJDwVIRGWtFZb_mM_CSRJMNCJUta20",
+            authDomain: "iu-pricing-tools.firebaseapp.com",
+            projectId: "iu-pricing-tools",
+            storageBucket: "iu-pricing-tools.firebasestorage.app",
+            messagingSenderId: "659335573790",
+            appId: "1:659335573790:web:00013a166787efecb3d90f",
+            measurementId: "G-NGKNY08XWP"
+        };
+        firebase.initializeApp(firebaseConfig);
+        firebase.auth().onAuthStateChanged(function(user) {
+            authResolved = true;
+            clearTimeout(authTimeout);
+            if (user) {
+                document.getElementById('loading-screen').style.display = 'none';
+                document.getElementById('main-content').style.display = 'block';
+            } else {
+                window.location.href = 'login.html?next=' + encodeURIComponent(window.location.pathname.split('/').pop());
+            }
+        });
+    } catch (e) {
+        // firebase is undefined because a compat script failed to load; the timeout
+        // above will surface the connection message.
+    }
 </script>
 
 </body>

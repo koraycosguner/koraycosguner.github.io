@@ -3,24 +3,39 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Qualitative Elasticity Assessment</title>
+    <title>Qualitative Elasticity Assessment | Koray Cosguner</title>
     <meta name="robots" content="noindex,nofollow">
+    <!-- Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-CTZ8G4EYLR"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-CTZ8G4EYLR');
+    </script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary: #2563eb;       /* Royal Blue */
+            --primary: #990000;       /* IU Crimson */
+            --primary-hover: #7a0000; /* Darker Crimson */
+            --primary-light: #fdf2f2; /* Crimson Tint */
             --bg: #f8fafc;            /* Light Gray Background */
             --surface: #ffffff;       /* White Card */
             --text-main: #1e293b;     /* Dark Slate */
             --text-muted: #64748b;    /* Muted Text */
             --border: #e2e8f0;        /* Light Border */
-            
-            /* Logic Colors */
+
+            /* Logic Colors (vivid: gradient tracks and meter) */
             --elastic: #ef4444;       /* Red */
             --unitary: #f59e0b;       /* Amber */
             --inelastic: #10b981;     /* Green */
+
+            /* Logic Colors (darkened for AA-contrast text) */
+            --elastic-text: #b91c1c;
+            --unitary-text: #b45309;
+            --inelastic-text: #047857;
         }
 
         body {
@@ -136,7 +151,22 @@
             transition: transform 0.2s;
             margin-top: -7px;
         }
-        input[type="range"]::-webkit-slider-thumb:hover { 
+        input[type="range"]::-webkit-slider-thumb:hover {
+            transform: scale(1.1);
+            border-color: var(--primary);
+        }
+
+        /* Firefox thumb (mirrors the WebKit thumb so the custom control shows in Firefox) */
+        input[type="range"]::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: white;
+            border: 2px solid var(--text-muted);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            transition: transform 0.2s;
+        }
+        input[type="range"]::-moz-range-thumb:hover {
             transform: scale(1.1);
             border-color: var(--primary);
         }
@@ -150,10 +180,14 @@
             color: var(--text-muted);
             text-transform: uppercase;
         }
-        .lbl-left { text-align: left; color: var(--elastic); }
+        .lbl-left { text-align: left; color: var(--elastic-text); }
         .lbl-center { text-align: center; color: var(--text-main); font-weight: 800; }
-        .lbl-right { text-align: right; color: var(--inelastic); }
-        .sub-label { display: block; font-size: 0.65rem; color: #94a3b8; font-weight: 400; text-transform: none; margin-top: 2px; }
+        .lbl-right { text-align: right; color: var(--inelastic-text); }
+        .sub-label { display: block; font-size: 0.65rem; color: var(--text-muted); font-weight: 400; text-transform: none; margin-top: 2px; }
+
+        /* Live rating readout next to each slider */
+        .rating-readout { font-size: 0.72rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
+        .rating-value { font-weight: 800; font-size: 0.95rem; color: var(--text-main); }
 
         /* Footer */
         .footer {
@@ -176,13 +210,47 @@
             font-weight: 700;
             font-size: 1rem;
             cursor: pointer;
-            box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.3);
+            box-shadow: 0 4px 6px -1px rgba(153, 0, 0, 0.3);
             transition: transform 0.1s;
         }
         button:hover {
             transform: translateY(-1px);
-            background-color: #1d4ed8;
+            background-color: var(--primary-hover);
         }
+
+        /* Secondary buttons (presets, reset, copy) */
+        .controls-bar {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 10px;
+            margin-top: 10px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border);
+        }
+        .controls-label { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-muted); margin-right: 4px; }
+        button.btn-secondary {
+            background: var(--surface);
+            color: var(--primary);
+            border: 1px solid var(--border);
+            padding: 9px 16px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            box-shadow: none;
+        }
+        button.btn-secondary:hover { background: var(--primary-light); border-color: var(--primary); color: var(--primary-hover); }
+        button.btn-normalize {
+            background: #9a3412;
+            color: #fff;
+            border: none;
+            padding: 8px 16px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            box-shadow: none;
+            margin-top: 10px;
+        }
+        button.btn-normalize:hover { background: #7c2d12; }
+        .copy-status { font-size: 0.8rem; font-weight: 600; color: var(--inelastic-text); margin-left: 4px; }
 
         /* Warning Box */
         .warning-box {
@@ -233,7 +301,7 @@
         .explainer {
             margin-top: 15px;
             padding: 15px;
-            background: #eef2ff;
+            background: #f1f5f9;
             border-radius: 8px;
             font-size: 0.85rem;
             color: #334155;
@@ -244,16 +312,43 @@
         /* Mobile Responsiveness */
         @media (max-width: 768px) {
             body { padding: 20px 10px; }
-            .container { padding: 0; }
-            .header { padding: 20px; }
+            .header { padding: 24px 20px; }
             .header h1 { font-size: 1.3rem; }
-            .section-header { padding: 12px 20px; font-size: 0.8rem; }
-            .content { padding: 15px 20px; }
-            .factor { padding: 15px 0; }
-            .factor-header { flex-direction: column; gap: 0.5rem; }
+            .content-area { padding: 20px 16px; }
             .factor-title { font-size: 0.95rem; }
             .score-val { font-size: 2rem; }
             .explainer { font-size: 0.8rem; padding: 12px; }
+
+            /* Footer: reduce padding and stack the meter and result full width */
+            .footer { padding: 20px 16px; gap: 20px; }
+            .meter-container { min-width: 0; width: 100%; }
+            .result-box { min-width: 0; width: 100%; text-align: left; }
+            .footer > button { width: 100%; }
+
+            /* Stack each factor (title, weight, slider) vertically so sliders get full width */
+            table { border-spacing: 0; }
+            thead { display: none; }
+            table, tbody, tr.row-item, td { display: block; width: 100%; }
+            tr.row-item {
+                border: 1px solid var(--border);
+                border-radius: 10px;
+                padding: 6px 4px 12px;
+                margin-bottom: 16px;
+            }
+            tr.row-item td { border-bottom: none; padding: 8px 14px; text-align: left !important; }
+            tr.row-item td:nth-child(2)::before {
+                content: "Weight (%)";
+                display: block;
+                font-size: 0.7rem;
+                font-weight: 700;
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
+                color: var(--text-muted);
+                margin-bottom: 4px;
+            }
+            .weight-input { width: 80px; }
+            .controls-bar { gap: 8px; }
+            .controls-bar button { flex: 1 1 auto; }
         }
     
         :focus-visible { outline: 2px solid currentColor; outline-offset: 2px; }
@@ -279,11 +374,11 @@
     <div class="header">
         <h1>Qualitative Elasticity Assessment Tool</h1>
         <div class="citation">Based on <em>The Strategy and Tactics of Pricing</em> (Nagle & Muller, 2018)</div>
-        <div class="credits">Created by Dr. Koray Cosguner with help of Gemini 3.0 Pro</div>
+        <div class="credits">Created by Dr. Koray Cosguner with the help of Gemini 3.0</div>
     </div>
 
     <div class="content-area">
-        <form id="elasticityForm">
+        <form id="elasticityForm" onsubmit="calculate(true); return false;">
             <table>
                 <thead>
                     <tr>
@@ -299,10 +394,11 @@
                             <span class="factor-desc">Are buyers aware of alternatives?</span>
                         </td>
                         <td style="text-align: center;">
-                            <input type="number" id="w0" class="weight-input" value="10" min="0" max="100">
+                            <input type="number" id="w0" class="weight-input" value="10" min="0" max="100" aria-label="Weight for Perceived Substitutes, percent">
                         </td>
                         <td>
-                            <input type="range" id="r0" min="-4" max="0" step="0.1" value="-1">
+                            <div class="rating-readout">Rating: <span class="rating-value" id="b0">-1.0</span></div>
+                            <input type="range" id="r0" min="-4" max="0" step="0.1" value="-1" aria-label="Rating for Perceived Substitutes, negative 4 most elastic to 0 most inelastic" aria-valuetext="-1.0, unitary">
                             <div class="slider-labels">
                                 <div class="lbl-left">Many Subs<span class="sub-label">(More Elastic)</span></div>
                                 <div class="lbl-center">Unitary (-1)</div>
@@ -316,10 +412,11 @@
                             <span class="factor-desc">Does the product offer unique differentiation?</span>
                         </td>
                         <td style="text-align: center;">
-                            <input type="number" id="w1" class="weight-input" value="10">
+                            <input type="number" id="w1" class="weight-input" value="10" min="0" max="100" aria-label="Weight for Unique Value, percent">
                         </td>
                         <td>
-                            <input type="range" id="r1" min="-4" max="0" step="0.1" value="-1">
+                            <div class="rating-readout">Rating: <span class="rating-value" id="b1">-1.0</span></div>
+                            <input type="range" id="r1" min="-4" max="0" step="0.1" value="-1" aria-label="Rating for Unique Value, negative 4 most elastic to 0 most inelastic" aria-valuetext="-1.0, unitary">
                             <div class="slider-labels">
                                 <div class="lbl-left">Commodity<span class="sub-label">(More Elastic)</span></div>
                                 <div class="lbl-center">Unitary (-1)</div>
@@ -333,10 +430,11 @@
                             <span class="factor-desc">Is it costly/risky to change suppliers?</span>
                         </td>
                         <td style="text-align: center;">
-                            <input type="number" id="w2" class="weight-input" value="10">
+                            <input type="number" id="w2" class="weight-input" value="10" min="0" max="100" aria-label="Weight for Switching Costs, percent">
                         </td>
                         <td>
-                            <input type="range" id="r2" min="-4" max="0" step="0.1" value="-1">
+                            <div class="rating-readout">Rating: <span class="rating-value" id="b2">-1.0</span></div>
+                            <input type="range" id="r2" min="-4" max="0" step="0.1" value="-1" aria-label="Rating for Switching Costs, negative 4 most elastic to 0 most inelastic" aria-valuetext="-1.0, unitary">
                             <div class="slider-labels">
                                 <div class="lbl-left">Easy Switch<span class="sub-label">(More Elastic)</span></div>
                                 <div class="lbl-center">Unitary (-1)</div>
@@ -350,10 +448,11 @@
                             <span class="factor-desc">Is it hard to compare prices directly?</span>
                         </td>
                         <td style="text-align: center;">
-                            <input type="number" id="w3" class="weight-input" value="10">
+                            <input type="number" id="w3" class="weight-input" value="10" min="0" max="100" aria-label="Weight for Difficult Comparison, percent">
                         </td>
                         <td>
-                            <input type="range" id="r3" min="-4" max="0" step="0.1" value="-1">
+                            <div class="rating-readout">Rating: <span class="rating-value" id="b3">-1.0</span></div>
+                            <input type="range" id="r3" min="-4" max="0" step="0.1" value="-1" aria-label="Rating for Difficult Comparison, negative 4 most elastic to 0 most inelastic" aria-valuetext="-1.0, unitary">
                             <div class="slider-labels">
                                 <div class="lbl-left">Easy Compare<span class="sub-label">(More Elastic)</span></div>
                                 <div class="lbl-center">Unitary (-1)</div>
@@ -367,10 +466,11 @@
                             <span class="factor-desc">Do buyers use price as a signal of quality?</span>
                         </td>
                         <td style="text-align: center;">
-                            <input type="number" id="w4" class="weight-input" value="10">
+                            <input type="number" id="w4" class="weight-input" value="10" min="0" max="100" aria-label="Weight for Price-Quality Effect, percent">
                         </td>
                         <td>
-                            <input type="range" id="r4" min="-4" max="0" step="0.1" value="-1">
+                            <div class="rating-readout">Rating: <span class="rating-value" id="b4">-1.0</span></div>
+                            <input type="range" id="r4" min="-4" max="0" step="0.1" value="-1" aria-label="Rating for Price-Quality Effect, negative 4 most elastic to 0 most inelastic" aria-valuetext="-1.0, unitary">
                             <div class="slider-labels">
                                 <div class="lbl-left">Price=Cost<span class="sub-label">(More Elastic)</span></div>
                                 <div class="lbl-center">Unitary (-1)</div>
@@ -384,10 +484,11 @@
                             <span class="factor-desc">How large is the cost relative to budget?</span>
                         </td>
                         <td style="text-align: center;">
-                            <input type="number" id="w5" class="weight-input" value="10">
+                            <input type="number" id="w5" class="weight-input" value="10" min="0" max="100" aria-label="Weight for Expenditure Effect, percent">
                         </td>
                         <td>
-                            <input type="range" id="r5" min="-4" max="0" step="0.1" value="-1">
+                            <div class="rating-readout">Rating: <span class="rating-value" id="b5">-1.0</span></div>
+                            <input type="range" id="r5" min="-4" max="0" step="0.1" value="-1" aria-label="Rating for Expenditure Effect, negative 4 most elastic to 0 most inelastic" aria-valuetext="-1.0, unitary">
                             <div class="slider-labels">
                                 <div class="lbl-left">High %<span class="sub-label">(More Elastic)</span></div>
                                 <div class="lbl-center">Unitary (-1)</div>
@@ -401,10 +502,11 @@
                             <span class="factor-desc">Does the product secure a critical benefit?</span>
                         </td>
                         <td style="text-align: center;">
-                            <input type="number" id="w6" class="weight-input" value="10">
+                            <input type="number" id="w6" class="weight-input" value="10" min="0" max="100" aria-label="Weight for End-Benefit Effect, percent">
                         </td>
                         <td>
-                            <input type="range" id="r6" min="-4" max="0" step="0.1" value="-1">
+                            <div class="rating-readout">Rating: <span class="rating-value" id="b6">-1.0</span></div>
+                            <input type="range" id="r6" min="-4" max="0" step="0.1" value="-1" aria-label="Rating for End-Benefit Effect, negative 4 most elastic to 0 most inelastic" aria-valuetext="-1.0, unitary">
                             <div class="slider-labels">
                                 <div class="lbl-left">Low Impact<span class="sub-label">(More Elastic)</span></div>
                                 <div class="lbl-center">Unitary (-1)</div>
@@ -418,10 +520,11 @@
                             <span class="factor-desc">Does the buyer pay the full bill?</span>
                         </td>
                         <td style="text-align: center;">
-                            <input type="number" id="w7" class="weight-input" value="10">
+                            <input type="number" id="w7" class="weight-input" value="10" min="0" max="100" aria-label="Weight for Shared-Cost Effect, percent">
                         </td>
                         <td>
-                            <input type="range" id="r7" min="-4" max="0" step="0.1" value="-1">
+                            <div class="rating-readout">Rating: <span class="rating-value" id="b7">-1.0</span></div>
+                            <input type="range" id="r7" min="-4" max="0" step="0.1" value="-1" aria-label="Rating for Shared-Cost Effect, negative 4 most elastic to 0 most inelastic" aria-valuetext="-1.0, unitary">
                             <div class="slider-labels">
                                 <div class="lbl-left">Buyer Pays All<span class="sub-label">(More Elastic)</span></div>
                                 <div class="lbl-center">Unitary (-1)</div>
@@ -435,10 +538,11 @@
                             <span class="factor-desc">Is the price perceived as fair vs exploitative?</span>
                         </td>
                         <td style="text-align: center;">
-                            <input type="number" id="w8" class="weight-input" value="10">
+                            <input type="number" id="w8" class="weight-input" value="10" min="0" max="100" aria-label="Weight for Fairness Effect, percent">
                         </td>
                         <td>
-                            <input type="range" id="r8" min="-4" max="0" step="0.1" value="-1">
+                            <div class="rating-readout">Rating: <span class="rating-value" id="b8">-1.0</span></div>
+                            <input type="range" id="r8" min="-4" max="0" step="0.1" value="-1" aria-label="Rating for Fairness Effect, negative 4 most elastic to 0 most inelastic" aria-valuetext="-1.0, unitary">
                             <div class="slider-labels">
                                 <div class="lbl-left">Unfair<span class="sub-label">(More Elastic)</span></div>
                                 <div class="lbl-center">Unitary (-1)</div>
@@ -452,10 +556,11 @@
                             <span class="factor-desc">Can buyers stock up now to avoid hikes?</span>
                         </td>
                         <td style="text-align: center;">
-                            <input type="number" id="w9" class="weight-input" value="10">
+                            <input type="number" id="w9" class="weight-input" value="10" min="0" max="100" aria-label="Weight for Inventory Effect, percent">
                         </td>
                         <td>
-                            <input type="range" id="r9" min="-4" max="0" step="0.1" value="-1">
+                            <div class="rating-readout">Rating: <span class="rating-value" id="b9">-1.0</span></div>
+                            <input type="range" id="r9" min="-4" max="0" step="0.1" value="-1" aria-label="Rating for Inventory Effect, negative 4 most elastic to 0 most inelastic" aria-valuetext="-1.0, unitary">
                             <div class="slider-labels">
                                 <div class="lbl-left">Stockpile<span class="sub-label">(More Elastic)</span></div>
                                 <div class="lbl-center">Unitary (-1)</div>
@@ -466,31 +571,43 @@
                 </tbody>
             </table>
         </form>
+
+        <div class="controls-bar">
+            <span class="controls-label">Load example:</span>
+            <button type="button" class="btn-secondary" onclick="applyPreset('gasoline')">Gasoline (single station)</button>
+            <button type="button" class="btn-secondary" onclick="applyPreset('airline')">Airline ticket (leisure)</button>
+            <button type="button" class="btn-secondary" onclick="applyPreset('pharma')">Branded patented drug</button>
+            <button type="button" class="btn-secondary" onclick="resetForm()">Reset</button>
+            <button type="button" class="btn-secondary" onclick="copyResults()">Copy results</button>
+            <span class="copy-status" id="copyStatus" role="status" aria-live="polite"></span>
+        </div>
     </div>
 
     <div class="footer">
         
-        <div id="weightWarning" class="warning-box">
-            ⚠️ Warning: Weights sum to <span id="weightSumVal">0</span>%. Please ensure they add up to 100%.
+        <div id="weightWarning" class="warning-box" role="alert">
+            Weights currently sum to <span id="weightSumVal">0</span>%. The score below is a weighted average, but weights that total 100% are easier to interpret.
+            <br>
+            <button type="button" class="btn-normalize" onclick="normalizeWeights()">Normalize weights to 100%</button>
         </div>
 
-        <button type="button" onclick="calculate()">Calculate Score</button>
+        <button type="button" onclick="calculate(true)">Calculate Score</button>
 
         <div class="meter-container">
             <div class="indicator" id="indicator" style="left: 75%;"></div>
             <div class="meter-bar"></div>
-            <div style="display:flex; justify-content:space-between; font-size:0.7rem; color:#94a3b8; margin-top:8px; font-weight:700; text-transform: uppercase;">
-                <span style="color:var(--elastic)">Elastic (-4.0)</span>
-                <span style="color:var(--unitary)">Unitary (-1.0)</span>
-                <span style="color:var(--inelastic)">Inelastic (0.0)</span>
+            <div style="display:flex; justify-content:space-between; font-size:0.7rem; color:var(--text-muted); margin-top:8px; font-weight:700; text-transform: uppercase;">
+                <span style="color:var(--elastic-text)">Elastic (-4.0)</span>
+                <span style="color:var(--unitary-text)">Unitary (-1.0)</span>
+                <span style="color:var(--inelastic-text)">Inelastic (0.0)</span>
             </div>
             
-            <div id="explainer" class="explainer">
+            <div id="explainer" class="explainer" aria-live="polite">
                 --
             </div>
         </div>
 
-        <div class="result-box">
+        <div class="result-box" aria-live="polite">
             <div class="score-val" id="scoreVal">--</div>
             <div class="score-label" id="scoreLabel">RESULT</div>
         </div>
@@ -498,94 +615,254 @@
 </div>
 
 <script>
-    function calculate() {
+    // Factor names, in slider/weight order (used for aria text and copy export)
+    const FACTORS = [
+        "Perceived Substitutes", "Unique Value", "Switching Costs", "Difficult Comparison",
+        "Price-Quality Effect", "Expenditure Effect", "End-Benefit Effect", "Shared-Cost Effect",
+        "Fairness Effect", "Inventory Effect"
+    ];
+
+    // Example scenarios (weights sum to 100). Ratings run -4 (most elastic) to 0 (most inelastic).
+    const PRESETS = {
+        gasoline: { w: [20, 15, 10, 15, 5, 10, 5, 10, 5, 5],   r: [-4, -3.5, -3.5, -4, -3, -2, -1.5, -3.5, -2, -0.5] },
+        airline:  { w: [15, 10, 10, 15, 5, 10, 10, 10, 10, 5], r: [-1.5, -1, -1, -1.5, -0.5, -1.5, -0.5, -1, -1.5, -0.5] },
+        pharma:   { w: [15, 15, 10, 10, 5, 10, 10, 15, 5, 5],  r: [-0.3, -0.2, -0.5, -0.5, -0.5, -0.5, -0.2, -0.2, -1.5, -0.3] }
+    };
+
+    // Plain-English descriptor for a single rating value.
+    function ratingDescriptor(v) {
+        if (v < -1.05) return "more elastic";
+        if (v > -0.95) return "more inelastic";
+        return "unitary";
+    }
+
+    // Refresh the visible badge and the aria-valuetext for one slider.
+    function updateRatingUI(i) {
+        const r = parseFloat(document.getElementById('r' + i).value) || 0;
+        const badge = document.getElementById('b' + i);
+        const slider = document.getElementById('r' + i);
+        const txt = r.toFixed(1);
+        badge.innerText = txt;
+        slider.setAttribute('aria-valuetext', txt + ", " + ratingDescriptor(r));
+        // Colour the badge to match its elasticity band
+        if (r < -1.05) badge.style.color = "var(--elastic-text)";
+        else if (r > -0.95) badge.style.color = "var(--inelastic-text)";
+        else badge.style.color = "var(--unitary-text)";
+    }
+
+    function updateAllRatingUI() {
+        for (let i = 0; i < 10; i++) updateRatingUI(i);
+    }
+
+    // highlight === true adds the red field borders (used by the Calculate button and
+    // form submit); live input events pass no argument so typing does not flash red.
+    function calculate(highlight) {
         let totalScore = 0;
         let totalWeight = 0;
 
         // Reset any error styles
         let inputs = document.getElementsByClassName('weight-input');
-        for(let i=0; i<inputs.length; i++) {
+        for (let i = 0; i < inputs.length; i++) {
             inputs[i].classList.remove('weight-error');
         }
 
-        // Loop through 10 factors
+        // Loop through 10 factors. Clamp negative weights to 0 so a negative
+        // weight cannot silently flip a factor's direction.
         for (let i = 0; i < 10; i++) {
-            let w = parseFloat(document.getElementById('w' + i).value) || 0;
+            let w = Math.max(0, parseFloat(document.getElementById('w' + i).value) || 0);
             let r = parseFloat(document.getElementById('r' + i).value) || 0;
-            
-            totalScore += (r * (w / 100));
+
+            totalScore += r * w;
             totalWeight += w;
         }
 
-        let final = totalScore.toFixed(2);
-        
         // --- CHECK WEIGHTS ---
         // Allow a small margin of error for float math (e.g. 99.999 is okay)
-        if (Math.abs(totalWeight - 100) > 0.1) {
+        const weightsOk = Math.abs(totalWeight - 100) <= 0.1;
+        if (!weightsOk) {
             document.getElementById('weightWarning').style.display = 'block';
-            document.getElementById('weightSumVal').innerText = totalWeight;
-            
-            // Highlight inputs to catch attention
-            for(let i=0; i<inputs.length; i++) {
-                inputs[i].classList.add('weight-error');
+            document.getElementById('weightSumVal').innerText = totalWeight.toFixed(1);
+            if (highlight) {
+                for (let i = 0; i < inputs.length; i++) {
+                    inputs[i].classList.add('weight-error');
+                }
             }
         } else {
             document.getElementById('weightWarning').style.display = 'none';
         }
 
+        const scoreVal = document.getElementById('scoreVal');
+        const scoreLabel = document.getElementById('scoreLabel');
+        const explainer = document.getElementById('explainer');
+
+        // With no positive weight there is no meaningful weighted average, so
+        // suppress the score, label, explainer, and meter rather than divide by zero.
+        if (totalWeight <= 0) {
+            scoreVal.innerText = "--";
+            scoreVal.style.color = "var(--text-muted)";
+            scoreLabel.innerText = "ADD WEIGHTS";
+            scoreLabel.style.color = "var(--text-muted)";
+            explainer.style.display = "none";
+            document.getElementById('indicator').style.left = "75%";
+            return;
+        }
+
+        // Weighted average normalized by the ACTUAL total weight, so the score is
+        // always a valid figure in the -4.0 to 0.0 range regardless of the weight sum.
+        const score = totalScore / totalWeight;
+        const final = score.toFixed(2);
 
         // --- LOGIC ---
         let label = "";
         let color = "";
         let explanation = "";
 
-        if (final < -1.05) {
+        if (score < -1.05) {
             label = "ELASTIC";
-            color = "var(--elastic)";
+            color = "var(--elastic-text)";
             explanation = "<strong>High Price Sensitivity</strong><br>Demand is likely to change significantly if price changes. Small price increases may lead to volume drops that outweigh the price gain. Revenue decreases as price increases.";
-        } else if (final > -0.95) {
+        } else if (score > -0.95) {
             label = "INELASTIC";
-            color = "var(--inelastic)";
+            color = "var(--inelastic-text)";
             explanation = "<strong>Low Price Sensitivity</strong><br>Demand is relatively stable. Customers are less likely to switch or leave due to price increases. Revenue increases as price increases.";
         } else {
             label = "UNITARY";
-            color = "var(--unitary)";
+            color = "var(--unitary-text)";
             explanation = "<strong>Unit Elastic</strong><br>The percentage change in quantity demanded is roughly equal to the percentage change in price. Revenue remains constant with small price changes.";
         }
 
         // Update Text
-        const scoreVal = document.getElementById('scoreVal');
-        const scoreLabel = document.getElementById('scoreLabel');
-        const explainer = document.getElementById('explainer');
-
         scoreVal.innerText = final;
         scoreVal.style.color = color;
         scoreLabel.innerText = label;
         scoreLabel.style.color = color;
-        
+
         explainer.innerHTML = explanation;
         explainer.style.display = "block";
         explainer.style.borderLeftColor = color;
 
         // Update Meter Position
-        // Formula: (Value - Min) / (Max - Min) * 100
-        // (final - (-4)) / 4 * 100
-        let percent = ((parseFloat(final) + 4) / 4) * 100;
+        // Formula: (Value - Min) / (Max - Min) * 100 = (score + 4) / 4 * 100
+        let percent = ((score + 4) / 4) * 100;
         if (percent < 0) percent = 0;
         if (percent > 100) percent = 100;
 
         document.getElementById('indicator').style.left = percent + "%";
     }
 
-    // Initialize on load
-    window.onload = function() {
+    // Load one of the example scenarios and recompute.
+    function applyPreset(name) {
+        const p = PRESETS[name];
+        if (!p) return;
+        for (let i = 0; i < 10; i++) {
+            document.getElementById('w' + i).value = p.w[i];
+            document.getElementById('r' + i).value = p.r[i];
+        }
+        updateAllRatingUI();
+        calculate();
+        clearCopyStatus();
+    }
+
+    // Return every field to the neutral starting state.
+    function resetForm() {
+        for (let i = 0; i < 10; i++) {
+            document.getElementById('w' + i).value = 10;
+            document.getElementById('r' + i).value = -1;
+        }
+        updateAllRatingUI();
+        calculate();
+        clearCopyStatus();
+    }
+
+    // Rescale the current weights so they add up to exactly 100 (score is unchanged
+    // because a weighted average does not depend on the weight scale).
+    function normalizeWeights() {
+        let ws = [];
+        for (let i = 0; i < 10; i++) {
+            ws.push(Math.max(0, parseFloat(document.getElementById('w' + i).value) || 0));
+        }
+        let sum = ws.reduce((a, b) => a + b, 0);
+        if (sum <= 0) {
+            // Nothing to rescale: fall back to an even split.
+            for (let i = 0; i < 10; i++) document.getElementById('w' + i).value = 10;
+            calculate();
+            return;
+        }
+        let scaled = ws.map(w => Math.round((w * 100 / sum) * 10) / 10);
+        // Push any rounding drift onto the largest weight so the total is exactly 100.0
+        let drift = Math.round((100 - scaled.reduce((a, b) => a + b, 0)) * 10) / 10;
+        let maxIdx = scaled.indexOf(Math.max.apply(null, scaled));
+        scaled[maxIdx] = Math.round((scaled[maxIdx] + drift) * 10) / 10;
+        for (let i = 0; i < 10; i++) document.getElementById('w' + i).value = scaled[i];
+        calculate();
+    }
+
+    function clearCopyStatus() {
+        const el = document.getElementById('copyStatus');
+        if (el) el.innerText = "";
+    }
+
+    // Copy the score plus per-factor settings as plain text.
+    function copyResults() {
+        let totalWeight = 0, totalScore = 0;
+        let lines = [];
+        for (let i = 0; i < 10; i++) {
+            let w = Math.max(0, parseFloat(document.getElementById('w' + i).value) || 0);
+            let r = parseFloat(document.getElementById('r' + i).value) || 0;
+            totalWeight += w;
+            totalScore += r * w;
+            lines.push((i + 1) + ". " + FACTORS[i] + ": weight " + w + "%, rating " + r.toFixed(1));
+        }
+        let header;
+        if (totalWeight <= 0) {
+            header = "Score: not available (weights sum to 0%)";
+        } else {
+            let score = totalScore / totalWeight;
+            let lab = score < -1.05 ? "ELASTIC" : (score > -0.95 ? "INELASTIC" : "UNITARY");
+            header = "Score: " + score.toFixed(2) + " (" + lab + ")";
+        }
+        let text = "Qualitative Elasticity Assessment\n" + header +
+            "\nWeights sum: " + totalWeight.toFixed(1) + "%\n\n" + lines.join("\n") + "\n";
+
+        const status = document.getElementById('copyStatus');
+        const done = function () { if (status) status.innerText = "Copied to clipboard"; };
+        const fail = function () { if (status) status.innerText = "Copy failed. Select the text manually."; };
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(text).then(done).catch(fail);
+        } else {
+            try {
+                const ta = document.createElement('textarea');
+                ta.value = text;
+                document.body.appendChild(ta);
+                ta.select();
+                document.execCommand('copy');
+                document.body.removeChild(ta);
+                done();
+            } catch (e) { fail(); }
+        }
+    }
+
+    // Initialize on load: wire live recalculation and draw the starting result.
+    window.onload = function () {
+        for (let i = 0; i < 10; i++) {
+            document.getElementById('r' + i).addEventListener('input', function () {
+                updateRatingUI(i);
+                calculate();
+                clearCopyStatus();
+            });
+            document.getElementById('w' + i).addEventListener('input', function () {
+                calculate();
+                clearCopyStatus();
+            });
+        }
+        updateAllRatingUI();
         calculate();
     };
 </script>
 
 </div> <!-- end main-content -->
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js" integrity="sha384-yuGdyIzzYtOBlBG6JOWn+Ey9kpq7HocusNuxEGyyohr1eEyXpeEyehIIXC/hznw4" crossorigin="anonymous"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js" integrity="sha384-lI+CxEx/bCvWP1b0OK13j5HTrTZP7yf1xle8TVOFq2smz6KC1RChTarRV/RHP5PP" crossorigin="anonymous"></script>
 <script>
     const firebaseConfig = {
         apiKey: "AIzaSyBg3LJDwVIRGWtFZb_mM_CSRJMNCJUta20",
@@ -596,15 +873,42 @@
         appId: "1:659335573790:web:00013a166787efecb3d90f",
         measurementId: "G-NGKNY08XWP"
     };
-    firebase.initializeApp(firebaseConfig);
-    firebase.auth().onAuthStateChanged(function(user) {
-        if (user) {
-            document.getElementById('loading-screen').style.display = 'none';
-            document.getElementById('main-content').style.display = 'block';
-        } else {
-            window.location.href = 'login.html';
+    // If the Firebase CDN is blocked or slow, do not hang on "Loading..." forever:
+    // after 12s with no auth response, show an explanatory message.
+    var authResolved = false;
+    var authTimeout = setTimeout(function () {
+        if (authResolved) return;
+        var screen = document.getElementById('loading-screen');
+        if (screen) {
+            screen.innerHTML = '<div style="max-width: 420px; text-align: center; color: #64748b; padding: 20px;">' +
+                '<p style="font-weight: 600; color: #1e293b;">Could not reach the sign-in service.</p>' +
+                '<p>Check your connection and reload this page, or <a href="login.html" style="color: #990000;">go to the sign-in page</a>.</p>' +
+                '</div>';
         }
-    });
+    }, 12000);
+
+    try {
+        firebase.initializeApp(firebaseConfig);
+        firebase.auth().onAuthStateChanged(function (user) {
+            authResolved = true;
+            clearTimeout(authTimeout);
+            if (user) {
+                document.getElementById('loading-screen').style.display = 'none';
+                document.getElementById('main-content').style.display = 'block';
+            } else {
+                window.location.href = 'login.html?next=' + encodeURIComponent(window.location.pathname.split('/').pop());
+            }
+        });
+    } catch (e) {
+        clearTimeout(authTimeout);
+        var screen = document.getElementById('loading-screen');
+        if (screen) {
+            screen.innerHTML = '<div style="max-width: 420px; text-align: center; color: #64748b; padding: 20px;">' +
+                '<p style="font-weight: 600; color: #1e293b;">Could not reach the sign-in service.</p>' +
+                '<p>Check your connection and reload this page, or <a href="login.html" style="color: #990000;">go to the sign-in page</a>.</p>' +
+                '</div>';
+        }
+    }
 </script>
 
 </body>

@@ -5,7 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pricing with Substitute or Complementary Products | Koray Cosguner</title>
     <meta name="robots" content="noindex,nofollow">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <!-- Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-CTZ8G4EYLR"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-CTZ8G4EYLR');
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js" integrity="sha384-9nhczxUqK87bcKHh20fSQcTGD4qq5GhayNYSYWqwBkINBhOfQLg/P5HG5lF1urn4" crossorigin="anonymous"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -465,6 +473,10 @@
         @media (max-width: 768px) {
             .pair-selector { flex-direction: column; }
             .pair-selector select { max-width: 100%; }
+            /* Stack label and value so long "$X -> $Y +Z%" strings are not clipped by overflow-x: hidden */
+            .insight-metric { flex-direction: column; align-items: flex-start; gap: 0.15rem; }
+            .insight-metric .values { white-space: normal; text-align: left; }
+            .insight-metric .label { margin-right: 0; }
         }
 
         /* Chart */
@@ -488,9 +500,13 @@
         .tab {
             padding: 0.6rem 1rem;
             cursor: pointer;
+            background: none;
+            border: none;
             border-bottom: 2px solid transparent;
             margin-bottom: -2px;
             color: var(--text-light);
+            font-family: inherit;
+            font-size: inherit;
             font-weight: 500;
             transition: all 0.2s;
         }
@@ -774,19 +790,19 @@
                         Product 1
                     </div>
                     <div class="input-row">
-                        <label>Name (optional)</label>
+                        <label for="manual_name1">Name (optional)</label>
                         <input type="text" id="manual_name1" placeholder="e.g., Coke" style="border: 1px solid var(--border); border-radius: 6px; font-size: 0.9rem;">
                     </div>
                     <div class="input-row">
-                        <label>a<sub>1</sub> (base demand)</label>
+                        <label for="a1">a<sub>1</sub> (base demand)</label>
                         <input type="number" id="a1" value="1000" step="any">
                     </div>
                     <div class="input-row">
-                        <label>b<sub>1</sub> (own-price, &lt; 0)</label>
+                        <label for="b1">b<sub>1</sub> (own-price, &lt; 0)</label>
                         <input type="number" id="b1" value="-50" step="any">
                     </div>
                     <div class="input-row">
-                        <label>C<sub>1</sub> (marginal cost)</label>
+                        <label for="c1">C<sub>1</sub> (marginal cost)</label>
                         <input type="number" id="c1" value="7" step="any">
                     </div>
                 </div>
@@ -797,19 +813,19 @@
                         Product 2
                     </div>
                     <div class="input-row">
-                        <label>Name (optional)</label>
+                        <label for="manual_name2">Name (optional)</label>
                         <input type="text" id="manual_name2" placeholder="e.g., Pepsi" style="border: 1px solid var(--border); border-radius: 6px; font-size: 0.9rem;">
                     </div>
                     <div class="input-row">
-                        <label>a<sub>2</sub> (base demand)</label>
+                        <label for="a2">a<sub>2</sub> (base demand)</label>
                         <input type="number" id="a2" value="1000" step="any">
                     </div>
                     <div class="input-row">
-                        <label>b<sub>2</sub> (own-price, &lt; 0)</label>
+                        <label for="b2">b<sub>2</sub> (own-price, &lt; 0)</label>
                         <input type="number" id="b2" value="-50" step="any">
                     </div>
                     <div class="input-row">
-                        <label>C<sub>2</sub> (marginal cost)</label>
+                        <label for="c2">C<sub>2</sub> (marginal cost)</label>
                         <input type="number" id="c2" value="7" step="any">
                     </div>
                 </div>
@@ -820,7 +836,7 @@
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
                     <div>
                         <div class="input-row" style="margin-bottom: 0.5rem;">
-                            <label style="color: var(--producer1);">c<sub>1</sub> (P₂ → Q₁)</label>
+                            <label for="crossPrice1" style="color: var(--producer1);">c<sub>1</sub> (P₂ → Q₁)</label>
                             <input type="number" id="crossPrice1" value="10" step="any">
                         </div>
                         <div style="font-size: 0.8rem; color: var(--text-light);">
@@ -829,7 +845,7 @@
                     </div>
                     <div>
                         <div class="input-row" style="margin-bottom: 0.5rem;">
-                            <label style="color: var(--producer2);">c<sub>2</sub> (P₁ → Q₂)</label>
+                            <label for="crossPrice2" style="color: var(--producer2);">c<sub>2</sub> (P₁ → Q₂)</label>
                             <input type="number" id="crossPrice2" value="10" step="any">
                         </div>
                         <div style="font-size: 0.8rem; color: var(--text-light);">
@@ -852,12 +868,17 @@
                 </div>
 
                 <!-- File Upload -->
-                <div class="reg-upload-area" id="regUploadArea">
-                    <input type="file" id="regFileInput" accept=".csv">
+                <div class="reg-upload-area" id="regUploadArea" role="button" tabindex="0" aria-label="Upload a CSV file with sales and price columns">
+                    <input type="file" id="regFileInput" accept=".csv" aria-label="CSV file">
                     <div style="font-size: 2.5rem;">&#128202;</div>
                     <p style="font-size: 1rem; color: var(--text-dark); margin-top: 0.5rem; font-weight: 500;">Click to upload or drag and drop</p>
                     <p style="font-size: 0.85rem; color: var(--text-light); margin-top: 0.25rem;">CSV file with sales/quantity and price columns</p>
                 </div>
+
+                <p style="font-size: 0.85rem; color: var(--text-light); margin-top: 0.5rem;">
+                    No data handy? <a href="#" onclick="downloadSampleCsv(); return false;" style="color: var(--iu-crimson); font-weight: 600;">Download a sample CSV</a> (two prices and two sales columns, 60 rows) to try the workflow.
+                </p>
+                <div id="regUploadError" class="error-message" style="margin-top: 0.5rem;" aria-live="polite"></div>
 
                 <!-- Data Preview -->
                 <div id="regDataPreview" style="display: none; margin-top: 1.25rem;">
@@ -880,17 +901,17 @@
                                 <span class="producer-dot producer1"></span> Product 1
                             </div>
                             <div class="input-row">
-                                <label style="width: 140px;">Name (optional)</label>
+                                <label for="reg_name1" style="width: 140px;">Name (optional)</label>
                                 <input type="text" id="reg_name1" placeholder="e.g., Coke" style="flex:1; padding: 0.5rem; border: 1px solid var(--border); border-radius: 6px; font-size: 0.9rem;">
                             </div>
                             <div class="input-row">
-                                <label style="width: 140px;">Quantity (Q<sub>1</sub>)</label>
+                                <label for="reg_q1_col" style="width: 140px;">Quantity (Q<sub>1</sub>)</label>
                                 <select id="reg_q1_col" style="flex:1; padding: 0.5rem; border: 1px solid var(--border); border-radius: 6px; font-size: 0.9rem;">
                                     <option value="">-- Select --</option>
                                 </select>
                             </div>
                             <div class="input-row">
-                                <label style="width: 140px;">Price (P<sub>1</sub>)</label>
+                                <label for="reg_p1_col" style="width: 140px;">Price (P<sub>1</sub>)</label>
                                 <select id="reg_p1_col" style="flex:1; padding: 0.5rem; border: 1px solid var(--border); border-radius: 6px; font-size: 0.9rem;">
                                     <option value="">-- Select --</option>
                                 </select>
@@ -901,17 +922,17 @@
                                 <span class="producer-dot producer2"></span> Product 2
                             </div>
                             <div class="input-row">
-                                <label style="width: 140px;">Name (optional)</label>
+                                <label for="reg_name2" style="width: 140px;">Name (optional)</label>
                                 <input type="text" id="reg_name2" placeholder="e.g., Pepsi" style="flex:1; padding: 0.5rem; border: 1px solid var(--border); border-radius: 6px; font-size: 0.9rem;">
                             </div>
                             <div class="input-row">
-                                <label style="width: 140px;">Quantity (Q<sub>2</sub>)</label>
+                                <label for="reg_q2_col" style="width: 140px;">Quantity (Q<sub>2</sub>)</label>
                                 <select id="reg_q2_col" style="flex:1; padding: 0.5rem; border: 1px solid var(--border); border-radius: 6px; font-size: 0.9rem;">
                                     <option value="">-- Select --</option>
                                 </select>
                             </div>
                             <div class="input-row">
-                                <label style="width: 140px;">Price (P<sub>2</sub>)</label>
+                                <label for="reg_p2_col" style="width: 140px;">Price (P<sub>2</sub>)</label>
                                 <select id="reg_p2_col" style="flex:1; padding: 0.5rem; border: 1px solid var(--border); border-radius: 6px; font-size: 0.9rem;">
                                     <option value="">-- Select --</option>
                                 </select>
@@ -921,6 +942,7 @@
                     <button id="runRegressionsBtn" class="calculate-btn" style="margin-top: 1.25rem; width: 100%;" onclick="runDemandRegressions()" disabled>
                         Run Regressions
                     </button>
+                    <div id="regRunError" class="error-message" style="margin-top: 0.75rem;" aria-live="polite"></div>
                 </div>
 
                 <!-- Regression Results -->
@@ -947,6 +969,10 @@
                         <div id="regR2_2" style="font-size: 0.85rem; color: var(--text-light); margin-top: 0.5rem;"></div>
                     </div>
 
+                    <div style="font-size: 0.8rem; color: var(--text-light); margin-bottom: 1rem;">
+                        Signif. codes: *** p &lt; 0.001, ** p &lt; 0.01, * p &lt; 0.05, . p &lt; 0.1 (same thresholds as R's summary()).
+                    </div>
+
                     <div id="regParamsSummary" class="reg-params-summary" style="display: none;"></div>
 
                     <!-- Estimated Equations Box -->
@@ -965,7 +991,7 @@
                                 Product 1 Cost
                             </div>
                             <div class="input-row">
-                                <label>C<sub>1</sub> (marginal cost)</label>
+                                <label for="c1_reg">C<sub>1</sub> (marginal cost)</label>
                                 <input type="number" id="c1_reg" value="7" step="any">
                             </div>
                         </div>
@@ -975,7 +1001,7 @@
                                 Product 2 Cost
                             </div>
                             <div class="input-row">
-                                <label>C<sub>2</sub> (marginal cost)</label>
+                                <label for="c2_reg">C<sub>2</sub> (marginal cost)</label>
                                 <input type="number" id="c2_reg" value="7" step="any">
                             </div>
                         </div>
@@ -996,13 +1022,13 @@
                     <div style="display: grid; grid-template-columns: 1fr 1fr auto 1fr; gap: 1.5rem; align-items: end;">
                         <div>
                             <div class="input-row" style="margin-bottom: 0;">
-                                <label style="width: 60px; color: var(--producer1); font-weight: 600;">P₁</label>
+                                <label for="pred_p1" style="width: 60px; color: var(--producer1); font-weight: 600;">P₁</label>
                                 <input type="number" id="pred_p1" value="12" step="any">
                             </div>
                         </div>
                         <div>
                             <div class="input-row" style="margin-bottom: 0;">
-                                <label style="width: 60px; color: var(--producer2); font-weight: 600;">P₂</label>
+                                <label for="pred_p2" style="width: 60px; color: var(--producer2); font-weight: 600;">P₂</label>
                                 <input type="number" id="pred_p2" value="12" step="any">
                             </div>
                         </div>
@@ -1025,6 +1051,7 @@
                         </div>
                     </div>
                     <div id="predictionDetail" style="margin-top: 0.75rem; font-size: 0.85rem; color: var(--text-light); display: none;"></div>
+                    <div id="predictionError" class="error-message" style="margin-top: 0.75rem;" aria-live="polite"></div>
                 </div>
             </div>
 
@@ -1047,20 +1074,21 @@
                             Vary P₁ (hold P₂ constant)
                         </div>
                         <div class="input-row" style="margin-bottom: 0.5rem;">
-                            <label style="width: 140px;">P₁ (initial)</label>
+                            <label for="elast_p1_old" style="width: 140px;">P₁ (initial)</label>
                             <input type="number" id="elast_p1_old" value="12" step="any">
                         </div>
                         <div class="input-row" style="margin-bottom: 0.5rem;">
-                            <label style="width: 140px;">P₁ (new)</label>
+                            <label for="elast_p1_new" style="width: 140px;">P₁ (new)</label>
                             <input type="number" id="elast_p1_new" value="13" step="any">
                         </div>
                         <div class="input-row" style="margin-bottom: 0.75rem;">
-                            <label style="width: 140px;">P₂ (held constant)</label>
+                            <label for="elast_p2_const" style="width: 140px;">P₂ (held constant)</label>
                             <input type="number" id="elast_p2_const" value="12" step="any">
                         </div>
                         <button onclick="calculateElasticityBox1()" style="width: 100%; padding: 0.5rem; background: var(--producer1); color: white; border: none; border-radius: 6px; font-weight: 600; cursor: pointer;">
                             Calculate Elasticities
                         </button>
+                        <div id="elastBox1Error" class="error-message" style="margin-top: 0.75rem;" aria-live="polite"></div>
                         <div id="elastBox1Results" style="margin-top: 0.75rem; font-size: 0.9rem; display: none;">
                             <div style="background: white; padding: 0.75rem; border-radius: 6px; margin-bottom: 0.5rem;">
                                 <div style="color: var(--text-light); font-size: 0.8rem;">Own-Price Elasticity of Q₁</div>
@@ -1082,20 +1110,21 @@
                             Vary P₂ (hold P₁ constant)
                         </div>
                         <div class="input-row" style="margin-bottom: 0.5rem;">
-                            <label style="width: 140px;">P₂ (initial)</label>
+                            <label for="elast_p2_old" style="width: 140px;">P₂ (initial)</label>
                             <input type="number" id="elast_p2_old" value="12" step="any">
                         </div>
                         <div class="input-row" style="margin-bottom: 0.5rem;">
-                            <label style="width: 140px;">P₂ (new)</label>
+                            <label for="elast_p2_new" style="width: 140px;">P₂ (new)</label>
                             <input type="number" id="elast_p2_new" value="13" step="any">
                         </div>
                         <div class="input-row" style="margin-bottom: 0.75rem;">
-                            <label style="width: 140px;">P₁ (held constant)</label>
+                            <label for="elast_p1_const" style="width: 140px;">P₁ (held constant)</label>
                             <input type="number" id="elast_p1_const" value="12" step="any">
                         </div>
                         <button onclick="calculateElasticityBox2()" style="width: 100%; padding: 0.5rem; background: var(--producer2); color: white; border: none; border-radius: 6px; font-weight: 600; cursor: pointer;">
                             Calculate Elasticities
                         </button>
+                        <div id="elastBox2Error" class="error-message" style="margin-top: 0.75rem;" aria-live="polite"></div>
                         <div id="elastBox2Results" style="margin-top: 0.75rem; font-size: 0.9rem; display: none;">
                             <div style="background: white; padding: 0.75rem; border-radius: 6px; margin-bottom: 0.5rem;">
                                 <div style="color: var(--text-light); font-size: 0.8rem;">Own-Price Elasticity of Q₂</div>
@@ -1177,15 +1206,17 @@
             <div class="tool-container">
                 <h2 class="section-title">Scenario Comparison</h2>
 
+                <div id="resultsWarning" class="error-message" style="margin-top: 0; margin-bottom: 1rem;" aria-live="polite"></div>
+
                 <div class="pair-selector">
-                    <select id="scenarioLeft" onchange="updatePairView()">
+                    <select id="scenarioLeft" aria-label="First scenario to compare" onchange="updatePairView()">
                         <option value="s1" selected>Single Owner — Direct Sales</option>
                         <option value="s2">Single Owner — Through Retailer</option>
                         <option value="s3">Competing Brands — Direct Sales</option>
                         <option value="s4">Competing Brands — Through Retailer</option>
                     </select>
                     <span class="vs-label">vs.</span>
-                    <select id="scenarioRight" onchange="updatePairView()">
+                    <select id="scenarioRight" aria-label="Second scenario to compare" onchange="updatePairView()">
                         <option value="s1">Single Owner — Direct Sales</option>
                         <option value="s2">Single Owner — Through Retailer</option>
                         <option value="s3" selected>Competing Brands — Direct Sales</option>
@@ -1336,6 +1367,14 @@
                                 <span class="value retailer" id="s4_p2">-</span>
                             </div>
                             <div class="metric">
+                                <span class="label" id="s4_lbl_q1">Quantity Q₁</span>
+                                <span class="value" id="s4_q1">-</span>
+                            </div>
+                            <div class="metric">
+                                <span class="label" id="s4_lbl_q2">Quantity Q₂</span>
+                                <span class="value" id="s4_q2">-</span>
+                            </div>
+                            <div class="metric">
                                 <span class="label" id="s4_lbl_profit1">Producer 1 Profit</span>
                                 <span class="value producer1" id="s4_profit1">-</span>
                             </div>
@@ -1362,12 +1401,12 @@
             </div>
 
             <div class="tool-container">
-                <div class="tabs">
-                    <div class="tab active" onclick="switchTab('chart')">Profit Comparison</div>
-                    <div class="tab" onclick="switchTab('comparison')">Full Comparison Table</div>
+                <div class="tabs" role="tablist" aria-label="Result views">
+                    <button type="button" class="tab active" role="tab" aria-selected="true" aria-controls="chartTab" onclick="switchTab('chart')">Profit Comparison</button>
+                    <button type="button" class="tab" role="tab" aria-selected="false" aria-controls="comparisonTab" onclick="switchTab('comparison')">Full Comparison Table</button>
                 </div>
 
-                <div id="chartTab" class="tab-content active">
+                <div id="chartTab" class="tab-content active" role="tabpanel" aria-label="Profit comparison chart">
                     <p style="color: var(--text-light); margin-bottom: 1rem; font-size: 0.9rem;">
                         Comparison of profits across all four scenarios. Shows how channel structure and competition affect profit distribution.
                     </p>
@@ -1376,23 +1415,30 @@
                     </div>
                 </div>
 
-                <div id="comparisonTab" class="tab-content">
-                    <p style="color: var(--text-light); margin-bottom: 1rem;">
-                        Full comparison of outcomes across all scenarios.
-                    </p>
-                    <table class="comparison-table">
-                        <thead>
-                            <tr>
-                                <th>Metric</th>
-                                <th>1. Single Owner Direct</th>
-                                <th>2. Single Owner+Retailer</th>
-                                <th>3. Competitors Direct</th>
-                                <th>4. Competitors+Retailer</th>
-                            </tr>
-                        </thead>
-                        <tbody id="comparisonBody">
-                        </tbody>
-                    </table>
+                <div id="comparisonTab" class="tab-content" role="tabpanel" aria-label="Full comparison table">
+                    <div style="display: flex; flex-wrap: wrap; gap: 0.75rem; align-items: center; justify-content: space-between; margin-bottom: 1rem;">
+                        <p style="color: var(--text-light); margin: 0;">
+                            Full comparison of outcomes across all scenarios.
+                        </p>
+                        <button type="button" onclick="downloadComparisonCsv()" style="padding: 0.4rem 0.9rem; background: white; color: var(--iu-crimson); border: 1px solid var(--iu-crimson); border-radius: 6px; font-weight: 600; font-size: 0.85rem; cursor: pointer;">
+                            Download CSV
+                        </button>
+                    </div>
+                    <div class="table-scroll" style="overflow-x: auto;">
+                        <table class="comparison-table">
+                            <thead>
+                                <tr>
+                                    <th>Metric</th>
+                                    <th>1. Single Owner Direct</th>
+                                    <th>2. Single Owner+Retailer</th>
+                                    <th>3. Competitors Direct</th>
+                                    <th>4. Competitors+Retailer</th>
+                                </tr>
+                            </thead>
+                            <tbody id="comparisonBody">
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
 
             </div>
@@ -1454,19 +1500,65 @@
         }
 
         // ---- CSV Parsing ----
+        // Quote-aware parser: handles fields wrapped in double quotes that contain commas
+        // (e.g. Excel-exported "1,234"), escaped quotes (""), and CRLF or LF line endings.
+        // Returns { headers, data, skipped } where skipped counts rows whose column count did not match.
         function parseRegCSV(text) {
-            const lines = text.trim().split('\n');
-            const headers = lines[0].split(',').map(h => h.trim().replace(/^"|"$/g, ''));
-            const data = [];
-            for (let i = 1; i < lines.length; i++) {
-                const values = lines[i].split(',').map(v => v.trim().replace(/^"|"$/g, ''));
-                if (values.length === headers.length) {
-                    const row = {};
-                    headers.forEach((h, j) => { row[h] = values[j]; });
-                    data.push(row);
+            const rows = [];
+            let field = '';
+            let row = [];
+            let inQuotes = false;
+            for (let i = 0; i < text.length; i++) {
+                const ch = text[i];
+                if (inQuotes) {
+                    if (ch === '"') {
+                        if (text[i + 1] === '"') { field += '"'; i++; }
+                        else { inQuotes = false; }
+                    } else {
+                        field += ch;
+                    }
+                } else if (ch === '"') {
+                    inQuotes = true;
+                } else if (ch === ',') {
+                    row.push(field); field = '';
+                } else if (ch === '\r') {
+                    // ignore; handled by the following \n
+                } else if (ch === '\n') {
+                    row.push(field); rows.push(row); field = ''; row = [];
+                } else {
+                    field += ch;
                 }
             }
-            return { headers, data };
+            // Flush the final field/row if the file did not end with a newline
+            if (field !== '' || row.length > 0) { row.push(field); rows.push(row); }
+            // Drop fully-empty rows (e.g. a trailing blank line)
+            const cleaned = rows.filter(r => !(r.length === 1 && r[0].trim() === ''));
+            if (cleaned.length === 0) return { headers: [], data: [], skipped: 0 };
+            const headers = cleaned[0].map(h => h.trim());
+            const data = [];
+            let skipped = 0;
+            for (let r = 1; r < cleaned.length; r++) {
+                const values = cleaned[r];
+                if (values.length === headers.length) {
+                    const obj = {};
+                    headers.forEach((h, j) => { obj[h] = (values[j] || '').trim(); });
+                    data.push(obj);
+                } else {
+                    skipped++;
+                }
+            }
+            return { headers, data, skipped };
+        }
+
+        // Escape user-supplied CSV strings before inserting them into innerHTML (prevents self-XSS
+        // from a malicious cell such as <img onerror=...>).
+        function htmlEscape(s) {
+            return String(s)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;');
         }
 
         function isNumericColumnReg(data, colName) {
@@ -1483,25 +1575,33 @@
         // ---- File Upload Handling ----
         function handleRegFile(file) {
             if (!file || !file.name.toLowerCase().endsWith('.csv')) {
-                alert('Please upload a CSV file.');
+                showInlineError('regUploadError', 'Please upload a CSV file.');
                 return;
             }
+            clearInlineError('regUploadError');
             const reader = new FileReader();
             reader.onload = (e) => {
                 try {
                     regCsvData = parseRegCSV(e.target.result);
                     regCsvData.raw = e.target.result;
+                    if (regCsvData.data.length === 0) {
+                        showInlineError('regUploadError', 'No usable data rows were found in this file. Check that it is a comma-separated CSV with a header row.');
+                        return;
+                    }
                     displayRegPreview(regCsvData.headers, regCsvData.data);
                     populateRegDropdowns(regCsvData.headers, regCsvData.data);
                     document.getElementById('regDataPreview').style.display = 'block';
                     document.getElementById('regColumnMapping').style.display = 'block';
+                    const skippedNote = regCsvData.skipped > 0
+                        ? ` ${regCsvData.skipped} malformed row(s) were skipped (column count did not match the header).`
+                        : '';
                     document.getElementById('regDataInfo').textContent =
-                        `Loaded ${regCsvData.data.length} rows × ${regCsvData.headers.length} columns.`;
+                        `Loaded ${regCsvData.data.length} rows × ${regCsvData.headers.length} columns.${skippedNote}`;
                     // Reset previous results
                     regCoefficients = null;
                     document.getElementById('regressionResults').style.display = 'none';
                 } catch (error) {
-                    alert('Error parsing CSV: ' + error.message);
+                    showInlineError('regUploadError', 'Error parsing CSV: ' + error.message);
                 }
             };
             reader.readAsText(file);
@@ -1511,11 +1611,11 @@
             const table = document.getElementById('regPreviewTable');
             const preview = data.slice(0, 10);
             let html = '<thead><tr>';
-            headers.forEach(h => { html += `<th>${h}</th>`; });
+            headers.forEach(h => { html += `<th>${htmlEscape(h)}</th>`; });
             html += '</tr></thead><tbody>';
             preview.forEach(row => {
                 html += '<tr>';
-                headers.forEach(h => { html += `<td>${row[h] || ''}</td>`; });
+                headers.forEach(h => { html += `<td>${htmlEscape(row[h] || '')}</td>`; });
                 html += '</tr>';
             });
             html += '</tbody>';
@@ -1529,7 +1629,7 @@
                 const sel = document.getElementById(id);
                 sel.innerHTML = '<option value="">-- Select --</option>';
                 numericCols.forEach(col => {
-                    sel.innerHTML += `<option value="${col}">${col}</option>`;
+                    sel.innerHTML += `<option value="${htmlEscape(col)}">${htmlEscape(col)}</option>`;
                 });
                 sel.onchange = updateRunRegressionsBtn;
             });
@@ -1561,6 +1661,7 @@
             const btn = document.getElementById('runRegressionsBtn');
             btn.disabled = true;
             btn.textContent = 'Running regressions...';
+            clearInlineError('regRunError');
 
             try {
                 // Build CSV with just the 4 columns
@@ -1630,7 +1731,7 @@
                 displayRegressionResults(regResult, q1Col, q2Col, p1Col, p2Col);
 
             } catch (error) {
-                alert('Regression error: ' + error.message);
+                showInlineError('regRunError', 'Regression error: ' + error.message);
                 console.error(error);
             } finally {
                 btn.disabled = false;
@@ -1644,7 +1745,8 @@
             let html = '<thead><tr><th>Variable</th><th>Estimate</th><th>Std. Error</th><th>t-value</th><th>p-value</th></tr></thead><tbody>';
             coefs.forEach(c => {
                 const pDisp = c.p < 0.0001 ? '< 0.0001' : c.p.toFixed(4);
-                const sig = c.p < 0.01 ? ' ***' : c.p < 0.05 ? ' **' : c.p < 0.1 ? ' *' : '';
+                // R's summary() convention: *** p<0.001, ** p<0.01, * p<0.05, . p<0.1
+                const sig = c.p < 0.001 ? ' ***' : c.p < 0.01 ? ' **' : c.p < 0.05 ? ' *' : c.p < 0.1 ? ' .' : '';
                 html += `<tr>
                     <td style="font-weight: 500;">${c.var}</td>
                     <td>${c.est.toFixed(4)}</td>
@@ -1723,13 +1825,26 @@
 
         // ---- Event Listeners ----
         document.addEventListener('DOMContentLoaded', () => {
-            initChart();
+            // Guard against a blocked/failed Chart.js CDN: a ReferenceError here must not prevent
+            // the regression upload listeners below from being attached.
+            try {
+                initChart();
+            } catch (err) {
+                console.error('Chart initialization failed (charts will be unavailable):', err);
+            }
 
             // Regression upload area
             const regUploadArea = document.getElementById('regUploadArea');
             const regFileInput = document.getElementById('regFileInput');
             if (regUploadArea && regFileInput) {
                 regUploadArea.addEventListener('click', () => regFileInput.click());
+                // Keyboard support: the upload area is a role="button", so Enter/Space must open the picker.
+                regUploadArea.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        regFileInput.click();
+                    }
+                });
                 regFileInput.addEventListener('change', (e) => {
                     if (e.target.files.length > 0) handleRegFile(e.target.files[0]);
                 });
@@ -1746,6 +1861,20 @@
                     if (e.dataTransfer.files.length > 0) handleRegFile(e.dataTransfer.files[0]);
                 });
             }
+
+            // Enter-to-calculate on each calculator's inputs.
+            const enterToRun = (ids, fn) => {
+                ids.forEach(id => {
+                    const el = document.getElementById(id);
+                    if (el) el.addEventListener('keydown', (e) => {
+                        if (e.key === 'Enter') { e.preventDefault(); fn(); }
+                    });
+                });
+            };
+            enterToRun(['a1', 'b1', 'c1', 'a2', 'b2', 'c2', 'crossPrice1', 'crossPrice2'], calculateAll);
+            enterToRun(['pred_p1', 'pred_p2'], calculatePrediction);
+            enterToRun(['elast_p1_old', 'elast_p1_new', 'elast_p2_const'], calculateElasticityBox1);
+            enterToRun(['elast_p2_old', 'elast_p2_new', 'elast_p1_const'], calculateElasticityBox2);
         });
 
         function initChart() {
@@ -1818,11 +1947,41 @@
                 return 'All parameters must be valid numbers.';
             }
             if (p.b1 <= 0 || p.b2 <= 0) {
-                return 'Own-price coefficients (b₁, b₂) must be negative — quantity decreases when own price increases.';
+                return 'Own-price coefficients (b₁, b₂) must be negative: quantity decreases when own price increases.';
             }
-            // For stability, need b1*b2 > c1*c2 (ensures positive definite Hessian)
+            // Best-response stability (needed by Scenario 3): own-price effects must dominate the product of cross-price effects.
             if (p.c1 * p.c2 >= p.b1 * p.b2) {
                 return 'For stability: b₁·b₂ > c₁·c₂ (own-price effects must dominate cross-price effects).';
+            }
+            // Joint-profit concavity (needed by Scenarios 1, 2, and the retailer stage of 4): the single-owner
+            // Hessian is negative definite only when 4·b₁·b₂ > (c₁+c₂)². Without this, the "optimum" is a saddle
+            // point and the closed-form solver returns negative prices/profits, so we must reject these parameters.
+            const cSum = p.c1 + p.c2;
+            if (4 * p.b1 * p.b2 <= cSum * cSum) {
+                return 'For a valid joint-profit optimum: 4·b₁·b₂ > (c₁+c₂)² (this keeps the single-owner problem a proper maximum, not a saddle point). Reduce the cross-price effects or increase the own-price sensitivities.';
+            }
+            return null;
+        }
+
+        // Show/clear an inline error banner on a specific element (reuses the .error-message styling).
+        function showInlineError(id, msg) {
+            const el = document.getElementById(id);
+            if (!el) return;
+            el.textContent = msg;
+            el.classList.add('visible');
+        }
+        function clearInlineError(id) {
+            const el = document.getElementById(id);
+            if (!el) return;
+            el.classList.remove('visible');
+        }
+        // Returns a friendly message if the demand parameters are not usable yet (regression not run,
+        // or a demand field is blank), otherwise null. Used by the prediction and elasticity calculators.
+        function demandParamsError(p) {
+            if (p.__parseError) return p.__parseError;
+            const vals = [p.a1, p.a2, p.b1, p.b2, p.c1, p.c2];
+            if (vals.some(v => isNaN(v))) {
+                return 'Fill in all demand parameters (a, b, and c for both products), or run the regression, before using this calculator.';
             }
             return null;
         }
@@ -2052,6 +2211,32 @@
             displayResults(p);
         }
 
+        // Flag scenarios whose closed-form (interior) solution falls outside the valid demand
+        // range: negative sales, or below-cost prices (negative margins). In those cases the true
+        // equilibrium puts the affected product at a corner (zero sales), so the displayed
+        // interior-formula numbers are not economically valid and must be called out.
+        function equilibriumWarnings(p) {
+            const s = results;
+            const issues = [];
+            const negQ = [];
+            if (s.s1 && (s.s1.Q1 < 0 || s.s1.Q2 < 0)) negQ.push('1');
+            if (s.s2 && (s.s2.Q1 < 0 || s.s2.Q2 < 0)) negQ.push('2');
+            if (s.s3 && (s.s3.Q1 < 0 || s.s3.Q2 < 0)) negQ.push('3');
+            if (s.s4 && (s.s4.Q1 < 0 || s.s4.Q2 < 0)) negQ.push('4');
+            if (negQ.length) {
+                issues.push('negative sales in scenario ' + negQ.join(', '));
+            }
+            const negM = [];
+            if (s.s1 && (s.s1.P1 < p.C1 || s.s1.P2 < p.C2)) negM.push('1');
+            if (s.s2 && (s.s2.W1 < p.C1 || s.s2.W2 < p.C2 || s.s2.P1 < s.s2.W1 || s.s2.P2 < s.s2.W2)) negM.push('2');
+            if (s.s3 && (s.s3.P1 < p.C1 || s.s3.P2 < p.C2)) negM.push('3');
+            if (s.s4 && (s.s4.W1 < p.C1 || s.s4.W2 < p.C2 || s.s4.P1 < s.s4.W1 || s.s4.P2 < s.s4.W2)) negM.push('4');
+            if (negM.length) {
+                issues.push('below-cost prices (negative margins) in scenario ' + negM.join(', '));
+            }
+            return issues;
+        }
+
         function displayResults(p) {
             document.getElementById('resultsSection').style.display = 'block';
 
@@ -2084,6 +2269,8 @@
             document.getElementById('s4_lbl_w2').textContent = `${N2} Wholesale Price`;
             document.getElementById('s4_lbl_p1').textContent = `${N1} Retail Price`;
             document.getElementById('s4_lbl_p2').textContent = `${N2} Retail Price`;
+            document.getElementById('s4_lbl_q1').textContent = `${N1} Sales`;
+            document.getElementById('s4_lbl_q2').textContent = `${N2} Sales`;
             document.getElementById('s4_lbl_profit1').textContent = `${N1} Profit`;
             document.getElementById('s4_lbl_profit2').textContent = `${N2} Profit`;
 
@@ -2123,10 +2310,23 @@
             document.getElementById('s4_w2').textContent = results.s4.W2.toFixed(4);
             document.getElementById('s4_p1').textContent = results.s4.P1.toFixed(4);
             document.getElementById('s4_p2').textContent = results.s4.P2.toFixed(4);
+            document.getElementById('s4_q1').textContent = results.s4.Q1.toFixed(4);
+            document.getElementById('s4_q2').textContent = results.s4.Q2.toFixed(4);
             document.getElementById('s4_profit1').textContent = results.s4.profit1.toFixed(4);
             document.getElementById('s4_profit2').textContent = results.s4.profit2.toFixed(4);
             document.getElementById('s4_retailer').textContent = results.s4.retailerProfit.toFixed(4);
             document.getElementById('s4_total').textContent = results.s4.totalProfit.toFixed(4);
+
+            // Flag any scenario whose interior solution is outside the valid demand range.
+            const warnEl = document.getElementById('resultsWarning');
+            const issues = equilibriumWarnings(p);
+            if (issues.length) {
+                warnEl.innerHTML = '<strong>&#9888; Check these results:</strong> the model found ' + issues.join(' and ') +
+                    '. These come from the closed-form (interior) formula; the true equilibrium puts the affected product at zero sales (a corner solution), so the numbers below are not economically valid. Try parameters where base demand is larger relative to the cross-price effects.';
+                warnEl.classList.add('visible');
+            } else {
+                warnEl.classList.remove('visible');
+            }
 
             // Store params for pair switching without re-solving
             lastParams = p;
@@ -2220,7 +2420,8 @@
             // Generate comparison based on the specific pair
             if (pairKey === 's1_s3') {
                 html += `<div class="insight-section-title">Collusion vs. Competition — No Retailer</div>`;
-                html += `<div class="insight-question">What happens when two substitute products go from being owned by a single firm (collusion) to being owned by separate competing firms?</div>`;
+                const s1s3RelWord = isComplement ? 'two complementary products' : 'two substitute products';
+                html += `<div class="insight-question">What happens when ${s1s3RelWord} go from being owned by a single firm (collusion) to being owned by separate competing firms?</div>`;
                 html += `<div class="insight-metrics">`;
                 html += metric(`${N1} Retail Price`, results.s1.P1, results.s3.P1);
                 html += metric(`${N2} Retail Price`, results.s1.P2, results.s3.P2);
@@ -2326,6 +2527,7 @@
         }
 
         function updateChart(names) {
+            if (!profitChart) return; // Chart.js unavailable (CDN blocked); skip chart, keep table/cards working
             profitChart.data.labels = [
                 '1. Single Owner Direct',
                 '2. Single Owner+Retailer',
@@ -2377,8 +2579,9 @@
             profitChart.update();
         }
 
-        function updateComparison(names) {
-            const rows = [
+        // Data rows (excluding the header) shared by the on-screen table and the CSV export.
+        function comparisonRows(names) {
+            return [
                 [`${names.p1} Wholesale Price`, 'N/A', results.s2.W1, 'N/A', results.s4.W1],
                 [`${names.p2} Wholesale Price`, 'N/A', results.s2.W2, 'N/A', results.s4.W2],
                 [`${names.p1} Retail Price`, results.s1.P1, results.s2.P1, results.s3.P1, results.s4.P1],
@@ -2390,10 +2593,14 @@
                 ['Retailer Profit', 0, results.s2.retailerProfit, 0, results.s4.retailerProfit],
                 ['Total Channel Profit', results.s1.totalProfit, results.s2.totalProfit, results.s3.totalProfit, results.s4.totalProfit]
             ];
+        }
+
+        function updateComparison(names) {
+            const rows = comparisonRows(names);
 
             document.getElementById('comparisonBody').innerHTML = rows.map(row => {
                 return `<tr>
-                    <td style="font-family: inherit; font-weight: 500;">${row[0]}</td>
+                    <td style="font-family: inherit; font-weight: 500;">${htmlEscape(row[0])}</td>
                     <td>${typeof row[1] === 'number' ? row[1].toFixed(4) : row[1]}</td>
                     <td>${typeof row[2] === 'number' ? row[2].toFixed(4) : row[2]}</td>
                     <td>${typeof row[3] === 'number' ? row[3].toFixed(4) : row[3]}</td>
@@ -2403,9 +2610,16 @@
         }
 
         function switchTab(tab) {
-            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab').forEach(t => {
+                t.classList.remove('active');
+                t.setAttribute('aria-selected', 'false');
+            });
             document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
-            document.querySelector(`.tab[onclick="switchTab('${tab}')"]`).classList.add('active');
+            const activeTab = document.querySelector(`.tab[onclick="switchTab('${tab}')"]`);
+            if (activeTab) {
+                activeTab.classList.add('active');
+                activeTab.setAttribute('aria-selected', 'true');
+            }
             document.getElementById(tab + 'Tab').classList.add('active');
         }
 
@@ -2416,20 +2630,25 @@
         function calculateElasticityBox1() {
             // Box 1: Vary P1, hold P2 constant
             const p = getParams();
+            const pErr = demandParamsError(p);
+            if (pErr) {
+                showInlineError('elastBox1Error', pErr);
+                return;
+            }
             const P1_old = parseFloat(document.getElementById('elast_p1_old').value);
             const P1_new = parseFloat(document.getElementById('elast_p1_new').value);
             const P2 = parseFloat(document.getElementById('elast_p2_const').value);
 
             if (isNaN(P1_old) || isNaN(P1_new) || isNaN(P2)) {
-                alert('Please enter valid price values.');
+                showInlineError('elastBox1Error', 'Please enter valid price values.');
                 return;
             }
             if (P1_old === P1_new) {
-                alert('Initial and new P₁ must be different to calculate elasticity.');
+                showInlineError('elastBox1Error', 'Initial and new P₁ must be different to calculate elasticity.');
                 return;
             }
             if (P1_old <= 0) {
-                alert('Initial P₁ must be positive for elasticity calculation.');
+                showInlineError('elastBox1Error', 'Initial P₁ must be positive for elasticity calculation.');
                 return;
             }
 
@@ -2440,13 +2659,14 @@
             const Q2_new = p.a2 - p.b2 * P2 + p.c2 * P1_new;
 
             if (Q1_old <= 0) {
-                alert('Initial Q₁ is not positive at the given prices. Choose different price levels.');
+                showInlineError('elastBox1Error', 'Initial Q₁ is not positive at the given prices. Choose different price levels.');
                 return;
             }
             if (Q2_old <= 0) {
-                alert('Initial Q₂ is not positive at the given prices. Choose different price levels.');
+                showInlineError('elastBox1Error', 'Initial Q₂ is not positive at the given prices. Choose different price levels.');
                 return;
             }
+            clearInlineError('elastBox1Error');
 
             // Own-price elasticity of Q1 w.r.t. P1
             const pctChangeQ1 = (Q1_new - Q1_old) / Q1_old;
@@ -2473,20 +2693,25 @@
         function calculateElasticityBox2() {
             // Box 2: Vary P2, hold P1 constant
             const p = getParams();
+            const pErr = demandParamsError(p);
+            if (pErr) {
+                showInlineError('elastBox2Error', pErr);
+                return;
+            }
             const P2_old = parseFloat(document.getElementById('elast_p2_old').value);
             const P2_new = parseFloat(document.getElementById('elast_p2_new').value);
             const P1 = parseFloat(document.getElementById('elast_p1_const').value);
 
             if (isNaN(P2_old) || isNaN(P2_new) || isNaN(P1)) {
-                alert('Please enter valid price values.');
+                showInlineError('elastBox2Error', 'Please enter valid price values.');
                 return;
             }
             if (P2_old === P2_new) {
-                alert('Initial and new P₂ must be different to calculate elasticity.');
+                showInlineError('elastBox2Error', 'Initial and new P₂ must be different to calculate elasticity.');
                 return;
             }
             if (P2_old <= 0) {
-                alert('Initial P₂ must be positive for elasticity calculation.');
+                showInlineError('elastBox2Error', 'Initial P₂ must be positive for elasticity calculation.');
                 return;
             }
 
@@ -2497,13 +2722,14 @@
             const Q2_new = p.a2 - p.b2 * P2_new + p.c2 * P1;
 
             if (Q2_old <= 0) {
-                alert('Initial Q₂ is not positive at the given prices. Choose different price levels.');
+                showInlineError('elastBox2Error', 'Initial Q₂ is not positive at the given prices. Choose different price levels.');
                 return;
             }
             if (Q1_old <= 0) {
-                alert('Initial Q₁ is not positive at the given prices. Choose different price levels.');
+                showInlineError('elastBox2Error', 'Initial Q₁ is not positive at the given prices. Choose different price levels.');
                 return;
             }
+            clearInlineError('elastBox2Error');
 
             // Own-price elasticity of Q2 w.r.t. P2
             const pctChangeQ2 = (Q2_new - Q2_old) / Q2_old;
@@ -2530,13 +2756,19 @@
         // Demand Prediction Function
         function calculatePrediction() {
             const p = getParams();
+            const pErr = demandParamsError(p);
+            if (pErr) {
+                showInlineError('predictionError', pErr);
+                return;
+            }
             const P1 = parseFloat(document.getElementById('pred_p1').value);
             const P2 = parseFloat(document.getElementById('pred_p2').value);
 
             if (isNaN(P1) || isNaN(P2)) {
-                alert('Please enter valid price values.');
+                showInlineError('predictionError', 'Please enter valid price values.');
                 return;
             }
+            clearInlineError('predictionError');
 
             // Calculate quantities using demand functions
             const Q1 = p.a1 - p.b1 * P1 + p.c1 * P2;
@@ -2561,11 +2793,70 @@
             document.getElementById('predictionDetail').innerHTML = detailHtml;
         }
 
+        // ---- Download helpers ----
+        function triggerDownload(content, filename, mime) {
+            const blob = new Blob([content], { type: mime + ';charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            setTimeout(() => URL.revokeObjectURL(url), 1000);
+        }
+
+        // Quote a CSV cell only when it contains a comma, quote, or newline.
+        function csvCell(v) {
+            const s = typeof v === 'number' ? v.toFixed(4) : String(v);
+            return /[",\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s;
+        }
+
+        // Small seeded PRNG so the sample data is the same every time it is downloaded.
+        function mulberry32(seed) {
+            return function() {
+                seed |= 0; seed = (seed + 0x6D2B79F5) | 0;
+                let t = Math.imul(seed ^ (seed >>> 15), 1 | seed);
+                t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+                return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+            };
+        }
+
+        // F13: a ready-to-use sample CSV so students can try the regression workflow immediately.
+        // Two substitute products (Coke, Pepsi): Q = 1000 - 50*ownPrice + 10*otherPrice + small noise.
+        function downloadSampleCsv() {
+            clearInlineError('regUploadError');
+            const rng = mulberry32(20260715);
+            const rows = [['coke_price', 'pepsi_price', 'coke_sales', 'pepsi_sales']];
+            for (let i = 0; i < 60; i++) {
+                const p1 = 8 + rng() * 8;   // 8 to 16
+                const p2 = 8 + rng() * 8;
+                const q1 = 1000 - 50 * p1 + 10 * p2 + (rng() - 0.5) * 40;
+                const q2 = 1000 - 50 * p2 + 10 * p1 + (rng() - 0.5) * 40;
+                rows.push([p1.toFixed(2), p2.toFixed(2), String(Math.round(q1)), String(Math.round(q2))]);
+            }
+            const csv = rows.map(r => r.join(',')).join('\n');
+            triggerDownload(csv, 'sample_demand_data.csv', 'text/csv');
+        }
+
+        // F13: export the full comparison table for lab write-ups.
+        function downloadComparisonCsv() {
+            if (!results || !results.s1 || !lastParams) {
+                showInlineError('errorMessage', 'Solve for optimal prices first, then download the comparison.');
+                return;
+            }
+            const names = getProductNames();
+            const header = ['Metric', '1. Single Owner Direct', '2. Single Owner+Retailer', '3. Competitors Direct', '4. Competitors+Retailer'];
+            const rows = [header].concat(comparisonRows(names));
+            const csv = rows.map(r => r.map(csvCell).join(',')).join('\n');
+            triggerDownload(csv, 'scenario_comparison.csv', 'text/csv');
+        }
+
     </script>
 
 </div> <!-- end main-content -->
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js" integrity="sha384-yuGdyIzzYtOBlBG6JOWn+Ey9kpq7HocusNuxEGyyohr1eEyXpeEyehIIXC/hznw4" crossorigin="anonymous"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js" integrity="sha384-lI+CxEx/bCvWP1b0OK13j5HTrTZP7yf1xle8TVOFq2smz6KC1RChTarRV/RHP5PP" crossorigin="anonymous"></script>
 <script>
     const firebaseConfig = {
         apiKey: "AIzaSyBg3LJDwVIRGWtFZb_mM_CSRJMNCJUta20",
@@ -2577,12 +2868,20 @@
         measurementId: "G-NGKNY08XWP"
     };
     firebase.initializeApp(firebaseConfig);
+    // Fallback: if the sign-in service cannot be reached, do not hang on "Loading..." forever.
+    var authFallbackTimer = setTimeout(function() {
+        var ls = document.getElementById('loading-screen');
+        if (ls) {
+            ls.innerHTML = '<p style="color: #64748b; max-width: 420px; text-align: center; padding: 1rem;">Could not reach the sign-in service. Check your connection and reload this page.</p>';
+        }
+    }, 12000);
     firebase.auth().onAuthStateChanged(function(user) {
+        clearTimeout(authFallbackTimer);
         if (user) {
             document.getElementById('loading-screen').style.display = 'none';
             document.getElementById('main-content').style.display = 'block';
         } else {
-            window.location.href = 'login.html';
+            window.location.href = 'login.html?next=' + encodeURIComponent(window.location.pathname.split('/').pop());
         }
     });
 </script>

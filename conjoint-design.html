@@ -194,13 +194,23 @@
         .section-title.mt { margin-top: 2rem; }
         .section-hint { font-size: 0.9rem; color: var(--text-light); margin-bottom: 1rem; }
 
-        /* Loading overlay (WebR boot) */
-        .loading-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.96); display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 9999; }
+        /* WebR boot banner (non-blocking: the attribute builder works before R is ready) */
+        .loading-overlay {
+            position: fixed; bottom: 18px; left: 50%; transform: translateX(-50%);
+            display: flex; align-items: center; gap: 12px;
+            background: var(--white); border: 1px solid var(--border-strong);
+            border-radius: var(--radius-lg); box-shadow: var(--shadow-lg);
+            padding: 12px 18px; z-index: 9999; max-width: calc(100% - 32px);
+        }
         .loading-overlay.hidden { display: none; }
-        .spinner { width: 60px; height: 60px; border: 4px solid var(--border); border-top-color: var(--iu-crimson); border-radius: 50%; animation: spin 1s linear infinite; }
+        .loading-overlay.error { border-color: #fecaca; background: #fef2f2; }
+        .spinner { width: 26px; height: 26px; border: 3px solid var(--border); border-top-color: var(--iu-crimson); border-radius: 50%; animation: spin 1s linear infinite; flex-shrink: 0; }
+        .loading-overlay.error .spinner { display: none; }
         @keyframes spin { to { transform: rotate(360deg); } }
-        .loading-text { margin-top: 1rem; font-size: 1.1rem; color: var(--text-light); }
-        .loading-stage { margin-top: 0.5rem; font-size: 0.85rem; color: #999; text-align: center; max-width: 420px; padding: 0 1rem; }
+        .loading-copy { display: flex; flex-direction: column; min-width: 0; }
+        .loading-text { font-size: 0.95rem; font-weight: 600; color: var(--text-sub); }
+        .loading-overlay.error .loading-text { color: #991b1b; }
+        .loading-stage { margin-top: 2px; font-size: 0.8rem; color: #6b7280; max-width: 340px; }
 
         /* Status message */
         .status-message { padding: 0.85rem 1rem; border-radius: 6px; margin-bottom: 1rem; display: none; font-size: 0.95rem; }
@@ -229,7 +239,7 @@
         }
         .attr-row input[type="text"]:focus { outline: none; border-color: var(--iu-crimson); }
         .attr-row .remove-col { display: flex; align-items: flex-end; height: 100%; padding-top: 1.25rem; }
-        .levels-count { font-size: 0.78rem; color: var(--text-muted); margin-top: 0.35rem; }
+        .levels-count { font-size: 0.78rem; color: #6b7280; margin-top: 0.35rem; }
         .row-error { grid-column: 1 / -1; color: #991b1b; font-size: 0.82rem; margin-top: 0.2rem; display: none; }
         .row-error.visible { display: block; }
 
@@ -269,6 +279,25 @@
         .copy-btn { position: absolute; top: 14px; right: 14px; display: inline-flex; align-items: center; gap: 5px; background: rgba(255,255,255,0.12); color: #d4d4d4; border: 1px solid rgba(255,255,255,0.25); border-radius: 6px; padding: 5px 10px; font-size: 0.78rem; font-weight: 600; font-family: inherit; cursor: pointer; transition: background 0.15s, color 0.15s, border-color 0.15s; }
         .copy-btn:hover { background: rgba(255,255,255,0.22); color: #fff; }
         .copy-btn.copied { background: #16a34a; border-color: #16a34a; color: #fff; }
+
+        /* Generation options (number of profiles) */
+        .gen-options { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 1rem; margin-top: 1.25rem; }
+        .gen-options .field { display: flex; flex-direction: column; gap: 0.3rem; }
+        .gen-options label { font-weight: 600; font-size: 0.78rem; color: var(--text-light); text-transform: uppercase; letter-spacing: 0.04em; }
+        .gen-options input[type="number"] { width: 150px; padding: 0.6rem 0.7rem; border: 1px solid var(--border); border-radius: 6px; font-size: 0.95rem; font-family: inherit; background: var(--white); }
+        .gen-options input[type="number"]:focus { outline: none; border-color: var(--iu-crimson); }
+        .gen-hint { font-size: 0.8rem; color: var(--text-light); margin-top: 0.45rem; }
+        .field-error { color: #991b1b; font-size: 0.82rem; margin-top: 0.3rem; display: none; }
+        .field-error.visible { display: block; }
+
+        /* Design diagnostics (level balance + D-efficiency) */
+        .diagnostics { margin-top: 1rem; border: 1px solid var(--border); border-radius: 8px; padding: 1rem 1.25rem; background: var(--surface); }
+        .diagnostics h4 { font-size: 0.95rem; color: var(--text-dark); margin: 0 0 0.5rem; }
+        .diag-eff { font-size: 0.9rem; color: var(--text-sub); margin-bottom: 0.85rem; line-height: 1.55; }
+        .balance-attr { font-size: 0.88rem; color: var(--text-sub); margin-bottom: 0.4rem; }
+        .balance-attr strong { color: var(--text-dark); }
+        .balance-chip { display: inline-block; background: var(--white); border: 1px solid var(--border); border-radius: var(--radius-full); padding: 1px 9px; margin: 2px 3px 0 0; font-size: 0.82rem; font-variant-numeric: tabular-nums; }
+        .table-note { font-size: 0.82rem; color: var(--text-light); margin-top: 0.4rem; }
 
         footer { text-align: center; padding: 2rem; color: var(--text-light); font-size: 0.9rem; background: var(--surface); border-top: 1px solid var(--border); margin-top: 3rem; }
 
@@ -347,7 +376,7 @@
                     <button class="font-size-btn decrease-a" onclick="adjustFontSize(-1)" title="Decrease text size" aria-label="Decrease text size">A</button>
                     <button class="font-size-btn increase-a" onclick="adjustFontSize(1)" title="Increase text size" aria-label="Increase text size">A</button>
                 </div>
-                <div class="nav-toggle" role="button" tabindex="0" aria-label="Toggle navigation menu" onclick="document.querySelector('.nav-links').classList.toggle('active')">
+                <div class="nav-toggle" role="button" tabindex="0" aria-label="Toggle navigation menu" aria-expanded="false" onclick="toggleNav(this)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();toggleNav(this);}">
                     <span></span>
                     <span></span>
                     <span></span>
@@ -367,11 +396,13 @@
         </div>
     </nav>
 
-    <!-- WebR boot overlay -->
-    <div class="loading-overlay" id="loadingOverlay">
+    <!-- WebR boot banner (non-blocking; you can build your attribute list while R loads) -->
+    <div class="loading-overlay" id="loadingOverlay" role="status" aria-live="polite">
         <div class="spinner"></div>
-        <p class="loading-text" id="loadingText">Loading WebR (R in your browser)...</p>
-        <p class="loading-stage" id="loadingStage">First load may take 30 to 60 seconds. Everything runs locally in your browser.</p>
+        <div class="loading-copy">
+            <span class="loading-text" id="loadingText">Loading R in your browser (WebR)...</span>
+            <span class="loading-stage" id="loadingStage">First load may take 30 to 60 seconds. You can define your attributes now; Generate unlocks when R is ready.</span>
+        </div>
     </div>
 
     <main>
@@ -406,7 +437,7 @@
 
         <div class="tool-container">
 
-            <div class="status-message" id="statusMessage"></div>
+            <div class="status-message" id="statusMessage" role="status" aria-live="polite"></div>
 
             <!-- ============================== 1. Define Attributes ============================== -->
             <h2 class="section-title">1. Define Attributes</h2>
@@ -427,6 +458,17 @@
             <p class="section-hint">The full factorial count is the product of the number of levels across all attributes. The fractional design selects an efficient subset.</p>
             <div class="stat-grid" id="statGrid"></div>
 
+            <div class="gen-options">
+                <div class="field">
+                    <label for="nProfilesInput">Number of profiles (optional)</label>
+                    <input type="number" id="nProfilesInput" min="1" step="1" inputmode="numeric"
+                           placeholder="auto" autocomplete="off" aria-describedby="nProfilesHint">
+                </div>
+            </div>
+            <p class="gen-hint" id="nProfilesHint">Leave blank to use the recommended default. <span id="nProfilesRec"></span></p>
+            <div class="field-error" id="nProfilesError"></div>
+            <div class="status-message" id="sizeWarning" role="status" aria-live="polite" style="margin-top:1rem;"></div>
+
             <div class="button-group">
                 <button class="btn btn-primary" id="generateBtn" type="button" disabled>Generate Fractional Design</button>
             </div>
@@ -434,10 +476,13 @@
             <!-- ============================== 3. Results ============================== -->
             <div class="results-container" id="resultsContainer">
                 <h2 class="section-title mt">3. Design Profiles</h2>
-                <div class="summary-line" id="summaryLine"></div>
+                <div class="summary-line" id="summaryLine" aria-live="polite"></div>
+
+                <div class="diagnostics" id="diagnostics" aria-live="polite"></div>
 
                 <h3 style="margin-top: 1.5rem; margin-bottom: 0.25rem; color: var(--text-dark); font-size: 1.05rem;">Fractional Design Profiles</h3>
                 <div class="result-table-wrap"><table class="result-table" id="profilesTable"></table></div>
+                <p class="table-note" id="profilesNote" style="display:none;"></p>
                 <div class="button-group">
                     <button class="btn btn-primary btn-sm" id="downloadProfilesBtn" type="button">Download profiles (CSV)</button>
                 </div>
@@ -445,6 +490,7 @@
                 <h3 style="margin-top: 1.75rem; margin-bottom: 0.25rem; color: var(--text-dark); font-size: 1.05rem;">Dummy-Coded Design Matrix</h3>
                 <p class="section-hint" style="margin-bottom: 0.5rem;">Reference levels (the first level of each attribute) are omitted; each remaining level becomes a 0/1 indicator column.</p>
                 <div class="result-table-wrap"><table class="result-table" id="dummyTable"></table></div>
+                <p class="table-note" id="dummyNote" style="display:none;"></p>
                 <div class="button-group">
                     <button class="btn btn-primary btn-sm" id="downloadDummyBtn" type="button">Download dummy-coded (CSV)</button>
                 </div>
@@ -471,7 +517,9 @@
 
     <!-- WebR tool logic -->
     <script type="module">
-        import { WebR } from 'https://webr.r-wasm.org/latest/webr.mjs';
+        // Pinned to a tested WebR release (not /latest/) so a breaking upstream
+        // release cannot take this tool down mid-semester without a code change here.
+        import { WebR } from 'https://webr.r-wasm.org/v0.5.4/webr.mjs';
 
         // ==================== STATE ====================
         let webR = null;
@@ -481,6 +529,9 @@
         // Last generated result, kept for CSV downloads.
         let lastProfilesCSV = '';
         let lastDummyCSV = '';
+        // Profile count of the current design, shown in the stats grid; null when no
+        // valid design exists (or the attributes changed since the last generation).
+        let lastFracN = null;
 
         const EXAMPLE = [
             { name: 'Brand', levelsText: 'A, B, C' },
@@ -488,7 +539,26 @@
             { name: 'Size',  levelsText: 'Small, Large' }
         ];
 
+        // Names the R program reserves for its own output columns; students cannot use them as attribute names.
+        const RESERVED_NAMES = ['profile'];
+        // Largest full-factorial candidate set we will hand to R. expand.grid of a
+        // bigger set can exhaust WebR memory, so we block generation above this.
+        const MAX_FULL = 50000;
+        // Largest number of rows we render into an on-page table (full data still goes to the CSV download).
+        const MAX_TABLE_ROWS = 500;
+
         const $ = (id) => document.getElementById(id);
+
+        // Number of estimated parameters for a main-effects model: intercept + (levels - 1) per attribute.
+        // This mirrors ncol(model.matrix(~ ., full)) in R and drives the default profile count.
+        function modelParams(validAttrs) {
+            return validAttrs.reduce((sum, p) => sum + (p.levels.length - 1), 0) + 1;
+        }
+        // The default profile count R will use when the user leaves the field blank: parameters + 5,
+        // never above the full factorial size.
+        function defaultProfileCount(validAttrs, full) {
+            return Math.min(full, modelParams(validAttrs) + 5);
+        }
 
         function showStatus(msg, type = 'info', autoHideMs = 0) {
             const el = $('statusMessage');
@@ -541,6 +611,7 @@
                 el.addEventListener('input', e => {
                     const idx = parseInt(e.target.dataset.idx, 10);
                     attrs[idx].name = e.target.value;
+                    invalidateResults();
                     afterEdit();
                 });
             });
@@ -554,7 +625,8 @@
                     if (countEl) {
                         countEl.innerHTML = `${levels.length} level${levels.length === 1 ? '' : 's'}${levels.length ? ': ' + escapeHtml(levels.join(' · ')) : ''}`;
                     }
-                    afterEdit(false);
+                    invalidateResults();
+                    afterEdit();
                 });
             });
             tbl.querySelectorAll('[data-remove]').forEach(el => {
@@ -562,6 +634,7 @@
                     const idx = parseInt(e.currentTarget.dataset.remove, 10);
                     attrs.splice(idx, 1);
                     renderAttrTable();
+                    invalidateResults();
                     afterEdit();
                 });
             });
@@ -574,6 +647,7 @@
 
             parsed.forEach((p, i) => {
                 if (!p.name) errorsByRow[i] = 'Attribute name is required.';
+                else if (RESERVED_NAMES.includes(p.name.toLowerCase())) errorsByRow[i] = '"' + p.name + '" is a reserved name (used for the profile index column). Please choose another name.';
                 else if (p.levels.length < 2) errorsByRow[i] = 'Enter at least 2 levels, separated by commas.';
             });
 
@@ -590,13 +664,15 @@
                 }
             });
 
-            // Duplicate levels within an attribute
+            // Duplicate levels within an attribute. Normalize the same way R will when
+            // it builds dummy column names (spaces become underscores), so that levels
+            // like "A B" and "A_B" are rejected instead of silently clobbering one column.
             parsed.forEach((p, i) => {
                 if (errorsByRow[i]) return;
                 const lset = {};
                 for (const lv of p.levels) {
-                    const k = lv.toLowerCase();
-                    if (lset[k]) { errorsByRow[i] = 'Levels within an attribute must be unique.'; break; }
+                    const k = lv.toLowerCase().replace(/\s+/g, '_');
+                    if (lset[k]) { errorsByRow[i] = 'Levels within an attribute must be unique (levels that differ only by spaces vs underscores collide in dummy coding).'; break; }
                     lset[k] = true;
                 }
             });
@@ -627,13 +703,93 @@
             });
         }
 
-        // Recompute stats + enable/disable the Generate button. fullRender controls
-        // whether we re-render the table (only needed when rows are added/removed).
+        // Recompute stats, the recommended profile count, the size guard, and the
+        // enabled/disabled state of the Generate button after any attribute edit.
         function afterEdit() {
             const v = validate();
             showRowErrors(v.errorsByRow);
             renderStats(v);
-            $('generateBtn').disabled = !(v.ok && webrReady);
+
+            const validAttrs = v.parsed.filter(p => p.name && p.levels.length >= 2);
+            const full = fullFactorial(v.parsed);
+            const tooBig = full > MAX_FULL;
+
+            updateProfileHint(validAttrs, full);
+            const pv = validateProfileInput(validAttrs, full);
+
+            const warn = $('sizeWarning');
+            if (tooBig) {
+                warn.textContent = 'This full factorial has ' + full.toLocaleString() +
+                    ' profiles, which is above the ' + MAX_FULL.toLocaleString() +
+                    ' limit for in-browser generation. Reduce the number of attributes or levels.';
+                warn.className = 'status-message error visible';
+            } else {
+                warn.className = 'status-message';
+            }
+
+            $('generateBtn').disabled = !(v.ok && webrReady && !tooBig && pv.ok);
+        }
+
+        // A generation is only valid for the attributes it was run on. Whenever the
+        // attribute list (or requested count) changes, drop the stale results so the
+        // old tables and Download buttons cannot export data that no longer matches.
+        function invalidateResults() {
+            if (lastProfilesCSV || lastDummyCSV || lastFracN != null) {
+                lastProfilesCSV = '';
+                lastDummyCSV = '';
+                lastFracN = null;
+                $('resultsContainer').classList.remove('visible');
+            }
+        }
+
+        // Show the recommended default profile count and the valid range under the input.
+        function updateProfileHint(validAttrs, full) {
+            const rec = $('nProfilesRec');
+            const input = $('nProfilesInput');
+            if (!rec || !input) return;
+            if (validAttrs.length >= 2 && full > 0 && full <= MAX_FULL) {
+                const params = modelParams(validAttrs);
+                const def = defaultProfileCount(validAttrs, full);
+                rec.textContent = 'Recommended: ' + def.toLocaleString() +
+                    ' (parameters + 5). Valid range: ' + params.toLocaleString() +
+                    ' to ' + full.toLocaleString() + ' (full factorial).';
+                input.min = params;
+                input.max = full;
+            } else {
+                rec.textContent = '';
+                input.removeAttribute('max');
+            }
+        }
+
+        // Validate the optional "number of profiles" field. Blank is valid and means
+        // "use the recommended default". Returns { ok, value } (value null when blank).
+        function validateProfileInput(validAttrs, full) {
+            const input = $('nProfilesInput');
+            const err = $('nProfilesError');
+            if (!input || !err) return { ok: true, value: null };
+            const raw = (input.value || '').trim();
+            const clear = () => { err.classList.remove('visible'); err.textContent = ''; };
+            if (raw === '') { clear(); return { ok: true, value: null }; }
+            const n = Number(raw);
+            if (!Number.isInteger(n) || n <= 0) {
+                err.textContent = 'Enter a whole number of profiles, or leave blank for the default.';
+                err.classList.add('visible'); return { ok: false, value: null };
+            }
+            if (validAttrs.length >= 2 && full > 0) {
+                const params = modelParams(validAttrs);
+                if (n < params) {
+                    err.textContent = 'Use at least ' + params.toLocaleString() +
+                        ' profiles: you need one per model parameter to estimate every effect.';
+                    err.classList.add('visible'); return { ok: false, value: null };
+                }
+                if (n > full) {
+                    err.textContent = 'The full factorial only has ' + full.toLocaleString() +
+                        ' profiles; request that many or fewer.';
+                    err.classList.add('visible'); return { ok: false, value: null };
+                }
+            }
+            clear();
+            return { ok: true, value: n };
         }
 
         function fullFactorial(parsed) {
@@ -661,7 +817,7 @@
                 </div>
                 <div class="stat">
                     <div class="label">Fractional Profiles</div>
-                    <div class="value" id="fractionalStat">-</div>
+                    <div class="value" id="fractionalStat">${lastFracN != null ? lastFracN.toLocaleString() : '-'}</div>
                 </div>`;
         }
 
@@ -669,20 +825,47 @@
         $('addAttrBtn').addEventListener('click', () => {
             attrs.push({ name: '', levelsText: '' });
             renderAttrTable();
+            invalidateResults();
             afterEdit();
             const last = document.querySelector(`#attrName${attrs.length - 1}`);
             if (last) last.focus();
         });
         $('resetBtn').addEventListener('click', () => {
             attrs = EXAMPLE.map(e => ({ name: e.name, levelsText: e.levelsText }));
+            $('nProfilesInput').value = '';
+            lastProfilesCSV = '';
+            lastDummyCSV = '';
+            lastFracN = null;
+            $('resultsContainer').classList.remove('visible');
             renderAttrTable();
             afterEdit();
-            $('resultsContainer').classList.remove('visible');
             hideStatus();
         });
 
+        // Changing the requested profile count invalidates the current design and
+        // re-validates the field (blank is allowed, out-of-range disables Generate).
+        $('nProfilesInput').addEventListener('input', () => {
+            invalidateResults();
+            afterEdit();
+        });
+
+        // Enter in any attribute field (or the count field) generates, when allowed.
+        function generateOnEnter(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                if (!$('generateBtn').disabled) generateDesign();
+            }
+        }
+        $('attrTable').addEventListener('keydown', e => {
+            if (e.target.classList.contains('attr-name') || e.target.classList.contains('attr-levels')) generateOnEnter(e);
+        });
+        $('nProfilesInput').addEventListener('keydown', generateOnEnter);
+
         // ==================== INIT WEBR ====================
+        let webrBootStarted = false;
         async function initWebR() {
+            if (webrBootStarted) return;   // auth can fire more than once; only boot once
+            webrBootStarted = true;
             try {
                 webR = new WebR();
                 await webR.init();
@@ -694,13 +877,18 @@
                 showStatus('Ready. Define your attributes, then click Generate Fractional Design.', 'success', 4000);
                 afterEdit();
             } catch (err) {
-                $('loadingOverlay').innerHTML = `<div style="text-align:center; padding:2rem; max-width:520px;">
-                    <p style="color:#991b1b; font-size:1.2rem; font-weight:600;">Failed to load WebR</p>
-                    <p style="color:#666; margin-top:1rem; font-size:0.9rem;">${escapeHtml(err.message || String(err))}</p>
-                    <p style="color:#666; margin-top:0.5rem; font-size:0.85rem;">Reload the page to try again.</p>
-                </div>`;
+                const overlay = $('loadingOverlay');
+                overlay.classList.remove('hidden');
+                overlay.classList.add('error');
+                $('loadingText').textContent = 'Could not load R (WebR).';
+                $('loadingStage').textContent = (err && (err.message || String(err))) + ' Reload the page to try again.';
             }
         }
+        // Only boot WebR once the user is authenticated (the Firebase script calls this),
+        // so redirected visitors do not pay the multi-MB WebR download. If auth already
+        // resolved before this module ran, the flag below triggers the boot immediately.
+        window.__bootWebR = initWebR;
+        if (window.__authResolved) initWebR();
 
         // ==================== R ESCAPING ====================
         // Escape a JS string so it is safe inside an R double-quoted string literal.
@@ -726,19 +914,33 @@
         const R_HELPERS = `options(contrasts = c("contr.treatment","contr.poly"))
 suppressMessages(library(AlgDesign))
 
-generate_design = function(attrs, seed=123) {
+generate_design = function(attrs, seed=123, n_profiles=NULL) {
   # expand.grid turns the levels into factors and builds the full factorial.
-  full  = expand.grid(attrs)
-  set.seed(seed)
-  # Fractional (D-optimal) design; for very small factorials that cannot be
-  # reduced, fall back to the full factorial.
-  prof  = tryCatch({
-    des = optFederov(~., data=full, approximate=FALSE, nullify=1)
-    des$design
-  }, error = function(e) full)
-  prof  = prof[do.call(order, prof), , drop=FALSE]
+  full   = expand.grid(attrs)
+  n_full = nrow(full)
+  # Parameters in the main-effects model: intercept + (levels - 1) per attribute.
+  p  = ncol(model.matrix(~ ., data = full))
+  # Default profile count is (parameters + 5), capped at the full factorial size.
+  # Passing nTrials explicitly is what avoids optFederov's "nTrials must not be
+  # greater than the number of rows" error on small designs.
+  nt = if (is.null(n_profiles)) min(n_full, p + 5) else max(p, min(n_full, as.integer(n_profiles)))
+  set.seed(seed)  # kept for clarity; with nullify=1 the search is already deterministic.
+  used_full = FALSE
+  dea = NA_real_
+  if (nt >= n_full) {
+    # Nothing to reduce (or the whole factorial was requested): use it directly.
+    prof = full
+    used_full = TRUE
+  } else {
+    des = tryCatch(
+      optFederov(~ ., data = full, nTrials = nt, approximate = FALSE, nullify = 1),
+      error = function(e) NULL)
+    if (is.null(des)) { prof = full; used_full = TRUE }
+    else { prof = des$design; dea = des$Dea }
+  }
+  prof = prof[do.call(order, prof), , drop=FALSE]
   rownames(prof) = NULL
-  list(full_n=nrow(full), profiles=prof)
+  list(full_n = n_full, profiles = prof, dea = dea, used_full = used_full)
 }
 
 dummy_code = function(profiles, attrs) {
@@ -753,21 +955,25 @@ dummy_code = function(profiles, attrs) {
   out
 }`;
 
-        // Build the full R program for a generation run.
-        function buildRProgram(parsed) {
+        // Build the full R program for a generation run. nProfiles (optional) is the
+        // number of profiles the student requested; blank means "use the default".
+        function buildRProgram(parsed, nProfiles) {
             const attrsLiteral = buildAttrsR(parsed);
+            const nArg = (typeof nProfiles === 'number' && nProfiles > 0) ? `, n_profiles = ${nProfiles}` : '';
             return `${R_HELPERS}
 
 attrs = ${attrsLiteral}
 
 res = tryCatch({
-  d = generate_design(attrs)
+  d = generate_design(attrs${nArg})
   prof = d$profiles
   prof_out = cbind(Profile = seq_len(nrow(prof)), prof)
   dummy = dummy_code(prof, attrs)
   profiles_csv = paste(capture.output(write.csv(prof_out, row.names = FALSE)), collapse = "\\n")
   dummy_csv    = paste(capture.output(write.csv(dummy, row.names = FALSE)), collapse = "\\n")
-  paste0("OK\\n", d$full_n, "\\n", nrow(prof),
+  dea_str  = if (is.na(d$dea)) "NA" else formatC(d$dea, format = "f", digits = 4)
+  full_str = if (isTRUE(d$used_full)) "1" else "0"
+  paste0("OK\\n", d$full_n, "\\n", nrow(prof), "\\n", dea_str, "\\n", full_str,
          "\\n<<<PROFILES>>>\\n", profiles_csv,
          "\\n<<<DUMMY>>>\\n", dummy_csv)
 }, error = function(e) {
@@ -777,8 +983,11 @@ res`;
         }
 
         // The display version of the R code, written as a clean, student-friendly
-        // script that reproduces the design in a normal R/RStudio session.
-        function buildDisplayR(parsed) {
+        // script that reproduces the SAME design in a normal R/RStudio session.
+        // nt = the number of profiles the tool selected; usedFull = true when the
+        // design is simply the full factorial (nothing to reduce at this size, or the
+        // whole factorial was requested), in which case optFederov is not used.
+        function buildDisplayR(parsed, nt, usedFull) {
             const valid = parsed.filter(p => p.name && p.levels.length >= 2);
             // Build safe R variable names from the attribute names.
             const used = {};
@@ -791,7 +1000,8 @@ res`;
             });
             const defs = valid.map((p, i) => `${vars[i]} = c(${p.levels.map(rStr).join(', ')})`).join('\n');
             const egArgs = valid.map((p, i) => `${vars[i]} = ${vars[i]}`).join(', ');
-            return `# Conjoint Fractional Factorial Design
+
+            const head = `# Conjoint Fractional Factorial Design
 # Paste this into R or RStudio to reproduce the design on your own machine.
 
 # 1. Install the design package once, then load it each session
@@ -803,9 +1013,19 @@ ${defs}
 
 # 3. Build the full factorial design: every possible combination of levels
 full_profiles = expand.grid(${egArgs})
-nrow(full_profiles)   # how many profiles the full design has
+nrow(full_profiles)   # how many profiles the full design has`;
 
-# 4. Pick an efficient subset of those profiles with optFederov().
+            let step4;
+            if (usedFull) {
+                step4 = `# 4. At this size the full factorial is small enough to use directly, so
+#    there is nothing to reduce: the design is the full factorial itself.
+#    optFederov() is only needed when you want FEWER profiles than the full
+#    factorial has.
+profiles = full_profiles
+profiles = profiles[do.call(order, profiles), ]   # sort the rows for readability
+profiles`;
+            } else {
+                step4 = `# 4. Pick an efficient subset of those profiles with optFederov().
 #
 #    Showing every full-factorial profile to respondents is usually too many.
 #    optFederov() (from the AlgDesign package) searches for a smaller set of
@@ -817,25 +1037,40 @@ nrow(full_profiles)   # how many profiles the full design has
 #      ~ .                  the model. "~ ." means "use every attribute as a
 #                           main effect" (the dot stands for all columns).
 #      data = full_profiles the pool of candidate profiles to choose from.
+#      nTrials = ${nt}           how many profiles to select. THIS is what sets the
+#                           design size. This tool defaults to
+#                           (number of model parameters) + 5; change it to
+#                           choose a different number of profiles.
 #      approximate = FALSE  return actual whole profiles (an exact design),
 #                           not fractional weights.
-#      nullify = 1          let the function seed the search and choose a
-#                           sensible number of profiles automatically.
-#    (To choose the count yourself, add e.g. nTrials = 16.)
-set.seed(123)               # makes the search reproducible
+#      nullify = 1          build the starting design deterministically. This
+#                           makes the result reproducible WITHOUT set.seed():
+#                           once nullify = 1 is set, the random seed has no
+#                           effect on which profiles are chosen.
 design   = optFederov(~ ., data = full_profiles,
-                      approximate = FALSE, nullify = 1)
+                      nTrials = ${nt}, approximate = FALSE, nullify = 1)
 profiles = design$design                          # the chosen profiles
 profiles = profiles[do.call(order, profiles), ]   # sort the rows for readability
 profiles
+design$Dea   # D-efficiency of the chosen design (0 to 1; higher is better)`;
+            }
 
-# 5. Save the profiles to a CSV file
+            const tail = `# 5. Save the profiles to a CSV file
 write.csv(profiles, "conjoint_profiles.csv", row.names = FALSE)
 
 # 6. (Optional) dummy-code the design for regression.
 #    The first level of each attribute is the baseline (coded 0).
+#    Note: model.matrix names these columns like BrandB / PriceMid, while this
+#    tool's CSV download names them Brand_B / Price_Mid (with an underscore).
+#    The 0/1 values are identical; only the column labels differ.
 dummy = model.matrix(~ ., data = profiles)[, -1]
 write.csv(dummy, "conjoint_profiles_dummy_coded.csv", row.names = FALSE)`;
+
+            return `${head}
+
+${step4}
+
+${tail}`;
         }
 
         // ==================== CSV PARSING (for rendering tables) ====================
@@ -862,15 +1097,19 @@ write.csv(dummy, "conjoint_profiles_dummy_coded.csv", row.names = FALSE)`;
             return result;
         }
 
-        // Render a parsed CSV (array of rows) into a table element.
-        // numericCols: set of column indexes to right-align (numbers).
-        function renderTable(tableEl, parsedRows, numericFromCol) {
-            if (!parsedRows.length) { tableEl.innerHTML = ''; return; }
+        // Render a parsed CSV (array of rows) into a table element, capping how many
+        // data rows are drawn (the full design always stays in the CSV download).
+        // Returns the number of data rows actually rendered. numericFromCol right-aligns
+        // columns at or after that index.
+        function renderTable(tableEl, parsedRows, numericFromCol, maxRows) {
+            if (!parsedRows.length) { tableEl.innerHTML = ''; return 0; }
             const header = parsedRows[0];
+            const dataRows = parsedRows.length - 1;
+            const shown = (maxRows && dataRows > maxRows) ? maxRows : dataRows;
             let html = '<thead><tr>';
             header.forEach(h => { html += `<th>${escapeHtml(h)}</th>`; });
             html += '</tr></thead><tbody>';
-            for (let r = 1; r < parsedRows.length; r++) {
+            for (let r = 1; r <= shown; r++) {
                 html += '<tr>';
                 parsedRows[r].forEach((cell, ci) => {
                     const isNum = numericFromCol !== undefined && ci >= numericFromCol && cell !== '' && !isNaN(cell);
@@ -881,6 +1120,66 @@ write.csv(dummy, "conjoint_profiles_dummy_coded.csv", row.names = FALSE)`;
             }
             html += '</tbody>';
             tableEl.innerHTML = html;
+            return shown;
+        }
+
+        // Show per-attribute level balance and, when a reduced design was chosen, its
+        // D-efficiency. This turns the generator into visible course content.
+        function renderDiagnostics(parsedProfiles, validAttrs, dea, usedFull) {
+            const box = $('diagnostics');
+            if (!box) return;
+            if (!parsedProfiles.length) { box.innerHTML = ''; return; }
+            const header = parsedProfiles[0];
+            const rows = parsedProfiles.slice(1);
+
+            let effHtml;
+            if (usedFull) {
+                effHtml = 'This is the full factorial (every combination), so it is perfectly balanced and orthogonal. D-efficiency is only reported when optFederov selects a reduced subset.';
+            } else if (!isNaN(dea)) {
+                effHtml = 'D-efficiency: <strong>' + (dea * 100).toFixed(1) + '%</strong>. ' +
+                    'D-optimal designs trade perfect balance and orthogonality for estimation precision, so the level counts below are often uneven.';
+            } else {
+                effHtml = 'D-efficiency was not reported for this design.';
+            }
+
+            // Level balance: count how often each level appears, per attribute column
+            // (column 0 is the Profile index, so start at column 1).
+            let balHtml = '';
+            for (let c = 1; c < header.length; c++) {
+                const counts = {};
+                const seenOrder = [];
+                for (const row of rows) {
+                    const val = row[c];
+                    if (!(val in counts)) { counts[val] = 0; seenOrder.push(val); }
+                    counts[val]++;
+                }
+                const attr = validAttrs[c - 1];
+                const levelOrder = attr ? attr.levels.slice() : seenOrder.slice();
+                for (const lv of seenOrder) if (!levelOrder.includes(lv)) levelOrder.push(lv);
+                const chips = levelOrder
+                    .filter(lv => lv in counts)
+                    .map(lv => `<span class="balance-chip">${escapeHtml(lv)}: ${counts[lv]}</span>`)
+                    .join('');
+                balHtml += `<div class="balance-attr"><strong>${escapeHtml(header[c])}</strong> ${chips}</div>`;
+            }
+
+            box.innerHTML = '<h4>Design diagnostics</h4>' +
+                `<div class="diag-eff">${effHtml}</div>` +
+                '<div class="balance-attr" style="margin-bottom:0.5rem;">Level balance (how many profiles carry each level):</div>' +
+                balHtml;
+        }
+
+        // Show or hide a "showing first N of M rows" note under a results table.
+        function setTableNote(noteEl, total, shown) {
+            if (!noteEl) return;
+            if (total > shown) {
+                noteEl.textContent = 'Showing the first ' + shown.toLocaleString() + ' of ' +
+                    total.toLocaleString() + ' rows. Use the Download button for the complete design.';
+                noteEl.style.display = 'block';
+            } else {
+                noteEl.textContent = '';
+                noteEl.style.display = 'none';
+            }
         }
 
         // ==================== GENERATE ====================
@@ -895,15 +1194,26 @@ write.csv(dummy, "conjoint_profiles_dummy_coded.csv", row.names = FALSE)`;
             }
             if (!webrReady) { showStatus('WebR is still loading, please wait.', 'info', 3000); return; }
 
+            const validAttrs = v.parsed.filter(p => p.name && p.levels.length >= 2);
+            const full = fullFactorial(v.parsed);
+            if (full > MAX_FULL) {
+                showStatus('This full factorial has ' + full.toLocaleString() + ' profiles, above the ' +
+                    MAX_FULL.toLocaleString() + ' limit for in-browser generation. Reduce the attributes or levels.', 'error', 6000);
+                return;
+            }
+            const pv = validateProfileInput(validAttrs, full);
+            if (!pv.ok) { showStatus('Fix the number of profiles, or leave it blank for the default.', 'error', 5000); return; }
+
             const btn = $('generateBtn');
             const originalLabel = btn.textContent;
+            let result = null;
             try {
                 btn.disabled = true;
                 btn.textContent = 'Generating...';
                 showStatus('Running the design generation in R...', 'info');
 
-                const program = buildRProgram(v.parsed);
-                const result = await webR.evalR(program);
+                const program = buildRProgram(v.parsed, pv.value);
+                result = await webR.evalR(program);
                 const obj = await result.toJs();
                 let out;
                 if (typeof obj === 'string') out = obj;
@@ -927,28 +1237,47 @@ write.csv(dummy, "conjoint_profiles_dummy_coded.csv", row.names = FALSE)`;
                 if (headerEnd === -1 || dummyStart === -1) {
                     throw new Error('Could not parse R output structure.');
                 }
-                const headerBlock = out.slice(0, headerEnd).split('\n'); // ["OK", fullN, fracN]
+                // Header lines: ["OK", fullN, fracN, dea, usedFull]
+                const headerBlock = out.slice(0, headerEnd).split('\n');
                 const fullN = parseInt(headerBlock[1], 10);
                 const fracN = parseInt(headerBlock[2], 10);
+                const dea = headerBlock[3] === 'NA' ? NaN : parseFloat(headerBlock[3]);
+                const usedFull = headerBlock[4] === '1';
                 lastProfilesCSV = out.slice(headerEnd + profMarker.length, dummyStart).trim();
                 lastDummyCSV = out.slice(dummyStart + dummyMarker.length).trim();
 
-                // Summary
-                const pct = fullN > 0 ? ((fracN / fullN) * 100).toFixed(1) : '0';
-                $('summaryLine').innerHTML =
-                    `Full factorial design has <strong>${fullN.toLocaleString()}</strong> profiles. ` +
-                    `The fractional design selects <strong>${fracN.toLocaleString()}</strong> profiles ` +
-                    `(${pct}% of the full factorial).`;
+                // Summary: say plainly when the full factorial was used instead of
+                // labelling it a fractional design at "100.0% of the full factorial".
+                if (usedFull) {
+                    $('summaryLine').innerHTML =
+                        `The full factorial has <strong>${fullN.toLocaleString()}</strong> profiles. ` +
+                        `At this size no reduction was possible or needed, so the design is the full ` +
+                        `factorial itself (all <strong>${fracN.toLocaleString()}</strong> profiles).`;
+                } else {
+                    const pct = fullN > 0 ? ((fracN / fullN) * 100).toFixed(1) : '0';
+                    $('summaryLine').innerHTML =
+                        `Full factorial design has <strong>${fullN.toLocaleString()}</strong> profiles. ` +
+                        `The fractional design selects <strong>${fracN.toLocaleString()}</strong> profiles ` +
+                        `(${pct}% of the full factorial).`;
+                }
+                lastFracN = fracN;
                 const fracStat = $('fractionalStat');
                 if (fracStat) fracStat.textContent = fracN.toLocaleString();
 
-                // Tables (column 0 = Profile is numeric; for profiles the rest are labels;
-                // for dummy coding the rest are 0/1 numerics).
-                renderTable($('profilesTable'), parseCSV(lastProfilesCSV), undefined);
-                renderTable($('dummyTable'), parseCSV(lastDummyCSV), 1);
+                // Diagnostics: per-attribute level balance + D-efficiency.
+                const parsedProfiles = parseCSV(lastProfilesCSV);
+                const parsedDummy = parseCSV(lastDummyCSV);
+                renderDiagnostics(parsedProfiles, validAttrs, dea, usedFull);
 
-                // R code display
-                $('rCodeBlock').textContent = buildDisplayR(v.parsed);
+                // Tables (column 0 = Profile is numeric; for profiles the rest are labels;
+                // for dummy coding the rest are 0/1 numerics). Rows are capped for display.
+                const shownProf = renderTable($('profilesTable'), parsedProfiles, undefined, MAX_TABLE_ROWS);
+                const shownDummy = renderTable($('dummyTable'), parsedDummy, 1, MAX_TABLE_ROWS);
+                setTableNote($('profilesNote'), parsedProfiles.length - 1, shownProf);
+                setTableNote($('dummyNote'), parsedDummy.length - 1, shownDummy);
+
+                // R code display (matches the exact profiles selected above).
+                $('rCodeBlock').textContent = buildDisplayR(v.parsed, fracN, usedFull);
 
                 $('resultsContainer').classList.add('visible');
                 showStatus('Done. Design generated with ' + fracN.toLocaleString() + ' profiles.', 'success', 4000);
@@ -957,6 +1286,8 @@ write.csv(dummy, "conjoint_profiles_dummy_coded.csv", row.names = FALSE)`;
                 console.error(err);
                 showStatus('Error: ' + (err.message || String(err)), 'error');
             } finally {
+                // Free the R object so the WASM heap does not grow across a class session.
+                if (result) { try { webR.destroy(result); } catch (_) {} }
                 btn.textContent = originalLabel;
                 afterEdit(); // re-evaluates disabled state
             }
@@ -1000,15 +1331,17 @@ write.csv(dummy, "conjoint_profiles_dummy_coded.csv", row.names = FALSE)`;
         }
 
         // ==================== GO ====================
+        // The attribute builder is pure JS and works before R loads. WebR itself is
+        // booted by the Firebase auth handler (window.__bootWebR) once the user is
+        // signed in, so unauthenticated visitors never download it.
         attrs = EXAMPLE.map(e => ({ name: e.name, levelsText: e.levelsText }));
         renderAttrTable();
         afterEdit();
-        initWebR();
     </script>
 
     <!-- Firebase auth -->
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js" integrity="sha384-yuGdyIzzYtOBlBG6JOWn+Ey9kpq7HocusNuxEGyyohr1eEyXpeEyehIIXC/hznw4" crossorigin="anonymous"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js" integrity="sha384-lI+CxEx/bCvWP1b0OK13j5HTrTZP7yf1xle8TVOFq2smz6KC1RChTarRV/RHP5PP" crossorigin="anonymous"></script>
     <script>
         const firebaseConfig = {
             apiKey: "AIzaSyBg3LJDwVIRGWtFZb_mM_CSRJMNCJUta20",
@@ -1019,15 +1352,36 @@ write.csv(dummy, "conjoint_profiles_dummy_coded.csv", row.names = FALSE)`;
             appId: "1:659335573790:web:00013a166787efecb3d90f",
             measurementId: "G-NGKNY08XWP"
         };
+
+        // If the sign-in service cannot be reached, do not leave the page stuck on
+        // "Loading...": after 12s show a clear, actionable message instead.
+        const authTimeout = setTimeout(function () {
+            const ls = document.getElementById('loading-screen');
+            if (ls) ls.innerHTML = '<p style="color: var(--text-light); max-width: 420px; text-align: center; padding: 0 1rem;">Could not reach the sign-in service. Check your connection and reload this page.</p>';
+        }, 12000);
+
         firebase.initializeApp(firebaseConfig);
         firebase.auth().onAuthStateChanged(function(user) {
+            clearTimeout(authTimeout);
             if (user) {
                 document.getElementById('loading-screen').style.display = 'none';
                 document.getElementById('main-content').style.display = 'block';
+                // Boot WebR now that the user is signed in (see the module script).
+                if (window.__bootWebR) window.__bootWebR();
+                else window.__authResolved = true;
             } else {
-                window.location.href = 'login.html';
+                window.location.href = 'login.html?next=' + encodeURIComponent(window.location.pathname.split('/').pop());
             }
         });
+
+        // Mobile navigation toggle (keyboard-operable; tracks aria-expanded)
+        function toggleNav(el) {
+            const links = document.querySelector('.nav-links');
+            if (!links) return;
+            const open = links.classList.toggle('active');
+            el.setAttribute('aria-expanded', open ? 'true' : 'false');
+        }
+        window.toggleNav = toggleNav;
 
         // Font size controls (matches tools.html)
         const fontSizes = [14, 16, 18, 20, 22];

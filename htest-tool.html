@@ -5,6 +5,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Hypothesis Tests (Browser) | Koray Cosguner</title>
     <meta name="robots" content="noindex,nofollow">
+    <link rel="icon" type="image/jpeg" href="KCFavicon.jpg">
+
+    <!-- Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-CTZ8G4EYLR"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-CTZ8G4EYLR');
+    </script>
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -70,9 +81,12 @@
         .test-card p { font-size: 0.82rem; color: var(--text-light); line-height: 1.45; }
         .test-card .r-fn { font-family: 'Monaco', monospace; font-size: 0.75rem; color: var(--text-light); margin-top: 0.4rem; display: block; }
 
-        .upload-area { border: 2px dashed var(--border); border-radius: 8px; padding: 2.5rem; text-align: center; cursor: pointer; transition: all 0.3s; margin-bottom: 1rem; }
+        .upload-area { position: relative; border: 2px dashed var(--border); border-radius: 8px; padding: 2.5rem; text-align: center; cursor: pointer; transition: all 0.3s; margin-bottom: 1rem; }
         .upload-area:hover, .upload-area.dragover { border-color: var(--iu-crimson); background: rgba(153, 0, 0, 0.05); }
-        .upload-area input[type="file"] { display: none; }
+        .upload-area:focus-within { border-color: var(--iu-crimson); background: rgba(153, 0, 0, 0.05); }
+        /* Keep the file input reachable by keyboard (Tab) rather than display:none,
+           which removes it from the tab order entirely. Visually hidden but focusable. */
+        .upload-area input[type="file"] { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
         .upload-icon { font-size: 2.5rem; color: var(--iu-crimson); margin-bottom: 0.5rem; }
         .upload-text { font-size: 1rem; color: var(--text-dark); }
         .upload-hint { font-size: 0.85rem; color: var(--text-light); margin-top: 0.4rem; }
@@ -99,7 +113,9 @@
         .btn-primary:disabled { background: var(--text-light); cursor: not-allowed; opacity: 0.6; }
         .btn-secondary { background: var(--white); color: var(--iu-crimson); border: 2px solid var(--iu-crimson); }
         .btn-secondary:hover { background: var(--iu-crimson); color: var(--white); }
+        .btn-sm { padding: 0.5rem 1rem; font-size: 0.9rem; }
         .button-group { display: flex; gap: 1rem; margin-top: 1.5rem; flex-wrap: wrap; }
+        .example-row { text-align: center; margin: 0 0 1rem; }
 
         .data-preview { display: none; margin-bottom: 1rem; }
         .data-preview.visible { display: block; }
@@ -163,6 +179,12 @@
     </style>
 </head>
 <body>
+    <!-- Auth check: redirect to login if not signed in -->
+    <div id="loading-screen" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: var(--bg-light); display: flex; align-items: center; justify-content: center; z-index: 100000;">
+        <p style="color: var(--text-light);">Loading...</p>
+    </div>
+
+    <div id="main-content" style="display: none;">
     <div class="loading-overlay" id="loadingOverlay">
         <div class="spinner"></div>
         <p class="loading-text" id="loadingText">Loading WebR (R in your browser)…</p>
@@ -202,21 +224,24 @@
 
         <div class="tool-container">
 
-            <div class="status-message" id="statusMessage"></div>
+            <div class="status-message" id="statusMessage" role="status" aria-live="polite"></div>
 
             <!-- ============================== 1. Choose Test ============================== -->
             <h2 class="section-title">1. Choose Test</h2>
             <p class="section-hint">Pick the hypothesis test you want to run. The configuration form in Section 3 changes based on your choice.</p>
-            <div class="test-grid" id="testGrid"></div>
+            <div class="test-grid" id="testGrid" role="radiogroup" aria-label="Choose hypothesis test"></div>
 
             <!-- ============================== 2. Upload Data ============================== -->
             <h2 class="section-title mt">2. Upload Your Data</h2>
             <p class="section-hint">Upload a CSV. The columns you'll need depend on the test (numeric column, grouping column, two paired columns, two categorical columns, etc.).</p>
             <div class="upload-area" id="uploadArea">
-                <input type="file" id="fileInput" accept=".csv">
+                <input type="file" id="fileInput" accept=".csv" aria-label="Upload CSV file">
                 <div class="upload-icon">📊</div>
                 <p class="upload-text">Click to upload or drag and drop a CSV</p>
                 <p class="upload-hint">CSV files only</p>
+            </div>
+            <div class="example-row">
+                <button type="button" class="btn btn-secondary btn-sm" id="loadExampleBtn">Load example data for the selected test</button>
             </div>
             <div class="data-preview" id="dataPreview">
                 <h3 style="margin-bottom: 0.5rem; font-size: 1.05rem; color: var(--text-dark);">Data Preview (first 8 rows)</h3>
@@ -241,13 +266,16 @@
             </div>
 
             <!-- ============================== Results ============================== -->
-            <div class="results-container" id="resultsContainer">
+            <div class="results-container" id="resultsContainer" aria-live="polite">
                 <h2 class="section-title mt">5. Results</h2>
                 <div id="resultsHeader" style="font-size: 0.95rem; color: var(--text-light); margin-bottom: 0.5rem;"></div>
                 <div class="stat-grid" id="resultsStats"></div>
                 <div id="resultsExtra"></div>
                 <div class="verdict" id="resultsVerdict"></div>
-                <h3 style="margin-top: 1.5rem; margin-bottom: 0.5rem; color: var(--text-dark); font-size: 1.05rem;">Full R Output</h3>
+                <div style="display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap; margin-top: 1.5rem; margin-bottom: 0.5rem;">
+                    <h3 style="margin: 0; color: var(--text-dark); font-size: 1.05rem;">Full R Output</h3>
+                    <button type="button" class="btn btn-secondary btn-sm" id="copyOutputBtn">Copy output</button>
+                </div>
                 <pre class="results-output" id="rawOutput"></pre>
             </div>
         </div>
@@ -256,9 +284,12 @@
     <footer>
         <p>&copy; 2026 Koray Cosguner. All Rights Reserved.</p>
     </footer>
+    </div> <!-- end main-content -->
 
     <script type="module">
-        import { WebR } from 'https://webr.r-wasm.org/latest/webr.mjs';
+        // Pinned to a specific WebR release (not "latest") so an upstream update
+        // cannot silently break this page.
+        import { WebR } from 'https://webr.r-wasm.org/v0.6.0/webr.mjs';
 
         // ==================== STATE ====================
         let webR = null;
@@ -305,54 +336,72 @@
         // ==================== TEST PICKER ====================
         function renderTestGrid() {
             $('testGrid').innerHTML = TESTS.map(t => `
-                <div class="test-card${t.id === selectedTest ? ' selected' : ''}" data-test="${t.id}">
+                <div class="test-card${t.id === selectedTest ? ' selected' : ''}" data-test="${t.id}"
+                     role="radio" aria-checked="${t.id === selectedTest ? 'true' : 'false'}" tabindex="0">
                     <h4>${t.name}</h4>
                     <p>${t.desc}</p>
                     <code class="r-fn">${t.rfn}</code>
                 </div>
             `).join('');
             $('testGrid').querySelectorAll('.test-card').forEach(card => {
-                card.addEventListener('click', () => {
-                    selectedTest = card.dataset.test;
-                    renderTestGrid();
-                    if (columnNames.length) renderConfig();
-                    updateRunEnabled();
+                card.addEventListener('click', () => selectTest(card.dataset.test));
+                card.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter' || e.key === ' ' || e.key === 'Spacebar') {
+                        e.preventDefault();
+                        selectTest(card.dataset.test);
+                    }
                 });
             });
+        }
+        // Switch the active test. Re-renders Section 3 AND Section 4 so the
+        // parameter controls always match the selected test (previously Section 4
+        // was only ever rendered on upload, leaving stale/missing controls).
+        function selectTest(id) {
+            selectedTest = id;
+            renderTestGrid();
+            if (columnNames.length) { renderConfig(); renderParams(); }
+            updateRunEnabled();
         }
         renderTestGrid();
 
         // ==================== CSV PARSING ====================
+        // Single-pass, quote-aware CSV parser. Unlike a line-split approach this
+        // correctly handles quoted cells that contain commas OR newlines. (Only
+        // used for the JS-side preview and column detection; R reads the raw
+        // CSV text itself.)
         function parseCSV(text) {
-            const lines = text.replace(/\r\n/g, '\n').replace(/\r/g, '\n').split('\n').filter(l => l.length > 0);
-            if (lines.length < 2) return { headers: [], rows: [] };
-            const headers = splitCSVLine(lines[0]);
+            const norm = String(text).replace(/\r\n/g, '\n').replace(/\r/g, '\n');
+            const records = [];
+            let row = [], cur = '', inQ = false;
+            for (let i = 0; i < norm.length; i++) {
+                const c = norm[i];
+                if (inQ) {
+                    if (c === '"' && norm[i + 1] === '"') { cur += '"'; i++; }
+                    else if (c === '"') { inQ = false; }
+                    else { cur += c; }
+                } else {
+                    if (c === '"') { inQ = true; }
+                    else if (c === ',') { row.push(cur); cur = ''; }
+                    else if (c === '\n') { row.push(cur); records.push(row); row = []; cur = ''; }
+                    else { cur += c; }
+                }
+            }
+            row.push(cur);
+            records.push(row);
+            // Trim each cell, then drop rows that are entirely empty.
+            const cleaned = records
+                .map(r => r.map(s => s.trim()))
+                .filter(r => r.some(cell => cell !== ''));
+            if (cleaned.length < 2) return { headers: [], rows: [] };
+            const headers = cleaned[0];
             const out = [];
-            for (let i = 1; i < lines.length; i++) {
-                const cells = splitCSVLine(lines[i]);
-                if (cells.length === 0) continue;
+            for (let i = 1; i < cleaned.length; i++) {
+                const cells = cleaned[i];
                 const obj = {};
                 headers.forEach((h, idx) => { obj[h] = cells[idx] !== undefined ? cells[idx] : ''; });
                 out.push(obj);
             }
             return { headers, rows: out };
-        }
-        function splitCSVLine(line) {
-            const result = []; let cur = ''; let inQ = false;
-            for (let i = 0; i < line.length; i++) {
-                const c = line[i];
-                if (inQ) {
-                    if (c === '"' && line[i + 1] === '"') { cur += '"'; i++; }
-                    else if (c === '"') { inQ = false; }
-                    else { cur += c; }
-                } else {
-                    if (c === ',') { result.push(cur); cur = ''; }
-                    else if (c === '"') { inQ = true; }
-                    else { cur += c; }
-                }
-            }
-            result.push(cur);
-            return result.map(s => s.trim());
         }
         function detectColumnTypes() {
             columnTypes = {};
@@ -504,6 +553,55 @@ F       Like</pre>
                 </div>`
         };
 
+        // Ready-to-run example datasets, one per test, so students (and this page's
+        // own smoke test) can run any test in a single click without building a CSV.
+        const EXAMPLE_DATA = {
+            'one-sample-t': {
+                csv: 'Score\n78\n85\n62\n90\n74\n88\n71\n95\n80\n69\n83\n77',
+                apply: () => { setVal('cfg-x', 'Score'); setVal('cfg-mu', '75'); }
+            },
+            'paired-t': {
+                csv: 'SubjectID,Before,After\n1,120,115\n2,135,128\n3,142,138\n4,128,124\n5,150,143\n6,133,130\n7,145,139\n8,138,132',
+                apply: () => { setVal('cfg-x', 'Before'); setVal('cfg-y', 'After'); }
+            },
+            'independent-t': {
+                csv: 'Group,Score\nA,75\nA,82\nA,68\nA,79\nA,71\nB,85\nB,90\nB,77\nB,88\nB,83',
+                apply: () => { setVal('cfg-x', 'Score'); setVal('cfg-g', 'Group'); }
+            },
+            'anova': {
+                csv: 'Treatment,Yield\nA,12.3\nA,11.8\nA,12.9\nA,11.5\nB,14.5\nB,15.1\nB,14.0\nB,15.4\nC,10.2\nC,9.8\nC,10.6\nC,9.5',
+                apply: () => { setVal('cfg-x', 'Yield'); setVal('cfg-g', 'Treatment'); }
+            },
+            'chi-square': {
+                csv: 'Gender,Preference\nM,Like\nF,Like\nM,Neutral\nF,Dislike\nM,Dislike\nF,Like\nM,Like\nF,Neutral\nM,Neutral\nF,Like\nM,Dislike\nF,Dislike\nM,Like\nF,Like\nM,Neutral\nF,Dislike',
+                apply: () => { setVal('cfg-x', 'Gender'); setVal('cfg-y', 'Preference'); }
+            }
+        };
+        function setVal(id, value) { const el = $(id); if (el) el.value = value; }
+
+        function loadExample() {
+            const ex = EXAMPLE_DATA[selectedTest];
+            if (!ex) return;
+            csvText = ex.csv;
+            const parsed = parseCSV(csvText);
+            columnNames = parsed.headers;
+            rows = parsed.rows;
+            detectColumnTypes();
+            renderPreview();
+            $('configSection').style.display = 'block';
+            renderConfig();
+            renderParams();
+            ex.apply();
+            updateRunEnabled();
+            $('resultsContainer').classList.remove('visible');
+            if (webR) {
+                showStatus('Loaded example data for this test. Running the test now.', 'info');
+                runTest();
+            } else {
+                showStatus('Example data loaded. WebR is still starting up, press Run Test in a moment.', 'info', 6000);
+            }
+        }
+
         function renderConfig() {
             const c = $('configBody');
             const hint = DATA_HINTS[selectedTest] || '';
@@ -512,11 +610,11 @@ F       Like</pre>
                     c.innerHTML = hint + `
                         <div class="form-row">
                             <div class="form-group">
-                                <label>Numeric Variable</label>
+                                <label for="cfg-x">Numeric Variable</label>
                                 <select id="cfg-x">${selectOpts(numericCols())}</select>
                             </div>
                             <div class="form-group">
-                                <label>Hypothesized Mean (μ₀)</label>
+                                <label for="cfg-mu">Hypothesized Mean (μ₀)</label>
                                 <input type="number" step="any" id="cfg-mu" value="0">
                             </div>
                         </div>`;
@@ -525,11 +623,11 @@ F       Like</pre>
                     c.innerHTML = hint + `
                         <div class="form-row">
                             <div class="form-group">
-                                <label>Variable 1 (e.g., Before) <span class="field-hint">numeric</span></label>
+                                <label for="cfg-x">Variable 1 (e.g., Before) <span class="field-hint">numeric</span></label>
                                 <select id="cfg-x">${selectOpts(numericCols())}</select>
                             </div>
                             <div class="form-group">
-                                <label>Variable 2 (e.g., After) <span class="field-hint">numeric</span></label>
+                                <label for="cfg-y">Variable 2 (e.g., After) <span class="field-hint">numeric</span></label>
                                 <select id="cfg-y">${selectOpts(numericCols())}</select>
                             </div>
                         </div>`;
@@ -538,11 +636,11 @@ F       Like</pre>
                     c.innerHTML = hint + `
                         <div class="form-row">
                             <div class="form-group">
-                                <label>Numeric Variable</label>
+                                <label for="cfg-x">Numeric Variable</label>
                                 <select id="cfg-x">${selectOpts(numericCols())}</select>
                             </div>
                             <div class="form-group">
-                                <label>Grouping Variable <span class="field-hint">(must have exactly 2 groups)</span></label>
+                                <label for="cfg-g">Grouping Variable <span class="field-hint">(must have exactly 2 groups)</span></label>
                                 <select id="cfg-g">${selectOpts(groupingCols())}</select>
                             </div>
                         </div>
@@ -558,11 +656,11 @@ F       Like</pre>
                     c.innerHTML = hint + `
                         <div class="form-row">
                             <div class="form-group">
-                                <label>Numeric Variable</label>
+                                <label for="cfg-x">Numeric Variable</label>
                                 <select id="cfg-x">${selectOpts(numericCols())}</select>
                             </div>
                             <div class="form-group">
-                                <label>Grouping Variable <span class="field-hint">(3+ groups)</span></label>
+                                <label for="cfg-g">Grouping Variable <span class="field-hint">(3+ groups)</span></label>
                                 <select id="cfg-g">${selectOpts(groupingCols())}</select>
                             </div>
                         </div>
@@ -578,12 +676,19 @@ F       Like</pre>
                     c.innerHTML = hint + `
                         <div class="form-row">
                             <div class="form-group">
-                                <label>Categorical Variable 1</label>
+                                <label for="cfg-x">Categorical Variable 1</label>
                                 <select id="cfg-x">${selectOpts(groupingCols())}</select>
                             </div>
                             <div class="form-group">
-                                <label>Categorical Variable 2</label>
+                                <label for="cfg-y">Categorical Variable 2</label>
                                 <select id="cfg-y">${selectOpts(groupingCols())}</select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Continuity correction <span class="field-hint">(Yates, only affects 2x2 tables)</span></label>
+                            <div class="radio-row">
+                                <label><input type="radio" name="chiCorrect" value="none" checked> Off (matches the textbook formula, sum of (O - E)² / E)</label>
+                                <label><input type="radio" name="chiCorrect" value="yates"> On (Yates correction, R's default for 2x2)</label>
                             </div>
                         </div>
                         <div class="form-group">
@@ -628,7 +733,7 @@ F       Like</pre>
                 </div>`}
                 <div class="form-row">
                     <div class="form-group">
-                        <label>Significance Level (α)</label>
+                        <label for="cfg-alpha">Significance Level (α)</label>
                         <select id="cfg-alpha">
                             <option value="0.05" selected>0.05</option>
                             <option value="0.10">0.10</option>
@@ -637,7 +742,7 @@ F       Like</pre>
                     </div>
                     ${(!isChi && !isAnova) ? `
                     <div class="form-group">
-                        <label>Confidence Level</label>
+                        <label for="cfg-conf">Confidence Level</label>
                         <select id="cfg-conf">
                             <option value="0.95" selected>95%</option>
                             <option value="0.90">90%</option>
@@ -646,6 +751,18 @@ F       Like</pre>
                     </div>` : ''}
                 </div>`;
             p.querySelectorAll('select, input').forEach(el => el.addEventListener('change', updateRunEnabled));
+            // Keep the confidence level in step with the significance level
+            // (conf = 1 - alpha) so a two-sided verdict and its interval agree.
+            // The user can still override the confidence level afterward.
+            const alphaSel = $('cfg-alpha');
+            const confSel = $('cfg-conf');
+            if (alphaSel && confSel) {
+                const CONF_FOR_ALPHA = { '0.05': '0.95', '0.10': '0.90', '0.01': '0.99' };
+                alphaSel.addEventListener('change', () => {
+                    const match = CONF_FOR_ALPHA[alphaSel.value];
+                    if (match) confSel.value = match;
+                });
+            }
         }
 
         function updateRunEnabled() {
@@ -659,7 +776,7 @@ F       Like</pre>
                     break;
                 case 'independent-t':
                 case 'anova':
-                    ok = $('cfg-x') && $('cfg-x').value && $('cfg-g') && $('cfg-g').value;
+                    ok = $('cfg-x') && $('cfg-x').value && $('cfg-g') && $('cfg-g').value && $('cfg-x').value !== $('cfg-g').value;
                     break;
                 case 'chi-square':
                     ok = $('cfg-x') && $('cfg-x').value && $('cfg-y') && $('cfg-y').value && $('cfg-x').value !== $('cfg-y').value;
@@ -681,6 +798,36 @@ F       Like</pre>
         // ==================== RUN ====================
         $('runButton').addEventListener('click', runTest);
 
+        // Load one-click example data for the currently selected test.
+        $('loadExampleBtn').addEventListener('click', loadExample);
+
+        // Copy the full R output to the clipboard.
+        $('copyOutputBtn').addEventListener('click', async () => {
+            const text = $('rawOutput').textContent || '';
+            if (!text.trim()) { showStatus('Run a test first, then copy the output.', 'info', 3000); return; }
+            const btn = $('copyOutputBtn');
+            try {
+                await navigator.clipboard.writeText(text);
+            } catch (e) {
+                const r = document.createRange(); r.selectNode($('rawOutput'));
+                const sel = window.getSelection(); sel.removeAllRanges(); sel.addRange(r);
+                try { document.execCommand('copy'); } catch (_) {}
+                sel.removeAllRanges();
+            }
+            const prev = btn.textContent;
+            btn.textContent = 'Copied';
+            setTimeout(() => { btn.textContent = prev; }, 1800);
+        });
+
+        // Enter inside the configuration/parameters area runs the test when ready.
+        $('configSection').addEventListener('keydown', (e) => {
+            if (e.key !== 'Enter' || e.shiftKey) return;
+            const tag = (e.target.tagName || '').toLowerCase();
+            if (tag === 'textarea') return;
+            e.preventDefault();
+            if (!$('runButton').disabled) runTest();
+        });
+
         function rEsc(s) { return String(s).replace(/\\/g, '\\\\').replace(/"/g, '\\"'); }
 
         async function runTest() {
@@ -697,7 +844,7 @@ F       Like</pre>
                 const altRadio = document.querySelector('input[name="alt"]:checked');
                 const alt = altRadio ? altRadio.value : 'two.sided';
 
-                let rCode = `data = read.csv("/tmp/htest_data.csv", stringsAsFactors = FALSE)
+                let rCode = `data = read.csv("/tmp/htest_data.csv", stringsAsFactors = FALSE, check.names = FALSE)
 # coerce numerics
 for (col in names(data)) {
     nv = suppressWarnings(as.numeric(data[[col]]))
@@ -711,6 +858,9 @@ for (col in names(data)) {
     if (is.na(x) || is.nan(x) || is.infinite(x)) return("null")
     format(x, digits = 12, scientific = FALSE, trim = TRUE)
 }
+# JSON string escaper for values (e.g. group level names) placed inside the
+# hand-built JSON: escape backslash first, then double-quote.
+.jesc = function(s) { s = gsub('\\\\', '\\\\\\\\', s, fixed = TRUE); gsub('"', '\\\\"', s, fixed = TRUE) }
 \n`;
 
                 let metaJson = {};
@@ -721,7 +871,7 @@ for (col in names(data)) {
                         const x = $('cfg-x').value;
                         const mu = parseFloat($('cfg-mu').value);
                         rCode += `
-.x = data[["${rEsc(x)}"]]
+.x = suppressWarnings(as.numeric(data[["${rEsc(x)}"]]))
 .x = .x[!is.na(.x)]
 .fit = t.test(.x, mu = ${mu}, alternative = "${alt}", conf.level = ${conf})
 .json = paste0('RES:{"stat":', .jn(.fit$statistic),',"df":', .jn(.fit$parameter),',"p":', .jn(.fit$p.value),
@@ -735,7 +885,7 @@ paste0(.json, "\\n---\\n", .summary_text)`;
                     case 'paired-t': {
                         const x = $('cfg-x').value, y = $('cfg-y').value;
                         rCode += `
-.x = data[["${rEsc(x)}"]]; .y = data[["${rEsc(y)}"]]
+.x = suppressWarnings(as.numeric(data[["${rEsc(x)}"]])); .y = suppressWarnings(as.numeric(data[["${rEsc(y)}"]]))
 ok = !is.na(.x) & !is.na(.y); .x = .x[ok]; .y = .y[ok]
 .fit = t.test(.x, .y, paired = TRUE, alternative = "${alt}", conf.level = ${conf})
 .mean1 = mean(.x); .mean2 = mean(.y)
@@ -753,7 +903,7 @@ paste0(.json, "\\n---\\n", .summary_text)`;
                         const varEq = document.querySelector('input[name="varEq"]:checked').value;
                         const varEqR = varEq === 'pooled' ? 'TRUE' : 'FALSE';
                         rCode += `
-.x = data[["${rEsc(x)}"]]; .g = as.factor(data[["${rEsc(g)}"]])
+.x = suppressWarnings(as.numeric(data[["${rEsc(x)}"]])); .g = as.factor(data[["${rEsc(g)}"]])
 ok = !is.na(.x) & !is.na(.g); .x = .x[ok]; .g = .g[ok]
 if (length(levels(.g)) != 2) stop("Grouping variable must have exactly 2 unique levels (got ", length(levels(.g)), ")")
 .fit = t.test(.x ~ .g, var.equal = ${varEqR}, alternative = "${alt}", conf.level = ${conf})
@@ -763,7 +913,7 @@ if (length(levels(.g)) != 2) stop("Grouping variable must have exactly 2 unique 
                ',"ciLo":', .jn(.fit$conf.int[1]), ',"ciHi":', .jn(.fit$conf.int[2]),
                ',"mean1":', .jn(.means[1]), ',"mean2":', .jn(.means[2]),
                ',"n":', length(.x),
-               ',"g1":"', .lvls[1], '","g2":"', .lvls[2], '"}:END')
+               ',"g1":"', .jesc(.lvls[1]), '","g2":"', .jesc(.lvls[2]), '"}:END')
 .summary_text = paste(capture.output(print(.fit)), collapse="\\n")
 paste0(.json, "\\n---\\n", .summary_text)`;
                         metaJson = { x, g, varEq, alt, conf, alpha, label: `Independent t-test: ${x} by ${g}` };
@@ -774,7 +924,7 @@ paste0(.json, "\\n---\\n", .summary_text)`;
                         const posthoc = document.querySelector('input[name="posthoc"]:checked').value;
                         const tukeyR = posthoc === 'tukey' ? `\n.tk = TukeyHSD(.fit)\n.tukey_text = paste(capture.output(print(.tk)), collapse="\\n")\n` : `\n.tukey_text = ""\n`;
                         rCode += `
-.x = data[["${rEsc(x)}"]]; .g = as.factor(data[["${rEsc(g)}"]])
+.x = suppressWarnings(as.numeric(data[["${rEsc(x)}"]])); .g = as.factor(data[["${rEsc(g)}"]])
 ok = !is.na(.x) & !is.na(.g); .x = .x[ok]; .g = .g[ok]
 .fit = aov(.x ~ .g)
 .s = summary(.fit)
@@ -784,7 +934,6 @@ ok = !is.na(.x) & !is.na(.g); .x = .x[ok]; .g = .g[ok]
 .p = .s[[1]][["Pr(>F)"]][1]
 .means = tapply(.x, .g, mean, na.rm=TRUE)
 .lvls = levels(.g)
-.means_json = paste0('"', paste(.lvls, sapply(.lvls, function(l) format(.means[l], digits=6)), sep='":', collapse=','), '')
 .json = paste0('RES:{"stat":', .jn(.fstat), ',"df1":', .jn(.df1), ',"df2":', .jn(.df2), ',"p":', .jn(.p),
                ',"n":', length(.x), ',"groups":', length(.lvls), '}:END')
 ${tukeyR}
@@ -797,28 +946,41 @@ paste0(.json, "\\n---\\n", .summary_text, "\\n\\nGroup means:\\n", .means_block,
                     case 'chi-square': {
                         const x = $('cfg-x').value, y = $('cfg-y').value;
                         const chiSim = document.querySelector('input[name="chiSim"]:checked').value;
+                        const chiCorrectEl = document.querySelector('input[name="chiCorrect"]:checked');
+                        const chiCorrect = chiCorrectEl ? chiCorrectEl.value : 'none';
+                        const correctR = chiCorrect === 'yates' ? 'TRUE' : 'FALSE';
                         const simR = chiSim === 'sim' ? ', simulate.p.value = TRUE, B = 5000' : '';
                         rCode += `
 .x = data[["${rEsc(x)}"]]; .y = data[["${rEsc(y)}"]]
 ok = !is.na(.x) & !is.na(.y) & .x != "" & .y != ""; .x = .x[ok]; .y = .y[ok]
 .tab = table(.x, .y)
-.fit = chisq.test(.tab${simR})
+.fit = chisq.test(.tab, correct = ${correctR}${simR})
 .df = if (is.null(.fit$parameter)) 0 else .fit$parameter
+# Yates correction is only ever applied by R to a 2x2 table computed without simulation.
+.corrApplied = (${correctR} && !("${chiSim}" == "sim") && nrow(.tab) == 2 && ncol(.tab) == 2)
 .json = paste0('RES:{"stat":', .jn(.fit$statistic), ',"df":', .jn(.df), ',"p":', .jn(.fit$p.value),
-               ',"n":', sum(.tab), ',"simulated":', if ("${chiSim}" == "sim") 'true' else 'false', '}:END')
+               ',"n":', sum(.tab), ',"nr":', nrow(.tab), ',"nc":', ncol(.tab),
+               ',"yates":', if (.corrApplied) 'true' else 'false',
+               ',"simulated":', if ("${chiSim}" == "sim") 'true' else 'false', '}:END')
 .tab_text = paste(capture.output(print(.tab)), collapse="\\n")
 .exp_text = paste(capture.output(print(round(.fit$expected, 2))), collapse="\\n")
 .summary_text = paste(capture.output(print(.fit)), collapse="\\n")
 paste0(.json, "\\n---\\n", .summary_text,
        "\\n\\nObserved counts:\\n", .tab_text,
        "\\n\\nExpected counts (under independence):\\n", .exp_text)`;
-                        metaJson = { x, y, chiSim, alpha, label: `Chi-square test of independence: ${x} × ${y}` };
+                        metaJson = { x, y, chiSim, chiCorrect, alpha, label: `Chi-square test of independence: ${x} × ${y}` };
                         break;
                     }
                 }
 
                 const result = await webR.evalR(rCode);
-                const obj = await result.toJs();
+                let obj;
+                try {
+                    obj = await result.toJs();
+                } finally {
+                    // Free the R-heap object so results don't accumulate across runs.
+                    if (result && typeof result.destroy === 'function') { try { await result.destroy(); } catch (_) {} }
+                }
                 let out;
                 if (typeof obj === 'string') out = obj;
                 else if (obj && obj.values) out = Array.isArray(obj.values) ? obj.values.join('\n') : obj.values;
@@ -872,8 +1034,8 @@ paste0(.json, "\\n---\\n", .summary_text,
                 }
                 case 'paired-t': {
                     return {
-                        H0: `\u03BC<sub>${meta.x}</sub> = \u03BC<sub>${meta.y}</sub>  (mean difference = 0)`,
-                        H1: `\u03BC<sub>${meta.x}</sub> ${altSym(meta.alt)} \u03BC<sub>${meta.y}</sub>`
+                        H0: `\u03BC<sub>${escapeHtml(meta.x)}</sub> = \u03BC<sub>${escapeHtml(meta.y)}</sub>  (mean difference = 0)`,
+                        H1: `\u03BC<sub>${escapeHtml(meta.x)}</sub> ${altSym(meta.alt)} \u03BC<sub>${escapeHtml(meta.y)}</sub>`
                     };
                 }
                 case 'independent-t': {
@@ -890,8 +1052,8 @@ paste0(.json, "\\n---\\n", .summary_text,
                 }
                 case 'chi-square': {
                     return {
-                        H0: `${meta.x} and ${meta.y} are independent`,
-                        H1: `${meta.x} and ${meta.y} are associated (two-tailed by construction)`
+                        H0: `${escapeHtml(meta.x)} and ${escapeHtml(meta.y)} are independent`,
+                        H1: `${escapeHtml(meta.x)} and ${escapeHtml(meta.y)} are associated (two-tailed by construction)`
                     };
                 }
             }
@@ -919,8 +1081,8 @@ paste0(.json, "\\n---\\n", .summary_text,
                     stats.push({ label: 't-statistic', value: fmt(s.stat) });
                     stats.push({ label: 'df', value: fmt(s.df, 2) });
                     stats.push({ label: 'p-value', value: fmtP(s.p) });
-                    stats.push({ label: `Mean 1 (${meta.x})`, value: fmt(s.mean1) });
-                    stats.push({ label: `Mean 2 (${meta.y})`, value: fmt(s.mean2) });
+                    stats.push({ label: `Mean 1 (${escapeHtml(meta.x)})`, value: fmt(s.mean1) });
+                    stats.push({ label: `Mean 2 (${escapeHtml(meta.y)})`, value: fmt(s.mean2) });
                     stats.push({ label: 'Mean diff (1 − 2)', value: fmt(s.mean), secondary: `n = ${s.n} pairs` });
                     stats.push({ label: `${(meta.conf*100).toFixed(0)}% CI for diff`, value: fmtCI(s.ciLo, s.ciHi) });
                     break;
@@ -928,8 +1090,8 @@ paste0(.json, "\\n---\\n", .summary_text,
                     stats.push({ label: 't-statistic', value: fmt(s.stat) });
                     stats.push({ label: 'df', value: fmt(s.df, 2) });
                     stats.push({ label: 'p-value', value: fmtP(s.p) });
-                    stats.push({ label: `Mean (${s.g1})`, value: fmt(s.mean1) });
-                    stats.push({ label: `Mean (${s.g2})`, value: fmt(s.mean2) });
+                    stats.push({ label: `Mean (${escapeHtml(s.g1)})`, value: fmt(s.mean1) });
+                    stats.push({ label: `Mean (${escapeHtml(s.g2)})`, value: fmt(s.mean2) });
                     stats.push({ label: `${(meta.conf*100).toFixed(0)}% CI for diff`, value: fmtCI(s.ciLo, s.ciHi) });
                     break;
                 case 'anova':
@@ -938,12 +1100,15 @@ paste0(.json, "\\n---\\n", .summary_text,
                     stats.push({ label: 'p-value', value: fmtP(s.p) });
                     stats.push({ label: 'Groups', value: s.groups, secondary: `n = ${s.n}` });
                     break;
-                case 'chi-square':
-                    stats.push({ label: 'χ² statistic', value: fmt(s.stat) });
-                    stats.push({ label: 'df', value: s.simulated ? '— (simulated)' : s.df });
+                case 'chi-square': {
+                    const is2x2 = s.nr === 2 && s.nc === 2;
+                    const corrNote = (!s.simulated && is2x2) ? (s.yates ? 'Yates corrected' : 'uncorrected') : undefined;
+                    stats.push({ label: 'χ² statistic', value: fmt(s.stat), secondary: corrNote });
+                    stats.push({ label: 'df', value: s.simulated ? 'n/a (simulated)' : s.df });
                     stats.push({ label: 'p-value', value: fmtP(s.p) });
                     stats.push({ label: 'Total n', value: s.n });
                     break;
+                }
             }
             $('resultsStats').innerHTML = stats.map(st => `
                 <div class="stat">
@@ -954,12 +1119,18 @@ paste0(.json, "\\n---\\n", .summary_text,
             `).join('');
             $('resultsExtra').innerHTML = extras.join('');
 
-            // Verdict
-            const reject = s.p < meta.alpha;
-            $('resultsVerdict').className = 'verdict ' + (reject ? 'reject' : 'fail-to-reject');
-            $('resultsVerdict').innerHTML = reject
-                ? `<strong>Reject H₀</strong> at α = ${meta.alpha}. The p-value (${fmtP(s.p)}) is below the threshold — the observed data are unlikely under the null hypothesis.`
-                : `<strong>Fail to reject H₀</strong> at α = ${meta.alpha}. The p-value (${fmtP(s.p)}) is above the threshold — the data are consistent with the null hypothesis.`;
+            // Verdict. Guard against a null / non-numeric p-value (e.g. a
+            // degenerate fit): null < alpha would otherwise wrongly read as "reject".
+            if (s.p === null || s.p === undefined || isNaN(s.p)) {
+                $('resultsVerdict').className = 'verdict fail-to-reject';
+                $('resultsVerdict').innerHTML = `<strong>No decision.</strong> The p-value could not be computed for this test, so no reject or fail-to-reject conclusion can be drawn. Check your data and the full R output below.`;
+            } else {
+                const reject = s.p < meta.alpha;
+                $('resultsVerdict').className = 'verdict ' + (reject ? 'reject' : 'fail-to-reject');
+                $('resultsVerdict').innerHTML = reject
+                    ? `<strong>Reject H₀</strong> at α = ${meta.alpha}. The p-value (${fmtP(s.p)}) is below the threshold, so the observed data are unlikely under the null hypothesis.`
+                    : `<strong>Fail to reject H₀</strong> at α = ${meta.alpha}. The p-value (${fmtP(s.p)}) is above the threshold, so the data are consistent with the null hypothesis.`;
+            }
 
             $('rawOutput').textContent = summary.trim();
             $('resultsContainer').classList.add('visible');
@@ -969,6 +1140,44 @@ paste0(.json, "\\n---\\n", .summary_text,
 
         // ==================== GO ====================
         initWebR();
+    </script>
+
+    <!-- Firebase auth -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js" integrity="sha384-yuGdyIzzYtOBlBG6JOWn+Ey9kpq7HocusNuxEGyyohr1eEyXpeEyehIIXC/hznw4" crossorigin="anonymous"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js" integrity="sha384-lI+CxEx/bCvWP1b0OK13j5HTrTZP7yf1xle8TVOFq2smz6KC1RChTarRV/RHP5PP" crossorigin="anonymous"></script>
+    <script>
+        // Reveal a clear message if the sign-in service cannot be reached, so a
+        // blocked Firebase CDN does not leave the page stuck on "Loading..." forever.
+        var authTimeout = setTimeout(function () {
+            var ls = document.getElementById('loading-screen');
+            if (ls) ls.innerHTML = '<p style="color:#991b1b; font-size:1rem; text-align:center; max-width:420px; padding:0 1rem;">Could not reach the sign-in service. Check your connection and reload this page.</p>';
+        }, 12000);
+
+        try {
+            var firebaseConfig = {
+                apiKey: "AIzaSyBg3LJDwVIRGWtFZb_mM_CSRJMNCJUta20",
+                authDomain: "iu-pricing-tools.firebaseapp.com",
+                projectId: "iu-pricing-tools",
+                storageBucket: "iu-pricing-tools.firebasestorage.app",
+                messagingSenderId: "659335573790",
+                appId: "1:659335573790:web:00013a166787efecb3d90f",
+                measurementId: "G-NGKNY08XWP"
+            };
+            firebase.initializeApp(firebaseConfig);
+            firebase.auth().onAuthStateChanged(function (user) {
+                clearTimeout(authTimeout);
+                if (user) {
+                    document.getElementById('loading-screen').style.display = 'none';
+                    document.getElementById('main-content').style.display = 'block';
+                } else {
+                    window.location.href = 'login.html?next=' + encodeURIComponent(window.location.pathname.split('/').pop());
+                }
+            });
+        } catch (e) {
+            clearTimeout(authTimeout);
+            var ls = document.getElementById('loading-screen');
+            if (ls) ls.innerHTML = '<p style="color:#991b1b; font-size:1rem; text-align:center; max-width:420px; padding:0 1rem;">Could not reach the sign-in service. Check your connection and reload this page.</p>';
+        }
     </script>
 </body>
 </html>

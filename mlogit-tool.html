@@ -5,6 +5,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Multinomial &amp; Conditional Logit (Browser) | Koray Cosguner</title>
     <meta name="robots" content="noindex,nofollow">
+    <meta name="description" content="Estimate multinomial and conditional logit discrete-choice models in your browser with the mlogit R package via WebR, with no R install required. Created by Dr. Koray Cosguner.">
+    <link rel="icon" type="image/jpeg" href="KCFavicon.jpg">
+
+    <!-- Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-CTZ8G4EYLR"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-CTZ8G4EYLR');
+    </script>
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -30,11 +42,9 @@
             background-color: var(--bg-light);
         }
 
-        nav { position: sticky; top: 0; background: var(--white); box-shadow: 0 2px 10px rgba(0,0,0,0.1); z-index: 1000; padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; }
-        .nav-brand { font-size: 1.5rem; font-weight: 700; color: var(--iu-crimson); text-decoration: none; }
-        .nav-links { display: flex; gap: 2rem; list-style: none; }
-        .nav-links a { text-decoration: none; color: var(--text-dark); font-weight: 500; transition: color 0.3s; }
-        .nav-links a:hover { color: var(--iu-crimson); }
+        /* Nav styles removed: this tool follows the "Tool 7" pattern and renders only a
+           back-to-tools link (no top nav bar), so the old nav / nav-brand / nav-links
+           rules were dead weight and have been deleted. */
 
         main { max-width: 1200px; margin: 0 auto; padding: 2rem; }
         .hero { text-align: center; padding: 3rem 0; }
@@ -75,7 +85,7 @@
         .form-group select:focus, .form-group input:focus { outline: none; border-color: var(--iu-crimson); }
         .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
         @media (max-width: 720px) { .form-row { grid-template-columns: 1fr; } }
-        .field-hint { color: #999; font-weight: 400; font-size: 0.85rem; margin-left: 0.4rem; }
+        .field-hint { color: #767676; font-weight: 400; font-size: 0.85rem; margin-left: 0.4rem; }
 
         /* Format-shape radio (Long / Wide) sits ABOVE the explainer cards and uses
            the same 2-column grid + gap so the two pills line up perfectly with the
@@ -359,6 +369,13 @@
     </style>
 </head>
 <body>
+    <!-- Auth gate: shown until Firebase resolves the sign-in state. -->
+    <div id="loading-screen" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: #fff; display: flex; align-items: center; justify-content: center; z-index: 100000; padding: 1rem;">
+        <p style="color: #666; font-family: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif; text-align: center; max-width: 420px;">Loading...</p>
+    </div>
+
+    <div id="main-content" style="display: none;">
+
     <!-- Loading Overlay -->
     <div class="loading-overlay" id="loadingOverlay">
         <div class="spinner"></div>
@@ -401,7 +418,7 @@
 
         <div class="tool-container">
 
-            <div class="status-message" id="statusMessage"></div>
+            <div class="status-message" id="statusMessage" role="status" aria-live="polite"></div>
 
             <!-- ============================== 1. Choose Data Format ============================== -->
             <h2 class="section-title">1. Choose Data Format</h2>
@@ -447,11 +464,14 @@
             <!-- ============================== 2. Upload ============================== -->
             <h2 class="section-title mt">2. Upload Your Data</h2>
             <p class="section-hint" id="uploadHint">Upload a CSV in <strong>long format</strong> (one row per alternative per choice occasion).</p>
-            <div class="upload-area" id="uploadArea">
+            <div class="upload-area" id="uploadArea" role="button" tabindex="0" aria-label="Upload a CSV file: click, or press Enter or Space, or drag and drop">
                 <input type="file" id="fileInput" accept=".csv">
-                <div class="upload-icon">📊</div>
+                <div class="upload-icon" aria-hidden="true">📊</div>
                 <p class="upload-text">Click to upload or drag and drop a CSV</p>
                 <p class="upload-hint" id="uploadHintShape">Long format · CSV only</p>
+            </div>
+            <div style="text-align: center; margin: -0.5rem 0 1.5rem;">
+                <button type="button" class="btn btn-secondary" id="loadExampleBtn" style="padding: 0.5rem 1.25rem; font-size: 0.9rem;">Load Example Data (Coke / Pepsi / No Purchase)</button>
             </div>
             <div class="data-preview" id="dataPreview">
                 <h3 style="margin-bottom: 0.5rem; font-size: 1.05rem; color: var(--text-dark);">Data Preview (first 8 rows)</h3>
@@ -470,6 +490,7 @@
                     <label><input type="radio" name="dataChoice" value="filtered"> Filter Data (Create a Subset)</label>
                 </div>
                 <div class="filter-conditions" id="filterConditions">
+                    <p style="font-size: 0.82rem; color: #0c4a6e; font-style: italic; margin-bottom: 0.6rem;">Note: in long format, filtering on a row-level column (like Alternative or Choice) can leave a choice occasion with only some of its alternatives, which <code>mlogit</code> cannot estimate. Prefer filtering on a per-occasion column (like the Choice ID) so each occasion is kept or dropped as a whole.</p>
                     <div id="filterRows"></div>
                     <button type="button" class="add-filter-btn" id="addFilterBtn">+ Add Filter Condition</button>
                     <div class="filter-summary" id="filterSummary" style="display: none;">
@@ -523,6 +544,7 @@
                         <label>Alternative-Specific Attribute Columns <span class="field-hint">(e.g., Price_Coke, Price_Pepsi → all "Price_*")</span></label>
                         <div id="wideAttrCols" style="border:1px solid var(--border); border-radius:6px; padding:0.75rem; max-height:160px; overflow-y:auto;"></div>
                         <p style="font-size:0.8rem; color:var(--text-light); margin-top:0.4rem; font-style:italic;">Pick all columns that vary by alternative within an occasion. Each column is mapped to (attribute, alternative) by splitting on the last underscore.</p>
+                        <p id="wideAttrWarn" style="display:none; font-size:0.82rem; color:#92400e; background:#fffbeb; border:1px solid #fde68a; border-radius:4px; padding:0.5rem 0.7rem; margin-top:0.5rem;"></p>
                     </div>
                     <div class="form-group">
                         <label for="wideReflevel">Reference Alternative</label>
@@ -565,6 +587,7 @@
                     <table class="coef-table" id="coefTable"></table>
                 </div>
                 <p class="copy-hint">Select the table and copy (Ctrl+C / Cmd+C) to paste into Excel.</p>
+                <p class="copy-hint" style="font-style: normal;">Color key: <span style="color: var(--green); font-weight: 600;">green</span> = significant at p &lt; 0.05; <span style="color: #b91c1c; font-weight: 600;">red</span> = not significant (p &ge; 0.10); default color = 0.05 &le; p &lt; 0.10.</p>
                 <div style="margin-top: 0.75rem; display: flex; gap: 0.75rem; align-items: center; flex-wrap: wrap;">
                     <label for="coefCsvDecimals" style="font-size: 0.9rem; color: var(--text-dark);">Decimals:</label>
                     <select id="coefCsvDecimals" style="padding: 0.35rem 0.5rem; font-size: 0.9rem; border: 1px solid var(--border); border-radius: 6px; background: var(--white);">
@@ -615,10 +638,10 @@
                 <!-- Prediction panel -->
                 <div class="prediction-section" id="predictionSection">
                     <h3>Make a Prediction</h3>
-                    <p style="font-size: 0.9rem; color: var(--text-light); margin-bottom: 1rem;">Enter values for each non-baseline alternative below to compute predicted choice probabilities (the baseline alternative has utility 0 by definition).</p>
+                    <p style="font-size: 0.9rem; color: var(--text-light); margin-bottom: 1rem;">Enter values for the alternatives below to compute predicted choice probabilities. Inputs are prefilled with each variable's sample mean; edit them to describe your scenario. The reference alternative also gets inputs whenever a variable it shares (a single-slope or per-alternative-slope attribute) affects its utility. This calculator always uses the full estimated model, so it ignores the significance filter above.</p>
                     <div id="predictionInputs"></div>
                     <button class="btn btn-primary" id="predictBtn" style="margin-top: 0.5rem;">Calculate Probabilities</button>
-                    <div class="prediction-result" id="predictionResult">
+                    <div class="prediction-result" id="predictionResult" aria-live="polite">
                         <div class="label">Predicted choice probabilities</div>
                         <div class="prediction-pr-grid" id="predictionPrGrid"></div>
                     </div>
@@ -631,13 +654,61 @@
         <p>&copy; 2026 Koray Cosguner. All Rights Reserved.</p>
     </footer>
 
+    </div> <!-- end main-content -->
+
+    <!-- Firebase auth gate -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js" integrity="sha384-yuGdyIzzYtOBlBG6JOWn+Ey9kpq7HocusNuxEGyyohr1eEyXpeEyehIIXC/hznw4" crossorigin="anonymous"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js" integrity="sha384-lI+CxEx/bCvWP1b0OK13j5HTrTZP7yf1xle8TVOFq2smz6KC1RChTarRV/RHP5PP" crossorigin="anonymous"></script>
+    <script>
+        (function () {
+            const firebaseConfig = {
+                apiKey: "AIzaSyBg3LJDwVIRGWtFZb_mM_CSRJMNCJUta20",
+                authDomain: "iu-pricing-tools.firebaseapp.com",
+                projectId: "iu-pricing-tools",
+                storageBucket: "iu-pricing-tools.firebasestorage.app",
+                messagingSenderId: "659335573790",
+                appId: "1:659335573790:web:00013a166787efecb3d90f",
+                measurementId: "G-NGKNY08XWP"
+            };
+            let authResolved = false;
+            // If Firebase's CDN is blocked or auth never resolves, don't hang forever:
+            // after 12s show a plain message in place of the loading state.
+            const failTimer = setTimeout(function () {
+                if (!authResolved) {
+                    const ls = document.getElementById('loading-screen');
+                    if (ls) ls.innerHTML = '<p style="color: #666; font-family: \'Outfit\', -apple-system, sans-serif; text-align: center; max-width: 420px;">Could not reach the sign-in service. Check your connection and reload this page.</p>';
+                }
+            }, 12000);
+            try {
+                firebase.initializeApp(firebaseConfig);
+                firebase.auth().onAuthStateChanged(function (user) {
+                    authResolved = true;
+                    clearTimeout(failTimer);
+                    if (user) {
+                        document.getElementById('loading-screen').style.display = 'none';
+                        document.getElementById('main-content').style.display = 'block';
+                    } else {
+                        window.location.href = 'login.html?next=' + encodeURIComponent(window.location.pathname.split('/').pop());
+                    }
+                });
+            } catch (e) {
+                // firebase undefined (CDN blocked) or init error: the 12s fallback handles the UI.
+                console.error(e);
+            }
+        })();
+    </script>
+
     <script type="module">
-        import { WebR } from 'https://webr.r-wasm.org/latest/webr.mjs';
+        // Pinned to a specific WebR release (not "latest") so an upstream breaking
+        // change or compromise cannot alter this tool's runtime underfoot. Bump this
+        // version deliberately after testing.
+        import { WebR } from 'https://webr.r-wasm.org/v0.5.4/webr.mjs';
 
         // ============================================================
         // STATE
         // ============================================================
         let webR = null;
+        let webRReady = false;   // true only after init + mlogit are fully loaded
         let csvText = '';
         let columnNames = [];
         let rows = [];           // parsed CSV rows
@@ -675,6 +746,7 @@
                 await webR.installPackages(['mlogit'], { quiet: true });
                 setLoadingText('Preparing R session…');
                 await webR.evalR('suppressPackageStartupMessages(library(mlogit))');
+                webRReady = true;
                 $('loadingOverlay').classList.add('hidden');
                 showStatus('Ready. Upload a CSV to begin.', 'success', 4000);
             } catch (err) {
@@ -743,6 +815,13 @@
         const uploadArea = $('uploadArea');
         const fileInput  = $('fileInput');
         uploadArea.addEventListener('click', () => fileInput.click());
+        // Keyboard access: the upload area is a role="button", so Enter/Space open the picker.
+        uploadArea.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ' || e.key === 'Spacebar') {
+                e.preventDefault();
+                fileInput.click();
+            }
+        });
         uploadArea.addEventListener('dragover', (e) => { e.preventDefault(); uploadArea.classList.add('dragover'); });
         uploadArea.addEventListener('dragleave', () => uploadArea.classList.remove('dragover'));
         uploadArea.addEventListener('drop', (e) => {
@@ -760,28 +839,97 @@
                 return;
             }
             const reader = new FileReader();
-            reader.onload = (ev) => {
-                csvText = ev.target.result;
-                const { headers, rows: parsedRows } = parseCSV(csvText);
-                if (headers.length === 0 || parsedRows.length === 0) {
-                    showStatus('Could not parse CSV. Is it empty or malformed?', 'error', 5000);
-                    return;
-                }
-                // Full reset of all derived UI state — new data invalidates every prior selection.
-                resetForNewData();
-                columnNames = headers;
-                rows = parsedRows;
-                detectColumnTypes();
-                renderPreview();
-                populateColumnSelectors();
-                populateWideColumnLists();
-                $('dataFilterSection').classList.add('visible');
-                $('modelConfig').style.display = 'block';
-                refreshVarSections(); // build the two empty checkbox lists
-                showStatus(`Loaded ${parsedRows.length.toLocaleString()} rows × ${headers.length} columns.`, 'success', 3000);
-            };
+            reader.onload = (ev) => ingestCSV(ev.target.result);
             reader.readAsText(file);
         }
+
+        // Parse CSV text (from an upload OR the example button) and wire up the UI.
+        function ingestCSV(text) {
+            csvText = text;
+            const { headers, rows: parsedRows } = parseCSV(csvText);
+            if (headers.length === 0 || parsedRows.length === 0) {
+                showStatus('Could not parse CSV. Is it empty or malformed?', 'error', 5000);
+                return false;
+            }
+            // Full reset of all derived UI state: new data invalidates every prior selection.
+            resetForNewData();
+            columnNames = headers;
+            rows = parsedRows;
+            detectColumnTypes();
+            renderPreview();
+            populateColumnSelectors();
+            populateWideColumnLists();
+            $('dataFilterSection').classList.add('visible');
+            $('modelConfig').style.display = 'block';
+            refreshVarSections(); // build the two empty checkbox lists
+            showStatus(`Loaded ${parsedRows.length.toLocaleString()} rows × ${headers.length} columns.`, 'success', 3000);
+            return true;
+        }
+
+        // ============================================================
+        // LOAD EXAMPLE DATA (Coke / Pepsi / No Purchase, long format)
+        // ============================================================
+        // Build a reproducible long-format demo: 80 choice occasions, 3 alternatives
+        // each, prices drawn from a deterministic pseudo-random sequence and a choice
+        // simulated from a logit with known coefficients so estimation recovers a
+        // negative price slope and positive brand intercepts. No Purchase is the
+        // outside option (Price 0) and serves as the reference alternative.
+        function buildExampleCSV() {
+            // mulberry32 PRNG: uses Math.imul and bitwise ops, so it stays exact in
+            // JavaScript (a plain multiplicative LCG overflows 2^53 and degrades).
+            let a = 0x9e3779b9 >>> 0;
+            const rnd = () => {
+                a = (a + 0x6D2B79F5) >>> 0;
+                let t = Math.imul(a ^ (a >>> 15), 1 | a);
+                t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+                return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+            };
+            const alts = ['Coke', 'Pepsi', 'NoPurchase'];
+            const bPrice = -3.0;
+            const asc = { Coke: 2.0, Pepsi: 1.6, NoPurchase: 0 };
+            const lines = ['ChoiceID,Alternative,Price,Chosen'];
+            const nOcc = 80;
+            for (let i = 1; i <= nOcc; i++) {
+                const price = {
+                    Coke: +(0.6 + rnd() * 0.6).toFixed(2),
+                    Pepsi: +(0.6 + rnd() * 0.6).toFixed(2),
+                    NoPurchase: 0
+                };
+                const eu = {}; let denom = 0;
+                for (const a of alts) { eu[a] = Math.exp(asc[a] + bPrice * price[a]); denom += eu[a]; }
+                let u = rnd() * denom, chosen = alts[alts.length - 1];
+                for (const a of alts) { u -= eu[a]; if (u <= 0) { chosen = a; break; } }
+                for (const a of alts) lines.push(`${i},${a},${price[a]},${a === chosen ? 1 : 0}`);
+            }
+            return lines.join('\n');
+        }
+
+        $('loadExampleBtn').addEventListener('click', () => {
+            // Force long shape (the example is long format) and sync the shape UI.
+            const longRadio = document.querySelector('input[name="dataShape"][value="long"]');
+            if (longRadio && !longRadio.checked) {
+                longRadio.checked = true;
+                longRadio.dispatchEvent(new Event('change', { bubbles: true }));
+            }
+            fileInput.value = '';
+            if (!ingestCSV(buildExampleCSV())) return;
+            // Pre-configure the choice structure so the user can estimate in one click.
+            $('chidVar').value = 'ChoiceID';
+            $('altVar').value = 'Alternative';
+            $('choiceVar').value = 'Chosen';
+            $('altVar').dispatchEvent(new Event('change')); // builds alternatives + reflevel options
+            $('reflevel').value = 'NoPurchase';
+            $('reflevel').dispatchEvent(new Event('change')); // rebuilds var sections with chid/alt/choice set
+            const priceCb = $('csVars').querySelector('input.cs-var-cb[value="Price"]');
+            if (priceCb) { priceCb.checked = true; priceCb.dispatchEvent(new Event('change')); }
+            updateRunEnabled();
+            if (webRReady) {
+                showStatus('Example loaded. Estimating a conditional logit (Price, reference = No Purchase)...', 'info');
+                runEstimation();
+            } else {
+                showStatus('Example loaded. WebR is still starting up: click Estimate Model once it is ready.', 'info', 8000);
+            }
+        });
 
         // Wipe every piece of UI state that depends on the previously-uploaded CSV.
         function resetForNewData() {
@@ -896,11 +1044,11 @@
             // Annotate each column option with its detected type so the user can tell at a glance.
             const colOpts = columnNames.map(c => {
                 const tag = columnTypes[c] === 'numeric' ? 'numeric' : 'categorical';
-                return `<option value="${escapeHtml(c)}" data-type="${columnTypes[c] || 'text'}">${escapeHtml(displayName(c))} — ${tag}</option>`;
+                return `<option value="${escapeHtml(c)}" data-type="${columnTypes[c] || 'text'}">${escapeHtml(displayName(c))} (${tag})</option>`;
             }).join('');
             row.innerHTML = `
-                <select class="filter-col"><option value="">-- Column --</option>${colOpts}</select>
-                <select class="filter-op">
+                <select class="filter-col" aria-label="Filter column"><option value="">-- Column --</option>${colOpts}</select>
+                <select class="filter-op" aria-label="Filter comparison">
                     <option value="==">=</option>
                     <option value="!=">≠</option>
                     <option value=">">&gt;</option>
@@ -908,7 +1056,7 @@
                     <option value="<">&lt;</option>
                     <option value="<=">&le;</option>
                 </select>
-                <span class="filter-val-wrap"><input type="text" class="filter-val" placeholder="value"></span>
+                <span class="filter-val-wrap"><input type="text" class="filter-val" placeholder="value" aria-label="Filter value"></span>
                 <button type="button" class="remove-filter-btn">Remove</button>
             `;
             $('filterRows').appendChild(row);
@@ -933,12 +1081,12 @@
             const col = row.querySelector('.filter-col').value;
             const wrap = row.querySelector('.filter-val-wrap');
             if (!col) {
-                wrap.innerHTML = '<input type="text" class="filter-val" placeholder="value">';
+                wrap.innerHTML = '<input type="text" class="filter-val" placeholder="value" aria-label="Filter value">';
                 wrap.querySelector('.filter-val').addEventListener('input', updateFilterSummary);
                 return;
             }
             if (columnTypes[col] === 'numeric') {
-                wrap.innerHTML = '<input type="number" step="any" class="filter-val" placeholder="value">';
+                wrap.innerHTML = '<input type="number" step="any" class="filter-val" placeholder="value" aria-label="Filter value">';
             } else {
                 // Categorical: collect unique values (limit to keep the dropdown sensible) and offer a select.
                 const seen = new Set();
@@ -949,10 +1097,10 @@
                 }
                 const uniq = Array.from(seen).sort((a, b) => a.localeCompare(b, undefined, { numeric: true }));
                 if (uniq.length <= 500) {
-                    wrap.innerHTML = '<select class="filter-val"><option value="">-- Value --</option>' +
+                    wrap.innerHTML = '<select class="filter-val" aria-label="Filter value"><option value="">-- Value --</option>' +
                         uniq.map(v => `<option value="${escapeHtml(v)}">${escapeHtml(v)}</option>`).join('') + '</select>';
                 } else {
-                    wrap.innerHTML = '<input type="text" class="filter-val" placeholder="value (too many uniques to list)">';
+                    wrap.innerHTML = '<input type="text" class="filter-val" placeholder="value (too many uniques to list)" aria-label="Filter value">';
                 }
             }
             wrap.querySelector('.filter-val').addEventListener('input', updateFilterSummary);
@@ -1058,45 +1206,69 @@
             $('wideChoiceMap').innerHTML = '';
             $('wideReflevel').innerHTML = '<option value="">-- Pick choice columns first --</option>';
             $('wideReflevel').disabled = true;
+            const warn = $('wideAttrWarn');
+            if (warn) warn.style.display = 'none';
+        }
 
-            // When choice cols change, build the alt-name mapping UI + populate reflevel
-            $('wideChoiceCols').addEventListener('change', () => {
-                const cols = Array.from($('wideChoiceCols').querySelectorAll('input.wide-choice-col:checked')).map(i => i.value);
-                if (cols.length === 0) {
-                    $('wideChoiceMap').innerHTML = '';
-                    $('wideReflevel').innerHTML = '<option value="">-- Pick choice columns first --</option>';
-                    $('wideReflevel').disabled = true;
-                    alternatives = [];
-                    refreshVarRowChoices();
-                    updateRunEnabled();
-                    return;
-                }
-                $('wideChoiceMap').innerHTML = '<p style="font-size:0.8rem; font-weight:600; color:var(--text-dark); margin-bottom:0.4rem;">Alternative name for each column:</p>' +
-                    cols.map((c, i) => {
-                        const guess = guessAltFromColumn(c);
-                        return `
-                            <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.5rem; margin-bottom:0.35rem; align-items:center;">
-                                <span style="font-size:0.85rem; color:var(--text-light);">${escapeHtml(displayName(c))} →</span>
-                                <input type="text" class="wide-alt-name" data-col="${escapeHtml(c)}" value="${escapeHtml(guess)}" placeholder="Alternative name">
-                            </div>
-                        `;
-                    }).join('');
-                refreshWideReflevel();
-                // Re-fire on every edit to the alt-name fields, since wideAttrGroups
-                // depends on the alt names (it strips them from the column suffixes
-                // to derive the base attribute name shown in the variable dropdown).
-                $('wideChoiceMap').querySelectorAll('input.wide-alt-name').forEach(i => {
-                    i.addEventListener('input', () => {
-                        refreshWideReflevel();
-                        refreshVarRowChoices();
-                        updateRunEnabled();
-                    });
-                });
+        // Choice-column change handler. Registered ONCE at module scope (below) rather
+        // than inside populateWideColumnLists, so it does not accumulate a new listener
+        // on every file upload. It reads current DOM state via event delegation on the
+        // persistent container, so a single registration is sufficient.
+        function onWideChoiceColsChange() {
+            const cols = Array.from($('wideChoiceCols').querySelectorAll('input.wide-choice-col:checked')).map(i => i.value);
+            if (cols.length === 0) {
+                $('wideChoiceMap').innerHTML = '';
+                $('wideReflevel').innerHTML = '<option value="">-- Pick choice columns first --</option>';
+                $('wideReflevel').disabled = true;
+                alternatives = [];
                 refreshVarRowChoices();
                 updateRunEnabled();
+                return;
+            }
+            $('wideChoiceMap').innerHTML = '<p style="font-size:0.8rem; font-weight:600; color:var(--text-dark); margin-bottom:0.4rem;">Alternative name for each column:</p>' +
+                cols.map((c, i) => {
+                    const guess = guessAltFromColumn(c);
+                    return `
+                        <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.5rem; margin-bottom:0.35rem; align-items:center;">
+                            <span style="font-size:0.85rem; color:var(--text-light);">${escapeHtml(displayName(c))} →</span>
+                            <input type="text" class="wide-alt-name" data-col="${escapeHtml(c)}" value="${escapeHtml(guess)}" placeholder="Alternative name">
+                        </div>
+                    `;
+                }).join('');
+            refreshWideReflevel();
+            // Re-fire on every edit to the alt-name fields, since wideAttrGroups
+            // depends on the alt names (it strips them from the column suffixes
+            // to derive the base attribute name shown in the variable dropdown).
+            $('wideChoiceMap').querySelectorAll('input.wide-alt-name').forEach(i => {
+                i.addEventListener('input', () => {
+                    refreshWideReflevel();
+                    updateWideAttrWarning();
+                    refreshVarRowChoices();
+                    updateRunEnabled();
+                });
             });
-            $('wideAttrCols').addEventListener('change', () => { refreshVarRowChoices(); updateRunEnabled(); });
+            updateWideAttrWarning();
+            refreshVarRowChoices();
+            updateRunEnabled();
         }
+
+        // Warn when a checked alternative-specific attribute column does not end with
+        // any of the mapped alternative names (matching is case-sensitive, like the
+        // reshape). Such a column would be silently dropped by the reshape and would
+        // otherwise cause a raw "object not found" R error, so surface it here.
+        function updateWideAttrWarning() {
+            const el = $('wideAttrWarn');
+            if (!el) return;
+            const attrCols = Array.from($('wideAttrCols').querySelectorAll('input.wide-attr-col:checked')).map(i => i.value);
+            const knownAlts = Array.from($('wideChoiceMap').querySelectorAll('input.wide-alt-name')).map(i => i.value).filter(Boolean);
+            if (attrCols.length === 0 || knownAlts.length === 0) { el.style.display = 'none'; return; }
+            const unmatched = attrCols.filter(c => !knownAlts.some(alt => new RegExp(`[_.\\-]?${escapeRegex(alt)}$`).test(c)));
+            if (unmatched.length === 0) { el.style.display = 'none'; return; }
+            el.textContent = `These attribute columns do not end with any alternative name (check spelling and capitalization) and will be ignored: ${unmatched.map(displayName).join(', ')}.`;
+            el.style.display = 'block';
+        }
+        $('wideChoiceCols').addEventListener('change', onWideChoiceColsChange);
+        $('wideAttrCols').addEventListener('change', () => { updateWideAttrWarning(); refreshVarRowChoices(); updateRunEnabled(); });
 
         // Pull the alt name from a column like "Choice_Coke", "ChoiceCoke", "Choice.Coke",
         // or "Price-Pepsi". Strategy:
@@ -1271,14 +1443,18 @@
             const chid       = $('wideChidVar').value;
             const knownAlts  = Array.from($('wideChoiceMap').querySelectorAll('input.wide-alt-name')).map(i => i.value).filter(Boolean);
 
+            // Only attribute columns whose suffix matches a mapped alternative name
+            // (same case-sensitive rule the reshape uses) contribute a base name. An
+            // unmatched column (e.g. "Price_coke" vs alt "Coke") is dropped by the
+            // reshape, so it must NOT appear as a candidate variable here or estimation
+            // would fail with a raw "object not found" R error. updateWideAttrWarning()
+            // tells the user which columns were ignored.
             const attrBases = new Set();
             for (const c of attrCols) {
-                let base = c;
                 for (const alt of knownAlts) {
-                    const re = new RegExp(`[_.\\\\-]?${escapeRegex(alt)}$`);
-                    if (re.test(c)) { base = c.replace(re, ''); break; }
+                    const re = new RegExp(`[_.\\-]?${escapeRegex(alt)}$`);
+                    if (re.test(c)) { attrBases.add(c.replace(re, '')); break; }
                 }
-                attrBases.add(base);
             }
 
             const used = new Set([chid, ...choiceCols, ...attrCols].filter(Boolean));
@@ -1431,16 +1607,50 @@
                     varsAltCI.push(...reclassifiedCI);
                 }
 
-                // Build mlogit formula parts (same logic as the original Shiny tool).
-                let part1 = varsSingle.length > 0 ? varsSingle.join(' + ') : '0';
+                // Build the three-part mlogit formula:  y ~ part1 | part2 | part3
+                //   part1: alternative-specific variables with a GENERIC coefficient
+                //          (varsSingle). Their coefficient is shared across alternatives,
+                //          so the reference alternative's utility includes beta * x_ref.
+                //   part2: individual-specific variables (varsAltCI) with alternative-
+                //          specific coefficients (reference fixed to 0), plus the
+                //          alternative-specific intercepts.
+                //   part3: alternative-specific variables with ALTERNATIVE-SPECIFIC
+                //          coefficients (varsAltCS). A slope is estimated for EVERY
+                //          alternative, including the reference (this is why part 3, not
+                //          part 2, is correct: part 2 would silently fix the reference
+                //          slope to 0 and misspecify the model).
+                // Backtick every variable name so headers that are not valid R
+                // identifiers (spaces, %, $, parentheses) still parse in the formula.
+                // read.csv is called with check.names = FALSE so the columns keep their
+                // original names, and the backticks in the coefficient names are stripped
+                // in R before the results come back.
+                const bt = (n) => '`' + String(n).replace(/`/g, '') + '`';
+                const part1 = varsSingle.length > 0 ? varsSingle.map(bt).join(' + ') : '0';
                 let part2;
                 if (interceptType === 'alt_specific') {
-                    part2 = varsAlt.length > 0 ? varsAlt.join(' + ') : '1';
+                    part2 = varsAltCI.length > 0 ? varsAltCI.map(bt).join(' + ') : '1';
                 } else {
-                    part2 = varsAlt.length > 0 ? '0 + ' + varsAlt.join(' + ') : '0';
-                    if (part1 !== '0') part1 = '0 + ' + part1;
+                    part2 = varsAltCI.length > 0 ? '0 + ' + varsAltCI.map(bt).join(' + ') : '0';
                 }
-                const formulaStr = `${choiceVar} ~ ${part1} | ${part2}`;
+                const part3 = varsAltCS.length > 0 ? varsAltCS.map(bt).join(' + ') : null;
+                const formulaStr = part3 !== null
+                    ? `${bt(choiceVar)} ~ ${part1} | ${part2} | ${part3}`
+                    : `${bt(choiceVar)} ~ ${part1} | ${part2}`;
+
+                // Client-side pre-flight validation: turn the most common student
+                // mistakes into plain-English guidance instead of raw R errors.
+                const preflight = validateLongData(longRows, { chidVar, altVar, choiceVar });
+                if (!preflight.ok) throw new Error(preflight.message);
+
+                // Per-alternative / shared sample means, used to prefill the prediction
+                // inputs so a forgotten field defaults to a realistic value (and an
+                // outside option with zero attributes naturally prefills near 0).
+                const predMeans = computePredMeans(longRows, {
+                    chidVar,
+                    altVar,
+                    perAltVars: [...varsSingle, ...varsAltCS],
+                    sharedVars: varsAltCI
+                });
 
                 // Write the (possibly reshaped) CSV to WebR's filesystem.
                 const csvOut = serializeCSV(longHeaders, longRows);
@@ -1450,12 +1660,14 @@
                 const rScript = buildRScript({ chidVar, altVar, choiceVar, reflevel, formulaStr });
                 const rCode = `${rScript}
 .coef_summary = summary(.fit)$CoefTable
+.jnum = function(x) if (is.finite(x)) as.character(x) else 'null'
 .coef_rows = c()
 for (i in 1:nrow(.coef_summary)) {
-    nm  = gsub('"', '\\\\"', rownames(.coef_summary)[i])
-    est = .coef_summary[i, 1]
-    se  = .coef_summary[i, 2]
-    pv  = .coef_summary[i, 4]
+    nm  = gsub('\`', '', rownames(.coef_summary)[i])
+    nm  = gsub('"', '\\\\\\\\"', nm)
+    est = .jnum(.coef_summary[i, 1])
+    se  = .jnum(.coef_summary[i, 2])
+    pv  = .jnum(.coef_summary[i, 4])
     .coef_rows = c(.coef_rows, paste0('{"name":"', nm, '","est":', est, ',"se":', se, ',"p":', pv, '}'))
 }
 .coef_json = paste0('COEFS_JSON:[', paste(.coef_rows, collapse = ','), ']:END')
@@ -1464,8 +1676,9 @@ for (i in 1:nrow(.coef_summary)) {
 .aic = AIC(.fit); .ll = as.numeric(logLik(.fit)); .df = attr(logLik(.fit), 'df')
 .r2  = if (!is.null(.fit_summary$mfR2)) as.numeric(.fit_summary$mfR2) else NA
 .alt_levels = levels(index(.mldata)$alt)
+.n_occ = length(unique(index(.mldata)$chid))
 .alts_json  = paste0('ALTS_JSON:["', paste(.alt_levels, collapse = '","'), '"]:END')
-.fit_json   = paste0('FIT_JSON:{"aic":', .aic, ',"ll":', .ll, ',"df":', .df, ',"r2":', if (is.na(.r2)) 'null' else .r2, ',"n":', nrow(index(.mldata)) / length(.alt_levels), '}:END')
+.fit_json   = paste0('FIT_JSON:{"aic":', .aic, ',"ll":', .ll, ',"df":', .df, ',"r2":', if (is.na(.r2)) 'null' else .r2, ',"n":', .n_occ, '}:END')
 .summary_text = paste(capture.output(print(.fit_summary)), collapse = '\\n')
 .summary_marker = paste0('SUMMARY:', .summary_text, ':END_SUMMARY')
 
@@ -1493,6 +1706,7 @@ paste(c(.coef_json, .alts_json, .fit_json, .summary_marker), collapse = '\\n---M
                     interceptType,
                     varsSingle, varsAlt, varsAltCS, varsAltCI,
                     choiceVar, altVar, chidVar,
+                    predMeans,
                     formula: formulaStr,
                     fit: JSON.parse(fitMatch[1]),
                     rawSummary: sumMatch ? sumMatch[1] : '(no summary captured)',
@@ -1584,6 +1798,94 @@ paste(c(.coef_json, .alts_json, .fit_json, .summary_marker), collapse = '\\n---M
             return lines.join('\n');
         }
 
+        // ============================================================
+        // PRE-FLIGHT VALIDATION (translate common R errors to plain English)
+        // ============================================================
+        // Checks the long-format rows that are about to go to mlogit for the mistakes
+        // that otherwise surface as cryptic R errors:
+        //   - the choice column is not binary 0/1,
+        //   - the choice column has only one value (e.g. after filtering to Chosen == 1),
+        //   - some occasion does not have exactly one chosen alternative,
+        //   - occasions do not all share the same set of alternatives (unbalanced).
+        function validateLongData(longRows, { chidVar, altVar, choiceVar }) {
+            if (!longRows || longRows.length === 0) {
+                return { ok: false, message: 'No rows to estimate. Check your data and filters.' };
+            }
+            // Group rows by choice occasion.
+            const byChid = new Map();
+            let sawZero = false, sawOne = false, badValue = null;
+            for (const r of longRows) {
+                const chid = r[chidVar];
+                const raw = r[choiceVar];
+                const num = parseFloat(raw);
+                if (raw === '' || raw === undefined || raw === null || isNaN(num)) {
+                    if (badValue === null) badValue = raw;
+                } else if (num === 0) { sawZero = true; }
+                else if (num === 1) { sawOne = true; }
+                else if (badValue === null) { badValue = raw; }
+                if (!byChid.has(chid)) byChid.set(chid, { chosen: 0, alts: [] });
+                const g = byChid.get(chid);
+                if (num === 1) g.chosen++;
+                g.alts.push(String(r[altVar]));
+            }
+            if (badValue !== null) {
+                return { ok: false, message: `Your Choice column must contain only 0 and 1, but it also contains "${badValue}". Pick the correct 0/1 Choice column in Section 4.` };
+            }
+            if (!(sawZero && sawOne)) {
+                return { ok: false, message: 'Your Choice column has only one value after filtering. mlogit needs both chosen (1) and non-chosen (0) rows. Did you filter to "Chosen == 1"? Use the full data, or filter on the Choice ID instead.' };
+            }
+            // Exactly one chosen alternative per occasion.
+            let badChosen = 0;
+            for (const g of byChid.values()) if (g.chosen !== 1) badChosen++;
+            if (badChosen > 0) {
+                return { ok: false, message: `${badChosen.toLocaleString()} of ${byChid.size.toLocaleString()} choice occasions do not have exactly one chosen alternative (Choice = 1). mlogit needs exactly one chosen row per occasion. This often happens after filtering rows in long format.` };
+            }
+            // Balanced alternative sets: every occasion should share the same alternatives.
+            const sig = (g) => Array.from(new Set(g.alts)).sort().join('\u0001');
+            const counts = new Map();
+            for (const g of byChid.values()) { const s = sig(g); counts.set(s, (counts.get(s) || 0) + 1); }
+            if (counts.size > 1) {
+                // Most common alt-set is treated as the intended full set.
+                let modeSig = null, modeN = -1;
+                for (const [s, n] of counts) if (n > modeN) { modeN = n; modeSig = s; }
+                const offending = byChid.size - modeN;
+                return { ok: false, message: `${offending.toLocaleString()} choice occasion(s) are missing one or more alternatives, so the alternative set is not the same across occasions. mlogit needs every occasion to keep its full set of alternatives. A row-level filter in long format is the usual cause: filter on the Choice ID instead so each occasion is kept or dropped as a whole.` };
+            }
+            return { ok: true };
+        }
+
+        // Per-alternative and shared sample means, used to prefill prediction inputs.
+        // Returns { perAlt: { "alt::var": mean }, shared: { var: mean } }.
+        function computePredMeans(longRows, { chidVar, altVar, perAltVars, sharedVars }) {
+            const perAltSum = {}, perAltN = {};   // keyed "alt::var"
+            const sharedByOcc = {};                // var -> { chid -> value }
+            for (const r of longRows) {
+                const alt = r[altVar];
+                for (const v of perAltVars) {
+                    const num = parseFloat(r[v]);
+                    if (isNaN(num)) continue;
+                    const k = `${alt}::${v}`;
+                    perAltSum[k] = (perAltSum[k] || 0) + num;
+                    perAltN[k] = (perAltN[k] || 0) + 1;
+                }
+                for (const v of sharedVars) {
+                    const num = parseFloat(r[v]);
+                    if (isNaN(num)) continue;
+                    const chid = r[chidVar];
+                    if (!sharedByOcc[v]) sharedByOcc[v] = {};
+                    sharedByOcc[v][chid] = num; // one value per occasion (replicated across alts)
+                }
+            }
+            const perAlt = {};
+            for (const k in perAltSum) perAlt[k] = perAltN[k] > 0 ? perAltSum[k] / perAltN[k] : 0;
+            const shared = {};
+            for (const v in sharedByOcc) {
+                const vals = Object.values(sharedByOcc[v]);
+                shared[v] = vals.length ? vals.reduce((a, b) => a + b, 0) / vals.length : 0;
+            }
+            return { perAlt, shared };
+        }
+
         function rEsc(s) {
             return String(s).replace(/\\/g, '\\\\').replace(/"/g, '\\"');
         }
@@ -1593,7 +1895,9 @@ paste(c(.coef_json, .alts_json, .fit_json, .summary_marker), collapse = '\\n---M
 suppressPackageStartupMessages(library(mlogit))
 
 # === Load data ===
-data = read.csv("/tmp/mlogit_data.csv", stringsAsFactors = FALSE)
+# check.names = FALSE keeps column names exactly as written (spaces, %, $, parentheses),
+# so headers that are not valid R identifiers still match the formula (which backticks them).
+data = read.csv("/tmp/mlogit_data.csv", stringsAsFactors = FALSE, check.names = FALSE)
 
 # Coerce numeric columns where possible
 for (col in names(data)) {
@@ -1630,12 +1934,15 @@ for (col in names(data)) {
         }
 
         function renderCoefTable() {
+            // Null-safe formatter: est/se/p can be null when R returns a non-finite
+            // value (e.g. NA standard error from a near-singular Hessian).
+            const num = (x, d = 4) => (x === null || x === undefined || !isFinite(x)) ? 'NA' : x.toFixed(d);
             const tbody = lastResult.coefs.map(c => {
-                const sigClass = c.p < 0.05 ? 'coef-sig' : (c.p < 0.10 ? '' : 'coef-insig');
+                const sigClass = (c.p !== null && isFinite(c.p)) ? (c.p < 0.05 ? 'coef-sig' : (c.p < 0.10 ? '' : 'coef-insig')) : '';
                 return `<tr>
                     <td>${escapeHtml(c.name)}</td>
-                    <td class="${sigClass}">${c.est.toFixed(4)}</td>
-                    <td>${c.se.toFixed(4)}</td>
+                    <td class="${sigClass}">${num(c.est)}</td>
+                    <td>${num(c.se)}</td>
                     <td class="${sigClass}">${formatP(c.p)}</td>
                 </tr>`;
             }).join('');
@@ -1648,15 +1955,19 @@ for (col in names(data)) {
         function renderFitStats() {
             const f = lastResult.fit;
             const items = [
-                { label: 'Observations', value: Math.round(f.n).toLocaleString() },
-                { label: 'AIC', value: f.aic.toFixed(2) },
-                { label: 'Log-Likelihood', value: f.ll.toFixed(2) },
+                { label: 'Choice occasions', value: Math.round(f.n).toLocaleString() },
+                { label: 'McFadden R²', value: (f.r2 === null || f.r2 === undefined || !isFinite(f.r2)) ? 'NA' : f.r2.toFixed(3), hint: '0.2 to 0.4 is a good fit for choice models' },
+                { label: 'AIC', value: (isFinite(f.aic) ? f.aic.toFixed(2) : 'NA') },
+                { label: 'Log-Likelihood', value: (isFinite(f.ll) ? f.ll.toFixed(2) : 'NA') },
                 { label: 'Parameters', value: f.df }
             ];
-            $('fitStats').innerHTML = items.map(i => `<div class="fit-stat"><div class="label">${i.label}</div><div class="value">${i.value}</div></div>`).join('');
+            $('fitStats').innerHTML = items.map(i => `<div class="fit-stat"><div class="label">${i.label}</div><div class="value">${i.value}</div>${i.hint ? `<div style="font-size:0.7rem; color:var(--text-light); margin-top:0.2rem;">${i.hint}</div>` : ''}</div>`).join('');
         }
 
-        function formatP(p) { return p < 0.0001 ? '< 0.0001' : p.toFixed(4); }
+        function formatP(p) {
+            if (p === null || p === undefined || !isFinite(p)) return 'NA';
+            return p < 0.0001 ? '< 0.0001' : p.toFixed(4);
+        }
 
         // ============================================================
         // PREDICTION EQUATIONS
@@ -1671,62 +1982,80 @@ for (col in names(data)) {
             if (!lastResult) return;
             const sigLevel = document.querySelector('input[name="sigLevel"]:checked').value;
             const threshold = sigLevel === 'all' ? 1 : parseFloat(sigLevel);
-            const { coefs, alts, reflevel: ref, interceptType } = lastResult;
+            const { coefs, alts, reflevel: ref, interceptType,
+                    varsSingle = [], varsAltCS = [], varsAltCI = [] } = lastResult;
             const nonBaseAlts = alts.filter(a => a !== ref);
-            const eff = coefs.map(c => ({ name: c.name, val: c.p < threshold ? c.est : 0 }));
+            const orderedAlts = [ref, ...nonBaseAlts];
 
-            const genericTerms = {};
+            // Parse coefficients with EXACT colon-split matching (mirrors
+            // computePrediction), zeroing out any coefficient that does not pass the
+            // selected significance filter. Substring matching used to leak, e.g.,
+            // Price:DietCoke into U_Coke; exact segment comparison fixes that.
+            const altIntercept = {};   // alt -> value
+            const altSlope = {};       // "alt::var" -> value
+            const genericSlope = {};   // var -> value
             let genericIntercept = null;
-            for (const c of eff) {
-                if (c.val === 0) continue;
-                if (!c.name.includes(':') && /intercept/i.test(c.name)) genericIntercept = c.val;
-                else if (!c.name.includes(':')) genericTerms[c.name] = c.val;
+            for (const c of coefs) {
+                const val = (c.p !== null && isFinite(c.p) && c.p < threshold) ? c.est : 0;
+                if (!c.name.includes(':')) {
+                    if (/intercept/i.test(c.name)) genericIntercept = val;
+                    else genericSlope[c.name] = val;
+                    continue;
+                }
+                const parts = c.name.split(':');
+                if (/intercept/i.test(parts[0]) || /intercept/i.test(parts[1])) {
+                    const alt = /intercept/i.test(parts[0]) ? parts[1] : parts[0];
+                    altIntercept[alt] = val;
+                } else {
+                    const alt = alts.includes(parts[0]) ? parts[0] : parts[1];
+                    const v   = alt === parts[0] ? parts[1] : parts[0];
+                    altSlope[`${alt}::${v}`] = val;
+                }
             }
+
+            const buildUtility = (alt) => {
+                const terms = [];
+                const push = (coefVal, label) => {
+                    const v = round4(coefVal);
+                    if (v === 0) return;
+                    const sign = v >= 0 && terms.length > 0 ? ' + ' : (v < 0 ? ' - ' : '');
+                    terms.push(label === null ? `${sign}${Math.abs(v)}` : `${sign}${Math.abs(v)} * ${label}`);
+                };
+                // Intercept: the reference alternative is fixed to 0.
+                if (interceptType === 'alt_specific' && alt !== ref) {
+                    if (altIntercept[alt] !== undefined) push(altIntercept[alt], null);
+                    else if (genericIntercept !== null) push(genericIntercept, null);
+                }
+                // Generic (single-slope) alt-varying vars apply to every alt incl. the
+                // reference (shared coefficient, per-alternative data).
+                for (const v of varsSingle) {
+                    if (genericSlope[v] !== undefined) push(genericSlope[v], v);
+                }
+                // Per-alt-slope alt-varying vars: every alt incl. the reference has its
+                // own coefficient (that is the point of moving these to formula part 3).
+                for (const v of varsAltCS) {
+                    if (altSlope[`${alt}::${v}`] !== undefined) push(altSlope[`${alt}::${v}`], v);
+                }
+                // Individual-specific vars: reference fixed to 0.
+                for (const v of varsAltCI) {
+                    if (altSlope[`${alt}::${v}`] !== undefined) push(altSlope[`${alt}::${v}`], v);
+                }
+                let eq = terms.join('').replace(/^\s*\+\s*/, '');
+                return eq === '' ? '0' : eq;
+            };
 
             const lines = [];
             lines.push('# Utility Equations');
-            lines.push(`# Baseline: U_${sanitizeAlt(ref)} = 0`);
             lines.push('');
-            for (const alt of nonBaseAlts) {
-                const altClean = sanitizeAlt(alt);
-                const terms = [];
-                let altInterceptFound = false;
-                for (const c of eff) {
-                    if (c.val === 0) continue;
-                    if (/intercept/i.test(c.name) && c.name.includes(':') && c.name.includes(alt)) {
-                        terms.push(round4(c.val).toString()); altInterceptFound = true; break;
-                    }
-                }
-                if (!altInterceptFound && genericIntercept !== null && interceptType === 'alt_specific') {
-                    terms.push(round4(genericIntercept).toString());
-                }
-                for (const c of eff) {
-                    if (c.val === 0) continue;
-                    if (c.name.includes(':') && c.name.includes(alt)) {
-                        let varName = c.name.replace(new RegExp(`^${escapeRegex(alt)}:`), '').replace(new RegExp(`:${escapeRegex(alt)}$`), '');
-                        if (/intercept/i.test(varName)) continue;
-                        const v = round4(c.val);
-                        const sign = v >= 0 && terms.length > 0 ? ' + ' : (v < 0 ? ' - ' : '');
-                        terms.push(`${sign}${Math.abs(v)} * ${varName}`);
-                    }
-                }
-                for (const [varName, val] of Object.entries(genericTerms)) {
-                    const v = round4(val);
-                    const sign = v >= 0 && terms.length > 0 ? ' + ' : (v < 0 ? ' - ' : '');
-                    terms.push(`${sign}${Math.abs(v)} * ${varName}`);
-                }
-                let eq = terms.join('');
-                if (eq === '') eq = '0';
-                eq = eq.replace(/^\s*\+\s*/, '');
-                lines.push(`U_${altClean} = ${eq}`);
+            for (const alt of orderedAlts) {
+                const tag = alt === ref ? '   # reference alternative' : '';
+                lines.push(`U_${sanitizeAlt(alt)} = ${buildUtility(alt)}${tag}`);
             }
             lines.push('');
             lines.push('# Choice Probabilities');
-            const denomTerms = ['1', ...nonBaseAlts.map(a => `exp(U_${sanitizeAlt(a)})`)];
-            const denomStr = denomTerms.join(' + ');
+            const denomStr = orderedAlts.map(a => `exp(U_${sanitizeAlt(a)})`).join(' + ');
             lines.push(`Denominator = ${denomStr}`);
-            lines.push(`Pr_${sanitizeAlt(ref)} = 1 / Denominator`);
-            for (const alt of nonBaseAlts) {
+            for (const alt of orderedAlts) {
                 const a = sanitizeAlt(alt);
                 lines.push(`Pr_${a} = exp(U_${a}) / Denominator`);
             }
@@ -1737,12 +2066,19 @@ for (col in names(data)) {
         // INTERACTIVE PREDICTION
         // ============================================================
         function setupPredictionUI() {
-            const { alts, reflevel: ref, varsSingle, varsAltCS = [], varsAltCI = [] } = lastResult;
+            const { alts, reflevel: ref, varsSingle = [], varsAltCS = [], varsAltCI = [], predMeans } = lastResult;
             const nonBaseAlts = alts.filter(a => a !== ref);
+            // The reference alternative also gets inputs, because a single-slope or
+            // per-alternative-slope variable makes its utility nonzero (it is NOT fixed
+            // to 0). Only the intercept and individual-specific parts are fixed for it.
+            const orderedAlts = [ref, ...nonBaseAlts];
 
             // Per-alt inputs: variables whose value varies across alternatives within
             // an occasion (varsSingle = CS single-slope, varsAltCS = CS per-alt slope).
             const perAltVars = [...varsSingle, ...varsAltCS];
+
+            const means = predMeans || { perAlt: {}, shared: {} };
+            const meanAttr = (m) => (m === undefined || m === null || !isFinite(m)) ? '' : ` value="${round4(m)}"`;
 
             let html = '';
 
@@ -1752,7 +2088,7 @@ for (col in names(data)) {
                 const sharedInputs = varsAltCI.map(v => `
                     <div class="prediction-input-group">
                         <label>${escapeHtml(displayName(v))}</label>
-                        <input type="number" step="any" class="pred-input-shared" data-var="${escapeHtml(v)}" placeholder="value">
+                        <input type="number" step="any" class="pred-input-shared" data-var="${escapeHtml(v)}" placeholder="value" aria-label="${escapeHtml(displayName(v))} (shared across alternatives)"${meanAttr(means.shared[v])}>
                     </div>
                 `).join('');
                 html += `
@@ -1763,18 +2099,21 @@ for (col in names(data)) {
                 `;
             }
 
-            // Per-alt blocks for variables that genuinely vary by alternative.
+            // Per-alt blocks for variables that genuinely vary by alternative (including
+            // the reference alternative).
             if (perAltVars.length > 0) {
-                html += nonBaseAlts.map(alt => {
+                html += orderedAlts.map(alt => {
+                    const isRef = alt === ref;
                     const inputs = perAltVars.map(v => `
                         <div class="prediction-input-group">
                             <label>${escapeHtml(displayName(v))}</label>
-                            <input type="number" step="any" class="pred-input" data-alt="${escapeHtml(alt)}" data-var="${escapeHtml(v)}" placeholder="value">
+                            <input type="number" step="any" class="pred-input" data-alt="${escapeHtml(alt)}" data-var="${escapeHtml(v)}" placeholder="value" aria-label="${escapeHtml(displayName(v))} for ${escapeHtml(alt)}"${meanAttr(means.perAlt[`${alt}::${v}`])}>
                         </div>
                     `).join('');
+                    const refTag = isRef ? ' <span style="font-weight:400; color:var(--text-light); font-size:0.85rem;">(reference)</span>' : '';
                     return `
                         <div class="prediction-alt-block">
-                            <div class="alt-name">${escapeHtml(alt)}</div>
+                            <div class="alt-name">${escapeHtml(alt)}${refTag}</div>
                             <div class="prediction-inputs">${inputs}</div>
                         </div>
                     `;
@@ -1786,11 +2125,22 @@ for (col in names(data)) {
         }
 
         $('predictBtn').addEventListener('click', computePrediction);
+        // Enter inside any prediction input triggers the calculation.
+        $('predictionInputs').addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' && e.target.classList && (e.target.classList.contains('pred-input') || e.target.classList.contains('pred-input-shared'))) {
+                e.preventDefault();
+                computePrediction();
+            }
+        });
 
         function computePrediction() {
             if (!lastResult) return;
-            const { coefs, alts, reflevel: ref, varsSingle, varsAltCS = [], varsAltCI = [], interceptType } = lastResult;
+            const { coefs, alts, reflevel: ref, varsSingle = [], varsAltCS = [], varsAltCI = [], interceptType } = lastResult;
             const nonBaseAlts = alts.filter(a => a !== ref);
+            // Include the reference alternative: its utility is NOT hard-coded to 0 when
+            // a single-slope or per-alternative-slope variable takes a nonzero value for
+            // it. exp(U_ref) then appears in the denominator like any other alternative.
+            const orderedAlts = [ref, ...nonBaseAlts];
 
             // Pre-process coefs into a lookup by (alt, var) and generic.
             const altIntercept = {};         // alt -> value
@@ -1798,21 +2148,22 @@ for (col in names(data)) {
             const genericSlope = {};          // var -> value
             let genericIntercept = null;
             for (const c of coefs) {
+                const est = (c.est === null || c.est === undefined || !isFinite(c.est)) ? 0 : c.est;
                 if (!c.name.includes(':')) {
-                    if (/intercept/i.test(c.name)) genericIntercept = c.est;
-                    else genericSlope[c.name] = c.est;
+                    if (/intercept/i.test(c.name)) genericIntercept = est;
+                    else genericSlope[c.name] = est;
                     continue;
                 }
                 // Either "(intercept):AltName" or "AltName:Var" or "Var:AltName"
                 const parts = c.name.split(':');
                 if (/intercept/i.test(parts[0]) || /intercept/i.test(parts[1])) {
                     const alt = /intercept/i.test(parts[0]) ? parts[1] : parts[0];
-                    altIntercept[alt] = c.est;
+                    altIntercept[alt] = est;
                 } else {
                     // Identify which side is the alt (it should match one of the alt names).
                     const alt = alts.includes(parts[0]) ? parts[0] : parts[1];
                     const v   = alt === parts[0] ? parts[1] : parts[0];
-                    altSlope[`${alt}::${v}`] = c.est;
+                    altSlope[`${alt}::${v}`] = est;
                 }
             }
 
@@ -1832,23 +2183,24 @@ for (col in names(data)) {
                 sharedInputs[v] = isNaN(num) ? 0 : num;
             });
 
-            // Compute utilities for each non-base alt.
+            // Compute utilities for every alternative, including the reference.
             const utilities = {};
-            for (const alt of nonBaseAlts) {
+            for (const alt of orderedAlts) {
                 let U = 0;
-                if (interceptType === 'alt_specific') {
+                // Intercept: the reference alternative is fixed to 0.
+                if (interceptType === 'alt_specific' && alt !== ref) {
                     U += altIntercept[alt] !== undefined ? altIntercept[alt] : (genericIntercept || 0);
                 }
-                // varsSingle: generic coef, per-alt data.
+                // varsSingle: generic coef, per-alt data (applies to the reference too).
                 for (const v of varsSingle) {
                     if (genericSlope[v] !== undefined) U += genericSlope[v] * (perAltInputs[`${alt}::${v}`] || 0);
                 }
-                // varsAltCS: per-alt coef, per-alt data.
+                // varsAltCS: per-alt coef, per-alt data (the reference has its own coef).
                 for (const v of varsAltCS) {
                     const beta = altSlope[`${alt}::${v}`];
                     if (beta !== undefined) U += beta * (perAltInputs[`${alt}::${v}`] || 0);
                 }
-                // varsAltCI: per-alt coef, shared data — reuse the single shared input.
+                // varsAltCI: per-alt coef (reference fixed to 0), shared data.
                 for (const v of varsAltCI) {
                     const beta = altSlope[`${alt}::${v}`];
                     if (beta !== undefined) U += beta * (sharedInputs[v] || 0);
@@ -1856,14 +2208,13 @@ for (col in names(data)) {
                 utilities[alt] = U;
             }
 
-            // Probabilities.
-            const expU = nonBaseAlts.map(a => Math.exp(utilities[a]));
-            const denom = 1 + expU.reduce((a, b) => a + b, 0);
+            // Probabilities: softmax over ALL alternatives (denominator includes the
+            // reference's exp(U_ref), which is 1 only when U_ref happens to be 0).
+            const expU = orderedAlts.map(a => Math.exp(utilities[a]));
+            const denom = expU.reduce((a, b) => a + b, 0);
             const probs = {};
-            probs[ref] = 1 / denom;
-            nonBaseAlts.forEach((a, i) => probs[a] = expU[i] / denom);
+            orderedAlts.forEach((a, i) => probs[a] = expU[i] / denom);
 
-            const orderedAlts = [ref, ...nonBaseAlts];
             $('predictionPrGrid').innerHTML = orderedAlts.map(a => `
                 <div class="prediction-pr-item">
                     <div class="alt">${escapeHtml(a)}</div>

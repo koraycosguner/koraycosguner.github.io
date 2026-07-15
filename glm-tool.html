@@ -5,6 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Web Tool for Running Regression Models | Koray Cosguner</title>
     <meta name="robots" content="noindex,nofollow">
+    <!-- Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-CTZ8G4EYLR"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-CTZ8G4EYLR');
+    </script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -31,43 +39,6 @@
             line-height: 1.6;
             color: var(--text-dark);
             background-color: var(--bg-light);
-        }
-
-        /* Navigation */
-        nav {
-            position: sticky;
-            top: 0;
-            background: var(--white);
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            z-index: 1000;
-            padding: 1rem 2rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .nav-brand {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--iu-crimson);
-            text-decoration: none;
-        }
-
-        .nav-links {
-            display: flex;
-            gap: 2rem;
-            list-style: none;
-        }
-
-        .nav-links a {
-            text-decoration: none;
-            color: var(--text-dark);
-            font-weight: 500;
-            transition: color 0.3s;
-        }
-
-        .nav-links a:hover {
-            color: var(--iu-crimson);
         }
 
         /* Main Content */
@@ -430,12 +401,6 @@
         @media (max-width: 768px) {
             body { font-size: 16px; }
             main { padding: 1rem; }
-            nav {
-                flex-direction: column;
-                gap: 0.75rem;
-                padding: 0.75rem 1rem;
-            }
-            .nav-links { gap: 1rem; flex-wrap: wrap; justify-content: center; }
             .hero { padding: 1.5rem 0; }
             .hero h1 { font-size: 1.3rem; }
             .hero p { font-size: 0.85rem; }
@@ -503,6 +468,7 @@
             background: var(--bg-light);
             border-radius: 6px;
             border: 1px solid var(--border);
+            flex-wrap: wrap;
         }
 
         .interaction-row .interaction-label {
@@ -960,15 +926,19 @@
 
         <div class="tool-container">
             <!-- Status Messages -->
-            <div class="status-message" id="statusMessage"></div>
+            <div class="status-message" id="statusMessage" role="status" aria-live="polite"></div>
 
             <!-- Step 1: Upload -->
             <h2 class="section-title">1. Upload Your Data</h2>
-            <div class="upload-area" id="uploadArea">
-                <input type="file" id="fileInput" accept=".csv">
+            <div class="upload-area" id="uploadArea" tabindex="0" role="button" aria-label="Upload a CSV file. Click, or press Enter or Space, or drag and drop a file here.">
+                <input type="file" id="fileInput" accept=".csv" aria-label="CSV file to upload">
                 <div class="upload-icon">📊</div>
                 <p class="upload-text">Click to upload or drag and drop</p>
                 <p class="upload-hint">CSV files only</p>
+            </div>
+            <div style="margin-bottom: 1.5rem; text-align: center;">
+                <button type="button" class="btn btn-secondary" id="loadExampleBtn" style="padding: 0.5rem 1.25rem; font-size: 0.9rem;">Load example data</button>
+                <p style="font-size: 0.85rem; color: var(--text-light); margin-top: 0.5rem;">No file handy? Load a small weekly marketing dataset (sales, price, advertising, region) to explore the tool.</p>
             </div>
 
             <!-- Data Preview -->
@@ -1040,7 +1010,7 @@
                         <select id="dependentVar" style="flex: 1;">
                             <option value="">-- Select dependent variable --</option>
                         </select>
-                        <select id="dvTransform" style="width: 120px;">
+                        <select id="dvTransform" style="width: 120px;" aria-label="Transformation for the dependent variable">
                             <option value="linear">Linear</option>
                             <option value="log">ln(Y)</option>
                             <option value="log1p">ln(Y + 1)</option>
@@ -1179,7 +1149,9 @@
 
     <!-- WebR -->
     <script type="module">
-        import { WebR } from 'https://webr.r-wasm.org/latest/webr.mjs';
+        // Pinned to a specific WebR release so an upstream change cannot alter or
+        // break the tool mid-semester (bump deliberately when upgrading).
+        import { WebR } from 'https://webr.r-wasm.org/v0.4.2/webr.mjs';
 
         // Global state
         let webR = null;
@@ -1195,6 +1167,8 @@
         let lastDvTransform = null; // Store DV transform for back-transformation in prediction
         let lastBatchPredictionRows = null; // Parsed uploaded rows + computed predictions for download
         let lastBatchPredictionHeaders = null; // Column order for download CSV
+        let lastUploadedFileName = 'your_data.csv'; // Name of the uploaded file for the R script header
+        let lastAnalysisData = null; // Data subset (filtered or full) captured at fit time for prediction defaults
 
         // DOM Elements
         const loadingOverlay = document.getElementById('loadingOverlay');
@@ -1246,14 +1220,53 @@
         }
 
         // Show status message
+        let statusHideTimer = null;
         function showStatus(message, type = 'info') {
+            // Clear any pending auto-hide so a stale success timer cannot hide a later message.
+            if (statusHideTimer !== null) {
+                clearTimeout(statusHideTimer);
+                statusHideTimer = null;
+            }
             statusMessage.textContent = message;
             statusMessage.className = `status-message visible ${type}`;
             if (type === 'success') {
-                setTimeout(() => {
+                statusHideTimer = setTimeout(() => {
                     statusMessage.classList.remove('visible');
+                    statusHideTimer = null;
                 }, 3000);
             }
+        }
+
+        // Escape a string for safe insertion into HTML (prevents CSV-driven markup/XSS).
+        function escapeHtml(value) {
+            if (value === null || value === undefined) return '';
+            return String(value)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;');
+        }
+
+        // Wrap a variable name in backticks only if it is not a syntactic R name.
+        // Used to build R formulas and to match R's coefficient names during prediction.
+        function wrapVarName(name) {
+            return /^[a-zA-Z_][a-zA-Z0-9_]*$/.test(name) ? name : '`' + name + '`';
+        }
+
+        // Build the R term string for a transformed variable (matches applyTransform).
+        function transformTermForR(name, transform) {
+            const v = wrapVarName(name);
+            if (transform === 'log') return `log(${v})`;
+            if (transform === 'log1p') return `log(${v} + 1)`;
+            return v;
+        }
+
+        // Candidate coefficient names R may use for an interaction term (either factor order).
+        function interactionCoefNames(int) {
+            const t1 = transformTermForR(int.var1, int.transform1);
+            const t2 = transformTermForR(int.var2, int.transform2);
+            return [`I(${t1} * ${t2})`, `I(${t2} * ${t1})`];
         }
 
         // Render coefficients table
@@ -1271,7 +1284,7 @@
 
             data.forEach(row => {
                 html += '<tr>';
-                html += `<td>${row.Variable}</td>`;
+                html += `<td>${escapeHtml(row.Variable)}</td>`;
                 html += `<td>${formatNumber(row.Estimate)}</td>`;
                 html += `<td>${formatNumber(row['Std. Error'])}</td>`;
                 // Handle both p-value column names
@@ -1286,36 +1299,97 @@
 
         // Format numbers for display
         function formatNumber(num) {
-            if (num === null || num === undefined) return 'NA';
-            return parseFloat(num).toFixed(4);
+            if (num === null || num === undefined || num === 'NA') return 'NA';
+            const n = parseFloat(num);
+            if (!isFinite(n)) return 'NA';
+            return n.toFixed(4);
         }
 
         // Format p-values
         function formatPValue(p) {
-            if (p === null || p === undefined) return 'NA';
+            if (p === null || p === undefined || p === 'NA') return 'NA';
             p = parseFloat(p);
+            if (!isFinite(p)) return 'NA';
             if (p < 0.0001) return '< 0.0001';
             return p.toFixed(4);
         }
 
-        // Parse CSV
+        // Parse CSV with a small state machine that understands quoted fields
+        // (commas and newlines inside quotes, and "" as an escaped quote).
+        // Returns { headers, data, skipped } where skipped counts malformed rows.
         function parseCSV(text) {
-            const lines = text.trim().split('\n');
-            const headers = lines[0].split(',').map(h => h.trim().replace(/^"|"$/g, ''));
-            const data = [];
+            // Split into records, respecting quotes, and split each record into fields.
+            const records = [];
+            let field = '';
+            let record = [];
+            let inQuotes = false;
+            let sawAny = false;
 
-            for (let i = 1; i < lines.length; i++) {
-                const values = lines[i].split(',').map(v => v.trim().replace(/^"|"$/g, ''));
+            const pushField = () => { record.push(field); field = ''; };
+            const pushRecord = () => { pushField(); records.push(record); record = []; };
+
+            for (let i = 0; i < text.length; i++) {
+                const ch = text[i];
+                if (inQuotes) {
+                    if (ch === '"') {
+                        if (text[i + 1] === '"') { field += '"'; i++; }
+                        else { inQuotes = false; }
+                    } else {
+                        field += ch;
+                    }
+                } else {
+                    if (ch === '"') {
+                        inQuotes = true;
+                        sawAny = true;
+                    } else if (ch === ',') {
+                        pushField();
+                        sawAny = true;
+                    } else if (ch === '\n') {
+                        pushRecord();
+                        sawAny = false;
+                    } else if (ch === '\r') {
+                        // Ignore carriage returns; handle \r\n and lone \r as line breaks.
+                        if (text[i + 1] !== '\n') { pushRecord(); sawAny = false; }
+                    } else {
+                        field += ch;
+                        sawAny = true;
+                    }
+                }
+            }
+            // Flush the final record if the file did not end on a newline.
+            if (sawAny || field !== '' || record.length > 0) {
+                pushRecord();
+            }
+
+            // Drop trailing fully-empty records (e.g. a trailing newline).
+            while (records.length > 0) {
+                const last = records[records.length - 1];
+                if (last.length === 1 && last[0].trim() === '') records.pop();
+                else break;
+            }
+
+            if (records.length === 0) return { headers: [], data: [], skipped: 0 };
+
+            const headers = records[0].map(h => h.trim());
+            const data = [];
+            let skipped = 0;
+
+            for (let i = 1; i < records.length; i++) {
+                const values = records[i];
+                // Ignore a stray blank line entirely.
+                if (values.length === 1 && values[0].trim() === '') continue;
                 if (values.length === headers.length) {
                     const row = {};
                     headers.forEach((h, j) => {
-                        row[h] = values[j];
+                        row[h] = values[j].trim();
                     });
                     data.push(row);
+                } else {
+                    skipped++;
                 }
             }
 
-            return { headers, data };
+            return { headers, data, skipped };
         }
 
         // Check if a column is numeric
@@ -1323,17 +1397,21 @@
             // Check first 100 rows (or all if less)
             const sampleSize = Math.min(data.length, 100);
             let numericCount = 0;
+            let nonEmptyCount = 0;
 
             for (let i = 0; i < sampleSize; i++) {
                 const val = data[i][colName];
                 if (val === '' || val === null || val === undefined) continue;
+                nonEmptyCount++;
                 if (!isNaN(parseFloat(val)) && isFinite(val)) {
                     numericCount++;
                 }
             }
 
-            // Consider numeric if at least 80% of non-empty values are numeric
-            return numericCount >= sampleSize * 0.8;
+            // Consider numeric if at least 80% of NON-EMPTY values are numeric.
+            // An all-empty column is treated as non-numeric.
+            if (nonEmptyCount === 0) return false;
+            return numericCount >= nonEmptyCount * 0.8;
         }
 
         // Display data preview
@@ -1356,14 +1434,14 @@
 
             let html = '<thead><tr>';
             headers.forEach(h => {
-                html += `<th>${h}</th>`;
+                html += `<th>${escapeHtml(h)}</th>`;
             });
             html += '</tr></thead><tbody>';
 
             previewData.forEach(row => {
                 html += '<tr>';
                 headers.forEach(h => {
-                    html += `<td>${row[h]}</td>`;
+                    html += `<td>${escapeHtml(row[h])}</td>`;
                 });
                 html += '</tr>';
             });
@@ -1390,7 +1468,7 @@
             dependentVar.innerHTML = '<option value="">-- Select dependent variable --</option>';
             headers.forEach(h => {
                 const typeLabel = columnTypes[h] === 'numeric' ? '' : ' (categorical)';
-                dependentVar.innerHTML += `<option value="${h}">${h}${typeLabel}</option>`;
+                dependentVar.innerHTML += `<option value="${escapeHtml(h)}">${escapeHtml(h)}${typeLabel}</option>`;
             });
 
             // Independent variables checkboxes with transformation dropdown
@@ -1409,13 +1487,14 @@
                        <option value="quadratic">X + X²</option>`
                     : `<option value="factor">Factor</option>`;
 
+                const safeH = escapeHtml(h);
                 independentVars.innerHTML += `
                     <div class="var-row" data-type="${columnTypes[h]}">
                         <label class="checkbox-item" style="flex: 1;">
-                            <input type="checkbox" value="${h}" class="indep-var">
-                            ${h} ${typeIndicator}
+                            <input type="checkbox" value="${safeH}" class="indep-var">
+                            ${safeH} ${typeIndicator}
                         </label>
-                        <select class="iv-transform" data-var="${h}" style="width: 110px; padding: 0.25rem; font-size: 0.85rem; border-radius: 4px; border: 1px solid var(--border);" disabled>
+                        <select class="iv-transform" data-var="${safeH}" aria-label="Transformation for ${safeH}" style="width: 110px; padding: 0.25rem; font-size: 0.85rem; border-radius: 4px; border: 1px solid var(--border);" disabled>
                             ${transformOptions}
                         </select>
                     </div>
@@ -1454,20 +1533,25 @@
             // Clear existing interactions
             interactionTerms.innerHTML = '';
 
-            // Get only numeric variables for interactions
-            const numericVars = headers.filter(h => columnTypes[h] === 'numeric');
-
-            // Store numeric vars for later use
-            window.numericVarsForInteraction = numericVars;
-
-            // Add interaction button handler
+            // Add interaction button handler. Interactions may only use variables that
+            // are currently selected as numeric independent variables (never the DV or
+            // an unselected column), so predictions always have matching inputs.
             addInteractionBtn.onclick = () => {
+                const numericVars = getSelectedNumericIVs();
                 if (numericVars.length < 2) {
-                    showStatus('Need at least 2 numeric variables for interactions.', 'error');
+                    showStatus('Select at least 2 numeric independent variables above before adding an interaction.', 'error');
                     return;
                 }
                 addInteractionRow(numericVars);
             };
+        }
+
+        // Currently checked numeric independent variables (excluding the dependent variable).
+        function getSelectedNumericIVs() {
+            const dv = dependentVar.value;
+            return Array.from(document.querySelectorAll('.indep-var:checked'))
+                .map(cb => cb.value)
+                .filter(name => name !== dv && csvData && csvData.columnTypes[name] === 'numeric');
         }
 
         // Add a new interaction row
@@ -1480,23 +1564,23 @@
             row.className = 'interaction-row';
             row.id = rowId;
 
-            // Variable options
-            let var1Options = numericVars.map(v => `<option value="${v}">${v}</option>`).join('');
+            // Variable options (values come from selected IVs; escape for safety)
+            let var1Options = numericVars.map(v => `<option value="${escapeHtml(v)}">${escapeHtml(v)}</option>`).join('');
             let var2Options = numericVars.map((v, i) =>
-                `<option value="${v}" ${i === 1 ? 'selected' : ''}>${v}</option>`
+                `<option value="${escapeHtml(v)}" ${i === 1 ? 'selected' : ''}>${escapeHtml(v)}</option>`
             ).join('');
 
             row.innerHTML = `
                 <span class="interaction-label">Interaction ${interactionNum}:</span>
-                <select class="interaction-var1">${var1Options}</select>
-                <select class="interaction-transform1">
+                <select class="interaction-var1" aria-label="Interaction ${interactionNum} first variable">${var1Options}</select>
+                <select class="interaction-transform1" aria-label="Interaction ${interactionNum} first variable transformation">
                     <option value="linear">Linear</option>
                     <option value="log">ln(X)</option>
                     <option value="log1p">ln(X+1)</option>
                 </select>
                 <span class="interaction-symbol">×</span>
-                <select class="interaction-var2">${var2Options}</select>
-                <select class="interaction-transform2">
+                <select class="interaction-var2" aria-label="Interaction ${interactionNum} second variable">${var2Options}</select>
+                <select class="interaction-transform2" aria-label="Interaction ${interactionNum} second variable transformation">
                     <option value="linear">Linear</option>
                     <option value="log">ln(X)</option>
                     <option value="log1p">ln(X+1)</option>
@@ -1571,6 +1655,8 @@
             lastInteractions = null;
             lastDvTransform = null;
             lastRScript = '';
+            lastAnalysisData = null;
+            lastUploadedFileName = 'your_data.csv';
 
             // Clear interaction terms
             document.getElementById('interactionTerms').innerHTML = '';
@@ -1579,24 +1665,41 @@
             statusMessage.classList.remove('visible');
         }
 
+        // Load a parsed dataset into the tool (shared by file upload and example data).
+        function loadDataset(headers, data, rawText, fileName, skipped) {
+            // Reset state before loading new data
+            resetStateForNewData();
+
+            lastUploadedFileName = fileName || 'your_data.csv';
+            csvData = { headers, data, raw: rawText };
+            displayPreview(headers, data);
+            populateVariables(headers);
+
+            let msg = `Loaded ${data.length} rows with ${headers.length} columns.`;
+            if (skipped && skipped > 0) {
+                msg += ` ${skipped} malformed row${skipped === 1 ? ' was' : 's were'} skipped (column count did not match the header).`;
+                showStatus(msg, skipped > 0 ? 'info' : 'success');
+            } else {
+                showStatus(msg, 'success');
+            }
+        }
+
         // Handle file upload
         function handleFile(file) {
-            if (!file || !file.name.endsWith('.csv')) {
+            if (!file || !file.name.toLowerCase().endsWith('.csv')) {
                 showStatus('Please upload a CSV file.', 'error');
                 return;
             }
 
-            // Reset state before loading new data
-            resetStateForNewData();
-
             const reader = new FileReader();
             reader.onload = (e) => {
                 try {
-                    const { headers, data } = parseCSV(e.target.result);
-                    csvData = { headers, data, raw: e.target.result };
-                    displayPreview(headers, data);
-                    populateVariables(headers);
-                    showStatus(`Loaded ${data.length} rows with ${headers.length} columns.`, 'success');
+                    const { headers, data, skipped } = parseCSV(e.target.result);
+                    if (headers.length === 0 || data.length === 0) {
+                        showStatus('The CSV file has no readable data rows.', 'error');
+                        return;
+                    }
+                    loadDataset(headers, data, e.target.result, file.name, skipped);
                 } catch (error) {
                     showStatus('Error parsing CSV file: ' + error.message, 'error');
                 }
@@ -1606,6 +1709,14 @@
 
         // Upload area events
         uploadArea.addEventListener('click', () => fileInput.click());
+
+        // Keyboard access: Enter or Space opens the file picker (F5).
+        uploadArea.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ' || e.key === 'Spacebar') {
+                e.preventDefault();
+                fileInput.click();
+            }
+        });
 
         fileInput.addEventListener('change', (e) => {
             if (e.target.files.length > 0) {
@@ -1627,6 +1738,65 @@
             uploadArea.classList.remove('dragover');
             if (e.dataTransfer.files.length > 0) {
                 handleFile(e.dataTransfer.files[0]);
+            }
+        });
+
+        // Embedded example dataset: weekly marketing data (sales, price, advertising, region).
+        const EXAMPLE_CSV = `Week,Sales,Price,Advertising,Region
+1,199,4.74,5.9,North
+2,269,5.08,28.7,South
+3,161,5.62,8.0,East
+4,289,3.27,22.7,West
+5,294,2.59,12.0,North
+6,298,3.27,25.6,South
+7,168,5.33,5.2,East
+8,200,3.69,10.4,West
+9,215,5.85,16.8,North
+10,238,5.47,26.1,South
+11,244,5.32,30.5,East
+12,268,3.82,24.3,West
+13,280,5.4,26.6,North
+14,153,4.97,6.6,South
+15,285,3.3,15.1,East
+16,270,2.85,14.7,West
+17,249,4.72,17.8,North
+18,366,3.43,37.8,South
+19,285,4.77,26.3,East
+20,291,3.07,18.3,West
+21,237,5.96,27.4,North
+22,257,5.45,32.2,South
+23,233,3.3,6.1,East
+24,366,3.24,38.0,West
+25,210,5.57,16.0,North
+26,195,5.7,21.1,South
+27,257,3.43,13.6,East
+28,301,4.55,36.4,West`;
+
+        // Load example data, preselect a sensible model, and run it if WebR is ready (F11).
+        document.getElementById('loadExampleBtn').addEventListener('click', () => {
+            const { headers, data, skipped } = parseCSV(EXAMPLE_CSV);
+            loadDataset(headers, data, EXAMPLE_CSV, 'example_marketing.csv', skipped);
+
+            // Preselect: Sales ~ Price + Advertising + Region (linear regression).
+            modelType.value = 'linear';
+            modelType.dispatchEvent(new Event('change'));
+            dependentVar.value = 'Sales';
+            dependentVar.dispatchEvent(new Event('change'));
+
+            ['Price', 'Advertising', 'Region'].forEach(name => {
+                const cb = independentVars.querySelector(`.indep-var[value="${name}"]`);
+                if (cb && !cb.disabled) {
+                    cb.checked = true;
+                    cb.dispatchEvent(new Event('change'));
+                }
+            });
+            updateRunButton();
+
+            // Auto-run only when WebR has finished loading.
+            if (webR && loadingOverlay.classList.contains('hidden')) {
+                runButton.click();
+            } else {
+                showStatus('Example data loaded. WebR is still loading; the model will be ready to run shortly.', 'info');
             }
         });
 
@@ -1690,6 +1860,78 @@
 
             const family = modelType.value;
 
+            // ---- Pre-run validation ----
+            const validationData = getDataForAnalysis();
+
+            // Minimum parseable numeric value in a column over the analysis data (null if none).
+            const columnMin = (colName) => {
+                let m = null;
+                for (const r of validationData) {
+                    const x = parseFloat(r[colName]);
+                    if (!isNaN(x) && isFinite(x)) { if (m === null || x < m) m = x; }
+                }
+                return m;
+            };
+
+            // F22: dependent-variable / model compatibility.
+            const dvType = csvData.columnTypes[depVar];
+            if ((family === 'linear' || family === 'poisson') && dvType !== 'numeric') {
+                const modelName = family === 'linear' ? 'Linear Regression' : 'Poisson Regression';
+                showStatus(`${modelName} requires a numeric dependent variable. "${depVar}" is categorical. Choose a numeric dependent variable or switch to Binary Logistic Regression.`, 'error');
+                return;
+            }
+            if (family === 'poisson') {
+                const mn = columnMin(depVar);
+                if (mn !== null && mn < 0) {
+                    showStatus(`Poisson Regression requires a non-negative dependent variable (counts). "${depVar}" has negative values.`, 'error');
+                    return;
+                }
+            }
+            if (family === 'binomial') {
+                const distinct = Array.from(new Set(validationData
+                    .map(r => r[depVar])
+                    .filter(v => v !== '' && v !== null && v !== undefined)));
+                const allBinary = distinct.every(v => parseFloat(v) === 0 || parseFloat(v) === 1);
+                if (!allBinary || distinct.length < 2) {
+                    const shown = distinct.slice(0, 6).join(', ');
+                    showStatus(`Binary Logistic Regression requires a 0/1 dependent variable. "${depVar}" has values: ${shown}. Recode it to 0 and 1, or pick a 0/1 column.`, 'error');
+                    return;
+                }
+            }
+
+            // F2: interactions may only use variables that are selected as independent variables.
+            const selectedIVNames = indepVarsData.map(v => v.name);
+            const interactionsForValidation = getInteractionTerms();
+            for (const int of interactionsForValidation) {
+                const bad = [int.var1, int.var2].filter(n => !selectedIVNames.includes(n));
+                if (bad.length > 0) {
+                    showStatus(`An interaction uses variable(s) not selected as independent variables: ${bad.join(', ')}. Select them above, or remove the interaction.`, 'error');
+                    return;
+                }
+            }
+
+            // F10: guard log transforms against non-positive values.
+            const lnProblems = [];
+            const checkLn = (colName, transform, label) => {
+                if (transform === 'log') {
+                    const mn = columnMin(colName);
+                    if (mn === null || mn <= 0) lnProblems.push(`${label} "${colName}": ln(X) needs every value greater than 0 (the minimum is ${mn === null ? 'not available' : mn}).`);
+                } else if (transform === 'log1p') {
+                    const mn = columnMin(colName);
+                    if (mn === null || mn <= -1) lnProblems.push(`${label} "${colName}": ln(X + 1) needs every value greater than -1 (the minimum is ${mn === null ? 'not available' : mn}).`);
+                }
+            };
+            checkLn(depVar, dvTransform, 'Dependent variable');
+            indepVarsData.forEach(v => checkLn(v.name, v.transform, 'Independent variable'));
+            interactionsForValidation.forEach(int => {
+                checkLn(int.var1, int.transform1, 'Interaction variable');
+                checkLn(int.var2, int.transform2, 'Interaction variable');
+            });
+            if (lnProblems.length > 0) {
+                showStatus('Cannot apply a log transform to non-positive values. ' + lnProblems[0] + ' Try the ln(X + 1) option, or choose Linear.', 'error');
+                return;
+            }
+
             runButton.disabled = true;
             runButton.textContent = 'Running...';
             showStatus('Running regression analysis...', 'info');
@@ -1745,6 +1987,9 @@
 
                 // Get the data to use (filtered or full)
                 const analysisData = getDataForAnalysis();
+                // Capture the exact subset used for the fit so prediction defaults
+                // (means/modes) come from this data, not the full dataset (F8).
+                lastAnalysisData = analysisData;
                 const analysisDataCSV = dataToCSV(analysisData, csvData.headers);
 
                 // Show data info in status
@@ -1779,8 +2024,8 @@ cat("F-statistic:", summary(model)$fstatistic[1], "on", summary(model)$fstatisti
                     : `cat("Null Deviance:", model$null.deviance, "on", model$df.null, "df\\n")
 cat("Residual Deviance:", model$deviance, "on", model$df.residual, "df\\n")`;
 
-                // Get the uploaded filename
-                const fileName = fileInput.files[0] ? fileInput.files[0].name : 'your_data.csv';
+                // Get the uploaded filename (tracked for click, drag-drop, and example data).
+                const fileName = lastUploadedFileName || 'your_data.csv';
 
                 // Build filter R code for script
                 let filterRCode = '';
@@ -1795,6 +2040,14 @@ cat("Residual Deviance:", model$deviance, "on", model$df.residual, "df\\n")`;
                         const value2 = row.querySelector('.filter-value-input-2')?.value || '';
                         const varType = csvData.columnTypes[varName];
 
+                        // Skip half-filled rows (mirrors applyFilters) so the script never
+                        // emits an incomplete condition like "data$X >= ".
+                        if (operator === 'between') {
+                            if (value1 === '' || value2 === '') return;
+                        } else if (value1 === '') {
+                            return;
+                        }
+
                         // Wrap variable name for R if it has special characters
                         const rVarName = /^[a-zA-Z_][a-zA-Z0-9_]*$/.test(varName)
                             ? `data$${varName}`
@@ -1806,7 +2059,8 @@ cat("Residual Deviance:", model$deviance, "on", model$df.residual, "df\\n")`;
                                 const maxVal = Math.max(parseFloat(value1), parseFloat(value2));
                                 filterConditions.push(`!is.na(${rVarName}) & ${rVarName} >= ${minVal} & ${rVarName} <= ${maxVal}`);
                             } else {
-                                const rOp = operator === '!=' ? '!=' : operator;
+                                // Map the default "=" operator to R's "==" (JS "=" is a syntax error).
+                                const rOp = operator === '=' ? '==' : operator;
                                 filterConditions.push(`!is.na(${rVarName}) & ${rVarName} ${rOp} ${value1}`);
                             }
                         } else {
@@ -1870,7 +2124,13 @@ summary(model)
                         row_json = paste0('{"Variable":"', var_name, '"')
                         for (j in 1:length(col_names)) {
                             col_name = gsub('\\\\|', '|', col_names[j])
-                            row_json = paste0(row_json, ',"', col_name, '":', vals[j])
+                            # Emit JSON null for non-finite values (NaN/Inf/NA) so the
+                            # coefficient JSON always parses and the results table shows.
+                            if (is.finite(vals[j])) {
+                                row_json = paste0(row_json, ',"', col_name, '":', vals[j])
+                            } else {
+                                row_json = paste0(row_json, ',"', col_name, '":null')
+                            }
                         }
                         row_json = paste0(row_json, '}')
                         coef_rows = c(coef_rows, row_json)
@@ -1884,7 +2144,7 @@ summary(model)
                         cat("============================================\\n\\n")
                         cat("Model Type: ${modelLabels[family]}\\n")
                         cat("Formula: ${formulaDisplay}\\n")
-                        cat("Observations:", nrow(data), "\\n\\n")
+                        cat("Observations:", nobs(model), "\\n\\n")
                         cat("--------------------------------------------\\n")
                         cat("MODEL SUMMARY\\n")
                         cat("--------------------------------------------\\n\\n")
@@ -1995,41 +2255,42 @@ summary(model)
             URL.revokeObjectURL(url);
         });
 
-        // Calculate mean for numeric column
-        function calculateMean(colName) {
-            const values = csvData.data
+        // Calculate mean for numeric column. Returns null when no parseable values exist.
+        function calculateMean(colName, data = csvData.data) {
+            const values = data
                 .map(row => parseFloat(row[colName]))
                 .filter(v => !isNaN(v));
-            if (values.length === 0) return 0;
+            if (values.length === 0) return null;
             return values.reduce((a, b) => a + b, 0) / values.length;
         }
 
-        // Calculate standard deviation
-        function calculateSD(colName) {
-            const values = csvData.data
+        // Calculate SAMPLE standard deviation (divide by n-1), matching R's sd() and
+        // Excel's STDEV.S. Returns null when fewer than two values exist.
+        function calculateSD(colName, data = csvData.data) {
+            const values = data
                 .map(row => parseFloat(row[colName]))
                 .filter(v => !isNaN(v));
-            if (values.length === 0) return 0;
+            if (values.length <= 1) return null;
             const mean = values.reduce((a, b) => a + b, 0) / values.length;
             const squaredDiffs = values.map(v => Math.pow(v - mean, 2));
-            return Math.sqrt(squaredDiffs.reduce((a, b) => a + b, 0) / values.length);
+            return Math.sqrt(squaredDiffs.reduce((a, b) => a + b, 0) / (values.length - 1));
         }
 
-        // Calculate min
-        function calculateMin(colName) {
-            const values = csvData.data
+        // Calculate min. Returns null when no parseable values exist.
+        function calculateMin(colName, data = csvData.data) {
+            const values = data
                 .map(row => parseFloat(row[colName]))
                 .filter(v => !isNaN(v));
-            if (values.length === 0) return 0;
+            if (values.length === 0) return null;
             return Math.min(...values);
         }
 
-        // Calculate max
-        function calculateMax(colName) {
-            const values = csvData.data
+        // Calculate max. Returns null when no parseable values exist.
+        function calculateMax(colName, data = csvData.data) {
+            const values = data
                 .map(row => parseFloat(row[colName]))
                 .filter(v => !isNaN(v));
-            if (values.length === 0) return 0;
+            if (values.length === 0) return null;
             return Math.max(...values);
         }
 
@@ -2040,24 +2301,28 @@ summary(model)
 
             let html = '<thead><tr><th>Variable</th><th>Type</th><th>Mean</th><th>SD</th><th>Min</th><th>Max</th></tr></thead><tbody>';
 
+            // Render a statistic as fixed decimals, or "NA" when it could not be computed.
+            const fmtStat = (v) => (v === null || v === undefined || !isFinite(v)) ? 'NA' : v.toFixed(2);
+
             headers.forEach(h => {
                 const isNumeric = csvData.columnTypes[h] === 'numeric';
+                const safeH = escapeHtml(h);
                 if (isNumeric) {
                     const mean = calculateMean(h);
                     const sd = calculateSD(h);
                     const min = calculateMin(h);
                     const max = calculateMax(h);
                     html += `<tr>
-                        <td>${h}</td>
+                        <td>${safeH}</td>
                         <td>Numerical</td>
-                        <td>${mean.toFixed(2)}</td>
-                        <td>${sd.toFixed(2)}</td>
-                        <td>${min.toFixed(2)}</td>
-                        <td>${max.toFixed(2)}</td>
+                        <td>${fmtStat(mean)}</td>
+                        <td>${fmtStat(sd)}</td>
+                        <td>${fmtStat(min)}</td>
+                        <td>${fmtStat(max)}</td>
                     </tr>`;
                 } else {
                     html += `<tr>
-                        <td>${h}</td>
+                        <td>${safeH}</td>
                         <td>Non-numerical</td>
                         <td colspan="4" style="text-align: center; font-style: italic; color: var(--text-light);">Descriptive statistics cannot be calculated for non-numerical variables.</td>
                     </tr>`;
@@ -2174,10 +2439,10 @@ summary(model)
             if (modelType === 'linear') {
                 if (dvTransform === 'log') {
                     equation = `${depVar} = EXP(${linearPredictor})`;
-                    note = 'Note: Since the dependent variable was log-transformed, the equation is back-transformed using EXP().';
+                    note = 'Note: Since the dependent variable was log-transformed, the equation is back-transformed using EXP(). This gives the median of Y (not the mean); the conditional mean is larger, roughly EXP(linear predictor + variance/2).';
                 } else if (dvTransform === 'log1p') {
                     equation = `${depVar} = EXP(${linearPredictor}) - 1`;
-                    note = 'Note: Since the dependent variable was log(Y+1) transformed, the equation uses EXP() - 1 for back-transformation.';
+                    note = 'Note: Since the dependent variable was log(Y+1) transformed, the equation uses EXP() - 1 for back-transformation. This gives a median-type prediction (not the mean); the conditional mean is larger.';
                 } else {
                     equation = `${depVar} = ${linearPredictor}`;
                     note = '';
@@ -2345,7 +2610,7 @@ summary(model)
             // Variable options
             const varOptions = headers.map(h => {
                 const typeLabel = columnTypes[h] === 'numeric' ? '(Num)' : '(Non-num)';
-                return `<option value="${h}" data-type="${columnTypes[h]}">${h} ${typeLabel}</option>`;
+                return `<option value="${escapeHtml(h)}" data-type="${columnTypes[h]}">${escapeHtml(h)} ${typeLabel}</option>`;
             }).join('');
 
             // Check if first variable is categorical to set initial value input
@@ -2353,14 +2618,14 @@ summary(model)
             let valueInputHtml;
             if (firstVarType === 'categorical') {
                 const uniqueVals = getUniqueValues(headers[0]);
-                valueInputHtml = `<select class="filter-value-input">${uniqueVals.map(v => `<option value="${v}">${v}</option>`).join('')}</select>`;
+                valueInputHtml = `<select class="filter-value-input" aria-label="Filter value">${uniqueVals.map(v => `<option value="${escapeHtml(v)}">${escapeHtml(v)}</option>`).join('')}</select>`;
             } else {
-                valueInputHtml = `<input type="text" class="filter-value-input" placeholder="Value">`;
+                valueInputHtml = `<input type="text" class="filter-value-input" placeholder="Value" aria-label="Filter value">`;
             }
 
             row.innerHTML = `
-                <select class="filter-var-select">${varOptions}</select>
-                <select class="filter-operator-select">
+                <select class="filter-var-select" aria-label="Filter variable">${varOptions}</select>
+                <select class="filter-operator-select" aria-label="Filter operator">
                     <option value="=">=</option>
                     <option value="!=">≠</option>
                     <option value=">">&gt;</option>
@@ -2371,7 +2636,7 @@ summary(model)
                 </select>
                 ${valueInputHtml}
                 <span class="between-label" style="display: none;">and</span>
-                <input type="text" class="filter-value-input-2" placeholder="Value 2" style="display: none;">
+                <input type="text" class="filter-value-input-2" placeholder="Value 2" style="display: none;" aria-label="Filter upper value">
                 <button type="button" class="remove-filter" title="Remove filter">×</button>
             `;
 
@@ -2393,7 +2658,8 @@ summary(model)
                     const uniqueVals = getUniqueValues(selectedVar);
                     const newSelect = document.createElement('select');
                     newSelect.className = 'filter-value-input';
-                    newSelect.innerHTML = uniqueVals.map(v => `<option value="${v}">${v}</option>`).join('');
+                    newSelect.setAttribute('aria-label', 'Filter value');
+                    newSelect.innerHTML = uniqueVals.map(v => `<option value="${escapeHtml(v)}">${escapeHtml(v)}</option>`).join('');
                     newSelect.addEventListener('change', applyFilters);
                     oldInput.replaceWith(newSelect);
                 } else {
@@ -2403,6 +2669,7 @@ summary(model)
                         newInput.type = 'text';
                         newInput.className = 'filter-value-input';
                         newInput.placeholder = 'Value';
+                        newInput.setAttribute('aria-label', 'Filter value');
                         newInput.addEventListener('input', applyFilters);
                         oldInput.replaceWith(newInput);
                     }
@@ -2610,9 +2877,9 @@ summary(model)
         // =====================================================
 
         // Get mode (most frequent value) for categorical column
-        function calculateMode(colName) {
+        function calculateMode(colName, data = csvData.data) {
             const counts = {};
-            csvData.data.forEach(row => {
+            data.forEach(row => {
                 const val = row[colName];
                 if (val !== '' && val !== null && val !== undefined) {
                     counts[val] = (counts[val] || 0) + 1;
@@ -2638,36 +2905,43 @@ summary(model)
             predictionInputs.innerHTML = '';
             predictionResult.style.display = 'none';
 
+            // Use the data the model was actually fit on (filtered or full) for defaults (F8).
+            const predData = lastAnalysisData || csvData.data;
+
             indepVarsData.forEach(iv => {
                 const isNumeric = csvData.columnTypes[iv.name] === 'numeric';
+                const safeName = escapeHtml(iv.name);
+                const inputId = `pred_${iv.name}`;
 
                 if (isNumeric) {
-                    // Calculate mean
-                    const mean = calculateMean(iv.name);
-                    const meanDisplay = mean.toFixed(2);
+                    // Calculate mean over the fit-time data
+                    const meanRaw = calculateMean(iv.name, predData);
+                    const hasMean = meanRaw !== null && isFinite(meanRaw);
+                    const meanAttr = hasMean ? meanRaw : '';
+                    const meanDisplay = hasMean ? `mean: ${meanRaw.toFixed(2)}` : 'no mean available';
 
                     // Numeric input
-                    let label = iv.name;
-                    if (iv.transform === 'log') label = `${iv.name} (will apply ln)`;
-                    if (iv.transform === 'log1p') label = `${iv.name} (will apply ln+1)`;
-                    if (iv.transform === 'quadratic') label = `${iv.name} (will apply X + X²)`;
+                    let label = safeName;
+                    if (iv.transform === 'log') label = `${safeName} (will apply ln)`;
+                    if (iv.transform === 'log1p') label = `${safeName} (will apply ln+1)`;
+                    if (iv.transform === 'quadratic') label = `${safeName} (will apply X + X²)`;
 
                     predictionInputs.innerHTML += `
                         <div class="prediction-input-group">
-                            <label>${label} (${meanDisplay})</label>
-                            <input type="number" step="any" id="pred_${iv.name}" data-var="${iv.name}" data-transform="${iv.transform}" data-mean="${mean}" placeholder="Enter value">
+                            <label for="${escapeHtml(inputId)}">${label} (${meanDisplay})</label>
+                            <input type="number" step="any" id="${escapeHtml(inputId)}" data-var="${safeName}" data-transform="${iv.transform}" data-mean="${meanAttr}" placeholder="Enter value">
                         </div>
                     `;
                 } else {
-                    // Categorical - dropdown with unique values
-                    const uniqueVals = [...new Set(csvData.data.map(row => row[iv.name]))].filter(v => v !== '');
-                    const mode = calculateMode(iv.name);
-                    let options = uniqueVals.map(v => `<option value="${v}">${v}</option>`).join('');
+                    // Categorical - dropdown with unique values (from the fit-time data)
+                    const uniqueVals = [...new Set(predData.map(row => row[iv.name]))].filter(v => v !== '' && v !== undefined && v !== null);
+                    const mode = calculateMode(iv.name, predData);
+                    let options = uniqueVals.map(v => `<option value="${escapeHtml(v)}">${escapeHtml(v)}</option>`).join('');
 
                     predictionInputs.innerHTML += `
                         <div class="prediction-input-group">
-                            <label>${iv.name} (${mode})</label>
-                            <select id="pred_${iv.name}" data-var="${iv.name}" data-transform="factor" data-mode="${mode}">
+                            <label for="${escapeHtml(inputId)}">${safeName} (mode: ${escapeHtml(mode)})</label>
+                            <select id="${escapeHtml(inputId)}" data-var="${safeName}" data-transform="factor" data-mode="${escapeHtml(mode)}">
                                 ${options}
                             </select>
                         </div>
@@ -2679,7 +2953,7 @@ summary(model)
             predictionInputs.innerHTML += `
                 <div style="grid-column: 1 / -1; margin-top: 0.5rem;">
                     <p style="font-size: 0.8rem; color: var(--text-light); font-style: italic;">
-                        Means are calculated after rows with missing data are dropped. If you leave a numeric field empty, the prediction will use that mean.
+                        Means and modes are computed from the data used to fit the model (after rows with missing data are dropped). If you leave a numeric field empty, the prediction uses that mean.
                     </p>
                 </div>
             `;
@@ -2713,6 +2987,39 @@ summary(model)
             adjustedCoefs.forEach(row => {
                 coefLookup[row.Variable] = row.adjustedEstimate;
             });
+
+            // F10: validate log-transformed inputs so we never display NaN or -Infinity.
+            const readPredVal = (name) => {
+                const input = document.getElementById(`pred_${name}`);
+                if (!input) return NaN;
+                let v = parseFloat(input.value);
+                if (isNaN(v) || input.value === '') v = parseFloat(input.dataset.mean);
+                return v;
+            };
+            const predProblems = [];
+            lastIndepVarsData.forEach(iv => {
+                if (csvData.columnTypes[iv.name] !== 'numeric') return;
+                if (iv.transform !== 'log' && iv.transform !== 'log1p') return;
+                const v = readPredVal(iv.name);
+                if (isNaN(v)) return;
+                if (iv.transform === 'log' && v <= 0) predProblems.push(`"${iv.name}" uses ln(X); enter a value greater than 0.`);
+                if (iv.transform === 'log1p' && v <= -1) predProblems.push(`"${iv.name}" uses ln(X + 1); enter a value greater than -1.`);
+            });
+            if (lastInteractions) {
+                lastInteractions.forEach(int => {
+                    [[int.var1, int.transform1], [int.var2, int.transform2]].forEach(([nm, tr]) => {
+                        if (tr !== 'log' && tr !== 'log1p') return;
+                        const v = readPredVal(nm);
+                        if (isNaN(v)) return;
+                        if (tr === 'log' && v <= 0) predProblems.push(`An interaction uses ln(${nm}); enter a value for "${nm}" greater than 0.`);
+                        if (tr === 'log1p' && v <= -1) predProblems.push(`An interaction uses ln(${nm} + 1); enter a value for "${nm}" greater than -1.`);
+                    });
+                });
+            }
+            if (predProblems.length > 0) {
+                showStatus(predProblems[0], 'error');
+                return;
+            }
 
             // Store prediction values for R script
             lastPredictionValues = {};
@@ -2793,18 +3100,9 @@ summary(model)
                         transformedVal2 = val2;
                     }
 
-                    // Build coefficient name to match R output for I(X * Y) format
-                    const term1 = int.transform1 === 'log' ? `log(${int.var1})` :
-                                  int.transform1 === 'log1p' ? `log(${int.var1} + 1)` :
-                                  int.var1;
-                    const term2 = int.transform2 === 'log' ? `log(${int.var2})` :
-                                  int.transform2 === 'log1p' ? `log(${int.var2} + 1)` :
-                                  int.var2;
-
-                    // Try different coefficient name formats for I(X * Y)
-                    const coefName1 = `I(${term1} * ${term2})`;
-                    const coefName2 = `I(${term2} * ${term1})`; // R might swap order
-
+                    // Match R's coefficient name using the same backtick logic as the
+                    // formula (either factor order), so names with spaces still resolve.
+                    const [coefName1, coefName2] = interactionCoefNames(int);
                     const coef = coefLookup[coefName1] || coefLookup[coefName2] || 0;
 
                     xBeta += coef * transformedVal1 * transformedVal2;
@@ -2842,12 +3140,23 @@ summary(model)
 
             // Update prediction note based on significance level
             const predictionNote = document.getElementById('predictionNote');
-            if (currentSignificanceLevel === 'all') {
-                predictionNote.textContent = 'Prediction uses coefficients with any p-value.';
-            } else {
-                predictionNote.textContent = `Prediction uses only coefficients with p-value < ${currentSignificanceLevel}. Other coefficients are set to zero.`;
+            let noteText = currentSignificanceLevel === 'all'
+                ? 'Prediction uses coefficients with any p-value.'
+                : `Prediction uses only coefficients with p-value < ${currentSignificanceLevel}. Other coefficients are set to zero.`;
+            // F13: back-transformed log predictions estimate the median, not the mean.
+            if (lastModelType === 'linear' && (lastDvTransform === 'log' || lastDvTransform === 'log1p')) {
+                noteText += ' Because the dependent variable was log-transformed, this is a median-type prediction and understates the mean of ' + lastDepVar + '.';
             }
+            predictionNote.textContent = noteText;
             predictionNote.style.display = 'block';
+        });
+
+        // Enter key in any prediction input triggers the calculation.
+        document.getElementById('predictionInputs').addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                document.getElementById('predictButton').click();
+            }
         });
 
         // Download R script with prediction
@@ -2879,9 +3188,22 @@ summary(model)
                 predictCall = `predict(model, newdata = newdata, type = "response")`;
             }
 
+            // F12: the on-page prediction zeroes insignificant coefficients when a
+            // significance filter is active, but predict() below uses the full model.
+            // Warn so a student does not think the two disagree by mistake.
+            let sigComment = '';
+            if (currentSignificanceLevel !== 'all') {
+                sigComment = `# NOTE: On the web page you selected "p-value < ${currentSignificanceLevel}", which sets
+# statistically insignificant coefficients to zero before predicting. The predict()
+# call below uses the FULL fitted model (all coefficients), so its result can differ
+# from the number shown on the page. To reproduce the on-page value, drop the
+# insignificant terms from the model formula (or set those coefficients to 0) first.
+`;
+            }
+
             const scriptWithPrediction = lastRScript + `
 # Make a prediction
-newdata = data.frame(
+${sigComment}newdata = data.frame(
 ${newdataArgs}
 )
 
@@ -2915,8 +3237,8 @@ ${predictCall}
                 if (isNumeric) {
                     let val = parseFloat(rawVal);
                     if (isNaN(val) || rawVal === '' || rawVal === undefined || rawVal === null) {
-                        // Mirror the single-row UI: fall back to the training mean.
-                        val = calculateMean(iv.name);
+                        // Mirror the single-row UI: fall back to the fit-time (training) mean.
+                        val = calculateMean(iv.name, lastAnalysisData || csvData.data);
                     }
                     rowValues[iv.name] = val;
 
@@ -2936,7 +3258,7 @@ ${predictCall}
                     }
                 } else {
                     const selectedVal = (rawVal !== undefined && rawVal !== '' && rawVal !== null)
-                        ? rawVal : calculateMode(iv.name);
+                        ? rawVal : calculateMode(iv.name, lastAnalysisData || csvData.data);
                     rowValues[iv.name] = selectedVal;
                     const coef = coefLookup[`factor(\`${iv.name}\`)${selectedVal}`]
                         || coefLookup[`factor(${iv.name})${selectedVal}`] || 0;
@@ -2952,12 +3274,8 @@ ${predictCall}
                         : int.transform1 === 'log1p' ? Math.log(v1 + 1) : v1;
                     const t2 = int.transform2 === 'log' ? Math.log(v2)
                         : int.transform2 === 'log1p' ? Math.log(v2 + 1) : v2;
-                    const term1 = int.transform1 === 'log' ? `log(${int.var1})`
-                        : int.transform1 === 'log1p' ? `log(${int.var1} + 1)` : int.var1;
-                    const term2 = int.transform2 === 'log' ? `log(${int.var2})`
-                        : int.transform2 === 'log1p' ? `log(${int.var2} + 1)` : int.var2;
-                    const coef = coefLookup[`I(${term1} * ${term2})`]
-                        || coefLookup[`I(${term2} * ${term1})`] || 0;
+                    const [cn1, cn2] = interactionCoefNames(int);
+                    const coef = coefLookup[cn1] || coefLookup[cn2] || 0;
                     xBeta += coef * t1 * t2;
                 });
             }
@@ -3054,11 +3372,11 @@ ${predictCall}
                 // Build the preview table (first 10 rows).
                 const preview = outRows.slice(0, 10);
                 let html = '<thead><tr>';
-                outHeaders.forEach(h => { html += `<th>${h}</th>`; });
+                outHeaders.forEach(h => { html += `<th>${escapeHtml(h)}</th>`; });
                 html += '</tr></thead><tbody>';
                 preview.forEach(r => {
                     html += '<tr>';
-                    outHeaders.forEach(h => { html += `<td>${r[h] !== undefined ? r[h] : ''}</td>`; });
+                    outHeaders.forEach(h => { html += `<td>${escapeHtml(r[h] !== undefined ? r[h] : '')}</td>`; });
                     html += '</tr>';
                 });
                 html += '</tbody>';
@@ -3145,8 +3463,8 @@ ${predictCall}
     </script>
 
 </div> <!-- end main-content -->
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js" integrity="sha384-yuGdyIzzYtOBlBG6JOWn+Ey9kpq7HocusNuxEGyyohr1eEyXpeEyehIIXC/hznw4" crossorigin="anonymous"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js" integrity="sha384-lI+CxEx/bCvWP1b0OK13j5HTrTZP7yf1xle8TVOFq2smz6KC1RChTarRV/RHP5PP" crossorigin="anonymous"></script>
 <script>
     const firebaseConfig = {
         apiKey: "AIzaSyBg3LJDwVIRGWtFZb_mM_CSRJMNCJUta20",
@@ -3157,15 +3475,31 @@ ${predictCall}
         appId: "1:659335573790:web:00013a166787efecb3d90f",
         measurementId: "G-NGKNY08XWP"
     };
-    firebase.initializeApp(firebaseConfig);
-    firebase.auth().onAuthStateChanged(function(user) {
-        if (user) {
-            document.getElementById('loading-screen').style.display = 'none';
-            document.getElementById('main-content').style.display = 'block';
-        } else {
-            window.location.href = 'login.html';
+    let authResolved = false;
+    // Fallback: if Firebase cannot be reached within 12s, show a message instead of hanging on "Loading...".
+    const authTimeout = setTimeout(function() {
+        if (!authResolved) {
+            const ls = document.getElementById('loading-screen');
+            if (ls) {
+                ls.innerHTML = '<p style="color: #64748b; max-width: 420px; text-align: center; padding: 0 1rem;">Could not reach the sign-in service. Check your connection and reload this page.</p>';
+            }
         }
-    });
+    }, 12000);
+    try {
+        firebase.initializeApp(firebaseConfig);
+        firebase.auth().onAuthStateChanged(function(user) {
+            authResolved = true;
+            clearTimeout(authTimeout);
+            if (user) {
+                document.getElementById('loading-screen').style.display = 'none';
+                document.getElementById('main-content').style.display = 'block';
+            } else {
+                window.location.href = 'login.html?next=' + encodeURIComponent(window.location.pathname.split('/').pop());
+            }
+        });
+    } catch (e) {
+        // Firebase failed to load or initialize; the timeout above will surface a message.
+    }
 </script>
 </body>
 </html>

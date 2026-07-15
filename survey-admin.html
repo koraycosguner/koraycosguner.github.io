@@ -5,6 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Survey Administration | Koray Cosguner</title>
     <meta name="robots" content="noindex,nofollow">
+
+    <!-- Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-CTZ8G4EYLR"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-CTZ8G4EYLR');
+    </script>
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -513,7 +523,7 @@
             .hero { padding: 1.5rem 0; }
             .hero h1 { font-size: 1.3rem; }
             .hero p { font-size: 0.85rem; }
-            .form-row, .form-row-2, .mapping-grid {
+            .form-row, .form-row-2 {
                 grid-template-columns: 1fr;
             }
             .survey-type-selector {
@@ -576,7 +586,7 @@
                 <p>Create and manage pricing surveys for your classes. Collect responses and analyze them with your tools.</p>
             </div>
 
-            <div class="status-message" id="statusMessage"></div>
+            <div class="status-message" id="statusMessage" role="status" aria-live="polite"></div>
 
             <!-- Create New Survey -->
             <div class="tool-container" id="create-section">
@@ -589,13 +599,13 @@
                     <p class="form-hint" style="margin-bottom: 0.75rem;">Select one or both survey types. If both are selected, students can complete either or both surveys for this product.</p>
                     <div class="survey-type-selector">
                         <label class="survey-type-option" id="opt-vw">
-                            <input type="checkbox" id="type-vw" onchange="updateSurveyTypes()">
+                            <input type="checkbox" id="type-vw" aria-label="Van Westendorp survey type" onchange="updateSurveyTypes()">
                             <div class="survey-type-icon">📈</div>
                             <div class="survey-type-name">Van Westendorp</div>
                             <div class="survey-type-desc">Find acceptable price range</div>
                         </label>
                         <label class="survey-type-option" id="opt-gg">
-                            <input type="checkbox" id="type-gg" onchange="updateSurveyTypes()">
+                            <input type="checkbox" id="type-gg" aria-label="Gabor-Granger survey type" onchange="updateSurveyTypes()">
                             <div class="survey-type-icon">📊</div>
                             <div class="survey-type-name">Gabor-Granger</div>
                             <div class="survey-type-desc">Find optimal price point</div>
@@ -639,10 +649,10 @@
                     <label>Product Photos (Optional)</label>
                     <p class="form-hint" style="margin-bottom: 0.75rem;">Add up to 3 photos to help students visualize the product</p>
                     <div class="photo-upload-area" id="photo-upload-area" onclick="document.getElementById('photo-input').click()">
-                        <input type="file" id="photo-input" accept="image/*" multiple onchange="handlePhotoUpload(event)">
+                        <input type="file" id="photo-input" accept="image/*" multiple aria-label="Upload product photos" onchange="handlePhotoUpload(event)">
                         <div class="photo-upload-icon">📷</div>
                         <div class="photo-upload-text">Click to upload photos or drag and drop</div>
-                        <div class="photo-upload-text" style="font-size: 0.8rem; margin-top: 0.25rem;">Max 3 photos, 2MB each</div>
+                        <div class="photo-upload-text" style="font-size: 0.8rem; margin-top: 0.25rem;">Max 3 photos. Large images are compressed automatically before saving.</div>
                     </div>
                     <div class="photo-preview" id="photo-preview"></div>
                 </div>
@@ -669,6 +679,7 @@
 
                 <div class="button-group">
                     <button class="btn btn-primary" onclick="createSurvey()">Create Survey</button>
+                    <button class="btn btn-secondary" onclick="loadExample()">Load Example</button>
                     <button class="btn btn-secondary" onclick="resetForm()">Clear Form</button>
                 </div>
             </div>
@@ -695,10 +706,11 @@
                     <!-- Links will be populated here -->
                 </div>
 
-                <div style="margin-top: 1.5rem; display: flex; gap: 1rem; align-items: center; flex-wrap: wrap;">
+                <div style="margin-top: 1.5rem; display: flex; gap: 1rem; align-items: center; flex-wrap: wrap;" aria-live="polite">
                     <span id="response-count" style="font-size: 1.1rem; font-weight: 600;">0 responses</span>
                     <button class="btn btn-secondary btn-small" onclick="refreshResponses()">↻ Refresh</button>
                 </div>
+                <p id="never-buyer-note" class="form-hint" style="margin-top: 0.5rem; display: none;"></p>
 
                 <!-- Download & Action Buttons -->
                 <div id="action-buttons" style="margin-top: 1rem; display: flex; gap: 0.75rem; flex-wrap: wrap;">
@@ -727,12 +739,22 @@
     </div>
 
     <!-- Firebase SDK -->
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-storage-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js" integrity="sha384-yuGdyIzzYtOBlBG6JOWn+Ey9kpq7HocusNuxEGyyohr1eEyXpeEyehIIXC/hznw4" crossorigin="anonymous"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js" integrity="sha384-lI+CxEx/bCvWP1b0OK13j5HTrTZP7yf1xle8TVOFq2smz6KC1RChTarRV/RHP5PP" crossorigin="anonymous"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js" integrity="sha384-nwX2Qpkhc2sv6L0ZPkLefLGguao67toSowvePuQvGF6cG+8MUphGI2uI94Ls3JF7" crossorigin="anonymous"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-storage-compat.js" integrity="sha384-oze9siCpFoiDBZ37lLp99ZmOMO+je1s/xtvwtbNv3NXQXLpbpfPSzZSpbT3xV9da" crossorigin="anonymous"></script>
 
     <script>
+        // Fallback if the Firebase CDN is blocked and auth never resolves.
+        // Scheduled BEFORE firebase.initializeApp so it still fires even when the
+        // Firebase scripts fail to load (in which case initializeApp throws below).
+        const authTimeout = setTimeout(function() {
+            const screen = document.getElementById('loading-screen');
+            if (screen && screen.style.display !== 'none') {
+                screen.innerHTML = '<p style="color: #991b1b; max-width: 420px; text-align: center; padding: 2rem;">Could not reach the sign-in service. Check your connection and reload this page.</p>';
+            }
+        }, 12000);
+
         // Firebase configuration
         const firebaseConfig = {
             apiKey: "AIzaSyBg3LJDwVIRGWtFZb_mM_CSRJMNCJUta20",
@@ -752,16 +774,60 @@
         let currentSurvey = null;
         let currentSurveyData = null;
         let uploadedPhotos = []; // Store base64 encoded photos
+        let loadedSurveys = {}; // id -> survey data, so click handlers never inline survey text
+
+        // Instructor allowlist. Only these Google accounts may use this console.
+        // Add any other Google account emails you sign in with to this list.
+        const ALLOWED_ADMIN_EMAILS = ['kcosgun@iu.edu'];
+
+        // Escape any Firestore-sourced text before it reaches innerHTML.
+        function escapeHtml(value) {
+            return String(value === null || value === undefined ? '' : value)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;');
+        }
+
+        // Full-page notice for signed-in users who are not the instructor.
+        function showRestrictedNotice(email) {
+            document.getElementById('main-content').style.display = 'none';
+            const screen = document.getElementById('loading-screen');
+            screen.style.display = 'flex';
+            screen.innerHTML = `
+                <div style="max-width: 480px; text-align: center; padding: 2rem;">
+                    <h1 style="font-size: 1.4rem; color: #990000; margin-bottom: 1rem;">Restricted console</h1>
+                    <p style="color: #333; margin-bottom: 0.75rem;">This console is restricted to the course instructor. You are signed in as ${escapeHtml(email)}.</p>
+                    <div style="display: flex; gap: 0.75rem; justify-content: center; margin-top: 1.5rem; flex-wrap: wrap;">
+                        <button class="btn btn-primary btn-small" onclick="signOutAdmin()">Sign out</button>
+                        <a class="btn btn-secondary btn-small" href="tools.html">Back to tools</a>
+                    </div>
+                </div>
+            `;
+        }
+
+        function signOutAdmin() {
+            firebase.auth().signOut().then(function() {
+                window.location.href = 'login.html';
+            });
+        }
 
         // Check authentication state
         firebase.auth().onAuthStateChanged(function(user) {
+            clearTimeout(authTimeout);
             if (user) {
                 currentUser = user;
+                const email = (user.email || '').toLowerCase();
+                if (!ALLOWED_ADMIN_EMAILS.map(e => e.toLowerCase()).includes(email)) {
+                    showRestrictedNotice(user.email || '');
+                    return;
+                }
                 document.getElementById('loading-screen').style.display = 'none';
                 document.getElementById('main-content').style.display = 'block';
                 loadSurveys();
             } else {
-                window.location.href = 'login.html';
+                window.location.href = 'login.html?next=' + encodeURIComponent(window.location.pathname.split('/').pop());
             }
         });
 
@@ -783,33 +849,89 @@
             document.getElementById('gg-options').classList.toggle('visible', ggChecked);
         }
 
+        // Approximate decoded byte size of a data URL from its base64 payload.
+        function dataURLBytes(dataUrl) {
+            const base64 = String(dataUrl || '').split(',')[1] || '';
+            return Math.floor(base64.length * 3 / 4);
+        }
+
+        // Downscale and JPEG-compress an image client-side so each stored photo
+        // stays small. Photos are still saved as base64 inside the Firestore
+        // survey document (which is capped near 1 MiB), so we keep them tiny.
+        // TODO: the proper home for product photos is Firebase Storage (store the
+        // download URL, not the base64 blob); move them there when rules can be
+        // deployed for this project.
+        function compressImage(file) {
+            return new Promise(function(resolve, reject) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const img = new Image();
+                    img.onload = function() {
+                        const maxDim = 1200;
+                        let width = img.width;
+                        let height = img.height;
+                        if (width > maxDim || height > maxDim) {
+                            if (width >= height) {
+                                height = Math.round(height * (maxDim / width));
+                                width = maxDim;
+                            } else {
+                                width = Math.round(width * (maxDim / height));
+                                height = maxDim;
+                            }
+                        }
+                        const canvas = document.createElement('canvas');
+                        canvas.width = width;
+                        canvas.height = height;
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0, width, height);
+
+                        const targetBytes = 200 * 1024; // <= 200KB per photo
+                        let quality = 0.9;
+                        let dataUrl = canvas.toDataURL('image/jpeg', quality);
+                        while (dataURLBytes(dataUrl) > targetBytes && quality > 0.3) {
+                            quality -= 0.1;
+                            dataUrl = canvas.toDataURL('image/jpeg', quality);
+                        }
+                        resolve(dataUrl);
+                    };
+                    img.onerror = function() { reject(new Error('Could not load image')); };
+                    img.src = e.target.result;
+                };
+                reader.onerror = function() { reject(new Error('Could not read file')); };
+                reader.readAsDataURL(file);
+            });
+        }
+
         // Photo upload handling
-        function handlePhotoUpload(event) {
+        async function handlePhotoUpload(event) {
             const files = Array.from(event.target.files);
             const maxPhotos = 3;
-            const maxSize = 2 * 1024 * 1024; // 2MB
+            const maxSize = 15 * 1024 * 1024; // accept large originals; we compress below
 
             if (uploadedPhotos.length + files.length > maxPhotos) {
                 showStatus(`Maximum ${maxPhotos} photos allowed.`, 'error');
+                event.target.value = '';
                 return;
             }
 
-            files.forEach(file => {
-                if (file.size > maxSize) {
-                    showStatus(`${file.name} is too large. Max 2MB per photo.`, 'error');
-                    return;
+            for (const file of files) {
+                if (!file.type || !file.type.startsWith('image/')) {
+                    showStatus(`${file.name} is not an image file.`, 'error');
+                    continue;
                 }
-
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    uploadedPhotos.push({
-                        name: file.name,
-                        data: e.target.result
-                    });
+                if (file.size > maxSize) {
+                    showStatus(`${file.name} is too large. Max 15MB per photo.`, 'error');
+                    continue;
+                }
+                try {
+                    const dataUrl = await compressImage(file);
+                    uploadedPhotos.push({ name: file.name, data: dataUrl });
                     renderPhotoPreview();
-                };
-                reader.readAsDataURL(file);
-            });
+                } catch (err) {
+                    console.error('Photo processing error:', err);
+                    showStatus(`Could not process ${file.name}. Please try a different image.`, 'error');
+                }
+            }
 
             // Clear input so same file can be selected again
             event.target.value = '';
@@ -857,12 +979,38 @@
                 const maxPrice = parseFloat(document.getElementById('max-price').value);
                 const step = parseFloat(document.getElementById('price-step').value);
 
+                if (!Number.isFinite(minPrice) || !Number.isFinite(maxPrice) || !Number.isFinite(step)) {
+                    showStatus('Enter valid numbers for the Gabor-Granger minimum, maximum, and step.', 'error');
+                    return;
+                }
+                if (minPrice < 0) {
+                    showStatus('Minimum price cannot be negative.', 'error');
+                    return;
+                }
+                if (step <= 0) {
+                    showStatus('Price step must be greater than 0.', 'error');
+                    return;
+                }
                 if (minPrice >= maxPrice) {
                     showStatus('Maximum price must be greater than minimum price.', 'error');
                     return;
                 }
+                if ((maxPrice - minPrice) / step > 200) {
+                    showStatus('This price ladder is too long (over 200 steps). Increase the step or narrow the price range.', 'error');
+                    return;
+                }
 
                 ggConfig = { minPrice, maxPrice, step };
+            }
+
+            // Photos are stored as base64 inside the survey document. Firestore
+            // caps documents near 1 MiB, so block creation before we blow past it.
+            const photoData = uploadedPhotos.map(p => p.data);
+            const approxBytes = photoData.reduce((sum, d) => sum + dataURLBytes(d), 0)
+                + (surveyName.length + productName.length + productDescription.length) * 2 + 2048;
+            if (approxBytes > 900 * 1024) {
+                showStatus('These photos are too large to save (survey documents are limited to about 1 MB). Please use fewer or smaller photos.', 'error');
+                return;
             }
 
             try {
@@ -877,7 +1025,7 @@
                     description: productDescription,
                     currency,
                     types, // Array of survey types
-                    photos: uploadedPhotos.map(p => p.data), // Store base64 photos
+                    photos: photoData, // Store base64 photos (compressed client-side)
                     userId: currentUser.uid,
                     active: true,
                     ggResponseCount: 0,
@@ -919,6 +1067,23 @@
             renderPhotoPreview();
         }
 
+        // Fill the create form with realistic example values so a new instructor
+        // can see the setup. This does NOT create the survey: review, then click
+        // Create Survey.
+        function loadExample() {
+            document.getElementById('type-vw').checked = true;
+            document.getElementById('type-gg').checked = true;
+            updateSurveyTypes();
+            document.getElementById('survey-name').value = 'M450 Pricing Exercise - Spring 2026';
+            document.getElementById('product-name').value = 'Premium Wireless Headphones';
+            document.getElementById('product-description').value = 'Over-ear noise-cancelling headphones with 30-hour battery life, Bluetooth 5.3, and a hard travel case.';
+            document.getElementById('currency').value = '$';
+            document.getElementById('min-price').value = '20';
+            document.getElementById('max-price').value = '200';
+            document.getElementById('price-step').value = '20';
+            showStatus('Example loaded. Review the details, then click Create Survey.', 'success');
+        }
+
         // Load surveys
         async function loadSurveys() {
             const container = document.getElementById('survey-list');
@@ -940,8 +1105,10 @@
                 }
 
                 container.innerHTML = '';
+                loadedSurveys = {};
                 snapshot.forEach(doc => {
                     const survey = doc.data();
+                    loadedSurveys[doc.id] = survey; // keep a lookup so handlers pass only the id
                     container.innerHTML += createSurveyCard(doc.id, survey);
                 });
             } catch (error) {
@@ -952,12 +1119,12 @@
         function createSurveyCard(id, survey) {
             const isActive = survey.active !== false;
             const createdDate = survey.createdAt?.toDate().toLocaleDateString() || 'Unknown';
-            const totalResponses = (survey.ggResponseCount || 0) + (survey.vwResponseCount || 0);
+            const totalResponses = (Number(survey.ggResponseCount) || 0) + (Number(survey.vwResponseCount) || 0);
 
-            // Get thumbnail
+            // Get thumbnail. Photos are our own compressed data URLs; escape for the attribute anyway.
             let thumbHtml = '';
             if (survey.photos && survey.photos.length > 0) {
-                thumbHtml = `<img src="${survey.photos[0]}" alt="${survey.product}">`;
+                thumbHtml = `<img src="${escapeHtml(survey.photos[0])}" alt="${escapeHtml(survey.product)}">`;
             } else {
                 thumbHtml = '📦';
             }
@@ -973,12 +1140,12 @@
                     <div class="survey-info">
                         <div class="survey-thumb">${thumbHtml}</div>
                         <div class="survey-details">
-                            <h4>${survey.name}</h4>
-                            <p>Product: ${survey.product}</p>
+                            <h4>${escapeHtml(survey.name)}</h4>
+                            <p>Product: ${escapeHtml(survey.product)}</p>
                             <div class="survey-meta">
                                 ${typeBadges}
                                 <span>${totalResponses} responses</span>
-                                <span>Created: ${createdDate}</span>
+                                <span>Created: ${escapeHtml(createdDate)}</span>
                                 ${isActive ? '<span class="active-badge">Active</span>' : '<span>Closed</span>'}
                             </div>
                         </div>
@@ -988,7 +1155,7 @@
                         <button class="btn btn-small ${isActive ? 'btn-danger' : 'btn-primary'}" onclick="toggleSurvey('${id}', ${isActive})">
                             ${isActive ? 'Close' : 'Reopen'}
                         </button>
-                        <button class="btn btn-danger btn-small" onclick="deleteSurvey('${id}', '${survey.name.replace(/'/g, "\\'")}')">🗑️</button>
+                        <button class="btn btn-danger btn-small" onclick="deleteSurvey('${id}')">🗑️</button>
                     </div>
                 </div>
             `;
@@ -1009,7 +1176,8 @@
         }
 
         // Delete entire survey
-        async function deleteSurvey(id, name) {
+        async function deleteSurvey(id) {
+            const name = (loadedSurveys[id] && loadedSurveys[id].name) || 'this survey';
             const confirmed = confirm(`⚠️ Delete survey "${name}"?\n\nThis will permanently delete the survey AND all its responses.\n\nThis action cannot be undone!`);
             if (!confirmed) return;
 
@@ -1066,9 +1234,9 @@
             if (types.includes('van-westendorp')) {
                 linksHtml += `
                     <div style="margin-bottom: 1rem;">
-                        <label style="font-weight: 600; display: block; margin-bottom: 0.5rem;">Van Westendorp Survey Link:</label>
+                        <label for="link-vw" style="font-weight: 600; display: block; margin-bottom: 0.5rem;">Van Westendorp Survey Link:</label>
                         <div class="link-box">
-                            <input type="text" id="link-vw" value="${baseUrl}vw-survey.html?id=${id}" readonly>
+                            <input type="text" id="link-vw" aria-label="Van Westendorp survey link" value="${escapeHtml(baseUrl + 'vw-survey.html?id=' + id)}" readonly>
                             <button class="btn btn-secondary btn-small" onclick="copyLink('link-vw')">Copy</button>
                             <button class="btn btn-primary btn-small" onclick="openLink('link-vw')">Open</button>
                         </div>
@@ -1078,9 +1246,9 @@
             if (types.includes('gabor-granger')) {
                 linksHtml += `
                     <div>
-                        <label style="font-weight: 600; display: block; margin-bottom: 0.5rem;">Gabor-Granger Survey Link:</label>
+                        <label for="link-gg" style="font-weight: 600; display: block; margin-bottom: 0.5rem;">Gabor-Granger Survey Link:</label>
                         <div class="link-box">
-                            <input type="text" id="link-gg" value="${baseUrl}gg-survey.html?id=${id}" readonly>
+                            <input type="text" id="link-gg" aria-label="Gabor-Granger survey link" value="${escapeHtml(baseUrl + 'gg-survey.html?id=' + id)}" readonly>
                             <button class="btn btn-secondary btn-small" onclick="copyLink('link-gg')">Copy</button>
                             <button class="btn btn-primary btn-small" onclick="openLink('link-gg')">Open</button>
                         </div>
@@ -1104,12 +1272,25 @@
             currentSurveyData = null;
         }
 
+        // Format a Firestore-sourced number safely (never trust the stored type).
+        function fmtMoney(v) {
+            const n = Number(v);
+            return Number.isFinite(n) ? n.toFixed(2) : 'n/a';
+        }
+        function fmtInt(v) {
+            const n = Number(v);
+            return Number.isFinite(n) ? String(Math.trunc(n)) : 'n/a';
+        }
+
         async function refreshResponses() {
             if (!currentSurvey) return;
 
             const tbody = document.getElementById('responses-body');
             const header = document.getElementById('responses-header');
-            tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 2rem;">Loading...</td></tr>';
+            const note = document.getElementById('never-buyer-note');
+            note.style.display = 'none';
+            note.textContent = '';
+            tbody.innerHTML = '<tr><td colspan="4" style="text-align: center; padding: 2rem;">Loading...</td></tr>';
 
             // Show/hide buttons based on survey types
             const types = currentSurveyData.types || [];
@@ -1148,18 +1329,23 @@
 
                 tbody.innerHTML = '';
                 let index = 1;
+                let ggNeverBuyers = 0;
 
-                // Add GG responses
+                // Add GG responses. maxWtp <= 0 means the student would not buy at
+                // any offered price; these respondents still count in the denominator.
                 ggSnapshot.forEach(doc => {
                     const r = doc.data();
                     const time = r.submittedAt?.toDate().toLocaleString() || 'Unknown';
-                    const wtpText = r.maxWtp > 0 ? `Max WTP: $${r.maxWtp.toFixed(2)}` : 'Below minimum';
+                    const maxWtp = Number(r.maxWtp);
+                    const isBuyer = Number.isFinite(maxWtp) && maxWtp > 0;
+                    if (!isBuyer) ggNeverBuyers++;
+                    const wtpText = isBuyer ? `Max WTP: $${maxWtp.toFixed(2)}` : 'Would not buy at any offered price';
                     tbody.innerHTML += `
                         <tr>
                             <td>${index++}</td>
                             <td><span style="background: var(--iu-crimson); color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.75rem;">GG</span></td>
-                            <td>${wtpText} (started at $${r.startingPrice?.toFixed(2)}, ${r.steps} steps)</td>
-                            <td>${time}</td>
+                            <td>${escapeHtml(wtpText)} (started at $${fmtMoney(r.startingPrice)}, ${fmtInt(r.steps)} steps)</td>
+                            <td>${escapeHtml(time)}</td>
                         </tr>
                     `;
                 });
@@ -1172,15 +1358,23 @@
                         <tr>
                             <td>${index++}</td>
                             <td><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.75rem;">VW</span></td>
-                            <td>TC: $${r.tooCheap?.toFixed(2)} | B: $${r.cheap?.toFixed(2)} | E: $${r.expensive?.toFixed(2)} | TE: $${r.tooExpensive?.toFixed(2)}</td>
-                            <td>${time}</td>
+                            <td>TC: $${fmtMoney(r.tooCheap)} | B: $${fmtMoney(r.cheap)} | E: $${fmtMoney(r.expensive)} | TE: $${fmtMoney(r.tooExpensive)}</td>
+                            <td>${escapeHtml(time)}</td>
                         </tr>
                     `;
                 });
 
+                // Never-buyer note so the demand denominator is transparent.
+                if (hasGG && ggSnapshot.size > 0) {
+                    note.style.display = 'block';
+                    note.textContent = ggNeverBuyers > 0
+                        ? `GG demand: N = ${ggSnapshot.size} respondents, including ${ggNeverBuyers} who would not buy at any offered price (they count as WTP = 0).`
+                        : `GG demand: N = ${ggSnapshot.size} respondents; all would buy at some offered price.`;
+                }
+
             } catch (error) {
                 console.error('Error loading responses:', error);
-                tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 2rem; color: #991b1b;">Error loading responses.</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="4" style="text-align: center; padding: 2rem; color: #991b1b;">Error loading responses.</td></tr>';
             }
         }
 
@@ -1194,6 +1388,21 @@
         function openLink(inputId) {
             const input = document.getElementById(inputId);
             window.open(input.value, '_blank');
+        }
+
+        // Guard a CSV cell against spreadsheet formula injection. Pure numbers pass
+        // through unchanged; any other value starting with =, +, -, or @ gets a
+        // leading apostrophe so Excel/Sheets treats it as text.
+        function csvCell(value) {
+            if (value === null || value === undefined) return '';
+            const s = String(value);
+            if (/^-?\d+(\.\d+)?$/.test(s)) return s;
+            if (/^[=+\-@]/.test(s)) return "'" + s;
+            return s;
+        }
+
+        function safeFilenamePart(value) {
+            return String(value || 'product').replace(/[^\w-]+/g, '_').replace(/^_+|_+$/g, '') || 'product';
         }
 
         // Download Gabor-Granger data in the correct format (just WTP values)
@@ -1210,16 +1419,19 @@
                 return;
             }
 
-            // Format for GG tool: just WTP values, one per line
+            // Format for GG tool: one WTP value per line, one row per respondent.
+            // Never-buyers (maxWtp <= 0 / below the lowest ladder price) export as 0
+            // so they stay in the denominator; the tool counts a buyer at price p as
+            // wtp >= p. Dropping them would inflate purchase intent.
             let csv = 'wtp\n';
             snapshot.forEach(doc => {
                 const r = doc.data();
-                if (r.maxWtp > 0) {
-                    csv += `${r.maxWtp}\n`;
-                }
+                const w = Number(r.maxWtp);
+                const val = Number.isFinite(w) ? Math.max(w, 0) : 0;
+                csv += csvCell(val) + '\n';
             });
 
-            downloadFile(csv, `gg_responses_${currentSurveyData.product.replace(/\s+/g, '_')}.csv`);
+            downloadFile(csv, `gg_responses_${safeFilenamePart(currentSurveyData.product)}.csv`);
             showStatus('Gabor-Granger data downloaded!', 'success');
         }
 
@@ -1237,14 +1449,20 @@
                 return;
             }
 
-            // Format for VW tool: too_cheap, cheap, expensive, too_expensive
+            // Format for VW tool: too_cheap, cheap, expensive, too_expensive.
+            // Coerce to numbers so a legitimate 0 is written as 0 (not blank), and
+            // guard every cell against spreadsheet formula injection.
             let csv = 'too_cheap,cheap,expensive,too_expensive\n';
             snapshot.forEach(doc => {
                 const r = doc.data();
-                csv += `${r.tooCheap || ''},${r.cheap || ''},${r.expensive || ''},${r.tooExpensive || ''}\n`;
+                const cells = [r.tooCheap, r.cheap, r.expensive, r.tooExpensive].map(v => {
+                    const n = Number(v);
+                    return Number.isFinite(n) ? csvCell(n) : '';
+                });
+                csv += cells.join(',') + '\n';
             });
 
-            downloadFile(csv, `vw_responses_${currentSurveyData.product.replace(/\s+/g, '_')}.csv`);
+            downloadFile(csv, `vw_responses_${safeFilenamePart(currentSurveyData.product)}.csv`);
             showStatus('Van Westendorp data downloaded!', 'success');
         }
 
@@ -1338,6 +1556,20 @@
             sessionStorage.setItem('surveyType', 'vw');
             window.location.href = 'van-westendorp.html?fromSurvey=true';
         }
+
+        // Enter on any single-line create-form field triggers Create Survey.
+        // The description textarea is excluded so Enter still inserts newlines.
+        ['survey-name', 'product-name', 'min-price', 'max-price', 'price-step'].forEach(function(fieldId) {
+            const el = document.getElementById(fieldId);
+            if (el) {
+                el.addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        createSurvey();
+                    }
+                });
+            }
+        });
     </script>
 </body>
 </html>

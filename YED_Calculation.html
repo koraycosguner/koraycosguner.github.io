@@ -3,8 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Income Elasticity of Demand (YED)</title>
+    <title>Income Elasticity of Demand (YED) | Koray Cosguner</title>
     <meta name="robots" content="noindex,nofollow">
+    <!-- Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-CTZ8G4EYLR"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-CTZ8G4EYLR');
+    </script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -88,6 +96,32 @@
         .badge-luxury { background: #f3e8ff; color: var(--luxury); }
         .badge-necessity { background: #d1fae5; color: var(--necessity); }
         .badge-inferior { background: #ffedd5; color: var(--inferior); }
+        .badge-neutral { background: #e5e7eb; color: #374151; }
+
+        /* Intermediate steps shown next to the result */
+        .change-row {
+            display: flex; flex-wrap: wrap; justify-content: center; gap: 10px 24px; margin-top: 18px; font-size: 0.95rem; color: var(--text-light);
+        }
+        .change-row span strong { color: var(--text-main); }
+        .method-note { margin-top: 14px; font-size: 0.8rem; color: #9ca3af; font-style: italic; }
+
+        /* Buttons */
+        .btn-row { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 20px; }
+        .btn-row .btn-calc { margin-top: 0; flex: 1 1 200px; }
+        .btn-example {
+            background: var(--surface); color: var(--primary); border: 1px solid var(--primary); padding: 14px 28px; border-radius: 8px; font-size: 1rem; font-weight: 700;
+            cursor: pointer; flex: 0 1 auto; transition: background 0.2s;
+        }
+        .btn-example:hover { background: #fef2f2; }
+
+        /* Inline validation */
+        .input-group input.invalid { border-color: #dc2626; box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1); }
+        .field-error { display: none; color: #dc2626; font-size: 0.85rem; font-weight: 600; margin-top: 6px; }
+        .field-error.show { display: block; }
+        .form-error {
+            display: none; background: #fef2f2; border: 1px solid #fecaca; color: #b91c1c; border-radius: 8px; padding: 12px 16px; margin-top: 16px; font-size: 0.95rem; font-weight: 600;
+        }
+        .form-error.show { display: block; }
 
         /* Analysis Box */
         .analysis-box {
@@ -111,9 +145,8 @@
         @media (max-width: 768px) {
             body { padding: 20px 15px; }
             .header h1 { font-size: 1.5rem; }
-            .input-grid { grid-template-columns: 1fr; gap: 15px; }
-            .result-row { flex-direction: column; gap: 1rem; }
-            .result-value { font-size: 2.5rem; }
+            .grid-2 { grid-template-columns: 1fr; gap: 15px; }
+            .metric-value { font-size: 2.5rem; }
             .analysis-box { padding: 20px; }
         }
     
@@ -140,7 +173,7 @@
     <div class="header">
         <h1>Income Elasticity of Demand (YED)</h1>
         <p>Analyze how consumer purchasing power affects demand for your product.</p>
-        <div class="notation-note">Note: In economics, <strong>Y</strong> is the standard symbol for <strong>Yield</strong> (Income).</div>
+        <div class="notation-note">Note: In economics, <strong>Y</strong> is the standard symbol for income (the letter I is reserved for investment).</div>
     </div>
 
     <div class="card">
@@ -148,37 +181,48 @@
             <div>
                 <div class="section-title">Consumer Income (Y)</div>
                 <div class="input-group">
-                    <label>Initial Income ($)</label>
-                    <input type="number" id="i1" placeholder="e.g. 50000">
+                    <label for="i1">Initial Income ($)</label>
+                    <input type="number" id="i1" min="0" step="any" placeholder="e.g. 50000">
+                    <div class="field-error" id="err-i1"></div>
                 </div>
                 <div class="input-group">
-                    <label>New Income ($)</label>
-                    <input type="number" id="i2" placeholder="e.g. 55000">
+                    <label for="i2">New Income ($)</label>
+                    <input type="number" id="i2" min="0" step="any" placeholder="e.g. 55000">
+                    <div class="field-error" id="err-i2"></div>
                 </div>
             </div>
 
             <div>
                 <div class="section-title">Product Demand (Q)</div>
                 <div class="input-group">
-                    <label>Initial Quantity Sold</label>
-                    <input type="number" id="q1" placeholder="e.g. 1000">
+                    <label for="q1">Initial Quantity Sold</label>
+                    <input type="number" id="q1" min="0" step="any" placeholder="e.g. 1000">
+                    <div class="field-error" id="err-q1"></div>
                 </div>
                 <div class="input-group">
-                    <label>New Quantity Sold</label>
-                    <input type="number" id="q2" placeholder="e.g. 1200">
+                    <label for="q2">New Quantity Sold</label>
+                    <input type="number" id="q2" min="0" step="any" placeholder="e.g. 1200">
+                    <div class="field-error" id="err-q2"></div>
                 </div>
             </div>
         </div>
 
-        <button class="btn-calc" onclick="calculate()">Calculate YED</button>
+        <div class="form-error" id="form-error"></div>
+
+        <div class="btn-row">
+            <button class="btn-calc" onclick="calculate()">Calculate YED</button>
+            <button class="btn-example" type="button" onclick="loadExample()">Load example</button>
+        </div>
     </div>
 
-    <div id="results">
-        
+    <div id="results" aria-live="polite">
+
         <div class="metric-box">
             <span class="metric-label">Income Elasticity (YED)</span>
             <div class="metric-value" id="yed-val">--</div>
             <div id="yed-badge"></div>
+            <div class="change-row" id="change-row"></div>
+            <div class="method-note">This tool uses the simple percentage-change (point) method. Mankiw's textbook uses the midpoint (arc) method for discrete changes, so its value may differ slightly.</div>
         </div>
 
         <div class="analysis-box">
@@ -192,6 +236,7 @@
             <strong>Definitions Source:</strong><br>
             <ul style="margin-top: 5px; padding-left: 20px; list-style-type: disc;">
                 <li><strong>Normal Good (Luxury):</strong> YED > 1. Demand rises faster than income.</li>
+                <li><strong>Unit Income Elastic:</strong> YED = 1. Demand rises exactly in proportion to income.</li>
                 <li><strong>Normal Good (Necessity):</strong> 0 < YED < 1. Demand rises slower than income.</li>
                 <li><strong>Inferior Good:</strong> YED < 0. Demand falls as income rises.</li>
             </ul>
@@ -203,78 +248,161 @@
     </div>
 
     <div class="footer">
-        Created by Dr. Koray Cosguner with the help of Gemini 3.0.
+        By Dr. Cosguner, with Gemini 3.0.
     </div>
 </div>
 
 <script>
+    const FIELD_IDS = ['i1', 'i2', 'q1', 'q2'];
+
+    function clearErrors() {
+        FIELD_IDS.forEach(function (id) {
+            document.getElementById(id).classList.remove('invalid');
+            const e = document.getElementById('err-' + id);
+            e.innerText = '';
+            e.classList.remove('show');
+        });
+        const fe = document.getElementById('form-error');
+        fe.innerText = '';
+        fe.classList.remove('show');
+    }
+
+    function setFieldError(id, msg) {
+        document.getElementById(id).classList.add('invalid');
+        const e = document.getElementById('err-' + id);
+        e.innerText = msg;
+        e.classList.add('show');
+    }
+
+    function setFormError(msg) {
+        const fe = document.getElementById('form-error');
+        fe.innerText = msg;
+        fe.classList.add('show');
+    }
+
+    function signStr(numStr) {
+        // Prefix a "+" for non-negative values; negatives already carry "-".
+        return (parseFloat(numStr) >= 0 ? '+' : '') + numStr;
+    }
+
     function calculate() {
+        clearErrors();
+        document.getElementById('results').style.display = 'none';
+
         // Get Inputs
         const i1 = parseFloat(document.getElementById('i1').value);
         const i2 = parseFloat(document.getElementById('i2').value);
         const q1 = parseFloat(document.getElementById('q1').value);
         const q2 = parseFloat(document.getElementById('q2').value);
 
-        if ([i1, i2, q1, q2].some(isNaN)) {
-            alert("Please fill in all fields.");
-            return;
-        }
+        // Field-level validation (inline messages, no alert)
+        let valid = true;
+        if (isNaN(i1)) { setFieldError('i1', 'Enter the initial income.'); valid = false; }
+        if (isNaN(i2)) { setFieldError('i2', 'Enter the new income.'); valid = false; }
+        if (isNaN(q1)) { setFieldError('q1', 'Enter the initial quantity.'); valid = false; }
+        if (isNaN(q2)) { setFieldError('q2', 'Enter the new quantity.'); valid = false; }
+
+        // Positivity of baselines (denominators) and non-negative signs
+        if (!isNaN(i1) && i1 <= 0) { setFieldError('i1', 'Initial income must be greater than 0.'); valid = false; }
+        if (!isNaN(q1) && q1 <= 0) { setFieldError('q1', 'Initial quantity must be greater than 0.'); valid = false; }
+        if (!isNaN(i2) && i2 < 0) { setFieldError('i2', 'New income cannot be negative.'); valid = false; }
+        if (!isNaN(q2) && q2 < 0) { setFieldError('q2', 'New quantity cannot be negative.'); valid = false; }
+
+        if (!valid) { return; }
 
         // Calculate % Changes
         const pctIncome = (i2 - i1) / i1;
         const pctQuant = (q2 - q1) / q1;
 
         if (pctIncome === 0) {
-            alert("Income must change to calculate elasticity.");
+            setFormError('Income must change to calculate elasticity. Enter a new income that differs from the initial income.');
             return;
         }
 
         // Calculate YED
         const yed = pctQuant / pctIncome;
 
-        // Display Results
-        document.getElementById('results').style.display = 'block';
-        document.getElementById('yed-val').innerText = yed.toFixed(2);
+        if (!isFinite(yed)) {
+            setFormError('The result is undefined for these values. Check the inputs and try again.');
+            return;
+        }
 
-        // Classification Logic
+        // Display Results
+        const display = yed.toFixed(2);
+        document.getElementById('results').style.display = 'block';
+        document.getElementById('yed-val').innerText = display;
+
+        // Show the two intermediate percentage changes (the pedagogical point)
+        const dY = (pctIncome * 100).toFixed(1);
+        const dQ = (pctQuant * 100).toFixed(1);
+        document.getElementById('change-row').innerHTML =
+            '<span><strong>' + signStr(dQ) + '%</strong> quantity</span>' +
+            '<span><strong>' + signStr(dY) + '%</strong> income</span>';
+
+        // Classification Logic (based on the rounded value so the label always
+        // matches the number shown; unit-elastic handled explicitly)
+        const y = parseFloat(display);
         const badgeEl = document.getElementById('yed-badge');
         const insightEl = document.getElementById('insight-text');
-        
+
+        // Clear any inline styles a prior run may have left on the badge
+        badgeEl.removeAttribute('style');
+
         let text = "";
 
-        if (yed > 1) {
+        if (y > 1) {
             // Luxury
             badgeEl.className = "classification-badge badge-luxury";
             badgeEl.innerText = "Normal Good (Luxury)";
-            text = `<strong>This is a Normal Good (Luxury).</strong><br> 
+            text = `<strong>This is a Normal Good (Luxury).</strong><br>
             Demand is income-elastic (YED > 1). As consumers become wealthier, they spend a larger proportion of their income on this good. Examples include sports cars, fine dining, and foreign travel.`;
-        } else if (yed > 0) {
+        } else if (y === 1) {
+            // Unit income elastic
+            badgeEl.className = "classification-badge badge-necessity";
+            badgeEl.innerText = "Unit Income Elastic";
+            text = `<strong>This is Unit Income Elastic (YED = 1).</strong><br>
+            Demand grows exactly in proportion to income: a 10% rise in income lifts sales by 10%. This is the boundary between a necessity and a luxury.`;
+        } else if (y > 0) {
             // Necessity
             badgeEl.className = "classification-badge badge-necessity";
             badgeEl.innerText = "Normal Good (Necessity)";
-            text = `<strong>This is a Normal Good (Necessity).</strong><br> 
+            text = `<strong>This is a Normal Good (Necessity).</strong><br>
             Demand is income-inelastic (0 < YED < 1). Sales increase with income, but not as fast as income itself. These are essential items like food, electricity, and clothing.`;
-        } else if (yed < 0) {
+        } else if (y < 0) {
             // Inferior
             badgeEl.className = "classification-badge badge-inferior";
             badgeEl.innerText = "Inferior Good";
-            text = `<strong>This is an Inferior Good.</strong><br> 
+            text = `<strong>This is an Inferior Good.</strong><br>
             Demand falls as income rises (YED < 0). As consumers get richer, they switch away from this product to higher-quality substitutes. Examples include generic brands, instant noodles, or bus travel (switching to cars).`;
         } else {
             // Exactly 0
-            badgeEl.className = "classification-badge";
-            badgeEl.style.background = "#e5e7eb"; badgeEl.style.color = "#374151";
+            badgeEl.className = "classification-badge badge-neutral";
             badgeEl.innerText = "Income Inelastic";
             text = `<strong>Demand is Income Inelastic.</strong><br> Changes in income have no impact on sales volume.`;
         }
 
         insightEl.innerHTML = text;
     }
+
+    function loadExample() {
+        document.getElementById('i1').value = 50000;
+        document.getElementById('i2').value = 55000;
+        document.getElementById('q1').value = 1000;
+        document.getElementById('q2').value = 1200;
+        calculate();
+    }
+
+    // Enter key in any input triggers calculation
+    FIELD_IDS.forEach(function (id) {
+        document.getElementById(id).addEventListener('keydown', function (ev) {
+            if (ev.key === 'Enter') { ev.preventDefault(); calculate(); }
+        });
+    });
 </script>
 
 </div> <!-- end main-content -->
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js" integrity="sha384-yuGdyIzzYtOBlBG6JOWn+Ey9kpq7HocusNuxEGyyohr1eEyXpeEyehIIXC/hznw4" crossorigin="anonymous"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js" integrity="sha384-lI+CxEx/bCvWP1b0OK13j5HTrTZP7yf1xle8TVOFq2smz6KC1RChTarRV/RHP5PP" crossorigin="anonymous"></script>
 <script>
     const firebaseConfig = {
         apiKey: "AIzaSyBg3LJDwVIRGWtFZb_mM_CSRJMNCJUta20",
@@ -285,13 +413,23 @@
         appId: "1:659335573790:web:00013a166787efecb3d90f",
         measurementId: "G-NGKNY08XWP"
     };
+    // If the sign-in service cannot be reached, stop showing "Loading..." forever.
+    // Scheduled BEFORE initializeApp so it still fires if the Firebase CDN is blocked
+    // (in which case the initializeApp call below throws).
+    var authTimeout = setTimeout(function () {
+        document.getElementById('loading-screen').innerHTML =
+            '<p style="color: #64748b; max-width: 340px; text-align: center;">Could not reach the sign-in service. Check your connection and reload this page.</p>';
+    }, 12000);
+
     firebase.initializeApp(firebaseConfig);
+
     firebase.auth().onAuthStateChanged(function(user) {
+        clearTimeout(authTimeout);
         if (user) {
             document.getElementById('loading-screen').style.display = 'none';
             document.getElementById('main-content').style.display = 'block';
         } else {
-            window.location.href = 'login.html';
+            window.location.href = 'login.html?next=' + encodeURIComponent(window.location.pathname.split('/').pop());
         }
     });
 </script>

@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Price Sensitivity Survey</title>
+    <meta name="robots" content="noindex,nofollow">
+    <title>Price Sensitivity Survey | Koray Cosguner</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -378,38 +379,38 @@
 
                     <div class="questions-container">
                         <div class="question-card q1">
-                            <div class="question-label">Question 1: Too Cheap</div>
+                            <div class="question-label" id="label-too-cheap">Question 1: Too Cheap</div>
                             <p class="question-text">At what price would you consider this product to be <strong>so cheap</strong> that you would question its quality?</p>
                             <div class="price-input-wrapper">
                                 <span class="currency-symbol" id="currency1">$</span>
-                                <input type="number" class="price-input" id="too-cheap" placeholder="Enter price" min="0" step="0.01">
+                                <input type="number" class="price-input" id="too-cheap" placeholder="Enter price" min="0" step="0.01" aria-labelledby="label-too-cheap" aria-label="Price so cheap you would question quality">
                             </div>
                         </div>
 
                         <div class="question-card q2">
-                            <div class="question-label">Question 2: Bargain</div>
-                            <p class="question-text">At what price would you consider this product to be a <strong>bargain</strong> — a great buy for the money?</p>
+                            <div class="question-label" id="label-cheap">Question 2: Bargain</div>
+                            <p class="question-text">At what price would you consider this product to be a <strong>bargain</strong>, a great buy for the money?</p>
                             <div class="price-input-wrapper">
                                 <span class="currency-symbol" id="currency2">$</span>
-                                <input type="number" class="price-input" id="cheap" placeholder="Enter price" min="0" step="0.01">
+                                <input type="number" class="price-input" id="cheap" placeholder="Enter price" min="0" step="0.01" aria-labelledby="label-cheap" aria-label="Price that would be a bargain">
                             </div>
                         </div>
 
                         <div class="question-card q3">
-                            <div class="question-label">Question 3: Getting Expensive</div>
+                            <div class="question-label" id="label-expensive">Question 3: Getting Expensive</div>
                             <p class="question-text">At what price would you consider this product to be <strong>getting expensive</strong>, but still worth considering?</p>
                             <div class="price-input-wrapper">
                                 <span class="currency-symbol" id="currency3">$</span>
-                                <input type="number" class="price-input" id="expensive" placeholder="Enter price" min="0" step="0.01">
+                                <input type="number" class="price-input" id="expensive" placeholder="Enter price" min="0" step="0.01" aria-labelledby="label-expensive" aria-label="Price that is getting expensive but still worth considering">
                             </div>
                         </div>
 
                         <div class="question-card q4">
-                            <div class="question-label">Question 4: Too Expensive</div>
+                            <div class="question-label" id="label-too-expensive">Question 4: Too Expensive</div>
                             <p class="question-text">At what price would you consider this product to be <strong>too expensive</strong> to consider buying?</p>
                             <div class="price-input-wrapper">
                                 <span class="currency-symbol" id="currency4">$</span>
-                                <input type="number" class="price-input" id="too-expensive" placeholder="Enter price" min="0" step="0.01">
+                                <input type="number" class="price-input" id="too-expensive" placeholder="Enter price" min="0" step="0.01" aria-labelledby="label-too-expensive" aria-label="Price too expensive to consider buying">
                             </div>
                         </div>
                     </div>
@@ -418,6 +419,13 @@
                         <p class="validation-error" id="validation-error"></p>
                         <button class="submit-btn" onclick="submitSurvey()">Submit Response</button>
                     </div>
+                </div>
+
+                <!-- Already Responded Screen (soft duplicate guard) -->
+                <div id="already-responded" class="thank-you hidden">
+                    <div class="thank-you-icon">✓</div>
+                    <h2>Already Submitted</h2>
+                    <p>Our records on this device show you have already responded to this survey. Thank you!</p>
                 </div>
 
                 <!-- Thank You Screen -->
@@ -454,8 +462,8 @@
     </div>
 
     <!-- Firebase SDK -->
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js" integrity="sha384-yuGdyIzzYtOBlBG6JOWn+Ey9kpq7HocusNuxEGyyohr1eEyXpeEyehIIXC/hznw4" crossorigin="anonymous"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js" integrity="sha384-nwX2Qpkhc2sv6L0ZPkLefLGguao67toSowvePuQvGF6cG+8MUphGI2uI94Ls3JF7" crossorigin="anonymous"></script>
 
     <script>
         // Firebase configuration
@@ -477,6 +485,18 @@
         let surveyId = null;
         let surveyData = null;
         let currency = '$';
+
+        // Soft duplicate-submission guard (F5). localStorage may throw in private mode,
+        // so every access is wrapped. This is a convenience guard, not access control.
+        function submitKey(id) { return 'vw_survey_submitted_' + id; }
+        function hasSubmitted(id) {
+            try { return localStorage.getItem(submitKey(id)) === '1'; }
+            catch (e) { return false; }
+        }
+        function markSubmitted(id) {
+            try { localStorage.setItem(submitKey(id), '1'); }
+            catch (e) { /* ignore (private mode) */ }
+        }
 
         // Initialize
         async function init() {
@@ -519,26 +539,34 @@
             document.getElementById('loading').classList.add('hidden');
             document.getElementById('survey-content').classList.remove('hidden');
 
-            // Set product photos
+            // Set product photos. Build image nodes with setAttribute so a crafted photo
+            // URL from the survey document cannot break out and inject markup (F10).
             const photosContainer = document.getElementById('product-photos');
-            if (surveyData.photos && surveyData.photos.length > 0) {
-                photosContainer.innerHTML = surveyData.photos.map(photo =>
-                    `<img src="${photo}" alt="Product" class="product-photo">`
-                ).join('');
+            const photos = Array.isArray(surveyData.photos) ? surveyData.photos : [];
+            if (photos.length > 0) {
+                photosContainer.textContent = '';
+                photos.forEach(photo => {
+                    if (typeof photo !== 'string' || !photo) return;
+                    const img = document.createElement('img');
+                    img.setAttribute('src', photo);
+                    img.setAttribute('alt', 'Product');
+                    img.className = 'product-photo';
+                    photosContainer.appendChild(img);
+                });
+                if (!photosContainer.hasChildNodes()) photosContainer.style.display = 'none';
             } else {
                 photosContainer.style.display = 'none';
             }
 
             // Set product info
-            document.getElementById('product-name').textContent = surveyData.product;
+            document.getElementById('product-name').textContent = surveyData.product || '';
             if (surveyData.description) {
-                // Format description: convert newlines to <br> and preserve bullet points
-                let formattedDesc = surveyData.description
-                    .replace(/\n/g, '<br>')
-                    .replace(/•/g, '<br>•');
-                // Clean up any double line breaks at the start
-                formattedDesc = formattedDesc.replace(/^<br>/, '');
-                document.getElementById('product-description').innerHTML = formattedDesc;
+                // Render the description as plain text (the CSS white-space: pre-line keeps
+                // line breaks, and putting each bullet on its own line preserves the layout).
+                // Using textContent means no HTML from the survey document can execute in the
+                // respondent's browser (F10).
+                const desc = String(surveyData.description).replace(/•/g, '\n•').replace(/^\n+/, '');
+                document.getElementById('product-description').textContent = desc;
             } else {
                 document.getElementById('product-description').style.display = 'none';
             }
@@ -549,6 +577,23 @@
             document.getElementById('currency2').textContent = currency;
             document.getElementById('currency3').textContent = currency;
             document.getElementById('currency4').textContent = currency;
+
+            // If this device already submitted a response for this survey, show a notice
+            // instead of the questions (soft guard, F5).
+            if (hasSubmitted(surveyId)) {
+                document.getElementById('questions-section').classList.add('hidden');
+                document.getElementById('already-responded').classList.remove('hidden');
+            } else {
+                // Enter key on any price field submits the response.
+                document.querySelectorAll('#questions-section .price-input').forEach(input => {
+                    input.addEventListener('keydown', function(e) {
+                        if (e.key === 'Enter') {
+                            e.preventDefault();
+                            submitSurvey();
+                        }
+                    });
+                });
+            }
         }
 
         function validateInputs() {
@@ -566,9 +611,9 @@
                 return null;
             }
 
-            // Check all are positive
+            // Check none are negative (0 is accepted as a valid price)
             if (tooCheap < 0 || cheap < 0 || expensive < 0 || tooExpensive < 0) {
-                errorEl.textContent = 'All prices must be positive.';
+                errorEl.textContent = 'Prices cannot be negative.';
                 errorEl.classList.add('visible');
                 return null;
             }
@@ -605,6 +650,9 @@
                     submittedAt: firebase.firestore.FieldValue.serverTimestamp()
                 });
 
+                // Record on this device so a reload does not re-open the form (soft guard, F5).
+                markSubmitted(surveyId);
+
                 // Show thank you
                 document.getElementById('questions-section').classList.add('hidden');
                 document.getElementById('thank-you').classList.remove('hidden');
@@ -615,7 +663,12 @@
                 document.getElementById('summary-expensive').textContent = currency + expensive.toFixed(2);
                 document.getElementById('summary-too-expensive').textContent = currency + tooExpensive.toFixed(2);
 
-                // Update response count (non-blocking, don't fail if this errors)
+                // Update response count (non-blocking, don't fail if this errors).
+                // NOTE: this client-side increment requires Firestore rules that permit a
+                // public update on surveys/{id}. That is broader access than ideal; the
+                // counter should move to a Cloud Function or be derived from the
+                // vw_responses subcollection so the rules can deny all public updates.
+                // Rules cannot be changed from this repo, so the increment stays for now.
                 try {
                     await db.collection('surveys').doc(surveyId).update({
                         vwResponseCount: firebase.firestore.FieldValue.increment(1)

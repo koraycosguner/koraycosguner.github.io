@@ -29,7 +29,6 @@
         :root {
             --primary: #990000;
             --primary-light: #fdf2f2;
-            --primary-hover: #7a0000;
             --accent: #1a1a9e;
 
             --text-main: #111827;
@@ -39,21 +38,16 @@
 
             --bg: #ffffff;
             --surface: #f9fafb;
-            --surface-dark: #111827;
             --border: #e2e8f0;
             --border-strong: #cbd5e1;
 
             --card-gradient: linear-gradient(145deg, #ffffff 0%, #f9fafb 100%);
 
-            --shadow-sm:    0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
-            --shadow-md:    0 4px 12px rgba(0,0,0,0.08), 0 2px 4px rgba(0,0,0,0.04);
             --shadow-lg:    0 12px 32px rgba(0,0,0,0.10), 0 4px 8px rgba(0,0,0,0.06);
-            --shadow-card:  0 2px 8px rgba(0,0,0,0.05), 0 0 0 1px rgba(0,0,0,0.03);
 
             --radius-sm:    6px;
             --radius-md:    12px;
             --radius-lg:    18px;
-            --radius-xl:    24px;
             --radius-full:  9999px;
 
             --transition-fast: 0.15s ease;
@@ -299,6 +293,30 @@
         .chip:hover { border-color: var(--primary); color: var(--primary); }
         .chip.active { background: var(--primary); border-color: var(--primary); color: #fff; }
         .chip .count { font-size: 0.72rem; font-weight: 700; opacity: 0.7; }
+
+        /* Text search box */
+        .search-bar { max-width: 520px; margin: 0 auto 20px; }
+        .search-input {
+            width: 100%; box-sizing: border-box; font-family: inherit;
+            font-size: 0.95rem; padding: 12px 20px;
+            border: 1px solid var(--border-strong); border-radius: var(--radius-full);
+            background: var(--surface); color: var(--text-main);
+            transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+        }
+        .search-input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(153,0,0,0.12); }
+        .search-input::placeholder { color: var(--text-muted); }
+        .no-matches { text-align: center; color: var(--text-light); font-size: 0.95rem; margin: 8px 0 0; }
+
+        /* Card header row: tool code + topic tag */
+        .card-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 18px; }
+        .card-head .tool-code { margin-bottom: 0; align-self: center; }
+        .card-tag {
+            font-size: 0.66rem; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase;
+            color: var(--text-muted); background: var(--surface);
+            border: 1px solid var(--border); padding: 3px 10px; border-radius: var(--radius-full); white-space: nowrap;
+        }
+        .card[hidden] { display: none; }
+
         .tool-group { margin-bottom: 48px; }
         .tool-group:last-child { margin-bottom: 0; }
         .tool-group[hidden] { display: none; }
@@ -309,7 +327,7 @@
         }
         .group-title::after { content: ''; flex: 1; height: 1px; background: var(--border); }
 
-        /* Analytics cards: blue accent (vs crimson Pricing) */
+        /* Analytics cards: crimson accent (vs blue Pricing) */
         .card-data::after { background: linear-gradient(145deg, var(--border) 0%, rgba(153,0,0,0.1) 50%, var(--border) 100%); }
         .card-data:hover::after { background: linear-gradient(145deg, var(--primary) 0%, var(--accent) 50%, var(--primary) 100%); }
         .card-data::before { background: linear-gradient(90deg, var(--primary) 0%, var(--accent) 100%); }
@@ -439,14 +457,6 @@
         }
         .font-size-btn.decrease-a { font-size: 0.7rem; }
         .font-size-btn.increase-a { font-size: 1.1rem; }
-        .font-size-level {
-            font-size: 0.65rem;
-            font-weight: 700;
-            color: var(--text-muted);
-            min-width: 14px;
-            text-align: center;
-            letter-spacing: -0.02em;
-        }
         @media (max-width: 640px) {
             .font-size-controls { margin-right: 4px; }
         }
@@ -496,6 +506,11 @@
 </head>
 <body>
     <!-- Auth check - redirect to login if not signed in -->
+    <noscript>
+        <div style="position: fixed; inset: 0; z-index: 10000; background: var(--bg); display: flex; align-items: center; justify-content: center; padding: 24px; text-align: center;">
+            <p style="color: var(--text-sub); max-width: 420px;">This page needs JavaScript to sign in and load the tools. Please enable JavaScript in your browser and reload this page.</p>
+        </div>
+    </noscript>
     <div id="loading-screen" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: var(--bg); display: flex; align-items: center; justify-content: center; z-index: 9999;">
         <p style="color: var(--text-light);">Loading...</p>
     </div>
@@ -565,10 +580,13 @@
 
     <div class="tools-section">
     <div class="container">
+        <div class="search-bar">
+            <input type="search" id="tool-search" class="search-input" placeholder="Search tools by name, topic, or keyword..." autocomplete="off" aria-label="Search tools by name, topic, or keyword">
+        </div>
         <div class="filter-bar">
-            <button class="chip" data-filter="data" onclick="filterTools('data', this)">Analytics <span class="count">8</span></button>
-            <button class="chip" data-filter="pricing" onclick="filterTools('pricing', this)">Pricing <span class="count">12</span></button>
-            <button class="chip active" data-filter="all" onclick="filterTools('all', this)">All <span class="count">20</span></button>
+            <button type="button" class="chip" data-filter="data" aria-pressed="false" onclick="filterTools('data', this)">Analytics <span class="count">8</span></button>
+            <button type="button" class="chip" data-filter="pricing" aria-pressed="false" onclick="filterTools('pricing', this)">Pricing <span class="count">13</span></button>
+            <button type="button" class="chip active" data-filter="all" aria-pressed="true" onclick="filterTools('all', this)">All <span class="count">21</span></button>
         </div>
 
         <section class="tool-group" data-group="data">
@@ -576,56 +594,56 @@
             <div class="grid">
 
             <a href="descriptive-stats.html" class="card card-data fade-in">
-                <span class="tool-code">Analytics Tool 1</span>
+                <div class="card-head"><span class="tool-code">Analytics Tool 1</span><span class="card-tag">Statistics</span></div>
                 <h3>Descriptive Statistics and Confidence Intervals</h3>
                 <p>Upload a CSV to compute descriptive statistics (mean, median, mode, SD, variance, quartiles, range, IQR, and more) for every numeric variable, with a downloadable results table, plus a t-distribution confidence interval for the mean of a variable and confidence level you choose. Runs entirely in your browser via R (WebR).</p>
                 <div class="card-foot"><span class="built">By Dr. Cosguner, with Claude</span><span class="launch-btn">Launch <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span></div>
             </a>
 
             <a href="htest-tool.html" class="card card-data fade-in">
-                <span class="tool-code">Analytics Tool 2</span>
+                <div class="card-head"><span class="tool-code">Analytics Tool 2</span><span class="card-tag">Statistics</span></div>
                 <h3>Hypothesis Tests: t-tests, ANOVA, Chi-square</h3>
                 <p>Run one-sample, paired, and independent-samples t-tests, one-way ANOVA (F-test), and chi-square test of independence. All powered by base R running in your browser.</p>
                 <div class="card-foot"><span class="built">By Dr. Cosguner, with Claude</span><span class="launch-btn">Launch <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span></div>
             </a>
 
             <a href="glm-tool.html" class="card card-data fade-in">
-                <span class="tool-code">Analytics Tool 3</span>
+                <div class="card-head"><span class="tool-code">Analytics Tool 3</span><span class="card-tag">Regression</span></div>
                 <h3>Linear, Poisson, Binary Logistic Regressions</h3>
                 <p>Upload a CSV to preview data, view descriptive statistics, and filter subsets, then fit Linear, Poisson, or Binary Logistic regressions (with variable transformations and interactions) using R in the browser via WebR. View coefficients and the estimated equation, set non-significant coefficients to zero (p &lt; 0.05 or 0.10), make single or batch predictions, and export the R script, estimates, and predictions.</p>
                 <div class="card-foot"><span class="built">By Dr. Cosguner, with Claude</span><span class="launch-btn">Launch <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span></div>
             </a>
 
             <a href="profit-optimizer.html" class="card card-data fade-in">
-                <span class="tool-code">Analytics Tool 4</span>
+                <div class="card-head"><span class="tool-code">Analytics Tool 4</span><span class="card-tag">Optimization</span></div>
                 <h3>General Purpose Optimizer</h3>
                 <p>Define a custom system of equations and maximize or minimize any variable over one or more bounded decision variables (with fixed control inputs). Solves in the browser and cross-checks with real R (via webR), then exports the model as R code or an Excel workbook and visualizes the objective.</p>
                 <div class="card-foot"><span class="built">By Dr. Cosguner, with Claude</span><span class="launch-btn">Launch <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span></div>
             </a>
 
             <a href="conjoint-design.html" class="card card-data fade-in">
-                <span class="tool-code">Analytics Tool 5</span>
+                <div class="card-head"><span class="tool-code">Analytics Tool 5</span><span class="card-tag">Conjoint</span></div>
                 <h3>Conjoint Fractional Factorial Design</h3>
                 <p>Build conjoint fractional factorial designs in the browser: define attributes and levels, generate a D-optimal subset of profiles via R (AlgDesign) on WebR, and export the profiles and a dummy-coded design matrix as CSV.</p>
                 <div class="card-foot"><span class="built">By Dr. Cosguner, with Claude</span><span class="launch-btn">Launch <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span></div>
             </a>
 
             <a href="conjoint-analysis.html" class="card card-data fade-in">
-                <span class="tool-code">Analytics Tool 6</span>
+                <div class="card-head"><span class="tool-code">Analytics Tool 6</span><span class="card-tag">Conjoint</span></div>
                 <h3>Conjoint Analysis Tool</h3>
                 <p>Analyzes ratings-based conjoint survey data: estimates per-respondent part-worth utilities via OLS regression, computes attribute importance, segments respondents by their key attributes, and runs a choice simulator that reports individual choices, choice probabilities, and aggregate market shares (first-choice and share of preference).</p>
                 <div class="card-foot"><span class="built">By Dr. Cosguner, with Claude</span><span class="launch-btn">Launch <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span></div>
             </a>
 
             <a href="latent-class.html" class="card card-data fade-in">
-                <span class="tool-code">Analytics Tool 7</span>
+                <div class="card-head"><span class="tool-code">Analytics Tool 7</span><span class="card-tag">Segmentation</span></div>
                 <h3>Latent Class Regression</h3>
                 <p>Estimates segment-level regression models via finite mixture modeling (the flexmix package in R), supporting Linear, Poisson, and Binary Logistic families. Reports per-segment coefficients (with standard errors and p-values), segment sizes, fit statistics (AIC, BIC, log-likelihood), consumer/household segment assignments, and an exportable R script.</p>
                 <div class="card-foot"><span class="built">By Dr. Cosguner, with Claude</span><span class="launch-btn">Launch <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span></div>
             </a>
 
             <a href="mlogit-tool.html" class="card card-data fade-in">
-                <span class="tool-code">Analytics Tool 8</span>
+                <div class="card-head"><span class="tool-code">Analytics Tool 8</span><span class="card-tag">Choice Models</span></div>
                 <h3>Multinomial and Conditional Logistic Regressions</h3>
                 <p>Estimate multinomial and conditional logit choice models with the mlogit R package, running entirely in your browser (no R install, data stays local). Upload long or wide CSV data, specify alternative-specific and choice-invariant variables, then view coefficients, fit statistics, prediction equations, and interactive choice probabilities, with CSV and R-script export.</p>
                 <div class="card-foot"><span class="built">By Dr. Cosguner, with Claude</span><span class="launch-btn">Launch <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span></div>
@@ -639,7 +657,7 @@
             <div class="grid">
 
             <a href="PEM.html" class="card fade-in">
-                <span class="tool-code">Pricing Tool 1</span>
+                <div class="card-head"><span class="tool-code">Pricing Tool 1</span><span class="card-tag">Pricing Strategy</span></div>
                 <h3>Pricing Effectiveness Matrix</h3>
                 <p>A weighted self-assessment that scores an organization's pricing capability across strategy, execution, and analytics, using adjustable factor weights and 1-to-5 ratings to produce a normalized score and maturity band.</p>
                 <div class="card-note">Adapted from Rockney Walters (Professor of Marketing), Stephen Brown (MBA), and Will Charron (MBA).</div>
@@ -647,85 +665,94 @@
             </a>
 
             <a href="QEAT.html" class="card fade-in">
-                <span class="tool-code">Pricing Tool 2</span>
+                <div class="card-head"><span class="tool-code">Pricing Tool 2</span><span class="card-tag">Elasticity</span></div>
                 <h3>Qualitative Elasticity Assessment</h3>
                 <p>Estimates a product's price elasticity by weighting and rating the 10 price-sensitivity drivers from Nagle and Muller's "The Strategy and Tactics of Pricing," returning a weighted score classified as elastic, unitary, or inelastic.</p>
                 <div class="card-foot"><span class="built">By Dr. Cosguner, with Gemini 3.0</span><span class="launch-btn">Launch <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span></div>
             </a>
 
             <a href="PED_Calculation.html" class="card fade-in">
-                <span class="tool-code">Pricing Tool 3</span>
+                <div class="card-head"><span class="tool-code">Pricing Tool 3</span><span class="card-tag">Elasticity</span></div>
                 <h3>Price Elasticity Calculator</h3>
                 <p>Computes price elasticity of demand, revenue, and profit from two price/quantity points and a variable cost, then reports before/after revenue, margin, and profit with strategic price/volume and margin/volume insights.</p>
                 <div class="card-foot"><span class="built">By Dr. Cosguner, with Gemini 3.0</span><span class="launch-btn">Launch <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span></div>
             </a>
 
             <a href="YED_Calculation.html" class="card fade-in">
-                <span class="tool-code">Pricing Tool 4</span>
+                <div class="card-head"><span class="tool-code">Pricing Tool 4</span><span class="card-tag">Elasticity</span></div>
                 <h3>Income Elasticity (YED)</h3>
                 <p>Calculates Income Elasticity of Demand from before/after income and quantity values, then classifies the product as a Necessity, Luxury, or Inferior good.</p>
                 <div class="card-foot"><span class="built">By Dr. Cosguner, with Gemini 3.0</span><span class="launch-btn">Launch <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span></div>
             </a>
 
             <a href="model-elasticity.html" class="card fade-in">
-                <span class="tool-code">Pricing Tool 5</span>
+                <div class="card-head"><span class="tool-code">Pricing Tool 5</span><span class="card-tag">Elasticity</span></div>
                 <h3>Model-Based Price Elasticity Calculator</h3>
                 <p>Enter an estimated demand equation (with fixed control variables), two price points, and unit cost to compute price elasticities of demand, revenue, and profit, plus a before/after table of quantity, revenue, margin, and profit.</p>
                 <div class="card-foot"><span class="built">By Dr. Cosguner, with Claude</span><span class="launch-btn">Launch <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span></div>
             </a>
 
             <a href="optimizer.html" class="card fade-in">
-                <span class="tool-code">Pricing Tool 6</span>
+                <div class="card-head"><span class="tool-code">Pricing Tool 6</span><span class="card-tag">Price Optimization</span></div>
                 <h3>Price Optimizer (Linear)</h3>
                 <p>Solver for linear demand (Q = A + BP): computes the optimal price under revenue maximization vs. profit maximization, with side-by-side metrics and revenue/profit curves.</p>
                 <div class="card-foot"><span class="built">By Dr. Cosguner, with Gemini 3.0</span><span class="launch-btn">Launch <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span></div>
             </a>
 
             <a href="constant_elasticity.html" class="card fade-in">
-                <span class="tool-code">Pricing Tool 7</span>
+                <div class="card-head"><span class="tool-code">Pricing Tool 7</span><span class="card-tag">Price Optimization</span></div>
                 <h3>Single-Point Price Optimizer</h3>
                 <p>Finds the profit-maximizing price from a single price/quantity point, an estimated elasticity, and variable cost using a constant-elasticity demand model. Outputs current vs. optimal price, profit, and a profit-vs-price chart.</p>
                 <div class="card-foot"><span class="built">By Dr. Cosguner, with Gemini 3.0</span><span class="launch-btn">Launch <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span></div>
             </a>
 
             <a href="channel-pricing.html" class="card fade-in">
-                <span class="tool-code">Pricing Tool 8</span>
+                <div class="card-head"><span class="tool-code">Pricing Tool 8</span><span class="card-tag">Channel Strategy</span></div>
                 <h3>Channel Pricing Optimizer</h3>
                 <p>Optimizes producer pricing in a vertical channel under three retailer types (vertically integrated, cost-plus markup, and strategic/Stackelberg), using a custom linear or non-linear demand function. Reports optimal wholesale and retail prices, profits, and the double-marginalization efficiency loss, with a comparison table, profit chart, and copyable R code.</p>
                 <div class="card-foot"><span class="built">By Dr. Cosguner, with Claude</span><span class="launch-btn">Launch <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span></div>
             </a>
 
             <a href="competitive-channel.html" class="card fade-in">
-                <span class="tool-code">Pricing Tool 9</span>
+                <div class="card-head"><span class="tool-code">Pricing Tool 9</span><span class="card-tag">Channel Strategy</span></div>
                 <h3>Pricing with Substitute or Complementary Products</h3>
                 <p>Solves optimal pricing for two substitute or complementary products across four channel scenarios (single owner vs. competing brands, selling direct vs. through a common retailer), comparing prices, quantities, and profits. Demand parameters can be entered manually or estimated from uploaded data via in-browser OLS regression, with built-in demand-prediction and elasticity calculators.</p>
                 <div class="card-foot"><span class="built">By Dr. Cosguner, with Claude</span><span class="launch-btn">Launch <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span></div>
             </a>
 
             <a href="van-westendorp.html" class="card fade-in">
-                <span class="tool-code">Pricing Tool 10</span>
+                <div class="card-head"><span class="tool-code">Pricing Tool 10</span><span class="card-tag">Pricing Research</span></div>
                 <h3>Van Westendorp Price Sensitivity Meter</h3>
                 <p>Discover optimal pricing and acceptable price ranges using customer survey data. Upload responses to four price sensitivity questions and get key price points instantly.</p>
                 <div class="card-foot"><span class="built">By Dr. Cosguner, with Claude</span><span class="launch-btn">Launch <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span></div>
             </a>
 
             <a href="gabor-granger.html" class="card fade-in">
-                <span class="tool-code">Pricing Tool 11</span>
+                <div class="card-head"><span class="tool-code">Pricing Tool 11</span><span class="card-tag">Pricing Research</span></div>
                 <h3>Gabor-Granger Price Analysis</h3>
                 <p>Find the revenue-maximizing (and, with unit cost, profit-maximizing) price from individual willingness-to-pay data. Enter WTP values manually or upload a CSV to build a demand curve, with charts, a results table, and CSV/PNG export.</p>
                 <div class="card-foot"><span class="built">By Dr. Cosguner, with Claude</span><span class="launch-btn">Launch <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span></div>
             </a>
 
             <a href="survey-admin.html" class="card card-instructor fade-in">
-                <span class="tool-code">Pricing Tool 12</span>
+                <div class="card-head"><span class="tool-code">Pricing Tool 12</span><span class="card-tag">Pricing Research</span></div>
                 <h3>Pricing Survey Builder</h3>
                 <p>Instructor console to build, share, and manage Van Westendorp (PSM) and Gabor-Granger pricing surveys: collects student responses in real time and exports them (or loads them directly) into the matching analysis tools.</p>
                 <div class="card-note">Instructor only. Uses Firebase for response storage.</div>
                 <div class="card-foot"><span class="built">By Dr. Cosguner, with Claude</span><span class="launch-btn">Launch <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span></div>
             </a>
 
+            <a href="bertrand-equilibrium.html" class="card fade-in">
+                <div class="card-head"><span class="tool-code">Pricing Tool 13</span><span class="card-tag">Competition</span></div>
+                <h3>Price Equilibrium Calculator</h3>
+                <p>Computes the Bertrand-Nash price equilibrium for two competing brands with differentiated products and linear demand. Enter base demand, marginal cost, and own- and cross-price sensitivities (or paste estimated demand equations) to get each brand's equilibrium price, its best response functions, and a chart of where they intersect. Includes a competition-vs-collusion comparison against joint profit maximization.</p>
+                <div class="card-foot"><span class="built">By Dr. Cosguner, with Claude</span><span class="launch-btn">Launch <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span></div>
+            </a>
+
             </div>
         </section>
+
+        <p id="no-matches" class="no-matches" hidden>No tools match your search. Try a different keyword or clear the search box.</p>
     </div>
     </div> <!-- end tools-section -->
 
@@ -740,8 +767,8 @@
     </button>
 
     <!-- Firebase SDK -->
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js" integrity="sha384-yuGdyIzzYtOBlBG6JOWn+Ey9kpq7HocusNuxEGyyohr1eEyXpeEyehIIXC/hznw4" crossorigin="anonymous"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js" integrity="sha384-lI+CxEx/bCvWP1b0OK13j5HTrTZP7yf1xle8TVOFq2smz6KC1RChTarRV/RHP5PP" crossorigin="anonymous"></script>
 
     <script>
         // Firebase configuration
@@ -751,23 +778,46 @@
             projectId: "iu-pricing-tools",
             storageBucket: "iu-pricing-tools.firebasestorage.app",
             messagingSenderId: "659335573790",
-            appId: "1:659335573790:web:00013a166787efecb3d90f",
-            measurementId: "G-NGKNY08XWP"
+            appId: "1:659335573790:web:00013a166787efecb3d90f"
         };
 
-        // Initialize Firebase
-        firebase.initializeApp(firebaseConfig);
+        // Show a visible error in place of the loading spinner (blocked CDN, offline, etc.)
+        function showAuthError() {
+            const ls = document.getElementById('loading-screen');
+            if (!ls) return;
+            ls.innerHTML =
+                '<div style="text-align:center; padding:24px; max-width:420px; color: var(--text-sub);">' +
+                '<p style="font-weight:600; margin:0 0 8px;">Could not reach the sign-in service.</p>' +
+                '<p style="margin:0 0 16px; color: var(--text-light);">Check your connection and reload this page.</p>' +
+                '<button type="button" onclick="window.location.reload()" style="font-family:inherit; font-weight:600; font-size:0.9rem; background: var(--primary); color:#fff; border:none; padding:8px 18px; border-radius:9999px; cursor:pointer;">Reload</button>' +
+                '</div>';
+        }
 
-        // Check authentication state
-        firebase.auth().onAuthStateChanged(function(user) {
-            if (user) {
-                document.getElementById('loading-screen').style.display = 'none';
-                document.getElementById('main-content').style.display = 'block';
-                document.getElementById('user-email').textContent = user.email;
-            } else {
-                window.location.href = 'login.html';
-            }
-        });
+        // Fallback: if Firebase never loads or auth never resolves, stop the eternal spinner
+        let authResolved = false;
+        const authTimeout = setTimeout(function() {
+            if (!authResolved) showAuthError();
+        }, 12000);
+
+        // Initialize Firebase and check authentication state
+        try {
+            firebase.initializeApp(firebaseConfig);
+            firebase.auth().onAuthStateChanged(function(user) {
+                authResolved = true;
+                clearTimeout(authTimeout);
+                if (user) {
+                    document.getElementById('loading-screen').style.display = 'none';
+                    document.getElementById('main-content').style.display = 'block';
+                    document.getElementById('user-email').textContent = user.email;
+                } else {
+                    window.location.href = 'login.html?next=' + encodeURIComponent(window.location.pathname.split('/').pop());
+                }
+            });
+        } catch (e) {
+            authResolved = true;
+            clearTimeout(authTimeout);
+            showAuthError();
+        }
 
         function signOut() {
             firebase.auth().signOut().then(function() {
@@ -776,8 +826,9 @@
         }
 
         // Font size controls
-        // Font size: 5 steps from 14px to 22px (default step 2 = 18px)
+        // Font size: 5 steps from 14px to 22px (default step 2 = 18px), persisted site-wide
         const fontSizes = [14, 16, 18, 20, 22];
+        const FONT_STEP_KEY = 'kc-font-step';
         let currentStep = 2;
 
         function adjustFontSize(delta) {
@@ -789,7 +840,17 @@
             document.documentElement.style.fontSize = fontSizes[step] + 'px';
             document.querySelectorAll('.decrease-a').forEach(b => b.classList.toggle('at-limit', step === 0));
             document.querySelectorAll('.increase-a').forEach(b => b.classList.toggle('at-limit', step === fontSizes.length - 1));
+            try { localStorage.setItem(FONT_STEP_KEY, String(step)); } catch (e) {}
         }
+
+        // Restore saved font-size preference on load
+        (function initFontSize() {
+            try {
+                const saved = parseInt(localStorage.getItem(FONT_STEP_KEY), 10);
+                if (!isNaN(saved) && saved >= 0 && saved < fontSizes.length) currentStep = saved;
+            } catch (e) {}
+            applyFontSize(currentStep);
+        })();
 
         // Auto-update copyright year
         document.querySelectorAll('.year').forEach(el => el.textContent = new Date().getFullYear());
@@ -805,16 +866,78 @@
         }, { threshold: 0.1 });
         document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
 
-        // Tool category filter
-        function filterTools(filter, btn) {
-            document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
-            btn.classList.add('active');
-            document.querySelectorAll('.tool-group').forEach(g => {
-                const show = (filter === 'all' || g.dataset.group === filter);
-                g.hidden = !show;
-                if (show) g.querySelectorAll('.fade-in').forEach(el => el.classList.add('visible'));
-            });
+        // Compute filter-chip counts from the DOM so they never drift when a card is added or removed
+        function updateChipCounts() {
+            const dataCount = document.querySelectorAll('[data-group="data"] .card').length;
+            const pricingCount = document.querySelectorAll('[data-group="pricing"] .card').length;
+            const set = (filter, n) => {
+                const el = document.querySelector('.chip[data-filter="' + filter + '"] .count');
+                if (el) el.textContent = n;
+            };
+            set('data', dataCount);
+            set('pricing', pricingCount);
+            set('all', dataCount + pricingCount);
         }
+        updateChipCounts();
+
+        // Tool category filter + text search (combined)
+        let activeFilter = 'all';
+
+        function getCardText(card) {
+            const h3 = card.querySelector('h3');
+            const p = card.querySelector('p');
+            const tag = card.querySelector('.card-tag');
+            return ((h3 ? h3.textContent : '') + ' ' + (p ? p.textContent : '') + ' ' + (tag ? tag.textContent : '')).toLowerCase();
+        }
+
+        function applyFilters() {
+            const searchEl = document.getElementById('tool-search');
+            const query = (searchEl ? searchEl.value : '').trim().toLowerCase();
+            let anyVisible = false;
+            document.querySelectorAll('.tool-group').forEach(group => {
+                const inFilter = (activeFilter === 'all' || group.dataset.group === activeFilter);
+                let groupHasVisible = false;
+                group.querySelectorAll('.card').forEach(card => {
+                    const matches = inFilter && (query === '' || getCardText(card).indexOf(query) !== -1);
+                    card.hidden = !matches;
+                    if (matches) {
+                        groupHasVisible = true;
+                        anyVisible = true;
+                        card.classList.add('visible');
+                    }
+                });
+                group.hidden = !groupHasVisible;
+            });
+            const noMatches = document.getElementById('no-matches');
+            if (noMatches) noMatches.hidden = anyVisible;
+        }
+
+        function filterTools(filter, btn) {
+            activeFilter = filter;
+            document.querySelectorAll('.chip').forEach(c => {
+                const isActive = (c === btn);
+                c.classList.toggle('active', isActive);
+                c.setAttribute('aria-pressed', isActive ? 'true' : 'false');
+            });
+            applyFilters();
+        }
+
+        // Live text search
+        const searchInput = document.getElementById('tool-search');
+        if (searchInput) searchInput.addEventListener('input', applyFilters);
+
+        // Lightweight usage signal: which tool card a student opens
+        document.querySelectorAll('.card').forEach(card => {
+            card.addEventListener('click', function() {
+                if (typeof gtag === 'function') {
+                    const h3 = card.querySelector('h3');
+                    gtag('event', 'tool_open', {
+                        tool_name: h3 ? h3.textContent : card.getAttribute('href'),
+                        tool_href: card.getAttribute('href')
+                    });
+                }
+            });
+        });
 
         // Back-to-top button visibility
         const backBtn = document.getElementById('backToTop');

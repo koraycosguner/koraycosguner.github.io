@@ -3,8 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Calculating Price Elasticity of Demand, Revenue, and Profit</title>
+    <title>Calculating Price Elasticity of Demand, Revenue, and Profit | Koray Cosguner</title>
     <meta name="robots" content="noindex,nofollow">
+    <!-- Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-CTZ8G4EYLR"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-CTZ8G4EYLR');
+    </script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -120,15 +128,34 @@
         .guide-list li { margin-bottom: 6px; }
 
         .footer {
-            margin-top: 60px; text-align: center; font-size: 0.85rem; color: #9ca3af; border-top: 1px solid var(--border); padding-top: 20px;
+            margin-top: 60px; text-align: center; font-size: 0.85rem; color: #6b7280; border-top: 1px solid var(--border); padding-top: 20px;
         }
+
+        /* Secondary buttons (Load example, Copy results) */
+        .btn-secondary {
+            background: var(--surface); color: var(--primary); border: 1px solid var(--primary);
+            padding: 12px 20px; border-radius: 8px; font-size: 0.95rem; font-weight: 700;
+            cursor: pointer; transition: background 0.2s; font-family: inherit;
+        }
+        .btn-secondary:hover { background: rgba(153, 0, 0, 0.06); }
+
+        /* Inline validation */
+        .input-group input.field-error { border-color: #dc2626; box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1); }
+        .field-msg { color: #dc2626; font-size: 0.8rem; margin-top: 6px; min-height: 1em; }
+        .form-banner {
+            display: none; background: #fef2f2; border: 1px solid #fecaca; color: #991b1b;
+            border-radius: 8px; padding: 12px 16px; font-size: 0.9rem; margin-bottom: 20px;
+        }
+
+        /* Horizontal-scroll wrapper for the results table on small screens */
+        .table-scroll { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+        .note { font-size: 0.85rem; color: var(--text-light); margin-top: 10px; }
 
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         
         @media (max-width: 768px) { .grid-3, .metrics-grid, .guide-grid { grid-template-columns: 1fr; } }
     
         :focus-visible { outline: 2px solid currentColor; outline-offset: 2px; }
-        html, body { overflow-x: hidden; }
     </style>
     <link rel="icon" type="image/jpeg" href="KCFavicon.jpg">
 </head>
@@ -153,45 +180,55 @@
     </div>
 
     <div class="card">
+        <div id="form-banner" class="form-banner" role="alert"></div>
+        <form id="ped-form" novalidate>
         <div class="grid-3">
             <div>
                 <div class="section-label">Initial State</div>
                 <div class="input-group">
-                    <label>Initial Price ($)</label>
+                    <label for="p1">Initial Price ($)</label>
                     <input type="number" id="p1" placeholder="e.g. 10.00" step="0.01">
+                    <div class="field-msg" id="msg-p1"></div>
                 </div>
                 <div class="input-group">
-                    <label>Initial Quantity</label>
+                    <label for="q1">Initial Quantity</label>
                     <input type="number" id="q1" placeholder="e.g. 1000">
+                    <div class="field-msg" id="msg-q1"></div>
                 </div>
             </div>
 
             <div>
                 <div class="section-label">New State</div>
                 <div class="input-group">
-                    <label>New Price ($)</label>
+                    <label for="p2">New Price ($)</label>
                     <input type="number" id="p2" placeholder="e.g. 11.00" step="0.01">
+                    <div class="field-msg" id="msg-p2"></div>
                 </div>
                 <div class="input-group">
-                    <label>New Quantity</label>
+                    <label for="q2">New Quantity</label>
                     <input type="number" id="q2" placeholder="e.g. 950">
+                    <div class="field-msg" id="msg-q2"></div>
                 </div>
             </div>
 
             <div>
                 <div class="section-label">Cost Structure</div>
                 <div class="input-group">
-                    <label>Variable Cost per Unit ($)</label>
+                    <label for="vc">Variable Cost per Unit ($)</label>
                     <input type="number" id="vc" placeholder="e.g. 6.00" step="0.01">
+                    <div class="field-msg" id="msg-vc"></div>
                 </div>
-                <div style="margin-top: 32px;">
-                    <button class="btn-calc" onclick="calculate()">Calculate Price Elasticities</button>
+                <div style="margin-top: 12px; display: flex; flex-direction: column; gap: 10px;">
+                    <button type="submit" class="btn-calc">Calculate Price Elasticities</button>
+                    <button type="button" class="btn-secondary" onclick="loadExample()">Load example</button>
                 </div>
             </div>
         </div>
+        </form>
+        <p class="note">Percentages are computed relative to the initial state (a forward point-elasticity), so results can differ slightly if you swap the initial and new values.</p>
     </div>
 
-    <div id="results">
+    <div id="results" aria-live="polite">
         <div class="metrics-grid">
             <div class="metric-card">
                 <div class="metric-title">Price Elasticity of Demand</div>
@@ -209,6 +246,7 @@
 
         <div class="card">
             <div class="section-label">Financial Levels (Before & After)</div>
+            <div class="table-scroll">
             <table class="levels-table">
                 <thead>
                     <tr>
@@ -239,6 +277,7 @@
                     </tr>
                 </tbody>
             </table>
+            </div>
         </div>
 
         <div class="analysis-box">
@@ -259,6 +298,10 @@
                 <div class="insight-text" id="insight-pep">--</div>
             </div>
         </div>
+
+        <div style="margin-top: 20px;">
+            <button type="button" class="btn-secondary" onclick="copyResults(this)">Copy results</button>
+        </div>
     </div>
 
     <div class="guide-section">
@@ -270,6 +313,7 @@
                 <br>Measures customer sensitivity.
                 <ul class="guide-list">
                     <li>|E| > 1: <strong>Elastic.</strong> Volume swings are larger than price swings.</li>
+                    <li>|E| = 1: <strong>Unit-elastic.</strong> Volume and price swing by the same percentage.</li>
                     <li>|E| < 1: <strong>Inelastic.</strong> Volume remains relatively stable.</li>
                 </ul>
             </div>
@@ -302,67 +346,116 @@
 </div>
 
 <script>
+    // --- Inline validation helpers ---
+    const FIELD_IDS = ['p1', 'q1', 'p2', 'q2', 'vc'];
+
+    function clearErrors() {
+        FIELD_IDS.forEach(function (id) {
+            const input = document.getElementById(id);
+            const msgEl = document.getElementById('msg-' + id);
+            if (input) input.classList.remove('field-error');
+            if (msgEl) msgEl.innerText = '';
+        });
+        const banner = document.getElementById('form-banner');
+        banner.style.display = 'none';
+        banner.innerText = '';
+    }
+
+    function showFieldError(id, msg) {
+        const input = document.getElementById(id);
+        const msgEl = document.getElementById('msg-' + id);
+        if (input) input.classList.add('field-error');
+        if (msgEl) msgEl.innerText = msg;
+    }
+
     function calculate() {
-        // 1. Get Inputs
+        clearErrors();
+
+        // 1. Get Inputs (parseFloat gives NaN for blank fields)
         const p1 = parseFloat(document.getElementById('p1').value);
         const q1 = parseFloat(document.getElementById('q1').value);
         const p2 = parseFloat(document.getElementById('p2').value);
         const q2 = parseFloat(document.getElementById('q2').value);
         const vc = parseFloat(document.getElementById('vc').value);
 
-        if (!p1 || !q1 || !p2 || !q2 || isNaN(vc)) {
-            alert("Please fill in all fields.");
+        // 2. Validate: treat 0 as a filled value, reject blanks and out-of-range signs
+        let ok = true;
+        if (Number.isNaN(p1)) { showFieldError('p1', 'Enter the initial price.'); ok = false; }
+        else if (p1 <= 0) { showFieldError('p1', 'Initial price must be greater than 0.'); ok = false; }
+
+        if (Number.isNaN(q1)) { showFieldError('q1', 'Enter the initial quantity.'); ok = false; }
+        else if (q1 <= 0) { showFieldError('q1', 'Initial quantity must be greater than 0.'); ok = false; }
+
+        if (Number.isNaN(p2)) { showFieldError('p2', 'Enter the new price.'); ok = false; }
+        else if (p2 < 0) { showFieldError('p2', 'New price cannot be negative.'); ok = false; }
+
+        if (Number.isNaN(q2)) { showFieldError('q2', 'Enter the new quantity.'); ok = false; }
+        else if (q2 < 0) { showFieldError('q2', 'New quantity cannot be negative.'); ok = false; }
+
+        if (Number.isNaN(vc)) { showFieldError('vc', 'Enter the variable cost.'); ok = false; }
+        else if (vc < 0) { showFieldError('vc', 'Variable cost cannot be negative.'); ok = false; }
+
+        // Price must actually change to define an elasticity
+        if (!Number.isNaN(p1) && !Number.isNaN(p2) && p1 > 0 && p2 >= 0 && p2 === p1) {
+            showFieldError('p2', 'New price must differ from the initial price to compute an elasticity.');
+            ok = false;
+        }
+
+        if (!ok) {
+            const banner = document.getElementById('form-banner');
+            banner.innerText = 'Please correct the highlighted fields.';
+            banner.style.display = 'block';
             return;
         }
 
-        // 2. Calculate Financials
+        // 3. Calculate Financials
         const r1 = p1 * q1;
         const r2 = p2 * q2;
-        
+
         const m1 = p1 - vc; // Unit Margin 1
         const m2 = p2 - vc; // Unit Margin 2
 
         const profit1 = m1 * q1;
         const profit2 = m2 * q2;
 
-        // 3. Calculate % Changes
+        // 4. Calculate % Changes (percentages are relative to the initial state)
         const pctP = (p2 - p1) / p1;
         const pctQ = (q2 - q1) / q1;
         const pctR = (r2 - r1) / r1;
-        const pctProfit = (profit2 - profit1) / Math.abs(profit1); 
 
-        if (pctP === 0) {
-            alert("Price must change to calculate elasticity.");
-            return;
-        }
+        // Profit elasticity is undefined when baseline profit is 0 (initial price equals variable cost).
+        // Using |profit1| as the base keeps "improvement" positive even when the baseline is negative.
+        const profitDefined = profit1 !== 0;
+        const pctProfit = profitDefined ? (profit2 - profit1) / Math.abs(profit1) : NaN;
 
-        // 4. Calculate Elasticities
+        // 5. Calculate Elasticities
         const ped = pctQ / pctP;
         const per = pctR / pctP;
-        const pep = pctProfit / pctP;
+        const pep = profitDefined ? pctProfit / pctP : NaN;
 
-        // 5. Display Results
+        // 6. Display Results
         document.getElementById('results').style.display = 'block';
         const fmt = (num) => num.toFixed(2);
         const fmtCur = (num) => "$" + num.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
-        
+
         // --- Elasticity Cards ---
         document.getElementById('ped-value').innerText = fmt(ped);
         document.getElementById('per-value').innerText = fmt(per);
-        document.getElementById('pep-value').innerText = fmt(pep);
+        document.getElementById('pep-value').innerText = profitDefined ? fmt(pep) : "n/a";
 
-        // Simple Color Logic
-        document.getElementById('ped-value').style.color = Math.abs(ped) > 1 ? "#dc2626" : "#059669"; 
+        // Color logic: PED magnitude is descriptive, so keep it neutral; reserve red/green
+        // for revenue and profit where direction genuinely means better or worse.
+        document.getElementById('ped-value').style.color = "#111827";
         document.getElementById('per-value').style.color = per > 0 ? "#059669" : "#dc2626";
-        document.getElementById('pep-value').style.color = pep > 0 ? "#059669" : "#dc2626";
+        document.getElementById('pep-value').style.color = profitDefined ? (pep > 0 ? "#059669" : "#dc2626") : "#6b7280";
 
         // --- Levels Table ---
         document.getElementById('lvl-r1').innerText = fmtCur(r1);
         document.getElementById('lvl-r2').innerText = fmtCur(r2);
-        
+
         document.getElementById('lvl-m1').innerText = fmtCur(m1);
         document.getElementById('lvl-m2').innerText = fmtCur(m2);
-        
+
         document.getElementById('lvl-pi1').innerText = fmtCur(profit1);
         document.getElementById('lvl-pi2').innerText = fmtCur(profit2);
 
@@ -376,15 +469,20 @@
         setDiff('lvl-mdiff', m2 - m1);
         setDiff('lvl-pidiff', profit2 - profit1);
 
-        // 6. Generate Insights & Tension Analysis
+        // 7. Generate Insights & Tension Analysis
         const isPriceIncrease = pctP > 0;
 
         // --- Demand Insight ---
         let pedText = "";
         if (Math.abs(ped) > 1) {
-            pedText = `<strong>Elastic Demand (|E| > 1):</strong> Customers are highly sensitive. A 1% price change causes a <em>greater than</em> 1% change in volume.`;
+            pedText = `<strong>Elastic Demand (|E| > 1):</strong> customers are highly sensitive. A 1% price change causes a <em>greater than</em> 1% change in volume.`;
+        } else if (Math.abs(ped) === 1) {
+            pedText = `<strong>Unit-elastic Demand (|E| = 1):</strong> a 1% price change causes exactly a 1% change in volume, so revenue is unchanged at the margin.`;
         } else {
-            pedText = `<strong>Inelastic Demand (|E| < 1):</strong> Customers are relatively insensitive. A 1% price change causes a <em>less than</em> 1% change in volume.`;
+            pedText = `<strong>Inelastic Demand (|E| < 1):</strong> customers are relatively insensitive. A 1% price change causes a <em>less than</em> 1% change in volume.`;
+        }
+        if (ped > 0) {
+            pedText += ` <br><br><em>Caution: price and quantity moved in the same direction, so this elasticity is positive. That is unusual for a downward-sloping demand curve and may reflect a demand shift, an outside confound, or a data-entry error.</em>`;
         }
         document.getElementById('insight-ped').innerHTML = pedText;
 
@@ -392,62 +490,152 @@
         let perText = "";
         if (r2 > r1) {
             perText = `<strong>Revenue Increased:</strong> `;
-            if (isPriceIncrease) {
-                // Price Up, Revenue Up (Inelastic)
-                perText += `The <strong>Price Effect</strong> (higher prices) dominated the Volume Effect (sales decline). You gained more from the higher price tag than you lost in volume.`;
+            if (pctQ === 0) {
+                perText += `volume held flat while price ${isPriceIncrease ? "rose" : "fell"}, so the price change flowed straight through to revenue.`;
+            } else if (isPriceIncrease && pctQ < 0) {
+                perText += `the <strong>Price Effect</strong> (higher price) outweighed the Volume Effect (fewer units). You gained more from the higher price tag than you lost in volume.`;
+            } else if (!isPriceIncrease && pctQ > 0) {
+                perText += `the <strong>Volume Effect</strong> (more units) outweighed the Price Effect (lower price). The added volume more than paid for the discount.`;
             } else {
-                // Price Down, Revenue Up (Elastic)
-                perText += `The <strong>Volume Effect</strong> (sales surge) dominated the Price Effect (lower prices). The added volume outweighed the discount.`;
+                perText += `both price and volume rose, so there is no price-volume tension here: each pushed revenue up.`;
             }
         } else if (r2 < r1) {
             perText = `<strong>Revenue Decreased:</strong> `;
-            if (isPriceIncrease) {
-                // Price Up, Revenue Down (Elastic)
-                perText += `The <strong>Volume Effect</strong> (sales decline) dominated the Price Effect. Customers fled too fast to make the price hike worth it.`;
+            if (pctQ === 0) {
+                perText += `volume held flat while price ${isPriceIncrease ? "rose" : "fell"}, so the price change flowed straight through to revenue.`;
+            } else if (isPriceIncrease && pctQ < 0) {
+                perText += `the <strong>Volume Effect</strong> (fewer units) outweighed the Price Effect. Customers left too fast to make the price hike worth it.`;
+            } else if (!isPriceIncrease && pctQ > 0) {
+                perText += `the <strong>Price Effect</strong> (discount) outweighed the Volume Effect. The extra units did not make up for the lower price.`;
             } else {
-                // Price Down, Revenue Down (Inelastic)
-                perText += `The <strong>Price Effect</strong> (discount) dominated the Volume Effect. You didn't generate enough sales to pay for the discount.`;
+                perText += `both price and volume fell, so there is no price-volume tension here: each pulled revenue down.`;
             }
         } else {
-            perText = `<strong>Revenue Unchanged:</strong> The Price Effect and Volume Effect perfectly cancelled each other out.`;
+            perText = `<strong>Revenue Unchanged:</strong> the Price Effect and Volume Effect cancelled out exactly.`;
         }
         document.getElementById('insight-per').innerHTML = perText;
 
         // --- Profit Tension (Margin vs Volume) ---
         let pepText = "";
-        
-        // Leverage Warning
-        if (pep > 1) {
-             pepText += `<strong>High Leverage Situation:</strong> A 1% price increase boosted profit by more than 1%. <br><br>`;
-        } else if (pep < -1 && !isPriceIncrease) {
-             pepText += `<strong>High Downside Leverage:</strong> A 1% price cut crashed profit by more than 1%. <br><br>`;
-        }
+        const mFmt = `($${fmt(m2)} vs $${fmt(m1)})`;
 
-        if (profit2 > profit1) {
-            pepText += `<strong>Profit Improved:</strong> `;
-            if (isPriceIncrease) {
-                pepText += `The <strong>Higher Unit Margin</strong> ($${fmt(m2)} vs $${fmt(m1)}) successfully offset the lower sales volume. Even with fewer sales, each sale was significantly more profitable.`;
+        if (!profitDefined) {
+            // Baseline profit is zero: percentage-change elasticity has no meaning.
+            pepText += `<strong>Profit Elasticity is not defined here:</strong> baseline profit is $0.00 because the initial price equals the variable cost, and a percentage change relative to a $0.00 base is undefined. `;
+            if (profit2 > 0) {
+                pepText += `In level terms, profit rose from $0.00 to ${fmtCur(profit2)}.`;
+            } else if (profit2 < 0) {
+                pepText += `In level terms, profit fell from $0.00 to ${fmtCur(profit2)}.`;
             } else {
-                pepText += `The <strong>Higher Sales Volume</strong> successfully compensated for the thinner Unit Margin ($${fmt(m2)} vs $${fmt(m1)}). You made it up on volume.`;
-            }
-        } else if (profit2 < profit1) {
-            pepText += `<strong>Profit Declined:</strong> `;
-            if (isPriceIncrease) {
-                pepText += `The <strong>Loss of Volume</strong> was too severe. The extra margin per unit could not make up for the drop in total units sold.`;
-            } else {
-                pepText += `The <strong>Margin Squeeze</strong> ($${fmt(m2)} vs $${fmt(m1)}) was too deep. The increase in volume wasn't enough to cover the loss in profitability per unit.`;
+                pepText += `In level terms, profit stayed at $0.00.`;
             }
         } else {
-            pepText += `<strong>Profit Neutral:</strong> The trade-off between Margin and Volume perfectly balanced out.`;
+            // Leverage note, keyed correctly on both |pep| > 1 and price direction.
+            if (pep > 1 && isPriceIncrease) {
+                pepText += `<strong>High Leverage Situation:</strong> a 1% price increase moved profit up by more than 1%. <br><br>`;
+            } else if (pep > 1 && !isPriceIncrease) {
+                pepText += `<strong>High Downside Leverage:</strong> a 1% price cut moved profit down by more than 1%. <br><br>`;
+            } else if (pep < -1 && isPriceIncrease) {
+                pepText += `<strong>High Downside Leverage:</strong> a 1% price increase moved profit down by more than 1%. <br><br>`;
+            } else if (pep < -1 && !isPriceIncrease) {
+                pepText += `<strong>High Leverage Situation:</strong> a 1% price cut moved profit up by more than 1%. <br><br>`;
+            }
+
+            // Negative-baseline caveat: the |profit1| base flips the sign versus the textbook formula.
+            if (profit1 < 0) {
+                pepText += `<em>Note: baseline profit is negative (${fmtCur(profit1)}), so this figure uses the absolute baseline to keep an improvement positive; its sign will not match the textbook (profit2 - profit1) / profit1 formula.</em> <br><br>`;
+            }
+
+            if (profit2 > profit1) {
+                pepText += `<strong>Profit Improved:</strong> `;
+                if (isPriceIncrease && pctQ < 0) {
+                    pepText += `the <strong>Higher Unit Margin</strong> ${mFmt} more than offset the lower sales volume. Even with fewer units sold, each sale was more profitable.`;
+                } else if (!isPriceIncrease && pctQ > 0) {
+                    pepText += `the <strong>Higher Sales Volume</strong> more than compensated for the thinner Unit Margin ${mFmt}. You made it up on volume.`;
+                } else if (isPriceIncrease && pctQ > 0) {
+                    pepText += `both a <strong>higher unit margin</strong> ${mFmt} and higher volume lifted profit. Price and volume rising together is unusual for a demand curve, so double-check the inputs.`;
+                } else if (isPriceIncrease && pctQ === 0) {
+                    pepText += `the <strong>Higher Unit Margin</strong> ${mFmt} lifted profit while volume held flat.`;
+                } else {
+                    pepText += `profit rose even though both margin and volume fell, which typically happens only when the baseline margin is negative. Double-check the inputs.`;
+                }
+            } else if (profit2 < profit1) {
+                pepText += `<strong>Profit Declined:</strong> `;
+                if (isPriceIncrease && pctQ < 0) {
+                    pepText += `the <strong>Loss of Volume</strong> was too severe. The extra margin per unit could not make up for the drop in total units sold.`;
+                } else if (!isPriceIncrease && pctQ > 0) {
+                    pepText += `the <strong>Margin Squeeze</strong> ${mFmt} was too deep. The increase in volume was not enough to cover the loss in profit per unit.`;
+                } else if (!isPriceIncrease && pctQ < 0) {
+                    pepText += `both a <strong>lower unit margin</strong> ${mFmt} and lower volume dragged profit down. Price and volume falling together is unusual for a demand curve, so double-check the inputs.`;
+                } else if (!isPriceIncrease && pctQ === 0) {
+                    pepText += `the <strong>Lower Unit Margin</strong> ${mFmt} cut profit while volume held flat.`;
+                } else {
+                    pepText += `profit fell even though both margin and volume rose, which typically happens only when the baseline margin is negative. Double-check the inputs.`;
+                }
+            } else {
+                pepText += `<strong>Profit Neutral:</strong> the trade-off between Margin and Volume balanced out exactly.`;
+            }
         }
 
         document.getElementById('insight-pep').innerHTML = pepText;
     }
+
+    // Fill realistic values and run the analysis in one click.
+    function loadExample() {
+        document.getElementById('p1').value = 10;
+        document.getElementById('q1').value = 1000;
+        document.getElementById('p2').value = 11;
+        document.getElementById('q2').value = 950;
+        document.getElementById('vc').value = 6;
+        calculate();
+    }
+
+    // Copy the headline elasticities and level changes as plain text.
+    function copyResults(btn) {
+        const g = (id) => document.getElementById(id).innerText;
+        const text = [
+            'Price Elasticity of Demand: ' + g('ped-value'),
+            'Price Elasticity of Revenue: ' + g('per-value'),
+            'Price Elasticity of Profit: ' + g('pep-value'),
+            '',
+            'Revenue: ' + g('lvl-r1') + ' to ' + g('lvl-r2') + ' (' + g('lvl-rdiff') + ')',
+            'Unit Margin: ' + g('lvl-m1') + ' to ' + g('lvl-m2') + ' (' + g('lvl-mdiff') + ')',
+            'Total Profit: ' + g('lvl-pi1') + ' to ' + g('lvl-pi2') + ' (' + g('lvl-pidiff') + ')'
+        ].join('\n');
+
+        const original = btn.innerText;
+        const done = function () {
+            btn.innerText = 'Copied';
+            setTimeout(function () { btn.innerText = original; }, 1500);
+        };
+        const fallback = function () {
+            const ta = document.createElement('textarea');
+            ta.value = text;
+            ta.style.position = 'fixed';
+            ta.style.opacity = '0';
+            document.body.appendChild(ta);
+            ta.select();
+            try { document.execCommand('copy'); } catch (e) {}
+            document.body.removeChild(ta);
+        };
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(text).then(done, function () { fallback(); done(); });
+        } else {
+            fallback();
+            done();
+        }
+    }
+
+    // Enter-to-calculate: the inputs live in a form, so submit runs the analysis.
+    document.getElementById('ped-form').addEventListener('submit', function (e) {
+        e.preventDefault();
+        calculate();
+    });
 </script>
 
 </div> <!-- end main-content -->
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js" integrity="sha384-yuGdyIzzYtOBlBG6JOWn+Ey9kpq7HocusNuxEGyyohr1eEyXpeEyehIIXC/hznw4" crossorigin="anonymous"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js" integrity="sha384-lI+CxEx/bCvWP1b0OK13j5HTrTZP7yf1xle8TVOFq2smz6KC1RChTarRV/RHP5PP" crossorigin="anonymous"></script>
 <script>
     const firebaseConfig = {
         apiKey: "AIzaSyBg3LJDwVIRGWtFZb_mM_CSRJMNCJUta20",
@@ -458,13 +646,23 @@
         appId: "1:659335573790:web:00013a166787efecb3d90f",
         measurementId: "G-NGKNY08XWP"
     };
+
+    // If Firebase cannot be reached, do not hang on "Loading..." forever.
+    const authTimeout = setTimeout(function () {
+        const screen = document.getElementById('loading-screen');
+        if (screen && screen.style.display !== 'none') {
+            screen.innerHTML = '<p style="color: #991b1b; max-width: 320px; text-align: center; padding: 0 20px;">Could not reach the sign-in service. Check your connection and reload this page.</p>';
+        }
+    }, 12000);
+
     firebase.initializeApp(firebaseConfig);
     firebase.auth().onAuthStateChanged(function(user) {
+        clearTimeout(authTimeout);
         if (user) {
             document.getElementById('loading-screen').style.display = 'none';
             document.getElementById('main-content').style.display = 'block';
         } else {
-            window.location.href = 'login.html';
+            window.location.href = 'login.html?next=' + encodeURIComponent(window.location.pathname.split('/').pop());
         }
     });
 </script>

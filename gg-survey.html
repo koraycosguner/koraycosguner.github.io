@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pricing Survey</title>
+    <title>Pricing Survey | Koray Cosguner</title>
+    <meta name="robots" content="noindex,nofollow">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -324,6 +325,13 @@
             <p style="margin-top: 1rem;">Thank you for your interest!</p>
         </div>
 
+        <!-- Already Responded State -->
+        <div id="already" class="survey-closed hidden">
+            <h2>Already Responded</h2>
+            <p>Our records show this device has already submitted a response to this survey.</p>
+            <p style="margin-top: 1rem;">Thank you for your participation!</p>
+        </div>
+
         <!-- Survey Content -->
         <div id="survey-content" class="hidden">
             <div class="survey-header">
@@ -353,6 +361,21 @@
                     </div>
                 </div>
 
+                <!-- Saving State -->
+                <div id="saving" class="loading hidden">
+                    <div class="spinner"></div>
+                    <p>Saving your response...</p>
+                </div>
+
+                <!-- Save Error State -->
+                <div id="save-error" class="error hidden">
+                    <h2>Could Not Save</h2>
+                    <p>Your response could not be saved. Please check your connection and try again.</p>
+                    <div class="button-row" style="margin-top: 1.5rem;">
+                        <button class="survey-btn btn-yes" onclick="saveResponse()">Try Again</button>
+                    </div>
+                </div>
+
                 <!-- Thank You Screen -->
                 <div id="thank-you" class="thank-you hidden">
                     <div class="thank-you-icon">✓</div>
@@ -372,8 +395,8 @@
     </div>
 
     <!-- Firebase SDK -->
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js" integrity="sha384-yuGdyIzzYtOBlBG6JOWn+Ey9kpq7HocusNuxEGyyohr1eEyXpeEyehIIXC/hznw4" crossorigin="anonymous"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js" integrity="sha384-nwX2Qpkhc2sv6L0ZPkLefLGguao67toSowvePuQvGF6cG+8MUphGI2uI94Ls3JF7" crossorigin="anonymous"></script>
 
     <script>
         // Firebase configuration
@@ -403,6 +426,8 @@
         let lastYesPrice = null;
         let stepCount = 0;
         let currency = '$';
+        let pendingWtp = null;       // WTP awaiting a save (kept for retry on failure)
+        let buttonsLocked = false;   // debounce guard against accidental double-taps
 
         // Initialize
         async function init() {
@@ -441,44 +466,71 @@
         }
 
         function setupSurvey() {
+            // Validate the price ladder parameters BEFORE revealing the survey.
+            const minPrice = Number(surveyData.minPrice);
+            const maxPrice = Number(surveyData.maxPrice);
+            const step = Number(surveyData.step);
+            if (!isFinite(minPrice) || !isFinite(maxPrice) || !isFinite(step) || step <= 0 || minPrice >= maxPrice) {
+                console.error('Invalid survey price settings:', surveyData.minPrice, surveyData.maxPrice, surveyData.step);
+                showError();
+                return;
+            }
+
+            // Soft duplicate-submission guard. Students may legitimately share a device in
+            // class, so warn and ask for an explicit confirmation rather than hard-blocking.
+            const respondedKey = 'gg-responded-' + surveyId;
+            let alreadyResponded = false;
+            try { alreadyResponded = !!localStorage.getItem(respondedKey); } catch (e) { alreadyResponded = false; }
+            if (alreadyResponded) {
+                const again = confirm('It looks like this device has already submitted a response to this survey. If you are sharing a device, that is fine. Do you want to submit another response?');
+                if (!again) {
+                    showAlready();
+                    return;
+                }
+            }
+
             // Hide loading, show survey
             document.getElementById('loading').classList.add('hidden');
             document.getElementById('survey-content').classList.remove('hidden');
 
-            // Set product photos
+            // Set product photos. Build with DOM nodes and validate the URL scheme so a
+            // tampered Firestore value cannot inject markup or scripts.
             const photosContainer = document.getElementById('product-photos');
-            if (surveyData.photos && surveyData.photos.length > 0) {
-                photosContainer.innerHTML = surveyData.photos.map(photo =>
-                    `<img src="${photo}" alt="Product" class="product-photo">`
-                ).join('');
+            photosContainer.innerHTML = '';
+            const photos = Array.isArray(surveyData.photos) ? surveyData.photos : [];
+            const safePhotos = photos.filter(p => typeof p === 'string' && /^(https?:|data:image\/)/i.test(p.trim()));
+            if (safePhotos.length > 0) {
+                safePhotos.forEach(p => {
+                    const img = document.createElement('img');
+                    img.src = p.trim();
+                    img.alt = 'Product';
+                    img.className = 'product-photo';
+                    photosContainer.appendChild(img);
+                });
             } else {
                 photosContainer.style.display = 'none';
             }
 
-            // Set product info
-            document.getElementById('product-name').textContent = surveyData.product;
+            // Set product info with textContent only (never innerHTML). The CSS rule
+            // white-space:pre-line renders newlines, so bullets on their own line display
+            // correctly without building any HTML from untrusted data.
+            document.getElementById('product-name').textContent = surveyData.product || 'Product';
+            const descEl = document.getElementById('product-description');
             if (surveyData.description) {
-                // Format description: convert newlines to <br> and preserve bullet points
-                let formattedDesc = surveyData.description
-                    .replace(/\n/g, '<br>')
-                    .replace(/•/g, '<br>•');
-                // Clean up any double line breaks at the start
-                formattedDesc = formattedDesc.replace(/^<br>/, '');
-                document.getElementById('product-description').innerHTML = formattedDesc;
+                let desc = String(surveyData.description).replace(/•/g, '\n•').replace(/^\n+/, '');
+                descEl.textContent = desc;
             } else {
-                document.getElementById('product-description').style.display = 'none';
+                descEl.style.display = 'none';
             }
 
             currency = surveyData.currency || '$';
 
-            // Build price ladder
-            const minPrice = surveyData.minPrice;
-            const maxPrice = surveyData.maxPrice;
-            const step = surveyData.step;
-
+            // Build the price ladder with integer indexing so the top price is always
+            // offered and stored WTP values stay clean (no floating-point drift).
+            const k = Math.round((maxPrice - minPrice) / step);
             priceLadder = [];
-            for (let p = minPrice; p <= maxPrice; p += step) {
-                priceLadder.push(p);
+            for (let i = 0; i <= k; i++) {
+                priceLadder.push(Math.round((minPrice + i * step) * 100) / 100);
             }
 
             // Random starting price from the middle 60% of the ladder
@@ -500,6 +552,13 @@
         }
 
         function answer(isYes) {
+            // Debounce: ignore a second tap within 300ms so an accidental double-tap
+            // cannot answer the next (unseen) price. The lock clears once the respondent
+            // has had a moment to read the newly displayed price.
+            if (buttonsLocked) return;
+            buttonsLocked = true;
+            setTimeout(function() { buttonsLocked = false; }, 300);
+
             stepCount++;
 
             const currentPrice = priceLadder[currentPriceIndex];
@@ -538,18 +597,23 @@
             }
         }
 
-        async function submitResponse(maxWtp) {
-            // Hide question, show thank you
+        function submitResponse(maxWtp) {
+            // Remember the answer and attempt to save it. The thank-you screen is shown
+            // only after the write actually succeeds (see saveResponse).
+            pendingWtp = maxWtp;
             document.getElementById('question-container').classList.add('hidden');
-            document.getElementById('thank-you').classList.remove('hidden');
+            saveResponse();
+        }
 
-            if (maxWtp === 0) {
-                document.getElementById('final-wtp').textContent = 'Below ' + currency + priceLadder[0].toFixed(2);
-            } else {
-                document.getElementById('final-wtp').textContent = currency + maxWtp.toFixed(2);
-            }
+        async function saveResponse() {
+            const maxWtp = pendingWtp;
+            if (maxWtp === null) return;
 
-            // Save to Firebase
+            // Show the saving state (hide any prior error).
+            document.getElementById('save-error').classList.add('hidden');
+            document.getElementById('question-container').classList.add('hidden');
+            document.getElementById('saving').classList.remove('hidden');
+
             try {
                 await db.collection('surveys').doc(surveyId).collection('gg_responses').add({
                     maxWtp: maxWtp,
@@ -566,10 +630,30 @@
                 } catch (e) {
                     console.warn('Could not update response count:', e);
                 }
+
+                // Remember that this device responded (soft duplicate guard).
+                try { localStorage.setItem('gg-responded-' + surveyId, String(Date.now())); } catch (e) { /* ignore */ }
+
+                // Only now confirm success to the respondent.
+                document.getElementById('saving').classList.add('hidden');
+                if (maxWtp === 0) {
+                    document.getElementById('final-wtp').textContent = 'Below ' + currency + priceLadder[0].toFixed(2);
+                } else {
+                    document.getElementById('final-wtp').textContent = currency + maxWtp.toFixed(2);
+                }
+                document.getElementById('thank-you').classList.remove('hidden');
+                pendingWtp = null;
             } catch (error) {
                 console.error('Error saving response:', error);
-                // Still show thank you even if save failed
+                // Show a visible error with a retry path; keep the answer in memory.
+                document.getElementById('saving').classList.add('hidden');
+                document.getElementById('save-error').classList.remove('hidden');
             }
+        }
+
+        function showAlready() {
+            document.getElementById('loading').classList.add('hidden');
+            document.getElementById('already').classList.remove('hidden');
         }
 
         function showError() {

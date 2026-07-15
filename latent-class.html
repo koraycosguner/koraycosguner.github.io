@@ -3,15 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Latent Class Regression Tool - Setup</title>
+    <title>Latent Class Regression Tool - Setup | Koray Cosguner</title>
     <meta name="robots" content="noindex,nofollow">
+    <!-- Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-CTZ8G4EYLR"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-CTZ8G4EYLR');
+    </script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary: #2563eb;
-            --primary-dark: #1d4ed8;
+            --primary: #990000;
+            --primary-dark: #7a0000;
             --success: #16a34a;
             --danger: #dc2626;
             --warning: #f59e0b;
@@ -251,7 +259,7 @@
     <p style="color: #64748b;">Loading...</p>
 </div>
 <div id="main-content" style="display: none;">
-    <div style="max-width: 800px; margin: 0 auto; padding: 0 0 10px 0;">
+    <div style="position: sticky; top: 0; z-index: 100; background: rgba(248,250,252,0.85); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); max-width: 800px; margin: 0 auto 10px auto; padding: 10px 0;">
         <a href="tools.html" style="display: inline-flex; align-items: center; gap: 6px; color: #64748b; text-decoration: none; font-size: 0.9rem; font-weight: 500;">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
             Back to Analytics and Pricing Tools
@@ -448,13 +456,13 @@ ui = fluidPage(
         color: #1e293b;
       }
       .btn-primary {
-        background: #2563eb;
+        background: #990000;
         border: none;
         padding: 10px 20px;
         border-radius: 8px;
       }
       .btn-primary:hover {
-        background: #1d4ed8;
+        background: #7a0000;
       }
       .btn-success {
         background: #16a34a;
@@ -475,7 +483,7 @@ ui = fluidPage(
       .stat-value {
         font-size: 1.5rem;
         font-weight: 700;
-        color: #2563eb;
+        color: #990000;
       }
       .stat-label {
         font-size: 0.85rem;
@@ -503,7 +511,7 @@ ui = fluidPage(
         font-size: 0.9rem;
       }
       .nav-tabs .nav-link.active {
-        background: #2563eb;
+        background: #990000;
         color: white;
         border: none;
       }
@@ -519,7 +527,7 @@ ui = fluidPage(
         margin-top: 5px;
       }
       .segment-header {
-        background: #2563eb;
+        background: #990000;
         color: white;
         padding: 10px 15px;
         border-radius: 8px 8px 0 0;
@@ -532,6 +540,7 @@ ui = fluidPage(
         border-radius: 0 0 8px 8px;
         padding: 15px;
         margin-bottom: 15px;
+        overflow-x: auto;
       }
       .segment-size {
         font-size: 0.9rem;
@@ -609,7 +618,12 @@ ui = fluidPage(
       fileInput("file", "Choose CSV File",
         accept = c("text/csv", "text/comma-separated-values", ".csv")
       ),
-      p(class = "help-text", "Upload a CSV file with headers in the first row.")
+      p(class = "help-text", "Upload a CSV file with headers in the first row."),
+      div(style = "margin-top: 10px;",
+        actionButton("load_example", "Load Example Data", class = "btn-secondary", style = "margin-right: 8px;"),
+        downloadButton("download_example", "Download Example CSV", class = "btn-secondary")
+      ),
+      p(class = "help-text", "No data yet? Load a built-in example (household spending, 2 segments) to try the tool right away.")
     ),
     # Data preview
     uiOutput("data_preview")
@@ -622,7 +636,7 @@ ui = fluidPage(
   uiOutput("run_card"),
 
   # Results
-  uiOutput("results_card")
+  div(\`aria-live\` = "polite", uiOutput("results_card"))
 )
 
 server = function(input, output, session) {
@@ -630,6 +644,154 @@ server = function(input, output, session) {
   # Reactive values
   data = reactiveVal(NULL)
   model_result = reactiveVal(NULL)
+
+  # Helper: format p-values, showing <0.0001 for very small values
+  format_pval = function(p) {
+    ifelse(is.na(p), "NA",
+      ifelse(p < 1e-4, "<0.0001", sprintf("%.4f", p)))
+  }
+
+  # Helper: built-in example dataset (household spending, two latent segments)
+  make_example_data = function() {
+    set.seed(2024)
+    n_hh = 120
+    obs_per = 5
+    hh = rep(1:n_hh, each = obs_per)
+    seg = rep(ifelse(1:n_hh <= n_hh / 2, 1, 2), each = obs_per)
+    Nn = length(hh)
+    income = round(runif(Nn, 20, 100), 1)
+    age = round(runif(Nn, 20, 70))
+    ads_seen = rpois(Nn, 3)
+    noise = rnorm(Nn, 0, 2)
+    spend = ifelse(seg == 1,
+                   10 + 0.3 * income + 0.2 * age + 0.5 * ads_seen,
+                   60 - 0.4 * income + 0.8 * age + 3 * ads_seen) + noise
+    data.frame(household_id = hh, spend = round(spend, 2),
+               income = income, age = age, ads_seen = ads_seen)
+  }
+
+  # Helper: fit the latent class (or k=1 GLM) model and return a result list.
+  # Used by both the Run button and the Load Example Data button.
+  fit_lc_model = function(df, dv, ivs, consumer_id, model_type, num_segments, seed) {
+    formula_str = paste(dv, "~", paste(ivs, collapse = " + "))
+    if (consumer_id != "") {
+      formula_str = paste(formula_str, "|", consumer_id)
+    }
+    model_formula = as.formula(formula_str)
+
+    set.seed(seed)
+
+    if (model_type == "gaussian") {
+      model_family = FLXMRglm(family = "gaussian")
+    } else if (model_type == "poisson") {
+      model_family = FLXMRglm(family = "poisson")
+    } else {
+      model_family = FLXMRglm(family = "binomial")
+    }
+
+    if (num_segments == 1) {
+      fam = switch(model_type,
+        "gaussian" = gaussian(),
+        "poisson" = poisson(),
+        "binomial" = binomial()
+      )
+      fit = glm(as.formula(paste(dv, "~", paste(ivs, collapse = " + "))),
+                data = df, family = fam)
+
+      clusters_glm = NULL
+      if (consumer_id != "") {
+        unique_ids = unique(df[[consumer_id]])
+        clusters_glm = data.frame(
+          ID = unique_ids,
+          Segment = rep(1, length(unique_ids))
+        )
+        colnames(clusters_glm) = c(consumer_id, "Segment")
+      }
+
+      list(
+        type = "glm",
+        fit = fit,
+        k = 1,
+        k_requested = 1,
+        model_type = model_type,
+        formula = formula_str,
+        dv = dv,
+        ivs = ivs,
+        consumer_id = consumer_id,
+        clusters = clusters_glm,
+        seed = seed
+      )
+
+    } else {
+      fit = stepFlexmix(
+        model_formula,
+        data = df,
+        k = num_segments,
+        model = model_family,
+        nrep = 3
+      )
+
+      actual_k = fit@k
+
+      clusters = NULL
+      if (consumer_id != "") {
+        clusters = unique(cbind(df[[consumer_id]], clusters(fit)))
+        colnames(clusters) = c(consumer_id, "Segment")
+      }
+
+      refit_fit = refit(fit)
+
+      list(
+        type = "flexmix",
+        fit = fit,
+        refit_model = refit_fit,
+        k_requested = num_segments,
+        k = actual_k,
+        model_type = model_type,
+        formula = formula_str,
+        dv = dv,
+        ivs = ivs,
+        consumer_id = consumer_id,
+        clusters = clusters,
+        seed = seed
+      )
+    }
+  }
+
+  # Download the example dataset as CSV
+  output$download_example = downloadHandler(
+    filename = function() "latent_class_example.csv",
+    content = function(file) {
+      write.csv(make_example_data(), file, row.names = FALSE)
+    }
+  )
+
+  # Load the example dataset and estimate a 2-segment model right away
+  observeEvent(input$load_example, {
+    df = make_example_data()
+    data(df)
+    model_result(NULL)
+
+    # Reflect the example choices in the setup controls
+    updateSelectInput(session, "dv", selected = "spend")
+    updateSelectInput(session, "ivs", selected = c("income", "age", "ads_seen"))
+    updateSelectInput(session, "consumer_id", selected = "household_id")
+    updateSelectInput(session, "model_type", selected = "gaussian")
+    updateNumericInput(session, "num_segments", value = 2)
+    updateNumericInput(session, "seed", value = 123)
+
+    tryCatch({
+      withProgress(message = "Estimating example model...", {
+        result = fit_lc_model(df, "spend", c("income", "age", "ads_seen"),
+                              "household_id", "gaussian", 2, 123)
+        model_result(result)
+      })
+      showNotification("Example data loaded and a 2-segment model was estimated. Explore the result tabs below.",
+                       type = "message", duration = 8)
+    }, error = function(e) {
+      showNotification(paste("Could not estimate the example model:", e$message), type = "error")
+    })
+  })
 
   # Load data
   observeEvent(input$file, {
@@ -735,110 +897,71 @@ server = function(input, output, session) {
       return()
     }
 
+    # Validate number of segments and seed are usable whole numbers
+    if (is.na(input$num_segments) || input$num_segments < 1 ||
+        input$num_segments != round(input$num_segments)) {
+      showNotification("Please enter a whole number of segments (1 or more).", type = "error")
+      return()
+    }
+    if (is.na(input$seed)) {
+      showNotification("Please enter a seed (a positive whole number) so results can be reproduced.", type = "error")
+      return()
+    }
+
+    # The Consumer/HH ID identifies rows, so it cannot be a model variable
+    if (input$consumer_id != "" && input$dv == input$consumer_id) {
+      showNotification("The Consumer/HH ID cannot be the dependent variable. Choose a different Y.", type = "error")
+      return()
+    }
+    if (input$consumer_id != "" && input$consumer_id %in% input$ivs) {
+      showNotification("The Consumer/HH ID cannot be an independent variable. Remove it from X.", type = "error")
+      return()
+    }
+
+    # Screen for missing values in the selected variables
+    model_vars = c(input$dv, input$ivs)
+    if (input$consumer_id != "") model_vars = c(model_vars, input$consumer_id)
+    complete_rows = complete.cases(df[, model_vars, drop = FALSE])
+    n_dropped = sum(!complete_rows)
+    if (n_dropped > 0) {
+      df = df[complete_rows, , drop = FALSE]
+      if (nrow(df) == 0) {
+        showNotification("Every row has a missing value in the selected variables. Please clean your data before running.", type = "error")
+        return()
+      }
+      showNotification(
+        paste0("Dropped ", n_dropped, " row(s) with missing values in the selected variables. Estimating on ", nrow(df), " complete rows."),
+        type = "warning", duration = 8
+      )
+    }
+
+    # Family-specific checks on the dependent variable
+    dv_vals = df[[input$dv]]
+    if (input$model_type == "binomial") {
+      if (!all(dv_vals %in% c(0, 1))) {
+        showNotification("Binary Logistic Regression needs a 0/1 dependent variable. Recode your Y so it only contains 0 and 1.", type = "error")
+        return()
+      }
+    } else if (input$model_type == "poisson") {
+      dv_num = suppressWarnings(as.numeric(as.character(dv_vals)))
+      if (any(is.na(dv_num))) {
+        showNotification("Poisson Regression needs a numeric count dependent variable.", type = "error")
+        return()
+      }
+      if (any(dv_num < 0) || any(dv_num != round(dv_num))) {
+        showNotification("Poisson Regression needs a non-negative whole-number (count) dependent variable.", type = "error")
+        return()
+      }
+    }
+
     tryCatch({
       withProgress(message = "Estimating model...", {
 
-        # Build formula
-        formula_str = paste(input$dv, "~", paste(input$ivs, collapse = " + "))
-
-        # Add consumer/HH ID if specified
-        if (input$consumer_id != "") {
-          formula_str = paste(formula_str, "|", input$consumer_id)
-        }
-
-        model_formula = as.formula(formula_str)
-
-        # Set seed
-        set.seed(input$seed)
-
-        # Determine family
-        if (input$model_type == "gaussian") {
-          model_family = FLXMRglm(family = "gaussian")
-        } else if (input$model_type == "poisson") {
-          model_family = FLXMRglm(family = "poisson")
-        } else {
-          model_family = FLXMRglm(family = "binomial")
-        }
-
-        # Run model
-        if (input$num_segments == 1) {
-          # Standard GLM for k=1
-          if (input$model_type == "gaussian") {
-            fit = glm(as.formula(paste(input$dv, "~", paste(input$ivs, collapse = " + "))),
-                      data = df, family = gaussian())
-          } else if (input$model_type == "poisson") {
-            fit = glm(as.formula(paste(input$dv, "~", paste(input$ivs, collapse = " + "))),
-                      data = df, family = poisson())
-          } else {
-            fit = glm(as.formula(paste(input$dv, "~", paste(input$ivs, collapse = " + "))),
-                      data = df, family = binomial())
-          }
-
-          # For k=1, create cluster assignments if consumer_id specified
-          clusters_glm = NULL
-          if (input$consumer_id != "") {
-            unique_ids = unique(df[[input$consumer_id]])
-            clusters_glm = data.frame(
-              ID = unique_ids,
-              Segment = rep(1, length(unique_ids))
-            )
-            colnames(clusters_glm) = c(input$consumer_id, "Segment")
-          }
-
-          model_result(list(
-            type = "glm",
-            fit = fit,
-            k = 1,
-            model_type = input$model_type,
-            formula = formula_str,
-            dv = input$dv,
-            ivs = input$ivs,
-            consumer_id = input$consumer_id,
-            clusters = clusters_glm,
-            seed = input$seed
-          ))
-
-        } else {
-          # Latent class model for k > 1
-          fit = stepFlexmix(
-            model_formula,
-            data = df,
-            k = input$num_segments,
-            model = model_family,
-            nrep = 3
-          )
-
-          # Get actual number of segments (may be less than requested)
-          actual_k = fit@k
-
-          # Get segment assignments
-          clusters = NULL
-          if (input$consumer_id != "") {
-            clusters = unique(cbind(df[[input$consumer_id]], clusters(fit)))
-            colnames(clusters) = c(input$consumer_id, "Segment")
-          }
-
-          # Get refit model for coefficients
-          refit_fit = refit(fit)
-
-          model_result(list(
-            type = "flexmix",
-            fit = fit,
-            refit_model = refit_fit,
-            k_requested = input$num_segments,
-            k = actual_k,
-            model_type = input$model_type,
-            formula = formula_str,
-            dv = input$dv,
-            ivs = input$ivs,
-            consumer_id = input$consumer_id,
-            clusters = clusters,
-            seed = input$seed
-          ))
-        }
+        result = fit_lc_model(df, input$dv, input$ivs, input$consumer_id,
+                              input$model_type, input$num_segments, input$seed)
+        model_result(result)
 
         # Check if fewer segments were identified
-        result = model_result()
         if (result$type == "flexmix" && result$k < result$k_requested) {
           showNotification(
             paste0("Note: Only ", result$k, " segments could be identified (requested ", result$k_requested, "). The model converged to fewer segments."),
@@ -890,7 +1013,14 @@ server = function(input, output, session) {
         if (!is.null(result$clusters)) {
           tabPanel("Consumer/HH Assignments",
             div(style = "margin-top: 15px;",
-              tableOutput("consumer_assignments"),
+              downloadButton("download_assignments", "Download Assignments (CSV)", class = "btn-secondary"),
+              p(style = "font-size: 0.85rem; color: #64748b; margin-top: 10px;",
+                paste0("Showing ", min(100, nrow(as.data.frame(result$clusters))), " of ",
+                       nrow(as.data.frame(result$clusters)), " consumer/household assignments. Download the full list as CSV above.")
+              ),
+              div(class = "data-preview",
+                tableOutput("consumer_assignments")
+              ),
               p(style = "font-size: 0.85rem; color: #64748b; font-style: italic;",
                 if (result$k == 1) {
                   "With only one segment, all consumers/households are assigned to Segment 1."
@@ -966,20 +1096,8 @@ server = function(input, output, session) {
         )
       }
 
-      # Build coefficient tables for each segment
+      # Build the per-segment table shells (the tables render via coef_table_seg_i)
       segment_tables = lapply(1:k, function(i) {
-        comp_name = paste0("Comp.", i)
-        coef_matrix = refit_mod@components[[1]][[comp_name]]
-
-        # Convert to data frame
-        coef_df = data.frame(
-          Variable = rownames(coef_matrix),
-          Estimate = round(coef_matrix[, 1], 4),
-          Std.Error = round(coef_matrix[, 2], 4),
-          z.value = round(coef_matrix[, 3], 4),
-          P.Value = round(coef_matrix[, 4], 4)
-        )
-
         div(style = "margin-bottom: 20px;",
           div(class = "segment-header",
             paste0("Segment ", i, " (", round(fit@prior[i] * 100, 1), "% of sample)")
@@ -1014,13 +1132,19 @@ server = function(input, output, session) {
     if (is.null(result) || result$type != "glm") return(NULL)
 
     coefs = summary(result$fit)$coefficients
-    data.frame(
+    # Linear (gaussian) GLM reports t values; Poisson/logistic report z values
+    stat_label = if (result$model_type == "gaussian") "t value" else "z value"
+    out = data.frame(
       Variable = rownames(coefs),
       Estimate = round(coefs[, 1], 4),
       Std.Error = round(coefs[, 2], 4),
-      z.value = round(coefs[, 3], 4),
-      P.Value = round(coefs[, 4], 4)
+      Stat = round(coefs[, 3], 4),
+      P.Value = format_pval(coefs[, 4]),
+      stringsAsFactors = FALSE,
+      check.names = FALSE
     )
+    names(out) = c("Variable", "Estimate", "Std. Error", stat_label, "p-value")
+    out
   }, rownames = FALSE, digits = 4)
 
   # Dynamic segment tables for flexmix
@@ -1041,13 +1165,17 @@ server = function(input, output, session) {
           comp_name = paste0("Comp.", seg_i)
           coef_matrix = result$refit_model@components[[1]][[comp_name]]
 
-          data.frame(
+          out = data.frame(
             Variable = rownames(coef_matrix),
             Estimate = round(coef_matrix[, 1], 4),
             Std.Error = round(coef_matrix[, 2], 4),
-            z.value = round(coef_matrix[, 3], 4),
-            P.Value = round(coef_matrix[, 4], 4)
+            Stat = round(coef_matrix[, 3], 4),
+            P.Value = format_pval(coef_matrix[, 4]),
+            stringsAsFactors = FALSE,
+            check.names = FALSE
           )
+          names(out) = c("Variable", "Estimate", "Std. Error", "z value", "p-value")
+          out
         }, rownames = FALSE, digits = 4)
       })
     })
@@ -1065,17 +1193,6 @@ server = function(input, output, session) {
         )
       )
     }
-
-    fit = result$fit
-    priors = fit@prior
-    k = length(priors)
-
-    # Create a data frame for segment sizes
-    size_df = data.frame(
-      Segment = paste("Segment", 1:k),
-      Size = paste0(round(priors * 100, 1), "%"),
-      Count = paste0("~", round(priors * fit@size, 0), " obs")
-    )
 
     tagList(
       h4("Segment Sizes", style = "margin-bottom: 15px; color: #1e293b;"),
@@ -1098,17 +1215,27 @@ server = function(input, output, session) {
     data.frame(
       Segment = paste("Segment", 1:k),
       Size = paste0(round(priors * 100, 1), "%"),
-      Count = paste0("~", round(priors * fit@size, 0), " observations")
+      Count = paste0("~", round(priors * sum(fit@size), 0), " observations")
     )
   }, rownames = FALSE)
 
-  # Consumer/HH assignments table
+  # Consumer/HH assignments table (preview of first 100 rows)
   output$consumer_assignments = renderTable({
     result = model_result()
     if (is.null(result) || is.null(result$clusters)) return(NULL)
 
-    as.data.frame(result$clusters)
+    head(as.data.frame(result$clusters), 100)
   }, rownames = FALSE)
+
+  # Download the full Consumer/HH assignments as CSV
+  output$download_assignments = downloadHandler(
+    filename = function() "segment_assignments.csv",
+    content = function(file) {
+      result = model_result()
+      if (is.null(result) || is.null(result$clusters)) return()
+      write.csv(as.data.frame(result$clusters), file, row.names = FALSE)
+    }
+  )
 
   # Helper: build equation string from coefficients
   build_equation = function(coefs, dv, model_type, seg_label = "") {
@@ -1118,25 +1245,25 @@ server = function(input, output, session) {
 
     for (i in seq_along(coefs)) {
       varname = names(coefs)[i]
-      est = round(coefs[i], 4)
+      est = coefs[i]
       if (varname == "(Intercept)") {
         intercept_val = est
-      } else if (est != 0) {
+      } else if (!is.na(est) && est != 0) {
         # Clean variable name: remove backticks, factor() wrappers
         clean = varname
         clean = gsub("factor\\\\(([^)]+)\\\\)", "\\\\1", clean)
         clean = gsub("\`", "", clean)
         if (est >= 0) {
-          terms = c(terms, paste0(" + ", formatC(est, format = "f", digits = 4), " * ", clean))
+          terms = c(terms, paste0(" + ", trimws(formatC(est, format = "g", digits = 4)), " * ", clean))
         } else {
-          terms = c(terms, paste0(" - ", formatC(abs(est), format = "f", digits = 4), " * ", clean))
+          terms = c(terms, paste0(" - ", trimws(formatC(abs(est), format = "g", digits = 4)), " * ", clean))
         }
       }
     }
 
     # Build linear predictor
     if (!is.null(intercept_val)) {
-      linear_pred = paste0(formatC(intercept_val, format = "f", digits = 4), paste(terms, collapse = ""))
+      linear_pred = paste0(trimws(formatC(intercept_val, format = "g", digits = 4)), paste(terms, collapse = ""))
     } else {
       linear_pred = paste(terms, collapse = "")
     }
@@ -1275,12 +1402,13 @@ server = function(input, output, session) {
         "data = read.csv(\\"your_data.csv\\")\\n\\n",
         "# Set seed for reproducibility\\n",
         "set.seed(", result$seed, ")\\n\\n",
-        "# Run latent class model\\n",
+        "# Run latent class model (nrep = 3 matches the app, so results reproduce)\\n",
         "model = stepFlexmix(\\n",
         "    ", formula_str, ",\\n",
         "    data = data,\\n",
-        "    k = ", result$k, ",\\n",
-        "    model = FLXMRglm(family = ", family_str, ")\\n",
+        "    k = ", result$k_requested, ",\\n",
+        "    model = FLXMRglm(family = ", family_str, "),\\n",
+        "    nrep = 3\\n",
         ")\\n\\n",
         "# Model fit statistics\\n",
         "cat(\\"AIC:\\", AIC(model), \\"\\\\n\\")\\n",
@@ -1350,8 +1478,9 @@ server = function(input, output, session) {
           "model = stepFlexmix(\\n",
           "    ", formula_str, ",\\n",
           "    data = data,\\n",
-          "    k = ", result$k, ",\\n",
-          "    model = FLXMRglm(family = ", family_str, ")\\n",
+          "    k = ", result$k_requested, ",\\n",
+          "    model = FLXMRglm(family = ", family_str, "),\\n",
+          "    nrep = 3\\n",
           ")\\n\\n",
           "cat(\\"AIC:\\", AIC(model), \\"\\\\n\\")\\n",
           "cat(\\"BIC:\\", BIC(model), \\"\\\\n\\")\\n\\n",
@@ -1383,8 +1512,8 @@ shinyApp(ui = ui, server = server)
     </script>
 
 </div> <!-- end main-content -->
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js" integrity="sha384-yuGdyIzzYtOBlBG6JOWn+Ey9kpq7HocusNuxEGyyohr1eEyXpeEyehIIXC/hznw4" crossorigin="anonymous"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js" integrity="sha384-lI+CxEx/bCvWP1b0OK13j5HTrTZP7yf1xle8TVOFq2smz6KC1RChTarRV/RHP5PP" crossorigin="anonymous"></script>
 <script>
     const firebaseConfig = {
         apiKey: "AIzaSyBg3LJDwVIRGWtFZb_mM_CSRJMNCJUta20",
@@ -1395,15 +1524,35 @@ shinyApp(ui = ui, server = server)
         appId: "1:659335573790:web:00013a166787efecb3d90f",
         measurementId: "G-NGKNY08XWP"
     };
-    firebase.initializeApp(firebaseConfig);
-    firebase.auth().onAuthStateChanged(function(user) {
-        if (user) {
-            document.getElementById('loading-screen').style.display = 'none';
-            document.getElementById('main-content').style.display = 'block';
-        } else {
-            window.location.href = 'login.html';
+    // If the sign-in service cannot be reached (offline, ad-blocker, campus
+    // filtering), do not hang on "Loading..." forever: show an actionable message.
+    var authResolved = false;
+    function showAuthError() {
+        var ls = document.getElementById('loading-screen');
+        if (ls) {
+            ls.innerHTML = '<p style="color: #64748b; max-width: 420px; text-align: center; padding: 0 20px;">Could not reach the sign-in service. Check your connection and reload this page.</p>';
         }
-    });
+    }
+    var authFallbackTimer = setTimeout(function() {
+        if (!authResolved) showAuthError();
+    }, 12000);
+
+    try {
+        firebase.initializeApp(firebaseConfig);
+        firebase.auth().onAuthStateChanged(function(user) {
+            authResolved = true;
+            clearTimeout(authFallbackTimer);
+            if (user) {
+                document.getElementById('loading-screen').style.display = 'none';
+                document.getElementById('main-content').style.display = 'block';
+            } else {
+                window.location.href = 'login.html?next=' + encodeURIComponent(window.location.pathname.split('/').pop());
+            }
+        });
+    } catch (e) {
+        clearTimeout(authFallbackTimer);
+        showAuthError();
+    }
 </script>
 </body>
 </html>

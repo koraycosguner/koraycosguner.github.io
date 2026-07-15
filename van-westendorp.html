@@ -5,6 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Van Westendorp Price Sensitivity Meter | Koray Cosguner</title>
     <meta name="robots" content="noindex,nofollow">
+    <!-- Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-CTZ8G4EYLR"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-CTZ8G4EYLR');
+    </script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -559,6 +567,153 @@
             margin-bottom: 0;
         }
     
+        /* ===================== Navigation (matches tools.html) ===================== */
+        nav {
+            background: rgba(255, 255, 255, 0.88);
+            border-bottom: 1px solid var(--border);
+            padding: 14px 0;
+            position: sticky;
+            top: 0;
+            z-index: 200;
+            backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
+        }
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .brand {
+            font-weight: 800;
+            font-size: 1.2rem;
+            color: var(--text-dark);
+            text-decoration: none;
+            letter-spacing: -0.03em;
+        }
+        .nav-links { display: flex; align-items: center; }
+        .font-size-controls.font-size-mobile { display: none; }
+        .nav-links a {
+            margin-left: 28px;
+            text-decoration: none;
+            color: var(--text-light);
+            font-weight: 600;
+            font-size: 0.9rem;
+            letter-spacing: -0.01em;
+            transition: color 0.2s;
+            position: relative;
+        }
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--iu-crimson);
+            transition: width 0.3s;
+            border-radius: 2px;
+        }
+        .nav-links a:hover::after,
+        .nav-links a.active::after { width: 100%; }
+        .nav-links a:hover, .nav-links a.active { color: var(--iu-crimson); }
+        .nav-toggle {
+            display: none;
+            flex-direction: column;
+            cursor: pointer;
+            padding: 4px;
+        }
+        .nav-toggle span {
+            width: 24px;
+            height: 2px;
+            background: var(--text-dark);
+            margin: 3px 0;
+            transition: 0.3s;
+        }
+        .font-size-controls {
+            display: flex;
+            align-items: center;
+            gap: 2px;
+            margin-right: 10px;
+            border: 1px solid rgba(153,0,0,0.12);
+            border-radius: 999px;
+            padding: 3px;
+            background: linear-gradient(135deg, rgba(249,250,251,0.9), rgba(243,244,246,0.9));
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            box-shadow: 0 1px 4px rgba(0,0,0,0.06), inset 0 1px 0 rgba(255,255,255,0.8);
+        }
+        .font-size-btn {
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            font-weight: 800;
+            color: var(--text-light);
+            border-radius: 999px;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            font-family: inherit;
+            line-height: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px;
+            height: 32px;
+            user-select: none;
+        }
+        .font-size-btn:hover { color: var(--iu-crimson); background: rgba(153,0,0,0.08); }
+        .font-size-btn:active { transform: scale(0.9); background: rgba(153,0,0,0.15); color: var(--iu-crimson); }
+        .font-size-btn.at-limit { opacity: 0.3; cursor: default; }
+        .font-size-btn.at-limit:hover { background: transparent; color: var(--text-light); }
+        .font-size-btn.decrease-a { font-size: 0.7rem; }
+        .font-size-btn.increase-a { font-size: 1.1rem; }
+        @media (max-width: 640px) {
+            .nav-toggle { display: flex; }
+            .font-size-controls.font-size-mobile { display: flex; }
+            .font-size-controls.font-size-desktop { display: none; }
+            .nav-links {
+                display: none;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                right: 0;
+                background: white;
+                flex-direction: column;
+                padding: 16px 24px;
+                border-bottom: 1px solid var(--border);
+                box-shadow: 0 10px 30px rgba(0,0,0,0.12);
+            }
+            .nav-links.active { display: flex; }
+            .nav-links a { margin-left: 0; padding: 12px 0; }
+        }
+
+        /* Survey handoff banner */
+        .survey-banner {
+            display: none;
+            position: relative;
+            background: #dbeafe;
+            color: #1e40af;
+            border: 1px solid #bfdbfe;
+            border-radius: 8px;
+            padding: 1rem 2.5rem 1rem 1rem;
+            margin-bottom: 1rem;
+            font-size: 0.95rem;
+        }
+        .survey-banner.visible { display: block; }
+        .survey-banner .dismiss-banner {
+            position: absolute;
+            top: 0.5rem;
+            right: 0.75rem;
+            background: transparent;
+            border: none;
+            color: #1e40af;
+            font-size: 1.4rem;
+            line-height: 1;
+            cursor: pointer;
+            padding: 0;
+        }
+
         :focus-visible { outline: 2px solid currentColor; outline-offset: 2px; }
         html, body { overflow-x: hidden; }
     </style>
@@ -571,6 +726,48 @@
     </div>
 
     <div id="main-content" style="display: none;">
+
+    <nav>
+        <div class="nav-container">
+            <div style="display: flex; align-items: center; gap: 18px;">
+                <span style="display: flex; align-items: center; gap: 10px;">
+                    <a href="https://robinson.gsu.edu/" target="_blank" rel="noopener" title="J. Mack Robinson College of Business, Georgia State University" style="line-height: 0;">
+                        <img src="gsu-logo.png" alt="Robinson College of Business, Georgia State University" style="height: 24px; filter: grayscale(1); opacity: 0.55;">
+                    </a>
+                    <a href="https://kelley.iu.edu/" target="_blank" rel="noopener" title="Kelley School of Business, Indiana University" style="line-height: 0;">
+                        <img src="iu-logo.png" alt="Kelley School of Business, Indiana University" style="height: 38px;">
+                    </a>
+                    <a href="https://sc.edu/study/colleges_schools/moore/" target="_blank" rel="noopener" title="Darla Moore School of Business, University of South Carolina" style="line-height: 0;">
+                        <img src="usc-logo.png" alt="Darla Moore School of Business, University of South Carolina" style="height: 24px; filter: grayscale(1); opacity: 0.55;">
+                    </a>
+                </span>
+                <span style="width: 1px; height: 26px; background: rgba(0,0,0,0.14);"></span>
+                <a href="index.html" class="brand">Koray Cosguner</a>
+            </div>
+            <div style="display: flex; align-items: center;">
+                <div class="font-size-controls font-size-mobile" role="group" aria-label="Text size">
+                    <button class="font-size-btn decrease-a" onclick="adjustFontSize(-1)" title="Decrease text size" aria-label="Decrease text size">A</button>
+                    <button class="font-size-btn increase-a" onclick="adjustFontSize(1)" title="Increase text size" aria-label="Increase text size">A</button>
+                </div>
+                <div class="nav-toggle" role="button" tabindex="0" aria-label="Toggle navigation menu" onclick="document.querySelector('.nav-links').classList.toggle('active')">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            </div>
+            <div class="nav-links">
+                <div class="font-size-controls font-size-desktop" role="group" aria-label="Text size">
+                    <button class="font-size-btn decrease-a" onclick="adjustFontSize(-1)" title="Decrease text size" aria-label="Decrease text size">A</button>
+                    <button class="font-size-btn increase-a" onclick="adjustFontSize(1)" title="Increase text size" aria-label="Increase text size">A</button>
+                </div>
+                <a href="index.html">Home</a>
+                <a href="research.html">Research</a>
+                <a href="teaching.html">Teaching</a>
+                <a href="https://koraycosguner.github.io/miaow-consulting/" target="_blank">Consulting</a>
+                <a href="tools.html" class="active">Analytics and Pricing Tools</a>
+            </div>
+        </div>
+    </nav>
 
     <!-- Loading Overlay -->
     <div class="loading-overlay hidden" id="loadingOverlay">
@@ -607,8 +804,14 @@
             </div>
         </div>
 
+        <!-- Survey handoff banner -->
+        <div class="survey-banner" id="surveyBanner" role="status">
+            <span id="surveyBannerText"></span>
+            <button type="button" class="dismiss-banner" id="dismissBanner" aria-label="Dismiss">&times;</button>
+        </div>
+
         <!-- Status Message -->
-        <div class="status-message" id="statusMessage"></div>
+        <div class="status-message" id="statusMessage" aria-live="polite"></div>
 
         <!-- Upload Section -->
         <div class="tool-container" id="uploadCard">
@@ -632,7 +835,7 @@
                     </tr>
                     <tr>
                         <td><strong>Cheap/Bargain</strong></td>
-                        <td>At what price would you consider the product to be a bargain—a great buy for the money?</td>
+                        <td>At what price would you consider the product to be a bargain, a great buy for the money?</td>
                         <td class="column-name">cheap</td>
                     </tr>
                     <tr>
@@ -649,12 +852,17 @@
             </div>
 
             <!-- Upload Area -->
-            <div class="upload-area" id="uploadArea">
-                <input type="file" id="fileInput" accept=".csv">
+            <div class="upload-area" id="uploadArea" role="button" tabindex="0" aria-label="Upload a CSV file. Press Enter or Space to open the file picker.">
+                <input type="file" id="fileInput" accept=".csv" aria-label="CSV file with Van Westendorp survey responses">
                 <div class="upload-icon">📁</div>
                 <p class="upload-text">Click to upload or drag and drop</p>
                 <p class="upload-hint">CSV files only (max 10MB)</p>
             </div>
+
+            <div class="button-group" style="margin-top: 0;">
+                <button type="button" class="btn btn-secondary" id="loadExampleBtn">Load example data</button>
+            </div>
+            <p class="form-hint" style="margin-top: 0.5rem;">No data yet? Load 50 sample respondents to see the full analysis instantly.</p>
 
             <!-- Data Preview -->
             <div class="data-preview" id="dataPreview">
@@ -727,29 +935,29 @@
         </div>
 
         <!-- Results Section -->
-        <div class="results-container" id="resultsContainer">
+        <div class="results-container" id="resultsContainer" aria-live="polite">
             <div class="tool-container">
                 <h2 class="section-title">Key Price Points</h2>
                 <p class="section-subtitle">Your data-driven pricing recommendations based on customer feedback</p>
 
                 <div class="price-points-grid">
                     <div class="price-point-card">
-                        <div class="price-point-label">Floor Price</div>
+                        <div class="price-point-label">Floor Price (PMC)</div>
                         <div class="price-point-value" id="pmcValue">-</div>
                         <div class="price-point-desc">Your minimum credible price. Below this, too many people question quality.</div>
                     </div>
                     <div class="price-point-card highlight">
-                        <div class="price-point-label">Optimal Price</div>
+                        <div class="price-point-label">Optimal Price (OPP)</div>
                         <div class="price-point-value" id="oppValue">-</div>
                         <div class="price-point-desc">The price with the least total resistance. Note: "optimal" means least pushback, not maximum revenue.</div>
                     </div>
                     <div class="price-point-card highlight">
-                        <div class="price-point-label">Market Price</div>
+                        <div class="price-point-label">Market Price (IPP)</div>
                         <div class="price-point-value" id="ippValue">-</div>
                         <div class="price-point-desc">Equal shares call it a bargain versus expensive. The price consumers would expect to see on the shelf.</div>
                     </div>
                     <div class="price-point-card">
-                        <div class="price-point-label">Ceiling Price</div>
+                        <div class="price-point-label">Ceiling Price (PME)</div>
                         <div class="price-point-value" id="pmeValue">-</div>
                         <div class="price-point-desc">Your absolute maximum. Beyond this, you lose more people than you could possibly attract.</div>
                     </div>
@@ -762,8 +970,9 @@
 
                 <!-- Chart -->
                 <div class="chart-container">
-                    <canvas id="psmChart"></canvas>
+                    <canvas id="psmChart" role="img" aria-label="Van Westendorp price sensitivity chart"></canvas>
                 </div>
+                <p id="chartSummary" class="form-hint" style="text-align:center; margin-top:-0.5rem;"></p>
 
                 <!-- Export Section -->
                 <div class="export-section">
@@ -795,14 +1004,14 @@
     </div> <!-- end main-content -->
 
     <!-- Chart.js -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js" integrity="sha384-9nhczxUqK87bcKHh20fSQcTGD4qq5GhayNYSYWqwBkINBhOfQLg/P5HG5lF1urn4" crossorigin="anonymous"></script>
 
     <!-- Papa Parse for CSV -->
-    <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js" integrity="sha384-D/t0ZMqQW31H3az8ktEiNb39wyKnS82iFY52QPACM+IjKW3jDUhyIgh2PApRqJZs" crossorigin="anonymous"></script>
 
     <!-- Firebase SDK -->
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js" integrity="sha384-yuGdyIzzYtOBlBG6JOWn+Ey9kpq7HocusNuxEGyyohr1eEyXpeEyehIIXC/hznw4" crossorigin="anonymous"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js" integrity="sha384-lI+CxEx/bCvWP1b0OK13j5HTrTZP7yf1xle8TVOFq2smz6KC1RChTarRV/RHP5PP" crossorigin="anonymous"></script>
 
     <script>
         // Firebase configuration
@@ -816,20 +1025,45 @@
             measurementId: "G-NGKNY08XWP"
         };
 
-        // Initialize Firebase
-        firebase.initializeApp(firebaseConfig);
-
-        // Check authentication state
-        firebase.auth().onAuthStateChanged(function(user) {
-            if (user) {
-                // User is signed in - show main content
-                document.getElementById('loading-screen').style.display = 'none';
-                document.getElementById('main-content').style.display = 'block';
-            } else {
-                // User is not signed in - redirect to login
-                window.location.href = 'login.html';
+        // Fallback: if the sign-in service (Firebase CDN) is blocked or never
+        // resolves, do not leave the user stuck on "Loading..." forever.
+        let authResolved = false;
+        const authTimeout = setTimeout(function() {
+            if (!authResolved) {
+                const screen = document.getElementById('loading-screen');
+                if (screen) {
+                    screen.innerHTML = '<p style="color:#991b1b; max-width:420px; text-align:center; padding:1rem;">Could not reach the sign-in service. Check your connection and reload this page.</p>';
+                }
             }
-        });
+        }, 12000);
+
+        try {
+            // Initialize Firebase
+            firebase.initializeApp(firebaseConfig);
+
+            // Check authentication state
+            firebase.auth().onAuthStateChanged(function(user) {
+                authResolved = true;
+                clearTimeout(authTimeout);
+                if (user) {
+                    // User is signed in - show main content
+                    document.getElementById('loading-screen').style.display = 'none';
+                    document.getElementById('main-content').style.display = 'block';
+                    // If arriving from the survey admin handoff, load and analyze.
+                    if (window.maybeLoadFromSurvey) window.maybeLoadFromSurvey();
+                } else {
+                    // User is not signed in - redirect to login (preserve destination)
+                    window.location.href = 'login.html?next=' + encodeURIComponent(window.location.pathname.split('/').pop());
+                }
+            });
+        } catch (err) {
+            authResolved = true;
+            clearTimeout(authTimeout);
+            const screen = document.getElementById('loading-screen');
+            if (screen) {
+                screen.innerHTML = '<p style="color:#991b1b; max-width:420px; text-align:center; padding:1rem;">Could not start the sign-in service. Check your connection and reload this page.</p>';
+            }
+        }
     </script>
 
     <script>
@@ -859,16 +1093,28 @@
         const currencySymbol = document.getElementById('currencySymbol');
 
         // Show status message
+        let statusTimer = null;
         function showStatus(message, type) {
+            // Clear any pending hide timer so a newer message is not cut short (F11).
+            if (statusTimer) clearTimeout(statusTimer);
             statusMessage.textContent = message;
             statusMessage.className = `status-message visible ${type}`;
-            setTimeout(() => {
+            statusTimer = setTimeout(() => {
                 statusMessage.classList.remove('visible');
+                statusTimer = null;
             }, 5000);
         }
 
         // File upload handling
         uploadArea.addEventListener('click', () => fileInput.click());
+
+        // Keyboard access for the upload area (F14): Enter/Space open the picker.
+        uploadArea.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ' || e.key === 'Spacebar') {
+                e.preventDefault();
+                fileInput.click();
+            }
+        });
 
         uploadArea.addEventListener('dragover', (e) => {
             e.preventDefault();
@@ -930,28 +1176,44 @@
             const thead = previewTable.querySelector('thead');
             const tbody = previewTable.querySelector('tbody');
 
-            // Header
-            thead.innerHTML = '<tr>' + columnNames.map(col => `<th>${col}</th>`).join('') + '</tr>';
+            // Build header with DOM nodes so CSV contents cannot inject markup (F10).
+            thead.textContent = '';
+            const headRow = document.createElement('tr');
+            columnNames.forEach(col => {
+                const th = document.createElement('th');
+                th.textContent = col;
+                headRow.appendChild(th);
+            });
+            thead.appendChild(headRow);
 
-            // Body (first 10 rows)
-            const previewRows = csvData.data.slice(0, 10);
-            tbody.innerHTML = previewRows.map(row =>
-                '<tr>' + columnNames.map(col => `<td>${row[col] || ''}</td>`).join('') + '</tr>'
-            ).join('');
+            // Build body (first 10 rows) with DOM nodes.
+            tbody.textContent = '';
+            csvData.data.slice(0, 10).forEach(row => {
+                const tr = document.createElement('tr');
+                columnNames.forEach(col => {
+                    const td = document.createElement('td');
+                    const cell = row[col];
+                    td.textContent = (cell === undefined || cell === null) ? '' : cell;
+                    tr.appendChild(td);
+                });
+                tbody.appendChild(tr);
+            });
 
             dataPreview.classList.add('visible');
         }
 
         function populateColumnSelectors() {
             const selectors = [colTooCheap, colCheap, colExpensive, colTooExpensive];
-            const defaultPatterns = [
+            const patternSets = [
                 ['too_cheap', 'toocheap', 'too cheap', 'q1'],
                 ['cheap', 'bargain', 'q2'],
                 ['expensive', 'exp', 'q3'],
                 ['too_expensive', 'tooexpensive', 'too expensive', 'q4']
             ];
+            const norm = s => String(s).toLowerCase().replace(/[^a-z0-9]/g, '');
 
-            selectors.forEach((selector, idx) => {
+            // Populate the option lists first.
+            selectors.forEach(selector => {
                 selector.innerHTML = '<option value="">-- Select column --</option>';
                 columnNames.forEach(col => {
                     const option = document.createElement('option');
@@ -959,29 +1221,64 @@
                     option.textContent = col;
                     selector.appendChild(option);
                 });
+                selector.value = '';
+            });
 
-                // Auto-detect columns
-                const patterns = defaultPatterns[idx];
-                for (const col of columnNames) {
-                    const colLower = col.toLowerCase().replace(/[^a-z0-9]/g, '');
-                    for (const pattern of patterns) {
-                        if (colLower.includes(pattern.replace(/[^a-z0-9]/g, ''))) {
-                            selector.value = col;
-                            break;
+            // Auto-detect columns without letting one selector steal another's column (F2).
+            const normalizedCols = columnNames.map(norm);
+            const assigned = {};          // selector idx -> column name
+            const usedCols = new Set();   // column names already claimed
+
+            // Pass A: exact normalized match, so "cheap" never grabs "too_cheap".
+            selectors.forEach((selector, idx) => {
+                const pats = patternSets[idx].map(norm);
+                for (let c = 0; c < columnNames.length; c++) {
+                    if (usedCols.has(columnNames[c])) continue;
+                    if (pats.includes(normalizedCols[c])) {
+                        assigned[idx] = columnNames[c];
+                        usedCols.add(columnNames[c]);
+                        break;
+                    }
+                }
+            });
+
+            // Pass B: substring match, longest pattern first, more specific selectors
+            // ("too_*") first, skipping columns already claimed. Fallback for
+            // non-standard headers such as "q1_too_cheap".
+            const order = [0, 3, 1, 2];
+            order.forEach(idx => {
+                if (assigned[idx]) return;
+                const pats = patternSets[idx].map(norm).sort((a, b) => b.length - a.length);
+                outer:
+                for (const pat of pats) {
+                    for (let c = 0; c < columnNames.length; c++) {
+                        if (usedCols.has(columnNames[c])) continue;
+                        if (normalizedCols[c].includes(pat)) {
+                            assigned[idx] = columnNames[c];
+                            usedCols.add(columnNames[c]);
+                            break outer;
                         }
                     }
-                    if (selector.value) break;
                 }
+            });
+
+            selectors.forEach((selector, idx) => {
+                if (assigned[idx]) selector.value = assigned[idx];
             });
 
             checkMappingComplete();
         }
 
-        // Check if all columns are mapped
+        // Check if all columns are mapped (and that they map to distinct columns, F2)
         function checkMappingComplete() {
-            const allMapped = colTooCheap.value && colCheap.value &&
-                            colExpensive.value && colTooExpensive.value;
-            analyzeBtn.disabled = !allMapped;
+            const vals = [colTooCheap.value, colCheap.value, colExpensive.value, colTooExpensive.value];
+            const allMapped = vals.every(v => v);
+            const uniqueCount = new Set(vals.filter(v => v)).size;
+            const hasDuplicates = allMapped && uniqueCount < 4;
+            analyzeBtn.disabled = !allMapped || hasDuplicates;
+            if (hasDuplicates) {
+                showStatus('Each question must map to a different column. Please fix the duplicate selection.', 'error');
+            }
         }
 
         [colTooCheap, colCheap, colExpensive, colTooExpensive].forEach(sel => {
@@ -1008,6 +1305,14 @@
         // Run analysis
         analyzeBtn.addEventListener('click', runAnalysis);
 
+        // Parse a price cell, tolerating currency symbols, commas, and spaces (F12).
+        function parsePrice(raw) {
+            if (raw === undefined || raw === null) return NaN;
+            const cleaned = String(raw).replace(/[^0-9.\-]/g, '');
+            if (cleaned === '' || cleaned === '-' || cleaned === '.') return NaN;
+            return parseFloat(cleaned);
+        }
+
         function runAnalysis() {
             loadingOverlay.classList.remove('hidden');
             document.querySelector('.loading-text').textContent = 'Analyzing price sensitivity data...';
@@ -1020,22 +1325,37 @@
                     const expensive = [];
                     const tooExpensive = [];
 
-                    csvData.data.forEach(row => {
-                        const tc = parseFloat(row[colTooCheap.value]);
-                        const c = parseFloat(row[colCheap.value]);
-                        const e = parseFloat(row[colExpensive.value]);
-                        const te = parseFloat(row[colTooExpensive.value]);
+                    const totalRows = csvData.data.length;
+                    let nonNumeric = 0;   // rows dropped because a value did not parse
+                    let inconsistent = 0; // rows dropped for negative or out-of-order answers
 
-                        if (!isNaN(tc) && !isNaN(c) && !isNaN(e) && !isNaN(te)) {
-                            tooCheap.push(tc);
-                            cheap.push(c);
-                            expensive.push(e);
-                            tooExpensive.push(te);
+                    csvData.data.forEach(row => {
+                        const tc = parsePrice(row[colTooCheap.value]);
+                        const c = parsePrice(row[colCheap.value]);
+                        const e = parsePrice(row[colExpensive.value]);
+                        const te = parsePrice(row[colTooExpensive.value]);
+
+                        if (isNaN(tc) || isNaN(c) || isNaN(e) || isNaN(te)) {
+                            nonNumeric++;
+                            return;
                         }
+                        // Screen out negatives and answers that violate the expected order
+                        // too_cheap <= cheap <= expensive <= too_expensive (F4).
+                        if (tc < 0 || c < 0 || e < 0 || te < 0 ||
+                            !(tc <= c && c <= e && e <= te)) {
+                            inconsistent++;
+                            return;
+                        }
+                        tooCheap.push(tc);
+                        cheap.push(c);
+                        expensive.push(e);
+                        tooExpensive.push(te);
                     });
 
-                    if (tooCheap.length < 10) {
-                        throw new Error('Need at least 10 valid responses for analysis.');
+                    const used = tooCheap.length;
+
+                    if (used < 10) {
+                        throw new Error('Need at least 10 valid, consistent responses for analysis. Used ' + used + ' of ' + totalRows + ' rows (' + nonNumeric + ' non-numeric, ' + inconsistent + ' inconsistent).');
                     }
 
                     // Calculate cumulative distributions
@@ -1043,14 +1363,22 @@
                     const minPrice = Math.min(...allPrices);
                     const maxPrice = Math.max(...allPrices);
                     const priceRange = maxPrice - minPrice;
-                    const step = priceRange / 100;
 
-                    const pricePoints = [];
-                    for (let p = minPrice; p <= maxPrice; p += step) {
-                        pricePoints.push(p);
+                    // Guard the degenerate case where every price is identical, which would
+                    // make step = 0 and hang the price-grid loop forever (F3).
+                    if (priceRange === 0) {
+                        throw new Error('All responses share the same price (' + formatPrice(minPrice) + '), so there is no price range to analyze. Please collect more varied responses.');
                     }
 
-                    const n = tooCheap.length;
+                    const step = priceRange / 100;
+
+                    // Index-based grid so a tiny step can never loop forever (F3).
+                    const pricePoints = [];
+                    for (let i = 0; i <= 100; i++) {
+                        pricePoints.push(minPrice + i * step);
+                    }
+
+                    const n = used;
 
                     // Calculate cumulative percentages
                     // Too Cheap: % who say price is too cheap (cumulative from high to low)
@@ -1071,9 +1399,11 @@
                         (tooExpensive.filter(v => v <= p).length / n) * 100
                     );
 
-                    // Derive "Not Cheap" and "Not Expensive" curves
-                    const notCheap = cumTooCheap.map(v => 100 - v);
-                    const notExpensive = cumTooExpensive.map(v => 100 - v);
+                    // Derive "Not Cheap" and "Not Expensive" curves as the complements of
+                    // the Cheap and Expensive curves. PMC is where "Too Cheap" crosses
+                    // "Not Cheap"; PME is where "Too Expensive" crosses "Not Expensive" (F1).
+                    const notCheap = cumCheap.map(v => 100 - v);
+                    const notExpensive = cumExpensive.map(v => 100 - v);
 
                     // Find intersection points
                     function findIntersection(curve1, curve2) {
@@ -1081,8 +1411,12 @@
                             const diff1 = curve1[i] - curve2[i];
                             const diff2 = curve1[i + 1] - curve2[i + 1];
                             if (diff1 * diff2 <= 0) {
+                                // If both differences are zero the curves coincide over a
+                                // flat segment; return the segment start instead of NaN (F8).
+                                const denom = Math.abs(diff1) + Math.abs(diff2);
+                                if (denom === 0) return pricePoints[i];
                                 // Linear interpolation
-                                const t = Math.abs(diff1) / (Math.abs(diff1) + Math.abs(diff2));
+                                const t = Math.abs(diff1) / denom;
                                 return pricePoints[i] + t * (pricePoints[i + 1] - pricePoints[i]);
                             }
                         }
@@ -1108,6 +1442,7 @@
                         cumTooCheap, cumCheap, cumExpensive, cumTooExpensive,
                         notCheap, notExpensive,
                         n,
+                        exclusions: { totalRows, used, nonNumeric, inconsistent },
                         stats: {
                             tooCheap: calculateStats(tooCheap),
                             cheap: calculateStats(cheap),
@@ -1118,7 +1453,13 @@
 
                     displayResults();
                     loadingOverlay.classList.add('hidden');
-                    showStatus('Analysis completed successfully!', 'success');
+
+                    // Tell the student exactly how many rows were used and why any were
+                    // dropped (F12, F4).
+                    let msg = 'Analysis complete. Used ' + used + ' of ' + totalRows + ' rows.';
+                    if (nonNumeric > 0) msg += ' ' + nonNumeric + ' dropped (non-numeric).';
+                    if (inconsistent > 0) msg += ' ' + inconsistent + ' dropped (inconsistent or negative).';
+                    showStatus(msg, 'success');
 
                 } catch (error) {
                     loadingOverlay.classList.add('hidden');
@@ -1131,17 +1472,18 @@
             const sorted = [...arr].sort((a, b) => a - b);
             const n = arr.length;
             const mean = arr.reduce((a, b) => a + b, 0) / n;
-            const variance = arr.reduce((sum, v) => sum + Math.pow(v - mean, 2), 0) / n;
+            // Sample variance (divide by n-1) to match Excel STDEV.S and R's sd() (F9).
+            const variance = n > 1
+                ? arr.reduce((sum, v) => sum + Math.pow(v - mean, 2), 0) / (n - 1)
+                : 0;
             const std = Math.sqrt(variance);
             const median = n % 2 === 0
                 ? (sorted[n/2 - 1] + sorted[n/2]) / 2
                 : sorted[Math.floor(n/2)];
             const min = sorted[0];
             const max = sorted[n - 1];
-            const q1 = sorted[Math.floor(n * 0.25)];
-            const q3 = sorted[Math.floor(n * 0.75)];
 
-            return { mean, std, median, min, max, q1, q3, n };
+            return { mean, std, median, min, max, n };
         }
 
         function formatPrice(value) {
@@ -1151,17 +1493,25 @@
         }
 
         function displayResults() {
-            const { opp, ipp, pmc, pme, pricePoints, cumTooCheap, cumCheap, cumExpensive, cumTooExpensive, stats, n } = analysisResults;
+            const { opp, ipp, pmc, pme, pricePoints, cumTooCheap, cumCheap, cumExpensive, cumTooExpensive, notCheap, notExpensive, stats, n } = analysisResults;
 
             // Update price point cards
             document.getElementById('oppValue').textContent = formatPrice(opp);
             document.getElementById('ippValue').textContent = formatPrice(ipp);
             document.getElementById('pmcValue').textContent = formatPrice(pmc);
             document.getElementById('pmeValue').textContent = formatPrice(pme);
-            document.getElementById('priceRange').textContent = `${formatPrice(pmc)} — ${formatPrice(pme)}`;
+            document.getElementById('priceRange').textContent = `${formatPrice(pmc)} to ${formatPrice(pme)}`;
 
-            // Create chart
-            createChart(pricePoints, cumTooCheap, cumCheap, cumExpensive, cumTooExpensive);
+            // Create chart (with complement curves and OPP/IPP/PMC/PME markers, F6)
+            createChart(pricePoints, cumTooCheap, cumCheap, cumExpensive, cumTooExpensive, notCheap, notExpensive, { opp, ipp, pmc, pme });
+
+            // Text alternative for the chart (F14)
+            const summaryEl = document.getElementById('chartSummary');
+            if (summaryEl) {
+                summaryEl.textContent = 'Key price points: Optimal (OPP) ' + formatPrice(opp) +
+                    ', Market (IPP) ' + formatPrice(ipp) + ', Floor (PMC) ' + formatPrice(pmc) +
+                    ', Ceiling (PME) ' + formatPrice(pme) + '.';
+            }
 
             // Create stats table
             createStatsTable(stats, n);
@@ -1171,7 +1521,7 @@
             resultsContainer.scrollIntoView({ behavior: 'smooth' });
         }
 
-        function createChart(pricePoints, cumTooCheap, cumCheap, cumExpensive, cumTooExpensive) {
+        function createChart(pricePoints, cumTooCheap, cumCheap, cumExpensive, cumTooExpensive, notCheap, notExpensive, points) {
             const ctx = document.getElementById('psmChart').getContext('2d');
 
             if (psmChart) {
@@ -1180,11 +1530,77 @@
 
             // Downsample for smoother rendering
             const sampleRate = Math.max(1, Math.floor(pricePoints.length / 50));
-            const sampledPrices = pricePoints.filter((_, i) => i % sampleRate === 0);
-            const sampledTooCheap = cumTooCheap.filter((_, i) => i % sampleRate === 0);
-            const sampledCheap = cumCheap.filter((_, i) => i % sampleRate === 0);
-            const sampledExpensive = cumExpensive.filter((_, i) => i % sampleRate === 0);
-            const sampledTooExpensive = cumTooExpensive.filter((_, i) => i % sampleRate === 0);
+            const keep = (_, i) => i % sampleRate === 0;
+            const sampledPrices = pricePoints.filter(keep);
+            const sampledTooCheap = cumTooCheap.filter(keep);
+            const sampledCheap = cumCheap.filter(keep);
+            const sampledExpensive = cumExpensive.filter(keep);
+            const sampledTooExpensive = cumTooExpensive.filter(keep);
+            const sampledNotCheap = (notCheap || []).filter(keep);
+            const sampledNotExpensive = (notExpensive || []).filter(keep);
+
+            const N = sampledPrices.length;
+            const span = N > 1 ? (sampledPrices[N - 1] - sampledPrices[0]) : 0;
+            // Choose tick precision so narrow price ranges do not show duplicate labels (F16d).
+            const tickDecimals = span < 5 ? 2 : (span < 20 ? 1 : 0);
+
+            // Map a price value to an x pixel on the (offset:false) category axis, so the
+            // OPP/IPP/PMC/PME markers land exactly where the curves cross (F6).
+            function priceToX(value, chartArea) {
+                if (value === null || value === undefined || isNaN(value) || N < 2) return null;
+                const first = sampledPrices[0], last = sampledPrices[N - 1];
+                let f;
+                if (value <= first) f = 0;
+                else if (value >= last) f = N - 1;
+                else {
+                    let i = 0;
+                    while (i < N - 1 && sampledPrices[i + 1] < value) i++;
+                    const lo = sampledPrices[i], hi = sampledPrices[i + 1];
+                    f = i + (hi > lo ? (value - lo) / (hi - lo) : 0);
+                }
+                return chartArea.left + (f / (N - 1)) * (chartArea.right - chartArea.left);
+            }
+
+            const markers = [
+                { value: points ? points.opp : null, label: 'OPP', color: '#16a34a' },
+                { value: points ? points.ipp : null, label: 'IPP', color: '#990000' },
+                { value: points ? points.pmc : null, label: 'PMC', color: '#0ea5e9' },
+                { value: points ? points.pme : null, label: 'PME', color: '#9333ea' }
+            ];
+
+            // Custom plugin: draw vertical dashed markers + labels for the four price points.
+            const markerPlugin = {
+                id: 'vwMarkers',
+                afterDatasetsDraw(chart) {
+                    const chartArea = chart.chartArea;
+                    const c = chart.ctx;
+                    c.save();
+                    markers.forEach((m, idx) => {
+                        const x = priceToX(m.value, chartArea);
+                        if (x === null) return;
+                        c.beginPath();
+                        c.setLineDash([5, 4]);
+                        c.lineWidth = 1.5;
+                        c.strokeStyle = m.color;
+                        c.moveTo(x, chartArea.top);
+                        c.lineTo(x, chartArea.bottom);
+                        c.stroke();
+                        c.setLineDash([]);
+                        c.font = '700 11px Outfit, sans-serif';
+                        c.textBaseline = 'top';
+                        const labelText = m.label + ' ' + formatPrice(m.value);
+                        const tw = c.measureText(labelText).width;
+                        const ty = chartArea.top + 4 + idx * 16;
+                        let tx = x + 4;
+                        if (tx + tw > chartArea.right) tx = x - 4 - tw;
+                        c.fillStyle = 'rgba(255,255,255,0.85)';
+                        c.fillRect(tx - 2, ty - 1, tw + 4, 14);
+                        c.fillStyle = m.color;
+                        c.fillText(labelText, tx, ty);
+                    });
+                    c.restore();
+                }
+            };
 
             psmChart = new Chart(ctx, {
                 type: 'line',
@@ -1198,7 +1614,7 @@
                             backgroundColor: 'rgba(239, 68, 68, 0.1)',
                             borderWidth: 2.5,
                             fill: false,
-                            tension: 0.4,
+                            tension: 0,
                             pointRadius: 0
                         },
                         {
@@ -1209,7 +1625,7 @@
                             borderWidth: 2.5,
                             borderDash: [6, 3],
                             fill: false,
-                            tension: 0.4,
+                            tension: 0,
                             pointRadius: 0
                         },
                         {
@@ -1219,7 +1635,7 @@
                             backgroundColor: 'rgba(59, 130, 246, 0.1)',
                             borderWidth: 2.5,
                             fill: false,
-                            tension: 0.4,
+                            tension: 0,
                             pointRadius: 0
                         },
                         {
@@ -1230,11 +1646,32 @@
                             borderWidth: 2.5,
                             borderDash: [6, 3],
                             fill: false,
-                            tension: 0.4,
+                            tension: 0,
+                            pointRadius: 0
+                        },
+                        {
+                            label: 'Not Cheap',
+                            data: sampledNotCheap,
+                            borderColor: '#9ca3af',
+                            borderWidth: 1.5,
+                            borderDash: [2, 3],
+                            fill: false,
+                            tension: 0,
+                            pointRadius: 0
+                        },
+                        {
+                            label: 'Not Expensive',
+                            data: sampledNotExpensive,
+                            borderColor: '#6b7280',
+                            borderWidth: 1.5,
+                            borderDash: [2, 3],
+                            fill: false,
+                            tension: 0,
                             pointRadius: 0
                         }
                     ]
                 },
+                plugins: [markerPlugin],
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
@@ -1270,6 +1707,7 @@
                     },
                     scales: {
                         x: {
+                            offset: false,
                             title: {
                                 display: true,
                                 text: 'Price (' + currencySymbol.value + ')',
@@ -1278,7 +1716,7 @@
                             ticks: {
                                 callback: function(value, index) {
                                     if (index % 5 === 0) {
-                                        return currencySymbol.value + parseFloat(this.getLabelForValue(value)).toFixed(0);
+                                        return currencySymbol.value + parseFloat(this.getLabelForValue(value)).toFixed(tickDecimals);
                                     }
                                     return '';
                                 }
@@ -1361,7 +1799,7 @@
         document.getElementById('exportCSV').addEventListener('click', () => {
             if (!analysisResults) return;
 
-            const { opp, ipp, pmc, pme, stats, n } = analysisResults;
+            const { opp, ipp, pmc, pme, stats, n, exclusions } = analysisResults;
             const symbol = currencySymbol.value;
 
             let csv = 'Van Westendorp Price Sensitivity Analysis Results\n\n';
@@ -1370,8 +1808,14 @@
             csv += `Indifference Price Point (IPP),${symbol}${ipp?.toFixed(2) || 'N/A'}\n`;
             csv += `Point of Marginal Cheapness (PMC),${symbol}${pmc?.toFixed(2) || 'N/A'}\n`;
             csv += `Point of Marginal Expensiveness (PME),${symbol}${pme?.toFixed(2) || 'N/A'}\n`;
-            csv += `Acceptable Price Range,${symbol}${pmc?.toFixed(2) || 'N/A'} - ${symbol}${pme?.toFixed(2) || 'N/A'}\n\n`;
-            csv += `Sample Size,${n}\n\n`;
+            csv += `Acceptable Price Range,${symbol}${pmc?.toFixed(2) || 'N/A'} to ${symbol}${pme?.toFixed(2) || 'N/A'}\n\n`;
+            csv += `Sample Size (rows used),${n}\n`;
+            if (exclusions) {
+                csv += `Total rows in file,${exclusions.totalRows}\n`;
+                csv += `Rows dropped (non-numeric),${exclusions.nonNumeric}\n`;
+                csv += `Rows dropped (inconsistent or negative),${exclusions.inconsistent}\n`;
+            }
+            csv += `\n`;
             csv += 'Descriptive Statistics\n';
             csv += 'Metric,Too Cheap,Cheap/Bargain,Expensive,Too Expensive\n';
             csv += `Mean,${stats.tooCheap.mean.toFixed(2)},${stats.cheap.mean.toFixed(2)},${stats.expensive.mean.toFixed(2)},${stats.tooExpensive.mean.toFixed(2)}\n`;
@@ -1400,6 +1844,105 @@
             link.href = psmChart.toBase64Image();
             link.click();
         });
+
+        // Load example data: 50 synthetic, guaranteed-consistent respondents (F7).
+        function generateExampleData() {
+            const rows = [];
+            for (let i = 0; i < 50; i++) {
+                const a = 8 + Math.random() * 6;        // too cheap  (~8-14)
+                const b = a + 2 + Math.random() * 4;    // cheap      (+2-6)
+                const c = b + 3 + Math.random() * 5;    // expensive  (+3-8)
+                const d = c + 3 + Math.random() * 6;    // too exp.   (+3-9)
+                rows.push({
+                    too_cheap: a.toFixed(2),
+                    cheap: b.toFixed(2),
+                    expensive: c.toFixed(2),
+                    too_expensive: d.toFixed(2)
+                });
+            }
+            return rows;
+        }
+
+        document.getElementById('loadExampleBtn').addEventListener('click', () => {
+            const rows = generateExampleData();
+            csvData = { data: rows, meta: { fields: ['too_cheap', 'cheap', 'expensive', 'too_expensive'] } };
+            columnNames = csvData.meta.fields;
+            fileInput.value = '';
+            showDataPreview();
+            populateColumnSelectors();
+            mappingCard.style.display = 'block';
+            showStatus('Loaded 50 sample respondents.', 'success');
+            runAnalysis();
+        });
+
+        // Dismiss the survey handoff banner.
+        document.getElementById('dismissBanner').addEventListener('click', () => {
+            document.getElementById('surveyBanner').classList.remove('visible');
+        });
+
+        // Receive data handed off from survey-admin.html (?fromSurvey=true).
+        // Contract: sessionStorage['surveyData'] = JSON array of response objects with
+        // numeric fields tooCheap, cheap, expensive, tooExpensive;
+        // sessionStorage['surveyType'] = 'vw'.
+        function maybeLoadFromSurvey() {
+            const params = new URLSearchParams(window.location.search);
+            if (params.get('fromSurvey') !== 'true') return;
+
+            let responses;
+            try {
+                if (sessionStorage.getItem('surveyType') !== 'vw') return;
+                responses = JSON.parse(sessionStorage.getItem('surveyData') || 'null');
+            } catch (e) {
+                showStatus('Could not read survey data from the previous page.', 'error');
+                return;
+            }
+
+            if (!Array.isArray(responses) || responses.length === 0) {
+                showStatus('No survey responses were passed to the analyzer.', 'error');
+                return;
+            }
+
+            // Map survey response objects to the analyzer's column format.
+            const rows = responses.map(r => ({
+                too_cheap: r.tooCheap,
+                cheap: r.cheap,
+                expensive: r.expensive,
+                too_expensive: r.tooExpensive
+            }));
+            csvData = { data: rows, meta: { fields: ['too_cheap', 'cheap', 'expensive', 'too_expensive'] } };
+            columnNames = csvData.meta.fields;
+
+            showDataPreview();
+            populateColumnSelectors();
+            mappingCard.style.display = 'block';
+
+            // Show a dismissible banner with the response count.
+            const banner = document.getElementById('surveyBanner');
+            document.getElementById('surveyBannerText').textContent =
+                'Loaded ' + responses.length + ' response' + (responses.length === 1 ? '' : 's') +
+                ' from your survey. Running the analysis now.';
+            banner.classList.add('visible');
+
+            // Clean up so a page refresh does not silently re-import the same data.
+            try {
+                sessionStorage.removeItem('surveyData');
+                sessionStorage.removeItem('surveyType');
+            } catch (e) {}
+
+            runAnalysis();
+        }
+        window.maybeLoadFromSurvey = maybeLoadFromSurvey;
+
+        // Font size controls (matches tools.html)
+        const fontSizes = [14, 16, 18, 20, 22];
+        let currentFontStep = 2;
+        function adjustFontSize(delta) {
+            currentFontStep = Math.max(0, Math.min(fontSizes.length - 1, currentFontStep + delta));
+            document.documentElement.style.fontSize = fontSizes[currentFontStep] + 'px';
+            document.querySelectorAll('.decrease-a').forEach(b => b.classList.toggle('at-limit', currentFontStep === 0));
+            document.querySelectorAll('.increase-a').forEach(b => b.classList.toggle('at-limit', currentFontStep === fontSizes.length - 1));
+        }
+        window.adjustFontSize = adjustFontSize;
     </script>
 </body>
 </html>

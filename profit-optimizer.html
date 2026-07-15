@@ -5,9 +5,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>General Purpose Optimizer | Koray Cosguner</title>
     <meta name="robots" content="noindex,nofollow">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/11.11.0/math.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+    <!-- Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-CTZ8G4EYLR"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-CTZ8G4EYLR');
+    </script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/11.11.0/math.min.js" integrity="sha384-4V7XiQrelKbkSsjfkFjNgJ1nxS5w1502z7Xd5ivrHYnLn/bdjulL1TZ3HyPo8tW7" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js" integrity="sha384-9nhczxUqK87bcKHh20fSQcTGD4qq5GhayNYSYWqwBkINBhOfQLg/P5HG5lF1urn4" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js" integrity="sha384-vtjasyidUo0kW94K5MXDXntzOJpQgBKXmE7e2Ga4LG0skTTLeBi97eFAXsqewJjw" crossorigin="anonymous"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -158,6 +168,16 @@
 
         .equation-btn.upload:hover {
             background: #dbeafe;
+        }
+
+        .equation-btn.example {
+            background: #fef2f2;
+            color: var(--iu-crimson);
+            border-color: #fecaca;
+        }
+
+        .equation-btn.example:hover {
+            background: #fde7e7;
         }
 
         .hidden-file-input {
@@ -329,6 +349,31 @@
 
         .var-row-name.control {
             color: var(--success);
+        }
+
+        /* Remove ("✕") button on decision/control rows. Sized as a proper tap target
+           (>= 28px) so it is usable on phones. */
+        .remove-btn {
+            width: 30px;
+            height: 30px;
+            min-width: 30px;
+            flex-shrink: 0;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+            background: white;
+            color: var(--error);
+            border: 1px solid #fecaca;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.95rem;
+            line-height: 1;
+            font-family: inherit;
+        }
+
+        .remove-btn:hover {
+            background: #fef2f2;
         }
 
         /* Control Variable Row */
@@ -560,7 +605,6 @@
         .solution-status.visible { display: inline-flex; }
         .solution-status.verifying { color: var(--text-light); }
         .solution-status.verified { color: var(--success); }
-        .solution-status.improved { color: var(--success); }
         .solution-status.failed { color: #b45309; }
         .solution-status .spinner {
             width: 0.8rem; height: 0.8rem;
@@ -907,12 +951,6 @@
             .setup-grid {
                 grid-template-columns: 1fr;
             }
-            .equation-row {
-                flex-wrap: wrap;
-            }
-            .var-input {
-                width: 100%;
-            }
             .decision-var-row {
                 flex-wrap: wrap;
             }
@@ -975,6 +1013,9 @@ Sales = 1000 - 30 * Price
 Revenue = Sales * Price
 Profit = Revenue - Cost * Sales" oninput="parseEquations()"></textarea>
             <div class="equation-buttons">
+                <button class="equation-btn example" onclick="loadExample()">
+                    <span>✨</span> Load Example
+                </button>
                 <button class="equation-btn download" onclick="downloadEquations()">
                     <span>📥</span> Save Equations
                 </button>
@@ -983,6 +1024,7 @@ Profit = Revenue - Cost * Sales" oninput="parseEquations()"></textarea>
                 </button>
                 <input type="file" id="equationFileInput" class="hidden-file-input" accept=".txt" onchange="uploadEquations(event)">
             </div>
+            <div id="equationMessage" class="error-message" aria-live="polite"></div>
             <p class="help-text">
                 You can use the following operators in your equations: <code>+</code> <code>-</code> <code>*</code> <code>/</code> <code>^</code> <code>exp()</code> <code>ln()</code> <code>sqrt()</code>
             </p>
@@ -1021,7 +1063,7 @@ Profit = Revenue - Cost * Sales" oninput="parseEquations()"></textarea>
             <div id="controlVarPills" class="var-pills-row"></div>
             <div id="controlVarBulk"></div>
             <div id="controlVarsContainer"></div>
-            <div id="errorMessage" class="error-message"></div>
+            <div id="errorMessage" class="error-message" aria-live="polite"></div>
             <button class="optimize-btn" onclick="optimize()">Find Optimal Solution</button>
 
             <!-- Prediction Section -->
@@ -1035,17 +1077,19 @@ Profit = Revenue - Cost * Sales" oninput="parseEquations()"></textarea>
                 </div>
                 <button class="predict-btn" onclick="predict()">Calculate Values</button>
                 <div class="prediction-results" id="predictionResults">
-                    <table class="prediction-table">
-                        <thead>
-                            <tr>
-                                <th>Variable</th>
-                                <th>Formula</th>
-                                <th>Value</th>
-                            </tr>
-                        </thead>
-                        <tbody id="predictionTableBody">
-                        </tbody>
-                    </table>
+                    <div style="overflow-x: auto;">
+                        <table class="prediction-table">
+                            <thead>
+                                <tr>
+                                    <th>Variable</th>
+                                    <th>Formula</th>
+                                    <th>Value</th>
+                                </tr>
+                            </thead>
+                            <tbody id="predictionTableBody">
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
@@ -1054,7 +1098,7 @@ Profit = Revenue - Cost * Sales" oninput="parseEquations()"></textarea>
         <div id="resultsSection" style="display: none;">
             <div class="solution-box">
                 <h3 id="solutionTitle">Optimal Solution</h3>
-                <div class="solution-status" id="solutionStatus"></div>
+                <div class="solution-status" id="solutionStatus" aria-live="polite"></div>
                 <div class="solution-grid" id="solutionGrid"></div>
                 <div class="all-values">
                     <div style="font-size: 0.8rem; color: var(--text-light); margin-bottom: 0.4rem;">All values at optimum:</div>
@@ -1063,10 +1107,10 @@ Profit = Revenue - Cost * Sales" oninput="parseEquations()"></textarea>
             </div>
 
             <div class="tool-container">
-                <div class="tabs">
-                    <div class="tab active" onclick="switchTab('chart')">Chart</div>
-                    <div class="tab" onclick="switchTab('rcode')">R Code</div>
-                    <div class="tab" onclick="switchTab('excel')">Excel</div>
+                <div class="tabs" role="tablist">
+                    <div class="tab active" role="tab" tabindex="0" onclick="switchTab('chart')" onkeydown="tabKey(event, 'chart')">Chart</div>
+                    <div class="tab" role="tab" tabindex="0" onclick="switchTab('rcode')" onkeydown="tabKey(event, 'rcode')">R Code</div>
+                    <div class="tab" role="tab" tabindex="0" onclick="switchTab('excel')" onkeydown="tabKey(event, 'excel')">Excel</div>
                 </div>
                 <div id="chartTab" class="tab-content active">
                     <div class="chart-container">
@@ -1123,6 +1167,23 @@ Profit = Revenue - Cost * Sales" oninput="parseEquations()"></textarea>
             renderDecisionVars();
             renderControlVars();
             renderPredictionInputs();
+
+            // Enter-to-calculate: pressing Enter in the objective select or any bound /
+            // value input runs the optimization. Listeners sit on the containers (which
+            // persist across re-renders) so they keep working after innerHTML rebuilds.
+            const objSel = document.getElementById('objectiveVar');
+            if (objSel) objSel.addEventListener('keydown', e => {
+                if (e.key === 'Enter') { e.preventDefault(); optimize(); }
+            });
+            ['decisionVarsContainer', 'controlVarsContainer'].forEach(id => {
+                const c = document.getElementById(id);
+                if (c) c.addEventListener('keydown', e => {
+                    if (e.key === 'Enter' && e.target && e.target.tagName === 'INPUT') {
+                        e.preventDefault();
+                        optimize();
+                    }
+                });
+            });
         });
 
         function initChart() {
@@ -1162,6 +1223,11 @@ Profit = Revenue - Cost * Sales" oninput="parseEquations()"></textarea>
             const text = textarea.value;
             equations = [];
 
+            const validName = /^[a-zA-Z_][a-zA-Z0-9_]*$/;
+            const seen = new Set();
+            const invalidNames = [];
+            const duplicateNames = [];
+
             const lines = text.split('\n');
             for (const line of lines) {
                 const trimmed = line.trim();
@@ -1171,31 +1237,92 @@ Profit = Revenue - Cost * Sales" oninput="parseEquations()"></textarea>
                 if (eqIndex > 0) {
                     const varName = trimmed.substring(0, eqIndex).trim();
                     const formula = trimmed.substring(eqIndex + 1).trim();
-                    if (varName && formula) {
-                        equations.push({ varName, formula });
+                    if (!varName || !formula) continue;
+
+                    // F13: reject left-hand-side names that are not simple identifiers
+                    // (spaces, parentheses, operators, leading digits). These can never be
+                    // referenced by a formula and would break the R / Excel exporters.
+                    if (!validName.test(varName)) {
+                        invalidNames.push(varName);
+                        continue;
                     }
+                    // F13: a repeated definition silently overwrote the earlier one before;
+                    // now we keep the last definition (consistent with the evaluator) and
+                    // flag it so the student notices.
+                    if (seen.has(varName)) {
+                        duplicateNames.push(varName);
+                        const existing = equations.find(e => e.varName === varName);
+                        if (existing) existing.formula = formula;
+                        continue;
+                    }
+                    seen.add(varName);
+                    equations.push({ varName, formula });
                 }
             }
 
-            // Reset downstream state BEFORE updateDropdowns so the pill renderers see
-            // the cleared decision/control arrays and rebuild the "Available" pills
-            // from scratch against the freshly parsed equations.
-            decisionVars = [];
-            decisionVarId = 0;
-            controlVars = [];
-            controlVarId = 0;
+            // Surface name/duplicate warnings inline (no alert()).
+            const warnings = [];
+            if (invalidNames.length) {
+                warnings.push(`Ignored invalid variable name(s): ${invalidNames.join(', ')}. Use letters, numbers and underscores only (no spaces or symbols).`);
+            }
+            if (duplicateNames.length) {
+                warnings.push(`Variable(s) defined more than once, only the last definition is used: ${[...new Set(duplicateNames)].join(', ')}.`);
+            }
+            showEquationMessage(warnings.join(' '));
+
+            // F2: preserve the student's setup across coefficient edits. Keep any decision
+            // or control assignment whose variable name is still an unassigned (undefined)
+            // variable in the re-parsed equations, so bounds/values (and the goal below)
+            // survive a keystroke. Entries for names that are now defined or no longer
+            // referenced are dropped. (The id counters are NOT reset so preserved ids stay
+            // unique against future additions.)
+            const stillUndefined = new Set(getUndefinedVars());
+            decisionVars = decisionVars.filter(d => d.name && stillUndefined.has(d.name));
+            controlVars = controlVars.filter(c => c.name && stillUndefined.has(c.name));
             lastResult = null;
 
             updateDropdowns();
             hidePredictionResults();
 
+            // Old results reflect old equations, so hide them; the student re-runs
+            // "Find Optimal Solution" after editing. The goal (Maximize/Minimize) is
+            // independent of the equations and is intentionally left untouched (F2).
             document.getElementById('resultsSection').style.display = 'none';
-            document.getElementById('goalType').selectedIndex = 0;
             if (mainChart) {
                 mainChart.data.labels = [];
-                mainChart.data.datasets[0].data = [];
+                mainChart.data.datasets = []; // F6: replace whole array (datasets[0] may be undefined)
                 mainChart.update();
             }
+        }
+
+        // Inline message area under the equation editor (invalid names, duplicates,
+        // "nothing to save"). Replaces the old alert() calls.
+        function showEquationMessage(msg) {
+            const el = document.getElementById('equationMessage');
+            if (!el) return;
+            if (!msg) {
+                el.classList.remove('visible');
+                el.textContent = '';
+                return;
+            }
+            el.textContent = msg;
+            el.classList.add('visible');
+        }
+
+        // One-click worked example: the canonical linear-demand profit model, with the
+        // objective, decision variable and bounds pre-filled, then optimized (F12).
+        function loadExample() {
+            const model =
+                'Cost = 10\n' +
+                'Sales = 1000 - 30 * Price\n' +
+                'Revenue = Sales * Price\n' +
+                'Profit = Revenue - Cost * Sales';
+            document.getElementById('equationsTextarea').value = model;
+            parseEquations();
+            document.getElementById('goalType').value = 'maximize';
+            document.getElementById('objectiveVar').value = 'Profit';
+            addDecisionVar('Price', '0', '33');
+            optimize();
         }
 
         function downloadEquations() {
@@ -1203,7 +1330,7 @@ Profit = Revenue - Cost * Sales" oninput="parseEquations()"></textarea>
             const text = textarea.value.trim();
 
             if (!text) {
-                alert('No equations to save.');
+                showEquationMessage('No equations to save. Enter or load equations first.');
                 return;
             }
 
@@ -1308,9 +1435,9 @@ Profit = Revenue - Cost * Sales" oninput="parseEquations()"></textarea>
                 <div class="bulk-bounds-row">
                     <span>Set bounds for all:</span>
                     <span>from</span>
-                    <input type="number" id="bulkDecisionMin" placeholder="min" step="any">
+                    <input type="number" id="bulkDecisionMin" placeholder="min" step="any" aria-label="Lower bound to apply to all decision variables">
                     <span>to</span>
-                    <input type="number" id="bulkDecisionMax" placeholder="max" step="any">
+                    <input type="number" id="bulkDecisionMax" placeholder="max" step="any" aria-label="Upper bound to apply to all decision variables">
                     <button type="button" onclick="applyBulkDecisionBounds()">Apply to all</button>
                 </div>
             `;
@@ -1321,10 +1448,10 @@ Profit = Revenue - Cost * Sales" oninput="parseEquations()"></textarea>
                 <div class="decision-var-row">
                     <span class="var-row-name">${escapeHtml(dv.name)}</span>
                     <span style="font-size: 0.85rem; color: var(--text-light);">from</span>
-                    <input type="number" value="${dv.min}" placeholder="min" step="any" onchange="updateDecisionVar(${dv.id}, 'min', this.value)">
+                    <input type="number" value="${dv.min}" placeholder="min" step="any" aria-label="Lower bound for ${escapeHtml(dv.name)}" onchange="updateDecisionVar(${dv.id}, 'min', this.value)">
                     <span style="font-size: 0.85rem; color: var(--text-light);">to</span>
-                    <input type="number" value="${dv.max}" placeholder="max" step="any" onchange="updateDecisionVar(${dv.id}, 'max', this.value)">
-                    <button class="remove-btn" onclick="removeDecisionVar(${dv.id})">✕</button>
+                    <input type="number" value="${dv.max}" placeholder="max" step="any" aria-label="Upper bound for ${escapeHtml(dv.name)}" onchange="updateDecisionVar(${dv.id}, 'max', this.value)">
+                    <button class="remove-btn" aria-label="Remove decision variable ${escapeHtml(dv.name)}" onclick="removeDecisionVar(${dv.id})">✕</button>
                 </div>
             `).join('');
         }
@@ -1372,7 +1499,7 @@ Profit = Revenue - Cost * Sales" oninput="parseEquations()"></textarea>
             document.getElementById('controlVarBulk').innerHTML = controlVars.length === 0 ? '' : `
                 <div class="bulk-bounds-row">
                     <span>Set value for all:</span>
-                    <input type="number" id="bulkControlValue" placeholder="value" step="any">
+                    <input type="number" id="bulkControlValue" placeholder="value" step="any" aria-label="Value to apply to all control variables">
                     <button type="button" onclick="applyBulkControlValue()">Apply to all</button>
                 </div>
             `;
@@ -1381,8 +1508,8 @@ Profit = Revenue - Cost * Sales" oninput="parseEquations()"></textarea>
                 <div class="control-var-row">
                     <span class="var-row-name control">${escapeHtml(cv.name)}</span>
                     <span style="font-size: 0.85rem; color: var(--text-light);">=</span>
-                    <input type="number" value="${cv.value}" placeholder="value" step="any" onchange="updateControlVar(${cv.id}, 'value', this.value)">
-                    <button class="remove-btn" onclick="removeControlVar(${cv.id})">✕</button>
+                    <input type="number" value="${cv.value}" placeholder="value" step="any" aria-label="Fixed value for ${escapeHtml(cv.name)}" onchange="updateControlVar(${cv.id}, 'value', this.value)">
+                    <button class="remove-btn" aria-label="Remove control variable ${escapeHtml(cv.name)}" onclick="removeControlVar(${cv.id})">✕</button>
                 </div>
             `).join('');
         }
@@ -1391,12 +1518,28 @@ Profit = Revenue - Cost * Sales" oninput="parseEquations()"></textarea>
             return equations.map(eq => eq.varName).filter(v => v.trim());
         }
 
+        // Extract identifier (variable/function) names from a formula while consuming
+        // numeric literals first, so scientific-notation constants like 2.5e6 do NOT
+        // leak a ghost token "e6". The alternation matches a full number OR an
+        // identifier at each position; only identifiers are returned. Identifiers that
+        // contain digits (x2, rate1) are preserved because a number literal cannot start
+        // with a letter.
+        function extractIdentifiers(formula) {
+            const ids = [];
+            const re = /(\d+\.?\d*(?:[eE][+-]?\d+)?|\.\d+(?:[eE][+-]?\d+)?)|([a-zA-Z_][a-zA-Z0-9_]*)/g;
+            let m;
+            while ((m = re.exec(formula)) !== null) {
+                if (m[2]) ids.push(m[2]);
+            }
+            return ids;
+        }
+
         function getUndefinedVars() {
             const defined = new Set(getDefinedVars());
             const used = new Set();
             const mathFuncs = ['exp', 'log', 'ln', 'sqrt', 'abs', 'sin', 'cos', 'tan', 'pow', 'min', 'max'];
             equations.forEach(eq => {
-                (eq.formula.match(/[a-zA-Z_][a-zA-Z0-9_]*/g) || []).forEach(m => {
+                extractIdentifiers(eq.formula).forEach(m => {
                     if (!mathFuncs.includes(m.toLowerCase())) used.add(m);
                 });
             });
@@ -1434,8 +1577,8 @@ Profit = Revenue - Cost * Sales" oninput="parseEquations()"></textarea>
             // Show which variables need values from decision/control sections
             container.innerHTML = undefinedVars.map(v => `
                 <div class="prediction-input-group">
-                    <label>${v} =</label>
-                    <input type="number" id="predict_${v}" step="any" placeholder="value" oninput="predict(true)">
+                    <label for="predict_${escapeHtml(v)}">${escapeHtml(v)} =</label>
+                    <input type="number" id="predict_${escapeHtml(v)}" step="any" placeholder="value" aria-label="Prediction input value for ${escapeHtml(v)}" oninput="predict(true)">
                 </div>
             `).join('');
         }
@@ -1550,7 +1693,7 @@ Profit = Revenue - Cost * Sales" oninput="parseEquations()"></textarea>
                 const eq = defined[name];
                 if (!eq) return true;
                 visiting.add(name);
-                const deps = (eq.formula.match(/[a-zA-Z_][a-zA-Z0-9_]*/g) || [])
+                const deps = extractIdentifiers(eq.formula)
                     .filter(d => defined[d] && d !== name);
                 for (const dep of deps) if (!visit(dep)) return false;
                 visiting.delete(name);
@@ -1668,8 +1811,10 @@ Profit = Revenue - Cost * Sales" oninput="parseEquations()"></textarea>
             // Clamp to bounds
             xOpt = Math.max(min, Math.min(max, xOpt));
 
-            // Round to 2 decimal places
-            xOpt = Math.round(xOpt * 100) / 100;
+            // F4: keep the vertex at full precision. Rounding here (previously to 2
+            // decimals) materially misplaced optima on small-scale variables (e.g. a rate
+            // in [0, 0.05]) while still being labelled "Exact Solution". Display rounding
+            // is handled downstream by format3().
 
             // Verify the model is genuinely quadratic by checking multiple points
             // spread across the range. A true quadratic fits through any 3 points
@@ -1713,6 +1858,12 @@ Profit = Revenue - Cost * Sales" oninput="parseEquations()"></textarea>
                 return { name: dv.name, min, max, step, origMin: min, origMax: max };
             });
 
+            // F1: guard against a zero/negative step (min >= max). Without this the search
+            // loops `v += step` never advance and freeze the tab. optimize() already
+            // rejects such bounds, but gridSearch is also reached from the coordinate /
+            // block paths, so guard defensively here too.
+            if (ranges.some(r => !(r.step > 0))) return null;
+
             let best = null, bestVal = goal === 'maximize' ? -Infinity : Infinity;
 
             function search(idx, current) {
@@ -1720,6 +1871,9 @@ Profit = Revenue - Cost * Sales" oninput="parseEquations()"></textarea>
                     const result = evalModel(current);
                     if (result.error) return;
                     const val = result.scope[objVar];
+                    // F5: never accept a non-finite objective (a pole like 1/(x-c) or
+                    // log(0) inside the range would otherwise be reported as +/-Infinity).
+                    if (!Number.isFinite(val)) return;
                     if ((goal === 'maximize' && val > bestVal) || (goal === 'minimize' && val < bestVal)) {
                         bestVal = val;
                         best = { ...current, __objective: val, __scope: result.scope };
@@ -1754,6 +1908,8 @@ Profit = Revenue - Cost * Sales" oninput="parseEquations()"></textarea>
                             const result = evalModel(current);
                             if (result.error) return;
                             const val = result.scope[objVar];
+                            // F5: reject non-finite objectives during refinement too.
+                            if (!Number.isFinite(val)) return;
                             if ((goal === 'maximize' && val > bestVal) || (goal === 'minimize' && val < bestVal)) {
                                 bestVal = val;
                                 best = { ...current, __objective: val, __scope: result.scope };
@@ -1770,19 +1926,53 @@ Profit = Revenue - Cost * Sales" oninput="parseEquations()"></textarea>
                 }
             }
 
-            // Round decision variables to 2 decimal places and re-evaluate
+            // F4: keep the refined full-precision optimum. Rounding every decision
+            // variable to 2 decimals here (and unconditionally replacing best, even when
+            // the rounded objective was worse) distorted small-scale answers. Display
+            // rounding is handled downstream by format3().
             if (best) {
-                const rounded = {};
-                decVars.forEach(dv => {
-                    rounded[dv.name] = Math.round(best[dv.name] * 100) / 100;
-                });
-                const result = evalModel(rounded);
-                if (!result.error) {
-                    best = { ...rounded, __objective: result.scope[objVar], __scope: result.scope, __method: 'grid' };
-                }
+                best.__method = best.__method || 'grid';
             }
 
             return best;
+        }
+
+        // F10: decide whether two decision variables interact by testing the discrete
+        // cross-partial f(hi,hi) - f(hi,lo) - f(lo,hi) + f(lo,lo) at SEVERAL rectangles,
+        // not just one (min, mid) corner. A cross-partial that happens to vanish on one
+        // rectangle (e.g. a factor that is zero at both tested points) can be non-zero
+        // elsewhere, so a single test could wrongly declare a coupled model separable.
+        // Returns true (interact), false (independent on all tested rectangles), or
+        // 'error' if the model could not be evaluated.
+        function pairInteracts(objVar, vi, vj, mids) {
+            const minI = parseFloat(vi.min), maxI = parseFloat(vi.max);
+            const minJ = parseFloat(vj.min), maxJ = parseFloat(vj.max);
+            const midI = (minI + maxI) / 2, midJ = (minJ + maxJ) / 2;
+
+            const rects = [
+                [minI, midI, minJ, midJ],
+                [midI, maxI, midJ, maxJ],
+                [minI, maxI, minJ, maxJ]
+            ];
+            // Two extra random rectangles per pair.
+            for (let k = 0; k < 2; k++) {
+                const iA = minI + Math.random() * (maxI - minI), iB = minI + Math.random() * (maxI - minI);
+                const jA = minJ + Math.random() * (maxJ - minJ), jB = minJ + Math.random() * (maxJ - minJ);
+                rects.push([Math.min(iA, iB), Math.max(iA, iB), Math.min(jA, jB), Math.max(jA, jB)]);
+            }
+
+            for (const [iLo, iHi, jLo, jHi] of rects) {
+                if (!(iHi > iLo) || !(jHi > jLo)) continue; // degenerate, skip
+                const r11 = evalModel({ ...mids, [vi.name]: iHi, [vj.name]: jHi });
+                const r10 = evalModel({ ...mids, [vi.name]: iHi, [vj.name]: jLo });
+                const r01 = evalModel({ ...mids, [vi.name]: iLo, [vj.name]: jHi });
+                const r00 = evalModel({ ...mids, [vi.name]: iLo, [vj.name]: jLo });
+                if (r11.error || r10.error || r01.error || r00.error) return 'error';
+                const cross = r11.scope[objVar] - r10.scope[objVar] - r01.scope[objVar] + r00.scope[objVar];
+                const scale = Math.max(Math.abs(r11.scope[objVar]), 1e-10);
+                if (Math.abs(cross / scale) > 1e-6) return true; // interact on this rectangle
+            }
+            return false;
         }
 
         // Check if the objective is separable across decision variables
@@ -1796,28 +1986,12 @@ Profit = Revenue - Cost * Sales" oninput="parseEquations()"></textarea>
                 mids[dv.name] = (parseFloat(dv.min) + parseFloat(dv.max)) / 2;
             });
 
-            // For each pair of decision variables, check if they interact
+            // For each pair of decision variables, check if they interact (multi-rectangle).
+            // Any interaction, or any evaluation error, means "not safely separable".
             for (let i = 0; i < decVars.length; i++) {
                 for (let j = i + 1; j < decVars.length; j++) {
-                    const vi = decVars[i], vj = decVars[j];
-                    const midI = mids[vi.name], midJ = mids[vj.name];
-                    const minI = parseFloat(vi.min), minJ = parseFloat(vj.min);
-
-                    // Evaluate at 4 points: (midI, midJ), (minI, midJ), (midI, minJ), (minI, minJ)
-                    const r11 = evalModel({ ...mids, [vi.name]: midI, [vj.name]: midJ });
-                    const r10 = evalModel({ ...mids, [vi.name]: midI, [vj.name]: minJ });
-                    const r01 = evalModel({ ...mids, [vi.name]: minI, [vj.name]: midJ });
-                    const r00 = evalModel({ ...mids, [vi.name]: minI, [vj.name]: minJ });
-
-                    if (r11.error || r10.error || r01.error || r00.error) return false;
-
-                    // Cross-partial derivative test:
-                    // If separable: f(mid,mid) - f(mid,min) - f(min,mid) + f(min,min) ≈ 0
-                    const cross = r11.scope[objVar] - r10.scope[objVar] - r01.scope[objVar] + r00.scope[objVar];
-                    const scale = Math.max(Math.abs(r11.scope[objVar]), 1e-10);
-
-                    if (Math.abs(cross / scale) > 1e-6) {
-                        return false; // Variables interact
+                    if (pairInteracts(objVar, decVars[i], decVars[j], mids) !== false) {
+                        return false;
                     }
                 }
             }
@@ -2001,26 +2175,12 @@ Profit = Revenue - Cost * Sales" oninput="parseEquations()"></textarea>
             for (let i = 0; i < n; i++) {
                 for (let j = i + 1; j < n; j++) {
                     if (find(i) === find(j)) continue; // already same block
-                    const vi = decVars[i], vj = decVars[j];
-                    const midI = mids[vi.name], midJ = mids[vj.name];
-                    const minI = parseFloat(vi.min), minJ = parseFloat(vj.min);
-
-                    const r11 = evalModel({ ...mids, [vi.name]: midI, [vj.name]: midJ });
-                    const r10 = evalModel({ ...mids, [vi.name]: midI, [vj.name]: minJ });
-                    const r01 = evalModel({ ...mids, [vi.name]: minI, [vj.name]: midJ });
-                    const r00 = evalModel({ ...mids, [vi.name]: minI, [vj.name]: minJ });
-
-                    if (r11.error || r10.error || r01.error || r00.error) {
-                        // On error, treat as interacting (safe default — no wrong split)
+                    // F10: multi-rectangle interaction test. On error OR any detected
+                    // interaction, keep the pair in the same block (safe default: never
+                    // split variables that might actually be coupled).
+                    const interacts = pairInteracts(objVar, decVars[i], decVars[j], mids);
+                    if (interacts === 'error' || interacts === true) {
                         union(i, j);
-                        continue;
-                    }
-
-                    const cross = r11.scope[objVar] - r10.scope[objVar] - r01.scope[objVar] + r00.scope[objVar];
-                    const scale = Math.max(Math.abs(r11.scope[objVar]), 1e-10);
-
-                    if (Math.abs(cross / scale) > 1e-6) {
-                        union(i, j); // interact → same block
                     }
                 }
             }
@@ -2098,8 +2258,10 @@ Profit = Revenue - Cost * Sales" oninput="parseEquations()"></textarea>
             }
 
             // For multiple variables, try block decomposition first. If the problem splits
-            // into ≥2 independent blocks, this converts an N-dim search into several smaller
-            // searches (e.g., 9 vars → 3 blocks of 3) — same answer, dramatically faster.
+            // into two or more independent blocks (verified pairwise across several
+            // rectangles), this converts an N-dim search into several smaller searches
+            // (e.g. 9 vars into 3 blocks of 3): the same answer for genuinely independent
+            // blocks, dramatically faster.
             if (!skipBlockDecomp && decVars.length > 1) {
                 const blocks = findBlocks(objVar, decVars);
                 if (blocks && blocks.length > 1) {
@@ -2167,6 +2329,17 @@ Profit = Revenue - Cost * Sales" oninput="parseEquations()"></textarea>
             }
             if (activeDecVars.length === 0) {
                 errorEl.textContent = 'Add at least one decision variable with range.';
+                errorEl.classList.add('visible');
+                return;
+            }
+
+            // F1 / F7: every decision variable needs min < max. Equal bounds froze the tab
+            // (step = 0 in the search loop) and reversed bounds (min > max) silently
+            // clamped to the wrong endpoint. Catches non-numeric entries too (NaN fails
+            // the comparison). To hold a variable fixed, use a control variable instead.
+            const badBounds = activeDecVars.filter(dv => !(parseFloat(dv.min) < parseFloat(dv.max)));
+            if (badBounds.length > 0) {
+                errorEl.textContent = `Each decision variable needs a lower bound below its upper bound (min < max). Fix: ${badBounds.map(d => d.name).join(', ')}. To hold a variable at a single value, add it as a control variable instead.`;
                 errorEl.classList.add('visible');
                 return;
             }
@@ -2243,7 +2416,12 @@ Profit = Revenue - Cost * Sales" oninput="parseEquations()"></textarea>
                     }
                     lastResult = { goal, objVar, decVars: activeDecVars, best: webrBest };
                     displayResults(goal, objVar, activeDecVars, webrBest, webrBest.__method);
-                    setVerificationStatus('verified', '✓ Solved with R (JS path skipped due to dimensionality)');
+                    // F11: reflect R's convergence code in the status.
+                    if (webrBest.__convergence === 0) {
+                        setVerificationStatus('verified', '✓ Solved with R (JS path skipped due to dimensionality)');
+                    } else {
+                        setVerificationStatus('failed', `Solved with R, but it did not fully converge (code ${webrBest.__convergence}); treat the result with caution.`);
+                    }
                     updateChart(objVar, activeDecVars, webrBest, goal);
                     generateRCode(goal, objVar, activeDecVars);
                     generateExcelPreview();
@@ -2303,8 +2481,8 @@ Profit = Revenue - Cost * Sales" oninput="parseEquations()"></textarea>
 
         // Update the verification subtitle on the result card. State is one of:
         //   'verifying' (gray + spinner), 'verified' (green check),
-        //   'improved' (green — R found a higher objective and we updated the answer),
-        //   'failed' (amber warning — R verification skipped, JS answer kept).
+        //   'failed' (amber warning: R verification skipped, did not converge, or
+        //   unavailable; the best answer found is kept).
         // Pass null/'' as state to hide.
         function setVerificationStatus(state, message) {
             const el = document.getElementById('solutionStatus');
@@ -2457,10 +2635,19 @@ c(${valueExpr}, ${parExpr}, ${convExpr})
                     displayResults(goal, objVar, decVars, webrBest, webrBest.__method);
                     updateChart(objVar, decVars, webrBest, goal);
                 }
-                // Show both objectives in the status so it's clear R actually ran and
-                // produced its own value, not just rubber-stamped the JS answer.
-                setVerificationStatus('verified',
-                    `✓ Cross-checked with R — JS: ${format3(jsBest.__objective)}, R: ${format3(webrBest.__objective)}`);
+                // F11: only claim a clean cross-check when R actually converged
+                // (convergence code 0). L-BFGS-B stopping at maxit (1) or reporting
+                // warnings (51/52) must not show the green "✓ Cross-checked" state.
+                const converged = webrBest.__convergence === 0;
+                if (converged) {
+                    // Show both objectives so it's clear R ran and produced its own value,
+                    // not just rubber-stamped the JS answer.
+                    setVerificationStatus('verified',
+                        `✓ Cross-checked with R. JS: ${format3(jsBest.__objective)}, R: ${format3(webrBest.__objective)}`);
+                } else {
+                    setVerificationStatus('failed',
+                        `R did not fully converge (code ${webrBest.__convergence}); showing the best answer found. JS: ${format3(jsBest.__objective)}, R: ${format3(webrBest.__objective)}`);
+                }
             } catch (e) {
                 if (stale()) return;
                 setVerificationStatus('failed', `R verification skipped: ${e.message || e}`);
@@ -2546,18 +2733,25 @@ c(${valueExpr}, ${parExpr}, ${convExpr})
                 plotMax = maxBound;
             }
 
-            const labels = [], data = [];
+            // F9: build numeric {x, y} points and use a LINEAR x-axis. Previously the
+            // curve used string labels (a category axis) and the optimum was pushed as a
+            // string-x point; when the plot window was clamped by a bound, the optimum's
+            // x was not among the labels and Chart.js dropped the marker at the far right.
+            const curve = [];
             const numPoints = 101;
             for (let i = 0; i < numPoints; i++) {
                 const x = plotMin + (i / (numPoints - 1)) * (plotMax - plotMin);
-                labels.push(x.toFixed(2));
                 const r = evalModel({ [dv.name]: x });
-                data.push(r.scope ? r.scope[objVar] : null);
+                const y = r.scope ? r.scope[objVar] : null;
+                curve.push({ x, y: Number.isFinite(y) ? y : null });
             }
-            mainChart.data.labels = labels;
+            mainChart.data.labels = [];
+            mainChart.options.scales.x.type = 'linear';
+            mainChart.options.scales.x.min = plotMin;
+            mainChart.options.scales.x.max = plotMax;
             mainChart.data.datasets = [{
                 label: objVar,
-                data: data,
+                data: curve,
                 borderColor: '#990000',
                 backgroundColor: 'rgba(153, 0, 0, 0.1)',
                 fill: true,
@@ -2566,7 +2760,7 @@ c(${valueExpr}, ${parExpr}, ${convExpr})
                 borderWidth: 2
             }, {
                 label: 'Optimum',
-                data: [{ x: best[dv.name].toFixed(2), y: best.__objective }],
+                data: [{ x: optVal, y: best.__objective }],
                 borderColor: '#059669',
                 backgroundColor: '#059669',
                 pointRadius: 8,
@@ -2576,7 +2770,9 @@ c(${valueExpr}, ${parExpr}, ${convExpr})
             mainChart.options.plugins.title.text = `${objVar} vs ${dv.name}`;
             mainChart.options.scales.x.title.text = dv.name;
             mainChart.options.scales.y.title.text = objVar;
-            document.getElementById('chartNote').textContent = `Showing ±25% around optimal ${dv.name} = ${optVal.toFixed(2)}`;
+            // Describe the actual plotted window (the marker sits at the true optimum).
+            document.getElementById('chartNote').textContent =
+                `Showing ${dv.name} from ${format3(plotMin)} to ${format3(plotMax)} around the optimum (${dv.name} = ${format3(optVal)}).`;
             mainChart.update();
         }
 
@@ -2605,7 +2801,9 @@ c(${valueExpr}, ${parExpr}, ${convExpr})
                 code += `${fnName} = function(${dv.name}) {\n`;
 
                 order.forEach(eq => {
-                    const rFormula = eq.formula.replace(/\^/g, '^');
+                    // F3: translate math.js syntax to R (ln -> log, pow(a,b) -> (a)^(b)),
+                    // otherwise the advertised ln()/pow() emit code that errors in RStudio.
+                    const rFormula = formulaToR(eq.formula);
                     code += `  ${eq.varName} = ${rFormula}\n`;
                 });
 
@@ -2634,7 +2832,8 @@ c(${valueExpr}, ${parExpr}, ${convExpr})
                 code += `\n`;
 
                 order.forEach(eq => {
-                    const rFormula = eq.formula.replace(/\^/g, '^');
+                    // F3: translate math.js syntax to R (see single-variable branch above).
+                    const rFormula = formulaToR(eq.formula);
                     code += `  ${eq.varName} = ${rFormula}\n`;
                 });
 
@@ -2677,6 +2876,15 @@ c(${valueExpr}, ${parExpr}, ${convExpr})
             setTimeout(() => btn.textContent = 'Copy', 1500);
         }
 
+        // Keyboard activation for the (div-based) tabs so they are reachable without a
+        // mouse: Enter or Space switches to the tab.
+        function tabKey(e, tab) {
+            if (e.key === 'Enter' || e.key === ' ' || e.key === 'Spacebar') {
+                e.preventDefault();
+                switchTab(tab);
+            }
+        }
+
         function switchTab(tab) {
             document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
             document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
@@ -2691,6 +2899,7 @@ c(${valueExpr}, ${parExpr}, ${convExpr})
             const activeControlVars = controlVars.filter(cv => cv.name && cv.value !== '');
 
             let html = '<h5>Excel File Layout:</h5>';
+            html += '<div style="overflow-x: auto;">'; // F15: allow long formulas to scroll on phones
             html += '<table style="width: 100%; border-collapse: collapse; font-size: 0.85rem; margin-top: 0.5rem;">';
 
             // Header row
@@ -2728,6 +2937,7 @@ c(${valueExpr}, ${parExpr}, ${convExpr})
             });
 
             html += '</table>';
+            html += '</div>';
             html += '<p style="margin-top: 0.75rem; font-size: 0.8rem; color: var(--text-light);">Column B contains Excel formulas that calculate values. Column C shows the formula text.</p>';
 
             document.getElementById('excelPreview').innerHTML = html;
@@ -2838,8 +3048,8 @@ c(${valueExpr}, ${parExpr}, ${convExpr})
     </script>
 
 </div> <!-- end main-content -->
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js" integrity="sha384-yuGdyIzzYtOBlBG6JOWn+Ey9kpq7HocusNuxEGyyohr1eEyXpeEyehIIXC/hznw4" crossorigin="anonymous"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js" integrity="sha384-lI+CxEx/bCvWP1b0OK13j5HTrTZP7yf1xle8TVOFq2smz6KC1RChTarRV/RHP5PP" crossorigin="anonymous"></script>
 <script>
     const firebaseConfig = {
         apiKey: "AIzaSyBg3LJDwVIRGWtFZb_mM_CSRJMNCJUta20",
@@ -2850,13 +3060,29 @@ c(${valueExpr}, ${parExpr}, ${convExpr})
         appId: "1:659335573790:web:00013a166787efecb3d90f",
         measurementId: "G-NGKNY08XWP"
     };
+    // If Firebase (CDN) never loads or auth never resolves, don't leave the page
+    // stuck on "Loading..." forever. After 12s show a clear, actionable message.
+    // Scheduled BEFORE initializeApp so it still fires if the Firebase CDN is blocked
+    // (in which case the initializeApp call below throws).
+    let _authResolved = false;
+    const _authTimeout = setTimeout(function() {
+        if (_authResolved) return;
+        const ls = document.getElementById('loading-screen');
+        if (ls) {
+            ls.innerHTML = '<p style="color: #64748b; max-width: 420px; text-align: center; padding: 1rem; line-height: 1.6;">Could not reach the sign-in service. Check your connection and reload this page.</p>';
+        }
+    }, 12000);
+
     firebase.initializeApp(firebaseConfig);
+
     firebase.auth().onAuthStateChanged(function(user) {
+        _authResolved = true;
+        clearTimeout(_authTimeout);
         if (user) {
             document.getElementById('loading-screen').style.display = 'none';
             document.getElementById('main-content').style.display = 'block';
         } else {
-            window.location.href = 'login.html';
+            window.location.href = 'login.html?next=' + encodeURIComponent(window.location.pathname.split('/').pop());
         }
     });
 </script>
