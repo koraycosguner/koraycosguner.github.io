@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign In | Analytics and Pricing Tools</title>
+    <meta name="robots" content="noindex,nofollow">
+    <meta name="description" content="Sign in to access Analytics and Pricing Tools by Dr. Koray Cosguner.">
+    <link rel="icon" type="image/jpeg" href="KCFavicon.jpg">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        html { scroll-behavior: smooth; }
+        html, body { overflow-x: hidden; }
+        :focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+        :root {
+            --primary: #990000;
+            --text-main: #111827;
+            --text-light: #4b5563;
+            --border: #e2e8f0;
+            --bg: #ffffff;
+            --surface: #f9fafb;
+            --radius-md: 12px;
+            --radius-xl: 24px;
+            --transition-base: 0.25s ease;
+        }
+
+        body {
+            font-family: 'Outfit', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            font-size: 18px;
+            margin: 0;
+            padding: 0;
+            background: radial-gradient(circle at center, #ffffff 0%, #f9fafb 100%);
+            color: var(--text-main);
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            -webkit-font-smoothing: antialiased;
+        }
+
+
+        .login-container {
+            position: relative;
+            z-index: 10;
+            text-align: center;
+            padding: 40px 24px;
+            max-width: 500px;
+            width: 100%;
+        }
+
+        .logo-section {
+            margin-bottom: 40px;
+        }
+
+        .logo-section img {
+            height: 50px;
+            margin-bottom: 20px;
+        }
+
+        .logo-row {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 14px;
+            margin-bottom: 30px;
+        }
+        .logo-row span {
+            color: var(--text-light);
+            font-size: 0.95rem;
+            font-weight: 500;
+        }
+
+        h1 {
+            margin: 0;
+            font-size: clamp(1.8rem, 5vw, 2.5rem);
+            font-weight: 800;
+            color: var(--text-main);
+            letter-spacing: -0.03em;
+        }
+
+        .subtitle {
+            color: var(--text-light);
+            font-size: 1.05rem;
+            margin-top: 12px;
+            max-width: 450px;
+            margin-left: auto;
+            margin-right: auto;
+            line-height: 1.7;
+        }
+
+        .creator-info {
+            margin-top: 28px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border);
+        }
+        .creator-info p {
+            margin: 0;
+            color: var(--text-sub, #374151);
+            font-size: 0.95rem;
+            font-weight: 600;
+        }
+        .creator-info .meta {
+            color: var(--text-light);
+            font-size: 0.88rem;
+            font-weight: 400;
+            margin-top: 4px;
+        }
+
+        .login-box {
+            background: var(--bg);
+            border: 1px solid transparent;
+            background-clip: padding-box;
+            border-radius: var(--radius-xl);
+            padding: 40px 32px;
+            box-shadow: 0 12px 40px rgba(0,0,0,0.08);
+            position: relative;
+        }
+        .login-box::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: var(--radius-xl);
+            padding: 1px;
+            background: linear-gradient(145deg, var(--border) 0%, rgba(153,0,0,0.1) 50%, var(--border) 100%);
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            pointer-events: none;
+        }
+
+        .login-box p {
+            margin: 0 0 25px 0;
+            color: var(--text-light);
+            font-size: 0.95rem;
+        }
+
+        .google-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            background: rgba(255,255,255,0.95);
+            border: none;
+            border-radius: var(--radius-md);
+            padding: 14px 28px;
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text-main);
+            cursor: pointer;
+            transition: all var(--transition-base);
+            width: 100%;
+            box-sizing: border-box;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.25);
+            font-family: inherit;
+        }
+
+        .google-btn:hover {
+            background: #ffffff;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.35);
+        }
+
+        .google-btn img {
+            width: 20px;
+            height: 20px;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-top: 24px;
+            color: var(--text-light);
+            font-size: 0.9rem;
+            font-weight: 500;
+            text-decoration: none;
+            transition: color var(--transition-base);
+        }
+        .back-link:hover {
+            color: var(--primary);
+            text-decoration: underline;
+        }
+
+        .error-message {
+            margin-top: 20px;
+            padding: 15px;
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+            border-radius: var(--radius-md);
+            font-size: 0.9rem;
+            color: #991b1b;
+            display: none;
+        }
+
+        .loading {
+            display: none;
+            margin-top: 20px;
+            color: var(--text-light);
+        }
+
+        footer {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            text-align: center;
+            padding: 20px;
+            color: var(--text-muted, #9ca3af);
+            font-size: 0.85rem;
+            z-index: 10;
+        }
+
+        /* Animations */
+        .logo-section, .login-box {
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeUp 0.6s ease forwards;
+        }
+        .logo-section { animation-delay: 0.1s; }
+        .login-box { animation-delay: 0.3s; }
+        @keyframes fadeUp {
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @media (max-width: 480px) {
+            .login-container {
+                padding: 20px;
+            }
+            .login-box {
+                padding: 28px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="login-container">
+        <div class="logo-section">
+            <div class="logo-row">
+                <img src="iu-logo.png" alt="Indiana University" style="height: 42px;">
+                <span>Kelley School of Business</span>
+            </div>
+            <h1>Analytics and Pricing Tools</h1>
+            <p class="subtitle">Interactive tools for pricing strategy, demand analysis, and marketing analytics.</p>
+            <div class="creator-info">
+                <p>Created by Dr. Koray Cosguner</p>
+                <p class="meta">Associate Professor of Marketing &middot; John Rau KSB Faculty Fellow</p>
+            </div>
+        </div>
+
+        <div class="login-box">
+            <p>Sign in with your Google account to access the tools.</p>
+
+            <button class="google-btn" onclick="signInWithGoogle()">
+                <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google">
+                Sign in with Google
+            </button>
+
+            <div class="error-message" id="error-message"></div>
+            <div class="loading" id="loading">Signing in...</div>
+
+            <a class="back-link" href="index.html">&larr; Back to koraycosguner.github.io</a>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; <span class="year"></span> Koray Cosguner &middot; All Rights Reserved</p>
+    </footer>
+
+    <script>
+        document.querySelectorAll('.year').forEach(el => el.textContent = new Date().getFullYear());
+    </script>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+
+    <script>
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyBg3LJDwVIRGWtFZb_mM_CSRJMNCJUta20",
+            authDomain: "iu-pricing-tools.firebaseapp.com",
+            projectId: "iu-pricing-tools",
+            storageBucket: "iu-pricing-tools.firebasestorage.app",
+            messagingSenderId: "659335573790",
+            appId: "1:659335573790:web:00013a166787efecb3d90f",
+            measurementId: "G-NGKNY08XWP"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+
+        // Check if already signed in
+        firebase.auth().onAuthStateChanged(function(user) {
+            if (user) {
+                window.location.href = 'tools.html';
+            }
+        });
+
+        function signInWithGoogle() {
+            const provider = new firebase.auth.GoogleAuthProvider();
+            // Force account selection
+            provider.setCustomParameters({
+                prompt: 'select_account'
+            });
+
+            document.getElementById('loading').style.display = 'block';
+            document.getElementById('error-message').style.display = 'none';
+
+            firebase.auth().signInWithPopup(provider)
+                .then(function(result) {
+                    window.location.href = 'tools.html';
+                })
+                .catch(function(error) {
+                    console.error('Sign in error:', error);
+                    showError('Sign in failed. Please try again.');
+                })
+                .finally(function() {
+                    document.getElementById('loading').style.display = 'none';
+                });
+        }
+
+        function showError(message) {
+            const errorEl = document.getElementById('error-message');
+            errorEl.textContent = message;
+            errorEl.style.display = 'block';
+            document.getElementById('loading').style.display = 'none';
+        }
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,2796 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gabor-Granger Price Analysis | Koray Cosguner</title>
+    <meta name="robots" content="noindex,nofollow">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --iu-crimson: #990000;
+            --iu-crimson-dark: #7a0000;
+            --text-dark: #333;
+            --text-light: #666;
+            --bg-light: #f5f5f5;
+            --white: #fff;
+            --border: #ddd;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-size: 18px;
+            font-family: 'Outfit', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            line-height: 1.6;
+            color: var(--text-dark);
+            background-color: var(--bg-light);
+        }
+
+        /* Main Content */
+        main {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        /* Back Link */
+        .back-link {
+            margin-bottom: 1rem;
+        }
+
+        .back-link a {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            color: var(--text-light);
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .back-link a:hover {
+            color: var(--iu-crimson);
+        }
+
+        /* Hero Section */
+        .hero {
+            text-align: center;
+            padding: 3rem 0;
+        }
+
+        .hero h1 {
+            font-size: 1.8rem;
+            color: var(--text-dark);
+            margin-bottom: 0.5rem;
+        }
+
+        .hero p {
+            font-size: 0.95rem;
+            color: var(--text-light);
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        /* Tool Container */
+        .tool-container {
+            background: var(--white);
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            padding: 2rem;
+            margin-top: 2rem;
+        }
+
+        .section-title {
+            font-size: 1.3rem;
+            color: var(--iu-crimson);
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--iu-crimson);
+        }
+
+        .section-subtitle {
+            font-size: 0.95rem;
+            color: var(--text-light);
+            margin-bottom: 1.5rem;
+        }
+
+        /* Info Box */
+        .info-box {
+            background: #dbeafe;
+            border: 1px solid #93c5fd;
+            border-radius: 8px;
+            padding: 1rem 1.25rem;
+            margin-bottom: 1.5rem;
+            font-size: 0.9rem;
+            color: #1e40af;
+        }
+
+        .info-box strong {
+            display: block;
+            margin-bottom: 0.25rem;
+            font-size: 0.95rem;
+        }
+
+        /* Input Mode Toggle */
+        .input-mode-toggle {
+            display: flex;
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .mode-btn {
+            flex: 1;
+            padding: 1rem 1.25rem;
+            border: 2px solid var(--border);
+            background: var(--white);
+            border-radius: 8px;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.3s;
+        }
+
+        .mode-btn:hover {
+            border-color: var(--iu-crimson);
+        }
+
+        .mode-btn.active {
+            border-color: var(--iu-crimson);
+            background: var(--iu-crimson);
+            color: var(--white);
+        }
+
+        .mode-btn .mode-icon {
+            font-size: 1.5rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .mode-btn .mode-label {
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        /* Manual Input Section */
+        .manual-input-section {
+            display: none;
+        }
+
+        .manual-input-section.visible {
+            display: block;
+        }
+
+        .price-points-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 1.25rem;
+        }
+
+        .price-points-table th,
+        .price-points-table td {
+            padding: 0.75rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .price-points-table th {
+            background: var(--iu-crimson);
+            color: var(--white);
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .price-points-table th:first-child {
+            border-radius: 8px 0 0 0;
+        }
+
+        .price-points-table th:last-child {
+            border-radius: 0 8px 0 0;
+        }
+
+        .price-points-table input {
+            width: 100%;
+            padding: 0.625rem;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-size: 0.95rem;
+            transition: border-color 0.3s;
+        }
+
+        .price-points-table input:focus {
+            outline: none;
+            border-color: var(--iu-crimson);
+        }
+
+        .price-points-table .remove-row {
+            background: none;
+            border: none;
+            color: #ef4444;
+            cursor: pointer;
+            font-size: 1.2rem;
+            padding: 4px 8px;
+            border-radius: 4px;
+            transition: background 0.3s;
+        }
+
+        .price-points-table .remove-row:hover {
+            background: #fef2f2;
+        }
+
+        .add-row-btn {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.25rem;
+            background: var(--bg-light);
+            border: 2px dashed var(--border);
+            border-radius: 8px;
+            color: var(--text-light);
+            cursor: pointer;
+            font-size: 0.95rem;
+            font-weight: 500;
+            transition: all 0.3s;
+            width: 100%;
+            justify-content: center;
+        }
+
+        .add-row-btn:hover {
+            border-color: var(--iu-crimson);
+            color: var(--iu-crimson);
+            background: rgba(153, 0, 0, 0.05);
+        }
+
+        /* CSV Upload Section */
+        .csv-upload-section {
+            display: none;
+        }
+
+        .csv-upload-section.visible {
+            display: block;
+        }
+
+        /* Loading Overlay */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255,255,255,0.95);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+
+        .loading-overlay.hidden {
+            display: none;
+        }
+
+        .spinner {
+            width: 60px;
+            height: 60px;
+            border: 4px solid var(--border);
+            border-top-color: var(--iu-crimson);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .loading-text {
+            margin-top: 1rem;
+            font-size: 1.1rem;
+            color: var(--text-light);
+        }
+
+        /* File Upload */
+        .upload-area {
+            border: 2px dashed var(--border);
+            border-radius: 8px;
+            padding: 3rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-bottom: 1.5rem;
+        }
+
+        .upload-area:hover, .upload-area.dragover {
+            border-color: var(--iu-crimson);
+            background: rgba(153, 0, 0, 0.05);
+        }
+
+        .upload-area input[type="file"] {
+            display: none;
+        }
+
+        .upload-icon {
+            font-size: 3rem;
+            color: var(--iu-crimson);
+            margin-bottom: 1rem;
+        }
+
+        .upload-text {
+            font-size: 1.1rem;
+            color: var(--text-dark);
+        }
+
+        .upload-hint {
+            font-size: 0.9rem;
+            color: var(--text-light);
+            margin-top: 0.5rem;
+        }
+
+        /* Data Format Info */
+        .data-format {
+            background: var(--bg-light);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1.25rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .data-format h4 {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--iu-crimson);
+            margin-bottom: 0.75rem;
+        }
+
+        .data-format table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+        }
+
+        .data-format th, .data-format td {
+            padding: 8px 12px;
+            text-align: left;
+            border: 1px solid var(--border);
+        }
+
+        .data-format th {
+            background: var(--iu-crimson);
+            color: var(--white);
+            font-weight: 600;
+        }
+
+        .data-format td {
+            background: var(--white);
+        }
+
+        .data-format .column-name {
+            font-family: monospace;
+            color: var(--iu-crimson-dark);
+            font-weight: 600;
+        }
+
+        /* Data Preview */
+        .data-preview {
+            margin-top: 1.5rem;
+            display: none;
+        }
+
+        .data-preview.visible {
+            display: block;
+        }
+
+        .preview-table-container {
+            overflow-x: auto;
+            max-height: 300px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+        }
+
+        .preview-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+        }
+
+        .preview-table th,
+        .preview-table td {
+            padding: 0.625rem 0.875rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .preview-table th {
+            background: var(--iu-crimson);
+            color: var(--white);
+            position: sticky;
+            top: 0;
+            font-weight: 600;
+        }
+
+        .preview-table tr:hover {
+            background: rgba(153, 0, 0, 0.05);
+        }
+
+        /* Column Mapping */
+        .mapping-section {
+            display: none;
+            margin-top: 1.5rem;
+        }
+
+        .mapping-section.visible {
+            display: block;
+        }
+
+        .mapping-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.25rem;
+        }
+
+        /* Form Controls */
+        .form-group {
+            margin-bottom: 1.25rem;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--text-dark);
+            font-size: 0.95rem;
+        }
+
+        .form-group select,
+        .form-group input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+
+        .form-group select:focus,
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--iu-crimson);
+        }
+
+        .form-hint {
+            font-size: 0.8rem;
+            color: var(--text-light);
+            margin-top: 0.375rem;
+        }
+
+        /* Buttons */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.75rem;
+            font-size: 1rem;
+            font-weight: 600;
+            text-align: center;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: var(--iu-crimson);
+            color: var(--white);
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            background: var(--iu-crimson-dark);
+        }
+
+        .btn-primary:disabled {
+            background: var(--text-light);
+            cursor: not-allowed;
+        }
+
+        .btn-secondary {
+            background: var(--white);
+            color: var(--iu-crimson);
+            border: 2px solid var(--iu-crimson);
+        }
+
+        .btn-secondary:hover {
+            background: var(--iu-crimson);
+            color: var(--white);
+        }
+
+        .button-group {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        /* Status Messages */
+        .status-message {
+            padding: 1rem;
+            border-radius: 6px;
+            margin-bottom: 1rem;
+            display: none;
+            font-size: 0.95rem;
+        }
+
+        .status-message.visible {
+            display: block;
+        }
+
+        .status-message.error {
+            background: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #fecaca;
+        }
+
+        .status-message.success {
+            background: #d1fae5;
+            color: #065f46;
+            border: 1px solid #a7f3d0;
+        }
+
+        .status-message.info {
+            background: #dbeafe;
+            color: #1e40af;
+            border: 1px solid #bfdbfe;
+        }
+
+        /* Results Section */
+        .results-container {
+            display: none;
+        }
+
+        .results-container.visible {
+            display: block;
+        }
+
+        /* Key Metrics Grid */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.25rem;
+            margin-bottom: 2rem;
+        }
+
+        .metric-card {
+            background: var(--bg-light);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            text-align: center;
+        }
+
+        .metric-card.highlight {
+            background: var(--iu-crimson);
+            color: var(--white);
+            border: none;
+        }
+
+        .metric-label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 0.5rem;
+            opacity: 0.8;
+        }
+
+        .metric-value {
+            font-size: 2rem;
+            font-weight: 700;
+        }
+
+        .metric-card.highlight .metric-value {
+            color: var(--white);
+        }
+
+        .metric-desc {
+            font-size: 0.8rem;
+            margin-top: 0.5rem;
+            opacity: 0.7;
+        }
+
+        /* Chart Container */
+        .chart-container {
+            background: var(--white);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            height: 400px;
+        }
+
+        /* Results Table */
+        .results-table-container {
+            overflow-x: auto;
+            margin-top: 1.5rem;
+        }
+
+        .results-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+        }
+
+        .results-table th,
+        .results-table td {
+            padding: 0.75rem 1rem;
+            text-align: right;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .results-table th {
+            background: var(--iu-crimson);
+            color: var(--white);
+            font-weight: 600;
+            text-align: right;
+        }
+
+        .results-table th:first-child,
+        .results-table td:first-child {
+            text-align: left;
+        }
+
+        .results-table tr:nth-child(even) {
+            background: var(--bg-light);
+        }
+
+        .results-table tr.optimal {
+            background: rgba(153, 0, 0, 0.15);
+            font-weight: 600;
+        }
+
+        .results-table tr.optimal td:first-child::before {
+            content: "* ";
+            color: var(--iu-crimson);
+            font-weight: 700;
+        }
+
+        /* Interpretation Section */
+        .interpretation {
+            background: var(--bg-light);
+            border-left: 4px solid var(--iu-crimson);
+            padding: 1.5rem;
+            border-radius: 0 12px 12px 0;
+            margin-top: 1.5rem;
+        }
+
+        .interpretation h4 {
+            color: var(--iu-crimson);
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+        }
+
+        .interpretation ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .interpretation li {
+            padding: 0.5rem 0;
+            padding-left: 1.5rem;
+            position: relative;
+        }
+
+        .interpretation li::before {
+            content: "\2192";
+            position: absolute;
+            left: 0;
+            color: var(--iu-crimson);
+            font-weight: 700;
+        }
+
+        /* Export Buttons */
+        .export-section {
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--border);
+        }
+
+        .export-section h4 {
+            font-size: 1rem;
+            color: var(--iu-crimson);
+            margin-bottom: 1rem;
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 2rem;
+            color: var(--text-light);
+            font-size: 0.9rem;
+        }
+
+        footer a {
+            color: var(--iu-crimson);
+            text-decoration: none;
+        }
+
+        /* Responsive */
+        @media (max-width: 900px) {
+            .metrics-grid {
+                grid-template-columns: 1fr;
+            }
+            .mapping-grid {
+                grid-template-columns: 1fr;
+            }
+            .input-mode-toggle {
+                flex-direction: column;
+            }
+            .tool-container > div[style*="grid-template-columns: 1fr 1fr"] {
+                grid-template-columns: 1fr !important;
+            }
+        }
+
+        @media (max-width: 600px) {
+            body { font-size: 16px; }
+            main { padding: 1rem; }
+            .hero { padding: 1.5rem 0; }
+            .hero h1 { font-size: 1.3rem; }
+            .hero p { font-size: 0.85rem; }
+            .tool-container { padding: 1rem; border-radius: 8px; }
+            .section-title { font-size: 1.1rem; }
+            .upload-area { padding: 1.5rem; }
+            .button-group { flex-direction: column; }
+            .btn { width: 100%; text-align: center; }
+            .price-points-table { font-size: 0.85rem; }
+            .price-points-table th, .price-points-table td { padding: 0.5rem; }
+            [style*="grid-template-columns: 1fr 1fr"],
+            [style*="grid-template-columns: repeat"] {
+                grid-template-columns: 1fr !important;
+            }
+        }
+
+        /* Help Tooltips */
+        .help-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: var(--border);
+            color: var(--text-light);
+            font-size: 0.7rem;
+            font-weight: 700;
+            cursor: help;
+            margin-left: 6px;
+            position: relative;
+        }
+
+        .help-icon:hover::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--iu-crimson);
+            color: var(--white);
+            padding: 0.5rem 0.75rem;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            font-weight: 400;
+            white-space: nowrap;
+            max-width: 250px;
+            white-space: normal;
+            z-index: 100;
+            margin-bottom: 0.5rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        /* Disclaimer */
+        .disclaimer {
+            background: rgba(153, 0, 0, 0.05);
+            border: 1px solid rgba(153, 0, 0, 0.2);
+            border-radius: 8px;
+            padding: 1.25rem;
+            margin-bottom: 1.5rem;
+            font-size: 0.85rem;
+        }
+
+        .disclaimer-title {
+            font-weight: 700;
+            color: var(--iu-crimson);
+            margin-bottom: 0.5rem;
+        }
+
+        .disclaimer ul {
+            margin: 0;
+            padding-left: 1.25rem;
+        }
+
+        .disclaimer li {
+            margin-bottom: 0.35rem;
+        }
+
+        .disclaimer li:last-child {
+            margin-bottom: 0;
+        }
+
+        /* Data Type Toggle */
+        .data-type-toggle {
+            display: flex;
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .data-type-btn {
+            flex: 1;
+            padding: 1rem;
+            border: 2px solid var(--border);
+            background: var(--white);
+            border-radius: 8px;
+            cursor: pointer;
+            text-align: left;
+            transition: all 0.3s;
+        }
+
+        .data-type-btn:hover {
+            border-color: var(--iu-crimson);
+        }
+
+        .data-type-btn.active {
+            border-color: var(--iu-crimson);
+            background: rgba(153, 0, 0, 0.05);
+        }
+
+        .data-type-btn .data-type-label {
+            font-weight: 600;
+            font-size: 0.95rem;
+            color: var(--text-dark);
+            margin-bottom: 0.25rem;
+        }
+
+        .data-type-btn .data-type-desc {
+            font-size: 0.8rem;
+            color: var(--text-light);
+        }
+
+        .data-type-btn.active .data-type-label {
+            color: var(--iu-crimson);
+        }
+
+        /* Raw WTP Section */
+        .raw-wtp-section {
+            display: none;
+        }
+
+        .raw-wtp-section.visible {
+            display: block;
+        }
+
+        /* WTP Manual/CSV Sections */
+        .wtp-manual-section {
+            display: none;
+        }
+
+        .wtp-manual-section.visible {
+            display: block;
+        }
+
+        .wtp-csv-section {
+            display: none;
+        }
+
+        .wtp-csv-section.visible {
+            display: block;
+        }
+
+        .wtp-textarea {
+            width: 100%;
+            min-height: 200px;
+            padding: 0.75rem;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-size: 0.95rem;
+            font-family: monospace;
+            resize: vertical;
+            transition: border-color 0.3s;
+        }
+
+        .wtp-textarea:focus {
+            outline: none;
+            border-color: var(--iu-crimson);
+        }
+    
+        :focus-visible { outline: 2px solid currentColor; outline-offset: 2px; }
+        html, body { overflow-x: hidden; }
+    </style>
+    <link rel="icon" type="image/jpeg" href="KCFavicon.jpg">
+</head>
+<body>
+    <!-- Auth check - redirect to login if not signed in -->
+    <div id="loading-screen" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: white; display: flex; align-items: center; justify-content: center; z-index: 9999;">
+        <p style="color: #64748b;">Loading...</p>
+    </div>
+
+    <div id="main-content" style="display: none;">
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay hidden" id="loadingOverlay">
+        <div class="spinner"></div>
+        <p class="loading-text">Analyzing price-demand relationship...</p>
+    </div>
+
+    <!-- Main Content -->
+    <main>
+        <!-- Back Link -->
+        <div class="back-link">
+            <a href="tools.html">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+                Back to Analytics and Pricing Tools
+            </a>
+        </div>
+
+        <!-- Hero Section -->
+        <div class="hero">
+            <h1>Gabor-Granger Price Analysis</h1>
+            <p>Find the price point that maximizes revenue and profit by analyzing how customer interest changes at different prices</p>
+        </div>
+
+        <!-- Disclaimer -->
+        <div class="disclaimer">
+            <div class="disclaimer-title">Disclaimer</div>
+            <ul>
+                <li><strong>Results may contain errors.</strong> The output from this tool may be inaccurate, incomplete, or incorrect. Users should independently verify all results.</li>
+                <li><strong>No warranty.</strong> This tool is provided "as is" without any warranty of any kind.</li>
+                <li><strong>User assumes all risk.</strong> Users assume full responsibility for reviewing and validating any output.</li>
+            </ul>
+            <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid rgba(153, 0, 0, 0.2);">
+                <strong>📧 Report issues:</strong> If you encounter any issues, problems, or errors while using this tool, please contact Dr. Cosguner at <a href="mailto:kcosgun@iu.edu" style="color: var(--iu-crimson); font-weight: 600;">kcosgun@iu.edu</a> so they can be resolved promptly.
+            </div>
+        </div>
+
+        <!-- Status Message -->
+        <div class="status-message" id="statusMessage"></div>
+
+        <!-- Input Section -->
+        <div class="tool-container" id="inputCard">
+            <h2 class="section-title">Enter Price Data
+                <span class="help-icon" data-tooltip="Gabor-Granger analysis helps find the optimal price by measuring how demand changes at different price points. The revenue-maximizing price balances higher prices with lower purchase intent.">?</span>
+            </h2>
+            <p class="section-subtitle">Enter the prices you tested and the percentage of customers willing to buy at each price</p>
+
+            <div class="info-box">
+                <strong>How Gabor-Granger Works</strong>
+                Survey respondents are shown a price and asked if they would buy. By testing multiple prices, you can build a demand curve and find the price that maximizes revenue (Price × Purchase Intent). Typically 5-10 price points are tested.
+            </div>
+
+            <!-- Removed: Aggregated Data Section -->
+            <div id="aggregatedSection" style="display:none;">
+                <!-- Input Mode Toggle -->
+                <div class="input-mode-toggle">
+                    <button class="mode-btn active" id="manualModeBtn" onclick="setAggregatedInputMode('manual')">
+                        <div class="mode-icon"></div>
+                        <div class="mode-label">Manual Entry</div>
+                    </button>
+                    <button class="mode-btn" id="csvModeBtn" onclick="setAggregatedInputMode('csv')">
+                        <div class="mode-icon"></div>
+                        <div class="mode-label">Upload CSV</div>
+                    </button>
+                </div>
+
+            <!-- Manual Input Section -->
+            <div class="manual-input-section visible" id="manualSection">
+                <div class="form-group" style="max-width: 200px; margin-bottom: 1.25rem;">
+                    <label for="currencySymbol">Currency Symbol</label>
+                    <select id="currencySymbol">
+                        <option value="$">$ (USD)</option>
+                        <option value="€">€ (EUR)</option>
+                        <option value="£">£ (GBP)</option>
+                        <option value="¥">¥ (JPY/CNY)</option>
+                        <option value="₹">₹ (INR)</option>
+                        <option value="">None</option>
+                    </select>
+                </div>
+
+                <table class="price-points-table" id="pricePointsTable">
+                    <thead>
+                        <tr>
+                            <th style="width: 40%;">Price Point</th>
+                            <th style="width: 40%;">Purchase Intent (%)</th>
+                            <th style="width: 20%;"></th>
+                        </tr>
+                    </thead>
+                    <tbody id="pricePointsBody">
+                        <tr>
+                            <td><input type="number" class="price-input" placeholder="e.g., 19.99" step="0.01" min="0"></td>
+                            <td><input type="number" class="intent-input" placeholder="e.g., 85" step="0.1" min="0" max="100"></td>
+                            <td><button class="remove-row" onclick="removeRow(this)" title="Remove row">x</button></td>
+                        </tr>
+                        <tr>
+                            <td><input type="number" class="price-input" placeholder="e.g., 24.99" step="0.01" min="0"></td>
+                            <td><input type="number" class="intent-input" placeholder="e.g., 70" step="0.1" min="0" max="100"></td>
+                            <td><button class="remove-row" onclick="removeRow(this)" title="Remove row">x</button></td>
+                        </tr>
+                        <tr>
+                            <td><input type="number" class="price-input" placeholder="e.g., 29.99" step="0.01" min="0"></td>
+                            <td><input type="number" class="intent-input" placeholder="e.g., 55" step="0.1" min="0" max="100"></td>
+                            <td><button class="remove-row" onclick="removeRow(this)" title="Remove row">x</button></td>
+                        </tr>
+                        <tr>
+                            <td><input type="number" class="price-input" placeholder="e.g., 34.99" step="0.01" min="0"></td>
+                            <td><input type="number" class="intent-input" placeholder="e.g., 40" step="0.1" min="0" max="100"></td>
+                            <td><button class="remove-row" onclick="removeRow(this)" title="Remove row">x</button></td>
+                        </tr>
+                        <tr>
+                            <td><input type="number" class="price-input" placeholder="e.g., 39.99" step="0.01" min="0"></td>
+                            <td><input type="number" class="intent-input" placeholder="e.g., 25" step="0.1" min="0" max="100"></td>
+                            <td><button class="remove-row" onclick="removeRow(this)" title="Remove row">x</button></td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <button class="add-row-btn" onclick="addRow()">
+                    <span>+</span> Add Price Point
+                </button>
+
+                <!-- Cost Input for Profit Analysis -->
+                <div style="margin-top: 1.5rem; padding: 1.25rem; background: var(--bg-light); border-radius: 8px; border: 1px solid var(--border);">
+                    <div class="form-group" style="margin-bottom: 0;">
+                        <label for="unitCost">Unit Cost (Optional)</label>
+                        <div style="display: flex; gap: 1rem; align-items: center;">
+                            <input type="number" id="unitCost" placeholder="e.g., 15.00" step="0.01" min="0" style="max-width: 200px;">
+                            <span style="font-size: 0.9rem; color: var(--text-light);">Enter to calculate profit-maximizing price</span>
+                        </div>
+                        <p class="form-hint">If provided, the tool will find both revenue-maximizing and profit-maximizing prices</p>
+                    </div>
+                </div>
+
+                <div class="button-group">
+                    <button class="btn btn-primary" id="analyzeManualBtn" onclick="analyzeManualData()">
+                        Run Analysis
+                    </button>
+                    <button class="btn btn-secondary" onclick="clearManualData()">
+                        Clear All
+                    </button>
+                    <button class="btn btn-secondary" onclick="loadSampleData()">
+                        Load Sample Data
+                    </button>
+                </div>
+            </div>
+
+            <!-- CSV Upload Section -->
+            <div class="csv-upload-section" id="csvSection">
+                <!-- Data Format Info -->
+                <div class="data-format">
+                    <h4>Required Data Format</h4>
+                    <p style="margin-bottom: 12px; font-size: 0.9rem; color: var(--text-light);">Your CSV should contain columns for price points and purchase intent percentages:</p>
+                    <table>
+                        <tr>
+                            <th>Column</th>
+                            <th>Description</th>
+                            <th>Example Values</th>
+                        </tr>
+                        <tr>
+                            <td class="column-name">price</td>
+                            <td>The price point tested</td>
+                            <td>19.99, 24.99, 29.99</td>
+                        </tr>
+                        <tr>
+                            <td class="column-name">purchase_intent</td>
+                            <td>Percentage of respondents willing to buy</td>
+                            <td>85, 70, 55</td>
+                        </tr>
+                    </table>
+                </div>
+
+                <!-- Upload Area -->
+                <div class="upload-area" id="uploadArea">
+                    <input type="file" id="fileInput" accept=".csv">
+                    <div class="upload-icon">📁</div>
+                    <p class="upload-text">Click to upload or drag and drop</p>
+                    <p class="upload-hint">CSV files only (max 10MB)</p>
+                </div>
+
+                <!-- Data Preview -->
+                <div class="data-preview" id="dataPreview">
+                    <h4 style="margin-bottom: 12px; color: var(--iu-crimson);">Data Preview</h4>
+                    <div class="preview-table-container">
+                        <table class="preview-table" id="previewTable">
+                            <thead></thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Column Mapping -->
+                <div class="mapping-section" id="mappingSection">
+                    <h4 style="margin-bottom: 1rem; color: var(--iu-crimson);">Map Your Columns</h4>
+                    <div class="mapping-grid">
+                        <div class="form-group">
+                            <label for="colPrice">Price Column</label>
+                            <select id="colPrice">
+                                <option value="">-- Select column --</option>
+                            </select>
+                            <p class="form-hint">Column containing price points</p>
+                        </div>
+                        <div class="form-group">
+                            <label for="colIntent">Purchase Intent Column</label>
+                            <select id="colIntent">
+                                <option value="">-- Select column --</option>
+                            </select>
+                            <p class="form-hint">Column containing purchase intent percentages</p>
+                        </div>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem;">
+                        <div class="form-group">
+                            <label for="csvCurrencySymbol">Currency Symbol</label>
+                            <select id="csvCurrencySymbol">
+                                <option value="$">$ (USD)</option>
+                                <option value="€">€ (EUR)</option>
+                                <option value="£">£ (GBP)</option>
+                                <option value="¥">¥ (JPY/CNY)</option>
+                                <option value="₹">₹ (INR)</option>
+                                <option value="">None</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="csvUnitCost">Unit Cost (Optional)</label>
+                            <input type="number" id="csvUnitCost" placeholder="e.g., 15.00" step="0.01" min="0">
+                            <p class="form-hint">Enter to calculate profit-maximizing price</p>
+                        </div>
+                    </div>
+
+                    <div class="button-group">
+                        <button class="btn btn-primary" id="analyzeCsvBtn" onclick="analyzeCsvData()" disabled>
+                            Run Analysis
+                        </button>
+                        <button class="btn btn-secondary" onclick="clearCsvData()">
+                            Clear & Start Over
+                        </button>
+                    </div>
+                </div>
+            </div>
+            </div> <!-- end aggregatedSection -->
+
+            <!-- Raw WTP Data Section -->
+            <div class="raw-wtp-section visible" id="rawWtpSection">
+                <!-- Input Mode Toggle for WTP -->
+                <div class="input-mode-toggle">
+                    <button class="mode-btn active" id="wtpManualModeBtn" onclick="setWtpInputMode('manual')">
+                        <div class="mode-icon">✏️</div>
+                        <div class="mode-label">Manual Entry</div>
+                    </button>
+                    <button class="mode-btn" id="wtpCsvModeBtn" onclick="setWtpInputMode('csv')">
+                        <div class="mode-icon">📁</div>
+                        <div class="mode-label">Upload CSV</div>
+                    </button>
+                </div>
+
+                <!-- WTP Manual Entry Section -->
+                <div class="wtp-manual-section visible" id="wtpManualSection">
+                    <div class="form-group">
+                        <textarea id="wtpTextarea" class="wtp-textarea" placeholder="Enter WTP values (one per line or comma-separated):
+30
+45
+50
+35
+40"></textarea>
+                        <p class="form-hint">Enter numeric values only. Currency symbols will be ignored.</p>
+                    </div>
+
+                    <div style="display: flex; gap: 1.5rem; flex-wrap: wrap; margin: 1.5rem 0;">
+                        <div class="form-group" style="margin-bottom: 0;">
+                            <label for="rawCurrencySymbol">Currency Symbol</label>
+                            <select id="rawCurrencySymbol">
+                                <option value="$">$ (USD)</option>
+                                <option value="€">€ (EUR)</option>
+                                <option value="£">£ (GBP)</option>
+                                <option value="¥">¥ (JPY/CNY)</option>
+                                <option value="₹">₹ (INR)</option>
+                                <option value="">None</option>
+                            </select>
+                        </div>
+                        <div class="form-group" style="margin-bottom: 0;">
+                            <label for="rawUnitCost">Unit Cost (Optional)</label>
+                            <input type="number" id="rawUnitCost" placeholder="e.g., 15.00" step="0.01" min="0" style="max-width: 150px;">
+                            <p class="form-hint">For profit optimization</p>
+                        </div>
+                    </div>
+
+                    <div class="button-group">
+                        <button class="btn btn-primary" id="analyzeWtpBtn" onclick="analyzeRawWtpData()">
+                            Run Analysis
+                        </button>
+                        <button class="btn btn-secondary" onclick="clearRawWtpData()">
+                            Clear All
+                        </button>
+                        <button class="btn btn-secondary" onclick="loadSampleRawWtp()">
+                            Load Sample Data
+                        </button>
+                    </div>
+                </div>
+
+                <!-- WTP CSV Upload Section -->
+                <div class="wtp-csv-section" id="wtpCsvSection">
+                    <!-- Data Format Info -->
+                    <div class="data-format">
+                        <h4>Required Data Format</h4>
+                        <p style="margin-bottom: 12px; font-size: 0.9rem; color: var(--text-light);">Your CSV should contain a column with individual WTP (willingness-to-pay) values:</p>
+                        <table>
+                            <tr>
+                                <th>Column</th>
+                                <th>Description</th>
+                                <th>Example Values</th>
+                            </tr>
+                            <tr>
+                                <td class="column-name">wtp</td>
+                                <td>Each respondent's maximum willingness-to-pay</td>
+                                <td>30, 45, 50, 35, 40</td>
+                            </tr>
+                        </table>
+                    </div>
+
+                    <!-- Upload Area -->
+                    <div class="upload-area" id="wtpUploadArea">
+                        <input type="file" id="wtpFileInput" accept=".csv" style="display: none;">
+                        <div class="upload-icon">📁</div>
+                        <p class="upload-text">Click to upload or drag and drop</p>
+                        <p class="upload-hint">CSV files only (max 10MB)</p>
+                    </div>
+
+                    <!-- Data Preview for WTP -->
+                    <div class="data-preview" id="wtpDataPreview">
+                        <h4 style="margin-bottom: 12px; color: var(--iu-crimson);">Data Preview</h4>
+                        <div class="preview-table-container">
+                            <table class="preview-table" id="wtpPreviewTable">
+                                <thead></thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                        <p id="wtpLoadedCount" style="margin-top: 0.75rem; font-size: 0.9rem; color: var(--text-light);"></p>
+                    </div>
+
+                    <!-- Settings after upload -->
+                    <div id="wtpCsvSettingsSection" style="display: none;">
+                        <div style="display: flex; gap: 1.5rem; flex-wrap: wrap; margin: 1.5rem 0;">
+                            <div class="form-group" style="margin-bottom: 0;">
+                                <label for="rawCsvCurrencySymbol">Currency Symbol</label>
+                                <select id="rawCsvCurrencySymbol">
+                                    <option value="$">$ (USD)</option>
+                                    <option value="€">€ (EUR)</option>
+                                    <option value="£">£ (GBP)</option>
+                                    <option value="¥">¥ (JPY/CNY)</option>
+                                    <option value="₹">₹ (INR)</option>
+                                    <option value="">None</option>
+                                </select>
+                            </div>
+                            <div class="form-group" style="margin-bottom: 0;">
+                                <label for="rawCsvUnitCost">Unit Cost (Optional)</label>
+                                <input type="number" id="rawCsvUnitCost" placeholder="e.g., 15.00" step="0.01" min="0" style="max-width: 150px;">
+                                <p class="form-hint">For profit optimization</p>
+                            </div>
+                        </div>
+
+                        <div class="button-group">
+                            <button class="btn btn-primary" onclick="analyzeWtpCsvData()">
+                                Run Analysis
+                            </button>
+                            <button class="btn btn-secondary" onclick="clearWtpCsvData()">
+                                Clear & Start Over
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Results Section -->
+        <div class="results-container" id="resultsContainer">
+            <div class="tool-container">
+                <h2 class="section-title">Analysis Results</h2>
+                <p class="section-subtitle">Your best price point based on the balance between price and customer demand</p>
+
+                <!-- Key Metrics - Revenue -->
+                <div class="metrics-grid">
+                    <div class="metric-card highlight">
+                        <div class="metric-label">Revenue-Maximizing Price</div>
+                        <div class="metric-value" id="optimalPrice">-</div>
+                        <div class="metric-desc">Best price for revenue</div>
+                    </div>
+                    <div class="metric-card highlight">
+                        <div class="metric-label">Maximum Revenue Index</div>
+                        <div class="metric-value" id="maxRevenue">-</div>
+                        <div class="metric-desc">Price × Intent</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-label">Purchase Intent</div>
+                        <div class="metric-value" id="optimalIntent">-</div>
+                        <div class="metric-desc">At revenue-max price</div>
+                    </div>
+                </div>
+
+                <!-- Key Metrics - Profit (shown only when cost is provided) -->
+                <div class="metrics-grid" id="profitMetrics" style="display: none; margin-top: 1rem;">
+                    <div class="metric-card" style="background: #065f46; color: white; border: none;">
+                        <div class="metric-label">Profit-Maximizing Price</div>
+                        <div class="metric-value" id="profitOptimalPrice">-</div>
+                        <div class="metric-desc">Best price for profit</div>
+                    </div>
+                    <div class="metric-card" style="background: #065f46; color: white; border: none;">
+                        <div class="metric-label">Maximum Profit Index</div>
+                        <div class="metric-value" id="maxProfit">-</div>
+                        <div class="metric-desc">(Price - Cost) × Intent</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-label">Unit Cost</div>
+                        <div class="metric-value" id="displayCost">-</div>
+                        <div class="metric-desc">Your input cost</div>
+                    </div>
+                </div>
+
+                <!-- Charts -->
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+                    <div class="chart-container">
+                        <canvas id="demandChart"></canvas>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="revenueChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Detailed Results Table -->
+                <h3 style="margin-top: 2rem; margin-bottom: 1rem; color: var(--iu-crimson);">Detailed Results by Price Point</h3>
+                <div class="results-table-container">
+                    <table class="results-table" id="resultsTable">
+                        <thead id="resultsHead">
+                            <tr>
+                                <th>Price Point</th>
+                                <th>Purchase Intent (%)</th>
+                                <th>Revenue Index</th>
+                            </tr>
+                        </thead>
+                        <tbody id="resultsBody">
+                        </tbody>
+                    </table>
+                </div>
+                <p style="font-size: 0.85rem; color: var(--text-light); margin-top: 0.5rem;" id="tableFootnote">* Indicates revenue-maximizing price point</p>
+
+                <!-- Interpretation -->
+                <div class="interpretation" id="interpretationSection">
+                    <h4>How to Interpret These Results</h4>
+                    <ul id="interpretationList">
+                        <li><strong>Optimal Price:</strong> The price that generates the most potential revenue by balancing what you charge with how many customers will buy.</li>
+                        <li><strong>Revenue Index:</strong> Shows relative revenue potential at each price. Higher numbers mean better combinations of price and demand.</li>
+                        <li><strong>Strategy tip:</strong> Price slightly below optimal if you want to grow market share, or slightly above if maximizing profit margin is your priority.</li>
+                    </ul>
+                </div>
+
+                <!-- Export Section -->
+                <div class="export-section">
+                    <h4>Export Results</h4>
+                    <div class="button-group">
+                        <button class="btn btn-secondary" onclick="exportCSV()">
+                            Export Data (CSV)
+                        </button>
+                        <button class="btn btn-secondary" onclick="exportCharts()">
+                            Export Charts (PNG)
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <p>Created by <a href="https://koraycosguner.github.io">Dr. Koray Cosguner</a>, Indiana University</p>
+    </footer>
+
+    </div> <!-- end main-content -->
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- Papa Parse for CSV -->
+    <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+
+    <script>
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyBg3LJDwVIRGWtFZb_mM_CSRJMNCJUta20",
+            authDomain: "iu-pricing-tools.firebaseapp.com",
+            projectId: "iu-pricing-tools",
+            storageBucket: "iu-pricing-tools.firebasestorage.app",
+            messagingSenderId: "659335573790",
+            appId: "1:659335573790:web:00013a166787efecb3d90f",
+            measurementId: "G-NGKNY08XWP"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+
+        // Check authentication state
+        firebase.auth().onAuthStateChanged(function(user) {
+            if (user) {
+                // User is signed in - show main content
+                document.getElementById('loading-screen').style.display = 'none';
+                document.getElementById('main-content').style.display = 'block';
+            } else {
+                // User is not signed in - redirect to login
+                window.location.href = 'login.html';
+            }
+        });
+    </script>
+
+    <script>
+        // Global variables
+        let csvData = null;
+        let columnNames = [];
+        let demandChart = null;
+        let revenueChart = null;
+        let analysisResults = null;
+        let currentMode = 'manual';
+        let currentDataType = 'raw'; // 'raw' WTP only
+
+        // DOM Elements
+        const statusMessage = document.getElementById('statusMessage');
+        const uploadArea = document.getElementById('uploadArea');
+        const fileInput = document.getElementById('fileInput');
+        const dataPreview = document.getElementById('dataPreview');
+        const previewTable = document.getElementById('previewTable');
+        const mappingSection = document.getElementById('mappingSection');
+        const colPrice = document.getElementById('colPrice');
+        const colIntent = document.getElementById('colIntent');
+        const resultsContainer = document.getElementById('resultsContainer');
+
+        // Show status message
+        function showStatus(message, type) {
+            statusMessage.textContent = message;
+            statusMessage.className = `status-message visible ${type}`;
+            setTimeout(() => {
+                statusMessage.classList.remove('visible');
+            }, 5000);
+        }
+
+        // Data type toggle (aggregated vs raw WTP)
+        function setDataType(type) {
+            currentDataType = type;
+            document.getElementById('aggregatedBtn').classList.toggle('active', type === 'aggregated');
+            document.getElementById('rawWtpBtn').classList.toggle('active', type === 'raw');
+            document.getElementById('aggregatedSection').style.display = type === 'aggregated' ? 'block' : 'none';
+            document.getElementById('rawWtpSection').classList.toggle('visible', type === 'raw');
+            resultsContainer.classList.remove('visible');
+        }
+
+        // Aggregated data input mode toggle (manual vs csv)
+        function setAggregatedInputMode(mode) {
+            currentMode = mode;
+            document.getElementById('manualModeBtn').classList.toggle('active', mode === 'manual');
+            document.getElementById('csvModeBtn').classList.toggle('active', mode === 'csv');
+            document.getElementById('manualSection').classList.toggle('visible', mode === 'manual');
+            document.getElementById('csvSection').classList.toggle('visible', mode === 'csv');
+        }
+
+        // WTP input mode toggle (manual vs csv)
+        function setWtpInputMode(mode) {
+            document.getElementById('wtpManualModeBtn').classList.toggle('active', mode === 'manual');
+            document.getElementById('wtpCsvModeBtn').classList.toggle('active', mode === 'csv');
+            document.getElementById('wtpManualSection').classList.toggle('visible', mode === 'manual');
+            document.getElementById('wtpCsvSection').classList.toggle('visible', mode === 'csv');
+        }
+
+        // Manual input functions
+        function addRow() {
+            const tbody = document.getElementById('pricePointsBody');
+            const newRow = document.createElement('tr');
+            newRow.innerHTML = `
+                <td><input type="number" class="price-input" placeholder="Enter price" step="0.01" min="0"></td>
+                <td><input type="number" class="intent-input" placeholder="Enter %" step="0.1" min="0" max="100"></td>
+                <td><button class="remove-row" onclick="removeRow(this)" title="Remove row">x</button></td>
+            `;
+            tbody.appendChild(newRow);
+        }
+
+        function removeRow(btn) {
+            const tbody = document.getElementById('pricePointsBody');
+            if (tbody.children.length > 2) {
+                btn.closest('tr').remove();
+            } else {
+                showStatus('You need at least 2 price points for analysis.', 'error');
+            }
+        }
+
+        function clearManualData() {
+            const tbody = document.getElementById('pricePointsBody');
+            tbody.innerHTML = `
+                <tr>
+                    <td><input type="number" class="price-input" placeholder="e.g., 19.99" step="0.01" min="0"></td>
+                    <td><input type="number" class="intent-input" placeholder="e.g., 85" step="0.1" min="0" max="100"></td>
+                    <td><button class="remove-row" onclick="removeRow(this)" title="Remove row">x</button></td>
+                </tr>
+                <tr>
+                    <td><input type="number" class="price-input" placeholder="e.g., 24.99" step="0.01" min="0"></td>
+                    <td><input type="number" class="intent-input" placeholder="e.g., 70" step="0.1" min="0" max="100"></td>
+                    <td><button class="remove-row" onclick="removeRow(this)" title="Remove row">x</button></td>
+                </tr>
+            `;
+            document.getElementById('unitCost').value = '';
+            resultsContainer.classList.remove('visible');
+            document.getElementById('profitMetrics').style.display = 'none';
+            if (demandChart) demandChart.destroy();
+            if (revenueChart) revenueChart.destroy();
+        }
+
+        function loadSampleData() {
+            // Comprehensive sample data for a SaaS product pricing study
+            // Based on survey of 500 respondents across 15 price points
+            const sampleData = [
+                { price: 4.99, intent: 97 },
+                { price: 7.99, intent: 94 },
+                { price: 9.99, intent: 91 },
+                { price: 12.99, intent: 86 },
+                { price: 14.99, intent: 82 },
+                { price: 17.99, intent: 76 },
+                { price: 19.99, intent: 71 },
+                { price: 22.99, intent: 64 },
+                { price: 24.99, intent: 58 },
+                { price: 27.99, intent: 51 },
+                { price: 29.99, intent: 45 },
+                { price: 34.99, intent: 35 },
+                { price: 39.99, intent: 26 },
+                { price: 44.99, intent: 18 },
+                { price: 49.99, intent: 12 }
+            ];
+
+            const tbody = document.getElementById('pricePointsBody');
+            tbody.innerHTML = '';
+
+            sampleData.forEach(item => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td><input type="number" class="price-input" value="${item.price}" step="0.01" min="0"></td>
+                    <td><input type="number" class="intent-input" value="${item.intent}" step="0.1" min="0" max="100"></td>
+                    <td><button class="remove-row" onclick="removeRow(this)" title="Remove row">x</button></td>
+                `;
+                tbody.appendChild(row);
+            });
+
+            // Also set a sample cost
+            document.getElementById('unitCost').value = '8.00';
+
+            showStatus('Sample data loaded: 15 price points from a SaaS pricing study (500 respondents). Unit cost set to $8.00.', 'success');
+        }
+
+        function getManualData() {
+            const priceInputs = document.querySelectorAll('.price-input');
+            const intentInputs = document.querySelectorAll('.intent-input');
+            const data = [];
+
+            priceInputs.forEach((priceInput, index) => {
+                const price = parseFloat(priceInput.value);
+                const intent = parseFloat(intentInputs[index].value);
+
+                if (!isNaN(price) && !isNaN(intent) && price > 0 && intent >= 0 && intent <= 100) {
+                    data.push({ price, intent });
+                }
+            });
+
+            return data.sort((a, b) => a.price - b.price);
+        }
+
+        function analyzeManualData() {
+            const data = getManualData();
+
+            if (data.length < 2) {
+                showStatus('Please enter at least 2 valid price points with purchase intent.', 'error');
+                return;
+            }
+
+            const currency = document.getElementById('currencySymbol').value;
+            const costInput = document.getElementById('unitCost').value;
+            const cost = costInput ? parseFloat(costInput) : null;
+
+            if (cost !== null && cost < 0) {
+                showStatus('Unit cost cannot be negative.', 'error');
+                return;
+            }
+
+            runAnalysis(data, currency, cost);
+        }
+
+        // CSV upload functions
+        uploadArea.addEventListener('click', () => fileInput.click());
+
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.classList.add('dragover');
+        });
+
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.classList.remove('dragover');
+        });
+
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.classList.remove('dragover');
+            const file = e.dataTransfer.files[0];
+            if (file) handleFile(file);
+        });
+
+        fileInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) handleFile(file);
+        });
+
+        // WTP CSV upload functions
+        const wtpUploadArea = document.getElementById('wtpUploadArea');
+        const wtpFileInput = document.getElementById('wtpFileInput');
+
+        wtpUploadArea.addEventListener('click', () => wtpFileInput.click());
+
+        wtpUploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            wtpUploadArea.classList.add('dragover');
+        });
+
+        wtpUploadArea.addEventListener('dragleave', () => {
+            wtpUploadArea.classList.remove('dragover');
+        });
+
+        wtpUploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            wtpUploadArea.classList.remove('dragover');
+            const file = e.dataTransfer.files[0];
+            if (file) handleWtpFile(file);
+        });
+
+        wtpFileInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) handleWtpFile(file);
+        });
+
+        function handleWtpFile(file) {
+            if (!file.name.endsWith('.csv')) {
+                showStatus('Please upload a CSV file.', 'error');
+                return;
+            }
+
+            Papa.parse(file, {
+                header: true,
+                skipEmptyLines: true,
+                complete: function(results) {
+                    // Filter out benign "UndetectableDelimiter" warning (common with single-column CSVs)
+                    const realErrors = results.errors.filter(e => e.type !== 'Delimiter');
+                    if (realErrors.length > 0) {
+                        showStatus('Error parsing CSV: ' + realErrors[0].message, 'error');
+                        return;
+                    }
+
+                    // Find the WTP column (case-insensitive)
+                    const columns = results.meta.fields;
+                    let wtpColumn = columns.find(col => col.toLowerCase() === 'wtp');
+
+                    // Also try common alternatives
+                    if (!wtpColumn) {
+                        wtpColumn = columns.find(col =>
+                            col.toLowerCase().includes('wtp') ||
+                            col.toLowerCase().includes('willingness') ||
+                            col.toLowerCase() === 'maxwtp' ||
+                            col.toLowerCase() === 'max_wtp'
+                        );
+                    }
+
+                    // If still not found and there's only one column, use it
+                    if (!wtpColumn && columns.length === 1) {
+                        wtpColumn = columns[0];
+                    }
+
+                    if (!wtpColumn) {
+                        showStatus('Could not find a WTP column. Please ensure your CSV has a column named "wtp".', 'error');
+                        return;
+                    }
+
+                    // Extract WTP values
+                    const wtpValues = [];
+                    results.data.forEach(row => {
+                        const val = parseFloat(row[wtpColumn]);
+                        if (!isNaN(val) && val > 0) {
+                            wtpValues.push(val);
+                        }
+                    });
+
+                    if (wtpValues.length < 10) {
+                        showStatus('Need at least 10 valid WTP values. Found: ' + wtpValues.length, 'error');
+                        return;
+                    }
+
+                    // Show data preview
+                    showWtpDataPreview(wtpValues, wtpColumn);
+
+                    // Store WTP values for later analysis
+                    window.loadedWtpValues = wtpValues;
+
+                    // Show the settings section
+                    document.getElementById('wtpCsvSettingsSection').style.display = 'block';
+
+                    showStatus(`Loaded ${wtpValues.length} WTP values from "${wtpColumn}" column. Click "Run Analysis" to proceed.`, 'success');
+                },
+                error: function(error) {
+                    showStatus('Error reading file: ' + error.message, 'error');
+                }
+            });
+        }
+
+        function handleFile(file) {
+            if (!file.name.endsWith('.csv')) {
+                showStatus('Please upload a CSV file.', 'error');
+                return;
+            }
+
+            if (file.size > 10 * 1024 * 1024) {
+                showStatus('File size exceeds 10MB limit.', 'error');
+                return;
+            }
+
+            Papa.parse(file, {
+                header: true,
+                skipEmptyLines: true,
+                complete: function(results) {
+                    const realErrors = results.errors.filter(e => e.type !== 'Delimiter');
+                    if (realErrors.length > 0) {
+                        showStatus('Error parsing CSV: ' + realErrors[0].message, 'error');
+                        return;
+                    }
+
+                    csvData = results;
+                    columnNames = results.meta.fields;
+
+                    showDataPreview();
+                    populateColumnSelectors();
+                    mappingSection.classList.add('visible');
+                    showStatus(`Loaded ${results.data.length} rows with ${columnNames.length} columns.`, 'success');
+                },
+                error: function(error) {
+                    showStatus('Error reading file: ' + error.message, 'error');
+                }
+            });
+        }
+
+        function showDataPreview() {
+            const thead = previewTable.querySelector('thead');
+            const tbody = previewTable.querySelector('tbody');
+
+            thead.innerHTML = '<tr>' + columnNames.map(col => `<th>${col}</th>`).join('') + '</tr>';
+
+            const previewRows = csvData.data.slice(0, 10);
+            tbody.innerHTML = previewRows.map(row =>
+                '<tr>' + columnNames.map(col => `<td>${row[col] || ''}</td>`).join('') + '</tr>'
+            ).join('');
+
+            dataPreview.classList.add('visible');
+        }
+
+        function showWtpDataPreview(wtpValues, columnName) {
+            const previewContainer = document.getElementById('wtpDataPreview');
+            const previewTable = document.getElementById('wtpPreviewTable');
+            const thead = previewTable.querySelector('thead');
+            const tbody = previewTable.querySelector('tbody');
+            const countEl = document.getElementById('wtpLoadedCount');
+
+            // Show header
+            thead.innerHTML = `<tr><th>${columnName}</th></tr>`;
+
+            // Show first 10 values
+            const previewValues = wtpValues.slice(0, 10);
+            tbody.innerHTML = previewValues.map(val => `<tr><td>${val}</td></tr>`).join('');
+
+            // Show count
+            countEl.textContent = `Showing ${previewValues.length} of ${wtpValues.length} values`;
+
+            // Show the preview
+            previewContainer.classList.add('visible');
+        }
+
+        function populateColumnSelectors() {
+            const selectors = [colPrice, colIntent];
+            const defaultPatterns = [
+                ['price', 'cost', 'amount'],
+                ['intent', 'purchase', 'buy', 'willing', 'percent', '%']
+            ];
+
+            selectors.forEach((selector, idx) => {
+                selector.innerHTML = '<option value="">-- Select column --</option>';
+                columnNames.forEach(col => {
+                    const option = document.createElement('option');
+                    option.value = col;
+                    option.textContent = col;
+                    selector.appendChild(option);
+                });
+
+                // Auto-detect columns
+                const patterns = defaultPatterns[idx];
+                for (const col of columnNames) {
+                    const colLower = col.toLowerCase().replace(/[^a-z0-9]/g, '');
+                    for (const pattern of patterns) {
+                        if (colLower.includes(pattern.replace(/[^a-z0-9]/g, ''))) {
+                            selector.value = col;
+                            break;
+                        }
+                    }
+                    if (selector.value) break;
+                }
+            });
+
+            checkMappingComplete();
+        }
+
+        function checkMappingComplete() {
+            const allMapped = colPrice.value && colIntent.value;
+            document.getElementById('analyzeCsvBtn').disabled = !allMapped;
+        }
+
+        [colPrice, colIntent].forEach(sel => {
+            sel.addEventListener('change', checkMappingComplete);
+        });
+
+        function clearCsvData() {
+            csvData = null;
+            columnNames = [];
+            fileInput.value = '';
+            dataPreview.classList.remove('visible');
+            mappingSection.classList.remove('visible');
+            resultsContainer.classList.remove('visible');
+            document.getElementById('csvUnitCost').value = '';
+            document.getElementById('profitMetrics').style.display = 'none';
+            [colPrice, colIntent].forEach(sel => {
+                sel.innerHTML = '<option value="">-- Select column --</option>';
+            });
+            if (demandChart) demandChart.destroy();
+            if (revenueChart) revenueChart.destroy();
+        }
+
+        function analyzeCsvData() {
+            const data = [];
+
+            csvData.data.forEach(row => {
+                const price = parseFloat(row[colPrice.value]);
+                const intent = parseFloat(row[colIntent.value]);
+
+                if (!isNaN(price) && !isNaN(intent) && price > 0) {
+                    data.push({ price, intent });
+                }
+            });
+
+            if (data.length < 2) {
+                showStatus('Need at least 2 valid data points for analysis.', 'error');
+                return;
+            }
+
+            data.sort((a, b) => a.price - b.price);
+
+            const currency = document.getElementById('csvCurrencySymbol').value;
+            const costInput = document.getElementById('csvUnitCost').value;
+            const cost = costInput ? parseFloat(costInput) : null;
+
+            if (cost !== null && cost < 0) {
+                showStatus('Unit cost cannot be negative.', 'error');
+                return;
+            }
+
+            runAnalysis(data, currency, cost);
+        }
+
+        // Analysis functions
+        function runAnalysis(data, currency, cost = null) {
+            const loadingOverlay = document.getElementById('loadingOverlay');
+            loadingOverlay.classList.remove('hidden');
+
+            setTimeout(() => {
+            // Calculate revenue and profit index for each price point
+            const results = data.map((item, index) => {
+                const revenueIndex = item.price * (item.intent / 100);
+                const profitIndex = cost !== null ? (item.price - cost) * (item.intent / 100) : null;
+
+                // Calculate price elasticity (between adjacent points)
+                let elasticity = null;
+                if (index > 0) {
+                    const prevItem = data[index - 1];
+                    const pctChangeQ = (item.intent - prevItem.intent) / prevItem.intent;
+                    const pctChangeP = (item.price - prevItem.price) / prevItem.price;
+                    if (pctChangeP !== 0) {
+                        elasticity = pctChangeQ / pctChangeP;
+                    }
+                }
+
+                return {
+                    price: item.price,
+                    intent: item.intent,
+                    revenueIndex,
+                    profitIndex,
+                    elasticity
+                };
+            });
+
+            // Find optimal price for revenue (maximum revenue index)
+            let maxRevIdx = 0;
+            let revenueOptimalIdx = 0;
+            results.forEach((r, idx) => {
+                if (r.revenueIndex > maxRevIdx) {
+                    maxRevIdx = r.revenueIndex;
+                    revenueOptimalIdx = idx;
+                }
+            });
+
+            // Find optimal price for profit (maximum profit index)
+            let maxProfitIdx = -Infinity;
+            let profitOptimalIdx = 0;
+            if (cost !== null) {
+                results.forEach((r, idx) => {
+                    if (r.profitIndex > maxProfitIdx) {
+                        maxProfitIdx = r.profitIndex;
+                        profitOptimalIdx = idx;
+                    }
+                });
+            }
+
+            analysisResults = {
+                data: results,
+                revenueOptimalIndex: revenueOptimalIdx,
+                profitOptimalIndex: cost !== null ? profitOptimalIdx : null,
+                currency,
+                cost
+            };
+
+            displayResults();
+            loadingOverlay.classList.add('hidden');
+            showStatus('Analysis completed successfully!', 'success');
+            }, 500);
+        }
+
+        function formatPrice(value, currency) {
+            if (value === null || value === undefined) return '-';
+            return currency + value.toFixed(2);
+        }
+
+        function displayResults() {
+            const { data, revenueOptimalIndex, profitOptimalIndex, currency, cost } = analysisResults;
+            const revenueOptimal = data[revenueOptimalIndex];
+
+            // Update revenue metrics
+            document.getElementById('optimalPrice').textContent = formatPrice(revenueOptimal.price, currency);
+            document.getElementById('maxRevenue').textContent = revenueOptimal.revenueIndex.toFixed(2);
+            document.getElementById('optimalIntent').textContent = revenueOptimal.intent.toFixed(1) + '%';
+
+            // Update profit metrics (if cost provided)
+            const profitMetrics = document.getElementById('profitMetrics');
+            if (cost !== null && profitOptimalIndex !== null) {
+                const profitOptimal = data[profitOptimalIndex];
+                document.getElementById('profitOptimalPrice').textContent = formatPrice(profitOptimal.price, currency);
+                document.getElementById('maxProfit').textContent = profitOptimal.profitIndex.toFixed(2);
+                document.getElementById('displayCost').textContent = formatPrice(cost, currency);
+                profitMetrics.style.display = 'grid';
+            } else {
+                profitMetrics.style.display = 'none';
+            }
+
+            // Create charts
+            createCharts(data, revenueOptimalIndex, profitOptimalIndex, currency, cost);
+
+            // Update table headers based on whether cost is provided
+            const thead = document.getElementById('resultsHead');
+            if (cost !== null) {
+                thead.innerHTML = `
+                    <tr>
+                        <th>Price Point</th>
+                        <th>Purchase Intent (%)</th>
+                        <th>Revenue Index</th>
+                        <th>Profit Index</th>
+                    </tr>
+                `;
+            } else {
+                thead.innerHTML = `
+                    <tr>
+                        <th>Price Point</th>
+                        <th>Purchase Intent (%)</th>
+                        <th>Revenue Index</th>
+                    </tr>
+                `;
+            }
+
+            // Populate results table
+            const tbody = document.getElementById('resultsBody');
+            tbody.innerHTML = data.map((item, idx) => {
+                const isRevenueOptimal = idx === revenueOptimalIndex;
+                const isProfitOptimal = cost !== null && idx === profitOptimalIndex;
+                let rowClass = '';
+                let marker = '';
+
+                if (isRevenueOptimal && isProfitOptimal) {
+                    rowClass = 'optimal';
+                    marker = '★ ';
+                } else if (isRevenueOptimal) {
+                    rowClass = 'optimal';
+                    marker = '* ';
+                } else if (isProfitOptimal) {
+                    rowClass = 'profit-optimal';
+                    marker = '† ';
+                }
+
+                if (cost !== null) {
+                    return `
+                        <tr class="${rowClass}" style="${isProfitOptimal && !isRevenueOptimal ? 'background: rgba(6, 95, 70, 0.15);' : ''}">
+                            <td>${marker}${formatPrice(item.price, currency)}</td>
+                            <td>${item.intent.toFixed(1)}%</td>
+                            <td>${item.revenueIndex.toFixed(2)}</td>
+                            <td>${item.profitIndex.toFixed(2)}</td>
+                        </tr>
+                    `;
+                } else {
+                    return `
+                        <tr class="${rowClass}">
+                            <td>${marker}${formatPrice(item.price, currency)}</td>
+                            <td>${item.intent.toFixed(1)}%</td>
+                            <td>${item.revenueIndex.toFixed(2)}</td>
+                        </tr>
+                    `;
+                }
+            }).join('');
+
+            // Update footnote
+            const footnote = document.getElementById('tableFootnote');
+            if (cost !== null) {
+                footnote.textContent = '* Revenue-maximizing price | † Profit-maximizing price | ★ Both optimal';
+            } else {
+                footnote.textContent = '* Indicates revenue-maximizing price point';
+            }
+
+            // Update interpretation
+            updateInterpretation(cost);
+
+            // Show results
+            resultsContainer.classList.add('visible');
+            resultsContainer.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function createCharts(data, revenueOptimalIndex, profitOptimalIndex, currency, cost) {
+            const labels = data.map(d => currency + d.price.toFixed(2));
+            const intentData = data.map(d => d.intent);
+            const revenueData = data.map(d => d.revenueIndex);
+            const profitData = cost !== null ? data.map(d => d.profitIndex) : null;
+
+            // Destroy existing charts
+            if (demandChart) demandChart.destroy();
+            if (revenueChart) revenueChart.destroy();
+
+            // Demand Curve Chart
+            const demandCtx = document.getElementById('demandChart').getContext('2d');
+            demandChart = new Chart(demandCtx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Purchase Intent (%)',
+                        data: intentData,
+                        borderColor: '#990000',
+                        backgroundColor: 'rgba(153, 0, 0, 0.1)',
+                        borderWidth: 3,
+                        fill: true,
+                        tension: 0.4,
+                        pointRadius: 6,
+                        pointBackgroundColor: '#990000',
+                        pointBorderColor: '#ffffff',
+                        pointBorderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Demand Curve',
+                            font: { size: 16, weight: '600' },
+                            color: '#990000',
+                            padding: { bottom: 20 }
+                        },
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return 'Purchase Intent: ' + context.parsed.y.toFixed(1) + '%';
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Price',
+                                font: { weight: '600' }
+                            }
+                        },
+                        y: {
+                            title: {
+                                display: true,
+                                text: 'Purchase Intent (%)',
+                                font: { weight: '600' }
+                            },
+                            min: 0,
+                            max: 100
+                        }
+                    }
+                }
+            });
+
+            // Revenue & Profit Chart
+            const revenueCtx = document.getElementById('revenueChart').getContext('2d');
+
+            // Build datasets
+            const datasets = [{
+                label: 'Revenue Index',
+                data: revenueData,
+                backgroundColor: labels.map((_, i) =>
+                    i === revenueOptimalIndex ? '#990000' : 'rgba(153, 0, 0, 0.5)'
+                ),
+                borderColor: labels.map((_, i) =>
+                    i === revenueOptimalIndex ? '#7a0000' : '#990000'
+                ),
+                borderWidth: 2,
+                borderRadius: 6
+            }];
+
+            // Add profit dataset if cost is provided
+            if (cost !== null && profitData) {
+                datasets.push({
+                    label: 'Profit Index',
+                    data: profitData,
+                    backgroundColor: labels.map((_, i) =>
+                        i === profitOptimalIndex ? '#065f46' : 'rgba(6, 95, 70, 0.5)'
+                    ),
+                    borderColor: labels.map((_, i) =>
+                        i === profitOptimalIndex ? '#064e3b' : '#065f46'
+                    ),
+                    borderWidth: 2,
+                    borderRadius: 6
+                });
+            }
+
+            revenueChart = new Chart(revenueCtx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: datasets
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: cost !== null ? 'Revenue & Profit Index by Price Point' : 'Revenue Index by Price Point',
+                            font: { size: 16, weight: '600' },
+                            color: '#990000',
+                            padding: { bottom: 20 }
+                        },
+                        legend: {
+                            display: cost !== null,
+                            position: 'bottom'
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return 'Revenue Index: ' + context.parsed.y.toFixed(2);
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Price',
+                                font: { weight: '600' }
+                            }
+                        },
+                        y: {
+                            title: {
+                                display: true,
+                                text: 'Revenue Index',
+                                font: { weight: '600' }
+                            },
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        }
+
+        // ============================================
+        // Raw WTP Data Functions
+        // ============================================
+
+        function parseWtpValues(text) {
+            // Parse WTP values from text (one per line or comma-separated)
+            const values = [];
+            // Split by newlines or commas
+            const parts = text.split(/[\n,]+/);
+            parts.forEach(part => {
+                // Remove currency symbols and whitespace
+                const cleaned = part.replace(/[$€£¥₹\s]/g, '').trim();
+                const num = parseFloat(cleaned);
+                if (!isNaN(num) && num > 0) {
+                    values.push(num);
+                }
+            });
+            return values;
+        }
+
+        function clearRawWtpData() {
+            document.getElementById('wtpTextarea').value = '';
+            document.getElementById('rawUnitCost').value = '';
+            document.getElementById('wtpFileInput').value = '';
+            document.getElementById('wtpDataPreview').classList.remove('visible');
+            resultsContainer.classList.remove('visible');
+            document.getElementById('profitMetrics').style.display = 'none';
+            if (demandChart) demandChart.destroy();
+            if (revenueChart) revenueChart.destroy();
+        }
+
+        function loadSampleRawWtp() {
+            // Generate sample WTP data for 100 respondents
+            // Simulating a product with WTP concentrated around $25-40
+            // This distribution will show different optimal prices for revenue vs profit
+            const sampleWtps = [
+                // Low WTP segment (10 respondents)
+                12, 14, 15, 16, 17, 18, 19, 20, 21, 22,
+                // Medium-low WTP (20 respondents)
+                23, 23, 24, 24, 25, 25, 25, 26, 26, 26,
+                27, 27, 27, 28, 28, 28, 29, 29, 29, 30,
+                // Core segment (40 respondents) - dense around $30-35
+                30, 30, 31, 31, 31, 32, 32, 32, 32, 33,
+                33, 33, 33, 33, 34, 34, 34, 34, 35, 35,
+                35, 35, 35, 35, 36, 36, 36, 37, 37, 38,
+                38, 39, 39, 40, 40, 40, 41, 42, 43, 44,
+                // Higher WTP (20 respondents)
+                45, 46, 47, 48, 49, 50, 52, 54, 56, 58,
+                60, 62, 65, 68, 70, 75, 80, 85, 90, 100
+            ];
+
+            document.getElementById('wtpTextarea').value = sampleWtps.join('\n');
+            document.getElementById('rawUnitCost').value = '18.00';
+            showStatus('Sample data loaded: 100 respondents\' WTP values. Unit cost set to $18.00 (try adjusting to see how optimal prices change).', 'success');
+        }
+
+        function clearWtpCsvData() {
+            document.getElementById('wtpFileInput').value = '';
+            document.getElementById('wtpDataPreview').classList.remove('visible');
+            document.getElementById('wtpCsvSettingsSection').style.display = 'none';
+            document.getElementById('rawCsvUnitCost').value = '';
+            window.loadedWtpValues = null;
+            resultsContainer.classList.remove('visible');
+            document.getElementById('profitMetrics').style.display = 'none';
+            if (demandChart) demandChart.destroy();
+            if (revenueChart) revenueChart.destroy();
+        }
+
+        function analyzeWtpCsvData() {
+            const wtpValues = window.loadedWtpValues;
+
+            if (!wtpValues || wtpValues.length < 10) {
+                showStatus('Please upload a CSV file with at least 10 valid WTP values.', 'error');
+                return;
+            }
+
+            const currency = document.getElementById('rawCsvCurrencySymbol').value;
+            const costInput = document.getElementById('rawCsvUnitCost').value;
+            const cost = costInput ? parseFloat(costInput) : null;
+
+            if (cost !== null && cost < 0) {
+                showStatus('Unit cost cannot be negative.', 'error');
+                return;
+            }
+
+            runContinuousAnalysis(wtpValues, currency, cost);
+        }
+
+        function analyzeRawWtpData() {
+            const text = document.getElementById('wtpTextarea').value;
+            const wtpValues = parseWtpValues(text);
+
+            if (wtpValues.length < 10) {
+                showStatus('Please enter at least 10 valid WTP values.', 'error');
+                return;
+            }
+
+            const currency = document.getElementById('rawCurrencySymbol').value;
+            const costInput = document.getElementById('rawUnitCost').value;
+            const cost = costInput ? parseFloat(costInput) : null;
+
+            if (cost !== null && cost < 0) {
+                showStatus('Unit cost cannot be negative.', 'error');
+                return;
+            }
+
+            runContinuousAnalysis(wtpValues, currency, cost);
+        }
+
+        function runContinuousAnalysis(wtpValues, currency, cost = null) {
+            const loadingOverlay = document.getElementById('loadingOverlay');
+            loadingOverlay.classList.remove('hidden');
+
+            setTimeout(() => {
+                // Sort WTP values
+                const sortedWtp = [...wtpValues].sort((a, b) => a - b);
+                const n = sortedWtp.length;
+
+                // Get unique WTP values for the step function
+                const uniqueWtps = [...new Set(sortedWtp)].sort((a, b) => a - b);
+
+                // Calculate demand at various price points using LINEAR INTERPOLATION
+                // This allows finding optimal prices between observed WTP values
+                const minPrice = 0; // Start at $0
+                const maxPrice = Math.max(...sortedWtp); // End at max WTP
+
+                // Create many price points for smooth curve and optimization
+                const numPoints = 500;
+                const priceStep = (maxPrice - minPrice) / numPoints;
+
+                // Build interpolated demand curve
+                // At each price, interpolate between the step function values
+                const demandData = [];
+
+                for (let i = 0; i <= numPoints; i++) {
+                    const price = minPrice + i * priceStep;
+
+                    // Calculate interpolated demand
+                    // Find the two adjacent WTP values that bracket this price
+                    const exactDemand = wtpValues.filter(wtp => wtp >= price).length / n * 100;
+
+                    // For smoother curve, use linear interpolation between WTP points
+                    let intent = exactDemand;
+
+                    // Find neighboring WTP values for interpolation
+                    const lowerWtps = uniqueWtps.filter(w => w < price);
+                    const higherWtps = uniqueWtps.filter(w => w >= price);
+
+                    if (lowerWtps.length > 0 && higherWtps.length > 0) {
+                        const lowerWtp = lowerWtps[lowerWtps.length - 1];
+                        const higherWtp = higherWtps[0];
+                        const lowerDemand = wtpValues.filter(wtp => wtp >= lowerWtp).length / n * 100;
+                        const higherDemand = wtpValues.filter(wtp => wtp >= higherWtp).length / n * 100;
+
+                        // Linear interpolation
+                        if (higherWtp !== lowerWtp) {
+                            const t = (price - lowerWtp) / (higherWtp - lowerWtp);
+                            intent = lowerDemand + t * (higherDemand - lowerDemand);
+                        }
+                    }
+
+                    const revenueIndex = price * (intent / 100);
+                    const profitIndex = cost !== null ? (price - cost) * (intent / 100) : null;
+                    demandData.push({ price, intent, revenueIndex, profitIndex });
+                }
+
+                // Find optimal prices using step-function demand at unique WTP values
+                let maxRevenue = 0;
+                let optimalRevenuePrice = 0;
+                let optimalRevenueIntent = 0;
+
+                let maxProfit = -Infinity;
+                let optimalProfitPrice = 0;
+                let optimalProfitIntent = 0;
+
+                uniqueWtps.forEach(price => {
+                    const willBuy = wtpValues.filter(wtp => wtp >= price).length;
+                    const intent = (willBuy / n) * 100;
+                    const revenueIndex = price * (intent / 100);
+                    const profitIndex = cost !== null ? (price - cost) * (intent / 100) : null;
+
+                    if (revenueIndex > maxRevenue) {
+                        maxRevenue = revenueIndex;
+                        optimalRevenuePrice = price;
+                        optimalRevenueIntent = intent;
+                    }
+
+                    if (cost !== null && profitIndex !== null && profitIndex > maxProfit) {
+                        maxProfit = profitIndex;
+                        optimalProfitPrice = price;
+                        optimalProfitIntent = intent;
+                    }
+                });
+
+                // Normalize revenue/profit index to per-unit basis
+                const normalizedRevenue = maxRevenue;
+                const normalizedProfit = cost !== null ? maxProfit : null;
+
+                // Build results data (sample some price points for table display)
+                const samplePrices = [];
+                const step = Math.max(1, Math.floor(uniqueWtps.length / 15));
+                for (let i = 0; i < uniqueWtps.length; i += step) {
+                    samplePrices.push(uniqueWtps[i]);
+                }
+                // Always include optimal prices
+                if (!samplePrices.includes(optimalRevenuePrice)) {
+                    samplePrices.push(optimalRevenuePrice);
+                }
+                if (cost !== null && !samplePrices.includes(optimalProfitPrice)) {
+                    samplePrices.push(optimalProfitPrice);
+                }
+                samplePrices.sort((a, b) => a - b);
+
+                const tableData = samplePrices.map((price, index) => {
+                    const willBuy = wtpValues.filter(wtp => wtp >= price).length;
+                    const intent = (willBuy / n) * 100;
+                    const revenueIndex = price * (intent / 100);
+                    const profitIndex = cost !== null ? (price - cost) * (intent / 100) : null;
+
+                    // Calculate elasticity
+                    let elasticity = null;
+                    if (index > 0) {
+                        const prevPrice = samplePrices[index - 1];
+                        const prevWillBuy = wtpValues.filter(wtp => wtp >= prevPrice).length;
+                        const prevIntent = (prevWillBuy / n) * 100;
+                        const pctChangeQ = (intent - prevIntent) / prevIntent;
+                        const pctChangeP = (price - prevPrice) / prevPrice;
+                        if (pctChangeP !== 0 && prevIntent !== 0) {
+                            elasticity = pctChangeQ / pctChangeP;
+                        }
+                    }
+
+                    return { price, intent, revenueIndex, profitIndex, elasticity };
+                });
+
+                // Find indices
+                const revenueOptimalIdx = tableData.findIndex(d => d.price === optimalRevenuePrice);
+                const profitOptimalIdx = cost !== null ? tableData.findIndex(d => d.price === optimalProfitPrice) : null;
+
+                analysisResults = {
+                    data: tableData,
+                    revenueOptimalIndex: revenueOptimalIdx,
+                    profitOptimalIndex: profitOptimalIdx,
+                    currency,
+                    cost,
+                    rawWtpMode: true,
+                    sampleSize: n,
+                    optimalRevenuePrice,
+                    optimalRevenueIntent,
+                    normalizedRevenue,
+                    optimalProfitPrice,
+                    optimalProfitIntent,
+                    normalizedProfit,
+                    demandCurve: demandData
+                };
+
+                displayResultsRaw();
+                loadingOverlay.classList.add('hidden');
+                showStatus(`Analysis completed! Analyzed ${n} WTP values. Optimal price found using continuous optimization.`, 'success');
+            }, 500);
+        }
+
+        function displayResultsRaw() {
+            const {
+                data, revenueOptimalIndex, profitOptimalIndex, currency, cost,
+                sampleSize, optimalRevenuePrice, optimalRevenueIntent, normalizedRevenue,
+                optimalProfitPrice, optimalProfitIntent, normalizedProfit, demandCurve
+            } = analysisResults;
+
+            // Update revenue metrics
+            document.getElementById('optimalPrice').textContent = formatPrice(optimalRevenuePrice, currency);
+            document.getElementById('maxRevenue').textContent = normalizedRevenue.toFixed(2);
+            document.getElementById('optimalIntent').textContent = optimalRevenueIntent.toFixed(1) + '%';
+
+            // Update profit metrics (if cost provided)
+            const profitMetrics = document.getElementById('profitMetrics');
+            if (cost !== null && profitOptimalIndex !== null) {
+                document.getElementById('profitOptimalPrice').textContent = formatPrice(optimalProfitPrice, currency);
+                document.getElementById('maxProfit').textContent = normalizedProfit.toFixed(2);
+                document.getElementById('displayCost').textContent = formatPrice(cost, currency);
+                profitMetrics.style.display = 'grid';
+            } else {
+                profitMetrics.style.display = 'none';
+            }
+
+            // Create charts using demand curve data
+            createChartsFromDemandCurve(demandCurve, optimalRevenuePrice, optimalProfitPrice, currency, cost);
+
+            // Update table headers
+            const thead = document.getElementById('resultsHead');
+            if (cost !== null) {
+                thead.innerHTML = `
+                    <tr>
+                        <th>Price Point</th>
+                        <th>Purchase Intent (%)</th>
+                        <th>Revenue Index</th>
+                        <th>Profit Index</th>
+                    </tr>
+                `;
+            } else {
+                thead.innerHTML = `
+                    <tr>
+                        <th>Price Point</th>
+                        <th>Purchase Intent (%)</th>
+                        <th>Revenue Index</th>
+                    </tr>
+                `;
+            }
+
+            // Populate results table
+            const tbody = document.getElementById('resultsBody');
+            tbody.innerHTML = data.map((item, idx) => {
+                const isRevenueOptimal = idx === revenueOptimalIndex;
+                const isProfitOptimal = cost !== null && idx === profitOptimalIndex;
+                let rowClass = '';
+                let marker = '';
+
+                if (isRevenueOptimal && isProfitOptimal) {
+                    rowClass = 'optimal';
+                    marker = '★ ';
+                } else if (isRevenueOptimal) {
+                    rowClass = 'optimal';
+                    marker = '* ';
+                } else if (isProfitOptimal) {
+                    rowClass = 'profit-optimal';
+                    marker = '† ';
+                }
+
+                if (cost !== null) {
+                    return `
+                        <tr class="${rowClass}" style="${isProfitOptimal && !isRevenueOptimal ? 'background: rgba(6, 95, 70, 0.15);' : ''}">
+                            <td>${marker}${formatPrice(item.price, currency)}</td>
+                            <td>${item.intent.toFixed(1)}%</td>
+                            <td>${item.revenueIndex.toFixed(2)}</td>
+                            <td>${item.profitIndex.toFixed(2)}</td>
+                        </tr>
+                    `;
+                } else {
+                    return `
+                        <tr class="${rowClass}">
+                            <td>${marker}${formatPrice(item.price, currency)}</td>
+                            <td>${item.intent.toFixed(1)}%</td>
+                            <td>${item.revenueIndex.toFixed(2)}</td>
+                        </tr>
+                    `;
+                }
+            }).join('');
+
+            // Update footnote
+            const footnote = document.getElementById('tableFootnote');
+            if (cost !== null) {
+                footnote.textContent = `* Revenue-maximizing price | † Profit-maximizing price | ★ Both optimal | Based on ${sampleSize} respondents (continuous optimization)`;
+            } else {
+                footnote.textContent = `* Indicates revenue-maximizing price point | Based on ${sampleSize} respondents (continuous optimization)`;
+            }
+
+            // Update interpretation
+            updateInterpretation(cost, true);
+
+            // Show results
+            resultsContainer.classList.add('visible');
+            resultsContainer.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function createChartsFromDemandCurve(demandData, revenueOptimal, profitOptimal, currency, cost) {
+            // Sample data for smoother charts
+            const sampleRate = Math.max(1, Math.floor(demandData.length / 30));
+            const sampled = demandData.filter((_, i) => i % sampleRate === 0);
+
+            const labels = sampled.map(d => currency + d.price.toFixed(2));
+            const intentData = sampled.map(d => d.intent);
+            const revenueData = sampled.map(d => d.revenueIndex);
+            const profitData = cost !== null ? sampled.map(d => d.profitIndex) : null;
+
+            // Find optimal indices in sampled data
+            const revenueOptimalIdx = sampled.findIndex(d => Math.abs(d.price - revenueOptimal) < 0.01);
+            const profitOptimalIdx = cost !== null ? sampled.findIndex(d => Math.abs(d.price - profitOptimal) < 0.01) : -1;
+
+            // Destroy existing charts
+            if (demandChart) demandChart.destroy();
+            if (revenueChart) revenueChart.destroy();
+
+            // Demand Curve Chart
+            const demandCtx = document.getElementById('demandChart').getContext('2d');
+            demandChart = new Chart(demandCtx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Purchase Intent (%)',
+                        data: intentData,
+                        borderColor: '#990000',
+                        backgroundColor: 'rgba(153, 0, 0, 0.1)',
+                        borderWidth: 3,
+                        fill: true,
+                        tension: 0.4,
+                        pointRadius: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Demand Curve (from WTP Data)',
+                            font: { size: 16, weight: '600' },
+                            color: '#990000',
+                            padding: { bottom: 20 }
+                        },
+                        legend: { display: false }
+                    },
+                    scales: {
+                        x: {
+                            title: { display: true, text: 'Price', font: { weight: '600' } },
+                            ticks: {
+                                maxTicksLimit: 8,
+                                callback: function(value, index) {
+                                    return index % 4 === 0 ? this.getLabelForValue(value) : '';
+                                }
+                            }
+                        },
+                        y: {
+                            title: { display: true, text: 'Purchase Intent (%)', font: { weight: '600' } },
+                            min: 0,
+                            max: 100
+                        }
+                    }
+                }
+            });
+
+            // Revenue & Profit Curve Chart
+            const revenueCtx = document.getElementById('revenueChart').getContext('2d');
+            const datasets = [{
+                label: 'Revenue Index',
+                data: revenueData,
+                borderColor: '#990000',
+                backgroundColor: 'rgba(153, 0, 0, 0.3)',
+                borderWidth: 2,
+                fill: true,
+                tension: 0.4,
+                pointRadius: 0
+            }];
+
+            if (cost !== null && profitData) {
+                datasets.push({
+                    label: 'Profit Index',
+                    data: profitData,
+                    borderColor: '#065f46',
+                    backgroundColor: 'rgba(6, 95, 70, 0.3)',
+                    borderWidth: 2,
+                    fill: true,
+                    tension: 0.4,
+                    pointRadius: 0
+                });
+            }
+
+            revenueChart = new Chart(revenueCtx, {
+                type: 'line',
+                data: { labels, datasets },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: cost !== null ? 'Revenue & Profit Index (Continuous)' : 'Revenue Index (Continuous)',
+                            font: { size: 16, weight: '600' },
+                            color: '#990000',
+                            padding: { bottom: 20 }
+                        },
+                        legend: {
+                            display: cost !== null,
+                            position: 'bottom'
+                        }
+                    },
+                    scales: {
+                        x: {
+                            title: { display: true, text: 'Price', font: { weight: '600' } },
+                            ticks: {
+                                maxTicksLimit: 8,
+                                callback: function(value, index) {
+                                    return index % 4 === 0 ? this.getLabelForValue(value) : '';
+                                }
+                            }
+                        },
+                        y: {
+                            title: { display: true, text: 'Index Value', font: { weight: '600' } },
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        }
+
+        function updateInterpretation(cost, isRawWtp = false) {
+            const list = document.getElementById('interpretationList');
+            if (cost !== null) {
+                list.innerHTML = `
+                    <li><strong>Revenue-Maximizing Price:</strong> The price that generates the most potential revenue by balancing what you charge with how many customers will buy.</li>
+                    <li><strong>Profit-Maximizing Price:</strong> The price that maximizes profit after subtracting unit cost. This may differ from the revenue-maximizing price because higher margins can offset lower demand.</li>
+                    <li><strong>Revenue Index:</strong> Shows relative revenue potential at each price (Price × Purchase Intent).</li>
+                    <li><strong>Profit Index:</strong> Shows relative profit potential at each price ((Price − Cost) × Purchase Intent).</li>
+                    ${isRawWtp ? '<li><strong>Continuous Optimization:</strong> The demand curve is smoothed using linear interpolation between observed WTP values, enabling the tool to identify optimal prices that may fall between discrete survey responses.</li>' : ''}
+                `;
+            } else {
+                list.innerHTML = `
+                    <li><strong>Optimal Price:</strong> The price that generates the most potential revenue by balancing what you charge with how many customers will buy.</li>
+                    <li><strong>Revenue Index:</strong> Shows relative revenue potential at each price. Higher numbers mean better combinations of price and demand.</li>
+                    ${isRawWtp ? '<li><strong>Continuous Optimization:</strong> The demand curve is smoothed using linear interpolation between observed WTP values, enabling the tool to identify optimal prices that may fall between discrete survey responses.</li>' : ''}
+                `;
+            }
+        }
+
+        // Export functions
+        function exportCSV() {
+            if (!analysisResults) return;
+
+            const { data, revenueOptimalIndex, profitOptimalIndex, currency, cost } = analysisResults;
+
+            let csv = 'Gabor-Granger Price Analysis Results\n\n';
+            csv += 'Key Findings\n';
+            csv += `Revenue-Maximizing Price,${currency}${data[revenueOptimalIndex].price.toFixed(2)}\n`;
+            csv += `Maximum Revenue Index,${data[revenueOptimalIndex].revenueIndex.toFixed(2)}\n`;
+            csv += `Purchase Intent at Optimal,${data[revenueOptimalIndex].intent.toFixed(1)}%\n`;
+            if (cost !== null && profitOptimalIndex !== null) {
+                csv += `Profit-Maximizing Price,${currency}${data[profitOptimalIndex].price.toFixed(2)}\n`;
+                csv += `Maximum Profit Index,${data[profitOptimalIndex].profitIndex.toFixed(2)}\n`;
+            }
+            csv += '\nDetailed Results\n';
+            if (cost !== null) {
+                csv += 'Price,Purchase Intent (%),Revenue Index,Profit Index,Is Revenue Optimal,Is Profit Optimal\n';
+            } else {
+                csv += 'Price,Purchase Intent (%),Revenue Index,Is Optimal\n';
+            }
+
+            data.forEach((item, idx) => {
+                if (cost !== null) {
+                    csv += `${currency}${item.price.toFixed(2)},${item.intent.toFixed(1)},${item.revenueIndex.toFixed(2)},${item.profitIndex.toFixed(2)},${idx === revenueOptimalIndex ? 'Yes' : 'No'},${idx === profitOptimalIndex ? 'Yes' : 'No'}\n`;
+                } else {
+                    csv += `${currency}${item.price.toFixed(2)},${item.intent.toFixed(1)},${item.revenueIndex.toFixed(2)},${idx === revenueOptimalIndex ? 'Yes' : 'No'}\n`;
+                }
+            });
+
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'gabor_granger_results.csv';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        function exportCharts() {
+            if (!demandChart || !revenueChart) return;
+
+            // Create a canvas to combine both charts
+            const canvas = document.createElement('canvas');
+            canvas.width = 1600;
+            canvas.height = 600;
+            const ctx = canvas.getContext('2d');
+
+            // White background
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Draw both charts side by side
+            ctx.drawImage(demandChart.canvas, 0, 0, 800, 600);
+            ctx.drawImage(revenueChart.canvas, 800, 0, 800, 600);
+
+            // Download
+            const link = document.createElement('a');
+            link.download = 'gabor_granger_charts.png';
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+        }
+    </script>
+</body>
+</html>

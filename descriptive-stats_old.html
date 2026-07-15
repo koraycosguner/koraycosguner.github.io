@@ -1,0 +1,1061 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Descriptive Statistics and Confidence Intervals | Koray Cosguner</title>
+    <meta name="robots" content="noindex,nofollow">
+    <meta name="description" content="Upload a CSV and compute descriptive statistics for every numeric variable, plus a confidence interval for the mean, powered by base R via WebR. Created by Dr. Koray Cosguner.">
+    <link rel="icon" type="image/jpeg" href="KCFavicon.jpg">
+
+    <!-- Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-CTZ8G4EYLR"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-CTZ8G4EYLR');
+    </script>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        html { scroll-behavior: smooth; }
+        :root {
+            --primary: #990000;
+            --primary-light: #fdf2f2;
+            --primary-hover: #7a0000;
+            --iu-crimson: #990000;
+            --iu-crimson-dark: #7a0000;
+            --accent: #1a1a9e;
+
+            --text-main: #111827;
+            --text-dark: #1e293b;
+            --text-sub:  #374151;
+            --text-light: #4b5563;
+            --text-muted: #9ca3af;
+
+            --bg: #ffffff;
+            --bg-light: #f5f5f5;
+            --white: #fff;
+            --surface: #f9fafb;
+            --border: #e2e8f0;
+            --border-strong: #cbd5e1;
+
+            --shadow-sm:    0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+            --shadow-md:    0 4px 12px rgba(0,0,0,0.08), 0 2px 4px rgba(0,0,0,0.04);
+            --shadow-lg:    0 12px 32px rgba(0,0,0,0.10), 0 4px 8px rgba(0,0,0,0.06);
+
+            --radius-sm:    6px;
+            --radius-md:    12px;
+            --radius-lg:    18px;
+            --radius-full:  9999px;
+
+            --transition-fast: 0.15s ease;
+            --transition-base: 0.25s ease;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+        html, body { overflow-x: hidden; }
+        body {
+            font-family: 'Outfit', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            font-size: 18px;
+            background: var(--bg);
+            color: var(--text-main);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* ===================== Navigation (matches tools.html) ===================== */
+        nav {
+            background: rgba(255, 255, 255, 0.88);
+            border-bottom: 1px solid var(--border);
+            padding: 14px 0;
+            position: sticky;
+            top: 0;
+            z-index: 200;
+            backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
+        }
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .brand {
+            font-weight: 800;
+            font-size: 1.2rem;
+            color: var(--text-main);
+            text-decoration: none;
+            letter-spacing: -0.03em;
+        }
+        .nav-links { display: flex; align-items: center; }
+        .font-size-controls.font-size-mobile { display: none; }
+        .nav-links a {
+            margin-left: 28px;
+            text-decoration: none;
+            color: var(--text-sub);
+            font-weight: 600;
+            font-size: 0.9rem;
+            letter-spacing: -0.01em;
+            transition: color var(--transition-fast);
+            position: relative;
+        }
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--primary);
+            transition: width var(--transition-base);
+            border-radius: 2px;
+        }
+        .nav-links a:hover::after,
+        .nav-links a.active::after { width: 100%; }
+        .nav-links a:hover, .nav-links a.active { color: var(--primary); }
+
+        .nav-toggle {
+            display: none;
+            flex-direction: column;
+            cursor: pointer;
+            padding: 4px;
+        }
+        .nav-toggle span {
+            width: 24px;
+            height: 2px;
+            background: var(--text-main);
+            margin: 3px 0;
+            transition: 0.3s;
+        }
+
+        .font-size-controls {
+            display: flex;
+            align-items: center;
+            gap: 2px;
+            margin-right: 10px;
+            border: 1px solid rgba(153,0,0,0.12);
+            border-radius: var(--radius-full);
+            padding: 3px;
+            background: linear-gradient(135deg, rgba(249,250,251,0.9), rgba(243,244,246,0.9));
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            box-shadow: 0 1px 4px rgba(0,0,0,0.06), inset 0 1px 0 rgba(255,255,255,0.8);
+        }
+        .font-size-btn {
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            font-weight: 800;
+            color: var(--text-light);
+            border-radius: var(--radius-full);
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            font-family: inherit;
+            line-height: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px;
+            height: 32px;
+            position: relative;
+            user-select: none;
+        }
+        .font-size-btn:hover { color: var(--primary); background: rgba(153,0,0,0.08); }
+        .font-size-btn:active { transform: scale(0.9); background: rgba(153,0,0,0.15); color: var(--primary); }
+        .font-size-btn.at-limit { opacity: 0.3; cursor: default; }
+        .font-size-btn.at-limit:hover { background: transparent; color: var(--text-light); }
+        .font-size-btn.at-limit:active { transform: none; background: transparent; }
+        .font-size-btn.decrease-a { font-size: 0.7rem; }
+        .font-size-btn.increase-a { font-size: 1.1rem; }
+
+        /* ===================== Page chrome ===================== */
+        main { max-width: 1000px; margin: 0 auto; padding: 2rem; }
+        .back-link { display: inline-flex; align-items: center; gap: 6px; color: #64748b; text-decoration: none; font-size: 0.9rem; font-weight: 500; }
+        .back-link:hover { color: var(--primary); }
+
+        .hero { text-align: center; padding: 2rem 0 1rem; }
+        .hero h1 { font-size: 1.8rem; color: var(--text-dark); margin-bottom: 0.5rem; letter-spacing: -0.02em; }
+        .hero ul { text-align: left; display: inline-block; margin: 0 auto; padding-left: 1.5rem; color: var(--text-light); font-size: 1rem; line-height: 1.8; }
+
+        .disclaimer { background: #fef2f2; border: 1px solid #fecaca; border-radius: 8px; padding: 1rem 1.25rem; margin-bottom: 2rem; }
+        .disclaimer-title { font-weight: 700; color: var(--iu-crimson); margin-bottom: 0.5rem; }
+        .disclaimer ul { margin: 0; padding-left: 1.25rem; color: var(--text-light); font-size: 0.9rem; }
+
+        .tool-container { background: var(--white); border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); padding: 2rem; margin-top: 2rem; }
+        .section-title { font-size: 1.3rem; color: var(--iu-crimson); margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 2px solid var(--iu-crimson); }
+        .section-title.mt { margin-top: 2rem; }
+        .section-hint { font-size: 0.9rem; color: var(--text-light); margin-bottom: 1rem; }
+
+        /* Loading overlay (WebR boot) */
+        .loading-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.96); display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 9999; }
+        .loading-overlay.hidden { display: none; }
+        .spinner { width: 60px; height: 60px; border: 4px solid var(--border); border-top-color: var(--iu-crimson); border-radius: 50%; animation: spin 1s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .loading-text { margin-top: 1rem; font-size: 1.1rem; color: var(--text-light); }
+        .loading-stage { margin-top: 0.5rem; font-size: 0.85rem; color: #999; text-align: center; max-width: 420px; padding: 0 1rem; }
+
+        /* Status message */
+        .status-message { padding: 0.85rem 1rem; border-radius: 6px; margin-bottom: 1rem; display: none; font-size: 0.95rem; }
+        .status-message.visible { display: block; }
+        .status-message.error { background: #fee2e2; color: #991b1b; border: 1px solid #fecaca; }
+        .status-message.success { background: #d1fae5; color: #065f46; border: 1px solid #a7f3d0; }
+        .status-message.info { background: #dbeafe; color: #1e40af; border: 1px solid #bfdbfe; }
+
+        /* Upload */
+        .upload-area { border: 2px dashed var(--border-strong); border-radius: 8px; padding: 2.5rem; text-align: center; cursor: pointer; transition: all 0.3s; margin-bottom: 1rem; }
+        .upload-area:hover, .upload-area.dragover { border-color: var(--iu-crimson); background: rgba(153, 0, 0, 0.05); }
+        .upload-area input[type="file"] { display: none; }
+        .upload-icon { font-size: 2.5rem; color: var(--iu-crimson); margin-bottom: 0.5rem; }
+        .upload-text { font-size: 1rem; color: var(--text-dark); }
+        .upload-hint { font-size: 0.85rem; color: var(--text-light); margin-top: 0.4rem; }
+
+        /* Data preview */
+        .preview-note { background: #f0f9ff; border: 1px solid #bae6fd; border-left: 4px solid #0369a1; border-radius: 6px; padding: 0.85rem 1rem; margin-bottom: 1rem; font-size: 0.9rem; line-height: 1.55; }
+        .preview-note strong { color: #0369a1; }
+        .var-pill { display: inline-block; background: var(--white); border: 1px solid var(--border); border-radius: var(--radius-full); padding: 2px 10px; margin: 2px 3px 0 0; font-size: 0.82rem; font-variant-numeric: tabular-nums; }
+        .var-pill.num { border-color: rgba(153,0,0,0.3); color: var(--iu-crimson-dark); }
+
+        /* Form controls */
+        .form-group { margin-bottom: 1.25rem; }
+        .form-group label { display: block; font-weight: 600; margin-bottom: 0.4rem; color: var(--text-dark); }
+        .form-group select, .form-group input[type="number"] {
+            width: 100%; padding: 0.65rem 0.75rem; border: 1px solid var(--border);
+            border-radius: 6px; font-size: 1rem; font-family: inherit; background: var(--white);
+        }
+        .form-group select:focus, .form-group input:focus { outline: none; border-color: var(--iu-crimson); }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+        @media (max-width: 720px) { .form-row { grid-template-columns: 1fr; } }
+        .field-hint { color: #999; font-weight: 400; font-size: 0.85rem; margin-left: 0.4rem; }
+
+        .radio-row { display: flex; gap: 0.65rem; flex-wrap: wrap; }
+        .radio-row label { display: inline-flex; align-items: center; gap: 0.4rem; font-weight: 500; cursor: pointer; padding: 0.45rem 0.85rem; border-radius: 6px; border: 1px solid var(--border); background: var(--white); font-size: 0.9rem; }
+        .radio-row label:has(input:checked) { border-color: var(--iu-crimson); background: rgba(153,0,0,0.04); color: var(--iu-crimson); font-weight: 600; }
+        .radio-row input { accent-color: var(--iu-crimson); }
+
+        /* Buttons */
+        .btn { display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; padding: 0.75rem 1.6rem; font-size: 1rem; font-weight: 600; text-align: center; border: none; border-radius: 6px; cursor: pointer; transition: all 0.2s; font-family: inherit; }
+        .btn-primary { background: var(--iu-crimson); color: var(--white); }
+        .btn-primary:hover:not(:disabled) { background: var(--iu-crimson-dark); }
+        .btn-primary:disabled { background: var(--text-light); cursor: not-allowed; opacity: 0.6; }
+        .btn-secondary { background: var(--white); color: var(--iu-crimson); border: 2px solid var(--iu-crimson); }
+        .btn-secondary:hover { background: var(--iu-crimson); color: var(--white); }
+        .btn-sm { padding: 0.55rem 1rem; font-size: 0.9rem; }
+        .button-group { display: flex; gap: 1rem; margin-top: 1.5rem; flex-wrap: wrap; }
+
+        /* Results */
+        .results-container { display: none; margin-top: 2rem; }
+        .results-container.visible { display: block; }
+
+        .result-table-wrap { overflow-x: auto; border: 1px solid var(--border); border-radius: 6px; margin-top: 0.75rem; max-height: 520px; overflow-y: auto; }
+        .result-table { width: 100%; border-collapse: collapse; font-size: 0.88rem; }
+        .result-table th, .result-table td { padding: 0.5rem 0.85rem; text-align: right; border-bottom: 1px solid var(--border); white-space: nowrap; }
+        .result-table th { background: var(--iu-crimson); color: var(--white); position: sticky; top: 0; z-index: 1; font-size: 0.82rem; font-weight: 600; }
+        .result-table th:first-child, .result-table td:first-child { text-align: left; }
+        .result-table tbody tr:nth-child(even) { background: #fafafa; }
+        .result-table td.num { text-align: right; font-variant-numeric: tabular-nums; }
+
+        /* Preview (head) table */
+        .preview-table { width: 100%; border-collapse: collapse; font-size: 0.86rem; }
+        .preview-table th, .preview-table td { padding: 0.45rem 0.85rem; text-align: left; border-bottom: 1px solid var(--border); white-space: nowrap; }
+        .preview-table th { background: var(--iu-crimson); color: var(--white); position: sticky; top: 0; z-index: 1; font-size: 0.82rem; }
+
+        /* Confidence-interval panel */
+        .ci-panel { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 1.25rem; margin-top: 0.75rem; }
+        .stat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 0.75rem; margin-top: 1rem; }
+        .stat { background: var(--white); border: 1px solid var(--border); border-radius: 8px; padding: 0.85rem 1rem; }
+        .stat .label { font-size: 0.72rem; color: var(--text-light); text-transform: uppercase; letter-spacing: 0.6px; font-weight: 600; }
+        .stat .value { font-size: 1.3rem; color: var(--iu-crimson); font-weight: 700; margin-top: 0.2rem; font-variant-numeric: tabular-nums; }
+        .stat .secondary { font-size: 0.75rem; color: var(--text-light); margin-top: 0.2rem; }
+        .ci-headline { margin-top: 1rem; padding: 1rem 1.25rem; border-radius: 8px; background: #f0f9ff; border: 1px solid #bae6fd; color: #075985; font-size: 1rem; line-height: 1.6; }
+        .ci-headline strong { color: #0369a1; font-variant-numeric: tabular-nums; }
+        .ci-warn { margin-top: 1rem; padding: 0.85rem 1rem; border-radius: 8px; background: #fffbeb; border: 1px solid #fde68a; color: #92400e; font-size: 0.92rem; }
+
+        /* Show R code */
+        details.r-code { margin-top: 1.5rem; border: 1px solid var(--border); border-radius: 8px; padding: 0.5rem 1rem; background: var(--surface); }
+        details.r-code summary { cursor: pointer; font-weight: 600; color: var(--text-sub); font-size: 0.92rem; padding: 0.4rem 0; }
+        details.r-code pre { background: #1e1e1e; color: #d4d4d4; font-family: 'Monaco', 'Menlo', 'Courier New', monospace; font-size: 0.8rem; padding: 1.1rem; border-radius: 8px; overflow-x: auto; white-space: pre; line-height: 1.5; margin: 0.5rem 0; }
+        .code-wrap { position: relative; }
+        .copy-btn { position: absolute; top: 14px; right: 14px; display: inline-flex; align-items: center; gap: 5px; background: rgba(255,255,255,0.12); color: #d4d4d4; border: 1px solid rgba(255,255,255,0.25); border-radius: 6px; padding: 5px 10px; font-size: 0.78rem; font-weight: 600; font-family: inherit; cursor: pointer; transition: background 0.15s, color 0.15s, border-color 0.15s; }
+        .copy-btn:hover { background: rgba(255,255,255,0.22); color: #fff; }
+        .copy-btn.copied { background: #16a34a; border-color: #16a34a; color: #fff; }
+
+        footer { text-align: center; padding: 2rem; color: var(--text-light); font-size: 0.9rem; background: var(--surface); border-top: 1px solid var(--border); margin-top: 3rem; }
+
+        @media (max-width: 768px) {
+            body { font-size: 16px; }
+            main { padding: 1rem; }
+            .tool-container { padding: 1.25rem; }
+            .hero { padding: 1.5rem 0; }
+            .hero h1 { font-size: 1.4rem; }
+            .button-group { flex-direction: column; }
+            .button-group .btn { width: 100%; }
+        }
+
+        @media (max-width: 640px) {
+            .nav-toggle { display: flex; }
+            .font-size-controls.font-size-mobile { display: flex; }
+            .font-size-controls.font-size-desktop { display: none; }
+            .nav-links {
+                display: none;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                right: 0;
+                background: white;
+                flex-direction: column;
+                padding: 16px 24px;
+                border-bottom: 1px solid var(--border);
+                box-shadow: var(--shadow-lg);
+            }
+            .nav-links.active { display: flex; }
+            .nav-links a {
+                margin-left: 0;
+                padding: 12px 0;
+                font-size: 1rem;
+                border-bottom: 1px solid var(--border);
+            }
+            .nav-links a::after { display: none; }
+            .nav-links a:last-child { border-bottom: none; }
+            .nav-container { position: relative; }
+            .font-size-controls { margin-right: 4px; }
+        }
+    
+        :focus-visible { outline: 2px solid currentColor; outline-offset: 2px; }
+    </style>
+</head>
+<body>
+    <!-- Auth check - redirect to login if not signed in -->
+    <div id="loading-screen" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: var(--bg); display: flex; align-items: center; justify-content: center; z-index: 99999;">
+        <p style="color: var(--text-light);">Loading...</p>
+    </div>
+
+    <div id="main-content" style="display: none;">
+
+    <nav>
+        <div class="nav-container">
+            <div style="display: flex; align-items: center; gap: 18px;">
+                <span style="display: flex; align-items: center; gap: 10px;">
+                    <a href="https://robinson.gsu.edu/" target="_blank" rel="noopener" title="J. Mack Robinson College of Business, Georgia State University" style="line-height: 0;">
+                        <img src="gsu-logo.png" alt="Robinson College of Business, Georgia State University" style="height: 24px; filter: grayscale(1); opacity: 0.55;">
+                    </a>
+                    <a href="https://kelley.iu.edu/" target="_blank" rel="noopener" title="Kelley School of Business, Indiana University" style="line-height: 0;">
+                        <img src="iu-logo.png" alt="Kelley School of Business, Indiana University" style="height: 38px;">
+                    </a>
+                    <a href="https://sc.edu/study/colleges_schools/moore/" target="_blank" rel="noopener" title="Darla Moore School of Business, University of South Carolina" style="line-height: 0;">
+                        <img src="usc-logo.png" alt="Darla Moore School of Business, University of South Carolina" style="height: 24px; filter: grayscale(1); opacity: 0.55;">
+                    </a>
+                </span>
+                <span style="width: 1px; height: 26px; background: rgba(0,0,0,0.14);"></span>
+                <a href="index.html" class="brand">Koray Cosguner</a>
+            </div>
+            <div style="display: flex; align-items: center;">
+                <div class="font-size-controls font-size-mobile" role="group" aria-label="Text size">
+                    <button class="font-size-btn decrease-a" onclick="adjustFontSize(-1)" title="Decrease text size" aria-label="Decrease text size">A</button>
+                    <button class="font-size-btn increase-a" onclick="adjustFontSize(1)" title="Increase text size" aria-label="Increase text size">A</button>
+                </div>
+                <div class="nav-toggle" role="button" tabindex="0" aria-label="Toggle navigation menu" onclick="document.querySelector('.nav-links').classList.toggle('active')">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            </div>
+            <div class="nav-links">
+                <div class="font-size-controls font-size-desktop" role="group" aria-label="Text size">
+                    <button class="font-size-btn decrease-a" onclick="adjustFontSize(-1)" title="Decrease text size" aria-label="Decrease text size">A</button>
+                    <button class="font-size-btn increase-a" onclick="adjustFontSize(1)" title="Increase text size" aria-label="Increase text size">A</button>
+                </div>
+                <a href="index.html">Home</a>
+                <a href="research.html">Research</a>
+                <a href="teaching.html">Teaching</a>
+                <a href="https://koraycosguner.github.io/miaow-consulting/" target="_blank">Consulting</a>
+                <a href="tools.html" class="active">Analytics and Pricing Tools</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- WebR boot overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="spinner"></div>
+        <p class="loading-text" id="loadingText">Loading WebR (R in your browser)...</p>
+        <p class="loading-stage" id="loadingStage">First load may take 30 to 60 seconds. Everything runs locally in your browser.</p>
+    </div>
+
+    <main>
+        <div style="margin-bottom: 0.5rem;">
+            <a href="tools.html" class="back-link">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+                Back to Analytics and Pricing Tools
+            </a>
+        </div>
+
+        <section class="hero">
+            <h1>Descriptive Statistics and Confidence Intervals</h1>
+            <ul>
+                <li>Upload a CSV with a header row, no coding required</li>
+                <li>Get descriptive statistics (mean, SD, quartiles, range, and more) for every numeric variable</li>
+                <li>Build a confidence interval for the mean of any variable you pick, at a confidence level you choose</li>
+                <li>Powered by base R (<code>mean</code>, <code>sd</code>, <code>quantile</code>, <code>qt</code>) running entirely in your browser via WebR</li>
+            </ul>
+        </section>
+
+        <div class="disclaimer">
+            <div class="disclaimer-title">Disclaimer</div>
+            <ul>
+                <li><strong>Verify all results.</strong> Output may be inaccurate or incomplete; check important conclusions independently.</li>
+                <li><strong>No warranty.</strong> Provided "as is" without warranty of any kind.</li>
+                <li><strong>Privacy:</strong> Your data never leaves your browser, everything runs locally in WebAssembly.</li>
+            </ul>
+            <div style="margin-top: 0.85rem; padding-top: 0.85rem; border-top: 1px solid rgba(153, 0, 0, 0.2); font-size: 0.9rem;">
+                <strong>Report issues:</strong> Email Dr. Cosguner at <a href="mailto:kcosgun@iu.edu" style="color: var(--iu-crimson); font-weight: 600;">kcosgun@iu.edu</a>.
+            </div>
+        </div>
+
+        <div class="tool-container">
+
+            <div class="status-message" id="statusMessage"></div>
+
+            <!-- ============================== 1. Upload Data ============================== -->
+            <h2 class="section-title">1. Upload Your Data</h2>
+            <p class="section-hint">Upload a CSV file with a header row. The tool reads it locally and computes statistics for every numeric column.</p>
+            <div class="upload-area" id="uploadArea">
+                <input type="file" id="fileInput" accept=".csv" aria-label="Upload CSV file">
+                <div class="upload-icon">&#128202;</div>
+                <p class="upload-text">Click to upload or drag and drop a CSV</p>
+                <p class="upload-hint">CSV files only, with a header row</p>
+            </div>
+
+            <div class="preview-note" id="previewNote" style="display: none;"></div>
+
+            <div id="previewWrap" style="display: none;">
+                <h3 style="margin-bottom: 0.25rem; font-size: 1.05rem; color: var(--text-dark);">Data Preview (first 8 rows)</h3>
+                <div class="result-table-wrap" style="max-height: 260px;"><table class="preview-table" id="previewTable"></table></div>
+            </div>
+
+            <!-- ============================== 2. Results ============================== -->
+            <div class="results-container" id="resultsContainer">
+                <h2 class="section-title mt">2. Descriptive Statistics</h2>
+                <p class="section-hint">One row per numeric variable. N is the count of non-missing values; Missing is the count of NA values.</p>
+                <div class="result-table-wrap"><table class="result-table" id="statsTable"></table></div>
+                <div class="button-group">
+                    <button class="btn btn-primary btn-sm" id="downloadStatsBtn" type="button">Download statistics (CSV)</button>
+                </div>
+
+                <h2 class="section-title mt">3. Confidence Interval for a Mean</h2>
+                <p class="section-hint">Pick a numeric variable and a confidence level. The interval is computed exactly as R's <code>t.test()</code> would, using the t distribution.</p>
+                <div class="ci-panel">
+                    <div class="form-row">
+                        <div class="form-group" style="margin-bottom: 0;">
+                            <label for="ciVar">Variable</label>
+                            <select id="ciVar" aria-label="Variable for confidence interval"></select>
+                        </div>
+                        <div class="form-group" style="margin-bottom: 0;">
+                            <label for="ciLevelSelect">Confidence Level</label>
+                            <select id="ciLevelSelect" aria-label="Confidence level preset">
+                                <option value="90">90%</option>
+                                <option value="95" selected>95%</option>
+                                <option value="99">99%</option>
+                                <option value="custom">Custom...</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group" id="customLevelWrap" style="display: none; margin-top: 1rem; margin-bottom: 0;">
+                        <label for="ciLevelCustom">Custom Confidence Level (%) <span class="field-hint">between 50 and 99.99</span></label>
+                        <input type="number" id="ciLevelCustom" min="50" max="99.99" step="0.01" value="95" aria-label="Custom confidence level in percent">
+                    </div>
+
+                    <div class="ci-headline" id="ciHeadline" style="display: none;"></div>
+                    <div class="ci-warn" id="ciWarn" style="display: none;"></div>
+                    <div class="stat-grid" id="ciStats" style="display: none;"></div>
+                </div>
+
+                <details class="r-code">
+                    <summary>Show R code</summary>
+                    <div class="code-wrap">
+                        <button type="button" class="copy-btn" id="copyRBtn" aria-label="Copy R code">
+                            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                            <span>Copy</span>
+                        </button>
+                        <pre id="rCodeBlock"></pre>
+                    </div>
+                </details>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <p>&copy; <span class="year"></span> Koray Cosguner &middot; All Rights Reserved</p>
+    </footer>
+
+    </div> <!-- end main-content -->
+
+    <!-- WebR tool logic -->
+    <script type="module">
+        import { WebR } from 'https://webr.r-wasm.org/latest/webr.mjs';
+
+        // ==================== STATE ====================
+        let webR = null;
+        let webrReady = false;
+        let csvText = '';
+        let numericVars = [];     // names of numeric columns, from R
+        let lastStatsCSV = '';    // descriptive stats as CSV text, for download
+        let ciRunToken = 0;       // guards against stale async CI results
+
+        const $ = (id) => document.getElementById(id);
+
+        function showStatus(msg, type = 'info', autoHideMs = 0) {
+            const el = $('statusMessage');
+            el.textContent = msg;
+            el.className = `status-message visible ${type}`;
+            if (autoHideMs > 0) setTimeout(() => el.classList.remove('visible'), autoHideMs);
+        }
+        function hideStatus() { $('statusMessage').classList.remove('visible'); }
+
+        function escapeHtml(s) {
+            return String(s).replace(/[&<>"']/g, ch => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
+        }
+
+        // ==================== R ESCAPING ====================
+        // Escape a JS string so it is safe inside an R double-quoted string literal.
+        function rStr(s) {
+            return '"' + String(s).replace(/\\/g, '\\\\').replace(/"/g, '\\"') + '"';
+        }
+        // Escape a column name for backtick quoting in R (escape backslash + backtick).
+        function rBacktick(s) {
+            return '`' + String(s).replace(/\\/g, '\\\\').replace(/`/g, '\\`') + '`';
+        }
+
+        // ==================== NUMBER FORMATTING ====================
+        // 4 significant digits for general statistics, but show integers (N, Missing, df)
+        // as whole numbers.
+        function fmtSig(x, sig = 4) {
+            if (x === null || x === undefined || x === '' || isNaN(x)) return '-';
+            const v = Number(x);
+            if (v === 0) return '0';
+            if (Number.isInteger(v) && Math.abs(v) < 1e6) return String(v);
+            // toPrecision then strip trailing zeros for readability.
+            let s = v.toPrecision(sig);
+            if (s.indexOf('e') === -1 && s.indexOf('.') !== -1) {
+                s = s.replace(/\.?0+$/, '');
+            }
+            return s;
+        }
+        function fmtInt(x) {
+            if (x === null || x === undefined || x === '' || isNaN(x)) return '-';
+            return String(Math.round(Number(x)));
+        }
+
+        // ==================== CSV PARSING (quote-aware, for rendering) ====================
+        function parseCSV(text) {
+            const lines = String(text).replace(/\r\n/g, '\n').replace(/\r/g, '\n').split('\n').filter(l => l.length > 0);
+            return lines.map(splitCSVLine);
+        }
+        function splitCSVLine(line) {
+            const result = []; let cur = ''; let inQ = false;
+            for (let i = 0; i < line.length; i++) {
+                const c = line[i];
+                if (inQ) {
+                    if (c === '"' && line[i + 1] === '"') { cur += '"'; i++; }
+                    else if (c === '"') { inQ = false; }
+                    else { cur += c; }
+                } else {
+                    if (c === ',') { result.push(cur); cur = ''; }
+                    else if (c === '"') { inQ = true; }
+                    else { cur += c; }
+                }
+            }
+            result.push(cur);
+            return result;
+        }
+
+        // ==================== UPLOAD ====================
+        const uploadArea = $('uploadArea');
+        const fileInput  = $('fileInput');
+        uploadArea.addEventListener('click', () => fileInput.click());
+        uploadArea.addEventListener('dragover', e => { e.preventDefault(); uploadArea.classList.add('dragover'); });
+        uploadArea.addEventListener('dragleave', () => uploadArea.classList.remove('dragover'));
+        uploadArea.addEventListener('drop', e => {
+            e.preventDefault();
+            uploadArea.classList.remove('dragover');
+            if (e.dataTransfer.files.length) handleFile(e.dataTransfer.files[0]);
+        });
+        fileInput.addEventListener('change', e => { if (e.target.files.length) handleFile(e.target.files[0]); });
+
+        function handleFile(file) {
+            if (!file.name.toLowerCase().endsWith('.csv')) {
+                showStatus('Please upload a .csv file.', 'error', 4000);
+                return;
+            }
+            if (!webrReady) {
+                showStatus('WebR is still loading, please wait a moment and try again.', 'info', 4000);
+                return;
+            }
+            const reader = new FileReader();
+            reader.onload = ev => {
+                csvText = ev.target.result;
+                if (!csvText || !csvText.trim()) {
+                    showStatus('That file looks empty.', 'error', 5000);
+                    return;
+                }
+                renderPreview();
+                computeStats();
+            };
+            reader.onerror = () => showStatus('Could not read that file.', 'error', 5000);
+            reader.readAsText(file);
+        }
+
+        // Render the first 8 rows so the user can confirm the upload parsed correctly.
+        function renderPreview() {
+            const parsed = parseCSV(csvText);
+            if (!parsed.length) { $('previewWrap').style.display = 'none'; return; }
+            const header = parsed[0];
+            let html = '<thead><tr>';
+            header.forEach(h => { html += `<th>${escapeHtml(h)}</th>`; });
+            html += '</tr></thead><tbody>';
+            for (let r = 1; r < Math.min(parsed.length, 9); r++) {
+                html += '<tr>';
+                parsed[r].forEach(cell => { html += `<td>${escapeHtml(cell)}</td>`; });
+                html += '</tr>';
+            }
+            html += '</tbody>';
+            $('previewTable').innerHTML = html;
+            $('previewWrap').style.display = 'block';
+        }
+
+        // ==================== INIT WEBR ====================
+        async function initWebR() {
+            try {
+                webR = new WebR();
+                await webR.init();
+                webrReady = true;
+                $('loadingOverlay').classList.add('hidden');
+                showStatus('Ready. Upload a CSV to compute descriptive statistics.', 'success', 4000);
+            } catch (err) {
+                $('loadingOverlay').innerHTML = `<div style="text-align:center; padding:2rem; max-width:520px;">
+                    <p style="color:#991b1b; font-size:1.2rem; font-weight:600;">Failed to load WebR</p>
+                    <p style="color:#666; margin-top:1rem; font-size:0.9rem;">${escapeHtml(err.message || String(err))}</p>
+                    <p style="color:#666; margin-top:0.5rem; font-size:0.85rem;">Reload the page to try again.</p>
+                </div>`;
+            }
+        }
+
+        // ==================== R PROGRAM: DESCRIPTIVE STATISTICS ====================
+        // Returns OK\n<nNumeric>\n<nVar1>...<<<STATS>>>\n<statsCSV><<<META>>>\n<dims>
+        // We keep the contract simple: a sentinel-delimited string we parse in JS.
+        function buildStatsProgram() {
+            return `res = tryCatch({
+  df = read.csv("/tmp/ds_data.csv", stringsAsFactors = FALSE, check.names = TRUE)
+  nrows = nrow(df); ncols = ncol(df)
+  num = df[, sapply(df, is.numeric), drop = FALSE]
+  if (ncol(num) == 0) {
+    paste0("NONUM\\n", nrows, "\\n", ncols)
+  } else {
+    get_mode = function(v) {
+      ux = unique(v)
+      if (length(ux) == length(v)) return(NA)   # all values distinct: no mode
+      tab = tabulate(match(v, ux))
+      min(ux[tab == max(tab)])                   # most frequent value (smallest if tied)
+    }
+    describe_one = function(x) {
+      miss = sum(is.na(x)); x = x[!is.na(x)]; n = length(x); m = mean(x); s = sd(x)
+      q = quantile(x, c(.25, .5, .75))
+      c(N = n, Missing = miss, Mean = m, Median = q[[2]], Mode = get_mode(x),
+        SD = s, Variance = var(x), SE = s / sqrt(n),
+        Min = min(x), Q1 = q[[1]], Q3 = q[[3]], Max = max(x),
+        Range = max(x) - min(x), IQR = q[[3]] - q[[1]])
+    }
+    stats = t(sapply(num, describe_one))
+    stats_df = as.data.frame(stats)
+    stats_df = cbind(Variable = rownames(stats), stats_df)
+    stats_csv = paste(capture.output(write.csv(stats_df, row.names = FALSE)), collapse = "\\n")
+    vars_csv = paste(colnames(num), collapse = "\\t")
+    paste0("OK\\n", nrows, "\\n", ncols,
+           "\\n<<<VARS>>>\\n", vars_csv,
+           "\\n<<<STATS>>>\\n", stats_csv)
+  }
+}, error = function(e) {
+  paste0("ERR\\n", conditionMessage(e))
+})
+res`;
+        }
+
+        async function computeStats() {
+            try {
+                showStatus('Computing descriptive statistics in R...', 'info');
+                await webR.FS.writeFile('/tmp/ds_data.csv', new TextEncoder().encode(csvText));
+
+                const result = await webR.evalR(buildStatsProgram());
+                const out = await toText(result);
+
+                if (out.startsWith('ERR')) {
+                    throw new Error(out.slice(4).trim() || 'R returned an error.');
+                }
+                if (out.startsWith('NONUM')) {
+                    const parts = out.split('\n');
+                    const nrows = parseInt(parts[1], 10);
+                    const ncols = parseInt(parts[2], 10);
+                    $('previewNote').style.display = 'block';
+                    $('previewNote').innerHTML = `Loaded <strong>${nrows.toLocaleString()}</strong> rows &times; <strong>${ncols.toLocaleString()}</strong> columns. ` +
+                        `<strong>No numeric columns were found.</strong> Descriptive statistics and confidence intervals require at least one numeric variable. ` +
+                        `Check that numeric columns do not contain text, currency symbols, or thousands separators.`;
+                    $('resultsContainer').classList.remove('visible');
+                    showStatus('No numeric columns found in this CSV.', 'error', 6000);
+                    return;
+                }
+                if (!out.startsWith('OK')) {
+                    throw new Error('Unexpected R output: ' + out.slice(0, 300));
+                }
+
+                // Parse the sentinel-delimited payload.
+                const varsMarker = '<<<VARS>>>\n';
+                const statsMarker = '\n<<<STATS>>>\n';
+                const varsStart = out.indexOf(varsMarker);
+                const statsStart = out.indexOf(statsMarker);
+                if (varsStart === -1 || statsStart === -1) throw new Error('Could not parse R output structure.');
+
+                const headerBlock = out.slice(0, varsStart).split('\n'); // ["OK", nrows, ncols]
+                const nrows = parseInt(headerBlock[1], 10);
+                const ncols = parseInt(headerBlock[2], 10);
+                const varsRaw = out.slice(varsStart + varsMarker.length, statsStart).trim();
+                numericVars = varsRaw.length ? varsRaw.split('\t') : [];
+                lastStatsCSV = out.slice(statsStart + statsMarker.length).trim();
+
+                // Preview note: dimensions + which columns are numeric.
+                const pills = numericVars.map(v => `<span class="var-pill num">${escapeHtml(v)}</span>`).join(' ');
+                $('previewNote').style.display = 'block';
+                $('previewNote').innerHTML =
+                    `Loaded <strong>${nrows.toLocaleString()}</strong> rows &times; <strong>${ncols.toLocaleString()}</strong> columns. ` +
+                    `<strong>${numericVars.length}</strong> numeric variable${numericVars.length === 1 ? '' : 's'} detected:<br>${pills}`;
+
+                renderStatsTable(lastStatsCSV);
+                populateCiSelect();
+                $('rCodeBlock').textContent = buildDisplayR();
+                $('resultsContainer').classList.add('visible');
+                runCI(); // compute the default CI immediately
+                showStatus('Done. Statistics computed for ' + numericVars.length + ' numeric variable' + (numericVars.length === 1 ? '' : 's') + '.', 'success', 4000);
+                $('resultsContainer').scrollIntoView({ behavior: 'smooth', block: 'start' });
+            } catch (err) {
+                console.error(err);
+                showStatus('Error: ' + (err.message || String(err)), 'error');
+            }
+        }
+
+        // Convert a WebR result to a single text string (matches htest-tool.html).
+        async function toText(result) {
+            const obj = await result.toJs();
+            if (typeof obj === 'string') return obj;
+            if (obj && obj.values) return Array.isArray(obj.values) ? obj.values.join('\n') : obj.values;
+            if (Array.isArray(obj)) return obj.join('\n');
+            return String(obj);
+        }
+
+        // Columns we keep as integers in the displayed stats table.
+        const INT_COLS = new Set(['N', 'Missing']);
+
+        function renderStatsTable(statsCSV) {
+            const rows = parseCSV(statsCSV);
+            const tableEl = $('statsTable');
+            if (!rows.length) { tableEl.innerHTML = ''; return; }
+            const header = rows[0];
+            let html = '<thead><tr>';
+            header.forEach(h => { html += `<th>${escapeHtml(h)}</th>`; });
+            html += '</tr></thead><tbody>';
+            for (let r = 1; r < rows.length; r++) {
+                html += '<tr>';
+                rows[r].forEach((cell, ci) => {
+                    if (ci === 0) {
+                        html += `<td>${escapeHtml(cell)}</td>`;
+                    } else {
+                        const colName = header[ci];
+                        const display = INT_COLS.has(colName) ? fmtInt(cell) : fmtSig(cell);
+                        html += `<td class="num">${display}</td>`;
+                    }
+                });
+                html += '</tr>';
+            }
+            html += '</tbody>';
+            tableEl.innerHTML = html;
+        }
+
+        function populateCiSelect() {
+            const sel = $('ciVar');
+            const prev = sel.value;
+            sel.innerHTML = numericVars.map(v => `<option value="${escapeHtml(v)}">${escapeHtml(v)}</option>`).join('');
+            if (numericVars.includes(prev)) sel.value = prev;
+        }
+
+        // ==================== CONFIDENCE INTERVAL ====================
+        function getCiLevelPercent() {
+            const preset = $('ciLevelSelect').value;
+            if (preset === 'custom') {
+                let v = parseFloat($('ciLevelCustom').value);
+                if (isNaN(v)) v = 95;
+                v = Math.min(99.99, Math.max(50, v));
+                return v;
+            }
+            return parseFloat(preset);
+        }
+
+        // Build the on-demand R expression that returns the six CI numbers for one
+        // variable at one level, using the validated ci_mean() logic.
+        function buildCiProgram(varName, levelFraction) {
+            return `res = tryCatch({
+  ci_mean = function(x, level = 0.95) {
+    x = x[!is.na(x)]; n = length(x); m = mean(x); se = sd(x) / sqrt(n)
+    tcrit = qt(1 - (1 - level) / 2, df = n - 1)
+    c(Mean = m, SE = se, df = n - 1, t = tcrit, Lower = m - tcrit * se, Upper = m + tcrit * se)
+  }
+  df = read.csv("/tmp/ds_data.csv", stringsAsFactors = FALSE, check.names = TRUE)
+  x = df[[${rStr(varName)}]]
+  x = x[!is.na(x)]
+  n = length(x)
+  if (n < 2) {
+    paste0("FEW\\n", n)
+  } else {
+    out = ci_mean(df[[${rStr(varName)}]], ${levelFraction})
+    fmt = function(v) format(v, digits = 12, scientific = FALSE, trim = TRUE)
+    paste0("OK\\n",
+           "Mean=", fmt(out[["Mean"]]), "\\n",
+           "SE=", fmt(out[["SE"]]), "\\n",
+           "df=", fmt(out[["df"]]), "\\n",
+           "t=", fmt(out[["t"]]), "\\n",
+           "Lower=", fmt(out[["Lower"]]), "\\n",
+           "Upper=", fmt(out[["Upper"]]))
+  }
+}, error = function(e) {
+  paste0("ERR\\n", conditionMessage(e))
+})
+res`;
+        }
+
+        async function runCI() {
+            if (!webrReady || !numericVars.length) return;
+            const varName = $('ciVar').value;
+            if (!varName) return;
+            const levelPct = getCiLevelPercent();
+            const levelFraction = levelPct / 100;
+
+            const token = ++ciRunToken;
+            try {
+                await webR.FS.writeFile('/tmp/ds_data.csv', new TextEncoder().encode(csvText));
+                const result = await webR.evalR(buildCiProgram(varName, levelFraction));
+                const out = await toText(result);
+                if (token !== ciRunToken) return; // a newer request superseded this one
+
+                if (out.startsWith('ERR')) throw new Error(out.slice(4).trim() || 'R returned an error.');
+
+                if (out.startsWith('FEW')) {
+                    const n = parseInt(out.split('\n')[1], 10) || 0;
+                    $('ciHeadline').style.display = 'none';
+                    $('ciStats').style.display = 'none';
+                    $('ciWarn').style.display = 'block';
+                    $('ciWarn').innerHTML = `A confidence interval for the mean needs at least 2 non-missing values. ` +
+                        `<strong>${escapeHtml(varName)}</strong> has only ${n}. Pick another variable.`;
+                    return;
+                }
+
+                if (!out.startsWith('OK')) throw new Error('Unexpected R output: ' + out.slice(0, 200));
+
+                const vals = {};
+                out.split('\n').slice(1).forEach(line => {
+                    const eq = line.indexOf('=');
+                    if (eq !== -1) vals[line.slice(0, eq)] = parseFloat(line.slice(eq + 1));
+                });
+
+                $('ciWarn').style.display = 'none';
+                $('ciHeadline').style.display = 'block';
+                $('ciStats').style.display = 'grid';
+
+                const lvlLabel = (Number.isInteger(levelPct) ? levelPct.toFixed(0) : String(levelPct));
+                $('ciHeadline').innerHTML =
+                    `${lvlLabel}% confidence interval for the mean of <strong>${escapeHtml(varName)}</strong>: ` +
+                    `<strong>[${fmtSig(vals.Lower)}, ${fmtSig(vals.Upper)}]</strong>. ` +
+                    `We are ${lvlLabel}% confident the true mean lies in this range.`;
+
+                const stats = [
+                    { label: 'Mean', value: fmtSig(vals.Mean) },
+                    { label: 'Std. Error', value: fmtSig(vals.SE) },
+                    { label: 'df', value: fmtInt(vals.df) },
+                    { label: 't critical', value: fmtSig(vals.t) },
+                    { label: 'Lower', value: fmtSig(vals.Lower) },
+                    { label: 'Upper', value: fmtSig(vals.Upper) }
+                ];
+                $('ciStats').innerHTML = stats.map(s => `
+                    <div class="stat">
+                        <div class="label">${s.label}</div>
+                        <div class="value">${s.value}</div>
+                    </div>`).join('');
+            } catch (err) {
+                if (token !== ciRunToken) return;
+                console.error(err);
+                $('ciHeadline').style.display = 'none';
+                $('ciStats').style.display = 'none';
+                $('ciWarn').style.display = 'block';
+                $('ciWarn').innerHTML = 'Error computing the confidence interval: ' + escapeHtml(err.message || String(err));
+            }
+        }
+
+        // CI control wiring.
+        $('ciVar').addEventListener('change', runCI);
+        $('ciLevelSelect').addEventListener('change', () => {
+            const isCustom = $('ciLevelSelect').value === 'custom';
+            $('customLevelWrap').style.display = isCustom ? 'block' : 'none';
+            runCI();
+        });
+        $('ciLevelCustom').addEventListener('input', runCI);
+        $('ciLevelCustom').addEventListener('change', runCI);
+
+        // ==================== DISPLAY R (student-friendly) ====================
+        function buildDisplayR() {
+            const firstVar = numericVars.length ? numericVars[0] : 'your_variable';
+            return `# Descriptive Statistics and Confidence Intervals
+# Paste this into R or RStudio to reproduce the analysis on your own machine.
+
+# 1. Read the data. check.names = TRUE makes column names valid R names.
+df = read.csv("your_data.csv", stringsAsFactors = FALSE, check.names = TRUE)
+
+# 2. Keep only the numeric columns. sapply(df, is.numeric) flags each column
+#    that R read as numbers; we use that flag to subset the data frame.
+num = df[, sapply(df, is.numeric), drop = FALSE]
+
+# 3a. A helper for the mode (the most frequent value). R has no built-in
+#     mode, so we count how often each value occurs and return the most
+#     common one. If every value is unique there is no mode (NA); if two
+#     or more values tie, we return the smallest.
+get_mode = function(v) {
+  ux = unique(v)
+  if (length(ux) == length(v)) return(NA)
+  tab = tabulate(match(v, ux))
+  min(ux[tab == max(tab)])
+}
+
+# 3b. A helper that summarizes one numeric vector.
+#     It drops missing values (NA), then reports the center and the spread.
+describe_one = function(x) {
+  miss = sum(is.na(x))           # how many values are missing
+  x = x[!is.na(x)]               # keep only the non-missing values
+  n = length(x)                  # sample size
+  m = mean(x)                    # average
+  s = sd(x)                      # standard deviation
+  q = quantile(x, c(.25, .5, .75))  # 25th, 50th (median), 75th percentiles
+  c(N = n, Missing = miss, Mean = m, Median = q[[2]], Mode = get_mode(x),
+    SD = s, Variance = var(x), SE = s / sqrt(n),
+    Min = min(x), Q1 = q[[1]], Q3 = q[[3]], Max = max(x),
+    Range = max(x) - min(x), IQR = q[[3]] - q[[1]])
+}
+
+# 4. Apply the helper to every numeric column.
+#    sapply runs describe_one on each column; t() turns the result so that
+#    each row is a variable and each column is a statistic.
+stats = t(sapply(num, describe_one))
+print(round(stats, 4))
+
+# 5. A confidence interval for the mean of one variable.
+#    qt() gives the t critical value; the interval is mean +/- t * SE.
+#    This matches what t.test() reports.
+ci_mean = function(x, level = 0.95) {
+  x = x[!is.na(x)]
+  n = length(x)
+  m = mean(x)
+  se = sd(x) / sqrt(n)
+  tcrit = qt(1 - (1 - level) / 2, df = n - 1)
+  c(Mean = m, SE = se, df = n - 1, t = tcrit,
+    Lower = m - tcrit * se, Upper = m + tcrit * se)
+}
+
+# Example: 95% confidence interval for the mean of one variable.
+ci_mean(df[[${rStr(firstVar)}]], level = 0.95)
+
+# Sanity check: t.test() returns the same interval.
+t.test(df[[${rStr(firstVar)}]], conf.level = 0.95)$conf.int`;
+        }
+
+        // ==================== DOWNLOAD ====================
+        function downloadCSV(csvData, filename) {
+            if (!csvData) { showStatus('Upload a CSV first.', 'info', 3000); return; }
+            const blob = new Blob([csvData + '\n'], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+        $('downloadStatsBtn').addEventListener('click', () => downloadCSV(lastStatsCSV, 'descriptive_statistics.csv'));
+
+        // ==================== COPY R CODE ====================
+        const ICON_COPY = '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg><span>Copy</span>';
+        const ICON_DONE = '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg><span>Copied</span>';
+        const copyRBtn = $('copyRBtn');
+        if (copyRBtn) {
+            copyRBtn.addEventListener('click', async () => {
+                const code = $('rCodeBlock').textContent;
+                try {
+                    await navigator.clipboard.writeText(code);
+                } catch (e) {
+                    const r = document.createRange(); r.selectNode($('rCodeBlock'));
+                    const sel = window.getSelection(); sel.removeAllRanges(); sel.addRange(r);
+                    try { document.execCommand('copy'); } catch (_) {}
+                    sel.removeAllRanges();
+                }
+                copyRBtn.classList.add('copied');
+                copyRBtn.innerHTML = ICON_DONE;
+                setTimeout(() => { copyRBtn.classList.remove('copied'); copyRBtn.innerHTML = ICON_COPY; }, 1800);
+            });
+        }
+
+        // ==================== GO ====================
+        initWebR();
+    </script>
+
+    <!-- Firebase auth -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyBg3LJDwVIRGWtFZb_mM_CSRJMNCJUta20",
+            authDomain: "iu-pricing-tools.firebaseapp.com",
+            projectId: "iu-pricing-tools",
+            storageBucket: "iu-pricing-tools.firebasestorage.app",
+            messagingSenderId: "659335573790",
+            appId: "1:659335573790:web:00013a166787efecb3d90f",
+            measurementId: "G-NGKNY08XWP"
+        };
+        firebase.initializeApp(firebaseConfig);
+        firebase.auth().onAuthStateChanged(function(user) {
+            if (user) {
+                document.getElementById('loading-screen').style.display = 'none';
+                document.getElementById('main-content').style.display = 'block';
+            } else {
+                window.location.href = 'login.html';
+            }
+        });
+
+        // Font size controls (matches tools.html)
+        const fontSizes = [14, 16, 18, 20, 22];
+        let currentStep = 2;
+        function adjustFontSize(delta) {
+            currentStep = Math.max(0, Math.min(fontSizes.length - 1, currentStep + delta));
+            applyFontSize(currentStep);
+        }
+        function applyFontSize(step) {
+            document.documentElement.style.fontSize = fontSizes[step] + 'px';
+            document.querySelectorAll('.decrease-a').forEach(b => b.classList.toggle('at-limit', step === 0));
+            document.querySelectorAll('.increase-a').forEach(b => b.classList.toggle('at-limit', step === fontSizes.length - 1));
+        }
+        window.adjustFontSize = adjustFontSize;
+
+        // Auto-update copyright year
+        document.querySelectorAll('.year').forEach(el => el.textContent = new Date().getFullYear());
+    </script>
+</body>
+</html>

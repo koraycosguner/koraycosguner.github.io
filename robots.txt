@@ -26,4 +26,7 @@ Disallow: /competitive-channel.html
 Disallow: /van-westendorp.html
 Disallow: /gabor-granger.html
 
+# Pre-fix rollback copies (kept for reference only, not for students)
+Disallow: /*_old.html$
+
 Sitemap: https://koraycosguner.github.io/sitemap.xml
