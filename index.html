@@ -611,6 +611,32 @@
             .award-year { font-size: 0.66rem; padding: 3px 8px; }
             .journals { margin-top: 30px; }
             .journals-label { font-size: 0.62rem; letter-spacing: 0.1em; margin-bottom: 12px; }
+            /* Covers are small here, so the tooltip is centered under the whole
+               row instead of the cover, leaving room for one-line journal names */
+            .journal-logos { position: relative; }
+            .journal-logos a { position: static; }
+            .journal-logos a::before { display: none; }
+            .journal-logos a::after,
+            .journal-logos a:first-child::after,
+            .journal-logos a:last-child::after {
+                left: 50%;
+                right: auto;
+                transform: translateX(-50%) translateY(-5px);
+                max-width: none;
+                white-space: nowrap;
+                font-size: 0.66rem;
+                padding: 7px 11px;
+                /* all tooltips share one spot here, so crossfading them overlaps */
+                transition: none;
+            }
+            .journal-logos a:hover::after,
+            .journal-logos a:focus-visible::after,
+            .journal-logos a:first-child:hover::after,
+            .journal-logos a:first-child:focus-visible::after,
+            .journal-logos a:last-child:hover::after,
+            .journal-logos a:last-child:focus-visible::after {
+                transform: translateX(-50%) translateY(0);
+            }
             .section-header { margin-bottom: 32px; }
             .section-title { font-size: 1.3rem; }
             .column-title { margin-bottom: 20px; font-size: 0.78rem; }
@@ -879,7 +905,7 @@
             <div class="bio-summary">
                 <p>I stand at the intersection of marketing, economics, and psychology, leveraging rigorous quantitative methods to decode the complexities of consumer decision-making. My research transforms deep behavioral insights into high-impact firm strategies, optimizing pricing architectures and strategic levers across product, promotion, and placement.</p>
 
-                <p>An expert in structural modeling, reduced form estimation, causal inference, experiments, and game theory, I address critical business challenges that range from dynamic pricing algorithms and retail distribution strategies in emerging markets to advanced decision support systems for firms' email marketing decisions. My models are built to do more than explain what happened. They tell firms what to do next: what to charge, where to sell, and whom to contact.</p>
+                <p>An expert in structural modeling, reduced form estimation, causal inference, experiments, and game theory, I address critical business challenges that range from dynamic pricing algorithms and retail distribution strategies in emerging markets to advanced decision support systems for firms' email marketing decisions.</p>
             </div>
 
             <div class="cta-container">
