@@ -256,6 +256,147 @@
             box-shadow: 0 4px 8px rgba(153,0,0,0.2);
         }
 
+        /* Teaching award pill */
+        .hero-award {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            margin-top: 32px;
+            padding: 7px 8px 7px 7px;
+            background: #ffffff;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-full);
+            box-shadow: 0 4px 14px rgba(17,24,39,0.07);
+            line-height: 1.3;
+            transition: transform var(--transition-base), box-shadow var(--transition-base);
+        }
+        .hero-award:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 22px rgba(153,0,0,0.13);
+        }
+        .award-medal {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), #cc2233);
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            box-shadow: 0 2px 6px rgba(153,0,0,0.25);
+        }
+        .award-name {
+            font-size: 0.88rem;
+            font-weight: 600;
+            color: var(--text-main);
+            letter-spacing: -0.01em;
+        }
+        .award-year {
+            font-size: 0.72rem;
+            font-weight: 700;
+            color: var(--primary);
+            background: var(--primary-light);
+            border: 1px solid rgba(153,0,0,0.12);
+            border-radius: var(--radius-full);
+            padding: 4px 10px;
+            letter-spacing: 0.02em;
+            flex-shrink: 0;
+        }
+
+        /* Journal covers */
+        .journals { margin-top: 40px; }
+        .journals-label {
+            font-size: 0.72rem;
+            font-weight: 600;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            margin-bottom: 18px;
+        }
+        .journal-logos {
+            display: flex;
+            flex-wrap: nowrap;
+            justify-content: center;
+            align-items: flex-end;
+            gap: clamp(7px, 2.2vw, 20px);
+        }
+        .journal-logos a {
+            position: relative;
+            display: block;
+            border-radius: 3px;
+        }
+        .journal-logos img {
+            display: block;
+            height: clamp(52px, 15vw, 120px);
+            width: auto;
+            border-radius: 3px;
+            border: 1px solid var(--border);
+            box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .journal-logos a:hover img,
+        .journal-logos a:focus-visible img {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.14);
+        }
+
+        /* Journal name tooltip */
+        .journal-logos a::after {
+            content: attr(data-journal);
+            position: absolute;
+            top: calc(100% + 12px);
+            left: 50%;
+            transform: translateX(-50%) translateY(-5px);
+            width: max-content;
+            max-width: min(230px, 70vw);
+            padding: 8px 12px;
+            background: var(--text-main);
+            color: #ffffff;
+            font-size: 0.72rem;
+            font-weight: 600;
+            line-height: 1.35;
+            letter-spacing: 0.01em;
+            text-align: center;
+            border-radius: 8px;
+            box-shadow: 0 8px 20px rgba(17,24,39,0.22);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s ease, transform 0.2s ease;
+            z-index: 5;
+        }
+        .journal-logos a::before {
+            content: '';
+            position: absolute;
+            top: calc(100% + 6px);
+            left: 50%;
+            transform: translateX(-50%) translateY(-5px);
+            border: 6px solid transparent;
+            border-bottom-color: var(--text-main);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s ease, transform 0.2s ease;
+            z-index: 5;
+        }
+        .journal-logos a:hover::after,
+        .journal-logos a:hover::before,
+        .journal-logos a:focus-visible::after,
+        .journal-logos a:focus-visible::before {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+        /* Keep edge tooltips inside the page */
+        .journal-logos a:first-child::after { left: 0; transform: translateX(0) translateY(-5px); }
+        .journal-logos a:first-child:hover::after,
+        .journal-logos a:first-child:focus-visible::after { transform: translateX(0) translateY(0); }
+        .journal-logos a:last-child::after { left: auto; right: 0; transform: translateX(0) translateY(-5px); }
+        .journal-logos a:last-child:hover::after,
+        .journal-logos a:last-child:focus-visible::after { transform: translateX(0) translateY(0); }
+        /* Wide screens have room for full journal names on one line */
+        @media (min-width: 641px) {
+            .journal-logos a::after { max-width: none; white-space: nowrap; }
+        }
+
         /* Gradient divider between hero and cards */
         .hero-divider {
             width: 100%;
@@ -463,6 +604,13 @@
             .cta-container { margin-top: 28px; gap: 10px; }
             .btn { padding: 12px 24px; font-size: 0.95rem; }
             .icon-link { width: 44px; height: 44px; }
+            .hero-award { margin-top: 24px; gap: 9px; padding: 6px 7px 6px 6px; }
+            .award-medal { width: 28px; height: 28px; }
+            .award-medal svg { width: 15px; height: 15px; }
+            .award-name { font-size: 0.78rem; }
+            .award-year { font-size: 0.66rem; padding: 3px 8px; }
+            .journals { margin-top: 30px; }
+            .journals-label { font-size: 0.62rem; letter-spacing: 0.1em; margin-bottom: 12px; }
             .section-header { margin-bottom: 32px; }
             .section-title { font-size: 1.3rem; }
             .column-title { margin-bottom: 20px; font-size: 0.78rem; }
@@ -635,7 +783,9 @@
         .hero .role,
         .hero .affiliation,
         .hero .bio-summary,
-        .hero .cta-container {
+        .hero .cta-container,
+        .hero .hero-award,
+        .hero .journals {
             opacity: 0;
             transform: translateY(20px);
             animation: fadeUp 0.6s ease forwards;
@@ -646,6 +796,8 @@
         .hero .affiliation { animation-delay: 0.28s; }
         .hero .bio-summary { animation-delay: 0.35s; }
         .hero .cta-container { animation-delay: 0.45s; }
+        .hero .hero-award { animation-delay: 0.52s; }
+        .hero .journals { animation-delay: 0.6s; }
         @keyframes fadeUp {
             to { opacity: 1; transform: translateY(0); }
         }
@@ -727,7 +879,7 @@
             <div class="bio-summary">
                 <p>I stand at the intersection of marketing, economics, and psychology, leveraging rigorous quantitative methods to decode the complexities of consumer decision-making. My research transforms deep behavioral insights into high-impact firm strategies, optimizing pricing architectures and strategic levers across product, promotion, and placement.</p>
 
-                <p>An expert in structural modeling, reduced form estimation, and causal inference, I address critical business challenges ranging from dynamic pricing algorithms to developing advanced decision support systems for firms' email marketing decisions. My scholarship is consistently published in the field's premier outlets, including <i>Marketing Science</i>, <i>Journal of Marketing Research</i>, <i>Management Science</i>, <i>MIS Quarterly</i>, <i>International Journal of Research in Marketing</i>, and <i>Journal of Retailing</i>.</p>
+                <p>An expert in structural modeling, reduced form estimation, causal inference, experiments, and game theory, I address critical business challenges that range from dynamic pricing algorithms and retail distribution strategies in emerging markets to advanced decision support systems for firms' email marketing decisions. My models are built to do more than explain what happened. They tell firms what to do next: what to charge, where to sell, and whom to contact.</p>
             </div>
 
             <div class="cta-container">
@@ -749,6 +901,38 @@
                 <a href="https://kelley.iu.edu/faculty-research/faculty-directory/profile.html?id=kcosgun" target="_blank" class="icon-link" title="IU Faculty Profile">
                     <img src="iu-logo.png" alt="IU Faculty Profile" style="width: 24px; height: 24px;">
                 </a>
+            </div>
+
+            <div class="hero-award">
+                <span class="award-medal">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>
+                </span>
+                <span class="award-name">IU Trustees Teaching Award Winner</span>
+                <span class="award-year">2024</span>
+            </div>
+
+            <div class="journals">
+                <div class="journals-label">Published in Top Marketing and Business Journals</div>
+                <div class="journal-logos">
+                    <a href="https://journals.sagepub.com/home/mrj" target="_blank" rel="noopener" data-journal="Journal of Marketing Research" aria-label="Journal of Marketing Research">
+                        <img src="jmr.png" alt="Journal of Marketing Research" width="198" height="254" decoding="async">
+                    </a>
+                    <a href="https://pubsonline.informs.org/journal/mksc" target="_blank" rel="noopener" data-journal="Marketing Science" aria-label="Marketing Science">
+                        <img src="mksc.png" alt="Marketing Science" width="179" height="239" decoding="async">
+                    </a>
+                    <a href="https://pubsonline.informs.org/journal/mnsc" target="_blank" rel="noopener" data-journal="Management Science" aria-label="Management Science">
+                        <img src="mnsc.png" alt="Management Science" width="179" height="239" decoding="async">
+                    </a>
+                    <a href="https://misq.umn.edu/" target="_blank" rel="noopener" data-journal="MIS Quarterly" aria-label="MIS Quarterly">
+                        <img src="misq.png" alt="MIS Quarterly" width="328" height="428" decoding="async">
+                    </a>
+                    <a href="https://www.sciencedirect.com/journal/international-journal-of-research-in-marketing" target="_blank" rel="noopener" data-journal="International Journal of Research in Marketing" aria-label="International Journal of Research in Marketing">
+                        <img src="ijrm.png" alt="International Journal of Research in Marketing" width="563" height="768" decoding="async">
+                    </a>
+                    <a href="https://www.sciencedirect.com/journal/journal-of-retailing" target="_blank" rel="noopener" data-journal="Journal of Retailing" aria-label="Journal of Retailing">
+                        <img src="jretail.png" alt="Journal of Retailing" width="563" height="768" decoding="async">
+                    </a>
+                </div>
             </div>
     </div>
 
