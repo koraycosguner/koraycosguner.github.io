@@ -321,10 +321,16 @@
             align-items: flex-end;
             gap: clamp(7px, 2.2vw, 20px);
         }
-        .journal-logos a {
+        .journal-cover {
             position: relative;
             display: block;
+            padding: 0;
+            border: 0;
+            background: none;
+            font: inherit;
             border-radius: 3px;
+            cursor: pointer;
+            -webkit-tap-highlight-color: transparent;
         }
         .journal-logos img {
             display: block;
@@ -335,14 +341,15 @@
             box-shadow: 0 3px 10px rgba(0,0,0,0.08);
             transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
-        .journal-logos a:hover img,
-        .journal-logos a:focus-visible img {
+        .journal-cover:hover img,
+        .journal-cover:focus-visible img,
+        .journal-cover.is-open img {
             transform: translateY(-4px);
             box-shadow: 0 10px 20px rgba(0,0,0,0.14);
         }
 
-        /* Journal name tooltip */
-        .journal-logos a::after {
+        /* Journal name tooltip: hover on desktop, tap on touch screens */
+        .journal-cover::after {
             content: attr(data-journal);
             position: absolute;
             top: calc(100% + 12px);
@@ -365,7 +372,7 @@
             transition: opacity 0.2s ease, transform 0.2s ease;
             z-index: 5;
         }
-        .journal-logos a::before {
+        .journal-cover::before {
             content: '';
             position: absolute;
             top: calc(100% + 6px);
@@ -378,23 +385,27 @@
             transition: opacity 0.2s ease, transform 0.2s ease;
             z-index: 5;
         }
-        .journal-logos a:hover::after,
-        .journal-logos a:hover::before,
-        .journal-logos a:focus-visible::after,
-        .journal-logos a:focus-visible::before {
+        .journal-cover:hover::after,
+        .journal-cover:hover::before,
+        .journal-cover:focus-visible::after,
+        .journal-cover:focus-visible::before,
+        .journal-cover.is-open::after,
+        .journal-cover.is-open::before {
             opacity: 1;
             transform: translateX(-50%) translateY(0);
         }
         /* Keep edge tooltips inside the page */
-        .journal-logos a:first-child::after { left: 0; transform: translateX(0) translateY(-5px); }
-        .journal-logos a:first-child:hover::after,
-        .journal-logos a:first-child:focus-visible::after { transform: translateX(0) translateY(0); }
-        .journal-logos a:last-child::after { left: auto; right: 0; transform: translateX(0) translateY(-5px); }
-        .journal-logos a:last-child:hover::after,
-        .journal-logos a:last-child:focus-visible::after { transform: translateX(0) translateY(0); }
+        .journal-cover:first-child::after { left: 0; transform: translateX(0) translateY(-5px); }
+        .journal-cover:first-child:hover::after,
+        .journal-cover:first-child:focus-visible::after,
+        .journal-cover:first-child.is-open::after { transform: translateX(0) translateY(0); }
+        .journal-cover:last-child::after { left: auto; right: 0; transform: translateX(0) translateY(-5px); }
+        .journal-cover:last-child:hover::after,
+        .journal-cover:last-child:focus-visible::after,
+        .journal-cover:last-child.is-open::after { transform: translateX(0) translateY(0); }
         /* Wide screens have room for full journal names on one line */
         @media (min-width: 641px) {
-            .journal-logos a::after { max-width: none; white-space: nowrap; }
+            .journal-cover::after { max-width: none; white-space: nowrap; }
         }
 
         /* Gradient divider between hero and cards */
@@ -614,11 +625,11 @@
             /* Covers are small here, so the tooltip is centered under the whole
                row instead of the cover, leaving room for one-line journal names */
             .journal-logos { position: relative; }
-            .journal-logos a { position: static; }
-            .journal-logos a::before { display: none; }
-            .journal-logos a::after,
-            .journal-logos a:first-child::after,
-            .journal-logos a:last-child::after {
+            .journal-cover { position: static; }
+            .journal-cover::before { display: none; }
+            .journal-cover::after,
+            .journal-cover:first-child::after,
+            .journal-cover:last-child::after {
                 left: 50%;
                 right: auto;
                 transform: translateX(-50%) translateY(-5px);
@@ -629,12 +640,15 @@
                 /* all tooltips share one spot here, so crossfading them overlaps */
                 transition: none;
             }
-            .journal-logos a:hover::after,
-            .journal-logos a:focus-visible::after,
-            .journal-logos a:first-child:hover::after,
-            .journal-logos a:first-child:focus-visible::after,
-            .journal-logos a:last-child:hover::after,
-            .journal-logos a:last-child:focus-visible::after {
+            .journal-cover:hover::after,
+            .journal-cover:focus-visible::after,
+            .journal-cover.is-open::after,
+            .journal-cover:first-child:hover::after,
+            .journal-cover:first-child:focus-visible::after,
+            .journal-cover:first-child.is-open::after,
+            .journal-cover:last-child:hover::after,
+            .journal-cover:last-child:focus-visible::after,
+            .journal-cover:last-child.is-open::after {
                 transform: translateX(-50%) translateY(0);
             }
             .section-header { margin-bottom: 32px; }
@@ -940,24 +954,24 @@
             <div class="journals">
                 <div class="journals-label">Published in Top Marketing and Business Journals</div>
                 <div class="journal-logos">
-                    <a href="https://journals.sagepub.com/home/mrj" target="_blank" rel="noopener" data-journal="Journal of Marketing Research" aria-label="Journal of Marketing Research">
+                    <button type="button" class="journal-cover" data-journal="Journal of Marketing Research">
                         <img src="jmr.png" alt="Journal of Marketing Research" width="198" height="254" decoding="async">
-                    </a>
-                    <a href="https://pubsonline.informs.org/journal/mksc" target="_blank" rel="noopener" data-journal="Marketing Science" aria-label="Marketing Science">
+                    </button>
+                    <button type="button" class="journal-cover" data-journal="Marketing Science">
                         <img src="mksc.png" alt="Marketing Science" width="179" height="239" decoding="async">
-                    </a>
-                    <a href="https://pubsonline.informs.org/journal/mnsc" target="_blank" rel="noopener" data-journal="Management Science" aria-label="Management Science">
+                    </button>
+                    <button type="button" class="journal-cover" data-journal="Management Science">
                         <img src="mnsc.png" alt="Management Science" width="179" height="239" decoding="async">
-                    </a>
-                    <a href="https://misq.umn.edu/" target="_blank" rel="noopener" data-journal="MIS Quarterly" aria-label="MIS Quarterly">
+                    </button>
+                    <button type="button" class="journal-cover" data-journal="MIS Quarterly">
                         <img src="misq.png" alt="MIS Quarterly" width="328" height="428" decoding="async">
-                    </a>
-                    <a href="https://www.sciencedirect.com/journal/international-journal-of-research-in-marketing" target="_blank" rel="noopener" data-journal="International Journal of Research in Marketing" aria-label="International Journal of Research in Marketing">
+                    </button>
+                    <button type="button" class="journal-cover" data-journal="International Journal of Research in Marketing">
                         <img src="ijrm.png" alt="International Journal of Research in Marketing" width="563" height="768" decoding="async">
-                    </a>
-                    <a href="https://www.sciencedirect.com/journal/journal-of-retailing" target="_blank" rel="noopener" data-journal="Journal of Retailing" aria-label="Journal of Retailing">
+                    </button>
+                    <button type="button" class="journal-cover" data-journal="Journal of Retailing">
                         <img src="jretail.png" alt="Journal of Retailing" width="563" height="768" decoding="async">
-                    </a>
+                    </button>
                 </div>
             </div>
     </div>
@@ -1085,6 +1099,19 @@
             });
         }, { threshold: 0.15 });
         document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+        // Journal covers: tap to show the journal name (hover handles it on desktop)
+        const journalCovers = document.querySelectorAll('.journal-cover');
+        const closeJournalNames = () => journalCovers.forEach(b => b.classList.remove('is-open'));
+        journalCovers.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const wasOpen = btn.classList.contains('is-open');
+                closeJournalNames();
+                if (!wasOpen) btn.classList.add('is-open');
+            });
+        });
+        document.addEventListener('click', closeJournalNames);
 
         // Back-to-top button visibility
         const backBtn = document.getElementById('backToTop');
