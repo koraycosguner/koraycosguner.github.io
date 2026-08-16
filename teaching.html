@@ -314,6 +314,16 @@
             color: var(--text-main);
             line-height: 1.4;
         }
+        .course-name a {
+            color: inherit;
+            text-decoration-color: rgba(153, 0, 0, 0.35);
+            text-decoration-thickness: 1px;
+            text-underline-offset: 3px;
+        }
+        .course-name a:hover {
+            color: var(--primary);
+            text-decoration-color: var(--primary);
+        }
         .course-level {
             display: inline;
             font-size: 0.82rem;
@@ -802,7 +812,7 @@
 
                 <div class="course-card fade-in">
                     <div class="course-info">
-                        <div class="course-name">Marketing Research</div>
+                        <div class="course-name"><a href="m303/">Marketing Research (M303)</a></div>
                         <span class="course-level level-undergrad">Undergraduate</span>
                     </div>
                     <div class="course-meta">
