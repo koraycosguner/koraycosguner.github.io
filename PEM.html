@@ -107,12 +107,7 @@
         .slider-labels { display: flex; justify-content: space-between; font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; font-weight: 600; }
         .score-badge { float: right; background: var(--primary-light); color: var(--primary); padding: 2px 8px; border-radius: 4px; font-weight: bold; }
 
-        /* Explanatory panels: what the tool is, how to weight, how to read the result */
-        .intro { padding: 26px 40px; border-bottom: 1px solid var(--border); }
-        .intro p { margin: 0 0 12px 0; font-size: 0.95rem; }
-        .intro p:last-child { margin-bottom: 0; }
-        .intro .lead { font-weight: 600; }
-
+        /* Score-band panel below the form */
         .guidance { padding: 22px 40px; border-top: 1px solid var(--border); background: #f8fafc; }
         .guidance h2 { margin: 0 0 10px 0; font-size: 0.8rem; text-transform: uppercase; letter-spacing: .05em; color: var(--text-main); }
         .guidance p { margin: 0 0 10px 0; font-size: 0.9rem; color: var(--text-muted); line-height: 1.55; }
@@ -146,6 +141,7 @@
             display: none; position: absolute; z-index: 40; top: 27px; left: -4px;
             width: 330px; max-width: 74vw; background: #0f172a; color: #e2e8f0;
             font-size: 0.82rem; line-height: 1.55; font-weight: 400; text-transform: none;
+            text-align: left; /* the weight tracker sets text-align:right; do not inherit it */
             padding: 12px 14px; border-radius: 8px; box-shadow: 0 12px 24px rgba(0,0,0,.28);
         }
         .info-pop::before {
@@ -306,9 +302,9 @@
                             aria-label="About this tool"
                             onclick="toggleInfo(event, 'about')">i</button>
                     <span class="info-pop wide" id="infopop-about" role="tooltip">
-                        <p><strong>How good is your organization at pricing?</strong> Most people cannot answer beyond &ldquo;pretty good.&rdquo; That matters, because pricing is the most powerful profit lever there is: raising price one percent without losing customers typically lifts operating profit eight to eleven percent. Cost cutting and extra volume do not come close.</p>
-                        <p>This assessment measures it. You rate your organization on <strong>eleven statements</strong> across three areas &mdash; <strong>Strategy &amp; Culture</strong> (does it take pricing seriously?), <strong>Execution &amp; Process</strong> (can it implement pricing decisions?), and <strong>Analytics &amp; Data</strong> (does it have the information to price well?). Each is scored 1, strongly disagree, to 5, strongly agree, and carries a weight you can adjust.</p>
-                        <p>The result is a weighted score out of 5 plus a subtotal for each area. Hover or click the <strong>&#9432;</strong> beside any statement to see what it is really asking.</p>
+                        <p>The Pricing Effectiveness Matrix assesses an organization&rsquo;s pricing capability. Pricing is the most consequential lever available on profitability: a one percent price increase, absent volume loss, typically raises operating profit by eight to eleven percent &mdash; an effect that neither cost reduction nor incremental volume matches.</p>
+                        <p>The instrument comprises <strong>eleven statements</strong> across three areas: <strong>Strategy &amp; Culture</strong>, whether the organization treats pricing as a strategic function; <strong>Execution &amp; Process</strong>, whether it can implement pricing decisions; and <strong>Analytics &amp; Data</strong>, whether it holds the information required to price well. Each statement is rated from 1, strongly disagree, to 5, strongly agree, and carries an adjustable weight.</p>
+                        <p>The output is a weighted score on the 1&ndash;5 scale together with a subtotal for each area. Explanatory notes for each statement are available from the <strong>&#9432;</strong> controls.</p>
                     </span>
                 </span>
             </div>
@@ -324,14 +320,14 @@
                             aria-label="How to set the weights"
                             onclick="toggleInfo(event, 'weights')">i</button>
                     <span class="info-pop wide align-right" id="infopop-weights" role="tooltip">
-                        <p><strong>Weights must total 100%.</strong> Eleven statements cannot be weighted perfectly equally, so the defaults give slightly more to the factors that tend to matter most broadly &mdash; Knowledge of Value and Pricing Objectives among them.</p>
-                        <p>Those are only defaults. <strong>Change them to match your situation:</strong></p>
+                        <p><strong>Weights must sum to 100 percent.</strong> Because eleven statements cannot be weighted equally, the defaults assign slightly greater weight to the factors that matter most broadly, Knowledge of Value and Pricing Objectives among them.</p>
+                        <p>The defaults should be adjusted to reflect organizational context:</p>
                         <ul>
-                            <li>A <strong>commodity market</strong> with heavy price competition &mdash; raise Knowledge of Competition.</li>
-                            <li><strong>Complex B2B solutions</strong> with long cycles and real negotiation &mdash; raise Knowledge of Value, since quantifying it decides whether you hold price.</li>
-                            <li>A <strong>five-person startup</strong> without systems yet &mdash; lower IT Support and weight Strategy &amp; Culture. Systems can come later.</li>
+                            <li><strong>Commodity markets</strong> with intense price competition warrant greater weight on Knowledge of Competition.</li>
+                            <li><strong>Complex B2B sales</strong>, characterized by long cycles and substantive negotiation, warrant greater weight on Knowledge of Value, which determines whether price can be defended.</li>
+                            <li><strong>Early-stage firms</strong> without established systems warrant reduced weight on IT Support and greater emphasis on Strategy &amp; Culture.</li>
                         </ul>
-                        <p>The weights force a decision about what matters most. You cannot call everything equally important &mdash; that is not strategy. Strategy is choosing.</p>
+                        <p>Weighting requires an explicit judgment about relative importance. Treating every factor as equally important defers that judgment rather than making it.</p>
                     </span>
                 </span>
             </div>
@@ -352,8 +348,8 @@
                         aria-label="About the Strategy and Culture section"
                         onclick="toggleInfo(event, 'sec-strategy')">i</button>
                 <span class="info-pop wide" id="infopop-sec-strategy" role="tooltip">
-                    <p><strong>Does your organization take pricing seriously?</strong></p>
-                    <p>These three statements ask whether pricing is treated as a priority: whether it reaches the boardroom or is left to whoever sets a number at the end of product development, whether the goals behind your prices are written down and agreed, and whether marketing, sales, and finance decide together rather than fight each other.</p>
+                    <p><strong>Whether the organization treats pricing as a strategic function.</strong></p>
+                    <p>These three statements assess the standing of pricing within the organization: whether it receives senior attention or is delegated to whoever sets a figure late in product development, whether pricing objectives are documented and agreed, and whether marketing, sales, and finance reach pricing decisions jointly.</p>
                 </span>
             </span>
         </div>
@@ -374,8 +370,8 @@
                         aria-label="About the Execution and Process section"
                         onclick="toggleInfo(event, 'sec-execution')">i</button>
                 <span class="info-pop wide" id="infopop-sec-execution" role="tooltip">
-                    <p><strong>Can your organization actually implement pricing decisions?</strong></p>
-                    <p>Good strategy means nothing if you cannot execute it. These three statements ask how quickly you could change a price if you decided to today, whether your systems help or obstruct that, and whether your people can explain the value behind a price instead of reaching for a discount.</p>
+                    <p><strong>Whether the organization can implement its pricing decisions.</strong></p>
+                    <p>Strategy without execution capability yields nothing. These three statements assess the speed at which prices can be changed, whether systems support or impede that process, and whether the organization can articulate the value underlying a price rather than conceding a discount.</p>
                 </span>
             </span>
         </div>
@@ -396,8 +392,8 @@
                         aria-label="About the Analytics and Data section"
                         onclick="toggleInfo(event, 'sec-analytics')">i</button>
                 <span class="info-pop wide" id="infopop-sec-analytics" role="tooltip">
-                    <p><strong>Do you have the information you need to price well?</strong></p>
-                    <p>This is where most organizations are weakest, which is why it carries five statements rather than three. They ask whether you measure what your pricing actually achieved, and whether you genuinely know your customers&rsquo; price sensitivity, the economic value you deliver, your competitors&rsquo; prices, and your own costs.</p>
+                    <p><strong>Whether the organization holds the information required to price well.</strong></p>
+                    <p>This is typically the weakest of the three areas, which is why it carries five statements rather than three. They assess whether pricing outcomes are measured, and whether the organization has reliable knowledge of customer price sensitivity, the economic value it delivers, competitor pricing, and its own costs.</p>
                 </span>
             </span>
         </div>
@@ -413,20 +409,20 @@
 
     <div class="guidance">
         <h2>How the overall score is classified</h2>
-        <p>The weighted score is a weighted average of your eleven ratings, reported on the same 1&ndash;5 scale. It falls into one of four bands:</p>
+        <p>The weighted score is the weighted average of the eleven ratings, reported on the 1&ndash;5 scale. It falls within one of four bands:</p>
         <ul class="band-list">
-            <li><span class="band-chip band-1">Below 2.50</span> <span><em>Needs Improvement.</em> Pricing capability is a live constraint on profitability. Most decisions are being made without the structure or information to support them.</span></li>
-            <li><span class="band-chip band-2">2.50 &ndash; 3.49</span> <span><em>Developing.</em> Some capability exists but it is uneven. On a 1&ndash;5 scale 3 is neutral, so a score here means the organization is not yet reliably good at pricing.</span></li>
-            <li><span class="band-chip band-3">3.50 &ndash; 4.49</span> <span><em>Strong Capability.</em> Pricing is managed deliberately, with real process and real data behind it.</span></li>
-            <li><span class="band-chip band-4">4.50 and above</span> <span><em>World Class.</em> Pricing is a genuine source of competitive advantage.</span></li>
+            <li><span class="band-chip band-1">Below 2.50</span> <span><em>Needs Improvement.</em> Pricing capability constrains profitability. Decisions are largely made without supporting structure or information.</span></li>
+            <li><span class="band-chip band-2">2.50 &ndash; 3.49</span> <span><em>Developing.</em> Capability exists but is uneven. Because 3 is the neutral point on a 1&ndash;5 scale, scores in this band indicate an organization not yet reliably competent at pricing.</span></li>
+            <li><span class="band-chip band-3">3.50 &ndash; 4.49</span> <span><em>Strong Capability.</em> Pricing is managed deliberately, supported by defined process and adequate data.</span></li>
+            <li><span class="band-chip band-4">4.50 and above</span> <span><em>World Class.</em> Pricing constitutes a source of competitive advantage.</span></li>
         </ul>
-        <p><em>Read the pattern, not just the total.</em> The three section subtotals matter more than the headline number, because they tell you where to act. Three patterns come up repeatedly:</p>
+        <p>The three section subtotals are more diagnostic than the aggregate score, since they indicate where remediation is warranted. Three patterns recur:</p>
         <ul>
-            <li><em>High Strategy, low Analytics.</em> Leadership cares about pricing, but decisions rest on judgment rather than evidence. Invest in measurement and data.</li>
-            <li><em>High Analytics, low Execution.</em> The data is good but you cannot act on it &mdash; systems are slow, or the field does not follow through. Fix the process.</li>
-            <li><em>High Execution, low Strategy.</em> You can change prices quickly but you are not sure what to change them to. Efficient but directionless; set clearer objectives.</li>
+            <li><em>High Strategy, low Analytics.</em> Pricing receives senior attention, but decisions rest on judgment rather than evidence. Investment in measurement and data is indicated.</li>
+            <li><em>High Analytics, low Execution.</em> Data is adequate but cannot be acted upon, whether because systems are slow or field execution is inconsistent. Process is the binding constraint.</li>
+            <li><em>High Execution, low Strategy.</em> Prices can be changed rapidly, but the objectives governing those changes are unclear. Clearer pricing objectives are indicated.</li>
         </ul>
-        <p>You do not need to fix everything at once. Start with the largest gap. The assessment is also more useful repeated &mdash; have colleagues complete it separately and compare where you disagree, then run it again in six months to see which capabilities you have actually built.</p>
+        <p>Remediation need not be simultaneous; the largest gap is the appropriate starting point. The instrument is also more informative when repeated &mdash; administered independently across colleagues to surface disagreement, and re-administered after an interval to assess capability development.</p>
     </div>
 </div>
 
@@ -463,31 +459,31 @@
     const sections = {
         strategy: [
             { title: "Pricing Importance", desc: "Pricing is viewed as a critical strategic function.", weight: 20,
-              info: "In some companies pricing is discussed in the boardroom: the CEO cares about it and a team owns it. In others it is an afterthought &mdash; someone in finance sets a price at the end of product development and nobody senior pays attention. Which one describes your organization?" },
+              info: "In some organizations pricing receives board-level attention and has dedicated ownership. In others it is residual: a figure set within finance at the close of product development, without senior involvement. This statement locates the organization between those poles." },
             { title: "Pricing Objectives", desc: "We have clear, documented goals for pricing.", weight: 20,
-              info: "What are you trying to achieve with price &mdash; maximize profit, gain share, signal premium positioning, keep a competitor out? These are different goals and they imply different prices. Are yours written down and agreed, or is it vague: &ldquo;charge what the market will bear&rdquo;? Without clear goals sales pushes for discounts, finance pushes for margin, marketing pushes for brand fit, and you get chaos." },
+              info: "Pricing may pursue profit maximization, share growth, premium positioning, or competitive deterrence. These objectives imply different prices. The statement assesses whether they are documented and agreed. Absent explicit objectives, sales advocates lower prices to close, finance advocates higher prices for margin, and marketing advocates prices consistent with brand position, with no principled basis for resolution." },
             { title: "Cross-Functional Effort", desc: "Marketing, sales, and finance collaborate.", weight: 5,
-              info: "Pricing touches everyone. Marketing needs prices that fit the brand, sales needs prices they can defend to a customer, finance needs prices that deliver profit. In weak organizations this is a running battle &mdash; sales blames marketing for pricing too high, marketing blames sales for discounting. In strong ones there is a standing process where the trade-offs get argued openly and decided as a team." }
+              info: "Pricing decisions affect marketing, sales, and finance simultaneously, and each function holds a legitimate and competing interest. Where capability is weak, pricing becomes contested between functions. Where it is strong, a defined process brings those interests together and resolves the trade-offs deliberately." }
         ],
         execution: [
             { title: "Pricing Flexibility", desc: "We can execute price changes quickly.", weight: 5,
-              info: "Here is the test: if you decided today to change a price, how long would it take &mdash; a day, a week, a quarter? Amazon reprices millions of times a day. Other firms need contract updates, system changes, sales retraining, and reprinted materials. Speed matters because costs move, competitors cut, and demand shifts. If you cannot respond quickly you are permanently behind." },
+              info: "The relevant measure is elapsed time from decision to realized price change. Some organizations reprice continuously; others require contract amendments, system updates, sales retraining, and revised collateral, extending the cycle to months. Because costs, competitor prices, and demand all move, execution speed determines whether the organization can respond or is structurally late." },
             { title: "IT Support", desc: "IT systems enable efficient pricing management.", weight: 5,
-              info: "Do your systems help or hurt? Can you see every price in one place, analyze what is working, and change a price without calling five different people? Many firms run an ERP built twenty years ago with data scattered across systems, so every price change becomes manual work in several places. If the systems are a barrier, that is a real constraint &mdash; rate it honestly." },
+              info: "This statement assesses whether systems enable or obstruct pricing work: whether prices are visible in a single place, whether performance can be analyzed, and whether a price change can be executed without manual intervention across multiple systems. Legacy architecture and fragmented data are common constraints." },
             { title: "Communication", desc: "We effectively communicate value and changes.", weight: 5,
-              info: "A price has to be explained. Customers need to understand why the product is worth it, and salespeople need to believe in it or they will discount immediately. The test: when a customer says &ldquo;your price is too high,&rdquo; can your salesperson say exactly why the product is worth the money &mdash; or do they reach for a discount? If the team cannot communicate value, prices will not stick." }
+              info: "A price requires justification, externally to customers and internally to the sales force. The diagnostic is whether a salesperson facing a price objection can articulate the specific value the product delivers, or defaults to a discount. Where value cannot be communicated, realized prices erode." }
         ],
         analytics: [
             { title: "Metrics & Measurement", desc: "We regularly measure pricing outcomes.", weight: 10,
-              info: "After you set a price, do you check whether it worked? Many firms set a price and move on. They never ask: did we realize the price we set, did customers accept it, did we lose deals on price, did profit go up or down? If you do not measure, you cannot improve &mdash; you are guessing." },
+              info: "This statement assesses whether pricing outcomes are evaluated after the fact: whether the price set was realized, whether customers accepted it, whether deals were lost on price, and how profit responded. Without measurement there is no basis for improvement." },
             { title: "Knowledge of Customers", desc: "We use data on customer price sensitivity.", weight: 15,
-              info: "Different customers react differently. Some pay a premium for convenience, some switch for a five percent saving, some never look at price at all. Do you have data on which is which? Treating every customer the same means overcharging the price-sensitive ones until you lose them, and undercharging the insensitive ones and leaving money on the table." },
+              info: "Price response varies across customers: some pay a premium for convenience, others switch on small differences, others are largely insensitive. This statement assesses whether the organization holds data distinguishing them. Uniform treatment overcharges sensitive customers, producing attrition, and undercharges insensitive customers, forgoing margin." },
             { title: "Knowledge of Value", desc: "We quantify the economic value we deliver.", weight: 5,
-              info: "Can you put a dollar figure on your value? Not &ldquo;we have good quality&rdquo; or &ldquo;we save time,&rdquo; but specifically: how much does the customer earn or save by choosing you over the alternative? &ldquo;Our machine reduces defects by two percent, which saves you fifty thousand dollars a year&rdquo; is quantified value, and it is what justifies your price. Without it, every conversation collapses into price and you have no defense." },
+              info: "This statement assesses whether the organization can express its value in monetary terms: the amount a customer gains or avoids by selecting it over the alternative. A quantified claim &mdash; a two percent defect reduction worth fifty thousand dollars annually &mdash; substantiates price. Absent quantification, negotiation reduces to price alone." },
             { title: "Knowledge of Competition", desc: "We systematically track competitor pricing.", weight: 5,
-              info: "Do you know what competitors charge &mdash; not roughly, but exactly? Do you know when they change, and how their prices compare to yours across products and customer segments? Many firms rely on what salespeople hear in the field, which is incomplete and often wrong. This needs a real system: regular monitoring, a database, actual analysis." },
+              info: "This statement assesses the precision and systematicity of competitor price intelligence: whether competitor prices are known exactly rather than approximately, whether changes are detected, and whether comparison is possible across products and customer segments. Field reports from the sales force are typically incomplete and frequently inaccurate; systematic monitoring is required." },
             { title: "Knowledge of Costs", desc: "We have accurate cost data for pricing.", weight: 5,
-              info: "This sounds basic and many firms get it wrong. Do you know the true cost of each product, the cost to serve different customers, and which accounts are actually profitable? Without accurate costs you can price below cost without knowing it, and celebrate a big deal that loses money." }
+              info: "This statement assesses cost accuracy at the level pricing requires: true product cost, cost to serve distinct customers, and account-level profitability. Inaccurate costs permit pricing below cost undetected, and allow unprofitable volume to be recorded as commercial success." }
         ]
     };
 
