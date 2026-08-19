@@ -104,6 +104,53 @@
         .slider-labels { display: flex; justify-content: space-between; font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; font-weight: 600; }
         .score-badge { float: right; background: var(--primary-light); color: var(--primary); padding: 2px 8px; border-radius: 4px; font-weight: bold; }
 
+        /* Explanatory panels: what the tool is, how to weight, how to read the result */
+        .intro { padding: 26px 40px; border-bottom: 1px solid var(--border); }
+        .intro p { margin: 0 0 12px 0; font-size: 0.95rem; }
+        .intro p:last-child { margin-bottom: 0; }
+        .intro .lead { font-weight: 600; }
+
+        .guidance { padding: 22px 40px; border-top: 1px solid var(--border); background: #f8fafc; }
+        .guidance h2 { margin: 0 0 10px 0; font-size: 0.8rem; text-transform: uppercase; letter-spacing: .05em; color: var(--text-main); }
+        .guidance p { margin: 0 0 10px 0; font-size: 0.9rem; color: var(--text-muted); line-height: 1.55; }
+        .guidance p:last-child { margin-bottom: 0; }
+        .guidance ul { margin: 0 0 10px 0; padding-left: 20px; font-size: 0.9rem; color: var(--text-muted); line-height: 1.55; }
+        .guidance li { margin-bottom: 5px; }
+        .guidance em { color: var(--text-main); font-style: normal; font-weight: 600; }
+
+        .band-list { list-style: none; padding-left: 0; margin: 0 0 12px 0; }
+        .band-list li { display: flex; gap: 12px; align-items: baseline; padding: 5px 0; margin: 0; }
+        .band-chip { flex: 0 0 auto; min-width: 104px; font-size: .72rem; font-weight: 800; text-transform: uppercase;
+                     padding: 3px 8px; border-radius: 4px; text-align: center; letter-spacing: .03em; }
+        .band-1 { background: #fee2e2; color: #991b1b; }
+        .band-2 { background: #ffedd5; color: #9a3412; }
+        .band-3 { background: #dcfce7; color: #166534; }
+        .band-4 { background: #dbeafe; color: #1e40af; }
+
+        /* Per-statement explanation: hover for mouse, click/Enter for touch and keyboard */
+        .factor-head { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
+        .factor-head .factor-title { margin-bottom: 0; }
+        .info-wrap { position: relative; display: inline-flex; }
+        .info-btn {
+            width: 20px; height: 20px; border-radius: 50%; padding: 0;
+            border: 1px solid var(--border); background: #fff; color: var(--primary);
+            font-size: 0.72rem; font-weight: 800; line-height: 1; cursor: pointer;
+            font-family: inherit;
+        }
+        .info-btn:hover, .info-btn[aria-expanded="true"] { background: var(--primary); color: #fff; border-color: var(--primary); }
+        .info-btn:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+        .info-pop {
+            display: none; position: absolute; z-index: 40; top: 27px; left: -4px;
+            width: 330px; max-width: 74vw; background: #0f172a; color: #e2e8f0;
+            font-size: 0.82rem; line-height: 1.55; font-weight: 400; text-transform: none;
+            padding: 12px 14px; border-radius: 8px; box-shadow: 0 12px 24px rgba(0,0,0,.28);
+        }
+        .info-pop::before {
+            content: ""; position: absolute; top: -6px; left: 8px;
+            border: 6px solid transparent; border-bottom-color: #0f172a; border-top: 0;
+        }
+        .info-wrap:hover .info-pop, .info-pop.open { display: block; }
+
         /* Sticky Footer */
         .footer {
             position: fixed; bottom: 0; left: 0; width: 100%;
@@ -240,9 +287,28 @@
         </div>
     </div>
 
+    <div class="intro">
+        <p class="lead">How good is your organization at pricing?</p>
+        <p>Most people cannot answer that question with anything better than &ldquo;pretty good&rdquo; or &ldquo;we could be better.&rdquo; That is a problem, because pricing is the most powerful lever a firm has on profitability: raising price by one percent without losing customers typically lifts operating profit by eight to eleven percent. No other lever &mdash; not cost cutting, not selling more units &mdash; comes close.</p>
+        <p>This assessment gives you a way to measure it. You rate your organization on <strong>eleven statements</strong> across three areas &mdash; <strong>Strategy &amp; Culture</strong> (does the organization take pricing seriously?), <strong>Execution &amp; Process</strong> (can it actually implement pricing decisions?), and <strong>Analytics &amp; Data</strong> (does it have the information needed to price well?). Each statement is scored from 1, strongly disagree, to 5, strongly agree, and carries a weight you can adjust. The result is a weighted score out of 5, plus a subtotal for each of the three areas.</p>
+        <p>Hover over or click the <strong>&#9432;</strong> beside any statement to see what it is really asking.</p>
+    </div>
+
     <div class="toolbar">
         <button type="button" class="btn-secondary" onclick="loadExample()">Load example</button>
         <button type="button" class="btn-secondary" onclick="resetDefaults()">Reset defaults</button>
+    </div>
+
+    <div class="guidance">
+        <h2>Setting the weights</h2>
+        <p>Every statement carries a weight, and the weights must total 100%. Eleven statements cannot be weighted perfectly equally, so the defaults give slightly more to the factors that tend to matter most broadly &mdash; Knowledge of Value and Pricing Objectives among them.</p>
+        <p>Those are only defaults. <em>Change them to match your situation.</em> What matters most depends on your industry, your competitive position, and your company&rsquo;s stage:</p>
+        <ul>
+            <li><em>A commodity market with heavy price competition</em>, where rivals watch each other closely &mdash; raise the weight on Knowledge of Competition.</li>
+            <li><em>Complex B2B solutions</em> with long sales cycles, large deals, and real negotiation &mdash; raise the weight on Knowledge of Value, since your ability to quantify it decides whether you hold price.</li>
+            <li><em>A five-person startup</em> without sophisticated systems yet &mdash; lower IT Support and put the weight on Strategy &amp; Culture. Systems can come later.</li>
+        </ul>
+        <p>The weights force a decision about what matters most. You cannot call everything equally important &mdash; that is not strategy. Strategy is choosing.</p>
     </div>
 
     <form id="assessmentForm">
@@ -276,6 +342,24 @@
             <span id="subtotal-value-analytics" class="subtotal-value">-- / 5.00</span>
         </div>
     </form>
+
+    <div class="guidance">
+        <h2>How the overall score is classified</h2>
+        <p>The weighted score is a weighted average of your eleven ratings, reported on the same 1&ndash;5 scale. It falls into one of four bands:</p>
+        <ul class="band-list">
+            <li><span class="band-chip band-1">Below 2.50</span> <span><em>Needs Improvement.</em> Pricing capability is a live constraint on profitability. Most decisions are being made without the structure or information to support them.</span></li>
+            <li><span class="band-chip band-2">2.50 &ndash; 3.49</span> <span><em>Developing.</em> Some capability exists but it is uneven. On a 1&ndash;5 scale 3 is neutral, so a score here means the organization is not yet reliably good at pricing.</span></li>
+            <li><span class="band-chip band-3">3.50 &ndash; 4.49</span> <span><em>Strong Capability.</em> Pricing is managed deliberately, with real process and real data behind it.</span></li>
+            <li><span class="band-chip band-4">4.50 and above</span> <span><em>World Class.</em> Pricing is a genuine source of competitive advantage.</span></li>
+        </ul>
+        <p><em>Read the pattern, not just the total.</em> The three section subtotals matter more than the headline number, because they tell you where to act. Three patterns come up repeatedly:</p>
+        <ul>
+            <li><em>High Strategy, low Analytics.</em> Leadership cares about pricing, but decisions rest on judgment rather than evidence. Invest in measurement and data.</li>
+            <li><em>High Analytics, low Execution.</em> The data is good but you cannot act on it &mdash; systems are slow, or the field does not follow through. Fix the process.</li>
+            <li><em>High Execution, low Strategy.</em> You can change prices quickly but you are not sure what to change them to. Efficient but directionless; set clearer objectives.</li>
+        </ul>
+        <p>You do not need to fix everything at once. Start with the largest gap. The assessment is also more useful repeated &mdash; have colleagues complete it separately and compare where you disagree, then run it again in six months to see which capabilities you have actually built.</p>
+    </div>
 </div>
 
 <div class="footer">
@@ -310,21 +394,32 @@
     // Data Structure
     const sections = {
         strategy: [
-            { title: "Pricing Importance", desc: "Pricing is viewed as a critical strategic function.", weight: 20 },
-            { title: "Pricing Objectives", desc: "We have clear, documented goals for pricing.", weight: 20 },
-            { title: "Cross-Functional Effort", desc: "Marketing, sales, and finance collaborate.", weight: 5 }
+            { title: "Pricing Importance", desc: "Pricing is viewed as a critical strategic function.", weight: 20,
+              info: "In some companies pricing is discussed in the boardroom: the CEO cares about it and a team owns it. In others it is an afterthought &mdash; someone in finance sets a price at the end of product development and nobody senior pays attention. Which one describes your organization?" },
+            { title: "Pricing Objectives", desc: "We have clear, documented goals for pricing.", weight: 20,
+              info: "What are you trying to achieve with price &mdash; maximize profit, gain share, signal premium positioning, keep a competitor out? These are different goals and they imply different prices. Are yours written down and agreed, or is it vague: &ldquo;charge what the market will bear&rdquo;? Without clear goals sales pushes for discounts, finance pushes for margin, marketing pushes for brand fit, and you get chaos." },
+            { title: "Cross-Functional Effort", desc: "Marketing, sales, and finance collaborate.", weight: 5,
+              info: "Pricing touches everyone. Marketing needs prices that fit the brand, sales needs prices they can defend to a customer, finance needs prices that deliver profit. In weak organizations this is a running battle &mdash; sales blames marketing for pricing too high, marketing blames sales for discounting. In strong ones there is a standing process where the trade-offs get argued openly and decided as a team." }
         ],
         execution: [
-            { title: "Pricing Flexibility", desc: "We can execute price changes quickly.", weight: 5 },
-            { title: "IT Support", desc: "IT systems enable efficient pricing management.", weight: 5 },
-            { title: "Communication", desc: "We effectively communicate value and changes.", weight: 5 }
+            { title: "Pricing Flexibility", desc: "We can execute price changes quickly.", weight: 5,
+              info: "Here is the test: if you decided today to change a price, how long would it take &mdash; a day, a week, a quarter? Amazon reprices millions of times a day. Other firms need contract updates, system changes, sales retraining, and reprinted materials. Speed matters because costs move, competitors cut, and demand shifts. If you cannot respond quickly you are permanently behind." },
+            { title: "IT Support", desc: "IT systems enable efficient pricing management.", weight: 5,
+              info: "Do your systems help or hurt? Can you see every price in one place, analyze what is working, and change a price without calling five different people? Many firms run an ERP built twenty years ago with data scattered across systems, so every price change becomes manual work in several places. If the systems are a barrier, that is a real constraint &mdash; rate it honestly." },
+            { title: "Communication", desc: "We effectively communicate value and changes.", weight: 5,
+              info: "A price has to be explained. Customers need to understand why the product is worth it, and salespeople need to believe in it or they will discount immediately. The test: when a customer says &ldquo;your price is too high,&rdquo; can your salesperson say exactly why the product is worth the money &mdash; or do they reach for a discount? If the team cannot communicate value, prices will not stick." }
         ],
         analytics: [
-            { title: "Metrics & Measurement", desc: "We regularly measure pricing outcomes.", weight: 10 },
-            { title: "Knowledge of Customers", desc: "We use data on customer price sensitivity.", weight: 15 },
-            { title: "Knowledge of Value", desc: "We quantify the economic value we deliver.", weight: 5 },
-            { title: "Knowledge of Competition", desc: "We systematically track competitor pricing.", weight: 5 },
-            { title: "Knowledge of Costs", desc: "We have accurate cost data for pricing.", weight: 5 }
+            { title: "Metrics & Measurement", desc: "We regularly measure pricing outcomes.", weight: 10,
+              info: "After you set a price, do you check whether it worked? Many firms set a price and move on. They never ask: did we realize the price we set, did customers accept it, did we lose deals on price, did profit go up or down? If you do not measure, you cannot improve &mdash; you are guessing." },
+            { title: "Knowledge of Customers", desc: "We use data on customer price sensitivity.", weight: 15,
+              info: "Different customers react differently. Some pay a premium for convenience, some switch for a five percent saving, some never look at price at all. Do you have data on which is which? Treating every customer the same means overcharging the price-sensitive ones until you lose them, and undercharging the insensitive ones and leaving money on the table." },
+            { title: "Knowledge of Value", desc: "We quantify the economic value we deliver.", weight: 5,
+              info: "Can you put a dollar figure on your value? Not &ldquo;we have good quality&rdquo; or &ldquo;we save time,&rdquo; but specifically: how much does the customer earn or save by choosing you over the alternative? &ldquo;Our machine reduces defects by two percent, which saves you fifty thousand dollars a year&rdquo; is quantified value, and it is what justifies your price. Without it, every conversation collapses into price and you have no defense." },
+            { title: "Knowledge of Competition", desc: "We systematically track competitor pricing.", weight: 5,
+              info: "Do you know what competitors charge &mdash; not roughly, but exactly? Do you know when they change, and how their prices compare to yours across products and customer segments? Many firms rely on what salespeople hear in the field, which is incomplete and often wrong. This needs a real system: regular monitoring, a database, actual analysis." },
+            { title: "Knowledge of Costs", desc: "We have accurate cost data for pricing.", weight: 5,
+              info: "This sounds basic and many firms get it wrong. Do you know the true cost of each product, the cost to serve different customers, and which accounts are actually profitable? Without accurate costs you can price below cost without knowing it, and celebrate a big deal that loses money." }
         ]
     };
 
@@ -333,7 +428,18 @@
         return sectionData.map((item, i) => `
             <tr>
                 <td style="width: 45%;">
-                    <span class="factor-title" id="factor-${sectionName}-${i}">${item.title}</span>
+                    <div class="factor-head">
+                        <span class="factor-title" id="factor-${sectionName}-${i}">${item.title}</span>
+                        <span class="info-wrap">
+                            <button type="button" class="info-btn"
+                                    id="infobtn-${sectionName}-${i}"
+                                    aria-expanded="false"
+                                    aria-controls="infopop-${sectionName}-${i}"
+                                    aria-label="What ${item.title} means"
+                                    onclick="toggleInfo(event, '${sectionName}-${i}')">i</button>
+                            <span class="info-pop" id="infopop-${sectionName}-${i}" role="tooltip">${item.info}</span>
+                        </span>
+                    </div>
                     <span class="factor-desc">${item.desc}</span>
                 </td>
                 <td style="width: 15%; text-align:center;">
@@ -365,6 +471,34 @@
     document.getElementById('assessmentForm').addEventListener('submit', function(e) {
         e.preventDefault();
         calculate();
+    });
+
+    // Statement explanations. CSS shows them on hover for mouse users; this handles
+    // click and keyboard, which is the only route on touch devices.
+    function closeAllInfo(exceptKey) {
+        document.querySelectorAll('.info-pop.open').forEach(pop => {
+            if (exceptKey && pop.id === 'infopop-' + exceptKey) return;
+            pop.classList.remove('open');
+            const btn = document.getElementById(pop.id.replace('infopop-', 'infobtn-'));
+            if (btn) btn.setAttribute('aria-expanded', 'false');
+        });
+    }
+
+    function toggleInfo(event, key) {
+        event.stopPropagation();
+        const pop = document.getElementById('infopop-' + key);
+        const btn = document.getElementById('infobtn-' + key);
+        if (!pop || !btn) return;
+        const willOpen = !pop.classList.contains('open');
+        closeAllInfo(key);
+        pop.classList.toggle('open', willOpen);
+        btn.setAttribute('aria-expanded', willOpen ? 'true' : 'false');
+    }
+
+    // Clicking anywhere else, or pressing Escape, dismisses an open explanation.
+    document.addEventListener('click', () => closeAllInfo());
+    document.addEventListener('keydown', e => {
+        if (e.key === 'Escape') closeAllInfo();
     });
 
     // Keep a weight in the allowed [0, 100] range.
