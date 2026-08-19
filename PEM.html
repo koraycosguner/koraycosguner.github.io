@@ -82,6 +82,9 @@
             text-transform: uppercase;
             border-bottom: 1px solid var(--border);
             border-top: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 9px;
         }
 
         /* Table */
@@ -150,6 +153,23 @@
             border: 6px solid transparent; border-bottom-color: #0f172a; border-top: 0;
         }
         .info-wrap:hover .info-pop, .info-pop.open { display: block; }
+
+        /* Header explanations carry more text and sit at the page edges */
+        .info-pop.wide { width: 440px; }
+        .info-pop.align-right { left: auto; right: -4px; }
+        .info-pop.align-right::before { left: auto; right: 8px; }
+        .info-pop p { margin: 0 0 9px 0; }
+        .info-pop p:last-child { margin-bottom: 0; }
+        .info-pop ul { margin: 0 0 9px 0; padding-left: 18px; }
+        .info-pop li { margin-bottom: 5px; }
+        .info-pop strong { color: #fff; }
+
+        .title-row { display: flex; align-items: center; gap: 9px; }
+        .weight-row { display: flex; align-items: center; gap: 9px; justify-content: flex-end; }
+        @media (max-width: 768px) {
+            .info-pop.wide { width: 300px; }
+            .weight-row { justify-content: center; }
+        }
 
         /* Sticky Footer */
         .footer {
@@ -278,20 +298,44 @@
 <div class="container">
     <div class="header">
         <div class="header-text">
-            <h1>Pricing Effectiveness Matrix</h1>
+            <div class="title-row">
+                <h1>Pricing Effectiveness Matrix</h1>
+                <span class="info-wrap">
+                    <button type="button" class="info-btn" id="infobtn-about"
+                            aria-expanded="false" aria-controls="infopop-about"
+                            aria-label="About this tool"
+                            onclick="toggleInfo(event, 'about')">i</button>
+                    <span class="info-pop wide" id="infopop-about" role="tooltip">
+                        <p><strong>How good is your organization at pricing?</strong> Most people cannot answer beyond &ldquo;pretty good.&rdquo; That matters, because pricing is the most powerful profit lever there is: raising price one percent without losing customers typically lifts operating profit eight to eleven percent. Cost cutting and extra volume do not come close.</p>
+                        <p>This assessment measures it. You rate your organization on <strong>eleven statements</strong> across three areas &mdash; <strong>Strategy &amp; Culture</strong> (does it take pricing seriously?), <strong>Execution &amp; Process</strong> (can it implement pricing decisions?), and <strong>Analytics &amp; Data</strong> (does it have the information to price well?). Each is scored 1, strongly disagree, to 5, strongly agree, and carries a weight you can adjust.</p>
+                        <p>The result is a weighted score out of 5 plus a subtotal for each area. Hover or click the <strong>&#9432;</strong> beside any statement to see what it is really asking.</p>
+                    </span>
+                </span>
+            </div>
             <div style="color:var(--text-muted); font-size:0.9rem;">Weighted Scoring Model</div>
         </div>
         <div class="weight-tracker">
             <span class="weight-label">Total Weight</span>
-            <div id="totalWeightDisplay" class="weight-value">100%</div>
+            <div class="weight-row">
+                <div id="totalWeightDisplay" class="weight-value">100%</div>
+                <span class="info-wrap">
+                    <button type="button" class="info-btn" id="infobtn-weights"
+                            aria-expanded="false" aria-controls="infopop-weights"
+                            aria-label="How to set the weights"
+                            onclick="toggleInfo(event, 'weights')">i</button>
+                    <span class="info-pop wide align-right" id="infopop-weights" role="tooltip">
+                        <p><strong>Weights must total 100%.</strong> Eleven statements cannot be weighted perfectly equally, so the defaults give slightly more to the factors that tend to matter most broadly &mdash; Knowledge of Value and Pricing Objectives among them.</p>
+                        <p>Those are only defaults. <strong>Change them to match your situation:</strong></p>
+                        <ul>
+                            <li>A <strong>commodity market</strong> with heavy price competition &mdash; raise Knowledge of Competition.</li>
+                            <li><strong>Complex B2B solutions</strong> with long cycles and real negotiation &mdash; raise Knowledge of Value, since quantifying it decides whether you hold price.</li>
+                            <li>A <strong>five-person startup</strong> without systems yet &mdash; lower IT Support and weight Strategy &amp; Culture. Systems can come later.</li>
+                        </ul>
+                        <p>The weights force a decision about what matters most. You cannot call everything equally important &mdash; that is not strategy. Strategy is choosing.</p>
+                    </span>
+                </span>
+            </div>
         </div>
-    </div>
-
-    <div class="intro">
-        <p class="lead">How good is your organization at pricing?</p>
-        <p>Most people cannot answer that question with anything better than &ldquo;pretty good&rdquo; or &ldquo;we could be better.&rdquo; That is a problem, because pricing is the most powerful lever a firm has on profitability: raising price by one percent without losing customers typically lifts operating profit by eight to eleven percent. No other lever &mdash; not cost cutting, not selling more units &mdash; comes close.</p>
-        <p>This assessment gives you a way to measure it. You rate your organization on <strong>eleven statements</strong> across three areas &mdash; <strong>Strategy &amp; Culture</strong> (does the organization take pricing seriously?), <strong>Execution &amp; Process</strong> (can it actually implement pricing decisions?), and <strong>Analytics &amp; Data</strong> (does it have the information needed to price well?). Each statement is scored from 1, strongly disagree, to 5, strongly agree, and carries a weight you can adjust. The result is a weighted score out of 5, plus a subtotal for each of the three areas.</p>
-        <p>Hover over or click the <strong>&#9432;</strong> beside any statement to see what it is really asking.</p>
     </div>
 
     <div class="toolbar">
@@ -299,20 +343,20 @@
         <button type="button" class="btn-secondary" onclick="resetDefaults()">Reset defaults</button>
     </div>
 
-    <div class="guidance">
-        <h2>Setting the weights</h2>
-        <p>Every statement carries a weight, and the weights must total 100%. Eleven statements cannot be weighted perfectly equally, so the defaults give slightly more to the factors that tend to matter most broadly &mdash; Knowledge of Value and Pricing Objectives among them.</p>
-        <p>Those are only defaults. <em>Change them to match your situation.</em> What matters most depends on your industry, your competitive position, and your company&rsquo;s stage:</p>
-        <ul>
-            <li><em>A commodity market with heavy price competition</em>, where rivals watch each other closely &mdash; raise the weight on Knowledge of Competition.</li>
-            <li><em>Complex B2B solutions</em> with long sales cycles, large deals, and real negotiation &mdash; raise the weight on Knowledge of Value, since your ability to quantify it decides whether you hold price.</li>
-            <li><em>A five-person startup</em> without sophisticated systems yet &mdash; lower IT Support and put the weight on Strategy &amp; Culture. Systems can come later.</li>
-        </ul>
-        <p>The weights force a decision about what matters most. You cannot call everything equally important &mdash; that is not strategy. Strategy is choosing.</p>
-    </div>
-
     <form id="assessmentForm">
-        <div class="section-header">1. Strategy & Culture</div>
+        <div class="section-header">
+            <span>1. Strategy &amp; Culture</span>
+            <span class="info-wrap">
+                <button type="button" class="info-btn" id="infobtn-sec-strategy"
+                        aria-expanded="false" aria-controls="infopop-sec-strategy"
+                        aria-label="About the Strategy and Culture section"
+                        onclick="toggleInfo(event, 'sec-strategy')">i</button>
+                <span class="info-pop wide" id="infopop-sec-strategy" role="tooltip">
+                    <p><strong>Does your organization take pricing seriously?</strong></p>
+                    <p>These three statements ask whether pricing is treated as a priority: whether it reaches the boardroom or is left to whoever sets a number at the end of product development, whether the goals behind your prices are written down and agreed, and whether marketing, sales, and finance decide together rather than fight each other.</p>
+                </span>
+            </span>
+        </div>
         <div class="table-container">
             <table id="table-strategy"></table>
         </div>
@@ -322,7 +366,19 @@
             <span id="subtotal-value-strategy" class="subtotal-value">-- / 5.00</span>
         </div>
 
-        <div class="section-header">2. Execution & Process</div>
+        <div class="section-header">
+            <span>2. Execution &amp; Process</span>
+            <span class="info-wrap">
+                <button type="button" class="info-btn" id="infobtn-sec-execution"
+                        aria-expanded="false" aria-controls="infopop-sec-execution"
+                        aria-label="About the Execution and Process section"
+                        onclick="toggleInfo(event, 'sec-execution')">i</button>
+                <span class="info-pop wide" id="infopop-sec-execution" role="tooltip">
+                    <p><strong>Can your organization actually implement pricing decisions?</strong></p>
+                    <p>Good strategy means nothing if you cannot execute it. These three statements ask how quickly you could change a price if you decided to today, whether your systems help or obstruct that, and whether your people can explain the value behind a price instead of reaching for a discount.</p>
+                </span>
+            </span>
+        </div>
         <div class="table-container">
             <table id="table-execution"></table>
         </div>
@@ -332,7 +388,19 @@
             <span id="subtotal-value-execution" class="subtotal-value">-- / 5.00</span>
         </div>
 
-        <div class="section-header">3. Analytics & Data</div>
+        <div class="section-header">
+            <span>3. Analytics &amp; Data</span>
+            <span class="info-wrap">
+                <button type="button" class="info-btn" id="infobtn-sec-analytics"
+                        aria-expanded="false" aria-controls="infopop-sec-analytics"
+                        aria-label="About the Analytics and Data section"
+                        onclick="toggleInfo(event, 'sec-analytics')">i</button>
+                <span class="info-pop wide" id="infopop-sec-analytics" role="tooltip">
+                    <p><strong>Do you have the information you need to price well?</strong></p>
+                    <p>This is where most organizations are weakest, which is why it carries five statements rather than three. They ask whether you measure what your pricing actually achieved, and whether you genuinely know your customers&rsquo; price sensitivity, the economic value you deliver, your competitors&rsquo; prices, and your own costs.</p>
+                </span>
+            </span>
+        </div>
         <div class="table-container">
             <table id="table-analytics"></table>
         </div>
