@@ -3664,6 +3664,38 @@ margin-top: 34px;
 .summary-item {
 min-height: 176px;
 }
+
+#index-toggle {
+position: fixed;
+box-sizing: border-box; 
+z-index: 40;
+top: 14px;
+right: 66px;
+width: 42px;
+height: 42px;
+border: 1px solid rgba(32, 36, 42, 0.18);
+border-radius: 8px;
+color: var(--ink);
+background: rgba(255, 255, 255, 0.9);
+display: inline-flex;
+align-items: center;
+justify-content: center;
+cursor: pointer;
+opacity: 0.72;
+text-decoration: none;
+transition: opacity 150ms ease, border-color 150ms ease, box-shadow 150ms ease;
+}
+#index-toggle:hover,
+#index-toggle:focus-visible {
+border-color: rgba(153, 0, 0, 0.45);
+box-shadow: 0 3px 12px rgba(32, 36, 42, 0.12);
+color: var(--iu-crimson);
+opacity: 1;
+outline: none;
+}
+@media print {
+#index-toggle { display: none !important; }
+}
 </style>
   <style type="text/css">
 :root {
@@ -6675,8 +6707,20 @@ window.QuartoSupport = function () {
         ]
       });
     </script>
+    <a id="index-toggle" href="m455-meeting-01-index.html" title="All slides" aria-label="All slides"><svg viewbox="0 0 20 20" width="19" height="19" aria-hidden="true"><rect x="1.5" y="1.5" width="7" height="7" rx="1.4" fill="currentColor" /><rect x="11.5" y="1.5" width="7" height="7" rx="1.4" fill="currentColor" /><rect x="1.5" y="11.5" width="7" height="7" rx="1.4" fill="currentColor" /><rect x="11.5" y="11.5" width="7" height="7" rx="1.4" fill="currentColor" /></svg></a>
     <button id="fullscreen-toggle" type="button" title="Toggle fullscreen (F)" aria-label="Toggle fullscreen">⛶</button>
     <script>
+      // One shared include serves both builds, so point the index button at whichever
+      // contact sheet matches the deck being viewed. Never send the student build to
+      // the instructor index, which shows the answer slides.
+      document.addEventListener("DOMContentLoaded", () => {
+        const link = document.getElementById("index-toggle");
+        if (!link) return;
+        const file = window.location.pathname.split("/").pop() || "";
+        if (/-student\.html$/.test(file)) link.setAttribute("href", "m455-meeting-01-index-student.html");
+        if (/print-pdf|view=print/.test(window.location.search)) link.hidden = true;
+      });
+
       document.addEventListener("DOMContentLoaded", () => {
         const button = document.getElementById("fullscreen-toggle");
         if (!button || !document.fullscreenEnabled) {
