@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Publications | Koray Cosguner</title>
-    <meta name="description" content="Peer-reviewed publications by Koray Cosguner in Marketing Science, Management Science, Journal of Marketing Research, Journal of Retailing, and MIS Quarterly.">
+    <meta name="description" content="Peer-reviewed publications by Koray Cosguner in Marketing Science, Management Science, Journal of Marketing Research, MIS Quarterly, International Journal of Research in Marketing, and Journal of Retailing.">
 
     <!-- Canonical -->
     <link rel="canonical" href="https://koraycosguner.github.io/research.html">
@@ -13,14 +13,14 @@
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://koraycosguner.github.io/research.html">
     <meta property="og:title" content="Publications | Koray Cosguner">
-    <meta property="og:description" content="Peer-reviewed publications by Koray Cosguner in Marketing Science, Management Science, Journal of Marketing Research, Journal of Retailing, and MIS Quarterly.">
+    <meta property="og:description" content="Peer-reviewed publications by Koray Cosguner in Marketing Science, Management Science, Journal of Marketing Research, MIS Quarterly, International Journal of Research in Marketing, and Journal of Retailing.">
     <meta property="og:image" content="https://koraycosguner.github.io/photo.jpg">
 
     <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:url" content="https://koraycosguner.github.io/research.html">
     <meta name="twitter:title" content="Publications | Koray Cosguner">
-    <meta name="twitter:description" content="Peer-reviewed publications by Koray Cosguner in Marketing Science, Management Science, Journal of Marketing Research, Journal of Retailing, and MIS Quarterly.">
+    <meta name="twitter:description" content="Peer-reviewed publications by Koray Cosguner in Marketing Science, Management Science, Journal of Marketing Research, MIS Quarterly, International Journal of Research in Marketing, and Journal of Retailing.">
     <meta name="twitter:image" content="https://koraycosguner.github.io/photo.jpg">
 
     <link rel="icon" type="image/jpeg" href="KCFavicon.jpg">
@@ -170,6 +170,128 @@
             font-size: 1.05rem;
             position: relative;
             z-index: 1;
+        }
+
+        /* Journal index: covers + paper counts at the top of the page */
+        .journal-index {
+            max-width: 940px;
+            margin: 30px auto 4px;
+            position: relative;
+            z-index: 1;
+        }
+        .journal-index-label {
+            font-size: 0.72rem;
+            font-weight: 700;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            margin-bottom: 16px;
+        }
+        .journal-index-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 10px;
+            max-width: 760px;
+            margin: 0 auto;
+            text-align: left;
+        }
+        .journal-chip {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 9px 18px 9px 9px;
+            background: var(--card-gradient);
+            border: 1.5px solid var(--border);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-sm);
+            font: inherit;
+            text-align: left;
+            cursor: pointer;
+            -webkit-tap-highlight-color: transparent;
+            transition: transform var(--transition-base), box-shadow var(--transition-base), border-color var(--transition-base);
+        }
+        .journal-chip img {
+            display: block;
+            flex-shrink: 0;
+            height: 48px;
+            width: auto;
+            border-radius: 3px;
+            border: 1px solid var(--border);
+            box-shadow: 0 2px 6px rgba(0,0,0,0.10);
+        }
+        .journal-chip-text {
+            display: flex;
+            flex-direction: column;
+            gap: 1px;
+        }
+        .journal-chip-name {
+            font-size: 0.78rem;
+            font-weight: 700;
+            color: var(--text-main);
+            line-height: 1.25;
+            letter-spacing: -0.01em;
+            max-width: 148px;
+        }
+        .journal-chip-count {
+            font-size: 0.72rem;
+            font-weight: 600;
+            color: var(--text-muted);
+        }
+        .journal-chip-count strong {
+            font-size: 0.88rem;
+            font-weight: 800;
+            color: var(--primary);
+        }
+        .journal-chip:hover {
+            transform: translateY(-2px);
+            border-color: var(--border-strong);
+            box-shadow: var(--shadow-md);
+        }
+        .journal-chip[aria-pressed="true"] {
+            border-color: var(--primary);
+            box-shadow: 0 6px 18px rgba(153,0,0,0.16);
+        }
+        .journal-index-reset {
+            margin-top: 16px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font: inherit;
+            font-size: 0.78rem;
+            font-weight: 600;
+            color: var(--text-sub);
+            background: transparent;
+            border: 1.5px solid var(--border-strong);
+            border-radius: var(--radius-full);
+            padding: 6px 16px;
+            cursor: pointer;
+            transition: color var(--transition-fast), border-color var(--transition-fast);
+        }
+        .journal-index-reset:hover {
+            color: var(--primary);
+            border-color: var(--primary);
+        }
+        .journal-index-reset[hidden] { display: none; }
+        .paper[hidden] { display: none; }
+
+        @media (max-width: 900px) {
+            .journal-chip { padding: 8px 14px 8px 8px; gap: 10px; }
+            .journal-chip img { height: 42px; }
+            .journal-chip-name { font-size: 0.74rem; max-width: 132px; }
+        }
+        @media (max-width: 640px) {
+            .journal-index { margin-top: 24px; }
+            .journal-index-label { font-size: 0.66rem; letter-spacing: 0.1em; margin-bottom: 12px; }
+            .journal-index-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+            .journal-chip {
+                padding: 8px 10px 8px 8px;
+                gap: 9px;
+                border-radius: var(--radius-md);
+            }
+            .journal-chip img { height: 36px; }
+            .journal-chip-name { font-size: 0.7rem; max-width: none; }
+            .journal-chip-count { font-size: 0.66rem; }
+            .journal-chip-count strong { font-size: 0.8rem; }
         }
 
         /* Main Content */
@@ -529,13 +651,15 @@
             transform: translateY(0);
         }
         .page-header h1,
-        .header-sub {
+        .header-sub,
+        .journal-index {
             opacity: 0;
             transform: translateY(20px);
             animation: fadeUp 0.6s ease forwards;
         }
         .page-header h1 { animation-delay: 0.1s; }
         .header-sub { animation-delay: 0.2s; }
+        .journal-index { animation-delay: 0.2s; }
         @keyframes fadeUp {
             to { opacity: 1; transform: translateY(0); }
         }
@@ -812,13 +936,62 @@
 
     <div class="page-header">
         <h1>Publications</h1>
+
+        <div class="journal-index">
+            <div class="journal-index-label">9 Papers Across 6 Journals</div>
+            <div class="journal-index-grid" id="journalIndex">
+                <button type="button" class="journal-chip" data-journal="jmr" aria-pressed="false" title="Show only Journal of Marketing Research papers">
+                    <img src="jmr.png" alt="Journal of Marketing Research" width="198" height="254" loading="lazy" decoding="async">
+                    <span class="journal-chip-text">
+                        <span class="journal-chip-name">Journal of Marketing Research</span>
+                        <span class="journal-chip-count"><strong>2</strong> papers</span>
+                    </span>
+                </button>
+                <button type="button" class="journal-chip" data-journal="mksc" aria-pressed="false" title="Show only Marketing Science papers">
+                    <img src="mksc.png" alt="Marketing Science" width="179" height="239" loading="lazy" decoding="async">
+                    <span class="journal-chip-text">
+                        <span class="journal-chip-name">Marketing Science</span>
+                        <span class="journal-chip-count"><strong>2</strong> papers</span>
+                    </span>
+                </button>
+                <button type="button" class="journal-chip" data-journal="mnsc" aria-pressed="false" title="Show only Management Science papers">
+                    <img src="mnsc.png" alt="Management Science" width="179" height="239" loading="lazy" decoding="async">
+                    <span class="journal-chip-text">
+                        <span class="journal-chip-name">Management Science</span>
+                        <span class="journal-chip-count"><strong>2</strong> papers</span>
+                    </span>
+                </button>
+                <button type="button" class="journal-chip" data-journal="misq" aria-pressed="false" title="Show only MIS Quarterly papers">
+                    <img src="misq.png" alt="MIS Quarterly" width="328" height="428" loading="lazy" decoding="async">
+                    <span class="journal-chip-text">
+                        <span class="journal-chip-name">MIS Quarterly</span>
+                        <span class="journal-chip-count"><strong>1</strong> paper</span>
+                    </span>
+                </button>
+                <button type="button" class="journal-chip" data-journal="ijrm" aria-pressed="false" title="Show only International Journal of Research in Marketing papers">
+                    <img src="ijrm.png" alt="International Journal of Research in Marketing" width="563" height="768" loading="lazy" decoding="async">
+                    <span class="journal-chip-text">
+                        <span class="journal-chip-name">International Journal of Research in Marketing</span>
+                        <span class="journal-chip-count"><strong>1</strong> paper</span>
+                    </span>
+                </button>
+                <button type="button" class="journal-chip" data-journal="jretail" aria-pressed="false" title="Show only Journal of Retailing papers">
+                    <img src="jretail.png" alt="Journal of Retailing" width="563" height="768" loading="lazy" decoding="async">
+                    <span class="journal-chip-text">
+                        <span class="journal-chip-name">Journal of Retailing</span>
+                        <span class="journal-chip-count"><strong>1</strong> paper</span>
+                    </span>
+                </button>
+            </div>
+            <button type="button" class="journal-index-reset" id="journalReset" hidden>&times; Show all publications</button>
+        </div>
     </div>
 
     <div class="section">
         <div class="container">
 
             <!-- Paper: Forthcoming, MIS Quarterly -->
-            <div class="paper fade-in">
+            <div class="paper fade-in" data-journal="misq">
                 <div class="paper-header">
                     <div class="paper-cover">
                         <img src="misq.png" alt="MIS Quarterly" loading="lazy" width="328" height="428">
@@ -839,7 +1012,7 @@
             </div>
 
             <!-- Paper 1 -->
-            <div class="paper fade-in">
+            <div class="paper fade-in" data-journal="mnsc">
                 <div class="paper-header">
                     <div class="paper-cover">
                         <img src="mnsc.png" alt="Management Science" loading="lazy" width="179" height="239">
@@ -858,7 +1031,7 @@
             </div>
 
             <!-- Paper 2 -->
-            <div class="paper fade-in">
+            <div class="paper fade-in" data-journal="mksc">
                 <div class="paper-header">
                     <div class="paper-cover">
                         <img src="mksc.png" alt="Marketing Science" loading="lazy" width="179" height="239">
@@ -877,7 +1050,7 @@
             </div>
 
             <!-- Paper 3 -->
-            <div class="paper fade-in">
+            <div class="paper fade-in" data-journal="jmr">
                 <div class="paper-header">
                     <div class="paper-cover">
                         <img src="jmr.png" alt="Journal of Marketing Research" loading="lazy" width="198" height="254">
@@ -896,7 +1069,7 @@
             </div>
 
             <!-- Paper 4 -->
-            <div class="paper fade-in">
+            <div class="paper fade-in" data-journal="mnsc">
                 <div class="paper-header">
                     <div class="paper-cover">
                         <img src="mnsc.png" alt="Management Science" loading="lazy" width="179" height="239">
@@ -915,7 +1088,7 @@
             </div>
 
             <!-- Paper 5 -->
-            <div class="paper fade-in">
+            <div class="paper fade-in" data-journal="jmr">
                 <div class="paper-header">
                     <div class="paper-cover">
                         <img src="jmr.png" alt="Journal of Marketing Research" loading="lazy" width="198" height="254">
@@ -934,7 +1107,7 @@
             </div>
 
             <!-- Paper 6 -->
-            <div class="paper fade-in">
+            <div class="paper fade-in" data-journal="mksc">
                 <div class="paper-header">
                     <div class="paper-cover">
                         <img src="mksc.png" alt="Marketing Science" loading="lazy" width="179" height="239">
@@ -952,8 +1125,29 @@
                 </div>
             </div>
 
+            <!-- Paper: Forthcoming, International Journal of Research in Marketing -->
+            <div class="paper fade-in" data-journal="ijrm">
+                <div class="paper-header">
+                    <div class="paper-cover">
+                        <img src="ijrm.png" alt="International Journal of Research in Marketing" loading="lazy" width="563" height="768">
+                    </div>
+                    <div class="paper-info">
+                        <div class="paper-title">Art as Revelation: Why AI Art Moves Us Less</div>
+                        <div class="paper-authors">Ezgi Ozgen, Baris Depecik, <strong>Koray Cosguner</strong>, and Jeffrey Inman (2026)</div>
+                        <div class="paper-journal" style="font-style: normal; margin-top: 8px; display: flex; align-items: center; gap: 9px; flex-wrap: wrap;">
+                            <span style="background: var(--primary); color: #fff; font-size: 0.68rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.08em; padding: 3px 11px; border-radius: var(--radius-full);">Forthcoming</span>
+                            <em style="color: var(--text-main); font-size: 0.95rem;">International Journal of Research in Marketing</em>
+                        </div>
+                    </div>
+                </div>
+                <div class="paper-abstract">With the dawn of automated creativity, industries such as the arts, advertising, media, and entertainment are eager to understand how consumers react to artistic creations made by AI. This research explores why and when identical artworks are evaluated differently when presented as human-made or machine-made. We propose a new mechanism grounded in the communicative function of art: art has a revelatory nature, in that it reveals the creator's way of looking at subject matter, which prompts an empathic response toward the creator and shapes evaluations of the artwork. Human artists hold an advantage because their art has a higher revelatory factor, thereby prompting more empathy. We validate this account through a real-world art gallery field study and controlled experiments. Revelatory factor and empathy consistently account for a substantially larger share of the effect than alternative mechanisms such as trust, love, self-transcendence, awe, effort, creativity, and uniqueness. The proposed pathway operates specifically in art contexts, helping explain what is distinctive about psychological reactions to art. We also examine how the bias varies with artwork features, audience traits, and creative contexts. It weakens for abstract styles, is amplified for individuals higher in need for affect, and narrows when art draws on the creator's own experiences. It disappears when human art lacks personal revelatory expression, and under human&ndash;AI collaboration, which reduces the revelatory quality of human art. We provide a comprehensive investigation using complementary methods across diverse contexts, art forms, and outcomes, including actual purchase behavior in a pop-up art market.</div>
+                <div class="paper-link">
+                    <a class="btn-summary" onclick="openModal('modal-ijrm')">Practitioner Summary</a>
+                </div>
+            </div>
+
             <!-- Paper 7 -->
-            <div class="paper fade-in">
+            <div class="paper fade-in" data-journal="jretail">
                 <div class="paper-header">
                     <div class="paper-cover">
                         <img src="jretail.png" alt="Journal of Retailing" loading="lazy" width="563" height="768">
@@ -1390,6 +1584,67 @@
         </div>
     </div>
 
+    <!-- MODAL: Forthcoming, Art as Revelation (International Journal of Research in Marketing) -->
+    <div class="modal-overlay" id="modal-ijrm">
+        <div class="modal" role="dialog" aria-modal="true" aria-label="Practitioner summary: What AI Art Is Missing Is Not Skill. It Is a Point of View.">
+            <button class="modal-close" onclick="closeModal('modal-ijrm')">&times;</button>
+            <div class="modal-label">Practitioner Summary (AI-assisted summary)</div>
+            <div class="modal-title">What AI Art Is Missing Is Not Skill. It Is a Point of View.</div>
+            <div class="modal-authors">Ozgen, Depecik, Cosguner &amp; Inman (2026), International Journal of Research in Marketing (Forthcoming)</div>
+
+            <div class="modal-section">
+                <h3>The Challenge</h3>
+                <p>Generative AI now produces paintings, poems, stories, and commercials that audiences often cannot tell apart from human work. Undisclosed, AI-made marketing images can match or even beat human-made content on quality and aesthetics. Yet the moment a machine is named as the creator, the very same content is valued less. The standard explanations (less effort, less skill, less creativity) treat art as a display of labor, and they explain neither why the penalty is so specific to art nor when it can be reduced. This is not an abstract question for firms: the AI art market is projected to grow from $3.2 billion in 2023 to nearly $40 billion by 2033, and creative teams in advertising, publishing, and entertainment are deciding right now what to automate and what to disclose.</p>
+            </div>
+
+            <div class="modal-section">
+                <h3>The Discovery</h3>
+                <p>Across ten studies and six supplementary studies, spanning a real gallery exhibition, a pop-up market with actual purchases, natural language analysis of viewer comments, and controlled experiments over paintings, photographs, microfiction, haiku, quatrains, and commercials, we identify what audiences are actually missing: <em>revelation</em>. Art is valued because it reveals how its creator sees a subject, and that revelation triggers empathy toward the creator, which in turn drives evaluation. AI art is perceived as lower in revelatory quality, which produces less empathy, which produces lower evaluations.</p>
+                <p>The field evidence is blunt. We curated an exhibition of 16 original paintings at a European university gallery and alternated the creator label every 30 minutes between a human artist and an AI. Same paintings, same room, same lighting. Visitors who believed AI made the work rated it 4.79 out of 7 versus 5.51, and they left almost a quarter sooner: 315 seconds versus 414. In a pop-up market selling &euro;5 fine art postcards, human attribution raised the odds of a purchase roughly fourfold for figurative work.</p>
+            </div>
+
+            <div class="modal-stat-grid">
+                <div class="modal-stat">
+                    <span class="number">24%</span>
+                    <span class="label">Less time spent in the gallery when paintings were labeled AI</span>
+                </div>
+                <div class="modal-stat">
+                    <span class="number">4.6x</span>
+                    <span class="label">Higher odds of purchase for human- vs. AI-labeled figurative art</span>
+                </div>
+                <div class="modal-stat">
+                    <span class="number">47%</span>
+                    <span class="label">Of the explained gap carried by revelation and empathy (love: 21%, trust: 18%)</span>
+                </div>
+                <div class="modal-stat">
+                    <span class="number">Erased</span>
+                    <span class="label">The gap under human&ndash;AI collaboration, but for the wrong reason</span>
+                </div>
+            </div>
+
+            <div class="modal-section">
+                <h3>The Surprise: Collaboration Closes the Gap by Pulling Humans Down</h3>
+                <p>"Made with AI" reads like a neutral production credit. It is not. When a painting was described as a human&ndash;AI collaboration, the machine-made penalty disappeared entirely. But the mechanism should worry any artist or agency. Collaboration did raise the perceived revelatory quality of the AI-attributed work. It also significantly lowered the revelatory quality, the empathy, and the evaluation of the human-attributed work. The gap closed mainly because human art lost ground, not because AI art gained it. Sharing creative control costs the human creator precisely the thing audiences are paying for.</p>
+            </div>
+
+            <div class="modal-highlight">
+                <p><strong>It is not effort, and it is not machines as such.</strong> Measured head to head against trust, love, self-transcendence, awe, effort, creativity, and uniqueness, the revelation&ndash;empathy pathway carried far more of the effect: roughly 47% of explained variance in one study and 58% to 59% in two others, versus 21% for love and 18% for trust. And the pathway is specific to art. Frame an identical photograph as a piece from a city exhibition and the penalty appears; frame it as an image in an urban infrastructure report and it vanishes. This is not general aversion to automation. It is about what audiences expect an artwork to communicate.</p>
+            </div>
+
+            <div class="modal-section">
+                <h3>The Playbook for Practitioners</h3>
+                <p><strong>Artists, galleries, and publishers:</strong> Your advantage is revelation, and it is not automatic. Simply telling viewers what a work reveals about its creator's perspective raised empathy and evaluations, for human and AI work alike. Conversely, when human art was stripped of personal revelatory expression, the human premium disappeared. Lead with the point of view rather than the process, and treat disclosure of AI assistance as a strategic decision, because it measurably discounts the human signature audiences are responding to.</p>
+                <p><strong>AI-art developers and creative technology marketers:</strong> Two levers work. Abstraction: the penalty weakens for abstract styles in both the real market and the lab, because abstraction leaves viewers less to infer about any creator. Experiential grounding: framing an AI work as drawing on its own experience, rather than retelling a human's, raised perceived revelatory quality enough that the evaluation gap became statistically insignificant. The implication cuts against the industry's current instinct. Stop making AI output look more human, and start revealing the machine's own vantage point, the approach Refik Anadol takes when he describes visualizing "the dreams of machines."</p>
+                <p><strong>Advertisers and brand teams:</strong> Disclosure changes the asset, not just the label. Comment analysis of Coca-Cola's fully AI-made holiday ad against its human-made counterpart shows significantly more annoyance, disgust, disappointment, and disapproval, with the most negative theme clustering on words like "experience," "feel," and "connect." Know your audience: viewers high in need for affect, exactly the people emotional campaigns are built for, penalize AI attribution the most. And if you rely on art infusion in packaging or advertising for an emotional lift, note that the lift is tied to art framing; the same image in a purely functional context carries neither the premium nor the penalty.</p>
+            </div>
+
+            <div class="modal-footer">
+                <span style="font-size: 0.85rem; color: var(--text-light);">Forthcoming: full paper available soon</span>
+                <span class="journal-tag">International Journal of Research in Marketing, 2026</span>
+            </div>
+        </div>
+    </div>
+
     <!-- MODAL: Paper 7, Channel Intermediaries -->
     <div class="modal-overlay" id="modal-paper7">
         <div class="modal" role="dialog" aria-modal="true" aria-label="Practitioner summary: Stop Paying for Motivation. Start Paying Attention to Alignment.">
@@ -1500,6 +1755,35 @@
 
         // Auto-update copyright year
         document.querySelectorAll('.year').forEach(el => el.textContent = new Date().getFullYear());
+
+        // Journal index: click a cover to show only that journal's papers
+        const journalChips = document.querySelectorAll('.journal-chip');
+        const journalReset = document.getElementById('journalReset');
+        const papers = document.querySelectorAll('.paper');
+        let activeJournal = null;
+
+        function applyJournalFilter(journal) {
+            activeJournal = journal;
+            papers.forEach(paper => {
+                const show = !journal || paper.dataset.journal === journal;
+                paper.hidden = !show;
+                // Papers revealed by the filter may never have crossed the observer
+                if (show) paper.classList.add('visible');
+            });
+            journalChips.forEach(chip => {
+                chip.setAttribute('aria-pressed', chip.dataset.journal === journal ? 'true' : 'false');
+            });
+            journalReset.hidden = !journal;
+        }
+
+        journalChips.forEach(chip => {
+            chip.addEventListener('click', () => {
+                const journal = chip.dataset.journal;
+                applyJournalFilter(activeJournal === journal ? null : journal);
+                document.querySelector('.section').scrollIntoView({ behavior: 'smooth', block: 'start' });
+            });
+        });
+        journalReset.addEventListener('click', () => applyJournalFilter(null));
 
         // Modal functions
         function openModal(id) {
