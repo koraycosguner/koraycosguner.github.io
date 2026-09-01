@@ -3857,6 +3857,11 @@ font-size: 0.4em;
 line-height: 1.28;
 }
 .research-triad + .ss-cite { margin-top: 8px; text-align: right; }
+
+.cite-block { max-width: 640px; margin: 16px auto 0; text-align: center; }
+.cite-note { font-size: 0.44em; line-height: 1.4; color: var(--ss-slate); }
+.cite-src { margin-top: 9px; padding-top: 9px; border-top: 1px solid var(--ss-line);
+font-size: 0.35em; line-height: 1.5; color: var(--ss-muted); }
 </style>
   <style type="text/css">.reveal
 div.sourceCode
@@ -4351,8 +4356,46 @@ display: block;
 margin-left: auto;
 margin-right: 0; }
 </style>
+<meta name="robots" content="noindex, nofollow, noarchive">
+<style>#gate{position:fixed;inset:0;z-index:99999;background:#fff;display:flex;align-items:center;justify-content:center;font:400 15px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif}#gate .box{text-align:center;max-width:340px}#gate h1{font-size:19px;margin:0 0 6px;color:#1a1a1a;letter-spacing:-0.01em}#gate p{margin:0 0 18px;color:#6b6b6b;font-size:13.5px}#gate input{width:100%;padding:10px 12px;font-size:15px;border:1px solid #d8d8d8;border-radius:6px;box-sizing:border-box}#gate input:focus{outline:none;border-color:#990000}#gate button{margin-top:10px;width:100%;padding:10px 12px;font-size:14.5px;font-weight:600;color:#fff;background:#990000;border:0;border-radius:6px;cursor:pointer}#gate button:hover{background:#7a0000}#gate .err{color:#990000;font-size:13px;height:17px;margin-top:9px}html.locked .reveal{visibility:hidden}</style>
 </head>
 <body class="quarto-light">
+<div id="gate"><div class="box"><h1>M303: Marketing Research</h1><p>Enter the password to open the deck.</p><input id="gate-pw" type="password" autocomplete="off" autofocus placeholder="Password"><button id="gate-go" type="button">Open the deck</button><div class="err" id="gate-err"></div></div></div>
+<script>
+document.documentElement.classList.add("locked");
+var GATE_HASH="fa1dc032945eba0b976413dc74b3f93c3371139299e078a81299a64bd1644162";
+async function sha256(s){const b=await crypto.subtle.digest("SHA-256",new TextEncoder().encode(s));return [...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,"0")).join("");}
+function revealKeys(on){try{if(window.Reveal&&Reveal.configure)Reveal.configure({keyboard:on});}catch(e){}}
+function unlock(){document.documentElement.classList.remove("locked");var g=document.getElementById("gate");if(g)g.remove();revealKeys(true);try{sessionStorage.setItem("deck-unlocked","1")}catch(e){}window.dispatchEvent(new Event("resize"));}
+async function tryUnlock(){
+  var i=document.getElementById("gate-pw"),e=document.getElementById("gate-err");
+  if(!i)return;
+  if(await sha256(i.value)===GATE_HASH){unlock();}
+  else{if(e)e.textContent="Not that one. Try again.";i.select();}
+}
+try{if(sessionStorage.getItem("deck-unlocked")==="1")unlock()}catch(e){}
+document.addEventListener("keydown",function(ev){
+  var i=document.getElementById("gate-pw");
+  if(!i||ev.target!==i)return;
+  ev.stopImmediatePropagation();
+  if(ev.key==="Enter"){ev.preventDefault();tryUnlock();}
+},true);
+document.addEventListener("DOMContentLoaded",function(){
+  var b=document.getElementById("gate-go");
+  if(b)b.addEventListener("click",tryUnlock);
+  var i=document.getElementById("gate-pw");
+  if(i)i.focus();
+  // reveal owns the keyboard once it initialises; hand it back on unlock
+  if(document.documentElement.classList.contains("locked")){
+    revealKeys(false);
+    var t=setInterval(function(){
+      if(!document.documentElement.classList.contains("locked")){clearInterval(t);return;}
+      revealKeys(false);
+    },250);
+  }
+});
+</script>
+
   <div class="reveal">
     <div class="slides">
 
@@ -4740,13 +4783,17 @@ margin-right: 0; }
   </li>
   <li class="fragment" data-fragment-index="0">Findings</li>
 </ul>
-<div style="display:grid;grid-template-columns:max-content max-content max-content;gap:6px 22px;align-items:center;justify-content:center;margin-top:6px;">
+<div style="display:grid;grid-template-columns:max-content max-content max-content;gap:10px 22px;align-items:center;justify-content:center;margin-top:8px;">
   <div class="fragment" data-fragment-index="0" style="font-size:0.62em;font-weight:800;color:var(--ss-crimson);text-align:right;">158% – 457%</div>
   <div class="fragment" data-fragment-index="0" style="font-size:1.05em;color:var(--ss-crimson);line-height:1;text-align:center;">↑</div>
   <div class="fragment" data-fragment-index="0" style="font-size:0.62em;color:var(--ss-ink);">Free return</div>
-  <div class="fragment" data-fragment-index="1" style="font-size:0.62em;font-weight:800;color:var(--ss-crimson);text-align:right;">75% – 100%</div>
-  <div class="fragment" data-fragment-index="1" style="font-size:1.05em;color:var(--ss-crimson);line-height:1;text-align:center;">↑</div>
+  <div class="fragment" data-fragment-index="1" style="font-size:0.62em;font-weight:800;color:var(--ss-slate);text-align:right;">75% – 100%</div>
+  <div class="fragment" data-fragment-index="1" style="font-size:1.05em;color:var(--ss-slate);line-height:1;text-align:center;">↓</div>
   <div class="fragment" data-fragment-index="1" style="font-size:0.62em;color:var(--ss-ink);">Pay for return</div>
+</div>
+<div class="cite-block fragment" data-fragment-index="1">
+  <div class="cite-note">Change in what those customers went on to spend afterwards</div>
+  <div class="cite-src">Bower, A. B., &amp; Maxham, J. G. III (2012). Return shipping policies of online retailers. <i>Journal of Marketing</i>, 76(5), 110–124.</div>
 </div>
 </section>
 <section id="how-does-the-level-of-uncertainty-influence-the-choice-of-research-approaches" class="slide level2 center">
@@ -6017,7 +6064,7 @@ window.QuartoSupport = function () {
         ]
       });
     </script>
-    <a id="index-toggle" href="M303-M03-Index-Instructor.html" title="All slides" aria-label="All slides"><svg viewbox="0 0 20 20" width="19" height="19" aria-hidden="true"><rect x="1.5" y="1.5" width="7" height="7" rx="1.4" fill="currentColor" /><rect x="11.5" y="1.5" width="7" height="7" rx="1.4" fill="currentColor" /><rect x="1.5" y="11.5" width="7" height="7" rx="1.4" fill="currentColor" /><rect x="11.5" y="11.5" width="7" height="7" rx="1.4" fill="currentColor" /></svg></a>
+    
     <button id="fullscreen-toggle" type="button" title="Toggle fullscreen (F)" aria-label="Toggle fullscreen">⛶</button>
     <script>
       // One include serves both builds, so point the index button at whichever contact
@@ -6027,7 +6074,7 @@ window.QuartoSupport = function () {
         const link = document.getElementById("index-toggle");
         if (!link) return;
         const file = window.location.pathname.split("/").pop() || "";
-        if (/-Student\.html$/.test(file)) link.setAttribute("href", "M303-M03-Index-Student.html");
+        
         if (/print-pdf|view=print/.test(window.location.search)) link.hidden = true;
       });
 
