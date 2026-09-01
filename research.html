@@ -179,19 +179,11 @@
             position: relative;
             z-index: 1;
         }
-        .journal-index-label {
-            font-size: 0.72rem;
-            font-weight: 700;
-            letter-spacing: 0.14em;
-            text-transform: uppercase;
-            color: var(--text-muted);
-            margin-bottom: 16px;
-        }
         .journal-index-grid {
             display: grid;
             grid-template-columns: repeat(3, minmax(0, 1fr));
             gap: 10px;
-            max-width: 760px;
+            max-width: 900px;
             margin: 0 auto;
             text-align: left;
         }
@@ -230,7 +222,6 @@
             color: var(--text-main);
             line-height: 1.25;
             letter-spacing: -0.01em;
-            max-width: 148px;
         }
         .journal-chip-count {
             font-size: 0.72rem;
@@ -277,11 +268,10 @@
         @media (max-width: 900px) {
             .journal-chip { padding: 8px 14px 8px 8px; gap: 10px; }
             .journal-chip img { height: 42px; }
-            .journal-chip-name { font-size: 0.74rem; max-width: 132px; }
+            .journal-chip-name { font-size: 0.74rem; }
         }
         @media (max-width: 640px) {
             .journal-index { margin-top: 24px; }
-            .journal-index-label { font-size: 0.66rem; letter-spacing: 0.1em; margin-bottom: 12px; }
             .journal-index-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
             .journal-chip {
                 padding: 8px 10px 8px 8px;
@@ -289,7 +279,7 @@
                 border-radius: var(--radius-md);
             }
             .journal-chip img { height: 36px; }
-            .journal-chip-name { font-size: 0.7rem; max-width: none; }
+            .journal-chip-name { font-size: 0.7rem; }
             .journal-chip-count { font-size: 0.66rem; }
             .journal-chip-count strong { font-size: 0.8rem; }
         }
@@ -938,48 +928,47 @@
         <h1>Publications</h1>
 
         <div class="journal-index">
-            <div class="journal-index-label">9 Papers Across 6 Journals</div>
             <div class="journal-index-grid" id="journalIndex">
                 <button type="button" class="journal-chip" data-journal="jmr" aria-pressed="false" title="Show only Journal of Marketing Research papers">
                     <img src="jmr.png" alt="Journal of Marketing Research" width="198" height="254" loading="lazy" decoding="async">
                     <span class="journal-chip-text">
                         <span class="journal-chip-name">Journal of Marketing Research</span>
-                        <span class="journal-chip-count"><strong>2</strong> papers</span>
+                        <span class="journal-chip-count"><strong>2</strong> Papers (2017 &amp; 2019)</span>
                     </span>
                 </button>
                 <button type="button" class="journal-chip" data-journal="mksc" aria-pressed="false" title="Show only Marketing Science papers">
                     <img src="mksc.png" alt="Marketing Science" width="179" height="239" loading="lazy" decoding="async">
                     <span class="journal-chip-text">
                         <span class="journal-chip-name">Marketing Science</span>
-                        <span class="journal-chip-count"><strong>2</strong> papers</span>
+                        <span class="journal-chip-count"><strong>2</strong> Papers (2017 &amp; 2020)</span>
                     </span>
                 </button>
                 <button type="button" class="journal-chip" data-journal="mnsc" aria-pressed="false" title="Show only Management Science papers">
                     <img src="mnsc.png" alt="Management Science" width="179" height="239" loading="lazy" decoding="async">
                     <span class="journal-chip-text">
                         <span class="journal-chip-name">Management Science</span>
-                        <span class="journal-chip-count"><strong>2</strong> papers</span>
+                        <span class="journal-chip-count"><strong>2</strong> Papers (2018 &amp; 2022)</span>
                     </span>
                 </button>
                 <button type="button" class="journal-chip" data-journal="misq" aria-pressed="false" title="Show only MIS Quarterly papers">
                     <img src="misq.png" alt="MIS Quarterly" width="328" height="428" loading="lazy" decoding="async">
                     <span class="journal-chip-text">
                         <span class="journal-chip-name">MIS Quarterly</span>
-                        <span class="journal-chip-count"><strong>1</strong> paper</span>
+                        <span class="journal-chip-count"><strong>1</strong> Paper (2026)</span>
                     </span>
                 </button>
                 <button type="button" class="journal-chip" data-journal="ijrm" aria-pressed="false" title="Show only International Journal of Research in Marketing papers">
                     <img src="ijrm.png" alt="International Journal of Research in Marketing" width="563" height="768" loading="lazy" decoding="async">
                     <span class="journal-chip-text">
                         <span class="journal-chip-name">International Journal of Research in Marketing</span>
-                        <span class="journal-chip-count"><strong>1</strong> paper</span>
+                        <span class="journal-chip-count"><strong>1</strong> Paper (2026)</span>
                     </span>
                 </button>
                 <button type="button" class="journal-chip" data-journal="jretail" aria-pressed="false" title="Show only Journal of Retailing papers">
                     <img src="jretail.png" alt="Journal of Retailing" width="563" height="768" loading="lazy" decoding="async">
                     <span class="journal-chip-text">
                         <span class="journal-chip-name">Journal of Retailing</span>
-                        <span class="journal-chip-count"><strong>1</strong> paper</span>
+                        <span class="journal-chip-count"><strong>1</strong> Paper (2021)</span>
                     </span>
                 </button>
             </div>
