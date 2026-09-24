@@ -554,7 +554,7 @@
             </div>
             <div style="display:flex; align-items:center; gap:.75rem; flex-wrap:wrap; margin-bottom:1rem;">
                 <button type="button" class="btn btn-secondary btn-sm" id="loadExampleBtn">Try example data</button>
-                <span class="section-hint" style="margin-bottom:0;">A small survey CSV, so you can explore before you have your own data.</span>
+                <span class="section-hint" style="margin-bottom:0;">The class coffee-shop survey: 600 customers, 7 variables. Every figure in the slides comes from it.</span>
             </div>
             <div class="preview-note" id="previewNote" style="display:none;"></div>
             <div id="previewWrap" style="display:none;">
@@ -581,7 +581,16 @@
                         <label for="varSecond" id="varSecondLabel">Second variable</label>
                         <select id="varSecond"></select>
                     </div>
+                    <div class="form-group" id="varValueWrap" style="display:none;">
+                        <label for="varValue" id="varValueLabel">Value variable (optional, else counts)</label>
+                        <select id="varValue"></select>
+                    </div>
+                    <div class="form-group" id="statWrap" style="display:none;">
+                        <label for="optStat">Summarize with</label>
+                        <select id="optStat"></select>
+                    </div>
                 </div>
+                <p class="section-hint" id="statHint" style="display:none;"></p>
 
                 <!-- ====================== 4. Design + figure ====================== -->
                 <h2 class="section-title mt">4. Design Your Figure</h2>
@@ -611,19 +620,29 @@
                 </div>
 
                 <div id="freqWrap" style="display:none;">
-                    <h3 style="margin:1.6rem 0 .25rem; font-size:1.05rem; color:var(--text-dark);">Frequency Table</h3>
-                    <p class="section-hint">The counts behind the figure. Percent is the share of non-missing observations.</p>
+                    <h3 id="freqTitle" style="margin:1.6rem 0 .25rem; font-size:1.05rem; color:var(--text-dark);">Frequency Table</h3>
+                    <p class="section-hint" id="freqHint">The counts behind the figure. Percent is the share of non-missing observations.</p>
                     <div class="result-table-wrap" style="max-height:320px;"><table class="result-table" id="freqTable"></table></div>
                 </div>
 
                 <details class="r-code">
-                    <summary>Show R code</summary>
+                    <summary>Show R code (short version, with comments)</summary>
                     <div class="code-wrap">
                         <button type="button" class="copy-btn" id="copyRBtn" aria-label="Copy R code">
                             <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
                             <span>Copy</span>
                         </button>
                         <pre id="rCodeBlock"></pre>
+                    </div>
+                </details>
+                <details class="r-code">
+                    <summary>Show the exact code behind this figure (advanced)</summary>
+                    <div class="code-wrap">
+                        <button type="button" class="copy-btn" id="copyRFullBtn" aria-label="Copy the exact R code">
+                            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                            <span>Copy</span>
+                        </button>
+                        <pre id="rCodeFull"></pre>
                     </div>
                 </details>
             </div>
@@ -880,19 +899,27 @@ res`);
             } else {
                 $('varSecondWrap').style.display = 'none';
             }
+            if (VALUE_SELECT.includes(chartType) && numericVars.length) {
+                fill($('varValue'), ['(none)'].concat(numericVars), true);
+                $('varValueLabel').textContent = 'Value variable (optional, else counts)';
+                $('varValueWrap').style.display = '';
+            } else {
+                $('varValueWrap').style.display = 'none';
+            }
             $('varHint').textContent = varHintFor(chartType);
+            updateStat();
         }
         function varHintFor(k) {
             switch (k) {
-                case 'bar': case 'lollipop': return 'Counts each level of the category. Add a numeric variable to plot its total instead of a count.';
-                case 'barGrouped': case 'barStacked': return 'Counts the first category, split by the second.';
-                case 'pie': case 'donut': return 'Shows each level of the category as a share of the whole.';
+                case 'bar': case 'lollipop': return 'Counts each level of the category. Add a numeric variable to show its average, total, spread or another summary instead.';
+                case 'barGrouped': case 'barStacked': return 'Counts the first category, split by the second. Add a value variable to summarize it instead.';
+                case 'pie': case 'donut': return 'Shows each level of the category as a share of the whole: a count, or the total of a value variable.';
                 case 'hist': case 'density': return 'Shows the shape of one numeric variable.';
                 case 'box': return 'Shows the spread of a numeric variable. Add a category to compare groups side by side.';
                 case 'violin': return 'Shows the full distribution of a numeric variable for each group.';
-                case 'line': case 'area': return 'Plots the variable in row order, or against a second numeric variable.';
+                case 'line': case 'area': return 'Plots the variable in row order, or against a second numeric variable. When that variable repeats (many customers share a week), summarize first.';
                 case 'scatter': return 'Plots two numeric variables against each other.';
-                case 'heatmap': return 'Counts every combination of the two categories.';
+                case 'heatmap': return 'Counts every combination of the two categories, or summarizes a value variable in each.';
                 default: return 'Only the columns that suit this figure are listed.';
             }
         }
@@ -987,6 +1014,58 @@ res`);
         const val = (id, d = '') => { const e = $(id); return e ? e.value : d; };
         const chk = (id, d = false) => { const e = $(id); return e ? e.checked : d; };
 
+        // ==================== SUMMARY STATISTICS ====================
+        // r: the function the figure runs. rs: the same thing in the student script. word: for comments.
+        const STATS = {
+            mean:   { label: 'Average (mean)',          y: v => `Average ${v}`,            r: 'function(z) mean(z, na.rm = TRUE)',        rs: 'mean',   word: 'average' },
+            sum:    { label: 'Sum (total)',             y: v => `Total ${v}`,              r: 'function(z) sum(z, na.rm = TRUE)',         rs: 'sum',    word: 'total' },
+            median: { label: 'Median',                  y: v => `Median ${v}`,             r: 'function(z) median(z, na.rm = TRUE)',      rs: 'median', word: 'median' },
+            min:    { label: 'Minimum',                 y: v => `Minimum ${v}`,            r: 'function(z) min(z, na.rm = TRUE)',         rs: 'min',    word: 'smallest value' },
+            max:    { label: 'Maximum',                 y: v => `Maximum ${v}`,            r: 'function(z) max(z, na.rm = TRUE)',         rs: 'max',    word: 'largest value' },
+            range:  { label: 'Range (max minus min)',   y: v => `Range of ${v}`,           r: 'function(z) diff(range(z, na.rm = TRUE))', rs: 'function(x) max(x) - min(x)', word: 'range (largest minus smallest)' },
+            var:    { label: 'Variance',                y: v => `Variance of ${v}`,        r: 'function(z) var(z, na.rm = TRUE)',         rs: 'var',    word: 'variance' },
+            sd:     { label: 'Standard deviation',      y: v => `Std. deviation of ${v}`,  r: 'function(z) sd(z, na.rm = TRUE)',          rs: 'sd',     word: 'standard deviation' },
+            n:      { label: 'Number of values',        y: v => `Number of ${v} values`,   r: 'function(z) sum(!is.na(z))',               rs: 'length', word: 'number of values' },
+            none:   { label: 'None: connect every row as it is' }
+        };
+        const ALL_STATS = ['mean', 'sum', 'median', 'min', 'max', 'range', 'var', 'sd', 'n'];
+        // Stacked bars and pies show parts of a whole, so only additive summaries make sense there.
+        const STATS_FOR = { bar: ALL_STATS, lollipop: ALL_STATS, barGrouped: ALL_STATS, heatmap: ALL_STATS,
+                            barStacked: ['sum', 'n'], pie: ['sum', 'n'], donut: ['sum', 'n'],
+                            // a line needs one y per x: with repeated x values (many diamonds share a carat) summarize first
+                            line: ['mean', 'median', 'sum', 'min', 'max', 'n', 'none'], area: ['mean', 'median', 'sum', 'min', 'max', 'n', 'none'] };
+        const VALUE_SELECT = ['barGrouped', 'barStacked', 'heatmap', 'pie', 'donut'];   // these get a third, optional value variable
+        function valueVar() {
+            const pick = id => { const el = $(id); return el && el.value && el.value !== '(none)' ? el.value : null; };
+            if (chartType === 'bar' || chartType === 'lollipop') return pick('varSecond');
+            if (chartType === 'line' || chartType === 'area') return pick('varSecond') ? $('varMain').value : null;
+            if (VALUE_SELECT.includes(chartType)) return pick('varValue');
+            return null;
+        }
+        function currentStat() {
+            const list = STATS_FOR[chartType];
+            if (!list || !valueVar()) return null;
+            const v = $('optStat').value;
+            if (v === 'none') return null;
+            return list.includes(v) ? v : list[0];
+        }
+        function updateStat() {
+            const list = STATS_FOR[chartType], vv = valueVar();
+            if (!list || !vv) { $('statWrap').style.display = 'none'; $('statHint').style.display = 'none'; return; }
+            const prev = $('optStat').value;
+            $('optStat').innerHTML = list.map(k => `<option value="${k}">${STATS[k].label}</option>`).join('');
+            $('optStat').value = list.includes(prev) ? prev : list[0];
+            $('statWrap').style.display = '';
+            $('statHint').style.display = '';
+            $('statHint').textContent = list.length === 2
+                ? `A ${CHARTS[chartType].name.toLowerCase()} shows parts of a whole, so ${vv} can only be summed or counted in each slice.`
+                : (chartType === 'line' || chartType === 'area')
+                ? `The line has one point at each value of ${$('varSecond').value}: choose how ${vv} is summarized there. Pick None when every row is already one point, as in a time series.`
+                : `Each bar shows one number per category: choose how ${vv} is summarized.`;
+        }
+        // decimals: an average or a spread rarely lands on a whole number
+        function decFor(o, stat) { return (o.dec === 0 && ['mean', 'median', 'var', 'sd'].includes(stat)) ? 2 : o.dec; }
+
         // ==================== R PLOT PROGRAM ====================
         function opts() {
             const [w, h] = val('optSize', '960x600').split('x').map(Number);
@@ -1049,7 +1128,7 @@ res`);
             return `labs(${parts.join(', ')})`;
         }
 
-        // Builds the R program. Returns { r, wantsFreq }.
+        // Builds the R program. Returns { r, file, tableKind, ... }. tableKind: 'freq', 'stat' or null.
         function buildPlotR(fmt) {
             const o = opts();
             const v1 = $('varMain') ? $('varMain').value : null;
@@ -1058,20 +1137,30 @@ res`);
             const k = chartType;
             const P = PALETTES[o.pal];
             const single = P.kind === 'single' ? rStr(P.colors[0]) : rStr(P.colors[0]);
-            const lbl = (expr) => o.pct ? `paste0(format(round(100*${expr}/sum(${expr}), ${o.dec}), nsmall=${o.dec}), "%")`
-                                        : `format(round(${expr}, ${o.dec}), nsmall=${o.dec}, big.mark=",")`;
-            let pre = '', plot = '', wantsFreq = false;
+            const vv = valueVar(), stat = currentStat(), ST = stat ? STATS[stat] : null;
+            const dec = decFor(o, stat);
+            const usePct = o.pct && (!stat || stat === 'sum' || stat === 'n');   // a share of an average means nothing
+            const lbl = (expr) => usePct ? `paste0(format(round(100*${expr}/sum(${expr}, na.rm = TRUE), ${dec}), nsmall=${dec}), "%")`
+                                         : `format(round(${expr}, ${dec}), nsmall=${dec}, big.mark=",")`;
+            let pre = '', plot = '', tableKind = null, groups = null;
+            // one summary number per group: drop rows with a missing value, then aggregate
+            const aggR = (gs) => {
+                groups = gs;
+                const keep = [vv].concat(gs.map(g => g[1])).map(v => `!is.na(df[[${rStr(v)}]])`).join(' & ');
+                tableKind = 'stat';
+                return `d0 = df[${keep}, , drop = FALSE]\n` +
+                       `pd = aggregate(list(value = d0[[${rStr(vv)}]]), by = list(${gs.map(g => `${g[0]} = d0[[${rStr(g[1])}]]`).join(', ')}), FUN = ${ST.r})`;
+            };
+            const valueLab = stat ? ST.y(vv) : 'Count';
 
             const flipLine = o.flip ? ' + coord_flip()' : '';
             const sortExpr = (col, val) => o.sort ? `reorder(${col}, ${o.flip ? '' : '-'}${val})` : col;
 
             if (k === 'bar' || k === 'lollipop') {
-                wantsFreq = !v2;
-                pre = v2
-                    ? `pd = aggregate(list(value = df[[${rStr(v2)}]]), by = list(cat = df[[${rStr(v1)}]]), FUN = function(z) sum(z, na.rm = TRUE))`
-                    : `pd = as.data.frame(table(cat = df[[${rStr(v1)}]]), stringsAsFactors = FALSE); names(pd)[2] = "value"`;
+                if (stat) pre = aggR([['cat', v1]]);
+                else { tableKind = 'freq'; pre = `pd = as.data.frame(table(cat = df[[${rStr(v1)}]]), stringsAsFactors = FALSE); names(pd)[2] = "value"`; }
                 pre += `\npd = pd[!is.na(pd$cat), ]`;
-                if (P.kind === 'highlight') pre += `\npd$hl = as.character(pd$value == max(pd$value))`;
+                if (P.kind === 'highlight') pre += `\npd$hl = as.character(pd$value == max(pd$value, na.rm = TRUE))`;
                 const fillAes = P.kind === 'single' ? '' :
                                 P.kind === 'highlight' ? ', fill = hl' :
                                 P.kind === 'ramp' ? ', fill = value' : ', fill = cat';
@@ -1082,9 +1171,11 @@ res`);
                 const sc = scaleCall(o, null, 'fill');
                 plot = `p = ggplot(pd, aes(${sortExpr('cat','value')}, value${fillAes})) + ${geom}`;
                 if (sc) plot += ` + ${sc}`;
-                if (o.labels) plot += ` + geom_text(aes(label = ${lbl('value')}), ${o.flip ? 'hjust = -0.25' : 'vjust = -0.5'}, size = ${(o.font*0.3).toFixed(2)}, fontface = "bold", colour = "#374151")`;
+                // a lollipop's dot is wider than a bar end, so its label sits further out
+                const just = k === 'lollipop' ? (o.flip ? 'hjust = -0.75' : 'vjust = -1.3') : (o.flip ? 'hjust = -0.25' : 'vjust = -0.5');
+                if (o.labels) plot += ` + geom_text(aes(label = ${lbl('value')}), ${just}, size = ${(o.font*0.3).toFixed(2)}, fontface = "bold", colour = "#374151")`;
                 plot += ` + scale_y_continuous(expand = expansion(mult = c(0, ${o.labels ? 0.16 : 0.05})))`;
-                plot += ` + ${labsCall(o, null, v2 ? v2 : 'Count')} + ${themeCall(o)}${flipLine}`;
+                plot += ` + ${labsCall(o, null, valueLab)} + ${themeCall(o)}${flipLine}`;
                 // Editorial: when the bars carry their own numbers, the value axis and its
                 // gridlines are saying the same thing a third time. Drop them.
                 if (o.theme === 'editorial' && o.labels) {
@@ -1093,27 +1184,28 @@ res`);
                             `axis.title.${o.flip ? 'x' : 'y'} = element_blank(), ` +
                             `axis.ticks = element_blank())`;
                 }
-                if (P.kind !== 'qual') plot += ` + theme(legend.position = "none")`;
+                plot += ` + theme(legend.position = "none")`;   // the axis already names every bar
 
             } else if (k === 'barGrouped' || k === 'barStacked') {
-                pre = `pd = as.data.frame(table(cat = df[[${rStr(v1)}]], grp = df[[${rStr(v2)}]]), stringsAsFactors = FALSE)\nnames(pd)[3] = "value"\npd = pd[!is.na(pd$cat) & !is.na(pd$grp), ]`;
+                pre = stat ? aggR([['cat', v1], ['grp', v2]])
+                           : `pd = as.data.frame(table(cat = df[[${rStr(v1)}]], grp = df[[${rStr(v2)}]]), stringsAsFactors = FALSE)\nnames(pd)[3] = "value"\npd = pd[!is.na(pd$cat) & !is.na(pd$grp), ]`;
                 const pos = k === 'barGrouped' ? 'position_dodge(width = 0.78)'
                           : (o.s100 ? 'position_fill()' : 'position_stack()');
                 const sc = scaleCall(o, null, 'fill') || `scale_fill_manual(values = rep(${rVec(PALETTES.okabe.colors)}, length.out = 12))`;
                 plot = `p = ggplot(pd, aes(cat, value, fill = grp)) + geom_col(position = ${pos}, width = 0.72) + ${sc}`;
-                if (o.labels && k === 'barGrouped') plot += ` + geom_text(aes(label = ${lbl('value')}), position = position_dodge(width = 0.78), ${o.flip ? 'hjust = -0.2' : 'vjust = -0.45'}, size = ${(o.font*0.27).toFixed(2)}, colour = "#374151")`;
+                if (o.labels && k === 'barGrouped') plot += ` + geom_text(aes(label = ${lbl('value')}), position = position_dodge(width = 0.78), ${o.flip ? 'hjust = -0.2' : 'vjust = -0.45'}, size = ${(o.font*0.27).toFixed(2)}, colour = "#374151") + scale_y_continuous(expand = expansion(mult = c(0, 0.1)))`;
                 if (k === 'barStacked' && o.s100) plot += ` + scale_y_continuous(labels = function(z) paste0(z*100, "%"))`;
-                plot += ` + ${labsCall(o, v1, o.s100 ? 'Share' : 'Count')} + ${themeCall(o)}${flipLine}`;
+                plot += ` + ${labsCall(o, v1, o.s100 ? (stat ? `Share of ${ST.y(vv).toLowerCase()}` : 'Share') : valueLab)} + ${themeCall(o)}${flipLine}`;
 
             } else if (k === 'pie' || k === 'donut') {
-                wantsFreq = true;
-                pre = `pd = as.data.frame(table(cat = df[[${rStr(v1)}]]), stringsAsFactors = FALSE); names(pd)[2] = "value"\npd = pd[!is.na(pd$cat), ]`;
+                if (stat) pre = aggR([['cat', v1]]);
+                else { tableKind = 'freq'; pre = `pd = as.data.frame(table(cat = df[[${rStr(v1)}]]), stringsAsFactors = FALSE); names(pd)[2] = "value"\npd = pd[!is.na(pd$cat), ]`; }
                 if (o.sort) pre += `\npd = pd[order(-pd$value), ]; pd$cat = factor(pd$cat, levels = pd$cat)`;
                 pre += `\npd$frac = pd$value / sum(pd$value)\npd$ymax = cumsum(pd$frac); pd$ymin = c(0, head(pd$ymax, -1))\npd$mid = (pd$ymax + pd$ymin) / 2`;
                 const sc = scaleCall(o, null, 'fill') || `scale_fill_manual(values = rep(${rVec(PALETTES.okabe.colors)}, length.out = 12))`;
                 const inner = k === 'donut' ? 2.2 : 0;
                 plot = `p = ggplot(pd, aes(ymax = ymax, ymin = ymin, xmax = 4, xmin = ${inner}, fill = cat)) + geom_rect(colour = "white", linewidth = .6) + coord_polar(theta = "y") + xlim(c(0, 4)) + ${sc}`;
-                if (o.labels) plot += ` + geom_text(aes(x = ${k === 'donut' ? 3.1 : 2.6}, y = mid, label = ${o.pct ? `paste0(round(100*frac, ${o.dec}), "%")` : `format(value, big.mark=",")`}), size = ${(o.font*0.26).toFixed(2)}, colour = "white", fontface = "bold")`;
+                if (o.labels) plot += ` + geom_text(aes(x = ${k === 'donut' ? 3.1 : 2.6}, y = mid, label = ${o.pct ? `paste0(round(100*frac, ${dec}), "%")` : `format(round(value, ${dec}), nsmall=${dec}, big.mark=",")`}), size = ${(o.font*0.26).toFixed(2)}, colour = "white", fontface = "bold")`;
                 plot += ` + ${labsCall(o, null, null)} + ${themeCall(o)} + theme(axis.text = element_blank(), axis.title = element_blank(), panel.grid = element_blank())`;
 
             } else if (k === 'hist') {
@@ -1146,14 +1238,16 @@ res`);
                 if (!grouped || P.kind === 'single') plot += ` + theme(legend.position = "none")`;
 
             } else if (k === 'line' || k === 'area') {
-                pre = v2
+                pre = stat
+                    ? aggR([['x', v2]]) + `\nnames(pd)[names(pd) == "value"] = "y"`
+                    : v2
                     ? `pd = data.frame(x = df[[${rStr(v2)}]], y = df[[${rStr(v1)}]]); pd = pd[!is.na(pd$x) & !is.na(pd$y), ]; pd = pd[order(pd$x), ]`
                     : `pd = data.frame(x = seq_len(nrow(df)), y = df[[${rStr(v1)}]]); pd = pd[!is.na(pd$y), ]`;
                 plot = k === 'area'
                     ? `p = ggplot(pd, aes(x, y)) + geom_area(fill = ${single}, alpha = .3) + geom_line(colour = ${single}, linewidth = 1.2)`
                     : `p = ggplot(pd, aes(x, y)) + geom_line(colour = ${single}, linewidth = 1.2)`;
                 if (o.points) plot += ` + geom_point(colour = ${single}, size = 2.4)`;
-                plot += ` + ${labsCall(o, v2 || 'Observation', v1)} + ${themeCall(o)} + theme(legend.position = "none")`;
+                plot += ` + ${labsCall(o, v2 || 'Observation', stat ? ST.y(v1) : v1)} + ${themeCall(o)} + theme(legend.position = "none")`;
 
             } else if (k === 'scatter') {
                 pre = `pd = data.frame(x = df[[${rStr(v1)}]], y = df[[${rStr(v2)}]]); pd = pd[!is.na(pd$x) & !is.na(pd$y), ]`;
@@ -1162,11 +1256,15 @@ res`);
                 plot += ` + ${labsCall(o, v1, v2)} + ${themeCall(o)} + theme(legend.position = "none")`;
 
             } else if (k === 'heatmap') {
-                pre = `pd = as.data.frame(table(a = df[[${rStr(v1)}]], b = df[[${rStr(v2)}]]), stringsAsFactors = FALSE)\nnames(pd)[3] = "value"\npd = pd[!is.na(pd$a) & !is.na(pd$b), ]`;
+                pre = stat ? aggR([['a', v1], ['b', v2]])
+                           : `pd = as.data.frame(table(a = df[[${rStr(v1)}]], b = df[[${rStr(v2)}]]), stringsAsFactors = FALSE)\nnames(pd)[3] = "value"\npd = pd[!is.na(pd$a) & !is.na(pd$b), ]`;
                 const ramp = PALETTES[o.pal].kind === 'ramp' ? PALETTES[o.pal].colors : ['#f7e9e9', '#990000'];
                 plot = `p = ggplot(pd, aes(a, b, fill = value)) + geom_tile(colour = "white", linewidth = 1.1) + scale_fill_gradientn(colours = ${rVec(ramp)})`;
-                if (o.labels) plot += ` + geom_text(aes(label = ${lbl('value')}), size = ${(o.font*0.27).toFixed(2)}, colour = "#111827")`;
+                // dark text on light tiles, white text on dark ones
+                if (o.labels) plot += ` + geom_text(aes(label = ${lbl('value')}, colour = ifelse(value > mean(range(value, na.rm = TRUE)), "white", "#111827")), size = ${(o.font*0.27).toFixed(2)}) + scale_colour_identity()`;
                 plot += ` + ${labsCall(o, v1, v2)} + ${themeCall(o)}`;
+                // the colour bar says what the tiles measure
+                plot += ` + guides(fill = guide_colourbar(title = ${rStr(valueLab)})) + theme(legend.title = element_text(size = ${(o.font*0.8).toFixed(1)}, colour = "#6b7280"))`;
             }
 
             const dev = fmt === 'svg'
@@ -1176,11 +1274,25 @@ res`);
                 : `png("/tmp/fig.png", width = ${o.w}, height = ${o.h}, res = 120)`;
             const file = fmt === 'svg' ? '/tmp/fig.svg' : fmt === 'jpeg' ? '/tmp/fig.jpg' : '/tmp/fig.png';
 
-            const freqBlock = wantsFreq ? `
+            let freqBlock = '  freq_csv = ""';
+            if (tableKind === 'freq') freqBlock = `
   ft = pd[, c("cat", "value")]
   names(ft) = c("Level", "Count")
   ft$Percent = round(100 * ft$Count / sum(ft$Count), 1)
-  freq_csv = paste(capture.output(write.csv(ft, row.names = FALSE)), collapse = "\\n")` : `  freq_csv = ""`;
+  freq_csv = paste(capture.output(write.csv(ft, row.names = FALSE)), collapse = "\\n")`;
+            else if (tableKind === 'stat') {
+                const by = `list(${groups.map(g => `${g[0]} = d0[[${rStr(g[1])}]]`).join(', ')})`;
+                const keys = groups.map(g => rStr(g[0])).join(', ');
+                freqBlock = `
+  ft = merge(${(k === 'line' || k === 'area') ? 'setNames(pd, c("x", "value"))' : 'pd'}, aggregate(list(n = d0[[${rStr(vv)}]]), by = ${by}, FUN = length))
+  ft = ft[, c(${keys}, "value"${stat === 'n' ? '' : ', "n"'})]
+  ft$value = round(ft$value, ${Math.max(dec, 2)})` +
+  (k === 'pie' || k === 'donut' ? `\n  ft$Percent = round(100 * ft$value / sum(ft$value), 1)` : '') + `
+  names(ft)[1:${groups.length + 1}] = c(${groups.map(g => rStr(g[1])).join(', ')}, ${rStr(ST.y(vv))})
+  if (${stat === 'n' ? 'FALSE' : 'TRUE'}) names(ft)[${groups.length + 2}] = "Values used"
+  freq_csv = paste(capture.output(write.csv(ft, row.names = FALSE)), collapse = "\\n")`;
+            }
+            freqBlock = `  # TABLE-START${freqBlock.startsWith('\n') ? '' : '\n'}${freqBlock}\n  # TABLE-END`;
 
             const r = `res = tryCatch({
   library(ggplot2)
@@ -1195,7 +1307,7 @@ ${freqBlock}
   paste0("OK\\n", freq_csv)
 }, error = function(e) paste0("ERR\\n", conditionMessage(e)))
 res`;
-            return { r, file, wantsFreq, o, v1, v2 };
+            return { r, file, tableKind, o, v1, v2, vv, stat, dec, usePct };
         }
 
         // ==================== DRAW ====================
@@ -1226,8 +1338,15 @@ res`;
                 $('plotFrame').style.display = '';
                 $('plotEmpty').style.display = 'none';
                 $('figToolbar').style.display = '';
-                renderFreq(txt.slice(3).replace(/^\n/, ''), built.wantsFreq);
-                $('rCodeBlock').textContent = buildDisplayR(built);
+                const tk = built.tableKind;
+                $('freqTitle').textContent = tk === 'stat' ? 'Summary Table' : 'Frequency Table';
+                $('freqHint').textContent = tk === 'stat'
+                    ? `The numbers behind the figure: the ${STATS[built.stat].word} of ${built.vv} in each group` +
+                      (built.stat === 'n' ? '.' : ', and how many values it is based on.')
+                    : 'The counts behind the figure. Percent is the share of non-missing observations.';
+                renderFreq(txt.slice(3).replace(/^\n/, ''), !!tk);
+                $('rCodeBlock').textContent = buildStudentR(built);
+                $('rCodeFull').textContent = buildDisplayR(built);
             } catch (err) {
                 $('plotErr').textContent = 'Something went wrong: ' + (err.message || err);
                 $('plotErr').style.display = '';
@@ -1256,10 +1375,7 @@ res`;
             const body = built.r
                 .replace(/^res = tryCatch\(\{\n/, '')
                 .replace(/\n\}, error = function\(e\)[\s\S]*$/, '')
-                .replace(/\n\s*freq_csv = [\s\S]*?collapse = "\\n"\)/, '')
-                .replace(/\n\s*freq_csv = ""/, '')
-                .replace(/\n\s*ft = pd\[[\s\S]*?\n\s*ft\$Percent[^\n]*\n/, '\n')
-                .replace(/\n\s*names\(ft\)[^\n]*\n/, '\n')
+                .replace(/\n\s*# TABLE-START[\s\S]*?# TABLE-END/, '')
                 .replace(/\n\s*paste0\("OK[^\n]*$/, '')
                 .replace(/\/tmp\/ch_data\.csv/, 'your_data.csv')
                 .replace(/\/tmp\/fig\.(png|jpg|svg)/, 'figure.$1');
@@ -1268,6 +1384,257 @@ res`;
 # You need ggplot2 once:  install.packages("ggplot2")
 
 ${body.trim()}`;
+        }
+
+        // ==================== R CODE FOR STUDENTS: SIMPLE, COMMENTED ====================
+        // The program above carries every style setting the preview needs. Students get a
+        // short script instead: numbered steps, one comment per line, ggplot2's standard look.
+        function buildStudentR(built) {
+            const o = built.o, v1 = built.v1, v2 = built.v2, k = chartType, P = PALETTES[o.pal];
+            const q = rStr;
+            const A = (v) => /^[A-Za-z.][A-Za-z0-9._]*$/.test(v) ? v : '`' + v + '`';   // a column inside aes()
+            const D = (v) => 'df$' + A(v);                                              // a column outside aes()
+            const main = P.colors[0];
+            const dec = built.dec, stat = built.stat, vv = built.vv, ST = stat ? STATS[stat] : null;
+            // the column that holds the summary number, named for what it is
+            const COL = { mean: 'average', sum: 'total', median: 'median', min: 'minimum', max: 'maximum',
+                          range: 'range', var: 'variance', sd: 'std_dev', n: 'n_values' };
+            const sc = stat ? COL[stat] : null;
+            const statNote = () => {
+                if (stat === 'range') out.push('# range = largest value minus smallest value, so we write that as a small function');
+                if (stat === 'n') out.push('# length() counts how many values each group has');
+                if (stat === 'var' || stat === 'sd') out.push('# a group with only one value has no variance, so R returns NA for it');
+            };
+            // aggregate(value ~ group, ...) drops rows with a missing value, then applies FUN within each group
+            const aggLine = (name, groupsF) => `${name} <- aggregate(${A(vv)} ~ ${groupsF}, data = df, FUN = ${ST.rs})`;
+            const numLabel = (col) => built.usePct ? 'paste0(percent, "%")' : (dec > 0 && stat && stat !== 'n' ? `round(${col}, ${dec})` : col);
+            const catColors = P.kind === 'qual' ? P.colors : PALETTES.okabe.colors;
+            const themeFn = { editorial: 'theme_minimal', minimal: 'theme_minimal', classic: 'theme_classic',
+                              light: 'theme_light', bw: 'theme_bw', gray: 'theme_gray', void: 'theme_void' }[o.theme] || 'theme_minimal';
+            const out = [], layers = [];
+            let step = 1;
+            const S = (text) => { out.push(''); out.push(`# Step ${++step}: ${text}`); };
+            const L = (code, note) => layers.push([code, note || '']);
+            // labs(): the titles. noAxes = true for a pie, which has no axes to label.
+            const labs = (defX, defY, noAxes) => {
+                const p = [];
+                if (o.title) p.push(`title = ${q(o.title)}`);
+                if (o.sub) p.push(`subtitle = ${q(o.sub)}`);
+                if (o.cap) p.push(`caption = ${q(o.cap)}`);
+                if (noAxes) { p.push('x = NULL', 'y = NULL', 'fill = NULL'); return `labs(${p.join(', ')})`; }
+                const x = o.xlab || defX, y = o.ylab || defY;
+                if (x) p.push(`x = ${q(x)}`);
+                if (y) p.push(`y = ${q(y)}`);
+                return `labs(${p.join(', ')})`;
+            };
+            const colorsLine = (cols, note) => {
+                S(note || 'pick the colors, one per group (add more if you have more groups)');
+                out.push(`my_colors <- ${rVec(cols)}`);
+            };
+            const flip = () => { if (o.flip) L('coord_flip()', 'turn the chart sideways'); };
+
+            out.push('# ' + '-'.repeat(64));
+            if (stat) {
+                const by = (k === 'barGrouped' || k === 'barStacked' || k === 'heatmap') ? `${v1} and ${v2}` : (k === 'line' || k === 'area') ? v2 : v1;
+                out.push(`# ${CHARTS[k].name}: the ${ST.word} of ${vv} ${(k === 'line' || k === 'area') ? 'at each' : 'for each'} ${by}, from the Charts tool`);
+            } else {
+                out.push(`# ${CHARTS[k].name} of ${v1}${v2 ? (k === 'scatter' ? ' and ' : ' by ') + v2 : ''}, from the Charts tool`);
+            }
+            out.push('# A short version of the code behind the figure, with comments.');
+            out.push("# It draws the same chart in ggplot2's standard style.");
+            out.push('# Run it in R or RStudio. The first time, install ggplot2 with:');
+            out.push('#   install.packages("ggplot2")');
+            out.push('# ' + '-'.repeat(64));
+            out.push('');
+            out.push('library(ggplot2)');
+            out.push('');
+            out.push("# Step 1: read the data (save your CSV file in R's working directory first)");
+            out.push('df <- read.csv("your_data.csv")');
+
+            let data = 'df', aes = '', legend = false, fillByCat = false;
+
+            if (k === 'bar' || k === 'lollipop') {
+                const y = stat ? sc : 'count';
+                if (stat) {
+                    S(`compute the ${ST.word} of ${vv} within each category of ${v1}`);
+                    statNote();
+                    out.push(aggLine('counts', A(v1)));
+                    out.push(`names(counts) <- c("category", "${sc}")`);
+                } else {
+                    S(`count how many rows fall in each category of ${v1}`);
+                    out.push(`counts <- as.data.frame(table(${D(v1)}))`);
+                    out.push(`names(counts) <- c("category", "count")`);
+                }
+                if (o.labels && built.usePct) out.push(`counts$percent <- round(100 * counts$${y} / sum(counts$${y}), ${dec})   # each category's share`);
+                data = 'counts';
+                const x = o.sort ? `reorder(category, ${o.flip ? '' : '-'}${y})` : 'category';
+                /* bars are painted with fill; a lollipop's stick and dot with colour */
+                const ak = k === 'bar' ? 'fill' : 'colour';
+                let fill = '';
+                if (P.kind === 'qual') { colorsLine(P.colors); fill = `, ${ak} = category`; fillByCat = true; }
+                if (P.kind === 'ramp') fill = `, ${ak} = ${y}`;
+                if (P.kind === 'highlight') fill = `, ${ak} = ${y} == max(${y})`;
+                aes = `aes(x = ${x}, y = ${y}${fill})`;
+                const constFill = P.kind === 'single' ? `fill = ${q(main)}` : '';
+                if (k === 'bar') L(`geom_col(${constFill})`, 'one bar per category');
+                else {
+                    const constCol = P.kind === 'single' ? `, colour = ${q(main)}` : '';
+                    L(`geom_segment(aes(xend = ${x}, y = 0, yend = ${y})${constCol})`, 'the stick');
+                    L(`geom_point(size = 3.5${constCol})`, 'the dot at the end');
+                }
+                if (P.kind === 'qual') L(`scale_${ak}_manual(values = my_colors)`, 'use our colors');
+                if (P.kind === 'ramp') L(`scale_${ak}_gradient(low = ${q(P.colors[0])}, high = ${q(P.colors[P.colors.length - 1])})`, 'taller bars get darker');
+                if (P.kind === 'highlight') L(`scale_${ak}_manual(values = c("TRUE" = ${q(P.colors[0])}, "FALSE" = ${q(P.colors[1])}))`, 'the tallest bar stands out');
+                if (o.labels) L(`geom_text(aes(label = ${numLabel(y)}), ${o.flip ? 'hjust = -0.3' : 'vjust = -0.5'})`, `the ${built.usePct ? 'share' : 'number'} on each bar`);
+                L(labs(v1, stat ? ST.y(vv) : 'Count'), 'the titles');
+                flip();
+                legend = false;
+                if (P.kind !== 'single') L('theme(legend.position = "none")', 'no legend: the axis already names the bars');
+
+            } else if (k === 'barGrouped' || k === 'barStacked') {
+                const y = stat ? sc : 'count';
+                if (stat) {
+                    S(`compute the ${ST.word} of ${vv} for every combination of ${v1} and ${v2}`);
+                    statNote();
+                    out.push(aggLine('counts', `${A(v1)} + ${A(v2)}`));
+                    out.push(`names(counts) <- c("category", "group", "${sc}")`);
+                } else {
+                    S(`count the rows for every combination of ${v1} and ${v2}`);
+                    out.push(`counts <- as.data.frame(table(${D(v1)}, ${D(v2)}))`);
+                    out.push(`names(counts) <- c("category", "group", "count")`);
+                }
+                colorsLine(catColors);
+                data = 'counts';
+                aes = `aes(x = category, y = ${y}, fill = group)`;
+                const pos = k === 'barGrouped' ? '"dodge"' : (o.s100 ? '"fill"' : '"stack"');
+                const why = k === 'barGrouped' ? 'groups side by side' : (o.s100 ? 'each bar stretched to 100%, to compare shares' : 'groups piled on top of each other');
+                L(`geom_col(position = ${pos})`, why);
+                L('scale_fill_manual(values = my_colors)', 'use our colors');
+                if (o.labels && k === 'barGrouped') L(`geom_text(aes(label = ${dec > 0 && stat && stat !== 'n' ? `round(${y}, ${dec})` : y}), position = position_dodge(width = 0.9), ${o.flip ? 'hjust = -0.3' : 'vjust = -0.5'})`, 'the number on each bar');
+                if (k === 'barStacked' && o.s100) L('scale_y_continuous(labels = scales::percent)', 'show the axis as percentages');
+                L(labs(v1, o.s100 ? 'Share' : (stat ? ST.y(vv) : 'Count')), 'the titles');
+                flip();
+                legend = true;
+
+            } else if (k === 'pie' || k === 'donut') {
+                const y = stat ? sc : 'count';
+                if (stat) {
+                    S(`${stat === 'sum' ? `add up ${vv}` : `count the values of ${vv}`} within each category of ${v1}, then turn the results into percentages`);
+                    statNote();
+                    out.push(aggLine('counts', A(v1)));
+                    out.push(`names(counts) <- c("category", "${sc}")`);
+                } else {
+                    S(`count each category of ${v1}, then turn the counts into percentages`);
+                    out.push(`counts <- as.data.frame(table(${D(v1)}))`);
+                    out.push(`names(counts) <- c("category", "count")`);
+                }
+                out.push(`counts$percent <- round(100 * counts$${y} / sum(counts$${y}), ${dec})`);
+                if (o.sort) out.push(`counts$category <- reorder(counts$category, -counts$${y})   # biggest slice first`);
+                colorsLine(catColors);
+                data = 'counts';
+                const donut = k === 'donut';
+                aes = `aes(x = ${donut ? 2 : '""'}, y = ${y}, fill = category)`;
+                L('geom_col(width = 1, colour = "white")', 'one bar, split into slices');
+                L('coord_polar(theta = "y")', 'bend the bar into a circle');
+                if (donut) L('xlim(0.5, 2.5)', 'leave the middle empty: a donut');
+                if (o.labels) L(`geom_text(aes(label = ${o.pct ? 'paste0(percent, "%")' : y}), position = position_stack(vjust = 0.5), colour = "white")`, 'the label in each slice');
+                L('scale_fill_manual(values = my_colors)', 'use our colors');
+                L(labs(null, null, true), 'the titles; a pie has no axes to label');
+                legend = true;
+
+            } else if (k === 'hist') {
+                aes = `aes(x = ${A(v1)})`;
+                L(`geom_histogram(bins = ${o.bins}, fill = ${q(main)}, colour = "white")`, `${o.bins} bins; white lines between the bars`);
+                L(labs(v1, 'Count'), 'the titles');
+
+            } else if (k === 'density') {
+                aes = `aes(x = ${A(v1)})`;
+                L(`geom_density(fill = ${q(main)}, colour = ${q(main)}, alpha = 0.3)`, 'a smoothed histogram; alpha makes the fill see-through');
+                L(labs(v1, 'Density'), 'the titles');
+
+            } else if (k === 'box' || k === 'violin') {
+                const grouped = !!v2;
+                if (grouped) colorsLine(catColors);
+                aes = grouped ? `aes(x = factor(${A(v2)}), y = ${A(v1)}, fill = factor(${A(v2)}))` : `aes(x = "", y = ${A(v1)})`;
+                if (grouped) out.push(`# factor() makes R treat ${v2} as groups, even if it is stored as numbers`);
+                if (k === 'violin') {
+                    L(`geom_violin(${grouped ? '' : `fill = ${q(main)}`})`, 'the width shows where values are common');
+                    L('geom_boxplot(width = 0.12, fill = "white")', 'a thin box plot inside');
+                } else {
+                    L(`geom_boxplot(${grouped ? '' : `fill = ${q(main)}`})`, 'box = middle 50%, line = median, whiskers = the rest');
+                    if (o.points) L('geom_jitter(width = 0.1, alpha = 0.4)', 'every observation as a dot, shaken sideways so they do not overlap');
+                }
+                if (grouped) L('scale_fill_manual(values = my_colors)', 'use our colors');
+                L(labs(grouped ? v2 : null, v1), 'the titles');
+                flip();
+                if (grouped) L('theme(legend.position = "none")', 'no legend: the axis already names the groups');
+
+            } else if (k === 'line' || k === 'area') {
+                let xv;
+                if (stat) {
+                    xv = A(v2);
+                    S(`compute the ${ST.word} of ${v1} at each value of ${v2} (aggregate also sorts by ${v2})`);
+                    statNote();
+                    out.push(aggLine('counts', A(v2)));
+                    out.push(`names(counts) <- c(${q(v2)}, "${sc}")`);
+                    data = 'counts';
+                }
+                else if (v2) { xv = A(v2); S(`sort the rows by ${v2}, so the line runs left to right`); out.push(`df <- df[order(${D(v2)}), ]`); }
+                else { xv = 'row'; S('number the rows 1, 2, 3, ... to use as the horizontal axis'); out.push('df$row <- seq_len(nrow(df))'); }
+                aes = `aes(x = ${xv}, y = ${stat ? sc : A(v1)})`;
+                if (k === 'area') L(`geom_area(fill = ${q(main)}, alpha = 0.3)`, 'shade the area under the line');
+                L(`geom_line(colour = ${q(main)}, linewidth = 1)`, 'connect the points');
+                if (o.points) L(`geom_point(colour = ${q(main)})`, 'mark each observation');
+                L(labs(v2 || 'Observation', stat ? ST.y(v1) : v1), 'the titles');
+
+            } else if (k === 'scatter') {
+                aes = `aes(x = ${A(v1)}, y = ${A(v2)})`;
+                L(`geom_point(colour = ${q(main)}, size = 2.5, alpha = 0.7)`, 'one dot per row; alpha shows where dots overlap');
+                if (o.trend) L('geom_smooth(method = "lm")', 'the least-squares line, with its confidence band');
+                L(labs(v1, v2), 'the titles');
+
+            } else if (k === 'heatmap') {
+                const y = stat ? sc : 'count';
+                if (stat) {
+                    S(`compute the ${ST.word} of ${vv} for every combination of ${v1} and ${v2}`);
+                    statNote();
+                    out.push(aggLine('counts', `${A(v1)} + ${A(v2)}`));
+                    out.push(`names(counts) <- c("row_cat", "col_cat", "${sc}")`);
+                } else {
+                    S(`count the rows for every combination of ${v1} and ${v2}`);
+                    out.push(`counts <- as.data.frame(table(${D(v1)}, ${D(v2)}))`);
+                    out.push(`names(counts) <- c("row_cat", "col_cat", "count")`);
+                }
+                if (o.labels && built.usePct) out.push(`counts$percent <- round(100 * counts$${y} / sum(counts$${y}), ${dec})`);
+                data = 'counts';
+                const ramp = P.kind === 'ramp' ? P.colors : ['#f7e9e9', '#990000'];
+                aes = `aes(x = row_cat, y = col_cat, fill = ${y})`;
+                L('geom_tile(colour = "white")', 'one tile per combination');
+                L(`scale_fill_gradient(low = ${q(ramp[0])}, high = ${q(ramp[ramp.length - 1])})`, `a bigger ${stat ? ST.word : 'count'} = a darker tile`);
+                if (o.labels) L(`geom_text(aes(label = ${numLabel(y)}))`, 'the number in each tile');
+                L(labs(v1, v2), 'the titles');
+                L(`labs(fill = ${q(stat ? ST.y(vv) : 'Count')})`, 'name the colour scale');
+                legend = true;
+            }
+
+            L(`${themeFn}(base_size = ${o.font})`, 'a clean look; base_size sets the text size');
+            if (legend && o.legend !== 'right') L(`theme(legend.position = ${q(o.legend)})`, `put the legend at the ${o.legend}`);
+            if (!o.grid) L('theme(panel.grid = element_blank())', 'no gridlines');
+
+            S('draw the chart, one layer at a time (each + adds a layer)');
+            const first = `ggplot(${data}, ${aes})`;
+            const rows = [[first, 'the data, and which columns go where']].concat(layers);
+            const width = Math.min(64, Math.max.apply(null, rows.map(r => r[0].length)) + 4);
+            rows.forEach((r, i) => {
+                const code = (i ? '  ' : '') + r[0] + (i < rows.length - 1 ? ' +' : '');
+                const pad = Math.max(1, width + 2 - code.length);
+                out.push(r[1] ? code + ' '.repeat(pad) + '# ' + r[1] : code);
+            });
+
+            S('save the figure as a PNG file (width and height in inches)');
+            out.push(`ggsave("figure.png", width = ${(o.w / 120).toFixed(1)}, height = ${(o.h / 120).toFixed(1)})`);
+            // a table of averages or spreads is not a table of counts: name it for what it holds
+            return stat ? out.join('\n').replace(/\bcounts\b/g, 'results') : out.join('\n');
         }
 
         // ==================== EXPORT ====================
@@ -1303,32 +1670,608 @@ ${body.trim()}`;
         }
 
         // ==================== EXAMPLE DATA ====================
-        const EXAMPLE_CSV = `respondent,bookstore,device,region,satisfaction,spend,visits
-1,Amazon,Laptop,Midwest,6,142.50,14
-2,Amazon,Phone,South,5,88.20,9
-3,Barnes & Noble,Laptop,Northeast,4,61.75,4
-4,Amazon,Tablet,West,7,210.00,21
-5,None,Phone,Midwest,3,0.00,0
-6,Amazon,Laptop,South,6,175.40,17
-7,Other,Tablet,West,5,54.10,6
-8,None,Phone,Northeast,2,12.00,1
-9,Amazon,Laptop,Midwest,7,320.75,26
-10,Barnes & Noble,Phone,South,5,97.30,8
-11,Amazon,Tablet,West,6,155.60,15
-12,None,Laptop,Midwest,3,22.40,2
-13,Amazon,Phone,Northeast,7,268.90,23
-14,Other,Laptop,South,4,44.00,5
-15,Amazon,Tablet,Midwest,6,188.25,16
-16,Barnes & Noble,Phone,West,5,73.80,7
-17,None,Laptop,Northeast,2,8.50,1
-18,Amazon,Phone,South,7,241.10,19
-19,Amazon,Laptop,West,6,134.70,13
-20,Other,Tablet,Midwest,4,39.95,3
-21,Amazon,Phone,Northeast,5,112.30,11
-22,Barnes & Noble,Laptop,South,6,86.60,8
-23,None,Tablet,West,3,17.20,2
-24,Amazon,Laptop,Midwest,7,295.40,24
-25,Amazon,Phone,Northeast,6,163.85,15`;
+        // The class dataset: a simulated exit survey of 600 customers at a three-store coffee chain.
+        const EXAMPLE_CSV = `week,store,channel,drink,order_total,wait_minutes,satisfaction
+1,Campus,Mobile app,Tea,7.64,5.8,5
+1,Campus,Mobile app,Latte,10.47,5.7,5
+1,Downtown,In store,Tea,14.97,7.4,6
+1,Downtown,In store,Drip coffee,8.51,9.7,4
+1,Eastside,In store,Latte,12.74,7.9,5
+1,Downtown,Mobile app,Drip coffee,3.48,6,5
+1,Eastside,In store,Drip coffee,9.68,7.8,5
+1,Campus,Mobile app,Cold brew,9.92,5.2,4
+1,Eastside,Mobile app,Tea,3.9,3.3,7
+1,Downtown,In store,Latte,5.99,7.4,5
+1,Eastside,In store,Latte,5.83,6.1,6
+1,Campus,Mobile app,Latte,29.27,5.7,6
+1,Campus,Mobile app,Latte,5.8,5.3,6
+1,Campus,Mobile app,Cold brew,5.19,7.3,4
+1,Campus,Mobile app,Drip coffee,6.12,6.7,4
+1,Campus,In store,Tea,4.05,10,5
+1,Eastside,In store,Drip coffee,3.77,5.4,6
+1,Campus,In store,Smoothie,7.41,10,5
+1,Campus,In store,Cold brew,4.82,12,4
+1,Campus,In store,Smoothie,7.51,10.3,5
+1,Campus,Mobile app,Latte,5.66,8.1,5
+1,Downtown,In store,Cold brew,9.04,7.3,5
+1,Downtown,In store,Cold brew,5.5,9.2,4
+1,Eastside,In store,Drip coffee,6.1,5.9,4
+1,Downtown,Mobile app,Smoothie,7.6,4.6,3
+1,Campus,Mobile app,Drip coffee,3.79,8.1,4
+1,Downtown,Mobile app,Smoothie,7.17,4.1,6
+1,Downtown,Mobile app,Cold brew,12.54,6.6,5
+1,Campus,Mobile app,Cold brew,11.41,5.5,4
+1,Eastside,In store,Drip coffee,2.98,5.5,6
+1,Campus,In store,Cold brew,10.78,10.8,6
+1,Campus,Mobile app,Smoothie,11.89,8,4
+1,Eastside,Mobile app,Latte,12.11,4.7,7
+1,Campus,Mobile app,Latte,25.08,7.6,5
+1,Downtown,In store,Drip coffee,3.21,8.9,4
+1,Downtown,Mobile app,Tea,4.3,5.8,5
+1,Campus,Mobile app,Cold brew,5.22,6.5,5
+1,Downtown,In store,Latte,6.01,8.4,4
+1,Campus,Mobile app,Latte,10.83,6.2,6
+1,Campus,Mobile app,Smoothie,6.99,6.8,4
+1,Eastside,In store,Tea,8.36,5.6,5
+1,Downtown,In store,Drip coffee,7.12,9.4,5
+1,Downtown,In store,Smoothie,7.05,10,4
+1,Downtown,Mobile app,Latte,11.34,6.4,4
+1,Campus,Mobile app,Smoothie,12.56,6,6
+2,Eastside,In store,Drip coffee,3.41,6.8,6
+2,Campus,Mobile app,Tea,4.58,4.9,5
+2,Downtown,In store,Drip coffee,10.71,7.5,7
+2,Downtown,In store,Drip coffee,10.4,7,5
+2,Campus,In store,Smoothie,12.44,6.5,6
+2,Downtown,In store,Cold brew,9.53,7.5,5
+2,Eastside,In store,Drip coffee,3.43,5.8,7
+2,Campus,Mobile app,Cold brew,11.76,6.2,5
+2,Downtown,In store,Latte,6.13,5.6,5
+2,Campus,Mobile app,Latte,12.14,5.2,6
+2,Eastside,In store,Cold brew,4.9,6.4,7
+2,Eastside,Mobile app,Drip coffee,3.25,4.7,7
+2,Campus,Mobile app,Smoothie,7.53,5.4,7
+2,Downtown,In store,Drip coffee,3.8,7.7,6
+2,Downtown,In store,Cold brew,5.36,7.6,5
+2,Campus,Mobile app,Tea,4.22,5.2,7
+2,Downtown,Mobile app,Tea,4.25,4.3,7
+2,Downtown,Mobile app,Latte,5.47,4.6,6
+2,Downtown,Mobile app,Latte,12.6,3.3,6
+2,Eastside,In store,Latte,12.15,4.4,6
+2,Campus,In store,Cold brew,5.26,8.1,4
+2,Downtown,In store,Smoothie,11.75,5.9,5
+2,Eastside,Mobile app,Tea,3.77,4.5,3
+2,Eastside,In store,Latte,13.12,5.3,6
+2,Downtown,In store,Drip coffee,3.76,5.3,7
+2,Campus,In store,Latte,16.15,7.7,6
+2,Eastside,In store,Drip coffee,15.75,7.9,5
+2,Campus,Mobile app,Cold brew,12.04,7.6,5
+2,Downtown,Mobile app,Smoothie,7.37,5,7
+2,Campus,Mobile app,Cold brew,22.23,4.6,3
+2,Campus,In store,Cold brew,5.1,7,5
+2,Eastside,In store,Latte,11.08,7.1,5
+2,Eastside,Mobile app,Latte,5.54,4.6,5
+2,Campus,In store,Drip coffee,10.95,6.9,6
+2,Campus,In store,Smoothie,14.78,6.8,5
+2,Eastside,In store,Smoothie,7.18,5.3,5
+2,Eastside,In store,Smoothie,7.25,5.2,5
+2,Campus,Mobile app,Smoothie,7.46,7.2,6
+2,Campus,In store,Latte,10.73,8.3,5
+2,Campus,In store,Smoothie,15.7,8.4,4
+3,Downtown,In store,Tea,3.7,5.9,5
+3,Downtown,In store,Smoothie,7.39,5.5,5
+3,Campus,Mobile app,Smoothie,7.81,4.4,6
+3,Campus,In store,Drip coffee,3.34,5.5,6
+3,Downtown,Mobile app,Latte,5.76,4.6,6
+3,Downtown,In store,Latte,5.75,6.7,5
+3,Eastside,In store,Cold brew,4.87,7.1,6
+3,Campus,Mobile app,Cold brew,5.24,4.8,5
+3,Eastside,In store,Drip coffee,3.78,4,6
+3,Campus,Mobile app,Smoothie,7.44,7.3,5
+3,Campus,Mobile app,Latte,6.01,6.3,5
+3,Campus,In store,Drip coffee,10.49,6.9,6
+3,Eastside,In store,Smoothie,10.73,6.6,4
+3,Campus,Mobile app,Latte,5.55,4.5,4
+3,Downtown,Mobile app,Cold brew,10.36,4,5
+3,Eastside,Mobile app,Drip coffee,19.07,3.1,5
+3,Downtown,In store,Smoothie,15.1,5.6,5
+3,Eastside,In store,Drip coffee,3.08,4.9,7
+3,Eastside,In store,Tea,7.81,5.8,5
+3,Campus,Mobile app,Cold brew,4.84,5.6,6
+3,Campus,In store,Cold brew,8.22,7.4,5
+3,Campus,In store,Smoothie,13.16,9.4,6
+3,Downtown,Mobile app,Latte,5.63,7.9,4
+3,Downtown,Mobile app,Tea,8.34,3.9,6
+3,Downtown,In store,Latte,10.97,5.5,6
+3,Downtown,Mobile app,Drip coffee,3.18,5.1,6
+3,Campus,In store,Drip coffee,6.18,5.2,6
+3,Campus,Mobile app,Latte,12.53,5.5,5
+3,Eastside,In store,Cold brew,5.12,4.9,6
+3,Campus,In store,Smoothie,14.42,7.7,6
+3,Downtown,Mobile app,Latte,24.76,4,6
+3,Eastside,Mobile app,Latte,6.38,3.6,5
+3,Eastside,In store,Latte,5.98,6.5,7
+3,Downtown,Mobile app,Drip coffee,3.48,4.5,6
+3,Downtown,In store,Drip coffee,7.98,6.7,6
+3,Downtown,Mobile app,Latte,10.89,4.1,6
+4,Eastside,In store,Latte,5.59,6.2,5
+4,Eastside,In store,Smoothie,7.7,4.8,7
+4,Downtown,In store,Drip coffee,3.38,5,7
+4,Downtown,In store,Cold brew,8.66,7.5,7
+4,Campus,In store,Cold brew,5.27,8.1,5
+4,Eastside,In store,Latte,5.64,4.3,6
+4,Downtown,Mobile app,Smoothie,7,3.6,6
+4,Eastside,Mobile app,Smoothie,7.73,4.3,6
+4,Downtown,Mobile app,Tea,8.82,5.8,5
+4,Downtown,In store,Latte,6.38,6.2,4
+4,Eastside,In store,Smoothie,21.39,4.4,7
+4,Eastside,In store,Cold brew,11.84,5.9,6
+4,Campus,In store,Tea,9.12,5.8,5
+4,Campus,Mobile app,Cold brew,4.88,6.4,5
+4,Downtown,In store,Cold brew,4.79,6.9,7
+4,Campus,In store,Latte,12.65,6.3,6
+4,Campus,In store,Latte,23.08,7.6,5
+4,Downtown,Mobile app,Cold brew,21.85,3.5,7
+4,Eastside,In store,Cold brew,5.29,6.4,5
+4,Eastside,Mobile app,Latte,5.55,3.8,5
+4,Downtown,In store,Cold brew,9.16,7.9,4
+4,Eastside,In store,Drip coffee,18.04,5.4,7
+4,Eastside,Mobile app,Cold brew,15.9,3.3,6
+4,Campus,Mobile app,Cold brew,5.14,9.4,4
+4,Campus,Mobile app,Latte,5.86,4.3,6
+4,Eastside,In store,Cold brew,5.23,6.2,7
+4,Campus,In store,Cold brew,15.72,6.2,5
+4,Eastside,In store,Latte,10.65,4.8,6
+4,Campus,Mobile app,Cold brew,5.3,4.7,5
+4,Eastside,In store,Latte,9.33,5.8,5
+4,Downtown,In store,Drip coffee,3.34,6.2,6
+4,Eastside,In store,Drip coffee,3.3,5.8,6
+4,Campus,In store,Latte,12.7,5.8,6
+4,Campus,In store,Latte,5.89,12.3,2
+4,Downtown,Mobile app,Drip coffee,3.27,3.1,5
+4,Downtown,Mobile app,Tea,10.7,4.7,6
+5,Campus,In store,Tea,8.2,9.9,4
+5,Downtown,In store,Drip coffee,9.69,4.7,5
+5,Downtown,In store,Cold brew,5.52,4.9,6
+5,Downtown,In store,Latte,21.17,10,4
+5,Downtown,Mobile app,Smoothie,7.87,5.6,6
+5,Eastside,In store,Drip coffee,3.8,4.6,7
+5,Campus,In store,Drip coffee,3.62,8.6,5
+5,Downtown,Mobile app,Tea,3.93,3.7,7
+5,Downtown,Mobile app,Latte,5.5,5,6
+5,Downtown,In store,Tea,7.36,4.6,6
+5,Campus,In store,Latte,5.8,6.3,6
+5,Campus,In store,Tea,4.47,5.6,7
+5,Campus,In store,Latte,11.96,7.8,5
+5,Campus,Mobile app,Latte,27.97,6.1,5
+5,Campus,Mobile app,Latte,11.47,8.1,4
+5,Eastside,In store,Drip coffee,6.98,9.6,4
+5,Eastside,In store,Latte,29.47,4.2,7
+5,Eastside,Mobile app,Latte,5.48,6.4,5
+5,Campus,Mobile app,Cold brew,15.73,6.2,5
+5,Campus,In store,Smoothie,15.06,5.6,7
+5,Downtown,Mobile app,Drip coffee,3.09,6.4,5
+5,Downtown,In store,Smoothie,7.35,7.1,6
+5,Downtown,Mobile app,Latte,12.68,6.5,5
+5,Campus,Mobile app,Latte,12.2,4.3,5
+5,Downtown,In store,Cold brew,4.99,5,6
+5,Downtown,In store,Drip coffee,3.05,7.7,4
+5,Eastside,In store,Drip coffee,3.76,4.1,5
+5,Campus,Mobile app,Latte,5.65,4,6
+5,Eastside,Mobile app,Drip coffee,3.35,3.1,6
+5,Campus,In store,Drip coffee,11.96,8,5
+5,Downtown,In store,Drip coffee,7.74,5.7,7
+5,Eastside,In store,Tea,14.29,6.2,6
+5,Campus,In store,Cold brew,10.76,5.8,4
+5,Campus,In store,Cold brew,4.79,8.6,5
+5,Campus,Mobile app,Drip coffee,9.34,4.1,6
+5,Downtown,In store,Drip coffee,3.64,9.2,4
+6,Downtown,Mobile app,Drip coffee,3.76,4.2,7
+6,Campus,In store,Cold brew,10.97,8.4,5
+6,Campus,In store,Latte,18.93,6,6
+6,Eastside,In store,Cold brew,9.05,6.4,7
+6,Downtown,In store,Smoothie,15.7,6.9,7
+6,Eastside,Mobile app,Drip coffee,11.01,5.7,4
+6,Downtown,Mobile app,Drip coffee,3.8,3.4,6
+6,Downtown,In store,Tea,3.94,6.5,5
+6,Downtown,In store,Latte,6.04,7.3,6
+6,Campus,Mobile app,Smoothie,13.63,6.6,4
+6,Downtown,Mobile app,Drip coffee,9.06,6.7,5
+6,Campus,In store,Smoothie,29.38,5.8,5
+6,Downtown,Mobile app,Latte,6.01,4.8,6
+6,Eastside,Mobile app,Latte,12.1,4.8,5
+6,Eastside,Mobile app,Smoothie,7.52,3.2,5
+6,Eastside,In store,Latte,11.6,6.9,6
+6,Eastside,Mobile app,Latte,24.16,5.4,6
+6,Downtown,In store,Cold brew,5.01,7.4,6
+6,Campus,Mobile app,Cold brew,8.77,4.9,5
+6,Campus,In store,Cold brew,10.08,8.4,5
+6,Campus,Mobile app,Tea,3.89,4.9,4
+6,Campus,Mobile app,Cold brew,10.17,4.4,7
+6,Campus,Mobile app,Latte,5.8,6.3,6
+6,Campus,Mobile app,Tea,9.14,6.4,5
+6,Campus,Mobile app,Latte,10.93,5.3,5
+6,Downtown,In store,Latte,18.16,5.5,6
+6,Eastside,In store,Drip coffee,9.84,5.2,5
+6,Campus,In store,Drip coffee,8.14,6.5,6
+6,Downtown,In store,Latte,6.06,6.2,6
+6,Campus,In store,Latte,10.11,6.6,7
+6,Campus,Mobile app,Smoothie,7.32,5.4,5
+6,Eastside,In store,Tea,13.53,5.4,5
+6,Campus,Mobile app,Cold brew,5.58,5.3,6
+6,Downtown,In store,Cold brew,5.31,5.9,6
+6,Campus,Mobile app,Smoothie,14.02,5.2,6
+6,Campus,Mobile app,Cold brew,10.7,6.2,5
+6,Campus,In store,Tea,10.28,5.5,6
+7,Downtown,Mobile app,Tea,7.94,13,3
+7,Downtown,Mobile app,Drip coffee,10.02,4.8,4
+7,Campus,In store,Latte,17.12,9.2,5
+7,Eastside,In store,Latte,5.49,5.2,6
+7,Eastside,In store,Tea,4.22,4.6,6
+7,Campus,In store,Latte,11.54,9.4,5
+7,Eastside,In store,Drip coffee,10.92,8.5,4
+7,Downtown,Mobile app,Latte,6.39,5.4,6
+7,Eastside,In store,Latte,6.28,5.9,6
+7,Eastside,In store,Drip coffee,3.57,7.8,5
+7,Campus,In store,Latte,6.18,8.5,4
+7,Campus,In store,Tea,8.76,8.7,6
+7,Downtown,In store,Latte,6.07,9.9,5
+7,Campus,Mobile app,Latte,17.44,6.2,5
+7,Campus,In store,Latte,5.62,8.2,6
+7,Campus,In store,Cold brew,5.23,8.1,4
+7,Campus,In store,Drip coffee,9.63,8.3,4
+7,Campus,In store,Drip coffee,8.85,8.7,6
+7,Eastside,In store,Cold brew,9.5,6.2,6
+7,Campus,Mobile app,Cold brew,11.34,8.1,5
+7,Campus,In store,Drip coffee,6.8,10.8,5
+7,Eastside,In store,Tea,4.26,6.5,4
+7,Eastside,Mobile app,Tea,13.02,3.6,6
+7,Eastside,In store,Drip coffee,3.27,7.4,6
+7,Campus,In store,Smoothie,11.99,8.6,4
+7,Campus,In store,Smoothie,7.77,10.7,5
+7,Downtown,In store,Drip coffee,3.46,8,4
+7,Campus,Mobile app,Latte,9.28,7.4,5
+7,Campus,Mobile app,Smoothie,13.54,7.4,4
+7,Eastside,In store,Tea,4.3,5.8,5
+7,Eastside,In store,Latte,10.52,5.9,7
+7,Campus,Mobile app,Smoothie,10.79,6.4,5
+7,Eastside,Mobile app,Tea,19.3,2.6,5
+7,Eastside,In store,Latte,5.59,5,7
+7,Downtown,In store,Smoothie,19.81,6.4,5
+7,Campus,Mobile app,Latte,5.97,5.7,5
+7,Eastside,In store,Cold brew,10.15,5.6,5
+7,Downtown,Mobile app,Latte,6.35,5.5,5
+7,Downtown,In store,Latte,5.95,7,6
+7,Campus,In store,Latte,6.32,8.8,4
+7,Campus,In store,Latte,5.75,9,5
+8,Campus,Mobile app,Cold brew,10.51,5.7,4
+8,Campus,In store,Drip coffee,6.66,11.1,5
+8,Downtown,Mobile app,Cold brew,10.62,5.3,5
+8,Campus,In store,Drip coffee,3.59,14,4
+8,Campus,In store,Cold brew,9.58,9.8,4
+8,Eastside,In store,Latte,11.88,5,6
+8,Campus,Mobile app,Drip coffee,8.03,6.2,6
+8,Downtown,In store,Drip coffee,3.44,8,6
+8,Eastside,In store,Drip coffee,9.37,6.5,4
+8,Downtown,In store,Drip coffee,6.32,7.3,5
+8,Campus,In store,Cold brew,14.49,11.4,2
+8,Campus,In store,Tea,3.74,12.2,3
+8,Campus,In store,Cold brew,17.32,11.8,3
+8,Campus,In store,Smoothie,20.5,10.7,3
+8,Downtown,In store,Drip coffee,7.36,12.3,1
+8,Downtown,In store,Drip coffee,6.38,8.9,6
+8,Campus,In store,Cold brew,20.52,10.5,3
+8,Campus,In store,Latte,9.31,10.3,4
+8,Campus,Mobile app,Drip coffee,3.74,8.2,4
+8,Campus,In store,Tea,4.51,11.8,4
+8,Eastside,In store,Latte,6.29,5.2,6
+8,Eastside,In store,Latte,5.56,5.6,6
+8,Campus,In store,Latte,11.94,11.4,4
+8,Downtown,In store,Latte,6.35,7.4,5
+8,Campus,In store,Tea,8.95,13,4
+8,Campus,In store,Drip coffee,9.1,12.7,4
+8,Campus,Mobile app,Latte,12.06,7.5,5
+8,Eastside,In store,Cold brew,9.64,5.9,7
+8,Campus,Mobile app,Latte,9.75,5.7,3
+8,Campus,In store,Latte,6.1,11.5,3
+8,Eastside,Mobile app,Drip coffee,6.84,6.8,5
+8,Campus,In store,Cold brew,5.15,10.5,5
+8,Eastside,Mobile app,Drip coffee,3.15,3.9,7
+8,Downtown,Mobile app,Drip coffee,7.46,5.8,5
+8,Downtown,In store,Drip coffee,3.05,8.4,6
+8,Campus,Mobile app,Cold brew,5.06,7.2,5
+8,Downtown,In store,Tea,4.36,8,3
+8,Campus,Mobile app,Tea,4.57,6.6,5
+8,Eastside,In store,Latte,5.55,5.9,7
+8,Eastside,In store,Tea,3.88,6.2,5
+8,Downtown,Mobile app,Latte,12.12,4.8,4
+8,Downtown,In store,Cold brew,5.26,8.5,7
+8,Downtown,In store,Latte,6.39,7.8,5
+8,Downtown,In store,Latte,11.46,7.3,7
+9,Eastside,In store,Smoothie,14.68,5.2,6
+9,Eastside,Mobile app,Cold brew,9.54,4.1,4
+9,Eastside,In store,Drip coffee,3.74,5.7,5
+9,Downtown,In store,Latte,12.76,5.5,7
+9,Downtown,In store,Tea,3.69,6.6,6
+9,Downtown,Mobile app,Latte,11.94,4.8,4
+9,Eastside,In store,Tea,4.13,5.3,6
+9,Campus,Mobile app,Cold brew,14.48,5.5,6
+9,Eastside,In store,Drip coffee,9.69,4.8,7
+9,Campus,In store,Cold brew,10.34,6.8,6
+9,Campus,Mobile app,Drip coffee,9.95,5.9,5
+9,Campus,In store,Cold brew,8.66,7.2,5
+9,Downtown,Mobile app,Cold brew,21.39,7.2,5
+9,Campus,In store,Latte,6.12,7,4
+9,Eastside,In store,Smoothie,14.54,7.8,5
+9,Downtown,Mobile app,Latte,12.22,4.5,7
+9,Downtown,In store,Latte,10.74,5.5,7
+9,Downtown,In store,Tea,14.72,10.9,5
+9,Eastside,In store,Drip coffee,9.38,4.3,6
+9,Downtown,In store,Drip coffee,8.33,5.3,6
+9,Downtown,In store,Drip coffee,7.34,5.8,6
+9,Downtown,Mobile app,Latte,17.91,4.6,7
+9,Eastside,In store,Drip coffee,7.95,7,5
+9,Eastside,In store,Tea,4.17,5.2,6
+9,Eastside,Mobile app,Smoothie,13.4,3.5,6
+9,Campus,In store,Cold brew,5.7,7.4,5
+9,Downtown,Mobile app,Latte,11.41,4.1,5
+9,Campus,In store,Cold brew,12.45,6.8,5
+9,Downtown,Mobile app,Latte,11.93,4.7,5
+9,Campus,Mobile app,Drip coffee,7.11,4.2,5
+9,Campus,Mobile app,Cold brew,5.18,5,6
+9,Campus,In store,Cold brew,15.24,8.9,4
+9,Eastside,In store,Latte,5.46,8.1,5
+9,Eastside,In store,Cold brew,4.96,4.6,7
+9,Downtown,Mobile app,Latte,10.91,3.8,6
+10,Campus,In store,Latte,17.82,6.1,6
+10,Downtown,In store,Latte,17.82,11.1,3
+10,Campus,In store,Cold brew,10.42,6.7,5
+10,Eastside,Mobile app,Smoothie,26.98,4.8,5
+10,Eastside,In store,Drip coffee,11.42,4.8,5
+10,Eastside,In store,Smoothie,12.02,5.3,7
+10,Downtown,In store,Drip coffee,7.07,6.6,6
+10,Downtown,In store,Latte,6.24,5.5,6
+10,Downtown,In store,Cold brew,5.21,7.4,6
+10,Downtown,Mobile app,Latte,15.21,3.6,7
+10,Eastside,In store,Latte,5.66,4.4,7
+10,Eastside,In store,Latte,6.4,4.8,7
+10,Campus,In store,Smoothie,7.81,6.4,3
+10,Campus,Mobile app,Cold brew,21.92,4.7,5
+10,Campus,Mobile app,Tea,3.97,4.2,6
+10,Campus,In store,Smoothie,29.52,6.2,6
+10,Eastside,In store,Tea,7.48,4.9,6
+10,Campus,Mobile app,Cold brew,9.72,7.1,5
+10,Campus,In store,Latte,6.36,5.8,6
+10,Campus,Mobile app,Cold brew,5.58,4,7
+10,Downtown,In store,Latte,9.86,4.9,6
+10,Campus,Mobile app,Latte,12.1,6.2,4
+10,Downtown,In store,Tea,8.05,7.3,4
+10,Downtown,In store,Drip coffee,6.93,6.2,6
+10,Campus,In store,Tea,4.22,7.5,5
+10,Downtown,In store,Tea,4.56,8.2,6
+10,Campus,In store,Latte,12.74,5.8,6
+10,Eastside,Mobile app,Drip coffee,7.19,4.1,6
+10,Campus,In store,Tea,3.69,6.8,4
+10,Downtown,In store,Cold brew,5.15,5.2,6
+10,Campus,In store,Latte,5.96,6.3,5
+10,Downtown,Mobile app,Latte,15.71,4.5,4
+10,Campus,In store,Cold brew,9.82,8.2,5
+10,Campus,Mobile app,Drip coffee,3.88,4.8,6
+10,Campus,In store,Cold brew,10.77,13,3
+11,Campus,Mobile app,Latte,12.2,3.9,6
+11,Downtown,In store,Latte,5.85,9.2,6
+11,Campus,Mobile app,Drip coffee,19.38,4.8,5
+11,Downtown,Mobile app,Tea,3.69,4,6
+11,Campus,In store,Latte,11.12,5.9,6
+11,Downtown,In store,Drip coffee,13.3,6.4,7
+11,Eastside,Mobile app,Latte,6.2,3.6,6
+11,Downtown,In store,Latte,6.38,5.2,7
+11,Eastside,In store,Latte,5.65,4.1,6
+11,Campus,In store,Smoothie,11.88,8.7,6
+11,Downtown,In store,Smoothie,7.73,6.3,4
+11,Campus,In store,Tea,4.5,6,6
+11,Campus,In store,Cold brew,5.25,9.4,6
+11,Eastside,In store,Smoothie,7.07,4.3,6
+11,Downtown,In store,Drip coffee,3.37,6.6,6
+11,Campus,In store,Tea,12.13,7.3,5
+11,Campus,In store,Drip coffee,3.25,5.8,5
+11,Campus,Mobile app,Smoothie,7.85,6.6,3
+11,Campus,Mobile app,Smoothie,7.16,6.8,5
+11,Campus,Mobile app,Tea,7.79,4,6
+11,Campus,In store,Tea,18.09,6.9,7
+11,Campus,Mobile app,Cold brew,9.22,4,5
+11,Campus,Mobile app,Smoothie,7.1,5.3,4
+11,Downtown,In store,Latte,11.44,7.8,7
+11,Downtown,In store,Tea,4.44,5.4,5
+11,Campus,Mobile app,Tea,7.48,6.5,4
+11,Campus,Mobile app,Cold brew,10.74,4.9,4
+11,Campus,Mobile app,Drip coffee,3.8,4.1,6
+11,Eastside,In store,Latte,5.9,8.5,4
+11,Downtown,Mobile app,Drip coffee,9.83,3.9,5
+11,Campus,In store,Cold brew,5.38,8.1,5
+11,Downtown,In store,Drip coffee,6.3,6.7,7
+11,Campus,In store,Tea,3.9,5.9,5
+11,Downtown,In store,Cold brew,5.17,6.9,6
+11,Campus,Mobile app,Latte,10.43,5.2,7
+11,Eastside,Mobile app,Smoothie,10.44,4.4,6
+11,Campus,In store,Cold brew,22.24,7.7,5
+12,Eastside,In store,Latte,18.76,8.3,4
+12,Eastside,In store,Latte,6.37,5,7
+12,Eastside,Mobile app,Smoothie,7.3,2.4,7
+12,Downtown,Mobile app,Latte,6.36,4.3,6
+12,Campus,In store,Latte,5.69,6.1,6
+12,Campus,In store,Smoothie,14.28,5.8,5
+12,Campus,In store,Latte,9.67,7.8,5
+12,Eastside,In store,Drip coffee,10.3,9.1,4
+12,Campus,In store,Latte,15.18,6.3,5
+12,Eastside,In store,Smoothie,7.76,6,5
+12,Downtown,Mobile app,Drip coffee,3.78,3.5,5
+12,Campus,Mobile app,Latte,5.88,4.1,6
+12,Downtown,In store,Drip coffee,11.5,4.7,6
+12,Eastside,In store,Tea,13.02,8.3,7
+12,Downtown,In store,Drip coffee,3.45,5.8,6
+12,Campus,Mobile app,Tea,13.14,7.4,4
+12,Campus,Mobile app,Smoothie,7.07,5,4
+12,Campus,Mobile app,Drip coffee,8.53,5.2,5
+12,Eastside,In store,Latte,5.92,5.4,5
+12,Downtown,Mobile app,Drip coffee,3.41,7.3,5
+12,Downtown,Mobile app,Drip coffee,10.03,3.4,7
+12,Campus,Mobile app,Latte,5.95,4.7,6
+12,Downtown,In store,Tea,4.39,6.3,5
+12,Campus,In store,Tea,13.02,6,7
+12,Eastside,In store,Latte,11.3,4.9,6
+12,Campus,In store,Latte,6.11,5.7,6
+12,Campus,In store,Cold brew,11.65,6.4,5
+12,Eastside,In store,Latte,11.82,6.6,4
+12,Campus,Mobile app,Tea,3.65,4.3,6
+12,Eastside,In store,Drip coffee,9.4,5.7,6
+12,Downtown,In store,Cold brew,5.18,7.2,6
+12,Campus,Mobile app,Tea,9.93,4.6,6
+12,Campus,Mobile app,Latte,6.35,5.9,6
+12,Eastside,Mobile app,Latte,11.06,4.7,5
+12,Downtown,Mobile app,Drip coffee,3.11,4.4,5
+12,Campus,Mobile app,Latte,5.6,4.4,7
+12,Eastside,In store,Latte,6.02,4.4,5
+13,Downtown,In store,Latte,5.63,7.1,5
+13,Downtown,In store,Smoothie,17.87,7.3,5
+13,Downtown,In store,Smoothie,14.3,5.2,7
+13,Downtown,In store,Smoothie,15.24,5.3,5
+13,Eastside,In store,Drip coffee,7.02,6.4,7
+13,Campus,Mobile app,Cold brew,16.47,5,5
+13,Eastside,In store,Smoothie,7.11,4.2,5
+13,Downtown,Mobile app,Latte,6.4,3.4,6
+13,Downtown,In store,Latte,5.53,5.3,5
+13,Downtown,Mobile app,Cold brew,9.92,5.3,5
+13,Eastside,In store,Drip coffee,3.89,4.9,5
+13,Campus,In store,Latte,5.57,6.9,5
+13,Campus,In store,Drip coffee,3.3,8.4,6
+13,Eastside,In store,Drip coffee,3.42,5.8,6
+13,Campus,Mobile app,Cold brew,5.37,6.1,7
+13,Eastside,Mobile app,Latte,5.61,4,6
+13,Downtown,Mobile app,Cold brew,5.17,3.6,5
+13,Campus,Mobile app,Cold brew,5.67,4.4,7
+13,Campus,Mobile app,Smoothie,7.52,5.5,6
+13,Campus,Mobile app,Latte,5.65,4.6,7
+13,Campus,In store,Latte,18.21,7.5,5
+13,Campus,In store,Cold brew,9.82,7.9,6
+13,Downtown,Mobile app,Latte,6.14,3.6,7
+13,Downtown,Mobile app,Cold brew,14.24,3.9,7
+13,Campus,In store,Smoothie,7.05,6.8,4
+13,Downtown,Mobile app,Latte,11,4.5,6
+13,Campus,In store,Cold brew,25.29,7.8,5
+13,Eastside,In store,Drip coffee,6.12,4.8,5
+13,Campus,Mobile app,Latte,19.02,5.5,5
+13,Campus,Mobile app,Latte,10.15,6.8,5
+13,Campus,Mobile app,Smoothie,15.12,4.9,7
+13,Downtown,In store,Latte,11.44,9,7
+13,Downtown,In store,Latte,6.18,5.4,6
+13,Campus,In store,Cold brew,14.94,7.3,5
+14,Downtown,Mobile app,Drip coffee,3.5,4.6,5
+14,Downtown,Mobile app,Latte,18.83,4.3,7
+14,Eastside,In store,Drip coffee,7.24,5.8,6
+14,Campus,Mobile app,Drip coffee,3.51,5,4
+14,Eastside,In store,Cold brew,9.56,5.8,6
+14,Eastside,In store,Tea,7.84,5.1,5
+14,Eastside,In store,Latte,5.98,4,7
+14,Campus,Mobile app,Drip coffee,3.55,5.1,6
+14,Downtown,In store,Drip coffee,3.14,7.7,7
+14,Campus,Mobile app,Latte,6.07,4.6,6
+14,Downtown,In store,Drip coffee,13.47,4.7,5
+14,Eastside,In store,Drip coffee,3.44,5.1,6
+14,Eastside,In store,Smoothie,13.03,6.2,6
+14,Eastside,Mobile app,Latte,5.48,4.5,7
+14,Eastside,In store,Latte,28.72,6.5,6
+14,Downtown,In store,Drip coffee,6.24,6.7,4
+14,Downtown,In store,Drip coffee,7.18,5.8,7
+15,Eastside,In store,Drip coffee,6.26,6.4,5
+15,Downtown,In store,Tea,4.02,7.9,5
+15,Campus,In store,Drip coffee,3.77,11.1,5
+15,Eastside,Mobile app,Tea,8.58,4.9,5
+15,Downtown,In store,Drip coffee,3.77,8.2,5
+15,Downtown,Mobile app,Latte,6.37,8.4,4
+15,Campus,In store,Latte,5.7,13,3
+15,Campus,In store,Latte,12.22,10.7,3
+15,Eastside,In store,Latte,5.54,7.9,5
+15,Eastside,Mobile app,Drip coffee,7.16,5.8,5
+15,Campus,Mobile app,Cold brew,9.68,8.4,4
+15,Downtown,Mobile app,Latte,5.7,6.2,6
+15,Campus,Mobile app,Drip coffee,10.84,6.2,6
+15,Eastside,Mobile app,Tea,21.84,3.8,5
+15,Campus,Mobile app,Drip coffee,12.52,6.1,4
+15,Campus,Mobile app,Latte,17.13,7.2,6
+15,Campus,Mobile app,Smoothie,7.56,7.4,6
+15,Eastside,In store,Smoothie,7.02,5.2,7
+15,Downtown,In store,Smoothie,7.74,9,5
+15,Downtown,In store,Latte,11.4,7.9,4
+15,Downtown,In store,Drip coffee,11.16,8,5
+15,Downtown,Mobile app,Latte,10.88,6.4,5
+15,Campus,In store,Smoothie,21.03,11.9,2
+15,Eastside,Mobile app,Tea,8.28,3.8,6
+15,Eastside,In store,Cold brew,5.45,7.4,7
+15,Downtown,Mobile app,Smoothie,11.54,5.2,5
+15,Eastside,Mobile app,Drip coffee,14.12,3.9,7
+15,Downtown,In store,Drip coffee,3.49,8.3,6
+15,Campus,In store,Cold brew,5.4,12.3,4
+15,Eastside,In store,Cold brew,4.78,6.7,5
+15,Campus,In store,Cold brew,16.64,13.7,4
+15,Campus,Mobile app,Tea,9.89,9.5,4
+15,Campus,Mobile app,Cold brew,5.58,6.5,5
+15,Downtown,In store,Latte,5.47,8.5,5
+15,Eastside,In store,Tea,4.3,6.8,4
+15,Downtown,In store,Latte,12.34,7.4,6
+15,Downtown,In store,Latte,11.24,8.1,5
+15,Campus,In store,Tea,4.6,12.7,4
+15,Downtown,Mobile app,Latte,17.82,7.8,5
+15,Downtown,In store,Tea,4.37,13.1,3
+15,Downtown,In store,Smoothie,7.12,8.8,5
+15,Downtown,Mobile app,Tea,8.2,8.1,4
+15,Downtown,In store,Latte,5.71,8.4,5
+15,Campus,In store,Cold brew,10.22,13,3
+15,Eastside,In store,Drip coffee,6.9,5.9,4
+16,Downtown,Mobile app,Cold brew,21.84,5.8,6
+16,Eastside,In store,Cold brew,5.67,6.7,5
+16,Campus,Mobile app,Cold brew,9.81,6.5,6
+16,Campus,In store,Latte,22.16,13.7,2
+16,Eastside,In store,Latte,18.5,6.9,5
+16,Downtown,In store,Cold brew,9.25,10.6,4
+16,Downtown,Mobile app,Latte,5.91,6.5,4
+16,Downtown,In store,Drip coffee,3.55,9,6
+16,Downtown,Mobile app,Drip coffee,3.38,7.9,4
+16,Eastside,In store,Smoothie,13.06,6.6,6
+16,Eastside,In store,Cold brew,9.48,5.8,6
+16,Campus,Mobile app,Latte,11.55,10.6,3
+16,Eastside,Mobile app,Cold brew,5.17,4.9,5
+16,Eastside,In store,Latte,30.17,6.2,7
+16,Eastside,Mobile app,Drip coffee,9.49,3,6
+16,Eastside,In store,Tea,4.4,6.1,7
+16,Downtown,In store,Drip coffee,3.66,9.6,6
+16,Campus,Mobile app,Latte,6.14,8.3,5
+16,Campus,In store,Cold brew,5.65,13.9,3
+16,Campus,Mobile app,Drip coffee,6.96,8.3,5
+16,Campus,Mobile app,Tea,7.98,7.5,5
+16,Downtown,Mobile app,Latte,12.42,8.9,4
+16,Campus,In store,Latte,5.9,13,2
+16,Eastside,In store,Latte,5.53,7.6,6
+16,Eastside,In store,Tea,9,6.9,7
+16,Eastside,In store,Drip coffee,7.34,6.5,7
+16,Downtown,Mobile app,Drip coffee,11.86,9.2,5
+16,Eastside,In store,Latte,11.53,7.7,4
+16,Campus,In store,Cold brew,5.33,13.3,3
+16,Campus,Mobile app,Latte,5.78,6.8,3
+16,Downtown,In store,Tea,4.16,10.3,4
+16,Campus,Mobile app,Drip coffee,14.72,6.4,5
+16,Eastside,Mobile app,Cold brew,5.4,4.4,6
+16,Eastside,In store,Latte,5.72,5.6,6
+16,Downtown,In store,Cold brew,16.11,8.4,4
+16,Downtown,In store,Drip coffee,2.97,11.7,3
+16,Campus,In store,Smoothie,14.38,12.1,3
+16,Downtown,In store,Drip coffee,8.91,8.1,4
+16,Campus,In store,Cold brew,5.23,14.7,4
+16,Downtown,Mobile app,Drip coffee,12.4,5.4,5
+16,Eastside,In store,Tea,9.94,6.5,7
+16,Campus,Mobile app,Latte,5.47,8.3,5
+16,Eastside,In store,Drip coffee,20.01,9.4,6
+16,Downtown,Mobile app,Latte,18.84,4.6,5
+16,Campus,In store,Cold brew,9.84,11.7,5`;
 
         // ==================== WIRING ====================
         const uploadArea = $('uploadArea'), fileInput = $('fileInput');
@@ -1339,8 +2282,10 @@ ${body.trim()}`;
         uploadArea.addEventListener('drop', e => { e.preventDefault(); uploadArea.classList.remove('dragover'); if (e.dataTransfer.files.length) handleFile(e.dataTransfer.files[0]); });
         fileInput.addEventListener('change', e => { if (e.target.files.length) handleFile(e.target.files[0]); e.target.value = ''; });
         $('loadExampleBtn').addEventListener('click', () => loadCsvText(EXAMPLE_CSV));
-        $('varMain').addEventListener('change', draw);
-        $('varSecond').addEventListener('change', draw);
+        $('varMain').addEventListener('change', () => { updateStat(); draw(); });
+        $('varSecond').addEventListener('change', () => { updateStat(); draw(); });
+        $('varValue').addEventListener('change', () => { updateStat(); draw(); });
+        $('optStat').addEventListener('change', draw);
         $('downloadFigBtn').addEventListener('click', downloadFigure);
         $('downloadFreqBtn').addEventListener('click', () => downloadCSV(lastFreqCSV, 'frequency-table.csv'));
         document.addEventListener('change', e => {
@@ -1349,6 +2294,11 @@ ${body.trim()}`;
         $('copyRBtn').addEventListener('click', async () => {
             try { await navigator.clipboard.writeText($('rCodeBlock').textContent);
                   const s = $('copyRBtn').querySelector('span'); s.textContent = 'Copied'; setTimeout(() => s.textContent = 'Copy', 1600); }
+            catch { showStatus('Could not copy to the clipboard.', 'error', 3000); }
+        });
+        $('copyRFullBtn').addEventListener('click', async () => {
+            try { await navigator.clipboard.writeText($('rCodeFull').textContent);
+                  const s = $('copyRFullBtn').querySelector('span'); s.textContent = 'Copied'; setTimeout(() => s.textContent = 'Copy', 1600); }
             catch { showStatus('Could not copy to the clipboard.', 'error', 3000); }
         });
 

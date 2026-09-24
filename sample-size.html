@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Descriptive Statistics, Confidence Intervals, Sample Size and Charts | Koray Cosguner</title>
+    <title>Descriptive Statistics, Confidence Intervals and Sample Size | Koray Cosguner</title>
     <meta name="robots" content="noindex,nofollow">
-    <meta name="description" content="Descriptive statistics from typed values, a frequency table or a CSV; confidence intervals for a mean; sample size for a target sampling error and the ad hoc rules; bar, pie and line charts. Every answer shows the arithmetic.">
+    <meta name="description" content="Descriptive statistics from typed values, a frequency table or a CSV; confidence intervals for a mean; sample size for a target sampling error. Every answer shows the arithmetic.">
     <link rel="icon" type="image/jpeg" href="KCFavicon.jpg">
 
     <!-- Google Analytics -->
@@ -364,9 +364,9 @@
     
         /* ================= four-tab toolkit ================= */
         .tk { width: 100%; max-width: 1100px; margin: 0 auto 3rem; padding: 0 1.25rem; box-sizing: border-box; }
-        .tk-panel, .tk-chartwrap > *, .tk-card { min-width: 0; }
+        .tk-panel, .tk-card { min-width: 0; }
         .tk [hidden] { display: none !important; }
-        .tk-tabs { display: grid; grid-template-columns: repeat(4, 1fr); gap: .45rem; padding: .45rem;
+        .tk-tabs { display: grid; grid-template-columns: repeat(3, 1fr); gap: .45rem; padding: .45rem;
                    background: #f3f4f6; border: 1px solid var(--border); border-radius: 16px; margin-bottom: 1.1rem;
                    position: sticky; top: var(--tk-top, .5rem); z-index: 150; box-shadow: var(--shadow-sm); }
         .tk-tab { display: flex; align-items: center; gap: .7rem; padding: .7rem .9rem; border: 0; border-radius: 12px;
@@ -382,13 +382,13 @@
         .tk-tab .tx { display: flex; flex-direction: column; font-weight: 700; font-size: .98rem; line-height: 1.2; }
         .tk-tab .tx small { font-size: .7rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: #9ca3af; }
         .tk-tab[aria-selected="true"] .tx small { color: rgba(153,0,0,.6); }
-        @media (max-width: 820px) { .tk-tabs { grid-template-columns: 1fr 1fr; position: static; } }
+        @media (max-width: 620px) { .tk-tabs { grid-template-columns: 1fr; position: static; } }
         @media (max-width: 460px) { .tk-tab .ic { display: none; } }
 
         .tk-conv { margin-bottom: 1rem; }
         .tk-panel { background: #fff; border: 1px solid var(--border); border-radius: 18px; padding: 1.8rem 1.8rem 2rem;
                     box-shadow: var(--shadow-md); }
-        @media (max-width: 620px) { .tk { padding: 0; } .tk-panel { padding: 1.1rem .8rem 1.3rem; } .tk-card { padding: .9rem .75rem; } .tk-chartview { padding: .7rem .5rem; } }
+        @media (max-width: 620px) { .tk { padding: 0; } .tk-panel { padding: 1.1rem .8rem 1.3rem; } .tk-card { padding: .9rem .75rem; } }
         .tk-head h2 { font-size: 1.45rem; color: var(--text-dark); margin: 0 0 .35rem; font-weight: 800; }
         .tk-head p { color: var(--text-light); font-size: .95rem; margin: 0 0 1.2rem; max-width: 62rem; }
         .tk-head.sub { margin-top: 2.2rem; padding-top: 1.6rem; border-top: 1px solid var(--border); }
@@ -488,20 +488,6 @@
         .tk-ciline { margin-top: 1rem; }
         .tk-ciline svg { width: 100%; max-width: 640px; height: auto; display: block; }
 
-        /* charts */
-        .tk-chartwrap { display: grid; grid-template-columns: minmax(0, 1fr); gap: 1.1rem; align-items: start; }
-        @media (max-width: 900px) { .tk-chartwrap { grid-template-columns: 1fr; } }
-        .tk-chartwrap .tk-card { margin-top: 0; }
-        .tk-chartview { background: #fff; }
-        .tk-chartctl { display: flex; flex-wrap: wrap; gap: .5rem; align-items: center; }
-        .tk-chartctl select { padding: .4rem .6rem; border: 1.5px solid var(--border-strong); border-radius: 8px; font-family: inherit; font-size: .85rem; }
-        .tk-title { width: 100%; margin-top: .8rem; padding: .45rem .6rem; border: 1.5px solid transparent; border-radius: 8px;
-                    font-weight: 700; font-size: 1.05rem; line-height: 1.3; font-family: inherit; font-family: inherit; color: var(--text-dark); background: transparent; }
-        .tk-title:hover { border-color: var(--border); }
-        .tk-svghost svg { width: 100%; height: auto; display: block; }
-        .tk-tip { position: fixed; z-index: 50; pointer-events: none; background: #1e293b; color: #fff; font-size: .82rem; padding: .45rem .65rem;
-                  border-radius: 7px; box-shadow: var(--shadow-md); white-space: nowrap; }
-        .tk-tip b { color: #fecaca; }
     </style>
 </head>
 <body>
@@ -557,12 +543,11 @@
 
     <main>
         <section class="hero">
-            <h1>Descriptive Statistics, Confidence Intervals, Sample Size and Charts</h1>
+            <h1>Descriptive Statistics, Confidence Intervals and Sample Size</h1>
             <ul>
                 <li><b>Descriptive Statistics:</b> type your numbers, enter values with frequencies, or upload a CSV, and get the mode, median, mean, range, variance and standard deviation</li>
                 <li><b>Confidence Intervals:</b> build an interval for a population mean, at 90%, 95% and 99%</li>
-                <li><b>Sample Size:</b> the sample needed for a target sampling error, plus the ad hoc rules</li>
-                <li><b>Charts:</b> bar, pie and line charts of a frequency table, with a PNG or SVG download</li>
+                <li><b>Sample Size:</b> the sample needed for a target sampling error</li>
                 <li>Every answer shows the arithmetic, so it can be checked by hand or reproduced on an exam</li>
             </ul>
         </section>
@@ -594,10 +579,6 @@
                     <span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="8" cy="8" r="2.4" fill="currentColor"/><circle cx="16" cy="8" r="2.4" fill="currentColor"/><circle cx="8" cy="16" r="2.4" fill="currentColor"/><circle cx="16" cy="16" r="2.4" fill="currentColor"/></svg></span>
                     <span class="tx"><small>Step 3</small>Sample Size</span>
                 </button>
-                <button class="tk-tab" role="tab" id="tab-charts" aria-controls="panel-charts" data-tab="charts">
-                    <span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 20V11M12 20V5M19 20v-7" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></svg></span>
-                    <span class="tx"><small>Step 4</small>Charts</span>
-                </button>
             </div>
 
             <div class="ss-conv tk-conv" id="zconvBar" hidden>
@@ -623,7 +604,7 @@
 
                 <div class="tk-card" data-ds-pane="type">
                     <label for="dsData" class="tk-label">Observations <span>separated by commas, spaces or new lines; a column copied from Excel works too</span></label>
-                    <textarea id="dsData" class="ds-data" spellcheck="false">5, 6, 7, 3, 5, 4</textarea>
+                    <textarea id="dsData" class="ds-data" spellcheck="false" placeholder="For example: 12, 15, 9, 20, 15"></textarea>
                 </div>
 
                 <div class="tk-card" data-ds-pane="freq" hidden>
@@ -646,13 +627,6 @@
                 </div>
 
                 <div class="tk-row">
-                    <div class="tk-examples">
-                        <span>Class examples</span>
-                        <button type="button" class="tk-chip" data-ds-example="grades">Ph.D. midterm grades</button>
-                        <button type="button" class="tk-chip" data-ds-example="symphony">Symphony ticket holders</button>
-                        <button type="button" class="tk-chip" data-ds-example="engineers">Design engineers (frequencies)</button>
-                        <button type="button" class="tk-chip" data-ds-example="fastfood">Fast-food visits</button>
-                    </div>
                     <div class="radio-row" role="radiogroup" aria-label="Population or sample">
                         <label for="dsSample"><input type="radio" id="dsSample" name="dskind" value="sample" checked> Sample (divide by n &minus; 1)</label>
                         <label for="dsPop"><input type="radio" id="dsPop" name="dskind" value="population"> Whole population (divide by N)</label>
@@ -665,7 +639,6 @@
                 <div class="tk-actions" id="dsActions" hidden>
                     <button type="button" id="dsToCi" class="btn btn-primary btn-sm">Use in Confidence Intervals &rarr;</button>
                     <button type="button" id="dsToN" class="btn btn-secondary btn-sm">Use for Sample Size &rarr;</button>
-                    <button type="button" id="dsToChart" class="btn btn-secondary btn-sm">Chart the frequencies &rarr;</button>
                 </div>
             </section>
 
@@ -680,15 +653,15 @@
                     <div class="form-row four">
                         <div class="form-group">
                             <label for="ciMean">Sample mean (<span style="text-decoration:overline;">x</span>)</label>
-                            <input type="number" id="ciMean" value="0" step="any">
+                            <input type="number" id="ciMean" step="any" placeholder="x&#772;">
                         </div>
                         <div class="form-group">
                             <label for="ciSd">Standard deviation (s or &sigma;)</label>
-                            <input type="number" id="ciSd" value="1.41" step="any" min="0">
+                            <input type="number" id="ciSd" step="any" min="0" placeholder="s">
                         </div>
                         <div class="form-group">
                             <label for="ciN">Sample size (n)</label>
-                            <input type="number" id="ciN" value="9" step="1" min="2">
+                            <input type="number" id="ciN" step="1" min="2" placeholder="n">
                         </div>
                         <div class="form-group">
                             <label for="ciLevel">Confidence level</label>
@@ -715,11 +688,11 @@
                     <div class="form-row three">
                         <div class="form-group">
                             <label for="nSd">Standard deviation (s or &sigma;)</label>
-                            <input type="number" id="nSd" value="1.41" step="any" min="0">
+                            <input type="number" id="nSd" step="any" min="0" placeholder="s">
                         </div>
                         <div class="form-group">
                             <label for="nErr">Allowed sampling error (e)</label>
-                            <input type="number" id="nErr" value="0.30" step="any" min="0">
+                            <input type="number" id="nErr" step="any" min="0" placeholder="e">
                         </div>
                         <div class="form-group">
                             <label for="nLevel">Confidence level</label>
@@ -733,109 +706,8 @@
                 </div>
                 <div id="nOut" class="ss-out answer"></div>
                 <div id="nAll"></div>
-
-                <div class="tk-head sub">
-                    <h2>Ad Hoc Methods</h2>
-                    <p>Used when experience or the budget, rather than a precision target, sets the sample size.</p>
-                </div>
-                <div class="ss-cards">
-                    <div class="ss-card">
-                        <h3>Minimum per group</h3>
-                        <div class="sub">Each major group should contain at least this many respondents once the sample is split proportionally.</div>
-                        <div class="form-group">
-                            <label for="r1Min">Minimum per group</label>
-                            <input type="number" id="r1Min" value="100" step="1" min="1">
-                        </div>
-                        <div class="form-group">
-                            <label for="r1Share">Smallest group, share of population (%)</label>
-                            <input type="number" id="r1Share" value="20" step="any" min="0.01" max="100">
-                        </div>
-                        <div id="r1Out" class="ss-out"></div>
-                    </div>
-                    <div class="ss-card">
-                        <h3>Minimum per subgroup</h3>
-                        <div class="sub">When subgroups will also be compared, each one needs 20 to 50 respondents. The smallest subgroup drives the total.</div>
-                        <div class="form-group">
-                            <label for="r2Min">Minimum per subgroup</label>
-                            <input type="number" id="r2Min" value="20" step="1" min="1">
-                        </div>
-                        <div class="form-group">
-                            <label for="r2Share">Smallest subgroup, share of population (%)</label>
-                            <input type="number" id="r2Share" value="1" step="any" min="0.01" max="100">
-                        </div>
-                        <div id="r2Out" class="ss-out"></div>
-                    </div>
-                    <div class="ss-card">
-                        <h3>Budget constraint</h3>
-                        <div class="sub">Whatever is left after fixed costs, divided by the cost of one interview. Round down: you cannot afford a partial respondent.</div>
-                        <div class="form-group">
-                            <label for="bTotal">Total budget ($)</label>
-                            <input type="number" id="bTotal" value="5000" step="any" min="0">
-                        </div>
-                        <div class="form-group">
-                            <label for="bFixed">Fixed cost, e.g. analysis ($)</label>
-                            <input type="number" id="bFixed" value="1000" step="any" min="0">
-                        </div>
-                        <div class="form-group">
-                            <label for="bEach">Cost per respondent ($)</label>
-                            <input type="number" id="bEach" value="20" step="any" min="0.01">
-                        </div>
-                        <div id="bOut" class="ss-out"></div>
-                    </div>
-                </div>
             </section>
 
-            <!-- ======================= 4. charts ======================= -->
-            <section class="tk-panel" role="tabpanel" id="panel-charts" aria-labelledby="tab-charts" hidden>
-                <div class="tk-head">
-                    <h2>Charts</h2>
-                    <p>Bar, pie and line charts of a frequency table. Type the table, upload a CSV, or send data over from Descriptive Statistics.</p>
-                </div>
-
-                <div class="tk-chartwrap">
-                    <div class="tk-card tk-chartdata">
-                        <div class="tk-label">Frequency table <span>categories down, groups across</span></div>
-                        <div class="tk-scroll"><table class="tk-grid" id="chTable"></table></div>
-                        <div class="tk-linkrow">
-                            <button type="button" class="tk-link" id="chAddRow">+ Category</button>
-                            <button type="button" class="tk-link" id="chAddCol">+ Group</button>
-                            <label class="tk-link" for="chFile">Upload a CSV<input type="file" id="chFile" accept=".csv,text/csv,.txt" hidden></label>
-                        </div>
-                        <div id="chFileInfo" class="tk-fileinfo" hidden></div>
-                        <div class="tk-examples" style="margin-top:.8rem;">
-                            <span>Class example</span>
-                            <button type="button" class="tk-chip" id="chExample">Choosing a computer (N = 300)</button>
-                        </div>
-                    </div>
-
-                    <div class="tk-card tk-chartview">
-                        <div class="tk-chartctl">
-                            <div class="tk-seg small" id="chType" role="radiogroup" aria-label="Chart type">
-                                <button type="button" class="on" data-ch-type="bar">Bar</button>
-                                <button type="button" data-ch-type="pie">Pie</button>
-                                <button type="button" data-ch-type="line">Line</button>
-                            </div>
-                            <div class="tk-seg small" id="chBarMode" role="radiogroup" aria-label="Bar layout">
-                                <button type="button" class="on" data-ch-bar="grouped">Grouped</button>
-                                <button type="button" data-ch-bar="stacked">Stacked</button>
-                            </div>
-                            <div class="tk-seg small" id="chScale" role="radiogroup" aria-label="Counts or percentages">
-                                <button type="button" class="on" data-ch-scale="count">Counts</button>
-                                <button type="button" data-ch-scale="pct">% of each group</button>
-                            </div>
-                            <select id="chPieSeries" aria-label="Group shown in the pie" hidden></select>
-                        </div>
-                        <input type="text" id="chTitle" class="tk-title" value="In choosing a computer, which one is more important to you?" aria-label="Chart title">
-                        <div id="chSvgHost" class="tk-svghost"></div>
-                        <div class="tk-actions">
-                            <button type="button" id="chPng" class="btn btn-secondary btn-sm">Download PNG</button>
-                            <button type="button" id="chSvg" class="btn btn-secondary btn-sm">Download SVG</button>
-                        </div>
-                    </div>
-                </div>
-                <div id="chFreq"></div>
-                <div id="chTip" class="tk-tip" hidden></div>
-            </section>
         </div>
     </main>
 
@@ -916,7 +788,9 @@
         }
 
         /* ================= tabs ================= */
-        var TABS = ['descriptives', 'intervals', 'sample-size', 'charts'];
+        var TABS = ['descriptives', 'intervals', 'sample-size'];
+        /* charts moved to Analytics Tool 2: old links to #charts go there */
+        if (location.hash === '#charts') { location.replace('charts.html'); return; }
         function showTab(name, keepHash) {
             if (TABS.indexOf(name) < 0) name = 'descriptives';
             TABS.forEach(function (t) {
@@ -927,7 +801,6 @@
             });
             $('zconvBar').hidden = !(name === 'intervals' || name === 'sample-size');
             if (!keepHash && location.hash !== '#' + name) history.replaceState(null, '', '#' + name);
-            if (name === 'charts') drawChart();
         }
         qsa('.tk-tab').forEach(function (btn, i, all) {
             btn.addEventListener('click', function () { showTab(btn.getAttribute('data-tab')); });
@@ -940,16 +813,8 @@
         window.addEventListener('hashchange', function () { showTab(location.hash.slice(1), true); });
 
         /* ================= 1. descriptive statistics ================= */
-        var dsMode = 'type', dsLabel = 'Symphony ticket holders', dsCsv = null, dsSel = 0, dsLast = null;
+        var dsMode = 'type', dsLabel = 'Your data', dsCsv = null, dsSel = 0, dsLast = null;
         var dsFreq = [];
-        var DS_EXAMPLES = {
-            grades:    { label: 'Ph.D. midterm grades', mode: 'type', data: '89, 84, 78, 71, 78, 86', kind: 'population' },
-            symphony:  { label: 'Symphony ticket holders', mode: 'type', data: '2, 0, -2, 1, 0, -1, 2, -1, -1', kind: 'sample' },
-            fastfood:  { label: 'Fast-food visits per month', mode: 'type', data: '5, 6, 7, 3, 5, 4', kind: 'sample' },
-            engineers: { label: 'Design engineers (importance rating)', mode: 'freq', kind: 'population',
-                         freq: [[5, 5000], [4, 8000], [3, 6000], [2, 2000], [1, 4000]] }
-        };
-        $('dsData').value = DS_EXAMPLES.symphony.data;
 
         function setDsMode(m) {
             dsMode = m;
@@ -976,7 +841,7 @@
             dsFreq.splice(+t.getAttribute('data-fdel'), 1); renderFreqTable(); describe();
         });
         $('dsFreqAdd').addEventListener('click', function () { dsFreq.push(['', '']); renderFreqTable(); describe(); });
-        dsFreq = DS_EXAMPLES.engineers.freq.map(function (r) { return [String(r[0]), String(r[1])]; });
+        dsFreq = [['', ''], ['', ''], ['', '']];
         renderFreqTable();
 
         /* ---- CSV ---- */
@@ -1024,7 +889,7 @@
                 dsCsv = { name: file.name, cols: num, rows: p.rows };
                 dsSel = 0;
                 info.innerHTML = '<b>' + esc(file.name) + '</b>: ' + fmt(p.rows, 0) + ' rows, ' + num.length + ' numeric column' + (num.length === 1 ? '' : 's') +
-                    (txt.length ? ' (text columns skipped here: ' + txt.map(function (c) { return esc(c.name); }).join(', ') + '; chart them in the Charts tab)' : '') + '.';
+                    (txt.length ? ' (text columns skipped here: ' + txt.map(function (c) { return esc(c.name); }).join(', ') + '; chart them in Analytics Tool 2: Charts)' : '') + '.';
                 describe();
             });
         }
@@ -1057,6 +922,7 @@
                 var t = $('dsData').value.replace(/[−–—]/g, '-');
                 var toks = t.split(/[\s,;]+/).filter(function (x) { return x !== ''; }), vals = [], bad = [];
                 toks.forEach(function (tok) { var v = toNum(tok); if (isFinite(v)) vals.push(v); else bad.push(tok); });
+                if (!toks.length) return { error: 'Type or paste your values to begin.', quiet: true };
                 if (bad.length) return { error: 'These entries are not numbers: ' + bad.slice(0, 6).map(function (b) { return '&ldquo;' + esc(b) + '&rdquo;'; }).join(', ') + (bad.length > 6 ? ' &hellip;' : '') };
                 return { vars: [{ label: dsLabel || 'Your data', vals: vals }] };
             }
@@ -1069,6 +935,7 @@
                     else { v2.push(v); w2.push(f); }
                 });
                 if (errs.length) return { error: 'Row ' + errs.join(', ') + ': each row needs a number and a whole-number frequency.' };
+                if (!v2.length) return { error: 'Fill in the values and their frequencies to begin.', quiet: true };
                 return { vars: [{ label: dsLabel || 'Your data', vals: v2, wts: w2 }] };
             }
             if (!dsCsv) return { error: 'Choose a CSV file to begin.', quiet: true };
@@ -1152,8 +1019,6 @@
             $('dsActions').hidden = false;
             $('dsToCi').disabled = pop;
             $('dsToCi').title = pop ? 'A whole population has no confidence interval: its mean is known exactly.' : '';
-            $('dsToChart').disabled = st.distinct.length > 15;
-            $('dsToChart').title = st.distinct.length > 15 ? 'More than 15 distinct values: too many to chart as categories.' : '';
         }
         $('dsSummary').addEventListener('click', function (e) {
             var tr = e.target.closest('[data-sel]'); if (!tr) return;
@@ -1161,17 +1026,6 @@
         });
         $('dsData').addEventListener('input', function () { dsLabel = 'Your data'; describe(); });
         qsa('input[name="dskind"]').forEach(function (r) { r.addEventListener('change', describe); });
-        qsa('[data-ds-example]').forEach(function (btn) {
-            btn.addEventListener('click', function () {
-                var ex = DS_EXAMPLES[btn.getAttribute('data-ds-example')];
-                dsLabel = ex.label;
-                if (ex.mode === 'type') $('dsData').value = ex.data;
-                else { dsFreq = ex.freq.map(function (r) { return [String(r[0]), String(r[1])]; }); renderFreqTable(); }
-                $(ex.kind === 'population' ? 'dsPop' : 'dsSample').checked = true;
-                setDsMode(ex.mode);
-                dsLabel = ex.label; describe();
-            });
-        });
 
         /* ---- hand-offs to the other tabs ---- */
         $('dsToCi').addEventListener('click', function () {
@@ -1190,23 +1044,12 @@
             $('nFrom').innerHTML = 'From Descriptive Statistics (' + esc(dsLast.label) + '): ' + (st.pop ? '&sigma;' : 's') + ' = ' + fmt(st.sd);
             nSize(); showTab('sample-size'); window.scrollTo({ top: $('tab-sample-size').getBoundingClientRect().top + window.scrollY - 80, behavior: 'smooth' });
         });
-        $('dsToChart').addEventListener('click', function () {
-            if (!dsLast) return;
-            var st = dsLast.st;
-            ch.cats = st.distinct.map(function (v) { return fmt(v); });
-            ch.series = [{ name: 'Frequency', vals: st.distinct.map(function (v) { return st.byVal[v]; }) }];
-            ch.type = 'bar'; ch.scale = 'count';
-            $('chTitle').value = dsLast.label + ': frequency of each value';
-            $('chFileInfo').hidden = true;
-            renderChartTable(); syncChartControls(); showTab('charts');
-        });
-
         /* ================= 2. confidence interval ================= */
         function ci() {
             var m = num('ciMean'), s = num('ciSd'), n = num('ciN'), lvl = $('ciLevel').value;
             var box = $('ciOut'), allBox = $('ciAll');
             allBox.innerHTML = '';
-            if (!isFinite(m) || !isFinite(s) || !isFinite(n)) { box.innerHTML = '<div class="ss-bad">Fill in the mean, the standard deviation and the sample size.</div>'; return; }
+            if (!isFinite(m) || !isFinite(s) || !isFinite(n)) { box.innerHTML = '<div class="ss-note">Fill in the mean, the standard deviation and the sample size, or send them over from Descriptive Statistics.</div>'; return; }
             if (n < 2) { box.innerHTML = '<div class="ss-bad">A confidence interval needs at least 2 observations.</div>'; return; }
             if (s < 0) { box.innerHTML = '<div class="ss-bad">The standard deviation cannot be negative.</div>'; return; }
             var z = zFor(lvl), err = z * s / Math.sqrt(n), lo = m - err, hi = m + err;
@@ -1244,7 +1087,7 @@
         function nSize() {
             var s = num('nSd'), e = num('nErr'), lvl = $('nLevel').value, box = $('nOut');
             $('nAll').innerHTML = '';
-            if (!isFinite(s) || !isFinite(e)) { box.innerHTML = '<div class="ss-bad">Fill in the standard deviation and the allowed sampling error.</div>'; return; }
+            if (!isFinite(s) || !isFinite(e)) { box.innerHTML = '<div class="ss-note">Fill in the standard deviation and the allowed sampling error.</div>'; return; }
             if (e <= 0) { box.innerHTML = '<div class="ss-bad">The allowed sampling error must be greater than zero.</div>'; return; }
             if (s < 0) { box.innerHTML = '<div class="ss-bad">The standard deviation cannot be negative.</div>'; return; }
             var z = zFor(lvl), raw = z * z * s * s / (e * e), n = Math.ceil(raw - 1e-9);
@@ -1257,370 +1100,15 @@
                 LEVELS.map(function (L) { var zz = zFor(L), r = zz * zz * s * s / (e * e); return '<tr class="' + (L === lvl ? 'on' : '') + '"><td>' + L + '%</td><td>' + zLabel(L) + '</td><td>' + fmt(r) + '</td><td>' + fmt(Math.ceil(r - 1e-9), 0) + '</td></tr>'; }).join('') +
                 '</tbody></table>';
         }
-        function rule(minId, shareId, outId, word) {
-            var mn = num(minId), sh = num(shareId), box = $(outId);
-            if (!isFinite(mn) || !isFinite(sh)) { box.innerHTML = '<div class="ss-bad">Fill in both fields.</div>'; return; }
-            if (sh <= 0 || sh > 100) { box.innerHTML = '<div class="ss-bad">The share must be between 0 and 100%.</div>'; return; }
-            var n = Math.ceil(mn / (sh / 100) - 1e-9);
-            box.innerHTML = '<div class="ss-big">n = ' + fmt(n, 0) + '</div>' +
-                '<div class="ss-work">' + fmt(mn) + ' / ' + fmt(sh / 100) + ' = <em>' + fmt(n, 0) + '</em></div>' +
-                '<div class="ss-note">Gives at least ' + fmt(mn) + ' in the smallest ' + word + '.</div>';
-        }
-        function budget() {
-            var t = num('bTotal'), f = num('bFixed'), e = num('bEach'), box = $('bOut');
-            if (!isFinite(t) || !isFinite(f) || !isFinite(e)) { box.innerHTML = '<div class="ss-bad">Fill in all three fields.</div>'; return; }
-            if (e <= 0) { box.innerHTML = '<div class="ss-bad">Cost per respondent must be greater than zero.</div>'; return; }
-            var left = t - f;
-            if (left < 0) { box.innerHTML = '<div class="ss-bad">Fixed costs exceed the total budget.</div>'; return; }
-            var n = Math.floor(left / e + 1e-9);
-            box.innerHTML = '<div class="ss-big">n = ' + fmt(n, 0) + '</div>' +
-                '<div class="ss-work">($' + fmt(t, 2) + ' &minus; $' + fmt(f, 2) + ') / $' + fmt(e, 2) + ' = $' + fmt(left, 2) + ' / $' + fmt(e, 2) + ' = <em>' + fmt(n, 0) + '</em></div>' +
-                '<div class="ss-note">Rounded down to stay inside the budget.</div>';
-        }
-        function adhoc() { rule('r1Min', 'r1Share', 'r1Out', 'group'); rule('r2Min', 'r2Share', 'r2Out', 'subgroup'); budget(); }
         ['ciMean', 'ciSd', 'ciN', 'ciLevel'].forEach(function (id) { ['input', 'change'].forEach(function (ev) { $(id).addEventListener(ev, function () { if (ev === 'input') $('ciFrom').hidden = true; ci(); }); }); });
         ['nSd', 'nErr', 'nLevel'].forEach(function (id) { ['input', 'change'].forEach(function (ev) { $(id).addEventListener(ev, function () { if (id === 'nSd' && ev === 'input') $('nFrom').hidden = true; nSize(); }); }); });
-        ['r1Min', 'r1Share', 'r2Min', 'r2Share', 'bTotal', 'bFixed', 'bEach'].forEach(function (id) { $(id).addEventListener('input', adhoc); });
         qsa('input[name="zconv"]').forEach(function (r) { r.addEventListener('change', function () { ci(); nSize(); }); });
-
-        /* ================= 4. charts ================= */
-        /* categorical palette, validated with the dataviz checks (CVD separation, lightness band, chroma);
-           amber falls under 3:1 against white, so every chart carries value labels and a table view */
-        var PAL = ['#b3242c', '#1f6fb2', '#d99a0b', '#1b8a6b', '#7e57c2'];
-        var MAX_SERIES = 5;
-        var ch = { cats: [], series: [], type: 'bar', bar: 'grouped', scale: 'count', pie: 'total' };
-        function loadComputerExample() {
-            ch.cats = ['Design factor', 'Performance', 'Both equally'];
-            ch.series = [{ name: 'College students', vals: [100, 60, 5] }, { name: 'College graduates', vals: [44, 86, 5] }];
-            $('chTitle').value = 'In choosing a computer, which one is more important to you? (N = 300)';
-            $('chFileInfo').hidden = true;
-        }
-        function val(v) { var n = toNum(v); return isFinite(n) && n > 0 ? n : 0; }
-
-        function renderChartTable() {
-            var t = $('chTable'), ns = ch.series.length;
-            t.innerHTML = '<thead><tr><th>Category</th>' + ch.series.map(function (s, j) {
-                return '<th><div style="display:flex;align-items:center;gap:.2rem"><span style="flex:0 0 10px;height:10px;border-radius:3px;background:' + PAL[j] + '"></span>' +
-                       '<input type="text" data-sname="' + j + '" value="' + esc(s.name) + '" aria-label="Group ' + (j + 1) + ' name">' +
-                       (ns > 1 ? '<button type="button" class="x" data-sdel="' + j + '" aria-label="Remove group">&times;</button>' : '') + '</div></th>';
-            }).join('') + '<th></th></tr></thead><tbody>' +
-            ch.cats.map(function (c, i) {
-                return '<tr><td><input type="text" data-cat="' + i + '" value="' + esc(c) + '" aria-label="Category ' + (i + 1) + '"></td>' +
-                    ch.series.map(function (s, j) { return '<td><input type="text" inputmode="decimal" data-cell="' + i + ',' + j + '" value="' + esc(s.vals[i] === undefined ? '' : s.vals[i]) + '" aria-label="' + esc(c) + ', ' + esc(s.name) + '"></td>'; }).join('') +
-                    '<td>' + (ch.cats.length > 1 ? '<button type="button" class="x" data-cdel="' + i + '" aria-label="Remove category">&times;</button>' : '') + '</td></tr>';
-            }).join('') + '</tbody>';
-            $('chAddCol').disabled = ns >= MAX_SERIES;
-            $('chAddCol').title = ns >= MAX_SERIES ? 'Up to ' + MAX_SERIES + ' groups, so each keeps a distinct color' : '';
-            drawChart();
-        }
-        $('chTable').addEventListener('input', function (e) {
-            var t = e.target;
-            if (t.hasAttribute('data-cat')) ch.cats[+t.getAttribute('data-cat')] = t.value;
-            else if (t.hasAttribute('data-sname')) ch.series[+t.getAttribute('data-sname')].name = t.value;
-            else if (t.hasAttribute('data-cell')) { var ij = t.getAttribute('data-cell').split(','); ch.series[+ij[1]].vals[+ij[0]] = t.value; }
-            syncChartControls(); drawChart();
-        });
-        $('chTable').addEventListener('click', function (e) {
-            var b = e.target.closest('button'); if (!b) return;
-            if (b.hasAttribute('data-cdel')) { var i = +b.getAttribute('data-cdel'); ch.cats.splice(i, 1); ch.series.forEach(function (s) { s.vals.splice(i, 1); }); }
-            if (b.hasAttribute('data-sdel')) ch.series.splice(+b.getAttribute('data-sdel'), 1);
-            renderChartTable(); syncChartControls();
-        });
-        $('chAddRow').addEventListener('click', function () { ch.cats.push('Category ' + (ch.cats.length + 1)); ch.series.forEach(function (s) { s.vals.push(''); }); renderChartTable(); });
-        $('chAddCol').addEventListener('click', function () { if (ch.series.length >= MAX_SERIES) return; ch.series.push({ name: 'Group ' + (ch.series.length + 1), vals: ch.cats.map(function () { return ''; }) }); renderChartTable(); syncChartControls(); });
-        $('chExample').addEventListener('click', function () { loadComputerExample(); renderChartTable(); syncChartControls(); });
-
-        $('chFile').addEventListener('change', function () {
-            var file = this.files[0]; if (!file) return;
-            readFile(file, function (text) {
-                var p = parseCSV(text), info = $('chFileInfo'); info.hidden = false;
-                if (!p) { info.innerHTML = '<span class="ss-bad">The file looks empty.</span>'; return; }
-                var num = p.cols.filter(function (c) { return c.numeric; }), txt = p.cols.filter(function (c) { return !c.numeric; });
-                var how;
-                if (txt.length && num.length && p.cols[0] === txt[0] && num.length <= MAX_SERIES) {
-                    /* a ready-made frequency table: labels in the first column, counts across */
-                    ch.cats = txt[0].raw.slice();
-                    ch.series = num.map(function (c) { return { name: c.name, vals: c.vals.slice() }; });
-                    how = 'read as a frequency table: ' + ch.cats.length + ' categories, ' + num.length + ' group' + (num.length === 1 ? '' : 's');
-                } else if (txt.length >= 2 || (txt.length === 1)) {
-                    /* raw responses: count them, and cross-tabulate by a second text column if there is one */
-                    var a = txt[0], g = txt[1];
-                    var cats = uniq(a.raw), groups = g ? uniq(g.raw).slice(0, MAX_SERIES) : [a.name];
-                    ch.cats = cats;
-                    ch.series = groups.map(function (gname) { return { name: gname, vals: cats.map(function () { return 0; }) }; });
-                    var rows = Math.min(a.raw.length, g ? g.raw.length : a.raw.length);
-                    for (var i = 0; i < rows; i++) {
-                        var ci2 = cats.indexOf(a.raw[i]), gi = g ? groups.indexOf(g.raw[i]) : 0;
-                        if (ci2 >= 0 && gi >= 0) ch.series[gi].vals[ci2]++;
-                    }
-                    how = g ? 'counted &ldquo;' + esc(a.name) + '&rdquo; within each &ldquo;' + esc(g.name) + '&rdquo;' : 'counted the responses in &ldquo;' + esc(a.name) + '&rdquo;';
-                } else if (num.length) {
-                    var c0 = num[0], d = uniq(c0.vals.map(String)).map(Number).sort(function (x, y) { return x - y; });
-                    if (d.length > 15) { info.innerHTML = '<span class="ss-bad">&ldquo;' + esc(c0.name) + '&rdquo; has ' + d.length + ' distinct values: too many to chart as categories.</span>'; return; }
-                    ch.cats = d.map(function (v) { return fmt(v); });
-                    ch.series = [{ name: c0.name, vals: d.map(function (v) { return c0.vals.filter(function (x) { return x === v; }).length; }) }];
-                    how = 'counted each value of &ldquo;' + esc(c0.name) + '&rdquo;';
-                }
-                info.innerHTML = '<b>' + esc(file.name) + '</b>: ' + how + '.';
-                $('chTitle').value = file.name.replace(/\.[^.]+$/, '');
-                renderChartTable(); syncChartControls();
-            });
-            this.value = '';
-        });
-        function uniq(arr) { var seen = {}, out = []; arr.forEach(function (x) { if (!seen[x]) { seen[x] = 1; out.push(x); } }); return out; }
-
-        function syncChartControls() {
-            qsa('[data-ch-type]').forEach(function (b) { b.classList.toggle('on', b.getAttribute('data-ch-type') === ch.type); });
-            qsa('[data-ch-bar]').forEach(function (b) { b.classList.toggle('on', b.getAttribute('data-ch-bar') === ch.bar); });
-            qsa('[data-ch-scale]').forEach(function (b) { b.classList.toggle('on', b.getAttribute('data-ch-scale') === ch.scale); });
-            var many = ch.series.length > 1;
-            $('chBarMode').hidden = !(ch.type === 'bar' && many);
-            $('chScale').hidden = ch.type === 'pie';
-            var pctBtn = document.querySelector('[data-ch-scale="pct"]');
-            pctBtn.textContent = ch.type === 'bar' && ch.bar === 'stacked' && many ? '% within each category' : (many ? '% of each group' : '% of total');
-            var sel = $('chPieSeries');
-            sel.hidden = !(ch.type === 'pie' && many);
-            var opts = [['total', 'All groups combined']].concat(ch.series.map(function (s, j) { return [String(j), s.name]; }));
-            if (!opts.some(function (o) { return o[0] === String(ch.pie); })) ch.pie = 'total';
-            sel.innerHTML = opts.map(function (o) { return '<option value="' + o[0] + '"' + (o[0] === String(ch.pie) ? ' selected' : '') + '>' + esc(o[1]) + '</option>'; }).join('');
-        }
-        qsa('[data-ch-type]').forEach(function (b) { b.addEventListener('click', function () { ch.type = b.getAttribute('data-ch-type'); syncChartControls(); drawChart(); }); });
-        qsa('[data-ch-bar]').forEach(function (b) { b.addEventListener('click', function () { ch.bar = b.getAttribute('data-ch-bar'); syncChartControls(); drawChart(); }); });
-        qsa('[data-ch-scale]').forEach(function (b) { b.addEventListener('click', function () { ch.scale = b.getAttribute('data-ch-scale'); syncChartControls(); drawChart(); }); });
-        $('chPieSeries').addEventListener('change', function () { ch.pie = this.value; drawChart(); });
-        $('chTitle').addEventListener('input', drawChart);
-
-        function niceMax(v) {
-            if (v <= 0) return 1;
-            var p = Math.pow(10, Math.floor(Math.log10(v))), f = v / p;
-            var step = f <= 1 ? 1 : f <= 2 ? 2 : f <= 2.5 ? 2.5 : f <= 5 ? 5 : 10;
-            return step * p;
-        }
-        function niceStep(raw) {
-            if (!(raw > 0)) return 1;
-            var p = Math.pow(10, Math.floor(Math.log10(raw))), f = raw / p;
-            return (f <= 1 ? 1 : f <= 2 ? 2 : f <= 2.5 ? 2.5 : f <= 5 ? 5 : 10) * p;
-        }
-        function ticks(max, st) {
-            var out = [];
-            for (var i = 0; i * st <= max + 1e-9; i++) out.push(i * st);
-            return out;
-        }
-        function wrapLabel(s, maxChars) {
-            var words = String(s).split(/\s+/), lines = [''];
-            words.forEach(function (w) { var cur = lines[lines.length - 1]; if ((cur + ' ' + w).trim().length > maxChars && cur) lines.push(w); else lines[lines.length - 1] = (cur + ' ' + w).trim(); });
-            return lines.slice(0, 3);
-        }
-        function tspans(lines, x, lh) { return lines.map(function (l, i) { return '<tspan x="' + x + '" dy="' + (i ? lh : 0) + '">' + esc(l) + '</tspan>'; }).join(''); }
-
-        function chartData() {
-            var cats = ch.cats, series = ch.series.map(function (s) { return { name: s.name, vals: cats.map(function (c, i) { return val(s.vals[i]); }) }; });
-            var colTot = series.map(function (s) { return s.vals.reduce(function (a, b) { return a + b; }, 0); });
-            var rowTot = cats.map(function (c, i) { return series.reduce(function (a, s) { return a + s.vals[i]; }, 0); });
-            return { cats: cats, series: series, colTot: colTot, rowTot: rowTot, grand: colTot.reduce(function (a, b) { return a + b; }, 0) };
-        }
-        var FONT = "font-family=\"Outfit, Helvetica, Arial, sans-serif\"";
-
-        function drawChart() {
-            var host = $('chSvgHost'), d = chartData();
-            if (!d.cats.length || !d.series.length || d.grand <= 0) {
-                host.innerHTML = '<div class="ss-out"><div class="ss-bad" style="margin:0">Enter at least one positive count.</div></div>'; renderFreq(d); return;
-            }
-            /* lay the chart out at the width it will be shown, so its text stays readable on a phone */
-            var hw = host.clientWidth || 760, W = Math.max(330, Math.min(760, Math.round(hw))), H = W < 560 ? 380 : 440, svg;
-            if (ch.type === 'pie') svg = pieSvg(d, W, H); else svg = axisSvg(d, W, H);
-            host.innerHTML = svg;
-            renderFreq(d);
-        }
-
-        function axisSvg(d, W, H) {
-            var many = d.series.length > 1, stacked = ch.type === 'bar' && ch.bar === 'stacked' && many, pct = ch.scale === 'pct';
-            /* the value each mark stands for */
-            function v(j, i) {
-                var raw = d.series[j].vals[i];
-                if (!pct) return raw;
-                if (stacked) return d.rowTot[i] ? raw / d.rowTot[i] * 100 : 0;
-                return d.colTot[j] ? raw / d.colTot[j] * 100 : 0;
-            }
-            var maxV = 0;
-            d.cats.forEach(function (c, i) {
-                if (stacked) { var t = 0; d.series.forEach(function (s, j) { t += v(j, i); }); maxV = Math.max(maxV, t); }
-                else d.series.forEach(function (s, j) { maxV = Math.max(maxV, v(j, i)); });
-            });
-            /* pick the tick step first, then stop one step above the data: 108 gives 0-120, not 0-200 */
-            var step = niceStep((pct && stacked ? 100 : maxV * 1.08) / 5), top = pct && stacked ? 100 : Math.max(step, Math.ceil(maxV * 1.08 / step - 1e-9) * step);
-            var L = W < 560 ? 48 : 64, R = 16, B = 78;
-            var legend = [], lx = L, lrow = 0;
-            if (many) d.series.forEach(function (s, j) {
-                var w = 26 + String(s.name).length * 7.3;
-                if (lx + w > W - R && lx > L) { lrow++; lx = L; }
-                legend.push([lx, 14 + lrow * 22, j]); lx += w + 14;
-            });
-            var T = many ? 40 + lrow * 22 + 12 : 26, pw = W - L - R, ph = H - T - B;
-            var y = function (val) { return T + ph - val / top * ph; };
-            var band = pw / d.cats.length, unit = pct ? '%' : '';
-            var lab = function (val) { return pct ? fmt(val, 1) + '%' : fmt(val, 2); };
-            var out = ['<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ' + W + ' ' + H + '" ' + FONT + ' role="img" aria-label="' + esc($('chTitle').value) + '">',
-                       '<rect width="' + W + '" height="' + H + '" fill="#ffffff"/>'];
-            ticks(top, step).forEach(function (t) {
-                out.push('<line x1="' + L + '" x2="' + (W - R) + '" y1="' + y(t) + '" y2="' + y(t) + '" stroke="#e5e7eb"/>');
-                out.push('<text x="' + (L - 10) + '" y="' + (y(t) + 4) + '" font-size="12" text-anchor="end" fill="#6b7280">' + fmt(t, 1) + unit + '</text>');
-            });
-            out.push('<line x1="' + L + '" x2="' + (W - R) + '" y1="' + y(0) + '" y2="' + y(0) + '" stroke="#94a3b8" stroke-width="1.5"/>');
-            legend.forEach(function (g) {
-                out.push('<rect x="' + g[0] + '" y="' + g[1] + '" width="12" height="12" rx="3" fill="' + PAL[g[2]] + '"/><text x="' + (g[0] + 18) + '" y="' + (g[1] + 10) + '" font-size="13" fill="#1e293b">' + esc(d.series[g[2]].name) + '</text>');
-            });
-            d.cats.forEach(function (c, i) {
-                var cx = L + band * i + band / 2;
-                out.push('<text x="' + cx + '" y="' + (y(0) + 22) + '" font-size="13" text-anchor="middle" fill="#1e293b" font-weight="600">' + tspans(wrapLabel(c, Math.max(8, Math.floor(band / 8))), cx, 15) + '</text>');
-            });
-            if (ch.type === 'bar') {
-                var ns = d.series.length, groupW = Math.min(band * 0.72, stacked ? 90 : 70 * ns), bw = stacked ? groupW : (groupW - 2 * (ns - 1)) / ns;
-                d.cats.forEach(function (c, i) {
-                    var x0 = L + band * i + (band - groupW) / 2, base = 0;
-                    d.series.forEach(function (s, j) {
-                        var val = v(j, i), bx = stacked ? x0 : x0 + j * (bw + 2), yt = y(base + val), yb = y(base), h = Math.max(0, yb - yt);
-                        var isTop = !stacked || j === ns - 1, r = Math.min(4, h / 2, bw / 2);
-                        var path = isTop && h > 0
-                            ? 'M' + bx + ',' + yb + 'V' + (yt + r) + 'Q' + bx + ',' + yt + ' ' + (bx + r) + ',' + yt + 'H' + (bx + bw - r) + 'Q' + (bx + bw) + ',' + yt + ' ' + (bx + bw) + ',' + (yt + r) + 'V' + yb + 'Z'
-                            : 'M' + bx + ',' + yb + 'V' + yt + 'H' + (bx + bw) + 'V' + yb + 'Z';
-                        out.push('<path d="' + path + '" fill="' + PAL[j] + '"' + (stacked && j ? ' stroke="#fff" stroke-width="2"' : '') + ' data-tip="' + esc(s.name + ' · ' + c) + '|' + esc(tipVal(d, j, i)) + '"/>');
-                        if (!stacked) out.push('<text x="' + (bx + bw / 2) + '" y="' + (yt - 6) + '" font-size="12" text-anchor="middle" fill="#1e293b" font-weight="700">' + lab(val) + '</text>');
-                        else if (h >= 18) out.push('<text x="' + (bx + bw / 2) + '" y="' + (yt + h / 2 + 4) + '" font-size="12" text-anchor="middle" fill="#fff" font-weight="700">' + lab(val) + '</text>');
-                        if (stacked) base += val;
-                    });
-                });
-            } else {
-                d.series.forEach(function (s, j) {
-                    var pts = d.cats.map(function (c, i) { return [L + band * i + band / 2, y(v(j, i))]; });
-                    out.push('<polyline points="' + pts.map(function (p) { return p.join(','); }).join(' ') + '" fill="none" stroke="' + PAL[j] + '" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>');
-                    pts.forEach(function (p, i) {
-                        out.push('<circle cx="' + p[0] + '" cy="' + p[1] + '" r="5.5" fill="' + PAL[j] + '" stroke="#fff" stroke-width="2" data-tip="' + esc(s.name + ' · ' + d.cats[i]) + '|' + esc(tipVal(d, j, i)) + '"/>');
-                        out.push('<text x="' + p[0] + '" y="' + (p[1] - 11) + '" font-size="12" text-anchor="middle" fill="#1e293b" font-weight="700">' + lab(v(j, i)) + '</text>');
-                    });
-                });
-            }
-            out.push('</svg>');
-            return out.join('');
-        }
-        function tipVal(d, j, i) {
-            var raw = d.series[j].vals[i];
-            return fmt(raw, 2) + ' (' + (d.colTot[j] ? fmt(raw / d.colTot[j] * 100, 1) : 0) + '% of ' + d.series[j].name + ')';
-        }
-
-        function pieSvg(d, W, H) {
-            var vals, name;
-            if (ch.pie === 'total' || d.series.length === 1) { vals = d.rowTot; name = d.series.length === 1 ? d.series[0].name : 'All groups'; }
-            else { vals = d.series[+ch.pie].vals; name = d.series[+ch.pie].name; }
-            var tot = vals.reduce(function (a, b) { return a + b; }, 0);
-            if (d.cats.length > PAL.length) return '<div class="ss-out"><div class="ss-bad" style="margin:0">A pie works best with ' + PAL.length + ' or fewer categories. Use a bar chart for ' + d.cats.length + '.</div></div>';
-            if (tot <= 0) return '<div class="ss-out"><div class="ss-bad" style="margin:0">This group has no positive counts.</div></div>';
-            var narrow = W < 600;
-            var r = narrow ? Math.min(W / 2 - 34, 130) : 165, cx = narrow ? W / 2 : 250, cy = narrow ? r + 30 : H / 2 + 6, a0 = -Math.PI / 2;
-            if (narrow) H = cy + r + 44 + vals.length * 30 + 10;
-            var out = ['<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ' + W + ' ' + H + '" ' + FONT + ' role="img" aria-label="' + esc($('chTitle').value) + '">',
-                       '<rect width="' + W + '" height="' + H + '" fill="#ffffff"/>'];
-            vals.forEach(function (val, i) {
-                if (val <= 0) return;
-                var a1 = a0 + val / tot * 2 * Math.PI, large = a1 - a0 > Math.PI ? 1 : 0;
-                var x0 = cx + r * Math.cos(a0), y0 = cy + r * Math.sin(a0), x1 = cx + r * Math.cos(a1), y1 = cy + r * Math.sin(a1);
-                var path = val === tot ? 'M' + cx + ',' + (cy - r) + 'A' + r + ',' + r + ' 0 1,1 ' + (cx - 0.01) + ',' + (cy - r) + 'Z'
-                         : 'M' + cx + ',' + cy + 'L' + x0 + ',' + y0 + 'A' + r + ',' + r + ' 0 ' + large + ',1 ' + x1 + ',' + y1 + 'Z';
-                out.push('<path d="' + path + '" fill="' + PAL[i] + '" stroke="#fff" stroke-width="2" data-tip="' + esc(name + ' · ' + d.cats[i]) + '|' + esc(fmt(val, 2) + ' (' + fmt(val / tot * 100, 1) + '%)') + '"/>');
-                var mid = (a0 + a1) / 2, share = val / tot, lr = share < 0.06 ? r + 22 : r * 0.64;
-                out.push('<text x="' + (cx + lr * Math.cos(mid)) + '" y="' + (cy + lr * Math.sin(mid) + 5) + '" font-size="' + (share < 0.06 ? 12 : 15) + '" font-weight="800" text-anchor="middle" fill="' + (share < 0.06 ? '#1e293b' : '#fff') + '">' + fmt(share * 100, 1) + '%</text>');
-                a0 = a1;
-            });
-            var lxx = narrow ? 24 : 470, ly = narrow ? cy + r + 52 : cy - vals.length * 16;
-            out.push('<text x="' + lxx + '" y="' + (ly - 18) + '" font-size="13" font-weight="700" fill="#6b7280">' + esc(name) + ' (total ' + fmt(tot, 2) + ')</text>');
-            vals.forEach(function (val, i) {
-                out.push('<rect x="' + lxx + '" y="' + (ly + i * (narrow ? 28 : 32)) + '" width="14" height="14" rx="3" fill="' + PAL[i] + '"/>' +
-                         '<text x="' + (lxx + 22) + '" y="' + (ly + i * (narrow ? 28 : 32) + 12) + '" font-size="14" fill="#1e293b">' + esc(d.cats[i]) + ': <tspan font-weight="700">' + fmt(val, 2) + '</tspan></text>');
-            });
-            out[0] = out[0].replace(/viewBox="0 0 \d+ \d+"/, 'viewBox="0 0 ' + W + ' ' + H + '"');
-            out[1] = '<rect width="' + W + '" height="' + H + '" fill="#ffffff"/>';
-            out.push('</svg>');
-            return out.join('');
-        }
-
-        function renderFreq(d) {
-            var box = $('chFreq');
-            if (!d.cats.length || !d.series.length) { box.innerHTML = ''; return; }
-            var many = d.series.length > 1;
-            box.innerHTML = '<div class="tk-work" style="margin-top:1.2rem"><h4>Frequency table</h4><div class="tk-scroll"><table class="tk-summary" style="margin-top:0"><thead><tr><th>Category</th>' +
-                d.series.map(function (s) { return '<th>' + esc(s.name) + '</th><th>%</th>'; }).join('') + (many ? '<th>Total</th><th>%</th>' : '') + '</tr></thead><tbody>' +
-                d.cats.map(function (c, i) {
-                    return '<tr><td>' + esc(c) + '</td>' + d.series.map(function (s, j) { return '<td>' + fmt(s.vals[i], 2) + '</td><td>' + (d.colTot[j] ? fmt(s.vals[i] / d.colTot[j] * 100, 1) : '0') + '%</td>'; }).join('') +
-                        (many ? '<td>' + fmt(d.rowTot[i], 2) + '</td><td>' + fmt(d.grand ? d.rowTot[i] / d.grand * 100 : 0, 1) + '%</td>' : '') + '</tr>';
-                }).join('') +
-                '<tr style="font-weight:800"><td>Total</td>' + d.series.map(function (s, j) { return '<td>' + fmt(d.colTot[j], 2) + '</td><td>100%</td>'; }).join('') + (many ? '<td>' + fmt(d.grand, 2) + '</td><td>100%</td>' : '') + '</tr>' +
-                '</tbody></table></div><div class="tk-note">Percentages are within each column.</div></div>';
-        }
-
-        /* hover layer */
-        var tip = $('chTip');
-        $('chSvgHost').addEventListener('mousemove', function (e) {
-            var t = e.target.closest('[data-tip]');
-            if (!t) { tip.hidden = true; return; }
-            var parts = t.getAttribute('data-tip').split('|');
-            tip.innerHTML = esc(parts[0]) + ': <b>' + esc(parts[1]) + '</b>';
-            tip.hidden = false;
-            tip.style.left = Math.min(e.clientX + 14, window.innerWidth - tip.offsetWidth - 8) + 'px';
-            tip.style.top = (e.clientY + 14) + 'px';
-        });
-        $('chSvgHost').addEventListener('mouseleave', function () { tip.hidden = true; });
-
-        /* downloads */
-        function svgText() {
-            var s = $('chSvgHost').querySelector('svg'); if (!s) return null;
-            var clone = s.cloneNode(true), title = $('chTitle').value.trim();
-            if (title) {
-                /* put the title into the exported file, above the chart */
-                var vb = clone.getAttribute('viewBox').split(' ').map(Number), extra = 44;
-                clone.setAttribute('viewBox', '0 ' + (-extra) + ' ' + vb[2] + ' ' + (vb[3] + extra));
-                var bg = '<rect x="0" y="' + (-extra) + '" width="' + vb[2] + '" height="' + extra + '" fill="#ffffff"/>';
-                var t = '<text x="24" y="-14" font-size="18" font-weight="800" fill="#1e293b">' + esc(title) + '</text>';
-                clone.innerHTML = bg + t + clone.innerHTML;
-            }
-            return new XMLSerializer().serializeToString(clone);
-        }
-        function fileName(ext) { return ($('chTitle').value.trim() || 'chart').replace(/[^\w\- ]+/g, '').trim().replace(/\s+/g, '-').slice(0, 60) + '.' + ext; }
-        function save(url, name) { var a = document.createElement('a'); a.href = url; a.download = name; document.body.appendChild(a); a.click(); a.remove(); }
-        $('chSvg').addEventListener('click', function () {
-            var t = svgText(); if (!t) return;
-            var url = URL.createObjectURL(new Blob([t], { type: 'image/svg+xml' })); save(url, fileName('svg')); setTimeout(function () { URL.revokeObjectURL(url); }, 1000);
-        });
-        $('chPng').addEventListener('click', function () {
-            var t = svgText(); if (!t) return;
-            var img = new Image(), url = URL.createObjectURL(new Blob([t], { type: 'image/svg+xml' }));
-            img.onload = function () {
-                var sc = 2, cv = document.createElement('canvas'); cv.width = img.width * sc || 1520; cv.height = img.height * sc || 968;
-                var cx = cv.getContext('2d'); cx.fillStyle = '#fff'; cx.fillRect(0, 0, cv.width, cv.height); cx.drawImage(img, 0, 0, cv.width, cv.height);
-                save(cv.toDataURL('image/png'), fileName('png')); URL.revokeObjectURL(url);
-            };
-            img.src = url;
-        });
 
         /* the site nav is sticky too: park the tab bar just below it */
         function placeTabs() { var nav = document.querySelector('nav'); document.documentElement.style.setProperty('--tk-top', ((nav ? nav.offsetHeight : 0) + 8) + 'px'); }
         window.addEventListener('resize', placeTabs);
-        /* redraw when the chart's box changes width: on resize, and when the page first appears after sign-in */
-        var lastW = 0, redrawTimer;
-        if ('ResizeObserver' in window) {
-            new ResizeObserver(function (entries) {
-                var w = Math.round(entries[0].contentRect.width);
-                if (!w || Math.abs(w - lastW) < 2) return;
-                lastW = w; clearTimeout(redrawTimer);
-                redrawTimer = setTimeout(drawChart, 60);
-            }).observe($('chSvgHost'));
-        } else {
-            window.addEventListener('resize', function () { clearTimeout(redrawTimer); redrawTimer = setTimeout(function () { if (!$('panel-charts').hidden) drawChart(); }, 150); });
-        }
-
         /* ================= start ================= */
-        loadComputerExample();
-        renderChartTable(); syncChartControls();
-        describe(); ci(); nSize(); adhoc();
+        describe(); ci(); nSize();
         showTab(location.hash.slice(1), true);
         placeTabs(); setTimeout(placeTabs, 400);
     })();
