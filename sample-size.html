@@ -1,0 +1,1693 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Descriptive Statistics, Confidence Intervals, Sample Size and Charts | Koray Cosguner</title>
+    <meta name="robots" content="noindex,nofollow">
+    <meta name="description" content="Descriptive statistics from typed values, a frequency table or a CSV; confidence intervals for a mean; sample size for a target sampling error and the ad hoc rules; bar, pie and line charts. Every answer shows the arithmetic.">
+    <link rel="icon" type="image/jpeg" href="KCFavicon.jpg">
+
+    <!-- Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-CTZ8G4EYLR"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-CTZ8G4EYLR');
+    </script>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        html { scroll-behavior: smooth; }
+        :root {
+            --primary: #990000;
+            --primary-light: #fdf2f2;
+            --primary-hover: #7a0000;
+            --iu-crimson: #990000;
+            --iu-crimson-dark: #7a0000;
+            --accent: #1a1a9e;
+
+            --text-main: #111827;
+            --text-dark: #1e293b;
+            --text-sub:  #374151;
+            --text-light: #4b5563;
+            --text-muted: #9ca3af;
+
+            --bg: #ffffff;
+            --bg-light: #f5f5f5;
+            --white: #fff;
+            --surface: #f9fafb;
+            --border: #e2e8f0;
+            --border-strong: #cbd5e1;
+
+            --shadow-sm:    0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+            --shadow-md:    0 4px 12px rgba(0,0,0,0.08), 0 2px 4px rgba(0,0,0,0.04);
+            --shadow-lg:    0 12px 32px rgba(0,0,0,0.10), 0 4px 8px rgba(0,0,0,0.06);
+
+            --radius-sm:    6px;
+            --radius-md:    12px;
+            --radius-lg:    18px;
+            --radius-full:  9999px;
+
+            --transition-fast: 0.15s ease;
+            --transition-base: 0.25s ease;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+        html, body { overflow-x: hidden; }
+        body {
+            font-family: 'Outfit', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            font-size: 18px;
+            background: var(--bg);
+            color: var(--text-main);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* ===================== Navigation (matches tools.html) ===================== */
+        nav {
+            background: rgba(255, 255, 255, 0.88);
+            border-bottom: 1px solid var(--border);
+            padding: 14px 0;
+            position: sticky;
+            top: 0;
+            z-index: 200;
+            backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
+        }
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .brand {
+            font-weight: 800;
+            font-size: 1.2rem;
+            color: var(--text-main);
+            text-decoration: none;
+            letter-spacing: -0.03em;
+        }
+        .nav-links { display: flex; align-items: center; }
+        .font-size-controls.font-size-mobile { display: none; }
+        .nav-links a {
+            margin-left: 28px;
+            text-decoration: none;
+            color: var(--text-sub);
+            font-weight: 600;
+            font-size: 0.9rem;
+            letter-spacing: -0.01em;
+            transition: color var(--transition-fast);
+            position: relative;
+        }
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--primary);
+            transition: width var(--transition-base);
+            border-radius: 2px;
+        }
+        .nav-links a:hover::after,
+        .nav-links a.active::after { width: 100%; }
+        .nav-links a:hover, .nav-links a.active { color: var(--primary); }
+
+        .nav-toggle {
+            display: none;
+            flex-direction: column;
+            cursor: pointer;
+            padding: 4px;
+        }
+        .nav-toggle span {
+            width: 24px;
+            height: 2px;
+            background: var(--text-main);
+            margin: 3px 0;
+            transition: 0.3s;
+        }
+
+        .font-size-controls {
+            display: flex;
+            align-items: center;
+            gap: 2px;
+            margin-right: 10px;
+            border: 1px solid rgba(153,0,0,0.12);
+            border-radius: var(--radius-full);
+            padding: 3px;
+            background: linear-gradient(135deg, rgba(249,250,251,0.9), rgba(243,244,246,0.9));
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            box-shadow: 0 1px 4px rgba(0,0,0,0.06), inset 0 1px 0 rgba(255,255,255,0.8);
+        }
+        .font-size-btn {
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            font-weight: 800;
+            color: var(--text-light);
+            border-radius: var(--radius-full);
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            font-family: inherit;
+            line-height: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px;
+            height: 32px;
+            position: relative;
+            user-select: none;
+        }
+        .font-size-btn:hover { color: var(--primary); background: rgba(153,0,0,0.08); }
+        .font-size-btn:active { transform: scale(0.9); background: rgba(153,0,0,0.15); color: var(--primary); }
+        .font-size-btn.at-limit { opacity: 0.3; cursor: default; }
+        .font-size-btn.at-limit:hover { background: transparent; color: var(--text-light); }
+        .font-size-btn.at-limit:active { transform: none; background: transparent; }
+        .font-size-btn.decrease-a { font-size: 0.7rem; }
+        .font-size-btn.increase-a { font-size: 1.1rem; }
+
+        /* ===================== Page chrome ===================== */
+        main { max-width: 1000px; margin: 0 auto; padding: 2rem; }
+        .back-link { display: inline-flex; align-items: center; gap: 6px; color: #64748b; text-decoration: none; font-size: 0.9rem; font-weight: 500; }
+        .back-link:hover { color: var(--primary); }
+
+        .hero { text-align: center; padding: 2rem 0 1rem; }
+        .hero h1 { font-size: 1.8rem; color: var(--text-dark); margin-bottom: 0.5rem; letter-spacing: -0.02em; }
+        .hero ul { text-align: left; display: inline-block; margin: 0 auto; padding-left: 1.5rem; color: var(--text-light); font-size: 1rem; line-height: 1.8; }
+
+        .disclaimer { background: #fef2f2; border: 1px solid #fecaca; border-radius: 8px; padding: 1rem 1.25rem; margin-bottom: 2rem; }
+        .disclaimer-title { font-weight: 700; color: var(--iu-crimson); margin-bottom: 0.5rem; }
+        .disclaimer ul { margin: 0; padding-left: 1.25rem; color: var(--text-light); font-size: 0.9rem; }
+
+        .tool-container { background: var(--white); border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); padding: 2rem; margin-top: 2rem; }
+        .section-title { font-size: 1.3rem; color: var(--iu-crimson); margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 2px solid var(--iu-crimson); }
+        .section-title.mt { margin-top: 2rem; }
+        .section-hint { font-size: 0.9rem; color: var(--text-light); margin-bottom: 1rem; }
+
+        /* Loading overlay (WebR boot) */
+        .loading-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.96); display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 9999; }
+        .loading-overlay.hidden { display: none; }
+        .spinner { width: 60px; height: 60px; border: 4px solid var(--border); border-top-color: var(--iu-crimson); border-radius: 50%; animation: spin 1s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .loading-text { margin-top: 1rem; font-size: 1.1rem; color: var(--text-light); }
+        .loading-stage { margin-top: 0.5rem; font-size: 0.85rem; color: var(--text-light); text-align: center; max-width: 420px; padding: 0 1rem; }
+
+        /* Status message */
+        .status-message { padding: 0.85rem 1rem; border-radius: 6px; margin-bottom: 1rem; display: none; font-size: 0.95rem; }
+        .status-message.visible { display: block; }
+        .status-message.error { background: #fee2e2; color: #991b1b; border: 1px solid #fecaca; }
+        .status-message.success { background: #d1fae5; color: #065f46; border: 1px solid #a7f3d0; }
+        .status-message.info { background: #dbeafe; color: #1e40af; border: 1px solid #bfdbfe; }
+
+        /* Upload */
+        .upload-area { border: 2px dashed var(--border-strong); border-radius: 8px; padding: 2.5rem; text-align: center; cursor: pointer; transition: all 0.3s; margin-bottom: 1rem; }
+        .upload-area:hover, .upload-area.dragover { border-color: var(--iu-crimson); background: rgba(153, 0, 0, 0.05); }
+        .upload-area input[type="file"] { display: none; }
+        .upload-icon { font-size: 2.5rem; color: var(--iu-crimson); margin-bottom: 0.5rem; }
+        .upload-text { font-size: 1rem; color: var(--text-dark); }
+        .upload-hint { font-size: 0.85rem; color: var(--text-light); margin-top: 0.4rem; }
+
+        /* Data preview */
+        .preview-note { background: #f0f9ff; border: 1px solid #bae6fd; border-left: 4px solid #0369a1; border-radius: 6px; padding: 0.85rem 1rem; margin-bottom: 1rem; font-size: 0.9rem; line-height: 1.55; }
+        .preview-note strong { color: #0369a1; }
+        .var-pill { display: inline-block; background: var(--white); border: 1px solid var(--border); border-radius: var(--radius-full); padding: 2px 10px; margin: 2px 3px 0 0; font-size: 0.82rem; font-variant-numeric: tabular-nums; }
+        .var-pill.num { border-color: rgba(153,0,0,0.3); color: var(--iu-crimson-dark); }
+
+        /* Form controls */
+        .form-group { margin-bottom: 1.25rem; }
+        .form-group label { display: block; font-weight: 600; margin-bottom: 0.4rem; color: var(--text-dark); }
+        .form-group select, .form-group input[type="number"] {
+            width: 100%; padding: 0.65rem 0.75rem; border: 1px solid var(--border);
+            border-radius: 6px; font-size: 1rem; font-family: inherit; background: var(--white);
+        }
+        .form-group select:focus, .form-group input:focus { outline: none; border-color: var(--iu-crimson); }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+        @media (max-width: 720px) { .form-row { grid-template-columns: 1fr; } }
+        .field-hint { color: var(--text-light); font-weight: 400; font-size: 0.85rem; margin-left: 0.4rem; }
+        .field-msg { display: block; margin-top: 0.35rem; font-size: 0.82rem; font-weight: 600; color: var(--iu-crimson); }
+
+        .radio-row { display: flex; gap: 0.65rem; flex-wrap: wrap; }
+        .radio-row label { display: inline-flex; align-items: center; gap: 0.4rem; font-weight: 500; cursor: pointer; padding: 0.45rem 0.85rem; border-radius: 6px; border: 1px solid var(--border); background: var(--white); font-size: 0.9rem; }
+        .radio-row label:has(input:checked) { border-color: var(--iu-crimson); background: rgba(153,0,0,0.04); color: var(--iu-crimson); font-weight: 600; }
+        .radio-row input { accent-color: var(--iu-crimson); }
+
+        /* Buttons */
+        .btn { display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; padding: 0.75rem 1.6rem; font-size: 1rem; font-weight: 600; text-align: center; border: none; border-radius: 6px; cursor: pointer; transition: all 0.2s; font-family: inherit; }
+        .btn-primary { background: var(--iu-crimson); color: var(--white); }
+        .btn-primary:hover:not(:disabled) { background: var(--iu-crimson-dark); }
+        .btn-primary:disabled { background: var(--text-light); cursor: not-allowed; opacity: 0.6; }
+        .btn-secondary { background: var(--white); color: var(--iu-crimson); border: 2px solid var(--iu-crimson); }
+        .btn-secondary:hover { background: var(--iu-crimson); color: var(--white); }
+        .btn-sm { padding: 0.55rem 1rem; font-size: 0.9rem; }
+        .button-group { display: flex; gap: 1rem; margin-top: 1.5rem; flex-wrap: wrap; }
+
+        /* Results */
+        .results-container { display: none; margin-top: 2rem; }
+        .results-container.visible { display: block; }
+
+        .result-table-wrap { overflow-x: auto; border: 1px solid var(--border); border-radius: 6px; margin-top: 0.75rem; max-height: 520px; overflow-y: auto; }
+        .result-table { width: 100%; border-collapse: collapse; font-size: 0.88rem; }
+        .result-table th, .result-table td { padding: 0.5rem 0.85rem; text-align: right; border-bottom: 1px solid var(--border); white-space: nowrap; }
+        .result-table th { background: var(--iu-crimson); color: var(--white); position: sticky; top: 0; z-index: 1; font-size: 0.82rem; font-weight: 600; }
+        .result-table th:first-child, .result-table td:first-child { text-align: left; }
+        .result-table tbody tr:nth-child(even) { background: #fafafa; }
+        .result-table td.num { text-align: right; font-variant-numeric: tabular-nums; }
+
+        /* Preview (head) table */
+        .preview-table { width: 100%; border-collapse: collapse; font-size: 0.86rem; }
+        .preview-table th, .preview-table td { padding: 0.45rem 0.85rem; text-align: left; border-bottom: 1px solid var(--border); white-space: nowrap; }
+        .preview-table th { background: var(--iu-crimson); color: var(--white); position: sticky; top: 0; z-index: 1; font-size: 0.82rem; }
+
+        /* Confidence-interval panel */
+        .ci-panel { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 1.25rem; margin-top: 0.75rem; }
+        .stat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 0.75rem; margin-top: 1rem; }
+        .stat { background: var(--white); border: 1px solid var(--border); border-radius: 8px; padding: 0.85rem 1rem; }
+        .stat .label { font-size: 0.72rem; color: var(--text-light); text-transform: uppercase; letter-spacing: 0.6px; font-weight: 600; }
+        .stat .value { font-size: 1.3rem; color: var(--iu-crimson); font-weight: 700; margin-top: 0.2rem; font-variant-numeric: tabular-nums; }
+        .stat .secondary { font-size: 0.75rem; color: var(--text-light); margin-top: 0.2rem; }
+        .ci-headline { margin-top: 1rem; padding: 1rem 1.25rem; border-radius: 8px; background: #f0f9ff; border: 1px solid #bae6fd; color: #075985; font-size: 1rem; line-height: 1.6; }
+        .ci-headline strong { color: #0369a1; font-variant-numeric: tabular-nums; }
+        .ci-warn { margin-top: 1rem; padding: 0.85rem 1rem; border-radius: 8px; background: #fffbeb; border: 1px solid #fde68a; color: #92400e; font-size: 0.92rem; }
+
+        /* Show R code */
+        details.r-code { margin-top: 1.5rem; border: 1px solid var(--border); border-radius: 8px; padding: 0.5rem 1rem; background: var(--surface); }
+        details.r-code summary { cursor: pointer; font-weight: 600; color: var(--text-sub); font-size: 0.92rem; padding: 0.4rem 0; }
+        details.r-code pre { background: #1e1e1e; color: #d4d4d4; font-family: 'Monaco', 'Menlo', 'Courier New', monospace; font-size: 0.8rem; padding: 1.1rem; border-radius: 8px; overflow-x: auto; white-space: pre; line-height: 1.5; margin: 0.5rem 0; }
+        .code-wrap { position: relative; }
+        .copy-btn { position: absolute; top: 14px; right: 14px; display: inline-flex; align-items: center; gap: 5px; background: rgba(255,255,255,0.12); color: #d4d4d4; border: 1px solid rgba(255,255,255,0.25); border-radius: 6px; padding: 5px 10px; font-size: 0.78rem; font-weight: 600; font-family: inherit; cursor: pointer; transition: background 0.15s, color 0.15s, border-color 0.15s; }
+        .copy-btn:hover { background: rgba(255,255,255,0.22); color: #fff; }
+        .copy-btn.copied { background: #16a34a; border-color: #16a34a; color: #fff; }
+
+        footer { text-align: center; padding: 2rem; color: var(--text-light); font-size: 0.9rem; background: var(--surface); border-top: 1px solid var(--border); margin-top: 3rem; }
+
+        @media (max-width: 768px) {
+            body { font-size: 16px; }
+            main { padding: 1rem; }
+            .tool-container { padding: 1.25rem; }
+            .hero { padding: 1.5rem 0; }
+            .hero h1 { font-size: 1.4rem; }
+            .button-group { flex-direction: column; }
+            .button-group .btn { width: 100%; }
+        }
+
+        @media (max-width: 640px) {
+            .nav-toggle { display: flex; }
+            .font-size-controls.font-size-mobile { display: flex; }
+            .font-size-controls.font-size-desktop { display: none; }
+            .nav-links {
+                display: none;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                right: 0;
+                background: white;
+                flex-direction: column;
+                padding: 16px 24px;
+                border-bottom: 1px solid var(--border);
+                box-shadow: var(--shadow-lg);
+            }
+            .nav-links.active { display: flex; }
+            .nav-links a {
+                margin-left: 0;
+                padding: 12px 0;
+                font-size: 1rem;
+                border-bottom: 1px solid var(--border);
+            }
+            .nav-links a::after { display: none; }
+            .nav-links a:last-child { border-bottom: none; }
+            .nav-container { position: relative; }
+            .font-size-controls { margin-right: 4px; }
+        }
+    
+        :focus-visible { outline: 2px solid currentColor; outline-offset: 2px; }
+
+        /* ---- sample-size tool ---- */
+        .ss-conv { display:flex; flex-wrap:wrap; gap:.5rem 1.4rem; align-items:center;
+            padding:.85rem 1rem; border:1px solid rgba(153,0,0,.18); border-radius:8px;
+            background:rgba(153,0,0,.03); margin-bottom:1.6rem; }
+        .ss-conv-label { font-weight:700; color:#990000; font-size:.9rem; }
+        .ss-out { margin-top:1rem; padding:1rem 1.15rem; border-radius:8px;
+            border:1px solid #d9dee5; background:#f7f9fb; }
+        .ss-out.answer { border-color:rgba(153,0,0,.35); background:rgba(153,0,0,.045); }
+        .ss-big { font-size:1.9rem; font-weight:800; color:#990000; line-height:1.15; }
+        .ss-big small { font-size:.95rem; font-weight:600; color:#4a5560; margin-left:.4rem; }
+        .ss-work { margin-top:.6rem; font-family:'SF Mono',Menlo,Consolas,monospace;
+            font-size:.86rem; color:#33404d; line-height:1.75; overflow-x:auto; }
+        .ss-work em { color:#990000; font-style:normal; font-weight:700; }
+        .ss-note { margin-top:.55rem; font-size:.82rem; color:#5a6672; }
+        .ss-bad { color:#990000; font-weight:600; font-size:.86rem; margin-top:.5rem; }
+        /* 1. descriptive statistics from pasted data */
+        .ds-data { width:100%; min-height:5.2rem; padding:.7rem .85rem; border:1.5px solid var(--border); border-radius:6px;
+                   font-family:'SF Mono',Menlo,Consolas,monospace; font-size:.95rem; line-height:1.5; resize:vertical; }
+        .ds-data:focus { outline:none; border-color:var(--iu-crimson); }
+        .ds-examples { display:flex; flex-wrap:wrap; gap:.5rem; align-items:center; margin:.2rem 0 .4rem; font-size:.88rem; color:var(--text-light); }
+        .ds-grid { display:grid; grid-template-columns:max-content 1fr; gap:.45rem 1.1rem; margin-top:.2rem; align-items:baseline; }
+        .ds-grid .k { font-weight:700; color:#4a5560; font-size:.9rem; }
+        .ds-grid .v { font-family:'SF Mono',Menlo,Consolas,monospace; font-size:.9rem; color:#1f2933; }
+        .ds-grid .v em { color:#990000; font-style:normal; font-weight:700; }
+        .ds-actions { display:flex; flex-wrap:wrap; gap:.6rem; margin-top:.9rem; }
+        .ss-cards { display:grid; grid-template-columns:repeat(auto-fit,minmax(265px,1fr)); gap:1.15rem; }
+        .ss-card { border:1px solid #d9dee5; border-radius:9px; padding:1.1rem 1.15rem; background:#fff; }
+        .ss-card h3 { margin:0 0 .3rem; font-size:1rem; color:#1d2733; }
+        .ss-card .sub { font-size:.83rem; color:#5a6672; margin-bottom:.85rem; line-height:1.5; }
+
+    
+        /* ================= four-tab toolkit ================= */
+        .tk { width: 100%; max-width: 1100px; margin: 0 auto 3rem; padding: 0 1.25rem; box-sizing: border-box; }
+        .tk-panel, .tk-chartwrap > *, .tk-card { min-width: 0; }
+        .tk [hidden] { display: none !important; }
+        .tk-tabs { display: grid; grid-template-columns: repeat(4, 1fr); gap: .45rem; padding: .45rem;
+                   background: #f3f4f6; border: 1px solid var(--border); border-radius: 16px; margin-bottom: 1.1rem;
+                   position: sticky; top: var(--tk-top, .5rem); z-index: 150; box-shadow: var(--shadow-sm); }
+        .tk-tab { display: flex; align-items: center; gap: .7rem; padding: .7rem .9rem; border: 0; border-radius: 12px;
+                  background: transparent; cursor: pointer; font-family: inherit; text-align: left; color: #4b5563;
+                  transition: background var(--transition-fast), color var(--transition-fast), box-shadow var(--transition-fast); }
+        .tk-tab:hover { background: rgba(255,255,255,.7); color: var(--text-dark); }
+        .tk-tab:focus-visible { outline: 2px solid var(--iu-crimson); outline-offset: 2px; }
+        .tk-tab[aria-selected="true"] { background: #fff; color: var(--iu-crimson); box-shadow: 0 2px 10px rgba(15,23,42,.10); }
+        .tk-tab .ic { flex: 0 0 36px; width: 36px; height: 36px; border-radius: 10px; display: grid; place-items: center;
+                      background: rgba(153,0,0,.07); color: var(--iu-crimson); }
+        .tk-tab[aria-selected="true"] .ic { background: var(--iu-crimson); color: #fff; }
+        .tk-tab .ic svg { width: 20px; height: 20px; }
+        .tk-tab .tx { display: flex; flex-direction: column; font-weight: 700; font-size: .98rem; line-height: 1.2; }
+        .tk-tab .tx small { font-size: .7rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: #9ca3af; }
+        .tk-tab[aria-selected="true"] .tx small { color: rgba(153,0,0,.6); }
+        @media (max-width: 820px) { .tk-tabs { grid-template-columns: 1fr 1fr; position: static; } }
+        @media (max-width: 460px) { .tk-tab .ic { display: none; } }
+
+        .tk-conv { margin-bottom: 1rem; }
+        .tk-panel { background: #fff; border: 1px solid var(--border); border-radius: 18px; padding: 1.8rem 1.8rem 2rem;
+                    box-shadow: var(--shadow-md); }
+        @media (max-width: 620px) { .tk { padding: 0; } .tk-panel { padding: 1.1rem .8rem 1.3rem; } .tk-card { padding: .9rem .75rem; } .tk-chartview { padding: .7rem .5rem; } }
+        .tk-head h2 { font-size: 1.45rem; color: var(--text-dark); margin: 0 0 .35rem; font-weight: 800; }
+        .tk-head p { color: var(--text-light); font-size: .95rem; margin: 0 0 1.2rem; max-width: 62rem; }
+        .tk-head.sub { margin-top: 2.2rem; padding-top: 1.6rem; border-top: 1px solid var(--border); }
+
+        .tk-seg { display: inline-flex; background: #f3f4f6; border: 1px solid var(--border); border-radius: 10px; padding: 3px; gap: 2px; flex-wrap: wrap; }
+        .tk-seg button { border: 0; background: transparent; padding: .5rem 1rem; border-radius: 8px; font-weight: 600; font-size: .9rem; line-height: 1.2; font-family: inherit;
+                         font-family: inherit; color: #4b5563; cursor: pointer; }
+        .tk-seg button.on { background: #fff; color: var(--iu-crimson); box-shadow: 0 1px 4px rgba(15,23,42,.12); }
+        .tk-seg.small button { padding: .38rem .75rem; font-size: .84rem; }
+
+        .tk-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 1.1rem 1.2rem; margin-top: 1rem; }
+        .tk-label { display: block; font-weight: 700; color: var(--text-dark); margin-bottom: .5rem; }
+        .tk-label span { font-weight: 400; color: var(--text-light); font-size: .85rem; margin-left: .35rem; }
+        .ds-data { width: 100%; min-height: 5.4rem; padding: .75rem .9rem; border: 1.5px solid var(--border-strong); border-radius: 8px;
+                   font-family: 'SF Mono', Menlo, Consolas, monospace; font-size: 1rem; line-height: 1.55; resize: vertical; background: #fff; }
+        .ds-data:focus, .tk-grid input:focus, .tk-title:focus { outline: none; border-color: var(--iu-crimson); box-shadow: 0 0 0 3px rgba(153,0,0,.08); }
+
+        .tk-row { display: flex; flex-wrap: wrap; gap: .8rem 1.4rem; align-items: center; justify-content: space-between; margin-top: 1rem; }
+        .tk-examples { display: flex; flex-wrap: wrap; gap: .45rem; align-items: center; font-size: .85rem; color: var(--text-light); }
+        .tk-examples > span { font-weight: 700; margin-right: .2rem; }
+        .tk-chip { border: 1px solid var(--border-strong); background: #fff; border-radius: 999px; padding: .35rem .8rem; font-weight: 600; font-size: .82rem; line-height: 1.2; font-family: inherit;
+                   font-family: inherit; color: var(--text-dark); cursor: pointer; transition: all var(--transition-fast); }
+        .tk-chip:hover { border-color: var(--iu-crimson); color: var(--iu-crimson); background: var(--primary-light); }
+
+        .tk-drop { display: flex; flex-direction: column; align-items: center; gap: .35rem; padding: 1.6rem 1rem; border: 2px dashed var(--border-strong);
+                   border-radius: 12px; background: #fff; cursor: pointer; text-align: center; color: var(--text-light); transition: all var(--transition-fast); }
+        .tk-drop:hover, .tk-drop.over { border-color: var(--iu-crimson); background: var(--primary-light); color: var(--iu-crimson); }
+        .tk-drop svg { width: 30px; height: 30px; color: var(--iu-crimson); }
+        .tk-drop b { color: var(--text-dark); }
+        .tk-drop span { font-size: .85rem; }
+        .tk-drop input { display: none; }
+        .tk-fileinfo { margin-top: .7rem; font-size: .88rem; color: var(--text-sub); }
+        .tk-fileinfo b { color: var(--text-dark); }
+
+        .tk-grid { border-collapse: separate; border-spacing: 0 6px; }
+        .tk-grid th { font-size: .78rem; text-transform: uppercase; letter-spacing: .06em; color: var(--text-light); text-align: left; padding: 0 .4rem; }
+        .tk-grid td { padding: 0 .3rem; }
+        .tk-grid input { width: 7rem; padding: .45rem .6rem; border: 1.5px solid var(--border-strong); border-radius: 7px; font-family: inherit; font-size: .92rem; background: #fff; }
+        .tk-grid td:first-child input { width: 14rem; }
+        .tk-grid th input { width: 11rem; }
+        #dsFreqTable td input { width: 9rem; }
+        #chTable td input[data-cell] { width: 11.6rem; }
+        .tk-grid th input { font-weight: 700; text-transform: none; letter-spacing: 0; color: var(--text-dark); font-size: .88rem; }
+        .tk-grid .x { border: 0; background: none; color: #9ca3af; cursor: pointer; font-size: 1.1rem; padding: .2rem .4rem; border-radius: 6px; }
+        .tk-grid .x:hover { color: var(--iu-crimson); background: var(--primary-light); }
+        .tk-link { border: 0; background: none; color: var(--iu-crimson); font-weight: 700; font-size: .88rem; line-height: 1.2; font-family: inherit; font-family: inherit; cursor: pointer; padding: .3rem 0; }
+        .tk-link:hover { text-decoration: underline; }
+        .tk-linkrow { display: flex; flex-wrap: wrap; gap: 1.1rem; margin-top: .2rem; }
+        .tk-scroll { overflow-x: auto; }
+
+        /* results */
+        .tk-stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: .75rem; margin-top: .45rem; }
+        .tk-stats.three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+        .tk-group { margin-top: 1.2rem; font-size: .74rem; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; color: var(--iu-crimson); }
+        @media (max-width: 720px) { .tk-stats, .tk-stats.three { grid-template-columns: 1fr 1fr; } }
+        .tk-stat { border: 1px solid var(--border); border-radius: 12px; padding: .8rem 1rem; background: #fff; }
+        .tk-stat .k { font-size: .72rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--text-light); }
+        .tk-stat .k .sym { text-transform: none; letter-spacing: 0; font-size: .95rem; font-family: Georgia, 'Times New Roman', serif; font-style: italic; color: var(--text-sub); }
+        .tk-stat .v { font-size: 1.55rem; font-weight: 800; color: var(--text-dark); margin-top: .15rem; line-height: 1.15; word-break: break-word; }
+        .tk-stat.hl { border-color: rgba(153,0,0,.35); background: var(--primary-light); }
+        .tk-stat.hl .v { color: var(--iu-crimson); }
+        .tk-work { margin-top: 1rem; border: 1px solid rgba(153,0,0,.25); background: rgba(153,0,0,.03); border-radius: 12px; padding: 1rem 1.15rem; }
+        .tk-work h4 { margin: 0 0 .6rem; font-size: .8rem; letter-spacing: .08em; text-transform: uppercase; color: var(--iu-crimson); }
+        .ds-grid { display: grid; grid-template-columns: max-content 1fr; gap: .5rem 1.2rem; align-items: baseline; }
+        .ds-grid .k { font-weight: 700; color: #4a5560; font-size: .9rem; }
+        .ds-grid .v { font-family: 'SF Mono', Menlo, Consolas, monospace; font-size: .88rem; color: #1f2933; line-height: 1.6; overflow-wrap: anywhere; }
+        .ds-grid .v em { color: #990000; font-style: normal; font-weight: 700; }
+        @media (max-width: 560px) { .ds-grid { grid-template-columns: 1fr; gap: .15rem; } .ds-grid .v { margin-bottom: .45rem; } }
+        .tk-note { margin-top: .7rem; font-size: .84rem; color: #5a6672; }
+        .tk-summary { width: 100%; border-collapse: collapse; margin-top: 1.2rem; font-size: .9rem; }
+        .tk-summary th { text-align: right; font-size: .74rem; letter-spacing: .06em; text-transform: uppercase; color: var(--text-light);
+                         padding: .55rem .7rem; border-bottom: 2px solid var(--border); white-space: nowrap; }
+        .tk-summary th:first-child, .tk-summary td:first-child { text-align: left; }
+        .tk-summary td { text-align: right; padding: .55rem .7rem; border-bottom: 1px solid var(--border); font-variant-numeric: tabular-nums; }
+        .tk-summary tbody tr { cursor: pointer; }
+        .tk-summary tbody tr:hover td { background: #fafafa; }
+        .tk-summary tr.on td { background: var(--primary-light); font-weight: 700; }
+        .tk-summary tr.on td:first-child { color: var(--iu-crimson); }
+        .tk-actions { display: flex; flex-wrap: wrap; gap: .6rem; margin-top: 1.2rem; }
+        .tk-from { margin-top: .2rem; padding: .6rem .9rem; border-radius: 10px; background: #eef6f2; color: #14543f; font-size: .88rem; font-weight: 600; }
+
+        .form-row.four { grid-template-columns: repeat(4, 1fr); }
+        .form-row.three { grid-template-columns: repeat(3, 1fr); }
+        @media (max-width: 820px) { .form-row.four, .form-row.three { grid-template-columns: 1fr 1fr; } }
+        @media (max-width: 480px) { .form-row.four, .form-row.three { grid-template-columns: 1fr; } }
+        .tk .form-row { align-items: end; }
+        .tk .form-group { margin-bottom: 0; }
+        .tk .ss-card .form-group { margin-bottom: .75rem; }
+        .tk .ss-card .form-group label { font-size: .85rem; margin-bottom: .3rem; }
+        .tk .ss-card input { width: 100%; }
+        .tk .ss-card .sub { margin-bottom: .9rem; }
+
+        .tk-levels { width: 100%; max-width: 640px; border-collapse: collapse; margin-top: 1rem; font-size: .9rem; }
+        .tk-levels th { text-align: left; font-size: .74rem; letter-spacing: .06em; text-transform: uppercase; color: var(--text-light); padding: .5rem .6rem; border-bottom: 2px solid var(--border); }
+        .tk-levels td { padding: .5rem .6rem; border-bottom: 1px solid var(--border); font-variant-numeric: tabular-nums; }
+        .tk-levels tr.on td { background: var(--primary-light); font-weight: 700; color: var(--iu-crimson); }
+        .tk-ciline { margin-top: 1rem; }
+        .tk-ciline svg { width: 100%; max-width: 640px; height: auto; display: block; }
+
+        /* charts */
+        .tk-chartwrap { display: grid; grid-template-columns: minmax(0, 1fr); gap: 1.1rem; align-items: start; }
+        @media (max-width: 900px) { .tk-chartwrap { grid-template-columns: 1fr; } }
+        .tk-chartwrap .tk-card { margin-top: 0; }
+        .tk-chartview { background: #fff; }
+        .tk-chartctl { display: flex; flex-wrap: wrap; gap: .5rem; align-items: center; }
+        .tk-chartctl select { padding: .4rem .6rem; border: 1.5px solid var(--border-strong); border-radius: 8px; font-family: inherit; font-size: .85rem; }
+        .tk-title { width: 100%; margin-top: .8rem; padding: .45rem .6rem; border: 1.5px solid transparent; border-radius: 8px;
+                    font-weight: 700; font-size: 1.05rem; line-height: 1.3; font-family: inherit; font-family: inherit; color: var(--text-dark); background: transparent; }
+        .tk-title:hover { border-color: var(--border); }
+        .tk-svghost svg { width: 100%; height: auto; display: block; }
+        .tk-tip { position: fixed; z-index: 50; pointer-events: none; background: #1e293b; color: #fff; font-size: .82rem; padding: .45rem .65rem;
+                  border-radius: 7px; box-shadow: var(--shadow-md); white-space: nowrap; }
+        .tk-tip b { color: #fecaca; }
+    </style>
+</head>
+<body>
+    <!-- Auth check - redirect to login if not signed in -->
+    <div id="loading-screen" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: var(--bg); display: flex; align-items: center; justify-content: center; z-index: 99999;">
+        <p style="color: var(--text-light);">Loading...</p>
+    </div>
+
+    <div id="main-content" style="display: none;">
+
+    <nav>
+        <div class="nav-container">
+            <div style="display: flex; align-items: center; gap: 18px;">
+                <span style="display: flex; align-items: center; gap: 10px;">
+                    <a href="https://robinson.gsu.edu/" target="_blank" rel="noopener" title="J. Mack Robinson College of Business, Georgia State University" style="line-height: 0;">
+                        <img src="gsu-logo.png" alt="Robinson College of Business, Georgia State University" style="height: 24px; filter: grayscale(1); opacity: 0.55;">
+                    </a>
+                    <a href="https://kelley.iu.edu/" target="_blank" rel="noopener" title="Kelley School of Business, Indiana University" style="line-height: 0;">
+                        <img src="iu-logo.png" alt="Kelley School of Business, Indiana University" style="height: 38px;">
+                    </a>
+                    <a href="https://sc.edu/study/colleges_schools/moore/" target="_blank" rel="noopener" title="Darla Moore School of Business, University of South Carolina" style="line-height: 0;">
+                        <img src="usc-logo.png" alt="Darla Moore School of Business, University of South Carolina" style="height: 24px; filter: grayscale(1); opacity: 0.55;">
+                    </a>
+                </span>
+                <span style="width: 1px; height: 26px; background: rgba(0,0,0,0.14);"></span>
+                <a href="index.html" class="brand">Koray Cosguner</a>
+            </div>
+            <div style="display: flex; align-items: center;">
+                <div class="font-size-controls font-size-mobile" role="group" aria-label="Text size">
+                    <button class="font-size-btn decrease-a" onclick="adjustFontSize(-1)" title="Decrease text size" aria-label="Decrease text size">A</button>
+                    <button class="font-size-btn increase-a" onclick="adjustFontSize(1)" title="Increase text size" aria-label="Increase text size">A</button>
+                </div>
+                <div class="nav-toggle" role="button" tabindex="0" aria-label="Toggle navigation menu" aria-expanded="false" onclick="toggleNav()" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();toggleNav();}">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            </div>
+            <div class="nav-links">
+                <div class="font-size-controls font-size-desktop" role="group" aria-label="Text size">
+                    <button class="font-size-btn decrease-a" onclick="adjustFontSize(-1)" title="Decrease text size" aria-label="Decrease text size">A</button>
+                    <button class="font-size-btn increase-a" onclick="adjustFontSize(1)" title="Increase text size" aria-label="Increase text size">A</button>
+                </div>
+                <a href="index.html">Home</a>
+                <a href="research.html">Research</a>
+                <a href="teaching.html">Teaching</a>
+                <a href="https://koraycosguner.github.io/miaow-consulting/" target="_blank">Consulting</a>
+                <a href="tools.html" class="active">Analytics and Pricing Tools</a>
+            </div>
+        </div>
+    </nav>
+
+
+    <main>
+        <section class="hero">
+            <h1>Descriptive Statistics, Confidence Intervals, Sample Size and Charts</h1>
+            <ul>
+                <li><b>Descriptive Statistics:</b> type your numbers, enter values with frequencies, or upload a CSV, and get the mode, median, mean, range, variance and standard deviation</li>
+                <li><b>Confidence Intervals:</b> build an interval for a population mean, at 90%, 95% and 99%</li>
+                <li><b>Sample Size:</b> the sample needed for a target sampling error, plus the ad hoc rules</li>
+                <li><b>Charts:</b> bar, pie and line charts of a frequency table, with a PNG or SVG download</li>
+                <li>Every answer shows the arithmetic, so it can be checked by hand or reproduced on an exam</li>
+            </ul>
+        </section>
+
+
+        <div class="disclaimer">
+            <div class="disclaimer-title">Disclaimer</div>
+            <ul>
+                <li><strong>Verify all results.</strong> Output may be inaccurate or incomplete; check important conclusions independently.</li>
+                <li><strong>No warranty.</strong> Provided "as is" without warranty of any kind.</li>
+                <li><strong>Privacy:</strong> Nothing you type or upload is sent anywhere. Every number is computed in your browser.</li>
+            </ul>
+            <div style="margin-top: 0.85rem; padding-top: 0.85rem; border-top: 1px solid rgba(153, 0, 0, 0.2); font-size: 0.9rem;">
+                <strong>Report issues:</strong> Email Dr. Cosguner at <a href="mailto:kcosgun@iu.edu" style="color: var(--iu-crimson); font-weight: 600;">kcosgun@iu.edu</a>.
+            </div>
+        </div>
+
+        <div class="tk">
+            <div class="tk-tabs" role="tablist" aria-label="Tool sections">
+                <button class="tk-tab" role="tab" id="tab-descriptives" aria-controls="panel-descriptives" data-tab="descriptives">
+                    <span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 4H6l7 8-7 8h12" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+                    <span class="tx"><small>Step 1</small>Descriptive Statistics</span>
+                </button>
+                <button class="tk-tab" role="tab" id="tab-intervals" aria-controls="panel-intervals" data-tab="intervals">
+                    <span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12h18M6 8v8M18 8v8" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/><circle cx="12" cy="12" r="2.6" fill="currentColor"/></svg></span>
+                    <span class="tx"><small>Step 2</small>Confidence Intervals</span>
+                </button>
+                <button class="tk-tab" role="tab" id="tab-sample-size" aria-controls="panel-sample-size" data-tab="sample-size">
+                    <span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="8" cy="8" r="2.4" fill="currentColor"/><circle cx="16" cy="8" r="2.4" fill="currentColor"/><circle cx="8" cy="16" r="2.4" fill="currentColor"/><circle cx="16" cy="16" r="2.4" fill="currentColor"/></svg></span>
+                    <span class="tx"><small>Step 3</small>Sample Size</span>
+                </button>
+                <button class="tk-tab" role="tab" id="tab-charts" aria-controls="panel-charts" data-tab="charts">
+                    <span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 20V11M12 20V5M19 20v-7" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></svg></span>
+                    <span class="tx"><small>Step 4</small>Charts</span>
+                </button>
+            </div>
+
+            <div class="ss-conv tk-conv" id="zconvBar" hidden>
+                <span class="ss-conv-label">z convention</span>
+                <span class="radio-row">
+                    <label for="convCourse"><input type="radio" id="convCourse" name="zconv" value="course" checked> Course values (z = 2 at 95%, z = 5/3 at 90%)</label>
+                    <label for="convExact"><input type="radio" id="convExact" name="zconv" value="exact"> Exact normal (z = 1.960 at 95%, z = 1.645 at 90%)</label>
+                </span>
+            </div>
+
+            <!-- ======================= 1. descriptive statistics ======================= -->
+            <section class="tk-panel" role="tabpanel" id="panel-descriptives" aria-labelledby="tab-descriptives">
+                <div class="tk-head">
+                    <h2>Descriptive Statistics</h2>
+                    <p>Central tendency (mode, median, mean) and dispersion (range, variance, standard deviation) for one variable, or for every numeric column of a CSV.</p>
+                </div>
+
+                <div class="tk-seg" role="radiogroup" aria-label="How to enter the data">
+                    <button type="button" class="on" data-ds-mode="type">Type or paste values</button>
+                    <button type="button" data-ds-mode="freq">Values with frequencies</button>
+                    <button type="button" data-ds-mode="csv">Upload a CSV</button>
+                </div>
+
+                <div class="tk-card" data-ds-pane="type">
+                    <label for="dsData" class="tk-label">Observations <span>separated by commas, spaces or new lines; a column copied from Excel works too</span></label>
+                    <textarea id="dsData" class="ds-data" spellcheck="false">5, 6, 7, 3, 5, 4</textarea>
+                </div>
+
+                <div class="tk-card" data-ds-pane="freq" hidden>
+                    <div class="tk-label">Values and how often each occurs <span>use this when the data come as a frequency table</span></div>
+                    <table class="tk-grid" id="dsFreqTable">
+                        <thead><tr><th>Value</th><th>Frequency</th><th></th></tr></thead>
+                        <tbody></tbody>
+                    </table>
+                    <button type="button" class="tk-link" id="dsFreqAdd">+ Add a value</button>
+                </div>
+
+                <div class="tk-card" data-ds-pane="csv" hidden>
+                    <label class="tk-drop" id="dsDrop" for="dsFile">
+                        <input type="file" id="dsFile" accept=".csv,text/csv,.txt">
+                        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 16V4M7 9l5-5 5 5M4 20h16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                        <b>Drop a CSV here, or click to choose one</b>
+                        <span>One column or many. A header row is detected automatically; empty cells are skipped.</span>
+                    </label>
+                    <div id="dsFileInfo" class="tk-fileinfo" hidden></div>
+                </div>
+
+                <div class="tk-row">
+                    <div class="tk-examples">
+                        <span>Class examples</span>
+                        <button type="button" class="tk-chip" data-ds-example="grades">Ph.D. midterm grades</button>
+                        <button type="button" class="tk-chip" data-ds-example="symphony">Symphony ticket holders</button>
+                        <button type="button" class="tk-chip" data-ds-example="engineers">Design engineers (frequencies)</button>
+                        <button type="button" class="tk-chip" data-ds-example="fastfood">Fast-food visits</button>
+                    </div>
+                    <div class="radio-row" role="radiogroup" aria-label="Population or sample">
+                        <label for="dsSample"><input type="radio" id="dsSample" name="dskind" value="sample" checked> Sample (divide by n &minus; 1)</label>
+                        <label for="dsPop"><input type="radio" id="dsPop" name="dskind" value="population"> Whole population (divide by N)</label>
+                    </div>
+                </div>
+
+                <div id="dsSummary"></div>
+                <div id="dsOut"></div>
+
+                <div class="tk-actions" id="dsActions" hidden>
+                    <button type="button" id="dsToCi" class="btn btn-primary btn-sm">Use in Confidence Intervals &rarr;</button>
+                    <button type="button" id="dsToN" class="btn btn-secondary btn-sm">Use for Sample Size &rarr;</button>
+                    <button type="button" id="dsToChart" class="btn btn-secondary btn-sm">Chart the frequencies &rarr;</button>
+                </div>
+            </section>
+
+            <!-- ======================= 2. confidence intervals ======================= -->
+            <section class="tk-panel" role="tabpanel" id="panel-intervals" aria-labelledby="tab-intervals" hidden>
+                <div class="tk-head">
+                    <h2>Confidence Interval for a Population Mean</h2>
+                    <p>The interval is the sample mean plus and minus the sampling error, <em>z</em> &middot; <em>s</em> / &radic;<em>n</em>. Use &sigma; if you know it, otherwise the sample <em>s</em>.</p>
+                </div>
+                <div id="ciFrom" class="tk-from" hidden></div>
+                <div class="tk-card">
+                    <div class="form-row four">
+                        <div class="form-group">
+                            <label for="ciMean">Sample mean (<span style="text-decoration:overline;">x</span>)</label>
+                            <input type="number" id="ciMean" value="0" step="any">
+                        </div>
+                        <div class="form-group">
+                            <label for="ciSd">Standard deviation (s or &sigma;)</label>
+                            <input type="number" id="ciSd" value="1.41" step="any" min="0">
+                        </div>
+                        <div class="form-group">
+                            <label for="ciN">Sample size (n)</label>
+                            <input type="number" id="ciN" value="9" step="1" min="2">
+                        </div>
+                        <div class="form-group">
+                            <label for="ciLevel">Confidence level</label>
+                            <select id="ciLevel">
+                                <option value="95" selected>95%</option>
+                                <option value="90">90%</option>
+                                <option value="99">99%</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div id="ciOut" class="ss-out answer"></div>
+                <div id="ciAll"></div>
+            </section>
+
+            <!-- ======================= 3. sample size ======================= -->
+            <section class="tk-panel" role="tabpanel" id="panel-sample-size" aria-labelledby="tab-sample-size" hidden>
+                <div class="tk-head">
+                    <h2>Sample Size for a Target Sampling Error</h2>
+                    <p>Fix how much sampling error you are willing to live with, then invert the sampling-error formula for <em>n</em>. Always round up: a fractional respondent is not a respondent.</p>
+                </div>
+                <div id="nFrom" class="tk-from" hidden></div>
+                <div class="tk-card">
+                    <div class="form-row three">
+                        <div class="form-group">
+                            <label for="nSd">Standard deviation (s or &sigma;)</label>
+                            <input type="number" id="nSd" value="1.41" step="any" min="0">
+                        </div>
+                        <div class="form-group">
+                            <label for="nErr">Allowed sampling error (e)</label>
+                            <input type="number" id="nErr" value="0.30" step="any" min="0">
+                        </div>
+                        <div class="form-group">
+                            <label for="nLevel">Confidence level</label>
+                            <select id="nLevel">
+                                <option value="95" selected>95%</option>
+                                <option value="90">90%</option>
+                                <option value="99">99%</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div id="nOut" class="ss-out answer"></div>
+                <div id="nAll"></div>
+
+                <div class="tk-head sub">
+                    <h2>Ad Hoc Methods</h2>
+                    <p>Used when experience or the budget, rather than a precision target, sets the sample size.</p>
+                </div>
+                <div class="ss-cards">
+                    <div class="ss-card">
+                        <h3>Minimum per group</h3>
+                        <div class="sub">Each major group should contain at least this many respondents once the sample is split proportionally.</div>
+                        <div class="form-group">
+                            <label for="r1Min">Minimum per group</label>
+                            <input type="number" id="r1Min" value="100" step="1" min="1">
+                        </div>
+                        <div class="form-group">
+                            <label for="r1Share">Smallest group, share of population (%)</label>
+                            <input type="number" id="r1Share" value="20" step="any" min="0.01" max="100">
+                        </div>
+                        <div id="r1Out" class="ss-out"></div>
+                    </div>
+                    <div class="ss-card">
+                        <h3>Minimum per subgroup</h3>
+                        <div class="sub">When subgroups will also be compared, each one needs 20 to 50 respondents. The smallest subgroup drives the total.</div>
+                        <div class="form-group">
+                            <label for="r2Min">Minimum per subgroup</label>
+                            <input type="number" id="r2Min" value="20" step="1" min="1">
+                        </div>
+                        <div class="form-group">
+                            <label for="r2Share">Smallest subgroup, share of population (%)</label>
+                            <input type="number" id="r2Share" value="1" step="any" min="0.01" max="100">
+                        </div>
+                        <div id="r2Out" class="ss-out"></div>
+                    </div>
+                    <div class="ss-card">
+                        <h3>Budget constraint</h3>
+                        <div class="sub">Whatever is left after fixed costs, divided by the cost of one interview. Round down: you cannot afford a partial respondent.</div>
+                        <div class="form-group">
+                            <label for="bTotal">Total budget ($)</label>
+                            <input type="number" id="bTotal" value="5000" step="any" min="0">
+                        </div>
+                        <div class="form-group">
+                            <label for="bFixed">Fixed cost, e.g. analysis ($)</label>
+                            <input type="number" id="bFixed" value="1000" step="any" min="0">
+                        </div>
+                        <div class="form-group">
+                            <label for="bEach">Cost per respondent ($)</label>
+                            <input type="number" id="bEach" value="20" step="any" min="0.01">
+                        </div>
+                        <div id="bOut" class="ss-out"></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ======================= 4. charts ======================= -->
+            <section class="tk-panel" role="tabpanel" id="panel-charts" aria-labelledby="tab-charts" hidden>
+                <div class="tk-head">
+                    <h2>Charts</h2>
+                    <p>Bar, pie and line charts of a frequency table. Type the table, upload a CSV, or send data over from Descriptive Statistics.</p>
+                </div>
+
+                <div class="tk-chartwrap">
+                    <div class="tk-card tk-chartdata">
+                        <div class="tk-label">Frequency table <span>categories down, groups across</span></div>
+                        <div class="tk-scroll"><table class="tk-grid" id="chTable"></table></div>
+                        <div class="tk-linkrow">
+                            <button type="button" class="tk-link" id="chAddRow">+ Category</button>
+                            <button type="button" class="tk-link" id="chAddCol">+ Group</button>
+                            <label class="tk-link" for="chFile">Upload a CSV<input type="file" id="chFile" accept=".csv,text/csv,.txt" hidden></label>
+                        </div>
+                        <div id="chFileInfo" class="tk-fileinfo" hidden></div>
+                        <div class="tk-examples" style="margin-top:.8rem;">
+                            <span>Class example</span>
+                            <button type="button" class="tk-chip" id="chExample">Choosing a computer (N = 300)</button>
+                        </div>
+                    </div>
+
+                    <div class="tk-card tk-chartview">
+                        <div class="tk-chartctl">
+                            <div class="tk-seg small" id="chType" role="radiogroup" aria-label="Chart type">
+                                <button type="button" class="on" data-ch-type="bar">Bar</button>
+                                <button type="button" data-ch-type="pie">Pie</button>
+                                <button type="button" data-ch-type="line">Line</button>
+                            </div>
+                            <div class="tk-seg small" id="chBarMode" role="radiogroup" aria-label="Bar layout">
+                                <button type="button" class="on" data-ch-bar="grouped">Grouped</button>
+                                <button type="button" data-ch-bar="stacked">Stacked</button>
+                            </div>
+                            <div class="tk-seg small" id="chScale" role="radiogroup" aria-label="Counts or percentages">
+                                <button type="button" class="on" data-ch-scale="count">Counts</button>
+                                <button type="button" data-ch-scale="pct">% of each group</button>
+                            </div>
+                            <select id="chPieSeries" aria-label="Group shown in the pie" hidden></select>
+                        </div>
+                        <input type="text" id="chTitle" class="tk-title" value="In choosing a computer, which one is more important to you?" aria-label="Chart title">
+                        <div id="chSvgHost" class="tk-svghost"></div>
+                        <div class="tk-actions">
+                            <button type="button" id="chPng" class="btn btn-secondary btn-sm">Download PNG</button>
+                            <button type="button" id="chSvg" class="btn btn-secondary btn-sm">Download SVG</button>
+                        </div>
+                    </div>
+                </div>
+                <div id="chFreq"></div>
+                <div id="chTip" class="tk-tip" hidden></div>
+            </section>
+        </div>
+    </main>
+
+    <footer>
+        <p>&copy; <span class="year"></span> Koray Cosguner &middot; All Rights Reserved</p>
+    </footer>
+
+    </div> <!-- end main-content -->
+
+    <!-- toolkit logic -->
+
+    <script>
+    (function () {
+        'use strict';
+        var $ = function (id) { return document.getElementById(id); };
+        var qsa = function (sel, root) { return Array.prototype.slice.call((root || document).querySelectorAll(sel)); };
+
+        /* ================= shared helpers ================= */
+        /* Inverse standard normal CDF (Acklam), used only for the exact-z convention. */
+        function qnorm(p) {
+            var a = [-3.969683028665376e+01, 2.209460984245205e+02, -2.759285104469687e+02,
+                      1.383577518672690e+02, -3.066479806614716e+01, 2.506628277459239e+00];
+            var b = [-5.447609879822406e+01, 1.615858368580409e+02, -1.556989798598866e+02,
+                      6.680131188771972e+01, -1.328068155288572e+01];
+            var c = [-7.784894002430293e-03, -3.223964580411365e-01, -2.400758277161838e+00,
+                     -2.549732539343734e+00, 4.374664141464968e+00, 2.938163982698783e+00];
+            var d = [7.784695709041462e-03, 3.224671290700398e-01, 2.445134137142996e+00,
+                     3.754408661907416e+00];
+            var pl = 0.02425, q, r;
+            if (p < pl) {
+                q = Math.sqrt(-2 * Math.log(p));
+                return (((((c[0]*q+c[1])*q+c[2])*q+c[3])*q+c[4])*q+c[5]) /
+                       ((((d[0]*q+d[1])*q+d[2])*q+d[3])*q+1);
+            }
+            if (p > 1 - pl) return -qnorm(1 - p);
+            q = p - 0.5; r = q * q;
+            return (((((a[0]*r+a[1])*r+a[2])*r+a[3])*r+a[4])*r+a[5])*q /
+                   (((((b[0]*r+b[1])*r+b[2])*r+b[3])*r+b[4])*r+1);
+        }
+        var COURSE_Z = { '90': 5 / 3, '95': 2, '99': 2.6 };
+        var LEVELS = ['90', '95', '99'];
+        function convention() { return document.querySelector('input[name="zconv"]:checked').value; }
+        function zFor(level) {
+            if (convention() === 'course' && COURSE_Z[level] !== undefined) return COURSE_Z[level];
+            return qnorm(1 - (1 - Number(level) / 100) / 2);
+        }
+        function zLabel(level) {
+            if (convention() === 'course' && level === '90') return '5/3';
+            return round(zFor(level), 3);
+        }
+        /* a fractional z needs brackets before a superscript, or 5/3^2 reads as 5 over 3^2 */
+        function zPow(level) {
+            var lab = zLabel(level);
+            return (lab.indexOf('/') >= 0 ? '(' + lab + ')' : lab) + '<sup>2</sup>';
+        }
+        /* plain rounding, for values written back into inputs */
+        function round(v, d) { var f = Math.pow(10, d); var r = Math.round(v * f) / f; return String(Object.is(r, -0) ? 0 : r); }
+        /* display: thousands separators and a true minus sign */
+        function fmt(v, d) {
+            d = d === undefined ? 4 : d;
+            var f = Math.pow(10, d), r = Math.round(v * f) / f;
+            if (Object.is(r, -0)) r = 0;
+            return r.toLocaleString('en-US', { maximumFractionDigits: d }).replace(/^-/, '−');
+        }
+        /* a negative number being subtracted or squared needs brackets: 2 − (−2), not 2 − −2 */
+        function paren(v) { return v < 0 ? '(' + fmt(v) + ')' : fmt(v); }
+        function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+        function num(id) { var v = parseFloat($(id).value); return isFinite(v) ? v : NaN; }
+        function ordinal(k) {
+            var s = ['th', 'st', 'nd', 'rd'], v = k % 100;
+            return fmt(k, 0) + (s[(v - 20) % 10] || s[v] || s[0]);
+        }
+        var NUM_RE = /^[+-]?(\d{1,3}(,\d{3})+|\d+)?(\.\d+)?([eE][+-]?\d+)?$/;
+        function toNum(tok) {
+            var t = String(tok).trim().replace(/[−–—]/g, '-');
+            if (t === '' || !NUM_RE.test(t) || !/\d/.test(t)) return NaN;
+            return Number(t.replace(/^\+/, '').replace(/,/g, ''));
+        }
+
+        /* ================= tabs ================= */
+        var TABS = ['descriptives', 'intervals', 'sample-size', 'charts'];
+        function showTab(name, keepHash) {
+            if (TABS.indexOf(name) < 0) name = 'descriptives';
+            TABS.forEach(function (t) {
+                var on = t === name, tab = $('tab-' + t);
+                tab.setAttribute('aria-selected', on ? 'true' : 'false');
+                tab.tabIndex = on ? 0 : -1;
+                $('panel-' + t).hidden = !on;
+            });
+            $('zconvBar').hidden = !(name === 'intervals' || name === 'sample-size');
+            if (!keepHash && location.hash !== '#' + name) history.replaceState(null, '', '#' + name);
+            if (name === 'charts') drawChart();
+        }
+        qsa('.tk-tab').forEach(function (btn, i, all) {
+            btn.addEventListener('click', function () { showTab(btn.getAttribute('data-tab')); });
+            btn.addEventListener('keydown', function (e) {
+                if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
+                var j = (i + (e.key === 'ArrowRight' ? 1 : all.length - 1)) % all.length;
+                all[j].focus(); showTab(all[j].getAttribute('data-tab'));
+            });
+        });
+        window.addEventListener('hashchange', function () { showTab(location.hash.slice(1), true); });
+
+        /* ================= 1. descriptive statistics ================= */
+        var dsMode = 'type', dsLabel = 'Symphony ticket holders', dsCsv = null, dsSel = 0, dsLast = null;
+        var dsFreq = [];
+        var DS_EXAMPLES = {
+            grades:    { label: 'Ph.D. midterm grades', mode: 'type', data: '89, 84, 78, 71, 78, 86', kind: 'population' },
+            symphony:  { label: 'Symphony ticket holders', mode: 'type', data: '2, 0, -2, 1, 0, -1, 2, -1, -1', kind: 'sample' },
+            fastfood:  { label: 'Fast-food visits per month', mode: 'type', data: '5, 6, 7, 3, 5, 4', kind: 'sample' },
+            engineers: { label: 'Design engineers (importance rating)', mode: 'freq', kind: 'population',
+                         freq: [[5, 5000], [4, 8000], [3, 6000], [2, 2000], [1, 4000]] }
+        };
+        $('dsData').value = DS_EXAMPLES.symphony.data;
+
+        function setDsMode(m) {
+            dsMode = m;
+            qsa('[data-ds-mode]').forEach(function (b) { b.classList.toggle('on', b.getAttribute('data-ds-mode') === m); });
+            qsa('[data-ds-pane]').forEach(function (p) { p.hidden = p.getAttribute('data-ds-pane') !== m; });
+            describe();
+        }
+        qsa('[data-ds-mode]').forEach(function (b) { b.addEventListener('click', function () { setDsMode(b.getAttribute('data-ds-mode')); }); });
+
+        function renderFreqTable() {
+            var tb = $('dsFreqTable').tBodies[0];
+            tb.innerHTML = dsFreq.map(function (r, i) {
+                return '<tr><td><input type="text" inputmode="decimal" data-fi="' + i + '" data-fk="v" value="' + esc(r[0]) + '" aria-label="Value ' + (i + 1) + '"></td>' +
+                       '<td><input type="text" inputmode="numeric" data-fi="' + i + '" data-fk="f" value="' + esc(r[1]) + '" aria-label="Frequency ' + (i + 1) + '"></td>' +
+                       '<td><button type="button" class="x" data-fdel="' + i + '" aria-label="Remove row">&times;</button></td></tr>';
+            }).join('');
+        }
+        $('dsFreqTable').addEventListener('input', function (e) {
+            var t = e.target; if (!t.hasAttribute('data-fi')) return;
+            dsFreq[+t.getAttribute('data-fi')][t.getAttribute('data-fk') === 'v' ? 0 : 1] = t.value; describe();
+        });
+        $('dsFreqTable').addEventListener('click', function (e) {
+            var t = e.target.closest('[data-fdel]'); if (!t) return;
+            dsFreq.splice(+t.getAttribute('data-fdel'), 1); renderFreqTable(); describe();
+        });
+        $('dsFreqAdd').addEventListener('click', function () { dsFreq.push(['', '']); renderFreqTable(); describe(); });
+        dsFreq = DS_EXAMPLES.engineers.freq.map(function (r) { return [String(r[0]), String(r[1])]; });
+        renderFreqTable();
+
+        /* ---- CSV ---- */
+        function parseCSV(text) {
+            text = text.replace(/^﻿/, '');
+            var first = text.split(/\r?\n/)[0] || '';
+            var delim = [',', ';', '\t'].map(function (d) { return [d, first.split(d).length]; })
+                        .sort(function (a, b) { return b[1] - a[1]; })[0][0];
+            var rows = [], row = [], cell = '', q = false;
+            for (var i = 0; i < text.length; i++) {
+                var ch = text[i];
+                if (q) { if (ch === '"') { if (text[i + 1] === '"') { cell += '"'; i++; } else q = false; } else cell += ch; }
+                else if (ch === '"') q = true;
+                else if (ch === delim) { row.push(cell); cell = ''; }
+                else if (ch === '\n' || ch === '\r') { if (ch === '\r' && text[i + 1] === '\n') i++; row.push(cell); rows.push(row); row = []; cell = ''; }
+                else cell += ch;
+            }
+            if (cell !== '' || row.length) { row.push(cell); rows.push(row); }
+            rows = rows.filter(function (r) { return r.some(function (x) { return x.trim() !== ''; }); });
+            if (!rows.length) return null;
+            var header = rows.length > 1 && rows[0].every(function (c) { return c.trim() === '' || isNaN(toNum(c)); });
+            var names = header ? rows[0] : [], data = header ? rows.slice(1) : rows;
+            var ncol = rows.reduce(function (m, r) { return Math.max(m, r.length); }, 0), cols = [];
+            for (var j = 0; j < ncol; j++) {
+                var raw = data.map(function (r) { return (r[j] || '').trim(); });
+                var filled = raw.filter(function (x) { return x !== ''; });
+                var nums = filled.map(toNum);
+                var numeric = filled.length > 0 && nums.every(function (v) { return isFinite(v); });
+                cols.push({ name: (names[j] || '').trim() || 'Column ' + (j + 1), raw: filled, vals: numeric ? nums : [],
+                            numeric: numeric, missing: raw.length - filled.length });
+            }
+            return { rows: data.length, header: header, cols: cols };
+        }
+        function readFile(file, done) {
+            var r = new FileReader();
+            r.onload = function () { done(String(r.result)); };
+            r.readAsText(file);
+        }
+        function loadDsCsv(file) {
+            readFile(file, function (text) {
+                var p = parseCSV(text), info = $('dsFileInfo');
+                info.hidden = false;
+                if (!p) { dsCsv = null; info.innerHTML = '<span class="ss-bad">The file looks empty.</span>'; describe(); return; }
+                var num = p.cols.filter(function (c) { return c.numeric; }), txt = p.cols.filter(function (c) { return !c.numeric; });
+                dsCsv = { name: file.name, cols: num, rows: p.rows };
+                dsSel = 0;
+                info.innerHTML = '<b>' + esc(file.name) + '</b>: ' + fmt(p.rows, 0) + ' rows, ' + num.length + ' numeric column' + (num.length === 1 ? '' : 's') +
+                    (txt.length ? ' (text columns skipped here: ' + txt.map(function (c) { return esc(c.name); }).join(', ') + '; chart them in the Charts tab)' : '') + '.';
+                describe();
+            });
+        }
+        $('dsFile').addEventListener('change', function () { if (this.files[0]) loadDsCsv(this.files[0]); });
+        ['dragenter', 'dragover'].forEach(function (ev) { $('dsDrop').addEventListener(ev, function (e) { e.preventDefault(); this.classList.add('over'); }); });
+        ['dragleave', 'drop'].forEach(function (ev) { $('dsDrop').addEventListener(ev, function (e) { e.preventDefault(); this.classList.remove('over'); }); });
+        $('dsDrop').addEventListener('drop', function (e) { if (e.dataTransfer.files[0]) loadDsCsv(e.dataTransfer.files[0]); });
+
+        /* ---- the statistics ---- */
+        function stats(vals, wts, pop) {
+            var byVal = {}, n = 0, sum = 0;
+            vals.forEach(function (v, i) { var f = wts ? wts[i] : 1; if (f > 0) { byVal[v] = (byVal[v] || 0) + f; n += f; sum += v * f; } });
+            var distinct = Object.keys(byVal).map(Number).sort(function (a, b) { return a - b; });
+            var top = 0; distinct.forEach(function (v) { if (byVal[v] > top) top = byVal[v]; });
+            var modes = distinct.filter(function (v) { return byVal[v] === top; });
+            var mean = sum / n;
+            function kth(k) { var c = 0; for (var i = 0; i < distinct.length; i++) { c += byVal[distinct[i]]; if (c >= k) return distinct[i]; } }
+            var odd = n % 2 === 1, median, medA, medB;
+            if (odd) median = kth((n + 1) / 2); else { medA = kth(n / 2); medB = kth(n / 2 + 1); median = (medA + medB) / 2; }
+            var ss = 0; distinct.forEach(function (v) { ss += byVal[v] * (v - mean) * (v - mean); });
+            var div = pop ? n : n - 1, variance = ss / div;
+            return { vals: vals, wts: wts, n: n, byVal: byVal, distinct: distinct, top: top, modes: modes, sum: sum, mean: mean,
+                     odd: odd, median: median, medA: medA, medB: medB, ss: ss, div: div, variance: variance, sd: Math.sqrt(variance),
+                     min: distinct[0], max: distinct[distinct.length - 1], pop: pop };
+        }
+
+        function currentData() {
+            /* returns { vars: [{label, vals, wts, missing}], error } */
+            if (dsMode === 'type') {
+                var t = $('dsData').value.replace(/[−–—]/g, '-');
+                var toks = t.split(/[\s,;]+/).filter(function (x) { return x !== ''; }), vals = [], bad = [];
+                toks.forEach(function (tok) { var v = toNum(tok); if (isFinite(v)) vals.push(v); else bad.push(tok); });
+                if (bad.length) return { error: 'These entries are not numbers: ' + bad.slice(0, 6).map(function (b) { return '&ldquo;' + esc(b) + '&rdquo;'; }).join(', ') + (bad.length > 6 ? ' &hellip;' : '') };
+                return { vars: [{ label: dsLabel || 'Your data', vals: vals }] };
+            }
+            if (dsMode === 'freq') {
+                var v2 = [], w2 = [], errs = [];
+                dsFreq.forEach(function (r, i) {
+                    if (String(r[0]).trim() === '' && String(r[1]).trim() === '') return;
+                    var v = toNum(r[0]), f = toNum(r[1]);
+                    if (!isFinite(v) || !isFinite(f) || f < 0 || Math.round(f) !== f) errs.push(i + 1);
+                    else { v2.push(v); w2.push(f); }
+                });
+                if (errs.length) return { error: 'Row ' + errs.join(', ') + ': each row needs a number and a whole-number frequency.' };
+                return { vars: [{ label: dsLabel || 'Your data', vals: v2, wts: w2 }] };
+            }
+            if (!dsCsv) return { error: 'Choose a CSV file to begin.', quiet: true };
+            if (!dsCsv.cols.length) return { error: 'No numeric columns were found in ' + esc(dsCsv.name) + '.' };
+            return { vars: dsCsv.cols.map(function (c) { return { label: c.name, vals: c.vals, missing: c.missing }; }) };
+        }
+
+        /* the label is set in capitals by CSS; symbols sit outside that, or μ would print as Μ and n as N */
+        function card(k, sym, v, hl) {
+            return '<div class="tk-stat' + (hl ? ' hl' : '') + '"><div class="k">' + k + (sym ? ' <span class="sym">' + sym + '</span>' : '') +
+                   '</div><div class="v">' + v + '</div></div>';
+        }
+
+        function detail(st, label, missing) {
+            var pop = st.pop, N = pop ? 'N' : 'n', w = !!st.wts;
+            var mS = pop ? '&mu;' : '<span style="text-decoration:overline;">x</span>';
+            var vS = pop ? '&sigma;<sup>2</sup>' : 's<sup>2</sup>', sS = pop ? '&sigma;' : 's';
+            var nd = st.distinct.length;
+            var modeTxt = st.top === 1 && !w ? 'none: every value appears once'
+                : '<em>' + st.modes.map(function (v) { return fmt(v); }).join(', ') + '</em> (' + (w ? 'frequency ' : 'appears ') + fmt(st.top, 0) + (w ? '' : ' times') + ')';
+            var modeCard = st.top === 1 && !w ? 'none' : st.modes.map(function (v) { return fmt(v); }).join(', ');
+            var medTxt = st.odd
+                ? N + ' = ' + fmt(st.n, 0) + ' is odd, so the ' + ordinal((st.n + 1) / 2) + ' value = <em>' + fmt(st.median) + '</em>'
+                : N + ' = ' + fmt(st.n, 0) + ' is even, so the average of the ' + ordinal(st.n / 2) + ' and ' + ordinal(st.n / 2 + 1) +
+                  ' values: (' + fmt(st.medA) + ' + ' + paren(st.medB) + ') / 2 = <em>' + fmt(st.median) + '</em>';
+            var sortedTxt;
+            if (w) sortedTxt = st.distinct.map(function (v) { return fmt(v) + ' <span style="color:#6b7280">(&times;' + fmt(st.byVal[v], 0) + ')</span>'; }).join(', ');
+            else {
+                var s = st.vals.slice().sort(function (a, b) { return a - b; });
+                sortedTxt = s.length <= 40 ? s.map(function (v) { return fmt(v); }).join(', ')
+                    : s.slice(0, 12).map(function (v) { return fmt(v); }).join(', ') + ', &hellip;, ' + s.slice(-6).map(function (v) { return fmt(v); }).join(', ');
+            }
+            var meanTxt;
+            if (w && nd <= 10) meanTxt = mS + ' = (' + st.distinct.map(function (v) { return fmt(v) + '&middot;' + fmt(st.byVal[v], 0); }).join(' + ') + ') / ' + fmt(st.n, 0) +
+                                         ' = ' + fmt(st.sum) + ' / ' + fmt(st.n, 0) + ' = <em>' + fmt(st.mean) + '</em>';
+            else if (!w && st.n <= 12) meanTxt = mS + ' = (' + st.vals.map(function (v, i) { return i ? paren(v) : fmt(v); }).join(' + ') + ') / ' + st.n + ' = ' + fmt(st.sum) + ' / ' + st.n + ' = <em>' + fmt(st.mean) + '</em>';
+            else meanTxt = mS + ' = &Sigma;x / ' + N + ' = ' + fmt(st.sum) + ' / ' + fmt(st.n, 0) + ' = <em>' + fmt(st.mean) + '</em>';
+            var sq;
+            if (w && nd <= 10) sq = st.distinct.map(function (v) { return fmt(st.byVal[v], 0) + '(' + fmt(v) + ' &minus; ' + paren(st.mean) + ')<sup>2</sup>'; }).join(' + ');
+            else if (!w && st.n <= 12) sq = st.vals.map(function (v) { return '(' + fmt(v) + ' &minus; ' + paren(st.mean) + ')<sup>2</sup>'; }).join(' + ');
+            var varTxt = vS + ' = ' + (sq ? '[' + sq + '] / ' : '&Sigma;' + (w ? 'f' : '') + '(x &minus; ' + mS + ')<sup>2</sup> / ') +
+                         (pop ? 'N' : '(n &minus; 1)') + ' = ' + fmt(st.ss) + ' / ' + fmt(st.div, 0) + ' = <em>' + fmt(st.variance) + '</em>';
+            return '<div class="tk-group">Central tendency</div><div class="tk-stats">' +
+                card(pop ? 'Population size' : 'Sample size', N, fmt(st.n, 0)) + card('Mean', mS, fmt(st.mean), true) + card('Median', '', fmt(st.median)) +
+                card('Mode', '', modeCard) + '</div><div class="tk-group">Dispersion</div><div class="tk-stats three">' +
+                card('Range', '', fmt(st.max - st.min)) + card('Variance', vS, fmt(st.variance)) +
+                card('Std. deviation', sS, fmt(st.sd), true) + '</div>' +
+                '<div class="tk-work"><h4>' + esc(label) + ': the arithmetic</h4><div class="ds-grid">' +
+                '<div class="k">Sorted</div><div class="v">' + sortedTxt + '</div>' +
+                '<div class="k">Mode</div><div class="v">' + modeTxt + '</div>' +
+                '<div class="k">Median</div><div class="v">' + medTxt + '</div>' +
+                '<div class="k">Mean</div><div class="v">' + meanTxt + '</div>' +
+                '<div class="k">Range</div><div class="v">' + fmt(st.max) + ' &minus; ' + paren(st.min) + ' = <em>' + fmt(st.max - st.min) + '</em></div>' +
+                '<div class="k">Variance</div><div class="v">' + varTxt + '</div>' +
+                '<div class="k">Std. deviation</div><div class="v">' + sS + ' = &radic;' + fmt(st.variance) + ' = <em>' + fmt(st.sd) + '</em></div>' +
+                '</div><div class="tk-note">' + (pop
+                    ? 'These are population parameters: the variance divides by N. With the whole population in hand, &mu; is known exactly, so there is no interval to build.'
+                    : 'These are sample statistics: the variance divides by n &minus; 1, not n.') +
+                (missing ? ' ' + missing + ' empty cell' + (missing === 1 ? ' was' : 's were') + ' skipped.' : '') + '</div></div>';
+        }
+
+        function describe() {
+            var out = $('dsOut'), sum = $('dsSummary'), pop = $('dsPop').checked, d = currentData();
+            dsLast = null; $('dsActions').hidden = true; sum.innerHTML = '';
+            if (d.error) { out.innerHTML = d.quiet ? '' : '<div class="ss-out"><div class="ss-bad" style="margin:0">' + d.error + '</div></div>'; return; }
+            var all = d.vars.map(function (v) { return v.vals.length >= 2 || (v.wts && v.wts.reduce(function (a, b) { return a + b; }, 0) >= 2) ? stats(v.vals, v.wts, pop) : null; });
+            if (dsSel >= d.vars.length) dsSel = 0;
+            if (d.vars.length > 1) {
+                sum.innerHTML = '<div class="tk-scroll"><table class="tk-summary"><thead><tr><th>Variable</th><th style="text-transform:none">' + (pop ? 'N' : 'n') + '</th><th>Mean</th><th>Median</th><th>Mode</th><th>Range</th><th>Variance</th><th>Std. dev.</th></tr></thead><tbody>' +
+                    d.vars.map(function (v, i) {
+                        var st = all[i];
+                        if (!st) return '<tr data-sel="' + i + '"><td>' + esc(v.label) + '</td><td colspan="7" style="text-align:left;color:#9ca3af">fewer than 2 values</td></tr>';
+                        return '<tr data-sel="' + i + '" class="' + (i === dsSel ? 'on' : '') + '"><td>' + esc(v.label) + '</td><td>' + fmt(st.n, 0) + '</td><td>' + fmt(st.mean) + '</td><td>' + fmt(st.median) +
+                            '</td><td>' + (st.top === 1 ? '&ndash;' : st.modes.slice(0, 3).map(function (m) { return fmt(m); }).join(', ')) + '</td><td>' + fmt(st.max - st.min) + '</td><td>' + fmt(st.variance) + '</td><td>' + fmt(st.sd) + '</td></tr>';
+                    }).join('') + '</tbody></table></div><div class="tk-note">Click a row to see its arithmetic below.</div>';
+            }
+            var st = all[dsSel], v = d.vars[dsSel];
+            if (!st) { out.innerHTML = '<div class="ss-out"><div class="ss-bad" style="margin:0">Enter at least two observations.</div></div>'; return; }
+            out.innerHTML = detail(st, v.label, v.missing);
+            dsLast = { st: st, label: v.label };
+            $('dsActions').hidden = false;
+            $('dsToCi').disabled = pop;
+            $('dsToCi').title = pop ? 'A whole population has no confidence interval: its mean is known exactly.' : '';
+            $('dsToChart').disabled = st.distinct.length > 15;
+            $('dsToChart').title = st.distinct.length > 15 ? 'More than 15 distinct values: too many to chart as categories.' : '';
+        }
+        $('dsSummary').addEventListener('click', function (e) {
+            var tr = e.target.closest('[data-sel]'); if (!tr) return;
+            dsSel = +tr.getAttribute('data-sel'); describe();
+        });
+        $('dsData').addEventListener('input', function () { dsLabel = 'Your data'; describe(); });
+        qsa('input[name="dskind"]').forEach(function (r) { r.addEventListener('change', describe); });
+        qsa('[data-ds-example]').forEach(function (btn) {
+            btn.addEventListener('click', function () {
+                var ex = DS_EXAMPLES[btn.getAttribute('data-ds-example')];
+                dsLabel = ex.label;
+                if (ex.mode === 'type') $('dsData').value = ex.data;
+                else { dsFreq = ex.freq.map(function (r) { return [String(r[0]), String(r[1])]; }); renderFreqTable(); }
+                $(ex.kind === 'population' ? 'dsPop' : 'dsSample').checked = true;
+                setDsMode(ex.mode);
+                dsLabel = ex.label; describe();
+            });
+        });
+
+        /* ---- hand-offs to the other tabs ---- */
+        $('dsToCi').addEventListener('click', function () {
+            if (!dsLast || dsLast.st.pop) return;
+            var st = dsLast.st;
+            $('ciMean').value = round(st.mean, 4); $('ciSd').value = round(st.sd, 4); $('ciN').value = st.n;
+            $('ciFrom').hidden = false;
+            $('ciFrom').innerHTML = 'From Descriptive Statistics (' + esc(dsLast.label) + '): x&#772; = ' + fmt(st.mean) + ', s = ' + fmt(st.sd) + ', n = ' + fmt(st.n, 0);
+            ci(); showTab('intervals'); window.scrollTo({ top: $('tab-intervals').getBoundingClientRect().top + window.scrollY - 80, behavior: 'smooth' });
+        });
+        $('dsToN').addEventListener('click', function () {
+            if (!dsLast) return;
+            var st = dsLast.st;
+            $('nSd').value = round(st.sd, 4);
+            $('nFrom').hidden = false;
+            $('nFrom').innerHTML = 'From Descriptive Statistics (' + esc(dsLast.label) + '): ' + (st.pop ? '&sigma;' : 's') + ' = ' + fmt(st.sd);
+            nSize(); showTab('sample-size'); window.scrollTo({ top: $('tab-sample-size').getBoundingClientRect().top + window.scrollY - 80, behavior: 'smooth' });
+        });
+        $('dsToChart').addEventListener('click', function () {
+            if (!dsLast) return;
+            var st = dsLast.st;
+            ch.cats = st.distinct.map(function (v) { return fmt(v); });
+            ch.series = [{ name: 'Frequency', vals: st.distinct.map(function (v) { return st.byVal[v]; }) }];
+            ch.type = 'bar'; ch.scale = 'count';
+            $('chTitle').value = dsLast.label + ': frequency of each value';
+            $('chFileInfo').hidden = true;
+            renderChartTable(); syncChartControls(); showTab('charts');
+        });
+
+        /* ================= 2. confidence interval ================= */
+        function ci() {
+            var m = num('ciMean'), s = num('ciSd'), n = num('ciN'), lvl = $('ciLevel').value;
+            var box = $('ciOut'), allBox = $('ciAll');
+            allBox.innerHTML = '';
+            if (!isFinite(m) || !isFinite(s) || !isFinite(n)) { box.innerHTML = '<div class="ss-bad">Fill in the mean, the standard deviation and the sample size.</div>'; return; }
+            if (n < 2) { box.innerHTML = '<div class="ss-bad">A confidence interval needs at least 2 observations.</div>'; return; }
+            if (s < 0) { box.innerHTML = '<div class="ss-bad">The standard deviation cannot be negative.</div>'; return; }
+            var z = zFor(lvl), err = z * s / Math.sqrt(n), lo = m - err, hi = m + err;
+            box.innerHTML =
+                '<div class="ss-big">(' + fmt(lo, 3) + ', ' + fmt(hi, 3) + ')<small>' + lvl + '% confidence interval</small></div>' +
+                '<div class="ss-work">' +
+                'sampling error = <em>z</em> &middot; s / &radic;n = ' + zLabel(lvl) + ' &middot; ' + fmt(s) + ' / &radic;' + fmt(n, 0) + ' = <em>' + fmt(err) + '</em><br>' +
+                'CI = x&#772; &plusmn; sampling error = ' + fmt(m) + ' &plusmn; ' + fmt(err) + ' = (' + fmt(lo) + ', ' + fmt(hi) + ')' +
+                '</div>' +
+                '<div class="ss-note">Read it as: if this sampling procedure were repeated many times, about ' + lvl +
+                '% of the intervals built this way would contain the true population mean.</div>';
+            /* the three levels side by side, and the interval on a number line */
+            var rows = LEVELS.map(function (L) { var e = zFor(L) * s / Math.sqrt(n); return { L: L, z: zLabel(L), e: e, lo: m - e, hi: m + e }; });
+            var W = 640, H = 34 * rows.length + 46, pad = 50, span = rows[2].hi - rows[2].lo || 1;
+            var x = function (v) { return pad + (v - (rows[2].lo - span * 0.08)) / (span * 1.16) * (W - 2 * pad); };
+            var svg = '<svg viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="Confidence intervals at 90, 95 and 99 percent">' +
+                '<line x1="' + x(m) + '" x2="' + x(m) + '" y1="8" y2="' + (H - 26) + '" stroke="#cbd5e1" stroke-dasharray="4 4"/>' +
+                rows.map(function (r, i) {
+                    var y = 22 + i * 34, on = r.L === lvl, col = on ? '#990000' : '#94a3b8';
+                    return '<text x="8" y="' + (y + 4) + '" font-size="13" font-weight="700" fill="' + col + '">' + r.L + '%</text>' +
+                        '<line x1="' + x(r.lo) + '" x2="' + x(r.hi) + '" y1="' + y + '" y2="' + y + '" stroke="' + col + '" stroke-width="' + (on ? 6 : 4) + '" stroke-linecap="round"/>' +
+                        '<text x="' + (x(r.lo) - 6) + '" y="' + (y + 4) + '" font-size="12" text-anchor="end" fill="#475569">' + fmt(r.lo, 2) + '</text>' +
+                        '<text x="' + (x(r.hi) + 6) + '" y="' + (y + 4) + '" font-size="12" fill="#475569">' + fmt(r.hi, 2) + '</text>';
+                }).join('') +
+                '<circle cx="' + x(m) + '" cy="' + (22 + 34) + '" r="0"/>' +
+                rows.map(function (r, i) { return '<circle cx="' + x(m) + '" cy="' + (22 + i * 34) + '" r="5" fill="#fff" stroke="' + (r.L === lvl ? '#990000' : '#94a3b8') + '" stroke-width="2.5"/>'; }).join('') +
+                '<text x="' + x(m) + '" y="' + (H - 8) + '" font-size="12" text-anchor="middle" fill="#1e293b">sample mean = ' + fmt(m, 3) + '</text></svg>';
+            allBox.innerHTML = '<div class="tk-ciline">' + svg + '</div>' +
+                '<table class="tk-levels"><thead><tr><th>Level</th><th>z</th><th>Sampling error</th><th>Interval</th></tr></thead><tbody>' +
+                rows.map(function (r) { return '<tr class="' + (r.L === lvl ? 'on' : '') + '"><td>' + r.L + '%</td><td>' + r.z + '</td><td>' + fmt(r.e) + '</td><td>(' + fmt(r.lo, 3) + ', ' + fmt(r.hi, 3) + ')</td></tr>'; }).join('') +
+                '</tbody></table><div class="tk-note">Higher confidence costs width: the 99% interval is the widest.</div>';
+        }
+
+        /* ================= 3. sample size ================= */
+        function nSize() {
+            var s = num('nSd'), e = num('nErr'), lvl = $('nLevel').value, box = $('nOut');
+            $('nAll').innerHTML = '';
+            if (!isFinite(s) || !isFinite(e)) { box.innerHTML = '<div class="ss-bad">Fill in the standard deviation and the allowed sampling error.</div>'; return; }
+            if (e <= 0) { box.innerHTML = '<div class="ss-bad">The allowed sampling error must be greater than zero.</div>'; return; }
+            if (s < 0) { box.innerHTML = '<div class="ss-bad">The standard deviation cannot be negative.</div>'; return; }
+            var z = zFor(lvl), raw = z * z * s * s / (e * e), n = Math.ceil(raw - 1e-9);
+            box.innerHTML =
+                '<div class="ss-big">n = ' + fmt(n, 0) + '<small>respondents</small></div>' +
+                '<div class="ss-work">n = <em>z</em><sup>2</sup>s<sup>2</sup> / e<sup>2</sup> = ' + zPow(lvl) + ' &middot; ' + fmt(s) + '<sup>2</sup> / ' + fmt(e) + '<sup>2</sup>' +
+                ' = ' + fmt(raw) + ' &rarr; <em>' + fmt(n, 0) + '</em></div>' +
+                '<div class="ss-note">Rounded up. Halving the allowed error multiplies the required sample by four, because n depends on e<sup>2</sup>.</div>';
+            $('nAll').innerHTML = '<table class="tk-levels"><thead><tr><th>Level</th><th>z</th><th>z<sup>2</sup>s<sup>2</sup> / e<sup>2</sup></th><th>Sample size</th></tr></thead><tbody>' +
+                LEVELS.map(function (L) { var zz = zFor(L), r = zz * zz * s * s / (e * e); return '<tr class="' + (L === lvl ? 'on' : '') + '"><td>' + L + '%</td><td>' + zLabel(L) + '</td><td>' + fmt(r) + '</td><td>' + fmt(Math.ceil(r - 1e-9), 0) + '</td></tr>'; }).join('') +
+                '</tbody></table>';
+        }
+        function rule(minId, shareId, outId, word) {
+            var mn = num(minId), sh = num(shareId), box = $(outId);
+            if (!isFinite(mn) || !isFinite(sh)) { box.innerHTML = '<div class="ss-bad">Fill in both fields.</div>'; return; }
+            if (sh <= 0 || sh > 100) { box.innerHTML = '<div class="ss-bad">The share must be between 0 and 100%.</div>'; return; }
+            var n = Math.ceil(mn / (sh / 100) - 1e-9);
+            box.innerHTML = '<div class="ss-big">n = ' + fmt(n, 0) + '</div>' +
+                '<div class="ss-work">' + fmt(mn) + ' / ' + fmt(sh / 100) + ' = <em>' + fmt(n, 0) + '</em></div>' +
+                '<div class="ss-note">Gives at least ' + fmt(mn) + ' in the smallest ' + word + '.</div>';
+        }
+        function budget() {
+            var t = num('bTotal'), f = num('bFixed'), e = num('bEach'), box = $('bOut');
+            if (!isFinite(t) || !isFinite(f) || !isFinite(e)) { box.innerHTML = '<div class="ss-bad">Fill in all three fields.</div>'; return; }
+            if (e <= 0) { box.innerHTML = '<div class="ss-bad">Cost per respondent must be greater than zero.</div>'; return; }
+            var left = t - f;
+            if (left < 0) { box.innerHTML = '<div class="ss-bad">Fixed costs exceed the total budget.</div>'; return; }
+            var n = Math.floor(left / e + 1e-9);
+            box.innerHTML = '<div class="ss-big">n = ' + fmt(n, 0) + '</div>' +
+                '<div class="ss-work">($' + fmt(t, 2) + ' &minus; $' + fmt(f, 2) + ') / $' + fmt(e, 2) + ' = $' + fmt(left, 2) + ' / $' + fmt(e, 2) + ' = <em>' + fmt(n, 0) + '</em></div>' +
+                '<div class="ss-note">Rounded down to stay inside the budget.</div>';
+        }
+        function adhoc() { rule('r1Min', 'r1Share', 'r1Out', 'group'); rule('r2Min', 'r2Share', 'r2Out', 'subgroup'); budget(); }
+        ['ciMean', 'ciSd', 'ciN', 'ciLevel'].forEach(function (id) { ['input', 'change'].forEach(function (ev) { $(id).addEventListener(ev, function () { if (ev === 'input') $('ciFrom').hidden = true; ci(); }); }); });
+        ['nSd', 'nErr', 'nLevel'].forEach(function (id) { ['input', 'change'].forEach(function (ev) { $(id).addEventListener(ev, function () { if (id === 'nSd' && ev === 'input') $('nFrom').hidden = true; nSize(); }); }); });
+        ['r1Min', 'r1Share', 'r2Min', 'r2Share', 'bTotal', 'bFixed', 'bEach'].forEach(function (id) { $(id).addEventListener('input', adhoc); });
+        qsa('input[name="zconv"]').forEach(function (r) { r.addEventListener('change', function () { ci(); nSize(); }); });
+
+        /* ================= 4. charts ================= */
+        /* categorical palette, validated with the dataviz checks (CVD separation, lightness band, chroma);
+           amber falls under 3:1 against white, so every chart carries value labels and a table view */
+        var PAL = ['#b3242c', '#1f6fb2', '#d99a0b', '#1b8a6b', '#7e57c2'];
+        var MAX_SERIES = 5;
+        var ch = { cats: [], series: [], type: 'bar', bar: 'grouped', scale: 'count', pie: 'total' };
+        function loadComputerExample() {
+            ch.cats = ['Design factor', 'Performance', 'Both equally'];
+            ch.series = [{ name: 'College students', vals: [100, 60, 5] }, { name: 'College graduates', vals: [44, 86, 5] }];
+            $('chTitle').value = 'In choosing a computer, which one is more important to you? (N = 300)';
+            $('chFileInfo').hidden = true;
+        }
+        function val(v) { var n = toNum(v); return isFinite(n) && n > 0 ? n : 0; }
+
+        function renderChartTable() {
+            var t = $('chTable'), ns = ch.series.length;
+            t.innerHTML = '<thead><tr><th>Category</th>' + ch.series.map(function (s, j) {
+                return '<th><div style="display:flex;align-items:center;gap:.2rem"><span style="flex:0 0 10px;height:10px;border-radius:3px;background:' + PAL[j] + '"></span>' +
+                       '<input type="text" data-sname="' + j + '" value="' + esc(s.name) + '" aria-label="Group ' + (j + 1) + ' name">' +
+                       (ns > 1 ? '<button type="button" class="x" data-sdel="' + j + '" aria-label="Remove group">&times;</button>' : '') + '</div></th>';
+            }).join('') + '<th></th></tr></thead><tbody>' +
+            ch.cats.map(function (c, i) {
+                return '<tr><td><input type="text" data-cat="' + i + '" value="' + esc(c) + '" aria-label="Category ' + (i + 1) + '"></td>' +
+                    ch.series.map(function (s, j) { return '<td><input type="text" inputmode="decimal" data-cell="' + i + ',' + j + '" value="' + esc(s.vals[i] === undefined ? '' : s.vals[i]) + '" aria-label="' + esc(c) + ', ' + esc(s.name) + '"></td>'; }).join('') +
+                    '<td>' + (ch.cats.length > 1 ? '<button type="button" class="x" data-cdel="' + i + '" aria-label="Remove category">&times;</button>' : '') + '</td></tr>';
+            }).join('') + '</tbody>';
+            $('chAddCol').disabled = ns >= MAX_SERIES;
+            $('chAddCol').title = ns >= MAX_SERIES ? 'Up to ' + MAX_SERIES + ' groups, so each keeps a distinct color' : '';
+            drawChart();
+        }
+        $('chTable').addEventListener('input', function (e) {
+            var t = e.target;
+            if (t.hasAttribute('data-cat')) ch.cats[+t.getAttribute('data-cat')] = t.value;
+            else if (t.hasAttribute('data-sname')) ch.series[+t.getAttribute('data-sname')].name = t.value;
+            else if (t.hasAttribute('data-cell')) { var ij = t.getAttribute('data-cell').split(','); ch.series[+ij[1]].vals[+ij[0]] = t.value; }
+            syncChartControls(); drawChart();
+        });
+        $('chTable').addEventListener('click', function (e) {
+            var b = e.target.closest('button'); if (!b) return;
+            if (b.hasAttribute('data-cdel')) { var i = +b.getAttribute('data-cdel'); ch.cats.splice(i, 1); ch.series.forEach(function (s) { s.vals.splice(i, 1); }); }
+            if (b.hasAttribute('data-sdel')) ch.series.splice(+b.getAttribute('data-sdel'), 1);
+            renderChartTable(); syncChartControls();
+        });
+        $('chAddRow').addEventListener('click', function () { ch.cats.push('Category ' + (ch.cats.length + 1)); ch.series.forEach(function (s) { s.vals.push(''); }); renderChartTable(); });
+        $('chAddCol').addEventListener('click', function () { if (ch.series.length >= MAX_SERIES) return; ch.series.push({ name: 'Group ' + (ch.series.length + 1), vals: ch.cats.map(function () { return ''; }) }); renderChartTable(); syncChartControls(); });
+        $('chExample').addEventListener('click', function () { loadComputerExample(); renderChartTable(); syncChartControls(); });
+
+        $('chFile').addEventListener('change', function () {
+            var file = this.files[0]; if (!file) return;
+            readFile(file, function (text) {
+                var p = parseCSV(text), info = $('chFileInfo'); info.hidden = false;
+                if (!p) { info.innerHTML = '<span class="ss-bad">The file looks empty.</span>'; return; }
+                var num = p.cols.filter(function (c) { return c.numeric; }), txt = p.cols.filter(function (c) { return !c.numeric; });
+                var how;
+                if (txt.length && num.length && p.cols[0] === txt[0] && num.length <= MAX_SERIES) {
+                    /* a ready-made frequency table: labels in the first column, counts across */
+                    ch.cats = txt[0].raw.slice();
+                    ch.series = num.map(function (c) { return { name: c.name, vals: c.vals.slice() }; });
+                    how = 'read as a frequency table: ' + ch.cats.length + ' categories, ' + num.length + ' group' + (num.length === 1 ? '' : 's');
+                } else if (txt.length >= 2 || (txt.length === 1)) {
+                    /* raw responses: count them, and cross-tabulate by a second text column if there is one */
+                    var a = txt[0], g = txt[1];
+                    var cats = uniq(a.raw), groups = g ? uniq(g.raw).slice(0, MAX_SERIES) : [a.name];
+                    ch.cats = cats;
+                    ch.series = groups.map(function (gname) { return { name: gname, vals: cats.map(function () { return 0; }) }; });
+                    var rows = Math.min(a.raw.length, g ? g.raw.length : a.raw.length);
+                    for (var i = 0; i < rows; i++) {
+                        var ci2 = cats.indexOf(a.raw[i]), gi = g ? groups.indexOf(g.raw[i]) : 0;
+                        if (ci2 >= 0 && gi >= 0) ch.series[gi].vals[ci2]++;
+                    }
+                    how = g ? 'counted &ldquo;' + esc(a.name) + '&rdquo; within each &ldquo;' + esc(g.name) + '&rdquo;' : 'counted the responses in &ldquo;' + esc(a.name) + '&rdquo;';
+                } else if (num.length) {
+                    var c0 = num[0], d = uniq(c0.vals.map(String)).map(Number).sort(function (x, y) { return x - y; });
+                    if (d.length > 15) { info.innerHTML = '<span class="ss-bad">&ldquo;' + esc(c0.name) + '&rdquo; has ' + d.length + ' distinct values: too many to chart as categories.</span>'; return; }
+                    ch.cats = d.map(function (v) { return fmt(v); });
+                    ch.series = [{ name: c0.name, vals: d.map(function (v) { return c0.vals.filter(function (x) { return x === v; }).length; }) }];
+                    how = 'counted each value of &ldquo;' + esc(c0.name) + '&rdquo;';
+                }
+                info.innerHTML = '<b>' + esc(file.name) + '</b>: ' + how + '.';
+                $('chTitle').value = file.name.replace(/\.[^.]+$/, '');
+                renderChartTable(); syncChartControls();
+            });
+            this.value = '';
+        });
+        function uniq(arr) { var seen = {}, out = []; arr.forEach(function (x) { if (!seen[x]) { seen[x] = 1; out.push(x); } }); return out; }
+
+        function syncChartControls() {
+            qsa('[data-ch-type]').forEach(function (b) { b.classList.toggle('on', b.getAttribute('data-ch-type') === ch.type); });
+            qsa('[data-ch-bar]').forEach(function (b) { b.classList.toggle('on', b.getAttribute('data-ch-bar') === ch.bar); });
+            qsa('[data-ch-scale]').forEach(function (b) { b.classList.toggle('on', b.getAttribute('data-ch-scale') === ch.scale); });
+            var many = ch.series.length > 1;
+            $('chBarMode').hidden = !(ch.type === 'bar' && many);
+            $('chScale').hidden = ch.type === 'pie';
+            var pctBtn = document.querySelector('[data-ch-scale="pct"]');
+            pctBtn.textContent = ch.type === 'bar' && ch.bar === 'stacked' && many ? '% within each category' : (many ? '% of each group' : '% of total');
+            var sel = $('chPieSeries');
+            sel.hidden = !(ch.type === 'pie' && many);
+            var opts = [['total', 'All groups combined']].concat(ch.series.map(function (s, j) { return [String(j), s.name]; }));
+            if (!opts.some(function (o) { return o[0] === String(ch.pie); })) ch.pie = 'total';
+            sel.innerHTML = opts.map(function (o) { return '<option value="' + o[0] + '"' + (o[0] === String(ch.pie) ? ' selected' : '') + '>' + esc(o[1]) + '</option>'; }).join('');
+        }
+        qsa('[data-ch-type]').forEach(function (b) { b.addEventListener('click', function () { ch.type = b.getAttribute('data-ch-type'); syncChartControls(); drawChart(); }); });
+        qsa('[data-ch-bar]').forEach(function (b) { b.addEventListener('click', function () { ch.bar = b.getAttribute('data-ch-bar'); syncChartControls(); drawChart(); }); });
+        qsa('[data-ch-scale]').forEach(function (b) { b.addEventListener('click', function () { ch.scale = b.getAttribute('data-ch-scale'); syncChartControls(); drawChart(); }); });
+        $('chPieSeries').addEventListener('change', function () { ch.pie = this.value; drawChart(); });
+        $('chTitle').addEventListener('input', drawChart);
+
+        function niceMax(v) {
+            if (v <= 0) return 1;
+            var p = Math.pow(10, Math.floor(Math.log10(v))), f = v / p;
+            var step = f <= 1 ? 1 : f <= 2 ? 2 : f <= 2.5 ? 2.5 : f <= 5 ? 5 : 10;
+            return step * p;
+        }
+        function niceStep(raw) {
+            if (!(raw > 0)) return 1;
+            var p = Math.pow(10, Math.floor(Math.log10(raw))), f = raw / p;
+            return (f <= 1 ? 1 : f <= 2 ? 2 : f <= 2.5 ? 2.5 : f <= 5 ? 5 : 10) * p;
+        }
+        function ticks(max, st) {
+            var out = [];
+            for (var i = 0; i * st <= max + 1e-9; i++) out.push(i * st);
+            return out;
+        }
+        function wrapLabel(s, maxChars) {
+            var words = String(s).split(/\s+/), lines = [''];
+            words.forEach(function (w) { var cur = lines[lines.length - 1]; if ((cur + ' ' + w).trim().length > maxChars && cur) lines.push(w); else lines[lines.length - 1] = (cur + ' ' + w).trim(); });
+            return lines.slice(0, 3);
+        }
+        function tspans(lines, x, lh) { return lines.map(function (l, i) { return '<tspan x="' + x + '" dy="' + (i ? lh : 0) + '">' + esc(l) + '</tspan>'; }).join(''); }
+
+        function chartData() {
+            var cats = ch.cats, series = ch.series.map(function (s) { return { name: s.name, vals: cats.map(function (c, i) { return val(s.vals[i]); }) }; });
+            var colTot = series.map(function (s) { return s.vals.reduce(function (a, b) { return a + b; }, 0); });
+            var rowTot = cats.map(function (c, i) { return series.reduce(function (a, s) { return a + s.vals[i]; }, 0); });
+            return { cats: cats, series: series, colTot: colTot, rowTot: rowTot, grand: colTot.reduce(function (a, b) { return a + b; }, 0) };
+        }
+        var FONT = "font-family=\"Outfit, Helvetica, Arial, sans-serif\"";
+
+        function drawChart() {
+            var host = $('chSvgHost'), d = chartData();
+            if (!d.cats.length || !d.series.length || d.grand <= 0) {
+                host.innerHTML = '<div class="ss-out"><div class="ss-bad" style="margin:0">Enter at least one positive count.</div></div>'; renderFreq(d); return;
+            }
+            /* lay the chart out at the width it will be shown, so its text stays readable on a phone */
+            var hw = host.clientWidth || 760, W = Math.max(330, Math.min(760, Math.round(hw))), H = W < 560 ? 380 : 440, svg;
+            if (ch.type === 'pie') svg = pieSvg(d, W, H); else svg = axisSvg(d, W, H);
+            host.innerHTML = svg;
+            renderFreq(d);
+        }
+
+        function axisSvg(d, W, H) {
+            var many = d.series.length > 1, stacked = ch.type === 'bar' && ch.bar === 'stacked' && many, pct = ch.scale === 'pct';
+            /* the value each mark stands for */
+            function v(j, i) {
+                var raw = d.series[j].vals[i];
+                if (!pct) return raw;
+                if (stacked) return d.rowTot[i] ? raw / d.rowTot[i] * 100 : 0;
+                return d.colTot[j] ? raw / d.colTot[j] * 100 : 0;
+            }
+            var maxV = 0;
+            d.cats.forEach(function (c, i) {
+                if (stacked) { var t = 0; d.series.forEach(function (s, j) { t += v(j, i); }); maxV = Math.max(maxV, t); }
+                else d.series.forEach(function (s, j) { maxV = Math.max(maxV, v(j, i)); });
+            });
+            /* pick the tick step first, then stop one step above the data: 108 gives 0-120, not 0-200 */
+            var step = niceStep((pct && stacked ? 100 : maxV * 1.08) / 5), top = pct && stacked ? 100 : Math.max(step, Math.ceil(maxV * 1.08 / step - 1e-9) * step);
+            var L = W < 560 ? 48 : 64, R = 16, B = 78;
+            var legend = [], lx = L, lrow = 0;
+            if (many) d.series.forEach(function (s, j) {
+                var w = 26 + String(s.name).length * 7.3;
+                if (lx + w > W - R && lx > L) { lrow++; lx = L; }
+                legend.push([lx, 14 + lrow * 22, j]); lx += w + 14;
+            });
+            var T = many ? 40 + lrow * 22 + 12 : 26, pw = W - L - R, ph = H - T - B;
+            var y = function (val) { return T + ph - val / top * ph; };
+            var band = pw / d.cats.length, unit = pct ? '%' : '';
+            var lab = function (val) { return pct ? fmt(val, 1) + '%' : fmt(val, 2); };
+            var out = ['<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ' + W + ' ' + H + '" ' + FONT + ' role="img" aria-label="' + esc($('chTitle').value) + '">',
+                       '<rect width="' + W + '" height="' + H + '" fill="#ffffff"/>'];
+            ticks(top, step).forEach(function (t) {
+                out.push('<line x1="' + L + '" x2="' + (W - R) + '" y1="' + y(t) + '" y2="' + y(t) + '" stroke="#e5e7eb"/>');
+                out.push('<text x="' + (L - 10) + '" y="' + (y(t) + 4) + '" font-size="12" text-anchor="end" fill="#6b7280">' + fmt(t, 1) + unit + '</text>');
+            });
+            out.push('<line x1="' + L + '" x2="' + (W - R) + '" y1="' + y(0) + '" y2="' + y(0) + '" stroke="#94a3b8" stroke-width="1.5"/>');
+            legend.forEach(function (g) {
+                out.push('<rect x="' + g[0] + '" y="' + g[1] + '" width="12" height="12" rx="3" fill="' + PAL[g[2]] + '"/><text x="' + (g[0] + 18) + '" y="' + (g[1] + 10) + '" font-size="13" fill="#1e293b">' + esc(d.series[g[2]].name) + '</text>');
+            });
+            d.cats.forEach(function (c, i) {
+                var cx = L + band * i + band / 2;
+                out.push('<text x="' + cx + '" y="' + (y(0) + 22) + '" font-size="13" text-anchor="middle" fill="#1e293b" font-weight="600">' + tspans(wrapLabel(c, Math.max(8, Math.floor(band / 8))), cx, 15) + '</text>');
+            });
+            if (ch.type === 'bar') {
+                var ns = d.series.length, groupW = Math.min(band * 0.72, stacked ? 90 : 70 * ns), bw = stacked ? groupW : (groupW - 2 * (ns - 1)) / ns;
+                d.cats.forEach(function (c, i) {
+                    var x0 = L + band * i + (band - groupW) / 2, base = 0;
+                    d.series.forEach(function (s, j) {
+                        var val = v(j, i), bx = stacked ? x0 : x0 + j * (bw + 2), yt = y(base + val), yb = y(base), h = Math.max(0, yb - yt);
+                        var isTop = !stacked || j === ns - 1, r = Math.min(4, h / 2, bw / 2);
+                        var path = isTop && h > 0
+                            ? 'M' + bx + ',' + yb + 'V' + (yt + r) + 'Q' + bx + ',' + yt + ' ' + (bx + r) + ',' + yt + 'H' + (bx + bw - r) + 'Q' + (bx + bw) + ',' + yt + ' ' + (bx + bw) + ',' + (yt + r) + 'V' + yb + 'Z'
+                            : 'M' + bx + ',' + yb + 'V' + yt + 'H' + (bx + bw) + 'V' + yb + 'Z';
+                        out.push('<path d="' + path + '" fill="' + PAL[j] + '"' + (stacked && j ? ' stroke="#fff" stroke-width="2"' : '') + ' data-tip="' + esc(s.name + ' · ' + c) + '|' + esc(tipVal(d, j, i)) + '"/>');
+                        if (!stacked) out.push('<text x="' + (bx + bw / 2) + '" y="' + (yt - 6) + '" font-size="12" text-anchor="middle" fill="#1e293b" font-weight="700">' + lab(val) + '</text>');
+                        else if (h >= 18) out.push('<text x="' + (bx + bw / 2) + '" y="' + (yt + h / 2 + 4) + '" font-size="12" text-anchor="middle" fill="#fff" font-weight="700">' + lab(val) + '</text>');
+                        if (stacked) base += val;
+                    });
+                });
+            } else {
+                d.series.forEach(function (s, j) {
+                    var pts = d.cats.map(function (c, i) { return [L + band * i + band / 2, y(v(j, i))]; });
+                    out.push('<polyline points="' + pts.map(function (p) { return p.join(','); }).join(' ') + '" fill="none" stroke="' + PAL[j] + '" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>');
+                    pts.forEach(function (p, i) {
+                        out.push('<circle cx="' + p[0] + '" cy="' + p[1] + '" r="5.5" fill="' + PAL[j] + '" stroke="#fff" stroke-width="2" data-tip="' + esc(s.name + ' · ' + d.cats[i]) + '|' + esc(tipVal(d, j, i)) + '"/>');
+                        out.push('<text x="' + p[0] + '" y="' + (p[1] - 11) + '" font-size="12" text-anchor="middle" fill="#1e293b" font-weight="700">' + lab(v(j, i)) + '</text>');
+                    });
+                });
+            }
+            out.push('</svg>');
+            return out.join('');
+        }
+        function tipVal(d, j, i) {
+            var raw = d.series[j].vals[i];
+            return fmt(raw, 2) + ' (' + (d.colTot[j] ? fmt(raw / d.colTot[j] * 100, 1) : 0) + '% of ' + d.series[j].name + ')';
+        }
+
+        function pieSvg(d, W, H) {
+            var vals, name;
+            if (ch.pie === 'total' || d.series.length === 1) { vals = d.rowTot; name = d.series.length === 1 ? d.series[0].name : 'All groups'; }
+            else { vals = d.series[+ch.pie].vals; name = d.series[+ch.pie].name; }
+            var tot = vals.reduce(function (a, b) { return a + b; }, 0);
+            if (d.cats.length > PAL.length) return '<div class="ss-out"><div class="ss-bad" style="margin:0">A pie works best with ' + PAL.length + ' or fewer categories. Use a bar chart for ' + d.cats.length + '.</div></div>';
+            if (tot <= 0) return '<div class="ss-out"><div class="ss-bad" style="margin:0">This group has no positive counts.</div></div>';
+            var narrow = W < 600;
+            var r = narrow ? Math.min(W / 2 - 34, 130) : 165, cx = narrow ? W / 2 : 250, cy = narrow ? r + 30 : H / 2 + 6, a0 = -Math.PI / 2;
+            if (narrow) H = cy + r + 44 + vals.length * 30 + 10;
+            var out = ['<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ' + W + ' ' + H + '" ' + FONT + ' role="img" aria-label="' + esc($('chTitle').value) + '">',
+                       '<rect width="' + W + '" height="' + H + '" fill="#ffffff"/>'];
+            vals.forEach(function (val, i) {
+                if (val <= 0) return;
+                var a1 = a0 + val / tot * 2 * Math.PI, large = a1 - a0 > Math.PI ? 1 : 0;
+                var x0 = cx + r * Math.cos(a0), y0 = cy + r * Math.sin(a0), x1 = cx + r * Math.cos(a1), y1 = cy + r * Math.sin(a1);
+                var path = val === tot ? 'M' + cx + ',' + (cy - r) + 'A' + r + ',' + r + ' 0 1,1 ' + (cx - 0.01) + ',' + (cy - r) + 'Z'
+                         : 'M' + cx + ',' + cy + 'L' + x0 + ',' + y0 + 'A' + r + ',' + r + ' 0 ' + large + ',1 ' + x1 + ',' + y1 + 'Z';
+                out.push('<path d="' + path + '" fill="' + PAL[i] + '" stroke="#fff" stroke-width="2" data-tip="' + esc(name + ' · ' + d.cats[i]) + '|' + esc(fmt(val, 2) + ' (' + fmt(val / tot * 100, 1) + '%)') + '"/>');
+                var mid = (a0 + a1) / 2, share = val / tot, lr = share < 0.06 ? r + 22 : r * 0.64;
+                out.push('<text x="' + (cx + lr * Math.cos(mid)) + '" y="' + (cy + lr * Math.sin(mid) + 5) + '" font-size="' + (share < 0.06 ? 12 : 15) + '" font-weight="800" text-anchor="middle" fill="' + (share < 0.06 ? '#1e293b' : '#fff') + '">' + fmt(share * 100, 1) + '%</text>');
+                a0 = a1;
+            });
+            var lxx = narrow ? 24 : 470, ly = narrow ? cy + r + 52 : cy - vals.length * 16;
+            out.push('<text x="' + lxx + '" y="' + (ly - 18) + '" font-size="13" font-weight="700" fill="#6b7280">' + esc(name) + ' (total ' + fmt(tot, 2) + ')</text>');
+            vals.forEach(function (val, i) {
+                out.push('<rect x="' + lxx + '" y="' + (ly + i * (narrow ? 28 : 32)) + '" width="14" height="14" rx="3" fill="' + PAL[i] + '"/>' +
+                         '<text x="' + (lxx + 22) + '" y="' + (ly + i * (narrow ? 28 : 32) + 12) + '" font-size="14" fill="#1e293b">' + esc(d.cats[i]) + ': <tspan font-weight="700">' + fmt(val, 2) + '</tspan></text>');
+            });
+            out[0] = out[0].replace(/viewBox="0 0 \d+ \d+"/, 'viewBox="0 0 ' + W + ' ' + H + '"');
+            out[1] = '<rect width="' + W + '" height="' + H + '" fill="#ffffff"/>';
+            out.push('</svg>');
+            return out.join('');
+        }
+
+        function renderFreq(d) {
+            var box = $('chFreq');
+            if (!d.cats.length || !d.series.length) { box.innerHTML = ''; return; }
+            var many = d.series.length > 1;
+            box.innerHTML = '<div class="tk-work" style="margin-top:1.2rem"><h4>Frequency table</h4><div class="tk-scroll"><table class="tk-summary" style="margin-top:0"><thead><tr><th>Category</th>' +
+                d.series.map(function (s) { return '<th>' + esc(s.name) + '</th><th>%</th>'; }).join('') + (many ? '<th>Total</th><th>%</th>' : '') + '</tr></thead><tbody>' +
+                d.cats.map(function (c, i) {
+                    return '<tr><td>' + esc(c) + '</td>' + d.series.map(function (s, j) { return '<td>' + fmt(s.vals[i], 2) + '</td><td>' + (d.colTot[j] ? fmt(s.vals[i] / d.colTot[j] * 100, 1) : '0') + '%</td>'; }).join('') +
+                        (many ? '<td>' + fmt(d.rowTot[i], 2) + '</td><td>' + fmt(d.grand ? d.rowTot[i] / d.grand * 100 : 0, 1) + '%</td>' : '') + '</tr>';
+                }).join('') +
+                '<tr style="font-weight:800"><td>Total</td>' + d.series.map(function (s, j) { return '<td>' + fmt(d.colTot[j], 2) + '</td><td>100%</td>'; }).join('') + (many ? '<td>' + fmt(d.grand, 2) + '</td><td>100%</td>' : '') + '</tr>' +
+                '</tbody></table></div><div class="tk-note">Percentages are within each column.</div></div>';
+        }
+
+        /* hover layer */
+        var tip = $('chTip');
+        $('chSvgHost').addEventListener('mousemove', function (e) {
+            var t = e.target.closest('[data-tip]');
+            if (!t) { tip.hidden = true; return; }
+            var parts = t.getAttribute('data-tip').split('|');
+            tip.innerHTML = esc(parts[0]) + ': <b>' + esc(parts[1]) + '</b>';
+            tip.hidden = false;
+            tip.style.left = Math.min(e.clientX + 14, window.innerWidth - tip.offsetWidth - 8) + 'px';
+            tip.style.top = (e.clientY + 14) + 'px';
+        });
+        $('chSvgHost').addEventListener('mouseleave', function () { tip.hidden = true; });
+
+        /* downloads */
+        function svgText() {
+            var s = $('chSvgHost').querySelector('svg'); if (!s) return null;
+            var clone = s.cloneNode(true), title = $('chTitle').value.trim();
+            if (title) {
+                /* put the title into the exported file, above the chart */
+                var vb = clone.getAttribute('viewBox').split(' ').map(Number), extra = 44;
+                clone.setAttribute('viewBox', '0 ' + (-extra) + ' ' + vb[2] + ' ' + (vb[3] + extra));
+                var bg = '<rect x="0" y="' + (-extra) + '" width="' + vb[2] + '" height="' + extra + '" fill="#ffffff"/>';
+                var t = '<text x="24" y="-14" font-size="18" font-weight="800" fill="#1e293b">' + esc(title) + '</text>';
+                clone.innerHTML = bg + t + clone.innerHTML;
+            }
+            return new XMLSerializer().serializeToString(clone);
+        }
+        function fileName(ext) { return ($('chTitle').value.trim() || 'chart').replace(/[^\w\- ]+/g, '').trim().replace(/\s+/g, '-').slice(0, 60) + '.' + ext; }
+        function save(url, name) { var a = document.createElement('a'); a.href = url; a.download = name; document.body.appendChild(a); a.click(); a.remove(); }
+        $('chSvg').addEventListener('click', function () {
+            var t = svgText(); if (!t) return;
+            var url = URL.createObjectURL(new Blob([t], { type: 'image/svg+xml' })); save(url, fileName('svg')); setTimeout(function () { URL.revokeObjectURL(url); }, 1000);
+        });
+        $('chPng').addEventListener('click', function () {
+            var t = svgText(); if (!t) return;
+            var img = new Image(), url = URL.createObjectURL(new Blob([t], { type: 'image/svg+xml' }));
+            img.onload = function () {
+                var sc = 2, cv = document.createElement('canvas'); cv.width = img.width * sc || 1520; cv.height = img.height * sc || 968;
+                var cx = cv.getContext('2d'); cx.fillStyle = '#fff'; cx.fillRect(0, 0, cv.width, cv.height); cx.drawImage(img, 0, 0, cv.width, cv.height);
+                save(cv.toDataURL('image/png'), fileName('png')); URL.revokeObjectURL(url);
+            };
+            img.src = url;
+        });
+
+        /* the site nav is sticky too: park the tab bar just below it */
+        function placeTabs() { var nav = document.querySelector('nav'); document.documentElement.style.setProperty('--tk-top', ((nav ? nav.offsetHeight : 0) + 8) + 'px'); }
+        window.addEventListener('resize', placeTabs);
+        /* redraw when the chart's box changes width: on resize, and when the page first appears after sign-in */
+        var lastW = 0, redrawTimer;
+        if ('ResizeObserver' in window) {
+            new ResizeObserver(function (entries) {
+                var w = Math.round(entries[0].contentRect.width);
+                if (!w || Math.abs(w - lastW) < 2) return;
+                lastW = w; clearTimeout(redrawTimer);
+                redrawTimer = setTimeout(drawChart, 60);
+            }).observe($('chSvgHost'));
+        } else {
+            window.addEventListener('resize', function () { clearTimeout(redrawTimer); redrawTimer = setTimeout(function () { if (!$('panel-charts').hidden) drawChart(); }, 150); });
+        }
+
+        /* ================= start ================= */
+        loadComputerExample();
+        renderChartTable(); syncChartControls();
+        describe(); ci(); nSize(); adhoc();
+        showTab(location.hash.slice(1), true);
+        placeTabs(); setTimeout(placeTabs, 400);
+    })();
+    </script>
+
+
+    <!-- Firebase auth -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js" integrity="sha384-yuGdyIzzYtOBlBG6JOWn+Ey9kpq7HocusNuxEGyyohr1eEyXpeEyehIIXC/hznw4" crossorigin="anonymous"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js" integrity="sha384-lI+CxEx/bCvWP1b0OK13j5HTrTZP7yf1xle8TVOFq2smz6KC1RChTarRV/RHP5PP" crossorigin="anonymous"></script>
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyBg3LJDwVIRGWtFZb_mM_CSRJMNCJUta20",
+            authDomain: "iu-pricing-tools.firebaseapp.com",
+            projectId: "iu-pricing-tools",
+            storageBucket: "iu-pricing-tools.firebasestorage.app",
+            messagingSenderId: "659335573790",
+            appId: "1:659335573790:web:00013a166787efecb3d90f",
+            measurementId: "G-NGKNY08XWP"
+        };
+        // If the sign-in service cannot be reached, do not leave the page stuck
+        // on "Loading..." forever: after 12s, show a clear message instead.
+        // Scheduled BEFORE initializeApp so it still fires if the Firebase CDN is blocked
+        // (in which case the initializeApp call below throws).
+        var authTimeout = setTimeout(function() {
+            var ls = document.getElementById('loading-screen');
+            if (ls) {
+                ls.innerHTML = '<p style="color: var(--text-light); max-width: 360px; text-align: center; padding: 0 1rem;">Could not reach the sign-in service. Check your connection and reload this page.</p>';
+            }
+        }, 12000);
+
+        firebase.initializeApp(firebaseConfig);
+
+        firebase.auth().onAuthStateChanged(function(user) {
+            clearTimeout(authTimeout);
+            if (user) {
+                document.getElementById('loading-screen').style.display = 'none';
+                document.getElementById('main-content').style.display = 'block';
+            } else {
+                window.location.href = 'login.html?next=' + encodeURIComponent(window.location.pathname.split('/').pop() + window.location.hash);
+            }
+        });
+
+        // Navigation toggle (keyboard operable, tracks aria-expanded).
+        function toggleNav() {
+            var links = document.querySelector('.nav-links');
+            var open = links.classList.toggle('active');
+            var toggle = document.querySelector('.nav-toggle');
+            if (toggle) toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+        }
+        window.toggleNav = toggleNav;
+
+        // Font size controls (matches tools.html)
+        const fontSizes = [14, 16, 18, 20, 22];
+        let currentStep = 2;
+        function adjustFontSize(delta) {
+            currentStep = Math.max(0, Math.min(fontSizes.length - 1, currentStep + delta));
+            applyFontSize(currentStep);
+        }
+        function applyFontSize(step) {
+            document.documentElement.style.fontSize = fontSizes[step] + 'px';
+            document.querySelectorAll('.decrease-a').forEach(b => b.classList.toggle('at-limit', step === 0));
+            document.querySelectorAll('.increase-a').forEach(b => b.classList.toggle('at-limit', step === fontSizes.length - 1));
+        }
+        window.adjustFontSize = adjustFontSize;
+
+        // Auto-update copyright year
+        document.querySelectorAll('.year').forEach(el => el.textContent = new Date().getFullYear());
+    </script>
+</body>
+</html>

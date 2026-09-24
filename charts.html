@@ -1,0 +1,1443 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Charts and Frequency Distributions | Koray Cosguner</title>
+    <meta name="robots" content="noindex,nofollow">
+    <meta name="description" content="Upload a CSV and build publication-quality charts with ggplot2 in your browser: bar, pie, histogram, box, violin, line, scatter and heatmap, with live design controls and PNG, JPEG or SVG export. Created by Dr. Koray Cosguner.">
+    <link rel="icon" type="image/jpeg" href="KCFavicon.jpg">
+
+    <!-- Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-CTZ8G4EYLR"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-CTZ8G4EYLR');
+    </script>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        html { scroll-behavior: smooth; }
+        :root {
+            --primary: #990000;
+            --primary-light: #fdf2f2;
+            --primary-hover: #7a0000;
+            --iu-crimson: #990000;
+            --iu-crimson-dark: #7a0000;
+            --accent: #1a1a9e;
+
+            --text-main: #111827;
+            --text-dark: #1e293b;
+            --text-sub:  #374151;
+            --text-light: #4b5563;
+            --text-muted: #9ca3af;
+
+            --bg: #ffffff;
+            --bg-light: #f5f5f5;
+            --white: #fff;
+            --surface: #f9fafb;
+            --border: #e2e8f0;
+            --border-strong: #cbd5e1;
+
+            --shadow-sm:    0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+            --shadow-md:    0 4px 12px rgba(0,0,0,0.08), 0 2px 4px rgba(0,0,0,0.04);
+            --shadow-lg:    0 12px 32px rgba(0,0,0,0.10), 0 4px 8px rgba(0,0,0,0.06);
+
+            --radius-sm:    6px;
+            --radius-md:    12px;
+            --radius-lg:    18px;
+            --radius-full:  9999px;
+
+            --transition-fast: 0.15s ease;
+            --transition-base: 0.25s ease;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+        html, body { overflow-x: hidden; }
+        body {
+            font-family: 'Outfit', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            font-size: 18px;
+            background: var(--bg);
+            color: var(--text-main);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* ===================== Navigation (matches tools.html) ===================== */
+        nav {
+            background: rgba(255, 255, 255, 0.88);
+            border-bottom: 1px solid var(--border);
+            padding: 14px 0;
+            position: sticky;
+            top: 0;
+            z-index: 200;
+            backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
+        }
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .brand {
+            font-weight: 800;
+            font-size: 1.2rem;
+            color: var(--text-main);
+            text-decoration: none;
+            letter-spacing: -0.03em;
+        }
+        .nav-links { display: flex; align-items: center; }
+        .font-size-controls.font-size-mobile { display: none; }
+        .nav-links a {
+            margin-left: 28px;
+            text-decoration: none;
+            color: var(--text-sub);
+            font-weight: 600;
+            font-size: 0.9rem;
+            letter-spacing: -0.01em;
+            transition: color var(--transition-fast);
+            position: relative;
+        }
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--primary);
+            transition: width var(--transition-base);
+            border-radius: 2px;
+        }
+        .nav-links a:hover::after,
+        .nav-links a.active::after { width: 100%; }
+        .nav-links a:hover, .nav-links a.active { color: var(--primary); }
+
+        .nav-toggle {
+            display: none;
+            flex-direction: column;
+            cursor: pointer;
+            padding: 4px;
+        }
+        .nav-toggle span {
+            width: 24px;
+            height: 2px;
+            background: var(--text-main);
+            margin: 3px 0;
+            transition: 0.3s;
+        }
+
+        .font-size-controls {
+            display: flex;
+            align-items: center;
+            gap: 2px;
+            margin-right: 10px;
+            border: 1px solid rgba(153,0,0,0.12);
+            border-radius: var(--radius-full);
+            padding: 3px;
+            background: linear-gradient(135deg, rgba(249,250,251,0.9), rgba(243,244,246,0.9));
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            box-shadow: 0 1px 4px rgba(0,0,0,0.06), inset 0 1px 0 rgba(255,255,255,0.8);
+        }
+        .font-size-btn {
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            font-weight: 800;
+            color: var(--text-light);
+            border-radius: var(--radius-full);
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            font-family: inherit;
+            line-height: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px;
+            height: 32px;
+            position: relative;
+            user-select: none;
+        }
+        .font-size-btn:hover { color: var(--primary); background: rgba(153,0,0,0.08); }
+        .font-size-btn:active { transform: scale(0.9); background: rgba(153,0,0,0.15); color: var(--primary); }
+        .font-size-btn.at-limit { opacity: 0.3; cursor: default; }
+        .font-size-btn.at-limit:hover { background: transparent; color: var(--text-light); }
+        .font-size-btn.at-limit:active { transform: none; background: transparent; }
+        .font-size-btn.decrease-a { font-size: 0.7rem; }
+        .font-size-btn.increase-a { font-size: 1.1rem; }
+
+        /* ===================== Page chrome ===================== */
+        main { max-width: 1000px; margin: 0 auto; padding: 2rem; }
+        .back-link { display: inline-flex; align-items: center; gap: 6px; color: #64748b; text-decoration: none; font-size: 0.9rem; font-weight: 500; }
+        .back-link:hover { color: var(--primary); }
+
+        .hero { text-align: center; padding: 2rem 0 1rem; }
+        .hero h1 { font-size: 1.8rem; color: var(--text-dark); margin-bottom: 0.5rem; letter-spacing: -0.02em; }
+        .hero ul { text-align: left; display: inline-block; margin: 0 auto; padding-left: 1.5rem; color: var(--text-light); font-size: 1rem; line-height: 1.8; }
+
+        .disclaimer { background: #fef2f2; border: 1px solid #fecaca; border-radius: 8px; padding: 1rem 1.25rem; margin-bottom: 2rem; }
+        .disclaimer-title { font-weight: 700; color: var(--iu-crimson); margin-bottom: 0.5rem; }
+        .disclaimer ul { margin: 0; padding-left: 1.25rem; color: var(--text-light); font-size: 0.9rem; }
+
+        .tool-container { background: var(--white); border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); padding: 2rem; margin-top: 2rem; }
+        .section-title { font-size: 1.3rem; color: var(--iu-crimson); margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 2px solid var(--iu-crimson); }
+        .section-title.mt { margin-top: 2rem; }
+        .section-hint { font-size: 0.9rem; color: var(--text-light); margin-bottom: 1rem; }
+
+        /* Loading overlay (WebR boot) */
+        .loading-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.96); display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 9999; }
+        .loading-overlay.hidden { display: none; }
+        .spinner { width: 60px; height: 60px; border: 4px solid var(--border); border-top-color: var(--iu-crimson); border-radius: 50%; animation: spin 1s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .loading-text { margin-top: 1rem; font-size: 1.1rem; color: var(--text-light); }
+        .loading-stage { margin-top: 0.5rem; font-size: 0.85rem; color: var(--text-light); text-align: center; max-width: 420px; padding: 0 1rem; }
+
+        /* Status message */
+        .status-message { padding: 0.85rem 1rem; border-radius: 6px; margin-bottom: 1rem; display: none; font-size: 0.95rem; }
+        .status-message.visible { display: block; }
+        .status-message.error { background: #fee2e2; color: #991b1b; border: 1px solid #fecaca; }
+        .status-message.success { background: #d1fae5; color: #065f46; border: 1px solid #a7f3d0; }
+        .status-message.info { background: #dbeafe; color: #1e40af; border: 1px solid #bfdbfe; }
+
+        /* Upload */
+        .upload-area { border: 2px dashed var(--border-strong); border-radius: 8px; padding: 2.5rem; text-align: center; cursor: pointer; transition: all 0.3s; margin-bottom: 1rem; }
+        .upload-area:hover, .upload-area.dragover { border-color: var(--iu-crimson); background: rgba(153, 0, 0, 0.05); }
+        .upload-area input[type="file"] { display: none; }
+        .upload-icon { font-size: 2.5rem; color: var(--iu-crimson); margin-bottom: 0.5rem; }
+        .upload-text { font-size: 1rem; color: var(--text-dark); }
+        .upload-hint { font-size: 0.85rem; color: var(--text-light); margin-top: 0.4rem; }
+
+        /* Data preview */
+        .preview-note { background: #f0f9ff; border: 1px solid #bae6fd; border-left: 4px solid #0369a1; border-radius: 6px; padding: 0.85rem 1rem; margin-bottom: 1rem; font-size: 0.9rem; line-height: 1.55; }
+        .preview-note strong { color: #0369a1; }
+        .var-pill { display: inline-block; background: var(--white); border: 1px solid var(--border); border-radius: var(--radius-full); padding: 2px 10px; margin: 2px 3px 0 0; font-size: 0.82rem; font-variant-numeric: tabular-nums; }
+        .var-pill.num { border-color: rgba(153,0,0,0.3); color: var(--iu-crimson-dark); }
+
+        /* Form controls */
+        .form-group { margin-bottom: 1.25rem; }
+        .form-group label { display: block; font-weight: 600; margin-bottom: 0.4rem; color: var(--text-dark); }
+        .form-group select, .form-group input[type="number"] {
+            width: 100%; padding: 0.65rem 0.75rem; border: 1px solid var(--border);
+            border-radius: 6px; font-size: 1rem; font-family: inherit; background: var(--white);
+        }
+        .form-group select:focus, .form-group input:focus { outline: none; border-color: var(--iu-crimson); }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+        @media (max-width: 720px) { .form-row { grid-template-columns: 1fr; } }
+        .field-hint { color: var(--text-light); font-weight: 400; font-size: 0.85rem; margin-left: 0.4rem; }
+        .field-msg { display: block; margin-top: 0.35rem; font-size: 0.82rem; font-weight: 600; color: var(--iu-crimson); }
+
+        .radio-row { display: flex; gap: 0.65rem; flex-wrap: wrap; }
+        .radio-row label { display: inline-flex; align-items: center; gap: 0.4rem; font-weight: 500; cursor: pointer; padding: 0.45rem 0.85rem; border-radius: 6px; border: 1px solid var(--border); background: var(--white); font-size: 0.9rem; }
+        .radio-row label:has(input:checked) { border-color: var(--iu-crimson); background: rgba(153,0,0,0.04); color: var(--iu-crimson); font-weight: 600; }
+        .radio-row input { accent-color: var(--iu-crimson); }
+
+        /* Buttons */
+        .btn { display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; padding: 0.75rem 1.6rem; font-size: 1rem; font-weight: 600; text-align: center; border: none; border-radius: 6px; cursor: pointer; transition: all 0.2s; font-family: inherit; }
+        .btn-primary { background: var(--iu-crimson); color: var(--white); }
+        .btn-primary:hover:not(:disabled) { background: var(--iu-crimson-dark); }
+        .btn-primary:disabled { background: var(--text-light); cursor: not-allowed; opacity: 0.6; }
+        .btn-secondary { background: var(--white); color: var(--iu-crimson); border: 2px solid var(--iu-crimson); }
+        .btn-secondary:hover { background: var(--iu-crimson); color: var(--white); }
+        .btn-sm { padding: 0.55rem 1rem; font-size: 0.9rem; }
+        .button-group { display: flex; gap: 1rem; margin-top: 1.5rem; flex-wrap: wrap; }
+
+        /* Results */
+        .results-container { display: none; margin-top: 2rem; }
+        .results-container.visible { display: block; }
+
+        .result-table-wrap { overflow-x: auto; border: 1px solid var(--border); border-radius: 6px; margin-top: 0.75rem; max-height: 520px; overflow-y: auto; }
+        .result-table { width: 100%; border-collapse: collapse; font-size: 0.88rem; }
+        .result-table th, .result-table td { padding: 0.5rem 0.85rem; text-align: right; border-bottom: 1px solid var(--border); white-space: nowrap; }
+        .result-table th { background: var(--iu-crimson); color: var(--white); position: sticky; top: 0; z-index: 1; font-size: 0.82rem; font-weight: 600; }
+        .result-table th:first-child, .result-table td:first-child { text-align: left; }
+        .result-table tbody tr:nth-child(even) { background: #fafafa; }
+        .result-table td.num { text-align: right; font-variant-numeric: tabular-nums; }
+
+        /* Preview (head) table */
+        .preview-table { width: 100%; border-collapse: collapse; font-size: 0.86rem; }
+        .preview-table th, .preview-table td { padding: 0.45rem 0.85rem; text-align: left; border-bottom: 1px solid var(--border); white-space: nowrap; }
+        .preview-table th { background: var(--iu-crimson); color: var(--white); position: sticky; top: 0; z-index: 1; font-size: 0.82rem; }
+
+        /* Confidence-interval panel */
+        .ci-panel { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 1.25rem; margin-top: 0.75rem; }
+        .stat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 0.75rem; margin-top: 1rem; }
+        .stat { background: var(--white); border: 1px solid var(--border); border-radius: 8px; padding: 0.85rem 1rem; }
+        .stat .label { font-size: 0.72rem; color: var(--text-light); text-transform: uppercase; letter-spacing: 0.6px; font-weight: 600; }
+        .stat .value { font-size: 1.3rem; color: var(--iu-crimson); font-weight: 700; margin-top: 0.2rem; font-variant-numeric: tabular-nums; }
+        .stat .secondary { font-size: 0.75rem; color: var(--text-light); margin-top: 0.2rem; }
+        .ci-headline { margin-top: 1rem; padding: 1rem 1.25rem; border-radius: 8px; background: #f0f9ff; border: 1px solid #bae6fd; color: #075985; font-size: 1rem; line-height: 1.6; }
+        .ci-headline strong { color: #0369a1; font-variant-numeric: tabular-nums; }
+        .ci-warn { margin-top: 1rem; padding: 0.85rem 1rem; border-radius: 8px; background: #fffbeb; border: 1px solid #fde68a; color: #92400e; font-size: 0.92rem; }
+
+        /* Show R code */
+        details.r-code { margin-top: 1.5rem; border: 1px solid var(--border); border-radius: 8px; padding: 0.5rem 1rem; background: var(--surface); }
+        details.r-code summary { cursor: pointer; font-weight: 600; color: var(--text-sub); font-size: 0.92rem; padding: 0.4rem 0; }
+        details.r-code pre { background: #1e1e1e; color: #d4d4d4; font-family: 'Monaco', 'Menlo', 'Courier New', monospace; font-size: 0.8rem; padding: 1.1rem; border-radius: 8px; overflow-x: auto; white-space: pre; line-height: 1.5; margin: 0.5rem 0; }
+        .code-wrap { position: relative; }
+        .copy-btn { position: absolute; top: 14px; right: 14px; display: inline-flex; align-items: center; gap: 5px; background: rgba(255,255,255,0.12); color: #d4d4d4; border: 1px solid rgba(255,255,255,0.25); border-radius: 6px; padding: 5px 10px; font-size: 0.78rem; font-weight: 600; font-family: inherit; cursor: pointer; transition: background 0.15s, color 0.15s, border-color 0.15s; }
+        .copy-btn:hover { background: rgba(255,255,255,0.22); color: #fff; }
+        .copy-btn.copied { background: #16a34a; border-color: #16a34a; color: #fff; }
+
+        footer { text-align: center; padding: 2rem; color: var(--text-light); font-size: 0.9rem; background: var(--surface); border-top: 1px solid var(--border); margin-top: 3rem; }
+
+        @media (max-width: 768px) {
+            body { font-size: 16px; }
+            main { padding: 1rem; }
+            .tool-container { padding: 1.25rem; }
+            .hero { padding: 1.5rem 0; }
+            .hero h1 { font-size: 1.4rem; }
+            .button-group { flex-direction: column; }
+            .button-group .btn { width: 100%; }
+        }
+
+        @media (max-width: 640px) {
+            .nav-toggle { display: flex; }
+            .font-size-controls.font-size-mobile { display: flex; }
+            .font-size-controls.font-size-desktop { display: none; }
+            .nav-links {
+                display: none;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                right: 0;
+                background: white;
+                flex-direction: column;
+                padding: 16px 24px;
+                border-bottom: 1px solid var(--border);
+                box-shadow: var(--shadow-lg);
+            }
+            .nav-links.active { display: flex; }
+            .nav-links a {
+                margin-left: 0;
+                padding: 12px 0;
+                font-size: 1rem;
+                border-bottom: 1px solid var(--border);
+            }
+            .nav-links a::after { display: none; }
+            .nav-links a:last-child { border-bottom: none; }
+            .nav-container { position: relative; }
+            .font-size-controls { margin-right: 4px; }
+        }
+    
+        :focus-visible { outline: 2px solid currentColor; outline-offset: 2px; }
+
+        /* ==================== charts tool ==================== */
+        .form-group input[type="text"] {
+            width: 100%; padding: 0.6rem 0.7rem; border: 1px solid var(--border);
+            border-radius: 6px; font-size: 0.95rem; font-family: inherit; background: var(--white);
+        }
+        .form-group input[type="text"]:focus { outline: none; border-color: var(--iu-crimson); }
+
+        /* --- step 1: chart type gallery --- */
+        .type-grid {
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(132px, 1fr));
+            gap: 0.7rem; margin-bottom: 0.4rem;
+        }
+        .type-card {
+            position: relative; display: flex; flex-direction: column; align-items: center;
+            gap: 0.45rem; padding: 0.8rem 0.5rem 0.65rem; border: 1px solid var(--border);
+            border-radius: 10px; background: var(--white); cursor: pointer;
+            transition: border-color .12s, box-shadow .12s, background .12s;
+        }
+        .type-card:hover { border-color: var(--border-strong); box-shadow: 0 2px 8px rgba(0,0,0,.05); }
+        .type-card input { position: absolute; opacity: 0; pointer-events: none; }
+        .type-card:has(input:checked) {
+            border-color: var(--iu-crimson); background: rgba(153,0,0,.035);
+            box-shadow: 0 0 0 1px var(--iu-crimson) inset;
+        }
+        .type-card svg { display: block; }
+        .type-card .tname { font-size: .78rem; font-weight: 600; color: var(--text-sub); text-align: center; line-height: 1.2; }
+        .type-card:has(input:checked) .tname { color: var(--iu-crimson); }
+        .type-group-label {
+            font-size: .74rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase;
+            color: var(--text-muted); margin: 1.1rem 0 .5rem;
+        }
+        .type-group-label:first-of-type { margin-top: .2rem; }
+
+        /* --- step 3: split layout --- */
+        .design-layout { display: grid; grid-template-columns: 340px minmax(0, 1fr); gap: 1.4rem; align-items: start; }
+        @media (max-width: 1040px) { .design-layout { grid-template-columns: 1fr; } }
+        .design-panel {
+            background: var(--surface); border: 1px solid var(--border); border-radius: 10px;
+            padding: 1rem 1.05rem; max-height: 76vh; overflow-y: auto;
+        }
+        @media (max-width: 1040px) { .design-panel { max-height: none; } }
+        .figure-pane { position: sticky; top: 1rem; }
+        @media (max-width: 1040px) { .figure-pane { position: static; } }
+
+        .opt-block { border-top: 1px solid var(--border); padding-top: .85rem; margin-top: .85rem; }
+        .opt-block:first-child { border-top: 0; padding-top: 0; margin-top: 0; }
+        .opt-title {
+            font-size: .74rem; font-weight: 700; letter-spacing: .07em; text-transform: uppercase;
+            color: var(--text-muted); margin-bottom: .6rem;
+        }
+        .design-panel .form-group { margin-bottom: .8rem; }
+        .design-panel .form-group:last-child { margin-bottom: 0; }
+        .design-panel label { font-size: .85rem; }
+        .design-panel select, .design-panel input[type="text"], .design-panel input[type="number"] {
+            padding: .45rem .55rem; font-size: .88rem;
+        }
+        .design-panel .form-row { gap: .6rem; }
+
+        .chk-list { display: flex; flex-direction: column; gap: .4rem; }
+        .chk-list label {
+            display: flex; align-items: center; gap: .5rem; font-size: .87rem; font-weight: 500;
+            color: var(--text-sub); cursor: pointer; margin: 0;
+        }
+        .chk-list input { accent-color: var(--iu-crimson); width: 15px; height: 15px; }
+
+        .pal-row { display: flex; flex-direction: column; gap: .4rem; }
+        .pal {
+            display: flex; align-items: center; gap: .55rem; cursor: pointer; padding: .4rem .5rem;
+            border: 1px solid var(--border); border-radius: 7px; background: var(--white); margin: 0;
+        }
+        .pal:has(input:checked) { border-color: var(--iu-crimson); background: rgba(153,0,0,.04); }
+        .pal input { position: absolute; opacity: 0; pointer-events: none; }
+        .pal .chips { display: flex; gap: 2px; flex: 0 0 auto; }
+        .pal .chips i { width: 13px; height: 13px; border-radius: 3px; display: block; }
+        .pal .pname { font-size: .82rem; font-weight: 600; color: var(--text-sub); }
+        .pal:has(input:checked) .pname { color: var(--iu-crimson); }
+
+        .slider-row { display: flex; align-items: center; gap: .6rem; }
+        .slider-row input[type="range"] { flex: 1; accent-color: var(--iu-crimson); }
+        .slider-val { font-size: .82rem; font-weight: 600; color: var(--text-sub); min-width: 2.2rem; text-align: right; font-variant-numeric: tabular-nums; }
+
+        /* --- figure --- */
+        .plot-frame {
+            border: 1px solid var(--border); border-radius: 10px; padding: .8rem;
+            background: var(--white); text-align: center; position: relative; min-height: 220px;
+        }
+        .plot-frame img { max-width: 100%; height: auto; display: block; margin: 0 auto; }
+        .plot-frame.busy::after {
+            content: ""; position: absolute; inset: 0; background: rgba(255,255,255,.55);
+            border-radius: 10px; pointer-events: none;
+        }
+        .plot-empty {
+            border: 1px dashed var(--border-strong); border-radius: 10px; padding: 3rem 1rem;
+            text-align: center; color: var(--text-muted); background: var(--surface); font-size: .92rem;
+        }
+        .plot-err {
+            border: 1px solid rgba(153,0,0,.35); background: var(--primary-light); color: #7a0000;
+            border-radius: 8px; padding: .8rem .9rem; font-size: .86rem; margin-top: .7rem;
+            white-space: pre-wrap; word-break: break-word;
+        }
+        .fig-toolbar {
+            display: flex; align-items: center; gap: .5rem; flex-wrap: wrap;
+            margin-top: .8rem; padding-top: .8rem; border-top: 1px solid var(--border);
+        }
+        .fig-toolbar .spacer { flex: 1 1 auto; }
+        .fmt-row { display: inline-flex; border: 1px solid var(--border); border-radius: 7px; overflow: hidden; }
+        .fmt-row label {
+            margin: 0; padding: .4rem .7rem; font-size: .82rem; font-weight: 600; cursor: pointer;
+            background: var(--white); color: var(--text-sub); border-right: 1px solid var(--border);
+        }
+        .fmt-row label:last-child { border-right: 0; }
+        .fmt-row label:has(input:checked) { background: var(--iu-crimson); color: #fff; }
+        .fmt-row input { position: absolute; opacity: 0; pointer-events: none; }
+
+        .step-lead { display: flex; align-items: baseline; gap: .6rem; flex-wrap: wrap; }
+        .step-lead .muted { font-size: .85rem; color: var(--text-muted); font-weight: 500; }
+
+    </style>
+</head>
+<body>
+    <!-- Auth check - redirect to login if not signed in -->
+    <div id="loading-screen" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: var(--bg); display: flex; align-items: center; justify-content: center; z-index: 99999;">
+        <p style="color: var(--text-light);">Loading...</p>
+    </div>
+
+    <div id="main-content" style="display: none;">
+
+    <nav>
+        <div class="nav-container">
+            <div style="display: flex; align-items: center; gap: 18px;">
+                <span style="display: flex; align-items: center; gap: 10px;">
+                    <a href="https://robinson.gsu.edu/" target="_blank" rel="noopener" title="J. Mack Robinson College of Business, Georgia State University" style="line-height: 0;">
+                        <img src="gsu-logo.png" alt="Robinson College of Business, Georgia State University" style="height: 24px; filter: grayscale(1); opacity: 0.55;">
+                    </a>
+                    <a href="https://kelley.iu.edu/" target="_blank" rel="noopener" title="Kelley School of Business, Indiana University" style="line-height: 0;">
+                        <img src="iu-logo.png" alt="Kelley School of Business, Indiana University" style="height: 38px;">
+                    </a>
+                    <a href="https://sc.edu/study/colleges_schools/moore/" target="_blank" rel="noopener" title="Darla Moore School of Business, University of South Carolina" style="line-height: 0;">
+                        <img src="usc-logo.png" alt="Darla Moore School of Business, University of South Carolina" style="height: 24px; filter: grayscale(1); opacity: 0.55;">
+                    </a>
+                </span>
+                <span style="width: 1px; height: 26px; background: rgba(0,0,0,0.14);"></span>
+                <a href="index.html" class="brand">Koray Cosguner</a>
+            </div>
+            <div style="display: flex; align-items: center;">
+                <div class="font-size-controls font-size-mobile" role="group" aria-label="Text size">
+                    <button class="font-size-btn decrease-a" onclick="adjustFontSize(-1)" title="Decrease text size" aria-label="Decrease text size">A</button>
+                    <button class="font-size-btn increase-a" onclick="adjustFontSize(1)" title="Increase text size" aria-label="Increase text size">A</button>
+                </div>
+                <div class="nav-toggle" role="button" tabindex="0" aria-label="Toggle navigation menu" aria-expanded="false" onclick="toggleNav()" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();toggleNav();}">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            </div>
+            <div class="nav-links">
+                <div class="font-size-controls font-size-desktop" role="group" aria-label="Text size">
+                    <button class="font-size-btn decrease-a" onclick="adjustFontSize(-1)" title="Decrease text size" aria-label="Decrease text size">A</button>
+                    <button class="font-size-btn increase-a" onclick="adjustFontSize(1)" title="Increase text size" aria-label="Increase text size">A</button>
+                </div>
+                <a href="index.html">Home</a>
+                <a href="research.html">Research</a>
+                <a href="teaching.html">Teaching</a>
+                <a href="https://koraycosguner.github.io/miaow-consulting/" target="_blank">Consulting</a>
+                <a href="tools.html" class="active">Analytics and Pricing Tools</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- WebR boot overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="spinner"></div>
+        <p class="loading-text" id="loadingText">Loading R (R in your browser)...</p>
+        <p class="loading-stage" id="loadingStage">First load may take 30 to 60 seconds. Everything runs locally in your browser.</p>
+    </div>
+
+    <main>
+        <div style="margin-bottom: 0.5rem;">
+            <a href="tools.html" class="back-link">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+                Back to Analytics and Pricing Tools
+            </a>
+        </div>
+
+        <section class="hero">
+            <h1>Charts and Frequency Distributions</h1>
+            <ul>
+                <li>Upload a CSV, pick a figure, and shape it with live controls, no coding required</li>
+                <li>Fourteen chart types: bar, grouped and stacked bar, lollipop, pie, donut, histogram, density, box, violin, line, area, scatter and heatmap</li>
+                <li>Themes, color palettes, labels, legends, sorting and data labels, all updating as you click</li>
+                <li>Export as PNG, JPEG or SVG, and download the frequency table behind any count-based figure</li>
+                <li>Drawn by <strong>ggplot2</strong> running entirely in your browser via WebR, with the R code shown so you can reproduce it</li>
+            </ul>
+        </section>
+
+
+        <div class="disclaimer">
+            <div class="disclaimer-title">Disclaimer</div>
+            <ul>
+                <li><strong>Verify all results.</strong> Output may be inaccurate or incomplete; check important conclusions independently.</li>
+                <li><strong>No warranty.</strong> Provided "as is" without warranty of any kind.</li>
+                <li><strong>Privacy:</strong> Your data never leaves your browser, everything runs locally in WebAssembly.</li>
+            </ul>
+            <div style="margin-top: 0.85rem; padding-top: 0.85rem; border-top: 1px solid rgba(153, 0, 0, 0.2); font-size: 0.9rem;">
+                <strong>Report issues:</strong> Email Dr. Cosguner at <a href="mailto:kcosgun@iu.edu" style="color: var(--iu-crimson); font-weight: 600;">kcosgun@iu.edu</a>.
+            </div>
+        </div>
+
+        <div class="tool-container">
+
+            <div class="status-message" id="statusMessage" role="status" aria-live="polite"></div>
+
+            <!-- ====================== 1. Upload ====================== -->
+            <h2 class="section-title">1. Upload Your Data</h2>
+            <p class="section-hint">A CSV with a header row. The file is read locally in your browser and never leaves your machine.</p>
+            <div class="upload-area" id="uploadArea" role="button" tabindex="0" aria-label="Upload a CSV file. Activate to choose a file, or drag and drop one here.">
+                <input type="file" id="fileInput" accept=".csv" aria-label="Upload CSV file">
+                <div class="upload-icon">&#128202;</div>
+                <p class="upload-text">Click to upload or drag and drop a CSV</p>
+                <p class="upload-hint">CSV files only, with a header row</p>
+            </div>
+            <div style="display:flex; align-items:center; gap:.75rem; flex-wrap:wrap; margin-bottom:1rem;">
+                <button type="button" class="btn btn-secondary btn-sm" id="loadExampleBtn">Try example data</button>
+                <span class="section-hint" style="margin-bottom:0;">A small survey CSV, so you can explore before you have your own data.</span>
+            </div>
+            <div class="preview-note" id="previewNote" style="display:none;"></div>
+            <div id="previewWrap" style="display:none;">
+                <h3 style="margin-bottom:.25rem; font-size:1.05rem; color:var(--text-dark);">Data Preview (first 8 rows)</h3>
+                <div class="result-table-wrap" style="max-height:240px;"><table class="preview-table" id="previewTable"></table></div>
+            </div>
+
+            <div id="afterUpload" style="display:none;">
+
+                <!-- ====================== 2. Chart type ====================== -->
+                <h2 class="section-title mt">2. Choose a Figure</h2>
+                <p class="section-hint">Pick the kind of figure you want. Types that your data cannot support are dimmed.</p>
+                <div id="typeGallery"></div>
+
+                <!-- ====================== 3. Variables ====================== -->
+                <h2 class="section-title mt">3. Choose Your Variables</h2>
+                <p class="section-hint" id="varHint">Only the columns that suit this figure are listed.</p>
+                <div class="form-row" id="varRow">
+                    <div class="form-group">
+                        <label for="varMain" id="varMainLabel">Variable</label>
+                        <select id="varMain"></select>
+                    </div>
+                    <div class="form-group" id="varSecondWrap" style="display:none;">
+                        <label for="varSecond" id="varSecondLabel">Second variable</label>
+                        <select id="varSecond"></select>
+                    </div>
+                </div>
+
+                <!-- ====================== 4. Design + figure ====================== -->
+                <h2 class="section-title mt">4. Design Your Figure</h2>
+                <p class="section-hint">Change anything on the left and the figure redraws immediately.</p>
+
+                <div class="design-layout">
+                    <div class="design-panel" id="designPanel"></div>
+
+                    <div class="figure-pane">
+                        <div class="plot-frame" id="plotFrame" style="display:none;">
+                            <img id="plotImg" alt="The figure generated from your data">
+                        </div>
+                        <div class="plot-empty" id="plotEmpty">Choose a figure type and a variable to draw your first chart.</div>
+                        <div class="plot-err" id="plotErr" style="display:none;"></div>
+
+                        <div class="fig-toolbar" id="figToolbar" style="display:none;">
+                            <div class="fmt-row" role="radiogroup" aria-label="Export format">
+                                <label><input type="radio" name="fmt" value="png" checked> PNG</label>
+                                <label><input type="radio" name="fmt" value="jpeg"> JPEG</label>
+                                <label><input type="radio" name="fmt" value="svg"> SVG</label>
+                            </div>
+                            <button class="btn btn-primary btn-sm" id="downloadFigBtn" type="button">Download figure</button>
+                            <span class="spacer"></span>
+                            <button class="btn btn-secondary btn-sm" id="downloadFreqBtn" type="button" style="display:none;">Frequency table (CSV)</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="freqWrap" style="display:none;">
+                    <h3 style="margin:1.6rem 0 .25rem; font-size:1.05rem; color:var(--text-dark);">Frequency Table</h3>
+                    <p class="section-hint">The counts behind the figure. Percent is the share of non-missing observations.</p>
+                    <div class="result-table-wrap" style="max-height:320px;"><table class="result-table" id="freqTable"></table></div>
+                </div>
+
+                <details class="r-code">
+                    <summary>Show R code</summary>
+                    <div class="code-wrap">
+                        <button type="button" class="copy-btn" id="copyRBtn" aria-label="Copy R code">
+                            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                            <span>Copy</span>
+                        </button>
+                        <pre id="rCodeBlock"></pre>
+                    </div>
+                </details>
+            </div>
+        </div>
+
+    </main>
+
+    <footer>
+        <p>&copy; <span class="year"></span> Koray Cosguner &middot; All Rights Reserved</p>
+    </footer>
+
+    </div> <!-- end main-content -->
+
+    <!-- charts tool logic -->
+    <script type="module">
+        import { WebR } from 'https://webr.r-wasm.org/latest/webr.mjs';
+
+        // ==================== STATE ====================
+        let webR = null, webrReady = false;
+        let csvText = '';
+        let numericVars = [], catVars = [], allVars = [];
+        let chartType = 'bar';
+        let lastFreqCSV = '';
+        let lastFmt = 'png';
+        let drawToken = 0;
+        let drawing = false, queued = false;
+
+        const $ = (id) => document.getElementById(id);
+        const showStatus = (msg, type = 'info', ms = 0) => {
+            const el = $('statusMessage');
+            el.textContent = msg; el.className = `status-message visible ${type}`;
+            if (ms > 0) setTimeout(() => el.classList.remove('visible'), ms);
+        };
+        const hideStatus = () => $('statusMessage').classList.remove('visible');
+        const escapeHtml = (s) => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+        const rStr = (s) => '"' + String(s).replace(/\\/g, '\\\\').replace(/"/g, '\\"') + '"';
+        const rVec = (a) => 'c(' + a.map(rStr).join(', ') + ')';
+
+        // ==================== CHART REGISTRY ====================
+        // need: the variable roles the chart requires, in order. 'cat' = categorical
+        // (or a numeric treated as discrete), 'num' = numeric. opt: an optional second role.
+        const CHARTS = {
+            bar:        { name: 'Bar',          group: 'Comparing categories', need: ['cat'],        opt: 'num' },
+            barGrouped: { name: 'Grouped bar',  group: 'Comparing categories', need: ['cat','cat'] },
+            barStacked: { name: 'Stacked bar',  group: 'Comparing categories', need: ['cat','cat'] },
+            lollipop:   { name: 'Lollipop',     group: 'Comparing categories', need: ['cat'],        opt: 'num' },
+            pie:        { name: 'Pie',          group: 'Parts of a whole',     need: ['cat'] },
+            donut:      { name: 'Donut',        group: 'Parts of a whole',     need: ['cat'] },
+            hist:       { name: 'Histogram',    group: 'Distributions',        need: ['num'] },
+            density:    { name: 'Density',      group: 'Distributions',        need: ['num'] },
+            box:        { name: 'Box plot',     group: 'Distributions',        need: ['num'],        opt: 'cat' },
+            violin:     { name: 'Violin',       group: 'Distributions',        need: ['num','cat'] },
+            line:       { name: 'Line',         group: 'Trends and relationships', need: ['num'],    opt: 'num' },
+            area:       { name: 'Area',         group: 'Trends and relationships', need: ['num'],    opt: 'num' },
+            scatter:    { name: 'Scatter',      group: 'Trends and relationships', need: ['num','num'] },
+            heatmap:    { name: 'Heatmap',      group: 'Trends and relationships', need: ['cat','cat'] }
+        };
+        const GROUP_ORDER = ['Comparing categories', 'Parts of a whole', 'Distributions', 'Trends and relationships'];
+
+        // Small line-art previews so students pick by sight, not by name.
+        const ICONS = {
+            bar:'<rect x="4" y="20" width="7" height="14"/><rect x="14" y="12" width="7" height="22"/><rect x="24" y="16" width="7" height="18"/>',
+            barGrouped:'<rect x="4" y="18" width="5" height="16"/><rect x="10" y="24" width="5" height="10"/><rect x="20" y="12" width="5" height="22"/><rect x="26" y="20" width="5" height="14"/>',
+            barStacked:'<rect x="6" y="22" width="9" height="12"/><rect x="6" y="14" width="9" height="7" opacity=".5"/><rect x="21" y="18" width="9" height="16"/><rect x="21" y="9" width="9" height="8" opacity=".5"/>',
+            lollipop:'<line x1="8" y1="34" x2="8" y2="16"/><circle cx="8" cy="13" r="3.4"/><line x1="18" y1="34" x2="18" y2="24"/><circle cx="18" cy="21" r="3.4"/><line x1="28" y1="34" x2="28" y2="10"/><circle cx="28" cy="7" r="3.4"/>',
+            pie:'<circle cx="18" cy="20" r="13" fill="none"/><path d="M18 20 L18 7 A13 13 0 0 1 29.3 26.5 Z"/>',
+            donut:'<circle cx="18" cy="20" r="13" fill="none"/><circle cx="18" cy="20" r="6" fill="none"/><path d="M18 7 A13 13 0 0 1 29.3 26.5 L23 23 A6.5 6.5 0 0 0 18 13.5 Z"/>',
+            hist:'<rect x="3" y="26" width="5" height="8"/><rect x="9" y="18" width="5" height="16"/><rect x="15" y="10" width="5" height="24"/><rect x="21" y="16" width="5" height="18"/><rect x="27" y="24" width="5" height="10"/>',
+            density:'<path d="M3 33 C9 33 9 12 18 12 C27 12 27 33 33 33" fill="none"/>',
+            box:'<line x1="18" y1="8" x2="18" y2="14"/><rect x="9" y="14" width="18" height="12" fill="none"/><line x1="9" y1="20" x2="27" y2="20"/><line x1="18" y1="26" x2="18" y2="32"/>',
+            violin:'<path d="M18 8 C10 12 10 20 14 24 C10 28 12 32 18 33 C24 32 26 28 22 24 C26 20 26 12 18 8 Z" fill="none"/>',
+            line:'<polyline points="4,29 12,18 20,23 28,9 33,14" fill="none"/>',
+            area:'<path d="M4 33 L4 26 L12 16 L20 21 L28 9 L33 13 L33 33 Z"/>',
+            scatter:'<circle cx="8" cy="27" r="2.6"/><circle cx="15" cy="19" r="2.6"/><circle cx="21" cy="24" r="2.6"/><circle cx="27" cy="12" r="2.6"/><circle cx="12" cy="30" r="2.6"/><circle cx="31" cy="17" r="2.6"/>',
+            heatmap:'<rect x="5" y="10" width="8" height="8" opacity=".3"/><rect x="14" y="10" width="8" height="8" opacity=".75"/><rect x="23" y="10" width="8" height="8" opacity=".45"/><rect x="5" y="19" width="8" height="8" opacity=".9"/><rect x="14" y="19" width="8" height="8" opacity=".25"/><rect x="23" y="19" width="8" height="8" opacity=".6"/>'
+        };
+
+        // ==================== PALETTES ====================
+        const PALETTES = {
+            crimson:   { name: 'IU Crimson',      kind: 'single',    colors: ['#990000'] },
+            ramp:      { name: 'Crimson ramp',    kind: 'ramp',      colors: ['#eccfcf', '#990000'] },
+            highlight: { name: 'Highlight',       kind: 'highlight', colors: ['#990000', '#d6d3d1'] },
+            okabe:     { name: 'Colorblind safe', kind: 'qual',      colors: ['#0072B2','#D55E00','#009E73','#CC79A7','#E69F00','#56B4E9','#F0E442'] },
+            ocean:     { name: 'Ocean',           kind: 'qual',      colors: ['#1f4e79','#2a9d8f','#457b9d','#219ebc','#8ecae6','#023047'] },
+            warm:      { name: 'Warm',            kind: 'qual',      colors: ['#990000','#c1666b','#e76f51','#f4a261','#e9c46a','#d4a373'] },
+            forest:    { name: 'Forest',          kind: 'qual',      colors: ['#1b4332','#2d6a4f','#40916c','#52b788','#74c69d','#95d5b2'] },
+            slate:     { name: 'Slate',           kind: 'qual',      colors: ['#0f172a','#334155','#475569','#64748b','#94a3b8','#cbd5e1'] },
+            viridis:   { name: 'Viridis',         kind: 'ramp',      colors: ['#440154','#21918c','#fde725'] }
+        };
+        const THEMES = {
+            editorial: 'Editorial (house)', minimal: 'Minimal', classic: 'Classic',
+            light: 'Light', bw: 'Black and white', gray: 'Gray', void: 'Bare'
+        };
+        const SIZES = { '960x600': 'Standard', '1200x620': 'Wide', '780x780': 'Square', '1400x860': 'Large' };
+
+        // ==================== CSV ====================
+        function parseCSV(text) {
+            const rows = []; let row = [], field = '', q = false;
+            for (let i = 0; i < text.length; i++) {
+                const c = text[i];
+                if (q) {
+                    if (c === '"') { if (text[i+1] === '"') { field += '"'; i++; } else q = false; }
+                    else field += c;
+                } else if (c === '"') q = true;
+                else if (c === ',') { row.push(field); field = ''; }
+                else if (c === '\n' || c === '\r') {
+                    if (c === '\r' && text[i+1] === '\n') i++;
+                    row.push(field); rows.push(row); row = []; field = '';
+                } else field += c;
+            }
+            if (field.length || row.length) { row.push(field); rows.push(row); }
+            return rows.filter(r => r.some(v => String(v).trim() !== ''));
+        }
+
+        let dataWritten = false;
+        async function ensureData() {
+            if (dataWritten) return;
+            await webR.FS.writeFile('/tmp/ch_data.csv', new TextEncoder().encode(csvText));
+            dataWritten = true;
+        }
+
+        function renderPreview() {
+            const rows = parseCSV(csvText);
+            if (!rows.length) return;
+            const head = rows[0], body = rows.slice(1, 9);
+            $('previewTable').innerHTML =
+                '<thead><tr>' + head.map(h => `<th>${escapeHtml(h)}</th>`).join('') + '</tr></thead>' +
+                '<tbody>' + body.map(r => '<tr>' + head.map((_, i) => `<td>${escapeHtml(r[i] ?? '')}</td>`).join('') + '</tr>').join('') + '</tbody>';
+            $('previewWrap').style.display = '';
+            $('previewNote').textContent = `${rows.length - 1} rows, ${head.length} columns.`;
+            $('previewNote').style.display = '';
+        }
+
+        function loadCsvText(text) {
+            csvText = text; dataWritten = false;
+            if (!csvText || !csvText.trim()) { showStatus('That file looks empty.', 'error', 5000); return; }
+            renderPreview();
+            profileColumns();
+        }
+        function handleFile(file) {
+            if (!file.name.toLowerCase().endsWith('.csv')) { showStatus('Please choose a .csv file.', 'error', 5000); return; }
+            const fr = new FileReader();
+            fr.onload = e => loadCsvText(String(e.target.result));
+            fr.onerror = () => showStatus('Could not read that file.', 'error', 5000);
+            fr.readAsText(file);
+        }
+
+        // ==================== COLUMN PROFILING (in R) ====================
+        async function profileColumns() {
+            if (!webrReady) { showStatus('Still starting R, one moment...', 'info'); return; }
+            try {
+                showStatus('Reading your data in R...', 'info');
+                await ensureData();
+                const res = await webR.evalR(`
+res = tryCatch({
+  df = read.csv("/tmp/ch_data.csv", stringsAsFactors = FALSE, check.names = TRUE)
+  df[] = lapply(df, function(c) if (is.logical(c)) as.numeric(c) else c)
+  isnum = sapply(df, is.numeric)
+  nuniq = sapply(df, function(c) length(unique(c[!is.na(c)])))
+  # A numeric column with few distinct values also works as a category.
+  cats = names(df)[!isnum | (isnum & nuniq <= 12)]
+  nums = names(df)[isnum]
+  paste0("OK\\n", nrow(df), "\\n",
+         paste(nums, collapse="\\t"), "\\n",
+         paste(cats, collapse="\\t"), "\\n",
+         paste(names(df), collapse="\\t"))
+}, error = function(e) paste0("ERR\\n", conditionMessage(e)))
+res`);
+                const txt = await res.toString(); webR.destroy(res);
+                const parts = txt.split('\n');
+                if (parts[0] !== 'OK') { showStatus('R could not read that file: ' + (parts[1] || ''), 'error', 8000); return; }
+                numericVars = (parts[2] || '').split('\t').filter(Boolean);
+                catVars     = (parts[3] || '').split('\t').filter(Boolean);
+                allVars     = (parts[4] || '').split('\t').filter(Boolean);
+                $('afterUpload').style.display = '';
+                buildTypeGallery();
+                selectType(firstUsableType());
+                hideStatus();
+            } catch (err) {
+                showStatus('Could not profile the data: ' + (err.message || err), 'error', 8000);
+            }
+        }
+
+        function canDo(key) {
+            const c = CHARTS[key];
+            let nNum = numericVars.length, nCat = catVars.length;
+            const needNum = c.need.filter(r => r === 'num').length;
+            const needCat = c.need.filter(r => r === 'cat').length;
+            return nNum >= needNum && nCat >= needCat;
+        }
+        function firstUsableType() {
+            for (const g of GROUP_ORDER)
+                for (const k of Object.keys(CHARTS))
+                    if (CHARTS[k].group === g && canDo(k)) return k;
+            return 'bar';
+        }
+
+        // ==================== STEP 2: TYPE GALLERY ====================
+        function buildTypeGallery() {
+            let html = '';
+            for (const g of GROUP_ORDER) {
+                const keys = Object.keys(CHARTS).filter(k => CHARTS[k].group === g);
+                if (!keys.length) continue;
+                html += `<div class="type-group-label">${g}</div><div class="type-grid">`;
+                for (const k of keys) {
+                    const ok = canDo(k);
+                    html += `<label class="type-card" style="${ok ? '' : 'opacity:.38; cursor:not-allowed;'}" title="${ok ? '' : 'Your data does not have the right kind of columns for this figure'}">
+                        <input type="radio" name="ctype" value="${k}" ${ok ? '' : 'disabled'}>
+                        <svg width="36" height="38" viewBox="0 0 36 38" fill="currentColor" stroke="currentColor" stroke-width="1.6" style="color:var(--iu-crimson)">${ICONS[k]}</svg>
+                        <span class="tname">${CHARTS[k].name}</span>
+                    </label>`;
+                }
+                html += '</div>';
+            }
+            $('typeGallery').innerHTML = html;
+            $('typeGallery').addEventListener('change', e => {
+                if (e.target.name === 'ctype') selectType(e.target.value);
+            });
+        }
+
+        function selectType(key) {
+            chartType = key;
+            const input = document.querySelector(`input[name="ctype"][value="${key}"]`);
+            if (input) input.checked = true;
+            buildVarSelectors();
+            buildDesignPanel();
+            draw();
+        }
+
+        // ==================== STEP 3: VARIABLES ====================
+        function fill(sel, list, keep) {
+            const prev = keep && list.includes(sel.value) ? sel.value : null;
+            sel.innerHTML = list.map(v => `<option value="${escapeHtml(v)}">${escapeHtml(v)}</option>`).join('');
+            if (prev) sel.value = prev;
+        }
+        function buildVarSelectors() {
+            const c = CHARTS[chartType];
+            const roleList = r => (r === 'num' ? numericVars : catVars);
+            fill($('varMain'), roleList(c.need[0]), true);
+            $('varMainLabel').textContent = c.need[0] === 'num' ? 'Numeric variable' : 'Category variable';
+
+            const secondRole = c.need[1] || c.opt || null;
+            if (secondRole) {
+                const list = roleList(secondRole).slice();
+                const optional = !c.need[1];
+                if (optional) list.unshift('(none)');
+                fill($('varSecond'), list, true);
+                $('varSecondLabel').textContent =
+                    chartType === 'scatter' ? 'Vertical axis variable'
+                  : chartType === 'line' || chartType === 'area' ? 'Horizontal axis (optional)'
+                  : secondRole === 'num' ? 'Value variable (optional, else counts)'
+                  : optional ? 'Group by (optional)' : 'Group by';
+                $('varSecondWrap').style.display = '';
+            } else {
+                $('varSecondWrap').style.display = 'none';
+            }
+            $('varHint').textContent = varHintFor(chartType);
+        }
+        function varHintFor(k) {
+            switch (k) {
+                case 'bar': case 'lollipop': return 'Counts each level of the category. Add a numeric variable to plot its total instead of a count.';
+                case 'barGrouped': case 'barStacked': return 'Counts the first category, split by the second.';
+                case 'pie': case 'donut': return 'Shows each level of the category as a share of the whole.';
+                case 'hist': case 'density': return 'Shows the shape of one numeric variable.';
+                case 'box': return 'Shows the spread of a numeric variable. Add a category to compare groups side by side.';
+                case 'violin': return 'Shows the full distribution of a numeric variable for each group.';
+                case 'line': case 'area': return 'Plots the variable in row order, or against a second numeric variable.';
+                case 'scatter': return 'Plots two numeric variables against each other.';
+                case 'heatmap': return 'Counts every combination of the two categories.';
+                default: return 'Only the columns that suit this figure are listed.';
+            }
+        }
+
+        // ==================== STEP 4: DESIGN PANEL ====================
+        const has = (k, feature) => ({
+            flip:      ['bar','barGrouped','barStacked','lollipop','box','violin'].includes(k),
+            sort:      ['bar','lollipop','pie','donut'].includes(k),
+            labels:    ['bar','barGrouped','barStacked','lollipop','pie','donut','heatmap'].includes(k),
+            percent:   ['bar','lollipop','pie','donut','barStacked','heatmap'].includes(k),
+            bins:      ['hist'].includes(k),
+            points:    ['line','area','scatter','box'].includes(k),
+            trend:     ['scatter'].includes(k),
+            legend:    ['barGrouped','barStacked','violin','heatmap','pie','donut','box'].includes(k),
+            stack100:  ['barStacked'].includes(k)
+        }[feature]);
+
+        function buildDesignPanel() {
+            const k = chartType;
+            const palRow = Object.entries(PALETTES).map(([id, p]) => `
+                <label class="pal"><input type="radio" name="pal" value="${id}" ${id === 'crimson' ? 'checked' : ''}>
+                    <span class="chips">${p.colors.slice(0,6).map(c => `<i style="background:${c}"></i>`).join('')}</span>
+                    <span class="pname">${p.name}</span></label>`).join('');
+
+            $('designPanel').innerHTML = `
+            <div class="opt-block">
+                <div class="opt-title">Text</div>
+                <div class="form-group"><label for="optTitle">Title</label>
+                    <input type="text" id="optTitle" placeholder="Leave blank for none"></div>
+                <div class="form-group"><label for="optSub">Subtitle</label>
+                    <input type="text" id="optSub" placeholder="Optional"></div>
+                <div class="form-group"><label for="optCap">Caption</label>
+                    <input type="text" id="optCap" placeholder="Source note, optional"></div>
+                <div class="form-row">
+                    <div class="form-group"><label for="optXlab">X label</label>
+                        <input type="text" id="optXlab" placeholder="auto"></div>
+                    <div class="form-group"><label for="optYlab">Y label</label>
+                        <input type="text" id="optYlab" placeholder="auto"></div>
+                </div>
+            </div>
+
+            <div class="opt-block">
+                <div class="opt-title">Colors</div>
+                <div class="pal-row">${palRow}</div>
+            </div>
+
+            <div class="opt-block">
+                <div class="opt-title">Style</div>
+                <div class="form-group"><label for="optTheme">Theme</label>
+                    <select id="optTheme">${Object.entries(THEMES).map(([v,n]) => `<option value="${v}"${v==='editorial'?' selected':''}>${n}</option>`).join('')}</select></div>
+                <div class="form-group"><label for="optFont">Base text size</label>
+                    <div class="slider-row"><input type="range" id="optFont" min="10" max="24" step="1" value="15">
+                    <span class="slider-val" id="optFontVal">15</span></div></div>
+                <div class="form-group"><label for="optSize">Figure size</label>
+                    <select id="optSize">${Object.entries(SIZES).map(([v,n]) => `<option value="${v}">${n} (${v.replace('x',' x ')})</option>`).join('')}</select></div>
+                ${has(k,'legend') ? `<div class="form-group"><label for="optLegend">Legend</label>
+                    <select id="optLegend"><option value="right">Right</option><option value="top">Top</option>
+                    <option value="bottom" selected>Bottom</option><option value="none">Hidden</option></select></div>` : ''}
+            </div>
+
+            <div class="opt-block">
+                <div class="opt-title">Options</div>
+                <div class="chk-list">
+                    ${has(k,'flip')    ? `<label><input type="checkbox" id="optFlip" ${['bar','lollipop'].includes(k)?'checked':''}> Horizontal</label>` : ''}
+                    ${has(k,'sort')    ? `<label><input type="checkbox" id="optSort" checked> Sort by size</label>` : ''}
+                    ${has(k,'labels')  ? `<label><input type="checkbox" id="optLabels" checked> Show data labels</label>` : ''}
+                    ${has(k,'percent') ? `<label><input type="checkbox" id="optPct"> Label as percentages</label>` : ''}
+                    ${has(k,'stack100')? `<label><input type="checkbox" id="opt100"> Scale to 100%</label>` : ''}
+                    ${has(k,'points')  ? `<label><input type="checkbox" id="optPoints" ${k==='line'?'checked':''}> Show points</label>` : ''}
+                    ${has(k,'trend')   ? `<label><input type="checkbox" id="optTrend"> Add trend line</label>` : ''}
+                    <label><input type="checkbox" id="optGrid" checked> Grid lines</label>
+                </div>
+                ${has(k,'bins') ? `<div class="form-group" style="margin-top:.7rem;"><label for="optBins">Bins</label>
+                    <div class="slider-row"><input type="range" id="optBins" min="4" max="50" step="1" value="12">
+                    <span class="slider-val" id="optBinsVal">12</span></div></div>` : ''}
+                ${has(k,'labels') ? `<div class="form-group" style="margin-top:.7rem;"><label for="optDec">Label decimals</label>
+                    <select id="optDec"><option value="0" selected>0</option><option value="1">1</option><option value="2">2</option></select></div>` : ''}
+            </div>`;
+
+            // Live redraw: clicks redraw at once, typing is debounced.
+            let typeTimer = null;
+            $('designPanel').addEventListener('input', e => {
+                if (e.target.id === 'optFont') $('optFontVal').textContent = e.target.value;
+                if (e.target.id === 'optBins') $('optBinsVal').textContent = e.target.value;
+                if (e.target.type === 'text') {
+                    clearTimeout(typeTimer); typeTimer = setTimeout(draw, 320);
+                } else draw();
+            });
+            $('designPanel').addEventListener('change', e => { if (e.target.type !== 'text') draw(); });
+        }
+
+        const val = (id, d = '') => { const e = $(id); return e ? e.value : d; };
+        const chk = (id, d = false) => { const e = $(id); return e ? e.checked : d; };
+
+        // ==================== R PLOT PROGRAM ====================
+        function opts() {
+            const [w, h] = val('optSize', '960x600').split('x').map(Number);
+            return {
+                title: val('optTitle'), sub: val('optSub'), cap: val('optCap'),
+                xlab: val('optXlab'), ylab: val('optYlab'),
+                pal: (document.querySelector('input[name="pal"]:checked') || {}).value || 'crimson',
+                theme: val('optTheme', 'editorial'), font: Number(val('optFont', 15)),
+                w, h, legend: val('optLegend', 'bottom'),
+                flip: chk('optFlip'), sort: chk('optSort'), labels: chk('optLabels'),
+                pct: chk('optPct'), s100: chk('opt100'), points: chk('optPoints'),
+                trend: chk('optTrend'), grid: chk('optGrid', true),
+                bins: Number(val('optBins', 12)), dec: Number(val('optDec', 0))
+            };
+        }
+
+        function themeCall(o) {
+            const t = { editorial: 'theme_minimal', minimal: 'theme_minimal', classic: 'theme_classic',
+                        light: 'theme_light', bw: 'theme_bw', gray: 'theme_gray', void: 'theme_void' }[o.theme];
+            let extra = `
+  plot.title = element_text(face = "bold", size = ${(o.font*1.32).toFixed(1)}, colour = "#111827", margin = margin(b = 5)),
+  plot.subtitle = element_text(size = ${(o.font*0.92).toFixed(1)}, colour = "#6b7280", margin = margin(b = 16)),
+  plot.caption = element_text(size = ${(o.font*0.72).toFixed(1)}, colour = "#adb2bb", hjust = 0, margin = margin(t = 16)),
+  plot.title.position = "plot", plot.caption.position = "plot",
+  plot.margin = margin(22, 26, 16, 20),
+  legend.position = ${rStr(o.legend)}, legend.title = element_blank(),
+  text = element_text(colour = "#374151")`;
+            if (o.theme === 'editorial') {
+                extra += `,
+  axis.text = element_text(colour = "#6b7280"),
+  panel.grid.minor = element_blank()`;
+                if (['bar','lollipop','box','violin','barGrouped','barStacked'].includes(chartType)) {
+                    extra += `,\n  axis.text.${o.flip ? 'y' : 'x'} = element_text(colour = "#111827", size = ${(o.font*0.95).toFixed(1)})`;
+                }
+            }
+            if (!o.grid) extra += `,\n  panel.grid = element_blank()`;
+            return `${t}(base_size = ${o.font}) + theme(${extra})`;
+        }
+
+        function scaleCall(o, n, kind) {
+            const p = PALETTES[o.pal];
+            const aes = kind === 'colour' ? 'colour' : 'fill';
+            if (p.kind === 'single') return null;                      // handled as a constant
+            if (p.kind === 'highlight') {
+                return `scale_${aes}_manual(values = c("TRUE" = ${rStr(p.colors[0])}, "FALSE" = ${rStr(p.colors[1])}), guide = "none")`;
+            }
+            if (p.kind === 'ramp') {
+                return `scale_${aes}_gradientn(colours = ${rVec(p.colors)})`;
+            }
+            return `scale_${aes}_manual(values = rep(${rVec(p.colors)}, length.out = ${Math.max(n || 8, 1)}))`;
+        }
+
+        function labsCall(o, defX, defY) {
+            const parts = [];
+            parts.push(`x = ${o.xlab ? rStr(o.xlab) : (defX ? rStr(defX) : 'NULL')}`);
+            parts.push(`y = ${o.ylab ? rStr(o.ylab) : (defY ? rStr(defY) : 'NULL')}`);
+            if (o.title) parts.push(`title = ${rStr(o.title)}`);
+            if (o.sub)   parts.push(`subtitle = ${rStr(o.sub)}`);
+            if (o.cap)   parts.push(`caption = ${rStr(o.cap)}`);
+            return `labs(${parts.join(', ')})`;
+        }
+
+        // Builds the R program. Returns { r, wantsFreq }.
+        function buildPlotR(fmt) {
+            const o = opts();
+            const v1 = $('varMain') ? $('varMain').value : null;
+            const v2raw = $('varSecond') ? $('varSecond').value : null;
+            const v2 = (!v2raw || v2raw === '(none)') ? null : v2raw;
+            const k = chartType;
+            const P = PALETTES[o.pal];
+            const single = P.kind === 'single' ? rStr(P.colors[0]) : rStr(P.colors[0]);
+            const lbl = (expr) => o.pct ? `paste0(format(round(100*${expr}/sum(${expr}), ${o.dec}), nsmall=${o.dec}), "%")`
+                                        : `format(round(${expr}, ${o.dec}), nsmall=${o.dec}, big.mark=",")`;
+            let pre = '', plot = '', wantsFreq = false;
+
+            const flipLine = o.flip ? ' + coord_flip()' : '';
+            const sortExpr = (col, val) => o.sort ? `reorder(${col}, ${o.flip ? '' : '-'}${val})` : col;
+
+            if (k === 'bar' || k === 'lollipop') {
+                wantsFreq = !v2;
+                pre = v2
+                    ? `pd = aggregate(list(value = df[[${rStr(v2)}]]), by = list(cat = df[[${rStr(v1)}]]), FUN = function(z) sum(z, na.rm = TRUE))`
+                    : `pd = as.data.frame(table(cat = df[[${rStr(v1)}]]), stringsAsFactors = FALSE); names(pd)[2] = "value"`;
+                pre += `\npd = pd[!is.na(pd$cat), ]`;
+                if (P.kind === 'highlight') pre += `\npd$hl = as.character(pd$value == max(pd$value))`;
+                const fillAes = P.kind === 'single' ? '' :
+                                P.kind === 'highlight' ? ', fill = hl' :
+                                P.kind === 'ramp' ? ', fill = value' : ', fill = cat';
+                const constFill = P.kind === 'single' ? `, fill = ${single}` : '';
+                const geom = k === 'bar'
+                    ? `geom_col(width = 0.66${constFill})`
+                    : `geom_segment(aes(xend = ${sortExpr('cat','value')}, y = 0, yend = value), linewidth = 1.1, colour = ${single}) + geom_point(size = 3.6${constFill ? ', colour = ' + single : ''})`;
+                const sc = scaleCall(o, null, 'fill');
+                plot = `p = ggplot(pd, aes(${sortExpr('cat','value')}, value${fillAes})) + ${geom}`;
+                if (sc) plot += ` + ${sc}`;
+                if (o.labels) plot += ` + geom_text(aes(label = ${lbl('value')}), ${o.flip ? 'hjust = -0.25' : 'vjust = -0.5'}, size = ${(o.font*0.3).toFixed(2)}, fontface = "bold", colour = "#374151")`;
+                plot += ` + scale_y_continuous(expand = expansion(mult = c(0, ${o.labels ? 0.16 : 0.05})))`;
+                plot += ` + ${labsCall(o, null, v2 ? v2 : 'Count')} + ${themeCall(o)}${flipLine}`;
+                // Editorial: when the bars carry their own numbers, the value axis and its
+                // gridlines are saying the same thing a third time. Drop them.
+                if (o.theme === 'editorial' && o.labels) {
+                    plot += ` + theme(panel.grid = element_blank(), ` +
+                            `axis.text.${o.flip ? 'x' : 'y'} = element_blank(), ` +
+                            `axis.title.${o.flip ? 'x' : 'y'} = element_blank(), ` +
+                            `axis.ticks = element_blank())`;
+                }
+                if (P.kind !== 'qual') plot += ` + theme(legend.position = "none")`;
+
+            } else if (k === 'barGrouped' || k === 'barStacked') {
+                pre = `pd = as.data.frame(table(cat = df[[${rStr(v1)}]], grp = df[[${rStr(v2)}]]), stringsAsFactors = FALSE)\nnames(pd)[3] = "value"\npd = pd[!is.na(pd$cat) & !is.na(pd$grp), ]`;
+                const pos = k === 'barGrouped' ? 'position_dodge(width = 0.78)'
+                          : (o.s100 ? 'position_fill()' : 'position_stack()');
+                const sc = scaleCall(o, null, 'fill') || `scale_fill_manual(values = rep(${rVec(PALETTES.okabe.colors)}, length.out = 12))`;
+                plot = `p = ggplot(pd, aes(cat, value, fill = grp)) + geom_col(position = ${pos}, width = 0.72) + ${sc}`;
+                if (o.labels && k === 'barGrouped') plot += ` + geom_text(aes(label = ${lbl('value')}), position = position_dodge(width = 0.78), ${o.flip ? 'hjust = -0.2' : 'vjust = -0.45'}, size = ${(o.font*0.27).toFixed(2)}, colour = "#374151")`;
+                if (k === 'barStacked' && o.s100) plot += ` + scale_y_continuous(labels = function(z) paste0(z*100, "%"))`;
+                plot += ` + ${labsCall(o, v1, o.s100 ? 'Share' : 'Count')} + ${themeCall(o)}${flipLine}`;
+
+            } else if (k === 'pie' || k === 'donut') {
+                wantsFreq = true;
+                pre = `pd = as.data.frame(table(cat = df[[${rStr(v1)}]]), stringsAsFactors = FALSE); names(pd)[2] = "value"\npd = pd[!is.na(pd$cat), ]`;
+                if (o.sort) pre += `\npd = pd[order(-pd$value), ]; pd$cat = factor(pd$cat, levels = pd$cat)`;
+                pre += `\npd$frac = pd$value / sum(pd$value)\npd$ymax = cumsum(pd$frac); pd$ymin = c(0, head(pd$ymax, -1))\npd$mid = (pd$ymax + pd$ymin) / 2`;
+                const sc = scaleCall(o, null, 'fill') || `scale_fill_manual(values = rep(${rVec(PALETTES.okabe.colors)}, length.out = 12))`;
+                const inner = k === 'donut' ? 2.2 : 0;
+                plot = `p = ggplot(pd, aes(ymax = ymax, ymin = ymin, xmax = 4, xmin = ${inner}, fill = cat)) + geom_rect(colour = "white", linewidth = .6) + coord_polar(theta = "y") + xlim(c(0, 4)) + ${sc}`;
+                if (o.labels) plot += ` + geom_text(aes(x = ${k === 'donut' ? 3.1 : 2.6}, y = mid, label = ${o.pct ? `paste0(round(100*frac, ${o.dec}), "%")` : `format(value, big.mark=",")`}), size = ${(o.font*0.26).toFixed(2)}, colour = "white", fontface = "bold")`;
+                plot += ` + ${labsCall(o, null, null)} + ${themeCall(o)} + theme(axis.text = element_blank(), axis.title = element_blank(), panel.grid = element_blank())`;
+
+            } else if (k === 'hist') {
+                pre = `pd = data.frame(x = df[[${rStr(v1)}]]); pd = pd[!is.na(pd$x), , drop = FALSE]`;
+                const fillAes = P.kind === 'ramp' ? ', fill = after_stat(count)' : '';
+                const constFill = P.kind === 'ramp' ? '' : `, fill = ${single}`;
+                plot = `p = ggplot(pd, aes(x${fillAes})) + geom_histogram(bins = ${o.bins}, colour = "white", linewidth = .35${constFill})`;
+                const sc = P.kind === 'ramp' ? scaleCall(o, null, 'fill') : null;
+                if (sc) plot += ` + ${sc}`;
+                plot += ` + ${labsCall(o, v1, 'Count')} + ${themeCall(o)} + theme(legend.position = "none")`;
+
+            } else if (k === 'density') {
+                pre = `pd = data.frame(x = df[[${rStr(v1)}]]); pd = pd[!is.na(pd$x), , drop = FALSE]`;
+                plot = `p = ggplot(pd, aes(x)) + geom_density(fill = ${single}, alpha = .28, colour = ${single}, linewidth = 1.1) + ${labsCall(o, v1, 'Density')} + ${themeCall(o)} + theme(legend.position = "none")`;
+
+            } else if (k === 'box' || k === 'violin') {
+                const grouped = !!v2 || k === 'violin';
+                pre = grouped
+                    ? `pd = data.frame(y = df[[${rStr(v1)}]], g = as.character(df[[${rStr(v2)}]])); pd = pd[!is.na(pd$y) & !is.na(pd$g), ]`
+                    : `pd = data.frame(y = df[[${rStr(v1)}]], g = ${rStr(v1)}); pd = pd[!is.na(pd$y), ]`;
+                const sc = grouped ? (scaleCall(o, null, 'fill') || `scale_fill_manual(values = rep(${rVec(PALETTES.okabe.colors)}, length.out = 12))`) : null;
+                const fillAes = grouped && P.kind !== 'single' ? ', fill = g' : '';
+                const constFill = (!grouped || P.kind === 'single') ? `, fill = ${single}` : '';
+                plot = k === 'violin'
+                    ? `p = ggplot(pd, aes(g, y${fillAes})) + geom_violin(alpha = .82, colour = "white", linewidth = .4${constFill}) + geom_boxplot(width = .12, outlier.shape = NA, fill = "white", colour = "#4b5563")`
+                    : `p = ggplot(pd, aes(g, y${fillAes})) + geom_boxplot(width = .5, alpha = .9, outlier.colour = "#9ca3af", linewidth = .45${constFill})`;
+                if (k === 'box' && o.points) plot += ` + geom_jitter(width = .12, alpha = .35, size = 1.5, colour = "#4b5563")`;
+                if (sc && P.kind !== 'single') plot += ` + ${sc}`;
+                plot += ` + ${labsCall(o, grouped && v2 ? v2 : null, v1)} + ${themeCall(o)}${flipLine}`;
+                if (!grouped || P.kind === 'single') plot += ` + theme(legend.position = "none")`;
+
+            } else if (k === 'line' || k === 'area') {
+                pre = v2
+                    ? `pd = data.frame(x = df[[${rStr(v2)}]], y = df[[${rStr(v1)}]]); pd = pd[!is.na(pd$x) & !is.na(pd$y), ]; pd = pd[order(pd$x), ]`
+                    : `pd = data.frame(x = seq_len(nrow(df)), y = df[[${rStr(v1)}]]); pd = pd[!is.na(pd$y), ]`;
+                plot = k === 'area'
+                    ? `p = ggplot(pd, aes(x, y)) + geom_area(fill = ${single}, alpha = .3) + geom_line(colour = ${single}, linewidth = 1.2)`
+                    : `p = ggplot(pd, aes(x, y)) + geom_line(colour = ${single}, linewidth = 1.2)`;
+                if (o.points) plot += ` + geom_point(colour = ${single}, size = 2.4)`;
+                plot += ` + ${labsCall(o, v2 || 'Observation', v1)} + ${themeCall(o)} + theme(legend.position = "none")`;
+
+            } else if (k === 'scatter') {
+                pre = `pd = data.frame(x = df[[${rStr(v1)}]], y = df[[${rStr(v2)}]]); pd = pd[!is.na(pd$x) & !is.na(pd$y), ]`;
+                plot = `p = ggplot(pd, aes(x, y)) + geom_point(colour = ${single}, size = 2.6, alpha = .78)`;
+                if (o.trend) plot += ` + geom_smooth(method = "lm", formula = y ~ x, se = TRUE, colour = "#374151", fill = "#d1d5db", linewidth = .9)`;
+                plot += ` + ${labsCall(o, v1, v2)} + ${themeCall(o)} + theme(legend.position = "none")`;
+
+            } else if (k === 'heatmap') {
+                pre = `pd = as.data.frame(table(a = df[[${rStr(v1)}]], b = df[[${rStr(v2)}]]), stringsAsFactors = FALSE)\nnames(pd)[3] = "value"\npd = pd[!is.na(pd$a) & !is.na(pd$b), ]`;
+                const ramp = PALETTES[o.pal].kind === 'ramp' ? PALETTES[o.pal].colors : ['#f7e9e9', '#990000'];
+                plot = `p = ggplot(pd, aes(a, b, fill = value)) + geom_tile(colour = "white", linewidth = 1.1) + scale_fill_gradientn(colours = ${rVec(ramp)})`;
+                if (o.labels) plot += ` + geom_text(aes(label = ${lbl('value')}), size = ${(o.font*0.27).toFixed(2)}, colour = "#111827")`;
+                plot += ` + ${labsCall(o, v1, v2)} + ${themeCall(o)}`;
+            }
+
+            const dev = fmt === 'svg'
+                ? `svg("/tmp/fig.svg", width = ${(o.w/120).toFixed(2)}, height = ${(o.h/120).toFixed(2)})`
+                : fmt === 'jpeg'
+                ? `jpeg("/tmp/fig.jpg", width = ${o.w}, height = ${o.h}, res = 120, quality = 96)`
+                : `png("/tmp/fig.png", width = ${o.w}, height = ${o.h}, res = 120)`;
+            const file = fmt === 'svg' ? '/tmp/fig.svg' : fmt === 'jpeg' ? '/tmp/fig.jpg' : '/tmp/fig.png';
+
+            const freqBlock = wantsFreq ? `
+  ft = pd[, c("cat", "value")]
+  names(ft) = c("Level", "Count")
+  ft$Percent = round(100 * ft$Count / sum(ft$Count), 1)
+  freq_csv = paste(capture.output(write.csv(ft, row.names = FALSE)), collapse = "\\n")` : `  freq_csv = ""`;
+
+            const r = `res = tryCatch({
+  library(ggplot2)
+  df = read.csv("/tmp/ch_data.csv", stringsAsFactors = FALSE, check.names = TRUE)
+  df[] = lapply(df, function(c) if (is.logical(c)) as.numeric(c) else c)
+${pre}
+${plot}
+${freqBlock}
+  ${dev}
+  print(p)
+  dev.off()
+  paste0("OK\\n", freq_csv)
+}, error = function(e) paste0("ERR\\n", conditionMessage(e)))
+res`;
+            return { r, file, wantsFreq, o, v1, v2 };
+        }
+
+        // ==================== DRAW ====================
+        async function draw() {
+            if (!webrReady || !csvText) return;
+            if (drawing) { queued = true; return; }
+            drawing = true;
+            const token = ++drawToken;
+            $('plotFrame').classList.add('busy');
+            try {
+                await ensureData();
+                const fmt = lastFmt === 'svg' ? 'png' : lastFmt;   // preview always raster
+                const built = buildPlotR(fmt);
+                const res = await webR.evalR(built.r);
+                const txt = await res.toString(); webR.destroy(res);
+                if (token !== drawToken) return;
+                if (txt.startsWith('ERR')) {
+                    $('plotErr').textContent = 'R could not draw this figure:\n' + txt.slice(4);
+                    $('plotErr').style.display = '';
+                    return;
+                }
+                $('plotErr').style.display = 'none';
+                const bytes = await webR.FS.readFile(built.file);
+                let bin = ''; const chunk = 8192;
+                for (let i = 0; i < bytes.length; i += chunk) bin += String.fromCharCode.apply(null, bytes.subarray(i, i + chunk));
+                const mime = fmt === 'jpeg' ? 'image/jpeg' : 'image/png';
+                $('plotImg').src = `data:${mime};base64,` + btoa(bin);
+                $('plotFrame').style.display = '';
+                $('plotEmpty').style.display = 'none';
+                $('figToolbar').style.display = '';
+                renderFreq(txt.slice(3).replace(/^\n/, ''), built.wantsFreq);
+                $('rCodeBlock').textContent = buildDisplayR(built);
+            } catch (err) {
+                $('plotErr').textContent = 'Something went wrong: ' + (err.message || err);
+                $('plotErr').style.display = '';
+            } finally {
+                drawing = false;
+                $('plotFrame').classList.remove('busy');
+                if (queued) { queued = false; draw(); }
+            }
+        }
+
+        function renderFreq(csv, want) {
+            if (!want || !csv.trim()) { $('freqWrap').style.display = 'none'; $('downloadFreqBtn').style.display = 'none'; lastFreqCSV = ''; return; }
+            lastFreqCSV = csv.trim();
+            const rows = parseCSV(lastFreqCSV);
+            if (rows.length < 2) { $('freqWrap').style.display = 'none'; return; }
+            const head = rows[0].map(h => h.replace(/^"|"$/g, ''));
+            $('freqTable').innerHTML =
+                '<thead><tr>' + head.map(h => `<th>${escapeHtml(h)}</th>`).join('') + '</tr></thead>' +
+                '<tbody>' + rows.slice(1).map(r => '<tr>' + r.map(c => `<td>${escapeHtml(c.replace(/^"|"$/g, ''))}</td>`).join('') + '</tr>').join('') + '</tbody>';
+            $('freqWrap').style.display = '';
+            $('downloadFreqBtn').style.display = '';
+        }
+
+        // ==================== R CODE FOR STUDENTS ====================
+        function buildDisplayR(built) {
+            const body = built.r
+                .replace(/^res = tryCatch\(\{\n/, '')
+                .replace(/\n\}, error = function\(e\)[\s\S]*$/, '')
+                .replace(/\n\s*freq_csv = [\s\S]*?collapse = "\\n"\)/, '')
+                .replace(/\n\s*freq_csv = ""/, '')
+                .replace(/\n\s*ft = pd\[[\s\S]*?\n\s*ft\$Percent[^\n]*\n/, '\n')
+                .replace(/\n\s*names\(ft\)[^\n]*\n/, '\n')
+                .replace(/\n\s*paste0\("OK[^\n]*$/, '')
+                .replace(/\/tmp\/ch_data\.csv/, 'your_data.csv')
+                .replace(/\/tmp\/fig\.(png|jpg|svg)/, 'figure.$1');
+            return `# Figure built with the Charts tool
+# Paste this into R or RStudio to reproduce it on your own machine.
+# You need ggplot2 once:  install.packages("ggplot2")
+
+${body.trim()}`;
+        }
+
+        // ==================== EXPORT ====================
+        async function downloadFigure() {
+            if (!csvText) return;
+            try {
+                showStatus('Rendering ' + lastFmt.toUpperCase() + '...', 'info');
+                await ensureData();
+                const built = buildPlotR(lastFmt);
+                const res = await webR.evalR(built.r);
+                const txt = await res.toString(); webR.destroy(res);
+                if (txt.startsWith('ERR')) { showStatus('Could not export: ' + txt.slice(4), 'error', 7000); return; }
+                const bytes = await webR.FS.readFile(built.file);
+                const mime = lastFmt === 'svg' ? 'image/svg+xml' : lastFmt === 'jpeg' ? 'image/jpeg' : 'image/png';
+                const ext  = lastFmt === 'svg' ? 'svg' : lastFmt === 'jpeg' ? 'jpg' : 'png';
+                const blob = new Blob([bytes], { type: mime });
+                const a = document.createElement('a');
+                a.href = URL.createObjectURL(blob);
+                a.download = `figure-${chartType}.${ext}`;
+                document.body.appendChild(a); a.click(); document.body.removeChild(a);
+                setTimeout(() => URL.revokeObjectURL(a.href), 1500);
+                showStatus('Figure downloaded.', 'success', 2500);
+            } catch (err) { showStatus('Export failed: ' + (err.message || err), 'error', 7000); }
+        }
+
+        function downloadCSV(text, filename) {
+            if (!text) return;
+            const blob = new Blob([text + '\n'], { type: 'text/csv;charset=utf-8;' });
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob); a.download = filename;
+            document.body.appendChild(a); a.click(); document.body.removeChild(a);
+            setTimeout(() => URL.revokeObjectURL(a.href), 1500);
+        }
+
+        // ==================== EXAMPLE DATA ====================
+        const EXAMPLE_CSV = `respondent,bookstore,device,region,satisfaction,spend,visits
+1,Amazon,Laptop,Midwest,6,142.50,14
+2,Amazon,Phone,South,5,88.20,9
+3,Barnes & Noble,Laptop,Northeast,4,61.75,4
+4,Amazon,Tablet,West,7,210.00,21
+5,None,Phone,Midwest,3,0.00,0
+6,Amazon,Laptop,South,6,175.40,17
+7,Other,Tablet,West,5,54.10,6
+8,None,Phone,Northeast,2,12.00,1
+9,Amazon,Laptop,Midwest,7,320.75,26
+10,Barnes & Noble,Phone,South,5,97.30,8
+11,Amazon,Tablet,West,6,155.60,15
+12,None,Laptop,Midwest,3,22.40,2
+13,Amazon,Phone,Northeast,7,268.90,23
+14,Other,Laptop,South,4,44.00,5
+15,Amazon,Tablet,Midwest,6,188.25,16
+16,Barnes & Noble,Phone,West,5,73.80,7
+17,None,Laptop,Northeast,2,8.50,1
+18,Amazon,Phone,South,7,241.10,19
+19,Amazon,Laptop,West,6,134.70,13
+20,Other,Tablet,Midwest,4,39.95,3
+21,Amazon,Phone,Northeast,5,112.30,11
+22,Barnes & Noble,Laptop,South,6,86.60,8
+23,None,Tablet,West,3,17.20,2
+24,Amazon,Laptop,Midwest,7,295.40,24
+25,Amazon,Phone,Northeast,6,163.85,15`;
+
+        // ==================== WIRING ====================
+        const uploadArea = $('uploadArea'), fileInput = $('fileInput');
+        uploadArea.addEventListener('click', () => fileInput.click());
+        uploadArea.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); fileInput.click(); } });
+        uploadArea.addEventListener('dragover', e => { e.preventDefault(); uploadArea.classList.add('dragover'); });
+        uploadArea.addEventListener('dragleave', () => uploadArea.classList.remove('dragover'));
+        uploadArea.addEventListener('drop', e => { e.preventDefault(); uploadArea.classList.remove('dragover'); if (e.dataTransfer.files.length) handleFile(e.dataTransfer.files[0]); });
+        fileInput.addEventListener('change', e => { if (e.target.files.length) handleFile(e.target.files[0]); e.target.value = ''; });
+        $('loadExampleBtn').addEventListener('click', () => loadCsvText(EXAMPLE_CSV));
+        $('varMain').addEventListener('change', draw);
+        $('varSecond').addEventListener('change', draw);
+        $('downloadFigBtn').addEventListener('click', downloadFigure);
+        $('downloadFreqBtn').addEventListener('click', () => downloadCSV(lastFreqCSV, 'frequency-table.csv'));
+        document.addEventListener('change', e => {
+            if (e.target.name === 'fmt') lastFmt = e.target.value;
+        });
+        $('copyRBtn').addEventListener('click', async () => {
+            try { await navigator.clipboard.writeText($('rCodeBlock').textContent);
+                  const s = $('copyRBtn').querySelector('span'); s.textContent = 'Copied'; setTimeout(() => s.textContent = 'Copy', 1600); }
+            catch { showStatus('Could not copy to the clipboard.', 'error', 3000); }
+        });
+
+        // ==================== BOOT ====================
+        (async function init() {
+            try {
+                const stage = document.querySelector('.loading-stage');
+                if (stage) stage.textContent = 'Starting R...';
+                webR = new WebR();
+                await webR.init();
+                if (stage) stage.textContent = 'Installing ggplot2...';
+                await webR.installPackages(['ggplot2']);
+                if (stage) stage.textContent = 'Warming up the graphics engine...';
+                await webR.evalR('library(ggplot2); invisible(TRUE)');
+                webrReady = true;
+                $('loadingOverlay').classList.add('hidden');
+                showStatus('Ready. Upload a CSV, or try the example data.', 'success', 4000);
+            } catch (err) {
+                $('loadingOverlay').innerHTML = `<div style="text-align:center; padding:2rem; max-width:520px;">
+                    <p style="color:#991b1b; font-size:1.2rem; font-weight:600;">Failed to load WebR</p>
+                    <p style="color:#666; margin-top:1rem; font-size:0.9rem;">${escapeHtml(err.message || String(err))}</p>
+                    <p style="color:#666; margin-top:0.5rem; font-size:0.85rem;">Reload the page to try again.</p>
+                </div>`;
+            }
+        })();
+    </script>
+
+
+    <!-- Firebase auth -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js" integrity="sha384-yuGdyIzzYtOBlBG6JOWn+Ey9kpq7HocusNuxEGyyohr1eEyXpeEyehIIXC/hznw4" crossorigin="anonymous"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js" integrity="sha384-lI+CxEx/bCvWP1b0OK13j5HTrTZP7yf1xle8TVOFq2smz6KC1RChTarRV/RHP5PP" crossorigin="anonymous"></script>
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyBg3LJDwVIRGWtFZb_mM_CSRJMNCJUta20",
+            authDomain: "iu-pricing-tools.firebaseapp.com",
+            projectId: "iu-pricing-tools",
+            storageBucket: "iu-pricing-tools.firebasestorage.app",
+            messagingSenderId: "659335573790",
+            appId: "1:659335573790:web:00013a166787efecb3d90f",
+            measurementId: "G-NGKNY08XWP"
+        };
+        // If the sign-in service cannot be reached, do not leave the page stuck
+        // on "Loading..." forever: after 12s, show a clear message instead.
+        // Scheduled BEFORE initializeApp so it still fires if the Firebase CDN is blocked
+        // (in which case the initializeApp call below throws).
+        var authTimeout = setTimeout(function() {
+            var ls = document.getElementById('loading-screen');
+            if (ls) {
+                ls.innerHTML = '<p style="color: var(--text-light); max-width: 360px; text-align: center; padding: 0 1rem;">Could not reach the sign-in service. Check your connection and reload this page.</p>';
+            }
+        }, 12000);
+
+        firebase.initializeApp(firebaseConfig);
+
+        firebase.auth().onAuthStateChanged(function(user) {
+            clearTimeout(authTimeout);
+            if (user) {
+                document.getElementById('loading-screen').style.display = 'none';
+                document.getElementById('main-content').style.display = 'block';
+            } else {
+                window.location.href = 'login.html?next=' + encodeURIComponent(window.location.pathname.split('/').pop());
+            }
+        });
+
+        // Navigation toggle (keyboard operable, tracks aria-expanded).
+        function toggleNav() {
+            var links = document.querySelector('.nav-links');
+            var open = links.classList.toggle('active');
+            var toggle = document.querySelector('.nav-toggle');
+            if (toggle) toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+        }
+        window.toggleNav = toggleNav;
+
+        // Font size controls (matches tools.html)
+        const fontSizes = [14, 16, 18, 20, 22];
+        let currentStep = 2;
+        function adjustFontSize(delta) {
+            currentStep = Math.max(0, Math.min(fontSizes.length - 1, currentStep + delta));
+            applyFontSize(currentStep);
+        }
+        function applyFontSize(step) {
+            document.documentElement.style.fontSize = fontSizes[step] + 'px';
+            document.querySelectorAll('.decrease-a').forEach(b => b.classList.toggle('at-limit', step === 0));
+            document.querySelectorAll('.increase-a').forEach(b => b.classList.toggle('at-limit', step === fontSizes.length - 1));
+        }
+        window.adjustFontSize = adjustFontSize;
+
+        // Auto-update copyright year
+        document.querySelectorAll('.year').forEach(el => el.textContent = new Date().getFullYear());
+    </script>
+</body>
+</html>

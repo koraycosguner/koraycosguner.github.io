@@ -310,7 +310,7 @@
         // to close the open-redirect risk; otherwise fall back to tools.html.
         function getSafeNext() {
             const next = new URLSearchParams(window.location.search).get('next');
-            if (next && /^[A-Za-z0-9_-]+\.html$/.test(next)) {
+            if (next && /^[A-Za-z0-9_-]+\.html(#[A-Za-z0-9_-]+)?$/.test(next)) {
                 return next;
             }
             return 'tools.html';
