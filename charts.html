@@ -213,11 +213,17 @@
         .upload-area { border: 2px dashed var(--border-strong); border-radius: 8px; padding: 2.5rem; text-align: center; cursor: pointer; transition: all 0.3s; margin-bottom: 1rem; }
         .upload-area:hover, .upload-area.dragover { border-color: var(--iu-crimson); background: rgba(153, 0, 0, 0.05); }
         .upload-area input[type="file"] { display: none; }
-        .paste-box { border: 1px solid var(--border); border-radius: 8px; padding: .7rem 1rem; margin-bottom: 1rem; background: var(--white); }
-        .paste-box summary { cursor: pointer; font-weight: 600; color: var(--iu-crimson); }
-        .paste-box[open] summary { margin-bottom: .5rem; }
-        .paste-box textarea { width: 100%; box-sizing: border-box; padding: .6rem .7rem; border: 1.5px solid var(--border-strong); border-radius: 8px;
-                              font-family: 'Monaco', 'Menlo', 'Courier New', monospace; font-size: .85rem; line-height: 1.45; resize: vertical; margin-bottom: .6rem; }
+        .paste-box { border: 1.5px dashed var(--border-strong); border-radius: 10px; padding: .9rem 1rem; margin-bottom: 1rem; background: var(--white); }
+        .paste-label { display: block; font-weight: 700; color: var(--text-dark); margin-bottom: .45rem; }
+        .paste-box textarea { width: 100%; box-sizing: border-box; padding: .7rem .8rem; border: 1.5px solid var(--border-strong); border-radius: 8px;
+                              font-family: inherit; font-size: .95rem; line-height: 1.5; resize: vertical; margin-bottom: .6rem; }
+        .paste-box textarea:focus { outline: none; border-color: var(--iu-crimson); box-shadow: 0 0 0 3px rgba(153,0,0,.1); }
+        .paste-actions { display: flex; align-items: center; gap: .8rem; }
+        .paste-link { background: none; border: 0; padding: 0; color: var(--text-light); font: inherit; font-size: .9rem; cursor: pointer; text-decoration: underline; }
+        .paste-done { display: flex; align-items: center; gap: .6rem; flex-wrap: wrap; margin-bottom: 1rem; padding: .6rem .9rem; border-radius: 10px;
+                      background: #eef6f2; color: #14543f; font-size: .92rem; font-weight: 600; }
+        .paste-done .paste-link { color: #14543f; font-weight: 500; }
+        .paste-box[hidden], .paste-done[hidden] { display: none !important; }
         .upload-icon { font-size: 2.5rem; color: var(--iu-crimson); margin-bottom: 0.5rem; }
         .upload-text { font-size: 1rem; color: var(--text-dark); }
         .upload-hint { font-size: 0.85rem; color: var(--text-light); margin-top: 0.4rem; }
@@ -378,7 +384,8 @@
         }
         @media (max-width: 1040px) { .design-panel { max-height: none; } }
         .figure-pane { position: sticky; top: 1rem; }
-        @media (max-width: 1040px) { .figure-pane { position: static; } }
+        /* one column: the figure comes first, so every change shows right above the control that made it */
+        @media (max-width: 1040px) { .figure-pane { position: static; order: -1; } }
 
         .opt-block { border-top: 1px solid var(--border); padding-top: .85rem; margin-top: .85rem; }
         .opt-block:first-child { border-top: 0; padding-top: 0; margin-top: 0; }
@@ -557,16 +564,20 @@
                 <p class="upload-text">Click to upload or drag and drop a CSV</p>
                 <p class="upload-hint">CSV files only, with a header row</p>
             </div>
-            <details class="paste-box" id="pasteBox">
-                <summary>Or paste your data</summary>
-                <p class="section-hint">First row: the column names. Values separated by commas, or copied straight from Excel or Google Sheets.</p>
-                <textarea id="pasteData" spellcheck="false" rows="7" placeholder="importance,group,count&#10;Design factor,College students,100&#10;Design factor,College graduates,44"></textarea>
-                <button type="button" class="btn btn-primary btn-sm" id="usePasteBtn">Use the pasted data</button>
-            </details>
             <div style="display:flex; align-items:center; gap:.75rem; flex-wrap:wrap; margin-bottom:1rem;">
+                <button type="button" class="btn btn-secondary btn-sm" id="pasteOpenBtn">Paste a table</button>
                 <button type="button" class="btn btn-secondary btn-sm" id="loadExampleBtn">Try example data</button>
                 <span class="section-hint" style="margin-bottom:0;">The class coffee-shop survey: 600 customers, 7 variables. Every figure in the slides comes from it.</span>
             </div>
+            <div class="paste-box" id="pasteBox" hidden>
+                <label for="pasteData" class="paste-label">Paste your table here</label>
+                <textarea id="pasteData" spellcheck="false" rows="4" placeholder="Click here, then paste (Ctrl+V, or &#8984;V on a Mac). The first row should hold the column names."></textarea>
+                <div class="paste-actions">
+                    <button type="button" class="btn btn-primary btn-sm" id="usePasteBtn">Use this table</button>
+                    <button type="button" class="paste-link" id="pasteCancelBtn">Cancel</button>
+                </div>
+            </div>
+            <div class="paste-done" id="pasteDone" hidden></div>
             <div class="preview-note" id="previewNote" style="display:none;"></div>
             <div id="previewWrap" style="display:none;">
                 <h3 style="margin-bottom:.25rem; font-size:1.05rem; color:var(--text-dark);">Data Preview (first 8 rows)</h3>
@@ -605,7 +616,7 @@
 
                 <!-- ====================== 4. Design + figure ====================== -->
                 <h2 class="section-title mt">4. Design Your Figure</h2>
-                <p class="section-hint">Change anything on the left and the figure redraws immediately.</p>
+                <p class="section-hint">Change any setting and the figure redraws immediately.</p>
 
                 <div class="design-layout">
                     <div class="design-panel" id="designPanel"></div>
@@ -747,7 +758,9 @@
             editorial: 'Editorial (house)', minimal: 'Minimal', classic: 'Classic',
             light: 'Light', bw: 'Black and white', gray: 'Gray', void: 'Bare'
         };
-        const SIZES = { '960x600': 'Standard', '1200x620': 'Wide', '780x780': 'Square', '1400x860': 'Large' };
+        const SIZES = { '960x600': 'Standard', '1200x620': 'Wide', '780x780': 'Square', '1400x860': 'Large', '560x560': 'Phone' };
+        // on a phone, a smaller canvas keeps the figure's text readable once it is scaled to the screen
+        const DEFAULT_SIZE = window.matchMedia('(max-width: 620px)').matches ? '560x560' : '960x600';
 
         // ==================== CSV ====================
         function parseCSV(text) {
@@ -985,7 +998,7 @@ res`);
                     <div class="slider-row"><input type="range" id="optFont" min="10" max="24" step="1" value="15">
                     <span class="slider-val" id="optFontVal">15</span></div></div>
                 <div class="form-group"><label for="optSize">Figure size</label>
-                    <select id="optSize">${Object.entries(SIZES).map(([v,n]) => `<option value="${v}">${n} (${v.replace('x',' x ')})</option>`).join('')}</select></div>
+                    <select id="optSize">${Object.entries(SIZES).map(([v,n]) => `<option value="${v}"${v === DEFAULT_SIZE ? ' selected' : ''}>${n} (${v.replace('x',' x ')})</option>`).join('')}</select></div>
                 ${has(k,'legend') ? `<div class="form-group"><label for="optLegend">Legend</label>
                     <select id="optLegend"><option value="right">Right</option><option value="top">Top</option>
                     <option value="bottom" selected>Bottom</option><option value="none">Hidden</option></select></div>` : ''}
@@ -1185,7 +1198,7 @@ res`);
                 // a lollipop's dot is wider than a bar end, so its label sits further out
                 const just = k === 'lollipop' ? (o.flip ? 'hjust = -0.75' : 'vjust = -1.3') : (o.flip ? 'hjust = -0.25' : 'vjust = -0.5');
                 if (o.labels) plot += ` + geom_text(aes(label = ${lbl('value')}), ${just}, size = ${(o.font*0.3).toFixed(2)}, fontface = "bold", colour = "#374151")`;
-                plot += ` + scale_y_continuous(expand = expansion(mult = c(0, ${o.labels ? 0.16 : 0.05})))`;
+                plot += ` + scale_y_continuous(expand = expansion(mult = c(0, ${o.labels ? 0.24 : 0.05})))`;   // room for the value labels, on a narrow canvas too
                 plot += ` + ${labsCall(o, null, valueLab)} + ${themeCall(o)}${flipLine}`;
                 // Editorial: when the bars carry their own numbers, the value axis and its
                 // gridlines are saying the same thing a third time. Drop them.
@@ -2300,12 +2313,26 @@ ${body.trim()}`;
             const cell = c => /[",]/.test(c) ? '"' + c.replace(/"/g, '""') + '"' : c;
             return t.split('\n').map(line => line.split('\t').map(c => cell(c.trim())).join(',')).join('\n');
         }
-        $('usePasteBtn').addEventListener('click', () => {
+        function openPaste() { $('pasteBox').hidden = false; $('pasteDone').hidden = true; $('pasteData').value = ''; $('pasteData').focus(); }
+        function usePaste() {
             const t = $('pasteData').value;
-            if (!t.trim()) { showStatus('Paste your data into the box first.', 'error', 4000); return; }
-            loadCsvText(pastedToCsv(t));
-        });
-        $('pasteData').addEventListener('paste', () => setTimeout(() => $('usePasteBtn').click(), 0));
+            if (!t.trim()) { showStatus('Paste your table into the box first.', 'error', 4000); return; }
+            const csv = pastedToCsv(t), lines = csv.split('\n'), cols = lines[0].split(',').map(c => c.replace(/^"|"$/g, '').trim());
+            loadCsvText(csv);
+            $('previewNote').style.display = 'none';          // the green line below says it already
+            $('pasteBox').hidden = true;
+            $('pasteDone').hidden = false;
+            $('pasteDone').innerHTML = `&#10003; Table loaded: ${lines.length - 1} rows, ${cols.length} columns (${cols.map(escapeHtml).join(', ')}). It is shown in the preview below.` +
+                ' <button type="button" class="paste-link" id="pasteAgainBtn">Paste a different table</button>';
+            $('pasteAgainBtn').addEventListener('click', openPaste);
+        }
+        $('pasteOpenBtn').addEventListener('click', openPaste);
+        $('pasteCancelBtn').addEventListener('click', () => { $('pasteBox').hidden = true; });
+        $('usePasteBtn').addEventListener('click', usePaste);
+        $('pasteData').addEventListener('paste', () => setTimeout(usePaste, 0));
+        // a new file or the example replaces a pasted table
+        $('loadExampleBtn').addEventListener('click', () => { $('pasteDone').hidden = true; $('pasteBox').hidden = true; });
+        $('fileInput').addEventListener('change', () => { $('pasteDone').hidden = true; $('pasteBox').hidden = true; });
         $('varMain').addEventListener('change', () => { updateStat(); draw(); });
         $('varSecond').addEventListener('change', () => { updateStat(); draw(); });
         $('varValue').addEventListener('change', () => { updateStat(); draw(); });

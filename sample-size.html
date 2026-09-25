@@ -382,8 +382,21 @@
         .tk-tab .tx { display: flex; flex-direction: column; font-weight: 700; font-size: .98rem; line-height: 1.2; }
         .tk-tab .tx small { font-size: .7rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: #9ca3af; }
         .tk-tab[aria-selected="true"] .tx small { color: rgba(153,0,0,.6); }
-        @media (max-width: 620px) { .tk-tabs { grid-template-columns: 1fr; position: static; } }
-        @media (max-width: 460px) { .tk-tab .ic { display: none; } }
+        /* phones: the three tabs stay in one row, as compact labels */
+        @media (max-width: 620px) {
+            .tk-tabs { gap: .3rem; padding: .3rem; border-radius: 12px; }
+            .tk-tab { flex-direction: column; justify-content: center; text-align: center; gap: .15rem; padding: .5rem .35rem; border-radius: 9px; }
+            .tk-tab .ic { display: none; }
+            .tk-tab .tx { font-size: .8rem; align-items: center; }
+            .tk-tab .tx small { font-size: .62rem; letter-spacing: .06em; }
+            /* the input switch: one choice per row, full width */
+            .tk .tk-seg { display: grid; grid-template-columns: 1fr; width: 100%; box-sizing: border-box; }
+            .tk .tk-seg button { text-align: left; }
+            /* the result: the label under the number, and the arithmetic a size smaller */
+            .ss-big { font-size: 1.6rem; }
+            .ss-big small { display: block; margin: .2rem 0 0; }
+            .ss-work { font-size: .8rem; }
+        }
 
         .tk-conv { margin-bottom: 1rem; }
         .tk-panel { background: #fff; border: 1px solid var(--border); border-radius: 18px; padding: 1.8rem 1.8rem 2rem;
@@ -553,7 +566,7 @@
             <h1>Descriptive Statistics, Confidence Intervals and Sample Size</h1>
             <ul>
                 <li><b>Descriptive Statistics:</b> type your numbers, enter values with frequencies, or upload a CSV, and get the mode, median, mean, range, variance and standard deviation</li>
-                <li><b>Confidence Intervals:</b> build an interval for a population mean, at 90%, 95% and 99%</li>
+                <li><b>Confidence Intervals:</b> the 95% and 90% intervals for a population mean, from the summary numbers or from the sample itself</li>
                 <li><b>Sample Size:</b> the sample needed for a target sampling error</li>
                 <li>Every answer shows the arithmetic, so it can be checked by hand or reproduced on an exam</li>
             </ul>
@@ -707,7 +720,7 @@
             <section class="tk-panel" role="tabpanel" id="panel-sample-size" aria-labelledby="tab-sample-size" hidden>
                 <div class="tk-head">
                     <h2>Sample Size for a Target Sampling Error</h2>
-                    <p>Fix how much sampling error you are willing to live with, then invert the sampling-error formula for <em>n</em>. Always round up: a fractional respondent is not a respondent.</p>
+                    <p>Fix how much sampling error you are willing to live with, then invert the sampling-error formula for <em>n</em>, rounding up.</p>
                 </div>
                 <div class="tk-seg" role="radiogroup" aria-label="Where does the standard deviation come from?">
                     <button type="button" class="on" data-n-mode="summary">I have the standard deviation</button>
@@ -841,6 +854,7 @@
                 $('panel-' + t).hidden = !on;
             });
             if (!keepHash && location.hash !== '#' + name) history.replaceState(null, '', '#' + name);
+            if (name === 'intervals' && typeof ci === 'function') ci();   /* the number line needs the tab's real width */
         }
         qsa('.tk-tab').forEach(function (btn, i, all) {
             btn.addEventListener('click', function () { showTab(btn.getAttribute('data-tab')); });
@@ -1145,9 +1159,9 @@
             var useSigma = $('ciKnowSigma').checked, sigma = num('ciSigma');
             if (useSigma && !(sigma > 0)) { box.innerHTML = '<div class="ss-note">Enter &sigma;, or untick the box to use the sample s.</div>'; return; }
             var sd = useSigma ? sigma : d.s, sym = useSigma ? '&sigma;' : 's', m = d.m, n = d.n;
-            var xbar = 'x&#772;';
+            var xbar = 'x&#772;', xbarText = '<span style="text-decoration:overline;">x</span>';
             if (d.fromData) {
-                given.innerHTML = '<div class="tk-given">From ' + esc(d.label) + ': n = <b>' + fmt(n, 0) + '</b> &middot; ' + xbar + ' = <b>' + fmt(m) + '</b> &middot; s = <b>' + fmt(d.s) + '</b>' +
+                given.innerHTML = '<div class="tk-given">From ' + esc(d.label) + ': n = <b>' + fmt(n, 0) + '</b> &middot; ' + xbarText + ' = <b>' + fmt(m) + '</b> &middot; s = <b>' + fmt(d.s) + '</b>' +
                     (d.missing ? ' (' + fmt(d.missing, 0) + ' empty cell' + (d.missing === 1 ? '' : 's') + ' skipped)' : '') + '</div>';
             }
             var rows = CI_LEVELS.map(function (L) { var e = zFor(L) * sd / Math.sqrt(n); return { L: L, z: zLabel(L), e: e, lo: m - e, hi: m + e }; });
@@ -1159,7 +1173,7 @@
                 (useSigma ? '<div class="ss-note">Using the known population &sigma; = ' + fmt(sigma) + ' in place of the sample s.</div>' : '') +
                 '<div class="ss-note">Read the 95% interval as: if this sampling procedure were repeated many times, about 95% of the intervals built this way would contain the true population mean. The 90% interval is narrower: less confidence buys a tighter range.</div>';
             /* both intervals on one number line */
-            var W = 640, H = 34 * rows.length + 46, pad = 50, span = rows[0].hi - rows[0].lo || 1;
+            var W = Math.round(Math.min(640, Math.max(300, allBox.clientWidth || 640))), H = 34 * rows.length + 46, pad = 92, span = rows[0].hi - rows[0].lo || 1;   /* room for the level and the lower bound on the left */
             var x = function (v) { return pad + (v - (rows[0].lo - span * 0.08)) / (span * 1.16) * (W - 2 * pad); };
             var col = { '95': '#990000', '90': '#475569' };
             allBox.innerHTML = '<div class="tk-ciline"><svg viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="The 95 and 90 percent confidence intervals on a number line">' +
@@ -1252,8 +1266,7 @@
                         '<div class="ss-work">n = <em>z</em><sup>2</sup>' + sym + '<sup>2</sup> / e<sup>2</sup> = ' + zPow(L) + ' &middot; ' + fmt(sd) + '<sup>2</sup> / ' + fmt(e) + '<sup>2</sup>' +
                         ' = ' + fmt(raw) + ' &rarr; <em>' + fmt(n, 0) + '</em></div></div>';
                 }).join('') + '</div>' +
-                (useSigma ? '<div class="ss-note">Using the known population &sigma; = ' + fmt(sigma) + ' (&sigma;<sup>2</sup> = ' + fmt(sigma * sigma) + ') in place of the sample s.</div>' : '') +
-                '<div class="ss-note">Rounded up: a fractional respondent is not a respondent. Halving the allowed error multiplies the required sample by four, because n depends on e<sup>2</sup>.</div>';
+                (useSigma ? '<div class="ss-note">Using the known population &sigma; = ' + fmt(sigma) + ' (&sigma;<sup>2</sup> = ' + fmt(sigma * sigma) + ') in place of the sample s.</div>' : '');
         }
         function loadNCsv(file) {
             readFile(file, function (text) {
@@ -1285,6 +1298,7 @@
         /* the site nav is sticky too: park the tab bar just below it */
         function placeTabs() { var nav = document.querySelector('nav'); document.documentElement.style.setProperty('--tk-top', ((nav ? nav.offsetHeight : 0) + 8) + 'px'); }
         window.addEventListener('resize', placeTabs);
+        var ciTimer; window.addEventListener('resize', function () { clearTimeout(ciTimer); ciTimer = setTimeout(function () { if (!$('panel-intervals').hidden) ci(); }, 150); });
         /* ================= start ================= */
         describe(); ci(); nSize();
         showTab(location.hash.slice(1), true);
