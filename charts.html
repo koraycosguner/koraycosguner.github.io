@@ -1213,6 +1213,7 @@ res`);
             } else if (k === 'barGrouped' || k === 'barStacked') {
                 pre = stat ? aggR([['cat', v1], ['grp', v2]])
                            : `pd = as.data.frame(table(cat = df[[${rStr(v1)}]], grp = df[[${rStr(v2)}]]), stringsAsFactors = FALSE)\nnames(pd)[3] = "value"\npd = pd[!is.na(pd$cat) & !is.na(pd$grp), ]`;
+                if (!stat) tableKind = 'cross';
                 const pos = k === 'barGrouped' ? 'position_dodge(width = 0.78)'
                           : (o.s100 ? 'position_fill()' : 'position_stack()');
                 const sc = scaleCall(o, null, 'fill') || `scale_fill_manual(values = rep(${rVec(PALETTES.okabe.colors)}, length.out = 12))`;
@@ -1282,6 +1283,7 @@ res`);
             } else if (k === 'heatmap') {
                 pre = stat ? aggR([['a', v1], ['b', v2]])
                            : `pd = as.data.frame(table(a = df[[${rStr(v1)}]], b = df[[${rStr(v2)}]]), stringsAsFactors = FALSE)\nnames(pd)[3] = "value"\npd = pd[!is.na(pd$a) & !is.na(pd$b), ]`;
+                if (!stat) tableKind = 'cross';
                 const ramp = PALETTES[o.pal].kind === 'ramp' ? PALETTES[o.pal].colors : ['#f7e9e9', '#990000'];
                 plot = `p = ggplot(pd, aes(a, b, fill = value)) + geom_tile(colour = "white", linewidth = 1.1) + scale_fill_gradientn(colours = ${rVec(ramp)})`;
                 // dark text on light tiles, white text on dark ones
@@ -1303,6 +1305,15 @@ res`);
   ft = pd[, c("cat", "value")]
   names(ft) = c("Level", "Count")
   ft$Percent = round(100 * ft$Count / sum(ft$Count), 1)
+  freq_csv = paste(capture.output(write.csv(ft, row.names = FALSE)), collapse = "\\n")`;
+            else if (tableKind === 'cross') freqBlock = `
+  ct = xtabs(pd[[3]] ~ pd[[1]] + pd[[2]])
+  rt = rowSums(ct); cs = colSums(ct); N = sum(ct)
+  pc = function(x, tot) paste0(x, " (", formatC(100 * x / tot, format = "f", digits = 1), "%)")
+  cells = matrix(pc(as.vector(ct), rep(rt, times = ncol(ct))), nrow = nrow(ct))
+  ft = data.frame(rownames(ct), cells, rt, check.names = FALSE, stringsAsFactors = FALSE)
+  names(ft) = c(${rStr(v1)}, colnames(ct), "Total")
+  ft = rbind(ft, c("Total", pc(cs, N), N))
   freq_csv = paste(capture.output(write.csv(ft, row.names = FALSE)), collapse = "\\n")`;
             else if (tableKind === 'stat') {
                 const by = `list(${groups.map(g => `${g[0]} = d0[[${rStr(g[1])}]]`).join(', ')})`;
@@ -1363,8 +1374,10 @@ res`;
                 $('plotEmpty').style.display = 'none';
                 $('figToolbar').style.display = '';
                 const tk = built.tableKind;
-                $('freqTitle').textContent = tk === 'stat' ? 'Summary Table' : 'Frequency Table';
-                $('freqHint').textContent = tk === 'stat'
+                $('freqTitle').textContent = tk === 'stat' ? 'Summary Table' : tk === 'cross' ? 'Cross Tabulation' : 'Frequency Table';
+                $('freqHint').textContent = tk === 'cross'
+                    ? `Counts for every combination of ${built.v1} (rows) and ${built.v2} (columns). In parentheses, each count's share of its row; the Total row shows the overall split.`
+                    : tk === 'stat'
                     ? `The numbers behind the figure: the ${STATS[built.stat].word} of ${built.vv} in each group` +
                       (built.stat === 'n' ? '.' : ', and how many values it is based on.')
                     : 'The counts behind the figure. Percent is the share of non-missing observations.';
@@ -1525,6 +1538,10 @@ ${body.trim()}`;
                 } else {
                     S(`count the rows for every combination of ${v1} and ${v2}`);
                     out.push(`counts <- as.data.frame(table(${D(v1)}, ${D(v2)}))`);
+                    out.push('# the cross tabulation: counts with totals, then each row\'s shares in %');
+                    out.push(`xtab <- table(${D(v1)}, ${D(v2)})`);
+                    out.push('addmargins(xtab)');
+                    out.push('round(100 * prop.table(xtab, 1), 1)');
                     out.push(`names(counts) <- c("category", "group", "count")`);
                 }
                 colorsLine(catColors);
@@ -1627,6 +1644,10 @@ ${body.trim()}`;
                 } else {
                     S(`count the rows for every combination of ${v1} and ${v2}`);
                     out.push(`counts <- as.data.frame(table(${D(v1)}, ${D(v2)}))`);
+                    out.push('# the cross tabulation: counts with totals, then each row\'s shares in %');
+                    out.push(`xtab <- table(${D(v1)}, ${D(v2)})`);
+                    out.push('addmargins(xtab)');
+                    out.push('round(100 * prop.table(xtab, 1), 1)');
                     out.push(`names(counts) <- c("row_cat", "col_cat", "count")`);
                 }
                 if (o.labels && built.usePct) out.push(`counts$percent <- round(100 * counts$${y} / sum(counts$${y}), ${dec})`);
