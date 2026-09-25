@@ -458,6 +458,13 @@
         .ds-grid .v em { color: #990000; font-style: normal; font-weight: 700; }
         @media (max-width: 560px) { .ds-grid { grid-template-columns: 1fr; gap: .15rem; } .ds-grid .v { margin-bottom: .45rem; } }
         .tk-note { margin-top: .7rem; font-size: .84rem; color: #5a6672; }
+        .tk-check { display: inline-flex; align-items: center; gap: .5rem; font-weight: 600; cursor: pointer; }
+        .tk-check input { accent-color: var(--iu-crimson); width: 16px; height: 16px; }
+        .tk-cis { display: grid; grid-template-columns: 1fr 1fr; gap: .9rem; }
+        @media (max-width: 720px) { .tk-cis { grid-template-columns: 1fr; } }
+        .tk-cis .ss-out { margin-top: 0; }
+        .tk-given { margin-top: .9rem; padding: .6rem .9rem; border-radius: 10px; background: #f8fafc; border: 1px solid var(--border); font-size: .9rem; color: var(--text-sub); }
+        .tk-given b { color: var(--text-dark); }
         .tk-summary { width: 100%; border-collapse: collapse; margin-top: 1.2rem; font-size: .9rem; }
         .tk-summary th { text-align: right; font-size: .74rem; letter-spacing: .06em; text-transform: uppercase; color: var(--text-light);
                          padding: .55rem .7rem; border-bottom: 2px solid var(--border); white-space: nowrap; }
@@ -581,14 +588,6 @@
                 </button>
             </div>
 
-            <div class="ss-conv tk-conv" id="zconvBar" hidden>
-                <span class="ss-conv-label">z convention</span>
-                <span class="radio-row">
-                    <label for="convCourse"><input type="radio" id="convCourse" name="zconv" value="course" checked> Course values (z = 2 at 95%, z = 5/3 at 90%)</label>
-                    <label for="convExact"><input type="radio" id="convExact" name="zconv" value="exact"> Exact normal (z = 1.960 at 95%, z = 1.645 at 90%)</label>
-                </span>
-            </div>
-
             <!-- ======================= 1. descriptive statistics ======================= -->
             <section class="tk-panel" role="tabpanel" id="panel-descriptives" aria-labelledby="tab-descriptives">
                 <div class="tk-head">
@@ -648,32 +647,55 @@
                     <h2>Confidence Interval for a Population Mean</h2>
                     <p>The interval is the sample mean plus and minus the sampling error, <em>z</em> &middot; <em>s</em> / &radic;<em>n</em>. Use &sigma; if you know it, otherwise the sample <em>s</em>.</p>
                 </div>
+                <div class="tk-seg" role="radiogroup" aria-label="What do you have?">
+                    <button type="button" class="on" data-ci-mode="summary">I have the mean, s and n</button>
+                    <button type="button" data-ci-mode="type">Type or paste the sample</button>
+                    <button type="button" data-ci-mode="csv">Upload a CSV</button>
+                </div>
                 <div id="ciFrom" class="tk-from" hidden></div>
-                <div class="tk-card">
-                    <div class="form-row four">
+                <div class="tk-card" data-ci-pane="summary">
+                    <div class="form-row three">
                         <div class="form-group">
                             <label for="ciMean">Sample mean (<span style="text-decoration:overline;">x</span>)</label>
                             <input type="number" id="ciMean" step="any" placeholder="x&#772;">
                         </div>
                         <div class="form-group">
-                            <label for="ciSd">Standard deviation (s or &sigma;)</label>
+                            <label for="ciSd">Sample standard deviation (s)</label>
                             <input type="number" id="ciSd" step="any" min="0" placeholder="s">
                         </div>
                         <div class="form-group">
                             <label for="ciN">Sample size (n)</label>
                             <input type="number" id="ciN" step="1" min="2" placeholder="n">
                         </div>
-                        <div class="form-group">
-                            <label for="ciLevel">Confidence level</label>
-                            <select id="ciLevel">
-                                <option value="95" selected>95%</option>
-                                <option value="90">90%</option>
-                                <option value="99">99%</option>
-                            </select>
-                        </div>
                     </div>
                 </div>
-                <div id="ciOut" class="ss-out answer"></div>
+                <div class="tk-card" data-ci-pane="type" hidden>
+                    <label for="ciData" class="tk-label">Sample observations <span>separated by commas, spaces or new lines; a column copied from Excel works too, and a name in its first row is used as the label</span></label>
+                    <textarea id="ciData" class="ds-data" spellcheck="false" placeholder="For example: 12, 15, 9, 20, 15"></textarea>
+                </div>
+                <div class="tk-card" data-ci-pane="csv" hidden>
+                    <label class="tk-drop" id="ciDrop" for="ciFile">
+                        <input type="file" id="ciFile" accept=".csv,text/csv,.txt">
+                        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 16V4M7 9l5-5 5 5M4 20h16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                        <b>Drop a CSV here, or click to choose one</b>
+                        <span>One variable per column. Variable names in the first row are detected automatically.</span>
+                    </label>
+                    <div id="ciFileInfo" class="tk-fileinfo" hidden></div>
+                    <div class="form-group" id="ciColWrap" style="margin-top:.8rem;max-width:360px;" hidden>
+                        <label for="ciCol">Variable</label>
+                        <select id="ciCol"></select>
+                    </div>
+                </div>
+                <div class="tk-card tk-sigma">
+                    <label class="tk-check" for="ciKnowSigma"><input type="checkbox" id="ciKnowSigma"> I know the true population standard deviation (&sigma;)</label>
+                    <div class="form-group" id="ciSigmaWrap" style="margin-top:.6rem;max-width:260px;" hidden>
+                        <label for="ciSigma">Population standard deviation (&sigma;)</label>
+                        <input type="number" id="ciSigma" step="any" min="0" placeholder="&sigma;">
+                    </div>
+                    <div class="tk-note" style="margin-top:.45rem;">When &sigma; is known, it replaces the sample s. It rarely is: it has to come from a census or earlier research.</div>
+                </div>
+                <div id="ciData0"></div>
+                <div id="ciOut" style="margin-top:1rem;"></div>
                 <div id="ciAll"></div>
             </section>
 
@@ -683,28 +705,43 @@
                     <h2>Sample Size for a Target Sampling Error</h2>
                     <p>Fix how much sampling error you are willing to live with, then invert the sampling-error formula for <em>n</em>. Always round up: a fractional respondent is not a respondent.</p>
                 </div>
+                <div class="tk-seg" role="radiogroup" aria-label="Where does the standard deviation come from?">
+                    <button type="button" class="on" data-n-mode="summary">I have the standard deviation</button>
+                    <button type="button" data-n-mode="type">Type or paste a test sample</button>
+                    <button type="button" data-n-mode="csv">Upload a CSV</button>
+                </div>
                 <div id="nFrom" class="tk-from" hidden></div>
-                <div class="tk-card">
-                    <div class="form-row three">
-                        <div class="form-group">
-                            <label for="nSd">Standard deviation (s or &sigma;)</label>
-                            <input type="number" id="nSd" step="any" min="0" placeholder="s">
-                        </div>
-                        <div class="form-group">
-                            <label for="nErr">Allowed sampling error (e)</label>
-                            <input type="number" id="nErr" step="any" min="0" placeholder="e">
-                        </div>
-                        <div class="form-group">
-                            <label for="nLevel">Confidence level</label>
-                            <select id="nLevel">
-                                <option value="95" selected>95%</option>
-                                <option value="90">90%</option>
-                                <option value="99">99%</option>
-                            </select>
-                        </div>
+                <div class="tk-card" data-n-pane="summary">
+                    <div class="form-group" style="max-width:320px;">
+                        <label for="nSd">Standard deviation (s, or &sigma; if you know it)</label>
+                        <input type="number" id="nSd" step="any" min="0" placeholder="s">
                     </div>
                 </div>
-                <div id="nOut" class="ss-out answer"></div>
+                <div class="tk-card" data-n-pane="type" hidden>
+                    <label for="nData" class="tk-label">Test sample <span>separated by commas, spaces or new lines; its standard deviation s is used; a name in the first row is used as the label</span></label>
+                    <textarea id="nData" class="ds-data" spellcheck="false" placeholder="For example: 12, 15, 9, 20, 15"></textarea>
+                </div>
+                <div class="tk-card" data-n-pane="csv" hidden>
+                    <label class="tk-drop" id="nDrop" for="nFile">
+                        <input type="file" id="nFile" accept=".csv,text/csv,.txt">
+                        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 16V4M7 9l5-5 5 5M4 20h16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                        <b>Drop a CSV here, or click to choose one</b>
+                        <span>One variable per column. Variable names in the first row are detected automatically.</span>
+                    </label>
+                    <div id="nFileInfo" class="tk-fileinfo" hidden></div>
+                    <div class="form-group" id="nColWrap" style="margin-top:.8rem;max-width:360px;" hidden>
+                        <label for="nCol">Variable</label>
+                        <select id="nCol"></select>
+                    </div>
+                </div>
+                <div class="tk-card">
+                    <div class="form-group" style="max-width:320px;">
+                        <label for="nErr">Allowed sampling error (e): half the width of the interval</label>
+                        <input type="number" id="nErr" step="any" min="0" placeholder="e">
+                    </div>
+                </div>
+                <div id="nGiven"></div>
+                <div id="nOut" style="margin-top:1rem;"></div>
                 <div id="nAll"></div>
             </section>
 
@@ -747,22 +784,11 @@
             return (((((a[0]*r+a[1])*r+a[2])*r+a[3])*r+a[4])*r+a[5])*q /
                    (((((b[0]*r+b[1])*r+b[2])*r+b[3])*r+b[4])*r+1);
         }
-        var COURSE_Z = { '90': 5 / 3, '95': 2, '99': 2.6 };
-        var LEVELS = ['90', '95', '99'];
-        function convention() { return document.querySelector('input[name="zconv"]:checked').value; }
-        function zFor(level) {
-            if (convention() === 'course' && COURSE_Z[level] !== undefined) return COURSE_Z[level];
-            return qnorm(1 - (1 - Number(level) / 100) / 2);
-        }
-        function zLabel(level) {
-            if (convention() === 'course' && level === '90') return '5/3';
-            return round(zFor(level), 3);
-        }
-        /* a fractional z needs brackets before a superscript, or 5/3^2 reads as 5 over 3^2 */
-        function zPow(level) {
-            var lab = zLabel(level);
-            return (lab.indexOf('/') >= 0 ? '(' + lab + ')' : lab) + '<sup>2</sup>';
-        }
+        /* the z values from the normal table, as used in class */
+        var Z = { '90': 1.645, '95': 1.96, '99': 2.576 };
+        function zFor(level) { return Z[level]; }
+        function zLabel(level) { return String(Z[level]); }
+        function zPow(level) { return zLabel(level) + '<sup>2</sup>'; }
         /* plain rounding, for values written back into inputs */
         function round(v, d) { var f = Math.pow(10, d); var r = Math.round(v * f) / f; return String(Object.is(r, -0) ? 0 : r); }
         /* display: thousands separators and a true minus sign */
@@ -799,7 +825,6 @@
                 tab.tabIndex = on ? 0 : -1;
                 $('panel-' + t).hidden = !on;
             });
-            $('zconvBar').hidden = !(name === 'intervals' || name === 'sample-size');
             if (!keepHash && location.hash !== '#' + name) history.replaceState(null, '', '#' + name);
         }
         qsa('.tk-tab').forEach(function (btn, i, all) {
@@ -889,6 +914,7 @@
                 dsCsv = { name: file.name, cols: num, rows: p.rows };
                 dsSel = 0;
                 info.innerHTML = '<b>' + esc(file.name) + '</b>: ' + fmt(p.rows, 0) + ' rows, ' + num.length + ' numeric column' + (num.length === 1 ? '' : 's') +
+                    (p.header ? ', variable names read from the first row' : ', no variable names in the first row, so the columns are numbered') +
                     (txt.length ? ' (text columns skipped here: ' + txt.map(function (c) { return esc(c.name); }).join(', ') + '; chart them in Analytics Tool 2: Charts)' : '') + '.';
                 describe();
             });
@@ -916,15 +942,26 @@
                      min: distinct[0], max: distinct[distinct.length - 1], pop: pop };
         }
 
+        function parseValues(text) {
+            var lines = text.replace(/[−–—]/g, '-').split(/\r?\n/).map(function (l) { return l.trim(); }).filter(function (l) { return l !== ''; });
+            var label = null;
+            if (lines.length > 1) {
+                var first = lines[0].split(/[\s,;]+/).filter(function (x) { return x !== ''; });
+                if (first.length && first.every(function (t) { return !isFinite(toNum(t)); })) { label = lines[0].replace(/^"|"$/g, ''); lines = lines.slice(1); }
+            }
+            var toks = lines.join(' ').split(/[\s,;]+/).filter(function (x) { return x !== ''; }), vals = [], bad = [];
+            toks.forEach(function (tok) { var v = toNum(tok); if (isFinite(v)) vals.push(v); else bad.push(tok); });
+            return { label: label, vals: vals, bad: bad, empty: !toks.length };
+        }
+        function badList(bad) { return 'These entries are not numbers: ' + bad.slice(0, 6).map(function (b) { return '&ldquo;' + esc(b) + '&rdquo;'; }).join(', ') + (bad.length > 6 ? ' &hellip;' : ''); }
+
         function currentData() {
             /* returns { vars: [{label, vals, wts, missing}], error } */
             if (dsMode === 'type') {
-                var t = $('dsData').value.replace(/[−–—]/g, '-');
-                var toks = t.split(/[\s,;]+/).filter(function (x) { return x !== ''; }), vals = [], bad = [];
-                toks.forEach(function (tok) { var v = toNum(tok); if (isFinite(v)) vals.push(v); else bad.push(tok); });
-                if (!toks.length) return { error: 'Type or paste your values to begin.', quiet: true };
-                if (bad.length) return { error: 'These entries are not numbers: ' + bad.slice(0, 6).map(function (b) { return '&ldquo;' + esc(b) + '&rdquo;'; }).join(', ') + (bad.length > 6 ? ' &hellip;' : '') };
-                return { vars: [{ label: dsLabel || 'Your data', vals: vals }] };
+                var pv = parseValues($('dsData').value);
+                if (pv.empty) return { error: 'Type or paste your values to begin.', quiet: true };
+                if (pv.bad.length) return { error: badList(pv.bad) };
+                return { vars: [{ label: pv.label || dsLabel || 'Your data', vals: pv.vals }] };
             }
             if (dsMode === 'freq') {
                 var v2 = [], w2 = [], errs = [];
@@ -1034,7 +1071,7 @@
             $('ciMean').value = round(st.mean, 4); $('ciSd').value = round(st.sd, 4); $('ciN').value = st.n;
             $('ciFrom').hidden = false;
             $('ciFrom').innerHTML = 'From Descriptive Statistics (' + esc(dsLast.label) + '): x&#772; = ' + fmt(st.mean) + ', s = ' + fmt(st.sd) + ', n = ' + fmt(st.n, 0);
-            ci(); showTab('intervals'); window.scrollTo({ top: $('tab-intervals').getBoundingClientRect().top + window.scrollY - 80, behavior: 'smooth' });
+            setCiMode('summary'); showTab('intervals'); window.scrollTo({ top: $('tab-intervals').getBoundingClientRect().top + window.scrollY - 80, behavior: 'smooth' });
         });
         $('dsToN').addEventListener('click', function () {
             if (!dsLast) return;
@@ -1042,67 +1079,183 @@
             $('nSd').value = round(st.sd, 4);
             $('nFrom').hidden = false;
             $('nFrom').innerHTML = 'From Descriptive Statistics (' + esc(dsLast.label) + '): ' + (st.pop ? '&sigma;' : 's') + ' = ' + fmt(st.sd);
-            nSize(); showTab('sample-size'); window.scrollTo({ top: $('tab-sample-size').getBoundingClientRect().top + window.scrollY - 80, behavior: 'smooth' });
+            setNMode('summary'); showTab('sample-size'); window.scrollTo({ top: $('tab-sample-size').getBoundingClientRect().top + window.scrollY - 80, behavior: 'smooth' });
         });
         /* ================= 2. confidence interval ================= */
-        function ci() {
-            var m = num('ciMean'), s = num('ciSd'), n = num('ciN'), lvl = $('ciLevel').value;
-            var box = $('ciOut'), allBox = $('ciAll');
-            allBox.innerHTML = '';
-            if (!isFinite(m) || !isFinite(s) || !isFinite(n)) { box.innerHTML = '<div class="ss-note">Fill in the mean, the standard deviation and the sample size, or send them over from Descriptive Statistics.</div>'; return; }
-            if (n < 2) { box.innerHTML = '<div class="ss-bad">A confidence interval needs at least 2 observations.</div>'; return; }
-            if (s < 0) { box.innerHTML = '<div class="ss-bad">The standard deviation cannot be negative.</div>'; return; }
-            var z = zFor(lvl), err = z * s / Math.sqrt(n), lo = m - err, hi = m + err;
-            box.innerHTML =
-                '<div class="ss-big">(' + fmt(lo, 3) + ', ' + fmt(hi, 3) + ')<small>' + lvl + '% confidence interval</small></div>' +
-                '<div class="ss-work">' +
-                'sampling error = <em>z</em> &middot; s / &radic;n = ' + zLabel(lvl) + ' &middot; ' + fmt(s) + ' / &radic;' + fmt(n, 0) + ' = <em>' + fmt(err) + '</em><br>' +
-                'CI = x&#772; &plusmn; sampling error = ' + fmt(m) + ' &plusmn; ' + fmt(err) + ' = (' + fmt(lo) + ', ' + fmt(hi) + ')' +
-                '</div>' +
-                '<div class="ss-note">Read it as: if this sampling procedure were repeated many times, about ' + lvl +
-                '% of the intervals built this way would contain the true population mean.</div>';
-            /* the three levels side by side, and the interval on a number line */
-            var rows = LEVELS.map(function (L) { var e = zFor(L) * s / Math.sqrt(n); return { L: L, z: zLabel(L), e: e, lo: m - e, hi: m + e }; });
-            var W = 640, H = 34 * rows.length + 46, pad = 50, span = rows[2].hi - rows[2].lo || 1;
-            var x = function (v) { return pad + (v - (rows[2].lo - span * 0.08)) / (span * 1.16) * (W - 2 * pad); };
-            var svg = '<svg viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="Confidence intervals at 90, 95 and 99 percent">' +
-                '<line x1="' + x(m) + '" x2="' + x(m) + '" y1="8" y2="' + (H - 26) + '" stroke="#cbd5e1" stroke-dasharray="4 4"/>' +
-                rows.map(function (r, i) {
-                    var y = 22 + i * 34, on = r.L === lvl, col = on ? '#990000' : '#94a3b8';
-                    return '<text x="8" y="' + (y + 4) + '" font-size="13" font-weight="700" fill="' + col + '">' + r.L + '%</text>' +
-                        '<line x1="' + x(r.lo) + '" x2="' + x(r.hi) + '" y1="' + y + '" y2="' + y + '" stroke="' + col + '" stroke-width="' + (on ? 6 : 4) + '" stroke-linecap="round"/>' +
-                        '<text x="' + (x(r.lo) - 6) + '" y="' + (y + 4) + '" font-size="12" text-anchor="end" fill="#475569">' + fmt(r.lo, 2) + '</text>' +
-                        '<text x="' + (x(r.hi) + 6) + '" y="' + (y + 4) + '" font-size="12" fill="#475569">' + fmt(r.hi, 2) + '</text>';
-                }).join('') +
-                '<circle cx="' + x(m) + '" cy="' + (22 + 34) + '" r="0"/>' +
-                rows.map(function (r, i) { return '<circle cx="' + x(m) + '" cy="' + (22 + i * 34) + '" r="5" fill="#fff" stroke="' + (r.L === lvl ? '#990000' : '#94a3b8') + '" stroke-width="2.5"/>'; }).join('') +
-                '<text x="' + x(m) + '" y="' + (H - 8) + '" font-size="12" text-anchor="middle" fill="#1e293b">sample mean = ' + fmt(m, 3) + '</text></svg>';
-            allBox.innerHTML = '<div class="tk-ciline">' + svg + '</div>' +
-                '<table class="tk-levels"><thead><tr><th>Level</th><th>z</th><th>Sampling error</th><th>Interval</th></tr></thead><tbody>' +
-                rows.map(function (r) { return '<tr class="' + (r.L === lvl ? 'on' : '') + '"><td>' + r.L + '%</td><td>' + r.z + '</td><td>' + fmt(r.e) + '</td><td>(' + fmt(r.lo, 3) + ', ' + fmt(r.hi, 3) + ')</td></tr>'; }).join('') +
-                '</tbody></table><div class="tk-note">Higher confidence costs width: the 99% interval is the widest.</div>';
+        var ciMode = 'summary', ciCsv = null;
+        var CI_LEVELS = ['95', '90'];                      /* both, always: no level to pick */
+        function setCiMode(m) {
+            ciMode = m;
+            qsa('[data-ci-mode]').forEach(function (b) { b.classList.toggle('on', b.getAttribute('data-ci-mode') === m); });
+            qsa('[data-ci-pane]').forEach(function (p) { p.hidden = p.getAttribute('data-ci-pane') !== m; });
+            if (m !== 'summary') $('ciFrom').hidden = true;
+            ci();
+        }
+        qsa('[data-ci-mode]').forEach(function (b) { b.addEventListener('click', function () { setCiMode(b.getAttribute('data-ci-mode')); }); });
+
+        /* the sample's mean, s and n, from whichever input is in use */
+        function ciSample() {
+            if (ciMode === 'summary') {
+                var m = num('ciMean'), sd = num('ciSd'), n = num('ciN');
+                if (!isFinite(m) || !isFinite(sd) || !isFinite(n)) return { error: 'Fill in the sample mean, the standard deviation and the sample size, or enter the sample itself above.', quiet: true };
+                if (n < 2 || Math.round(n) !== n) return { error: 'The sample size must be a whole number of at least 2.' };
+                if (sd < 0) return { error: 'The standard deviation cannot be negative.' };
+                return { m: m, s: sd, n: n };
+            }
+            var vals, label, missing = 0;
+            if (ciMode === 'type') {
+                var pv = parseValues($('ciData').value);
+                if (pv.empty) return { error: 'Type or paste the sample to begin.', quiet: true };
+                if (pv.bad.length) return { error: badList(pv.bad) };
+                vals = pv.vals; label = pv.label || 'your sample';
+            } else {
+                if (!ciCsv) return { error: 'Choose a CSV file to begin.', quiet: true };
+                if (!ciCsv.cols.length) return { error: 'No numeric columns were found in ' + esc(ciCsv.name) + '.' };
+                var c = ciCsv.cols[+$('ciCol').value || 0];
+                vals = c.vals; label = c.name; missing = c.missing;
+            }
+            if (vals.length < 2) return { error: 'A confidence interval needs at least 2 observations.' };
+            var st = stats(vals, null, false);
+            return { m: st.mean, s: st.sd, n: st.n, label: label, missing: missing, fromData: true };
         }
 
-        /* ================= 3. sample size ================= */
-        function nSize() {
-            var s = num('nSd'), e = num('nErr'), lvl = $('nLevel').value, box = $('nOut');
-            $('nAll').innerHTML = '';
-            if (!isFinite(s) || !isFinite(e)) { box.innerHTML = '<div class="ss-note">Fill in the standard deviation and the allowed sampling error.</div>'; return; }
-            if (e <= 0) { box.innerHTML = '<div class="ss-bad">The allowed sampling error must be greater than zero.</div>'; return; }
-            if (s < 0) { box.innerHTML = '<div class="ss-bad">The standard deviation cannot be negative.</div>'; return; }
-            var z = zFor(lvl), raw = z * z * s * s / (e * e), n = Math.ceil(raw - 1e-9);
-            box.innerHTML =
-                '<div class="ss-big">n = ' + fmt(n, 0) + '<small>respondents</small></div>' +
-                '<div class="ss-work">n = <em>z</em><sup>2</sup>s<sup>2</sup> / e<sup>2</sup> = ' + zPow(lvl) + ' &middot; ' + fmt(s) + '<sup>2</sup> / ' + fmt(e) + '<sup>2</sup>' +
-                ' = ' + fmt(raw) + ' &rarr; <em>' + fmt(n, 0) + '</em></div>' +
-                '<div class="ss-note">Rounded up. Halving the allowed error multiplies the required sample by four, because n depends on e<sup>2</sup>.</div>';
-            $('nAll').innerHTML = '<table class="tk-levels"><thead><tr><th>Level</th><th>z</th><th>z<sup>2</sup>s<sup>2</sup> / e<sup>2</sup></th><th>Sample size</th></tr></thead><tbody>' +
-                LEVELS.map(function (L) { var zz = zFor(L), r = zz * zz * s * s / (e * e); return '<tr class="' + (L === lvl ? 'on' : '') + '"><td>' + L + '%</td><td>' + zLabel(L) + '</td><td>' + fmt(r) + '</td><td>' + fmt(Math.ceil(r - 1e-9), 0) + '</td></tr>'; }).join('') +
-                '</tbody></table>';
+        function ci() {
+            var box = $('ciOut'), allBox = $('ciAll'), given = $('ciData0');
+            allBox.innerHTML = ''; given.innerHTML = '';
+            var d = ciSample();
+            if (d.error) { box.innerHTML = '<div class="' + (d.quiet ? 'ss-note' : 'ss-bad') + '">' + d.error + '</div>'; return; }
+            var useSigma = $('ciKnowSigma').checked, sigma = num('ciSigma');
+            if (useSigma && !(sigma > 0)) { box.innerHTML = '<div class="ss-note">Enter &sigma;, or untick the box to use the sample s.</div>'; return; }
+            var sd = useSigma ? sigma : d.s, sym = useSigma ? '&sigma;' : 's', m = d.m, n = d.n;
+            var xbar = 'x&#772;';
+            if (d.fromData) {
+                given.innerHTML = '<div class="tk-given">From ' + esc(d.label) + ': n = <b>' + fmt(n, 0) + '</b> &middot; ' + xbar + ' = <b>' + fmt(m) + '</b> &middot; s = <b>' + fmt(d.s) + '</b>' +
+                    (d.missing ? ' (' + fmt(d.missing, 0) + ' empty cell' + (d.missing === 1 ? '' : 's') + ' skipped)' : '') + '</div>';
+            }
+            var rows = CI_LEVELS.map(function (L) { var e = zFor(L) * sd / Math.sqrt(n); return { L: L, z: zLabel(L), e: e, lo: m - e, hi: m + e }; });
+            box.innerHTML = '<div class="tk-cis">' + rows.map(function (r) {
+                    return '<div class="ss-out answer"><div class="ss-big">(' + fmt(r.lo, 3) + ', ' + fmt(r.hi, 3) + ')<small>' + r.L + '% confidence interval</small></div>' +
+                        '<div class="ss-work">sampling error = <em>z</em> &middot; ' + sym + ' / &radic;n = ' + r.z + ' &middot; ' + fmt(sd) + ' / &radic;' + fmt(n, 0) + ' = <em>' + fmt(r.e) + '</em><br>' +
+                        'CI = ' + xbar + ' &plusmn; sampling error = ' + fmt(m) + ' &plusmn; ' + fmt(r.e) + '</div></div>';
+                }).join('') + '</div>' +
+                (useSigma ? '<div class="ss-note">Using the known population &sigma; = ' + fmt(sigma) + ' in place of the sample s.</div>' : '') +
+                '<div class="ss-note">Read the 95% interval as: if this sampling procedure were repeated many times, about 95% of the intervals built this way would contain the true population mean. The 90% interval is narrower: less confidence buys a tighter range.</div>';
+            /* both intervals on one number line */
+            var W = 640, H = 34 * rows.length + 46, pad = 50, span = rows[0].hi - rows[0].lo || 1;
+            var x = function (v) { return pad + (v - (rows[0].lo - span * 0.08)) / (span * 1.16) * (W - 2 * pad); };
+            var col = { '95': '#990000', '90': '#475569' };
+            allBox.innerHTML = '<div class="tk-ciline"><svg viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="The 95 and 90 percent confidence intervals on a number line">' +
+                '<line x1="' + x(m) + '" x2="' + x(m) + '" y1="8" y2="' + (H - 26) + '" stroke="#cbd5e1" stroke-dasharray="4 4"/>' +
+                rows.map(function (r, i) {
+                    var y = 22 + i * 34, c = col[r.L];
+                    return '<text x="8" y="' + (y + 4) + '" font-size="13" font-weight="700" fill="' + c + '">' + r.L + '%</text>' +
+                        '<line x1="' + x(r.lo) + '" x2="' + x(r.hi) + '" y1="' + y + '" y2="' + y + '" stroke="' + c + '" stroke-width="6" stroke-linecap="round"/>' +
+                        '<text x="' + (x(r.lo) - 6) + '" y="' + (y + 4) + '" font-size="12" text-anchor="end" fill="#475569">' + fmt(r.lo, 2) + '</text>' +
+                        '<text x="' + (x(r.hi) + 6) + '" y="' + (y + 4) + '" font-size="12" fill="#475569">' + fmt(r.hi, 2) + '</text>' +
+                        '<circle cx="' + x(m) + '" cy="' + y + '" r="5" fill="#fff" stroke="' + c + '" stroke-width="2.5"/>';
+                }).join('') +
+                '<text x="' + x(m) + '" y="' + (H - 8) + '" font-size="12" text-anchor="middle" fill="#1e293b">sample mean = ' + fmt(m, 3) + '</text></svg></div>';
         }
-        ['ciMean', 'ciSd', 'ciN', 'ciLevel'].forEach(function (id) { ['input', 'change'].forEach(function (ev) { $(id).addEventListener(ev, function () { if (ev === 'input') $('ciFrom').hidden = true; ci(); }); }); });
-        ['nSd', 'nErr', 'nLevel'].forEach(function (id) { ['input', 'change'].forEach(function (ev) { $(id).addEventListener(ev, function () { if (id === 'nSd' && ev === 'input') $('nFrom').hidden = true; nSize(); }); }); });
-        qsa('input[name="zconv"]').forEach(function (r) { r.addEventListener('change', function () { ci(); nSize(); }); });
+
+        function loadCiCsv(file) {
+            readFile(file, function (text) {
+                var pc = parseCSV(text), info = $('ciFileInfo'), sel = $('ciCol');
+                info.hidden = false;
+                if (!pc) { ciCsv = null; $('ciColWrap').hidden = true; info.innerHTML = '<span class="ss-bad">The file looks empty.</span>'; ci(); return; }
+                var nums = pc.cols.filter(function (c) { return c.numeric; });
+                ciCsv = { name: file.name, cols: nums };
+                sel.innerHTML = nums.map(function (c, i) { return '<option value="' + i + '">' + esc(c.name) + '</option>'; }).join('');
+                $('ciColWrap').hidden = !nums.length;
+                info.innerHTML = '<b>' + esc(file.name) + '</b>: ' + fmt(pc.rows, 0) + ' rows, ' + nums.length + ' numeric column' + (nums.length === 1 ? '' : 's') + '. ' +
+                    (pc.header ? 'Variable names were read from the first row.' : 'The first row holds numbers, not names, so the columns are numbered.') +
+                    (nums.length > 1 ? ' Choose the variable below.' : '');
+                ci();
+            });
+        }
+        $('ciFile').addEventListener('change', function () { if (this.files[0]) loadCiCsv(this.files[0]); });
+        ['dragenter', 'dragover'].forEach(function (ev) { $('ciDrop').addEventListener(ev, function (e) { e.preventDefault(); this.classList.add('over'); }); });
+        ['dragleave', 'drop'].forEach(function (ev) { $('ciDrop').addEventListener(ev, function (e) { e.preventDefault(); this.classList.remove('over'); }); });
+        $('ciDrop').addEventListener('drop', function (e) { if (e.dataTransfer.files[0]) loadCiCsv(e.dataTransfer.files[0]); });
+        $('ciData').addEventListener('input', ci);
+        $('ciCol').addEventListener('change', ci);
+        $('ciKnowSigma').addEventListener('change', function () { $('ciSigmaWrap').hidden = !this.checked; ci(); });
+        $('ciSigma').addEventListener('input', ci);
+
+        /* ================= 3. sample size ================= */
+        var nMode = 'summary', nCsv = null;
+        function setNMode(m) {
+            nMode = m;
+            qsa('[data-n-mode]').forEach(function (b) { b.classList.toggle('on', b.getAttribute('data-n-mode') === m); });
+            qsa('[data-n-pane]').forEach(function (p) { p.hidden = p.getAttribute('data-n-pane') !== m; });
+            if (m !== 'summary') $('nFrom').hidden = true;
+            nSize();
+        }
+        qsa('[data-n-mode]').forEach(function (b) { b.addEventListener('click', function () { setNMode(b.getAttribute('data-n-mode')); }); });
+        /* the standard deviation, typed in or computed from a test sample */
+        function nSigma() {
+            if (nMode === 'summary') {
+                var sd = num('nSd');
+                if (!isFinite(sd)) return { error: 'Fill in the standard deviation, or enter a test sample above.', quiet: true };
+                if (sd < 0) return { error: 'The standard deviation cannot be negative.' };
+                return { s: sd };
+            }
+            var vals, label, missing = 0;
+            if (nMode === 'type') {
+                var pv = parseValues($('nData').value);
+                if (pv.empty) return { error: 'Type or paste the test sample to begin.', quiet: true };
+                if (pv.bad.length) return { error: badList(pv.bad) };
+                vals = pv.vals; label = pv.label || 'your test sample';
+            } else {
+                if (!nCsv) return { error: 'Choose a CSV file to begin.', quiet: true };
+                if (!nCsv.cols.length) return { error: 'No numeric columns were found in ' + esc(nCsv.name) + '.' };
+                var c = nCsv.cols[+$('nCol').value || 0]; vals = c.vals; label = c.name; missing = c.missing;
+            }
+            if (vals.length < 2) return { error: 'A standard deviation needs at least 2 observations.' };
+            var st = stats(vals, null, false);
+            return { s: st.sd, n: st.n, m: st.mean, label: label, missing: missing, fromData: true };
+        }
+        function nSize() {
+            var box = $('nOut'), given = $('nGiven');
+            $('nAll').innerHTML = ''; given.innerHTML = '';
+            var d = nSigma(), e = num('nErr');
+            if (d.error) { box.innerHTML = '<div class="' + (d.quiet ? 'ss-note' : 'ss-bad') + '">' + d.error + '</div>'; return; }
+            if (d.fromData) given.innerHTML = '<div class="tk-given">From ' + esc(d.label) + ': n = <b>' + fmt(d.n, 0) + '</b> &middot; s = <b>' + fmt(d.s) + '</b>' +
+                (d.missing ? ' (' + fmt(d.missing, 0) + ' empty cell' + (d.missing === 1 ? '' : 's') + ' skipped)' : '') + '</div>';
+            if (!isFinite(e)) { box.innerHTML = '<div class="ss-note">Now fill in the allowed sampling error.</div>'; return; }
+            if (e <= 0) { box.innerHTML = '<div class="ss-bad">The allowed sampling error must be greater than zero.</div>'; return; }
+            var sd = d.s;
+            box.innerHTML = '<div class="tk-cis">' + CI_LEVELS.map(function (L) {
+                    var zz = zFor(L), raw = zz * zz * sd * sd / (e * e), n = Math.ceil(raw - 1e-9);
+                    return '<div class="ss-out answer"><div class="ss-big">n = ' + fmt(n, 0) + '<small>at ' + L + '% confidence</small></div>' +
+                        '<div class="ss-work">n = <em>z</em><sup>2</sup>s<sup>2</sup> / e<sup>2</sup> = ' + zPow(L) + ' &middot; ' + fmt(sd) + '<sup>2</sup> / ' + fmt(e) + '<sup>2</sup>' +
+                        ' = ' + fmt(raw) + ' &rarr; <em>' + fmt(n, 0) + '</em></div></div>';
+                }).join('') + '</div>' +
+                '<div class="ss-note">Rounded up: a fractional respondent is not a respondent. Halving the allowed error multiplies the required sample by four, because n depends on e<sup>2</sup>.</div>';
+        }
+        function loadNCsv(file) {
+            readFile(file, function (text) {
+                var pc = parseCSV(text), info = $('nFileInfo'), sel = $('nCol');
+                info.hidden = false;
+                if (!pc) { nCsv = null; $('nColWrap').hidden = true; info.innerHTML = '<span class="ss-bad">The file looks empty.</span>'; nSize(); return; }
+                var nums = pc.cols.filter(function (c) { return c.numeric; });
+                nCsv = { name: file.name, cols: nums };
+                sel.innerHTML = nums.map(function (c, i) { return '<option value="' + i + '">' + esc(c.name) + '</option>'; }).join('');
+                $('nColWrap').hidden = !nums.length;
+                info.innerHTML = '<b>' + esc(file.name) + '</b>: ' + fmt(pc.rows, 0) + ' rows, ' + nums.length + ' numeric column' + (nums.length === 1 ? '' : 's') + '. ' +
+                    (pc.header ? 'Variable names were read from the first row.' : 'The first row holds numbers, not names, so the columns are numbered.') +
+                    (nums.length > 1 ? ' Choose the variable below.' : '');
+                nSize();
+            });
+        }
+        $('nFile').addEventListener('change', function () { if (this.files[0]) loadNCsv(this.files[0]); });
+        ['dragenter', 'dragover'].forEach(function (ev) { $('nDrop').addEventListener(ev, function (e) { e.preventDefault(); this.classList.add('over'); }); });
+        ['dragleave', 'drop'].forEach(function (ev) { $('nDrop').addEventListener(ev, function (e) { e.preventDefault(); this.classList.remove('over'); }); });
+        $('nDrop').addEventListener('drop', function (e) { if (e.dataTransfer.files[0]) loadNCsv(e.dataTransfer.files[0]); });
+        $('nData').addEventListener('input', nSize);
+        $('nCol').addEventListener('change', nSize);
+        ['ciMean', 'ciSd', 'ciN'].forEach(function (id) { $(id).addEventListener('input', function () { $('ciFrom').hidden = true; ci(); }); });
+        $('nSd').addEventListener('input', function () { $('nFrom').hidden = true; nSize(); });
+        $('nErr').addEventListener('input', nSize);
 
         /* the site nav is sticky too: park the tab bar just below it */
         function placeTabs() { var nav = document.querySelector('nav'); document.documentElement.style.setProperty('--tk-top', ((nav ? nav.offsetHeight : 0) + 8) + 'px'); }

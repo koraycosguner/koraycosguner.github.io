@@ -213,6 +213,11 @@
         .upload-area { border: 2px dashed var(--border-strong); border-radius: 8px; padding: 2.5rem; text-align: center; cursor: pointer; transition: all 0.3s; margin-bottom: 1rem; }
         .upload-area:hover, .upload-area.dragover { border-color: var(--iu-crimson); background: rgba(153, 0, 0, 0.05); }
         .upload-area input[type="file"] { display: none; }
+        .paste-box { border: 1px solid var(--border); border-radius: 8px; padding: .7rem 1rem; margin-bottom: 1rem; background: var(--white); }
+        .paste-box summary { cursor: pointer; font-weight: 600; color: var(--iu-crimson); }
+        .paste-box[open] summary { margin-bottom: .5rem; }
+        .paste-box textarea { width: 100%; box-sizing: border-box; padding: .6rem .7rem; border: 1.5px solid var(--border-strong); border-radius: 8px;
+                              font-family: 'Monaco', 'Menlo', 'Courier New', monospace; font-size: .85rem; line-height: 1.45; resize: vertical; margin-bottom: .6rem; }
         .upload-icon { font-size: 2.5rem; color: var(--iu-crimson); margin-bottom: 0.5rem; }
         .upload-text { font-size: 1rem; color: var(--text-dark); }
         .upload-hint { font-size: 0.85rem; color: var(--text-light); margin-top: 0.4rem; }
@@ -544,14 +549,20 @@
             <div class="status-message" id="statusMessage" role="status" aria-live="polite"></div>
 
             <!-- ====================== 1. Upload ====================== -->
-            <h2 class="section-title">1. Upload Your Data</h2>
-            <p class="section-hint">A CSV with a header row. The file is read locally in your browser and never leaves your machine.</p>
+            <h2 class="section-title">1. Upload or Paste Your Data</h2>
+            <p class="section-hint">A CSV with a header row, or a table pasted from a slide or a spreadsheet. Your data stay in your browser and never leave your machine.</p>
             <div class="upload-area" id="uploadArea" role="button" tabindex="0" aria-label="Upload a CSV file. Activate to choose a file, or drag and drop one here.">
                 <input type="file" id="fileInput" accept=".csv" aria-label="Upload CSV file">
                 <div class="upload-icon">&#128202;</div>
                 <p class="upload-text">Click to upload or drag and drop a CSV</p>
                 <p class="upload-hint">CSV files only, with a header row</p>
             </div>
+            <details class="paste-box" id="pasteBox">
+                <summary>Or paste your data</summary>
+                <p class="section-hint">First row: the column names. Values separated by commas, or copied straight from Excel or Google Sheets.</p>
+                <textarea id="pasteData" spellcheck="false" rows="7" placeholder="importance,group,count&#10;Design factor,College students,100&#10;Design factor,College graduates,44"></textarea>
+                <button type="button" class="btn btn-primary btn-sm" id="usePasteBtn">Use the pasted data</button>
+            </details>
             <div style="display:flex; align-items:center; gap:.75rem; flex-wrap:wrap; margin-bottom:1rem;">
                 <button type="button" class="btn btn-secondary btn-sm" id="loadExampleBtn">Try example data</button>
                 <span class="section-hint" style="margin-bottom:0;">The class coffee-shop survey: 600 customers, 7 variables. Every figure in the slides comes from it.</span>
@@ -2282,6 +2293,19 @@ ${body.trim()}`;
         uploadArea.addEventListener('drop', e => { e.preventDefault(); uploadArea.classList.remove('dragover'); if (e.dataTransfer.files.length) handleFile(e.dataTransfer.files[0]); });
         fileInput.addEventListener('change', e => { if (e.target.files.length) handleFile(e.target.files[0]); e.target.value = ''; });
         $('loadExampleBtn').addEventListener('click', () => loadCsvText(EXAMPLE_CSV));
+        // pasted tables: a spreadsheet copy arrives tab-separated, so turn it into CSV first
+        function pastedToCsv(t) {
+            t = t.replace(/\r\n?/g, '\n').replace(/^\n+|\s+$/g, '');
+            if (!t.split('\n')[0].includes('\t')) return t;
+            const cell = c => /[",]/.test(c) ? '"' + c.replace(/"/g, '""') + '"' : c;
+            return t.split('\n').map(line => line.split('\t').map(c => cell(c.trim())).join(',')).join('\n');
+        }
+        $('usePasteBtn').addEventListener('click', () => {
+            const t = $('pasteData').value;
+            if (!t.trim()) { showStatus('Paste your data into the box first.', 'error', 4000); return; }
+            loadCsvText(pastedToCsv(t));
+        });
+        $('pasteData').addEventListener('paste', () => setTimeout(() => $('usePasteBtn').click(), 0));
         $('varMain').addEventListener('change', () => { updateStat(); draw(); });
         $('varSecond').addEventListener('change', () => { updateStat(); draw(); });
         $('varValue').addEventListener('change', () => { updateStat(); draw(); });
