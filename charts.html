@@ -568,7 +568,7 @@
             </div>
             <div style="display:flex; align-items:center; gap:.75rem; flex-wrap:wrap; margin-bottom:1rem;">
                 <button type="button" class="btn btn-secondary btn-sm" id="loadExampleBtn">Try example data</button>
-                <span class="section-hint" style="margin-bottom:0;">The class coffee-shop survey: 600 customers, 7 variables. Every figure in the slides comes from it.</span>
+                <span class="section-hint" style="margin-bottom:0;">The class coffee-shop survey: 600 customers, 8 variables. Every figure in the slides comes from it.</span>
             </div>
             <div class="preview-note" id="previewNote" style="display:none;"></div>
             <div id="previewWrap" style="display:none;">
@@ -1892,607 +1892,607 @@ ${body.trim()}`;
 
         // ==================== EXAMPLE DATA ====================
         // The class dataset: a simulated exit survey of 600 customers at a three-store coffee chain.
-        const EXAMPLE_CSV = `week,store,channel,drink,order_total,wait_minutes,satisfaction
-1,Campus,Mobile app,Tea,7.64,5.8,5
-1,Campus,Mobile app,Latte,10.47,5.7,5
-1,Downtown,In store,Tea,14.97,7.4,6
-1,Downtown,In store,Drip coffee,8.51,9.7,4
-1,Eastside,In store,Latte,12.74,7.9,5
-1,Downtown,Mobile app,Drip coffee,3.48,6,5
-1,Eastside,In store,Drip coffee,9.68,7.8,5
-1,Campus,Mobile app,Cold brew,9.92,5.2,4
-1,Eastside,Mobile app,Tea,3.9,3.3,7
-1,Downtown,In store,Latte,5.99,7.4,5
-1,Eastside,In store,Latte,5.83,6.1,6
-1,Campus,Mobile app,Latte,29.27,5.7,6
-1,Campus,Mobile app,Latte,5.8,5.3,6
-1,Campus,Mobile app,Cold brew,5.19,7.3,4
-1,Campus,Mobile app,Drip coffee,6.12,6.7,4
-1,Campus,In store,Tea,4.05,10,5
-1,Eastside,In store,Drip coffee,3.77,5.4,6
-1,Campus,In store,Smoothie,7.41,10,5
-1,Campus,In store,Cold brew,4.82,12,4
-1,Campus,In store,Smoothie,7.51,10.3,5
-1,Campus,Mobile app,Latte,5.66,8.1,5
-1,Downtown,In store,Cold brew,9.04,7.3,5
-1,Downtown,In store,Cold brew,5.5,9.2,4
-1,Eastside,In store,Drip coffee,6.1,5.9,4
-1,Downtown,Mobile app,Smoothie,7.6,4.6,3
-1,Campus,Mobile app,Drip coffee,3.79,8.1,4
-1,Downtown,Mobile app,Smoothie,7.17,4.1,6
-1,Downtown,Mobile app,Cold brew,12.54,6.6,5
-1,Campus,Mobile app,Cold brew,11.41,5.5,4
-1,Eastside,In store,Drip coffee,2.98,5.5,6
-1,Campus,In store,Cold brew,10.78,10.8,6
-1,Campus,Mobile app,Smoothie,11.89,8,4
-1,Eastside,Mobile app,Latte,12.11,4.7,7
-1,Campus,Mobile app,Latte,25.08,7.6,5
-1,Downtown,In store,Drip coffee,3.21,8.9,4
-1,Downtown,Mobile app,Tea,4.3,5.8,5
-1,Campus,Mobile app,Cold brew,5.22,6.5,5
-1,Downtown,In store,Latte,6.01,8.4,4
-1,Campus,Mobile app,Latte,10.83,6.2,6
-1,Campus,Mobile app,Smoothie,6.99,6.8,4
-1,Eastside,In store,Tea,8.36,5.6,5
-1,Downtown,In store,Drip coffee,7.12,9.4,5
-1,Downtown,In store,Smoothie,7.05,10,4
-1,Downtown,Mobile app,Latte,11.34,6.4,4
-1,Campus,Mobile app,Smoothie,12.56,6,6
-2,Eastside,In store,Drip coffee,3.41,6.8,6
-2,Campus,Mobile app,Tea,4.58,4.9,5
-2,Downtown,In store,Drip coffee,10.71,7.5,7
-2,Downtown,In store,Drip coffee,10.4,7,5
-2,Campus,In store,Smoothie,12.44,6.5,6
-2,Downtown,In store,Cold brew,9.53,7.5,5
-2,Eastside,In store,Drip coffee,3.43,5.8,7
-2,Campus,Mobile app,Cold brew,11.76,6.2,5
-2,Downtown,In store,Latte,6.13,5.6,5
-2,Campus,Mobile app,Latte,12.14,5.2,6
-2,Eastside,In store,Cold brew,4.9,6.4,7
-2,Eastside,Mobile app,Drip coffee,3.25,4.7,7
-2,Campus,Mobile app,Smoothie,7.53,5.4,7
-2,Downtown,In store,Drip coffee,3.8,7.7,6
-2,Downtown,In store,Cold brew,5.36,7.6,5
-2,Campus,Mobile app,Tea,4.22,5.2,7
-2,Downtown,Mobile app,Tea,4.25,4.3,7
-2,Downtown,Mobile app,Latte,5.47,4.6,6
-2,Downtown,Mobile app,Latte,12.6,3.3,6
-2,Eastside,In store,Latte,12.15,4.4,6
-2,Campus,In store,Cold brew,5.26,8.1,4
-2,Downtown,In store,Smoothie,11.75,5.9,5
-2,Eastside,Mobile app,Tea,3.77,4.5,3
-2,Eastside,In store,Latte,13.12,5.3,6
-2,Downtown,In store,Drip coffee,3.76,5.3,7
-2,Campus,In store,Latte,16.15,7.7,6
-2,Eastside,In store,Drip coffee,15.75,7.9,5
-2,Campus,Mobile app,Cold brew,12.04,7.6,5
-2,Downtown,Mobile app,Smoothie,7.37,5,7
-2,Campus,Mobile app,Cold brew,22.23,4.6,3
-2,Campus,In store,Cold brew,5.1,7,5
-2,Eastside,In store,Latte,11.08,7.1,5
-2,Eastside,Mobile app,Latte,5.54,4.6,5
-2,Campus,In store,Drip coffee,10.95,6.9,6
-2,Campus,In store,Smoothie,14.78,6.8,5
-2,Eastside,In store,Smoothie,7.18,5.3,5
-2,Eastside,In store,Smoothie,7.25,5.2,5
-2,Campus,Mobile app,Smoothie,7.46,7.2,6
-2,Campus,In store,Latte,10.73,8.3,5
-2,Campus,In store,Smoothie,15.7,8.4,4
-3,Downtown,In store,Tea,3.7,5.9,5
-3,Downtown,In store,Smoothie,7.39,5.5,5
-3,Campus,Mobile app,Smoothie,7.81,4.4,6
-3,Campus,In store,Drip coffee,3.34,5.5,6
-3,Downtown,Mobile app,Latte,5.76,4.6,6
-3,Downtown,In store,Latte,5.75,6.7,5
-3,Eastside,In store,Cold brew,4.87,7.1,6
-3,Campus,Mobile app,Cold brew,5.24,4.8,5
-3,Eastside,In store,Drip coffee,3.78,4,6
-3,Campus,Mobile app,Smoothie,7.44,7.3,5
-3,Campus,Mobile app,Latte,6.01,6.3,5
-3,Campus,In store,Drip coffee,10.49,6.9,6
-3,Eastside,In store,Smoothie,10.73,6.6,4
-3,Campus,Mobile app,Latte,5.55,4.5,4
-3,Downtown,Mobile app,Cold brew,10.36,4,5
-3,Eastside,Mobile app,Drip coffee,19.07,3.1,5
-3,Downtown,In store,Smoothie,15.1,5.6,5
-3,Eastside,In store,Drip coffee,3.08,4.9,7
-3,Eastside,In store,Tea,7.81,5.8,5
-3,Campus,Mobile app,Cold brew,4.84,5.6,6
-3,Campus,In store,Cold brew,8.22,7.4,5
-3,Campus,In store,Smoothie,13.16,9.4,6
-3,Downtown,Mobile app,Latte,5.63,7.9,4
-3,Downtown,Mobile app,Tea,8.34,3.9,6
-3,Downtown,In store,Latte,10.97,5.5,6
-3,Downtown,Mobile app,Drip coffee,3.18,5.1,6
-3,Campus,In store,Drip coffee,6.18,5.2,6
-3,Campus,Mobile app,Latte,12.53,5.5,5
-3,Eastside,In store,Cold brew,5.12,4.9,6
-3,Campus,In store,Smoothie,14.42,7.7,6
-3,Downtown,Mobile app,Latte,24.76,4,6
-3,Eastside,Mobile app,Latte,6.38,3.6,5
-3,Eastside,In store,Latte,5.98,6.5,7
-3,Downtown,Mobile app,Drip coffee,3.48,4.5,6
-3,Downtown,In store,Drip coffee,7.98,6.7,6
-3,Downtown,Mobile app,Latte,10.89,4.1,6
-4,Eastside,In store,Latte,5.59,6.2,5
-4,Eastside,In store,Smoothie,7.7,4.8,7
-4,Downtown,In store,Drip coffee,3.38,5,7
-4,Downtown,In store,Cold brew,8.66,7.5,7
-4,Campus,In store,Cold brew,5.27,8.1,5
-4,Eastside,In store,Latte,5.64,4.3,6
-4,Downtown,Mobile app,Smoothie,7,3.6,6
-4,Eastside,Mobile app,Smoothie,7.73,4.3,6
-4,Downtown,Mobile app,Tea,8.82,5.8,5
-4,Downtown,In store,Latte,6.38,6.2,4
-4,Eastside,In store,Smoothie,21.39,4.4,7
-4,Eastside,In store,Cold brew,11.84,5.9,6
-4,Campus,In store,Tea,9.12,5.8,5
-4,Campus,Mobile app,Cold brew,4.88,6.4,5
-4,Downtown,In store,Cold brew,4.79,6.9,7
-4,Campus,In store,Latte,12.65,6.3,6
-4,Campus,In store,Latte,23.08,7.6,5
-4,Downtown,Mobile app,Cold brew,21.85,3.5,7
-4,Eastside,In store,Cold brew,5.29,6.4,5
-4,Eastside,Mobile app,Latte,5.55,3.8,5
-4,Downtown,In store,Cold brew,9.16,7.9,4
-4,Eastside,In store,Drip coffee,18.04,5.4,7
-4,Eastside,Mobile app,Cold brew,15.9,3.3,6
-4,Campus,Mobile app,Cold brew,5.14,9.4,4
-4,Campus,Mobile app,Latte,5.86,4.3,6
-4,Eastside,In store,Cold brew,5.23,6.2,7
-4,Campus,In store,Cold brew,15.72,6.2,5
-4,Eastside,In store,Latte,10.65,4.8,6
-4,Campus,Mobile app,Cold brew,5.3,4.7,5
-4,Eastside,In store,Latte,9.33,5.8,5
-4,Downtown,In store,Drip coffee,3.34,6.2,6
-4,Eastside,In store,Drip coffee,3.3,5.8,6
-4,Campus,In store,Latte,12.7,5.8,6
-4,Campus,In store,Latte,5.89,12.3,2
-4,Downtown,Mobile app,Drip coffee,3.27,3.1,5
-4,Downtown,Mobile app,Tea,10.7,4.7,6
-5,Campus,In store,Tea,8.2,9.9,4
-5,Downtown,In store,Drip coffee,9.69,4.7,5
-5,Downtown,In store,Cold brew,5.52,4.9,6
-5,Downtown,In store,Latte,21.17,10,4
-5,Downtown,Mobile app,Smoothie,7.87,5.6,6
-5,Eastside,In store,Drip coffee,3.8,4.6,7
-5,Campus,In store,Drip coffee,3.62,8.6,5
-5,Downtown,Mobile app,Tea,3.93,3.7,7
-5,Downtown,Mobile app,Latte,5.5,5,6
-5,Downtown,In store,Tea,7.36,4.6,6
-5,Campus,In store,Latte,5.8,6.3,6
-5,Campus,In store,Tea,4.47,5.6,7
-5,Campus,In store,Latte,11.96,7.8,5
-5,Campus,Mobile app,Latte,27.97,6.1,5
-5,Campus,Mobile app,Latte,11.47,8.1,4
-5,Eastside,In store,Drip coffee,6.98,9.6,4
-5,Eastside,In store,Latte,29.47,4.2,7
-5,Eastside,Mobile app,Latte,5.48,6.4,5
-5,Campus,Mobile app,Cold brew,15.73,6.2,5
-5,Campus,In store,Smoothie,15.06,5.6,7
-5,Downtown,Mobile app,Drip coffee,3.09,6.4,5
-5,Downtown,In store,Smoothie,7.35,7.1,6
-5,Downtown,Mobile app,Latte,12.68,6.5,5
-5,Campus,Mobile app,Latte,12.2,4.3,5
-5,Downtown,In store,Cold brew,4.99,5,6
-5,Downtown,In store,Drip coffee,3.05,7.7,4
-5,Eastside,In store,Drip coffee,3.76,4.1,5
-5,Campus,Mobile app,Latte,5.65,4,6
-5,Eastside,Mobile app,Drip coffee,3.35,3.1,6
-5,Campus,In store,Drip coffee,11.96,8,5
-5,Downtown,In store,Drip coffee,7.74,5.7,7
-5,Eastside,In store,Tea,14.29,6.2,6
-5,Campus,In store,Cold brew,10.76,5.8,4
-5,Campus,In store,Cold brew,4.79,8.6,5
-5,Campus,Mobile app,Drip coffee,9.34,4.1,6
-5,Downtown,In store,Drip coffee,3.64,9.2,4
-6,Downtown,Mobile app,Drip coffee,3.76,4.2,7
-6,Campus,In store,Cold brew,10.97,8.4,5
-6,Campus,In store,Latte,18.93,6,6
-6,Eastside,In store,Cold brew,9.05,6.4,7
-6,Downtown,In store,Smoothie,15.7,6.9,7
-6,Eastside,Mobile app,Drip coffee,11.01,5.7,4
-6,Downtown,Mobile app,Drip coffee,3.8,3.4,6
-6,Downtown,In store,Tea,3.94,6.5,5
-6,Downtown,In store,Latte,6.04,7.3,6
-6,Campus,Mobile app,Smoothie,13.63,6.6,4
-6,Downtown,Mobile app,Drip coffee,9.06,6.7,5
-6,Campus,In store,Smoothie,29.38,5.8,5
-6,Downtown,Mobile app,Latte,6.01,4.8,6
-6,Eastside,Mobile app,Latte,12.1,4.8,5
-6,Eastside,Mobile app,Smoothie,7.52,3.2,5
-6,Eastside,In store,Latte,11.6,6.9,6
-6,Eastside,Mobile app,Latte,24.16,5.4,6
-6,Downtown,In store,Cold brew,5.01,7.4,6
-6,Campus,Mobile app,Cold brew,8.77,4.9,5
-6,Campus,In store,Cold brew,10.08,8.4,5
-6,Campus,Mobile app,Tea,3.89,4.9,4
-6,Campus,Mobile app,Cold brew,10.17,4.4,7
-6,Campus,Mobile app,Latte,5.8,6.3,6
-6,Campus,Mobile app,Tea,9.14,6.4,5
-6,Campus,Mobile app,Latte,10.93,5.3,5
-6,Downtown,In store,Latte,18.16,5.5,6
-6,Eastside,In store,Drip coffee,9.84,5.2,5
-6,Campus,In store,Drip coffee,8.14,6.5,6
-6,Downtown,In store,Latte,6.06,6.2,6
-6,Campus,In store,Latte,10.11,6.6,7
-6,Campus,Mobile app,Smoothie,7.32,5.4,5
-6,Eastside,In store,Tea,13.53,5.4,5
-6,Campus,Mobile app,Cold brew,5.58,5.3,6
-6,Downtown,In store,Cold brew,5.31,5.9,6
-6,Campus,Mobile app,Smoothie,14.02,5.2,6
-6,Campus,Mobile app,Cold brew,10.7,6.2,5
-6,Campus,In store,Tea,10.28,5.5,6
-7,Downtown,Mobile app,Tea,7.94,13,3
-7,Downtown,Mobile app,Drip coffee,10.02,4.8,4
-7,Campus,In store,Latte,17.12,9.2,5
-7,Eastside,In store,Latte,5.49,5.2,6
-7,Eastside,In store,Tea,4.22,4.6,6
-7,Campus,In store,Latte,11.54,9.4,5
-7,Eastside,In store,Drip coffee,10.92,8.5,4
-7,Downtown,Mobile app,Latte,6.39,5.4,6
-7,Eastside,In store,Latte,6.28,5.9,6
-7,Eastside,In store,Drip coffee,3.57,7.8,5
-7,Campus,In store,Latte,6.18,8.5,4
-7,Campus,In store,Tea,8.76,8.7,6
-7,Downtown,In store,Latte,6.07,9.9,5
-7,Campus,Mobile app,Latte,17.44,6.2,5
-7,Campus,In store,Latte,5.62,8.2,6
-7,Campus,In store,Cold brew,5.23,8.1,4
-7,Campus,In store,Drip coffee,9.63,8.3,4
-7,Campus,In store,Drip coffee,8.85,8.7,6
-7,Eastside,In store,Cold brew,9.5,6.2,6
-7,Campus,Mobile app,Cold brew,11.34,8.1,5
-7,Campus,In store,Drip coffee,6.8,10.8,5
-7,Eastside,In store,Tea,4.26,6.5,4
-7,Eastside,Mobile app,Tea,13.02,3.6,6
-7,Eastside,In store,Drip coffee,3.27,7.4,6
-7,Campus,In store,Smoothie,11.99,8.6,4
-7,Campus,In store,Smoothie,7.77,10.7,5
-7,Downtown,In store,Drip coffee,3.46,8,4
-7,Campus,Mobile app,Latte,9.28,7.4,5
-7,Campus,Mobile app,Smoothie,13.54,7.4,4
-7,Eastside,In store,Tea,4.3,5.8,5
-7,Eastside,In store,Latte,10.52,5.9,7
-7,Campus,Mobile app,Smoothie,10.79,6.4,5
-7,Eastside,Mobile app,Tea,19.3,2.6,5
-7,Eastside,In store,Latte,5.59,5,7
-7,Downtown,In store,Smoothie,19.81,6.4,5
-7,Campus,Mobile app,Latte,5.97,5.7,5
-7,Eastside,In store,Cold brew,10.15,5.6,5
-7,Downtown,Mobile app,Latte,6.35,5.5,5
-7,Downtown,In store,Latte,5.95,7,6
-7,Campus,In store,Latte,6.32,8.8,4
-7,Campus,In store,Latte,5.75,9,5
-8,Campus,Mobile app,Cold brew,10.51,5.7,4
-8,Campus,In store,Drip coffee,6.66,11.1,5
-8,Downtown,Mobile app,Cold brew,10.62,5.3,5
-8,Campus,In store,Drip coffee,3.59,14,4
-8,Campus,In store,Cold brew,9.58,9.8,4
-8,Eastside,In store,Latte,11.88,5,6
-8,Campus,Mobile app,Drip coffee,8.03,6.2,6
-8,Downtown,In store,Drip coffee,3.44,8,6
-8,Eastside,In store,Drip coffee,9.37,6.5,4
-8,Downtown,In store,Drip coffee,6.32,7.3,5
-8,Campus,In store,Cold brew,14.49,11.4,2
-8,Campus,In store,Tea,3.74,12.2,3
-8,Campus,In store,Cold brew,17.32,11.8,3
-8,Campus,In store,Smoothie,20.5,10.7,3
-8,Downtown,In store,Drip coffee,7.36,12.3,1
-8,Downtown,In store,Drip coffee,6.38,8.9,6
-8,Campus,In store,Cold brew,20.52,10.5,3
-8,Campus,In store,Latte,9.31,10.3,4
-8,Campus,Mobile app,Drip coffee,3.74,8.2,4
-8,Campus,In store,Tea,4.51,11.8,4
-8,Eastside,In store,Latte,6.29,5.2,6
-8,Eastside,In store,Latte,5.56,5.6,6
-8,Campus,In store,Latte,11.94,11.4,4
-8,Downtown,In store,Latte,6.35,7.4,5
-8,Campus,In store,Tea,8.95,13,4
-8,Campus,In store,Drip coffee,9.1,12.7,4
-8,Campus,Mobile app,Latte,12.06,7.5,5
-8,Eastside,In store,Cold brew,9.64,5.9,7
-8,Campus,Mobile app,Latte,9.75,5.7,3
-8,Campus,In store,Latte,6.1,11.5,3
-8,Eastside,Mobile app,Drip coffee,6.84,6.8,5
-8,Campus,In store,Cold brew,5.15,10.5,5
-8,Eastside,Mobile app,Drip coffee,3.15,3.9,7
-8,Downtown,Mobile app,Drip coffee,7.46,5.8,5
-8,Downtown,In store,Drip coffee,3.05,8.4,6
-8,Campus,Mobile app,Cold brew,5.06,7.2,5
-8,Downtown,In store,Tea,4.36,8,3
-8,Campus,Mobile app,Tea,4.57,6.6,5
-8,Eastside,In store,Latte,5.55,5.9,7
-8,Eastside,In store,Tea,3.88,6.2,5
-8,Downtown,Mobile app,Latte,12.12,4.8,4
-8,Downtown,In store,Cold brew,5.26,8.5,7
-8,Downtown,In store,Latte,6.39,7.8,5
-8,Downtown,In store,Latte,11.46,7.3,7
-9,Eastside,In store,Smoothie,14.68,5.2,6
-9,Eastside,Mobile app,Cold brew,9.54,4.1,4
-9,Eastside,In store,Drip coffee,3.74,5.7,5
-9,Downtown,In store,Latte,12.76,5.5,7
-9,Downtown,In store,Tea,3.69,6.6,6
-9,Downtown,Mobile app,Latte,11.94,4.8,4
-9,Eastside,In store,Tea,4.13,5.3,6
-9,Campus,Mobile app,Cold brew,14.48,5.5,6
-9,Eastside,In store,Drip coffee,9.69,4.8,7
-9,Campus,In store,Cold brew,10.34,6.8,6
-9,Campus,Mobile app,Drip coffee,9.95,5.9,5
-9,Campus,In store,Cold brew,8.66,7.2,5
-9,Downtown,Mobile app,Cold brew,21.39,7.2,5
-9,Campus,In store,Latte,6.12,7,4
-9,Eastside,In store,Smoothie,14.54,7.8,5
-9,Downtown,Mobile app,Latte,12.22,4.5,7
-9,Downtown,In store,Latte,10.74,5.5,7
-9,Downtown,In store,Tea,14.72,10.9,5
-9,Eastside,In store,Drip coffee,9.38,4.3,6
-9,Downtown,In store,Drip coffee,8.33,5.3,6
-9,Downtown,In store,Drip coffee,7.34,5.8,6
-9,Downtown,Mobile app,Latte,17.91,4.6,7
-9,Eastside,In store,Drip coffee,7.95,7,5
-9,Eastside,In store,Tea,4.17,5.2,6
-9,Eastside,Mobile app,Smoothie,13.4,3.5,6
-9,Campus,In store,Cold brew,5.7,7.4,5
-9,Downtown,Mobile app,Latte,11.41,4.1,5
-9,Campus,In store,Cold brew,12.45,6.8,5
-9,Downtown,Mobile app,Latte,11.93,4.7,5
-9,Campus,Mobile app,Drip coffee,7.11,4.2,5
-9,Campus,Mobile app,Cold brew,5.18,5,6
-9,Campus,In store,Cold brew,15.24,8.9,4
-9,Eastside,In store,Latte,5.46,8.1,5
-9,Eastside,In store,Cold brew,4.96,4.6,7
-9,Downtown,Mobile app,Latte,10.91,3.8,6
-10,Campus,In store,Latte,17.82,6.1,6
-10,Downtown,In store,Latte,17.82,11.1,3
-10,Campus,In store,Cold brew,10.42,6.7,5
-10,Eastside,Mobile app,Smoothie,26.98,4.8,5
-10,Eastside,In store,Drip coffee,11.42,4.8,5
-10,Eastside,In store,Smoothie,12.02,5.3,7
-10,Downtown,In store,Drip coffee,7.07,6.6,6
-10,Downtown,In store,Latte,6.24,5.5,6
-10,Downtown,In store,Cold brew,5.21,7.4,6
-10,Downtown,Mobile app,Latte,15.21,3.6,7
-10,Eastside,In store,Latte,5.66,4.4,7
-10,Eastside,In store,Latte,6.4,4.8,7
-10,Campus,In store,Smoothie,7.81,6.4,3
-10,Campus,Mobile app,Cold brew,21.92,4.7,5
-10,Campus,Mobile app,Tea,3.97,4.2,6
-10,Campus,In store,Smoothie,29.52,6.2,6
-10,Eastside,In store,Tea,7.48,4.9,6
-10,Campus,Mobile app,Cold brew,9.72,7.1,5
-10,Campus,In store,Latte,6.36,5.8,6
-10,Campus,Mobile app,Cold brew,5.58,4,7
-10,Downtown,In store,Latte,9.86,4.9,6
-10,Campus,Mobile app,Latte,12.1,6.2,4
-10,Downtown,In store,Tea,8.05,7.3,4
-10,Downtown,In store,Drip coffee,6.93,6.2,6
-10,Campus,In store,Tea,4.22,7.5,5
-10,Downtown,In store,Tea,4.56,8.2,6
-10,Campus,In store,Latte,12.74,5.8,6
-10,Eastside,Mobile app,Drip coffee,7.19,4.1,6
-10,Campus,In store,Tea,3.69,6.8,4
-10,Downtown,In store,Cold brew,5.15,5.2,6
-10,Campus,In store,Latte,5.96,6.3,5
-10,Downtown,Mobile app,Latte,15.71,4.5,4
-10,Campus,In store,Cold brew,9.82,8.2,5
-10,Campus,Mobile app,Drip coffee,3.88,4.8,6
-10,Campus,In store,Cold brew,10.77,13,3
-11,Campus,Mobile app,Latte,12.2,3.9,6
-11,Downtown,In store,Latte,5.85,9.2,6
-11,Campus,Mobile app,Drip coffee,19.38,4.8,5
-11,Downtown,Mobile app,Tea,3.69,4,6
-11,Campus,In store,Latte,11.12,5.9,6
-11,Downtown,In store,Drip coffee,13.3,6.4,7
-11,Eastside,Mobile app,Latte,6.2,3.6,6
-11,Downtown,In store,Latte,6.38,5.2,7
-11,Eastside,In store,Latte,5.65,4.1,6
-11,Campus,In store,Smoothie,11.88,8.7,6
-11,Downtown,In store,Smoothie,7.73,6.3,4
-11,Campus,In store,Tea,4.5,6,6
-11,Campus,In store,Cold brew,5.25,9.4,6
-11,Eastside,In store,Smoothie,7.07,4.3,6
-11,Downtown,In store,Drip coffee,3.37,6.6,6
-11,Campus,In store,Tea,12.13,7.3,5
-11,Campus,In store,Drip coffee,3.25,5.8,5
-11,Campus,Mobile app,Smoothie,7.85,6.6,3
-11,Campus,Mobile app,Smoothie,7.16,6.8,5
-11,Campus,Mobile app,Tea,7.79,4,6
-11,Campus,In store,Tea,18.09,6.9,7
-11,Campus,Mobile app,Cold brew,9.22,4,5
-11,Campus,Mobile app,Smoothie,7.1,5.3,4
-11,Downtown,In store,Latte,11.44,7.8,7
-11,Downtown,In store,Tea,4.44,5.4,5
-11,Campus,Mobile app,Tea,7.48,6.5,4
-11,Campus,Mobile app,Cold brew,10.74,4.9,4
-11,Campus,Mobile app,Drip coffee,3.8,4.1,6
-11,Eastside,In store,Latte,5.9,8.5,4
-11,Downtown,Mobile app,Drip coffee,9.83,3.9,5
-11,Campus,In store,Cold brew,5.38,8.1,5
-11,Downtown,In store,Drip coffee,6.3,6.7,7
-11,Campus,In store,Tea,3.9,5.9,5
-11,Downtown,In store,Cold brew,5.17,6.9,6
-11,Campus,Mobile app,Latte,10.43,5.2,7
-11,Eastside,Mobile app,Smoothie,10.44,4.4,6
-11,Campus,In store,Cold brew,22.24,7.7,5
-12,Eastside,In store,Latte,18.76,8.3,4
-12,Eastside,In store,Latte,6.37,5,7
-12,Eastside,Mobile app,Smoothie,7.3,2.4,7
-12,Downtown,Mobile app,Latte,6.36,4.3,6
-12,Campus,In store,Latte,5.69,6.1,6
-12,Campus,In store,Smoothie,14.28,5.8,5
-12,Campus,In store,Latte,9.67,7.8,5
-12,Eastside,In store,Drip coffee,10.3,9.1,4
-12,Campus,In store,Latte,15.18,6.3,5
-12,Eastside,In store,Smoothie,7.76,6,5
-12,Downtown,Mobile app,Drip coffee,3.78,3.5,5
-12,Campus,Mobile app,Latte,5.88,4.1,6
-12,Downtown,In store,Drip coffee,11.5,4.7,6
-12,Eastside,In store,Tea,13.02,8.3,7
-12,Downtown,In store,Drip coffee,3.45,5.8,6
-12,Campus,Mobile app,Tea,13.14,7.4,4
-12,Campus,Mobile app,Smoothie,7.07,5,4
-12,Campus,Mobile app,Drip coffee,8.53,5.2,5
-12,Eastside,In store,Latte,5.92,5.4,5
-12,Downtown,Mobile app,Drip coffee,3.41,7.3,5
-12,Downtown,Mobile app,Drip coffee,10.03,3.4,7
-12,Campus,Mobile app,Latte,5.95,4.7,6
-12,Downtown,In store,Tea,4.39,6.3,5
-12,Campus,In store,Tea,13.02,6,7
-12,Eastside,In store,Latte,11.3,4.9,6
-12,Campus,In store,Latte,6.11,5.7,6
-12,Campus,In store,Cold brew,11.65,6.4,5
-12,Eastside,In store,Latte,11.82,6.6,4
-12,Campus,Mobile app,Tea,3.65,4.3,6
-12,Eastside,In store,Drip coffee,9.4,5.7,6
-12,Downtown,In store,Cold brew,5.18,7.2,6
-12,Campus,Mobile app,Tea,9.93,4.6,6
-12,Campus,Mobile app,Latte,6.35,5.9,6
-12,Eastside,Mobile app,Latte,11.06,4.7,5
-12,Downtown,Mobile app,Drip coffee,3.11,4.4,5
-12,Campus,Mobile app,Latte,5.6,4.4,7
-12,Eastside,In store,Latte,6.02,4.4,5
-13,Downtown,In store,Latte,5.63,7.1,5
-13,Downtown,In store,Smoothie,17.87,7.3,5
-13,Downtown,In store,Smoothie,14.3,5.2,7
-13,Downtown,In store,Smoothie,15.24,5.3,5
-13,Eastside,In store,Drip coffee,7.02,6.4,7
-13,Campus,Mobile app,Cold brew,16.47,5,5
-13,Eastside,In store,Smoothie,7.11,4.2,5
-13,Downtown,Mobile app,Latte,6.4,3.4,6
-13,Downtown,In store,Latte,5.53,5.3,5
-13,Downtown,Mobile app,Cold brew,9.92,5.3,5
-13,Eastside,In store,Drip coffee,3.89,4.9,5
-13,Campus,In store,Latte,5.57,6.9,5
-13,Campus,In store,Drip coffee,3.3,8.4,6
-13,Eastside,In store,Drip coffee,3.42,5.8,6
-13,Campus,Mobile app,Cold brew,5.37,6.1,7
-13,Eastside,Mobile app,Latte,5.61,4,6
-13,Downtown,Mobile app,Cold brew,5.17,3.6,5
-13,Campus,Mobile app,Cold brew,5.67,4.4,7
-13,Campus,Mobile app,Smoothie,7.52,5.5,6
-13,Campus,Mobile app,Latte,5.65,4.6,7
-13,Campus,In store,Latte,18.21,7.5,5
-13,Campus,In store,Cold brew,9.82,7.9,6
-13,Downtown,Mobile app,Latte,6.14,3.6,7
-13,Downtown,Mobile app,Cold brew,14.24,3.9,7
-13,Campus,In store,Smoothie,7.05,6.8,4
-13,Downtown,Mobile app,Latte,11,4.5,6
-13,Campus,In store,Cold brew,25.29,7.8,5
-13,Eastside,In store,Drip coffee,6.12,4.8,5
-13,Campus,Mobile app,Latte,19.02,5.5,5
-13,Campus,Mobile app,Latte,10.15,6.8,5
-13,Campus,Mobile app,Smoothie,15.12,4.9,7
-13,Downtown,In store,Latte,11.44,9,7
-13,Downtown,In store,Latte,6.18,5.4,6
-13,Campus,In store,Cold brew,14.94,7.3,5
-14,Downtown,Mobile app,Drip coffee,3.5,4.6,5
-14,Downtown,Mobile app,Latte,18.83,4.3,7
-14,Eastside,In store,Drip coffee,7.24,5.8,6
-14,Campus,Mobile app,Drip coffee,3.51,5,4
-14,Eastside,In store,Cold brew,9.56,5.8,6
-14,Eastside,In store,Tea,7.84,5.1,5
-14,Eastside,In store,Latte,5.98,4,7
-14,Campus,Mobile app,Drip coffee,3.55,5.1,6
-14,Downtown,In store,Drip coffee,3.14,7.7,7
-14,Campus,Mobile app,Latte,6.07,4.6,6
-14,Downtown,In store,Drip coffee,13.47,4.7,5
-14,Eastside,In store,Drip coffee,3.44,5.1,6
-14,Eastside,In store,Smoothie,13.03,6.2,6
-14,Eastside,Mobile app,Latte,5.48,4.5,7
-14,Eastside,In store,Latte,28.72,6.5,6
-14,Downtown,In store,Drip coffee,6.24,6.7,4
-14,Downtown,In store,Drip coffee,7.18,5.8,7
-15,Eastside,In store,Drip coffee,6.26,6.4,5
-15,Downtown,In store,Tea,4.02,7.9,5
-15,Campus,In store,Drip coffee,3.77,11.1,5
-15,Eastside,Mobile app,Tea,8.58,4.9,5
-15,Downtown,In store,Drip coffee,3.77,8.2,5
-15,Downtown,Mobile app,Latte,6.37,8.4,4
-15,Campus,In store,Latte,5.7,13,3
-15,Campus,In store,Latte,12.22,10.7,3
-15,Eastside,In store,Latte,5.54,7.9,5
-15,Eastside,Mobile app,Drip coffee,7.16,5.8,5
-15,Campus,Mobile app,Cold brew,9.68,8.4,4
-15,Downtown,Mobile app,Latte,5.7,6.2,6
-15,Campus,Mobile app,Drip coffee,10.84,6.2,6
-15,Eastside,Mobile app,Tea,21.84,3.8,5
-15,Campus,Mobile app,Drip coffee,12.52,6.1,4
-15,Campus,Mobile app,Latte,17.13,7.2,6
-15,Campus,Mobile app,Smoothie,7.56,7.4,6
-15,Eastside,In store,Smoothie,7.02,5.2,7
-15,Downtown,In store,Smoothie,7.74,9,5
-15,Downtown,In store,Latte,11.4,7.9,4
-15,Downtown,In store,Drip coffee,11.16,8,5
-15,Downtown,Mobile app,Latte,10.88,6.4,5
-15,Campus,In store,Smoothie,21.03,11.9,2
-15,Eastside,Mobile app,Tea,8.28,3.8,6
-15,Eastside,In store,Cold brew,5.45,7.4,7
-15,Downtown,Mobile app,Smoothie,11.54,5.2,5
-15,Eastside,Mobile app,Drip coffee,14.12,3.9,7
-15,Downtown,In store,Drip coffee,3.49,8.3,6
-15,Campus,In store,Cold brew,5.4,12.3,4
-15,Eastside,In store,Cold brew,4.78,6.7,5
-15,Campus,In store,Cold brew,16.64,13.7,4
-15,Campus,Mobile app,Tea,9.89,9.5,4
-15,Campus,Mobile app,Cold brew,5.58,6.5,5
-15,Downtown,In store,Latte,5.47,8.5,5
-15,Eastside,In store,Tea,4.3,6.8,4
-15,Downtown,In store,Latte,12.34,7.4,6
-15,Downtown,In store,Latte,11.24,8.1,5
-15,Campus,In store,Tea,4.6,12.7,4
-15,Downtown,Mobile app,Latte,17.82,7.8,5
-15,Downtown,In store,Tea,4.37,13.1,3
-15,Downtown,In store,Smoothie,7.12,8.8,5
-15,Downtown,Mobile app,Tea,8.2,8.1,4
-15,Downtown,In store,Latte,5.71,8.4,5
-15,Campus,In store,Cold brew,10.22,13,3
-15,Eastside,In store,Drip coffee,6.9,5.9,4
-16,Downtown,Mobile app,Cold brew,21.84,5.8,6
-16,Eastside,In store,Cold brew,5.67,6.7,5
-16,Campus,Mobile app,Cold brew,9.81,6.5,6
-16,Campus,In store,Latte,22.16,13.7,2
-16,Eastside,In store,Latte,18.5,6.9,5
-16,Downtown,In store,Cold brew,9.25,10.6,4
-16,Downtown,Mobile app,Latte,5.91,6.5,4
-16,Downtown,In store,Drip coffee,3.55,9,6
-16,Downtown,Mobile app,Drip coffee,3.38,7.9,4
-16,Eastside,In store,Smoothie,13.06,6.6,6
-16,Eastside,In store,Cold brew,9.48,5.8,6
-16,Campus,Mobile app,Latte,11.55,10.6,3
-16,Eastside,Mobile app,Cold brew,5.17,4.9,5
-16,Eastside,In store,Latte,30.17,6.2,7
-16,Eastside,Mobile app,Drip coffee,9.49,3,6
-16,Eastside,In store,Tea,4.4,6.1,7
-16,Downtown,In store,Drip coffee,3.66,9.6,6
-16,Campus,Mobile app,Latte,6.14,8.3,5
-16,Campus,In store,Cold brew,5.65,13.9,3
-16,Campus,Mobile app,Drip coffee,6.96,8.3,5
-16,Campus,Mobile app,Tea,7.98,7.5,5
-16,Downtown,Mobile app,Latte,12.42,8.9,4
-16,Campus,In store,Latte,5.9,13,2
-16,Eastside,In store,Latte,5.53,7.6,6
-16,Eastside,In store,Tea,9,6.9,7
-16,Eastside,In store,Drip coffee,7.34,6.5,7
-16,Downtown,Mobile app,Drip coffee,11.86,9.2,5
-16,Eastside,In store,Latte,11.53,7.7,4
-16,Campus,In store,Cold brew,5.33,13.3,3
-16,Campus,Mobile app,Latte,5.78,6.8,3
-16,Downtown,In store,Tea,4.16,10.3,4
-16,Campus,Mobile app,Drip coffee,14.72,6.4,5
-16,Eastside,Mobile app,Cold brew,5.4,4.4,6
-16,Eastside,In store,Latte,5.72,5.6,6
-16,Downtown,In store,Cold brew,16.11,8.4,4
-16,Downtown,In store,Drip coffee,2.97,11.7,3
-16,Campus,In store,Smoothie,14.38,12.1,3
-16,Downtown,In store,Drip coffee,8.91,8.1,4
-16,Campus,In store,Cold brew,5.23,14.7,4
-16,Downtown,Mobile app,Drip coffee,12.4,5.4,5
-16,Eastside,In store,Tea,9.94,6.5,7
-16,Campus,Mobile app,Latte,5.47,8.3,5
-16,Eastside,In store,Drip coffee,20.01,9.4,6
-16,Downtown,Mobile app,Latte,18.84,4.6,5
-16,Campus,In store,Cold brew,9.84,11.7,5`;
+        const EXAMPLE_CSV = `Week,Store,Channel,Drink,Price,Wait_minutes,Age,Satisfaction
+1,Campus,Mobile app,Tea,3.25,5.6,47,5
+1,Campus,Mobile app,Latte,5.25,2.7,19,6
+1,Downtown,In store,Tea,3.25,10.8,69,6
+1,Downtown,In store,Drip coffee,2.95,7.5,72,6
+1,Eastside,In store,Latte,5.25,6,61,5
+1,Downtown,Mobile app,Drip coffee,2.95,1.7,19,7
+1,Eastside,In store,Drip coffee,2.95,4.8,61,6
+1,Campus,Mobile app,Cold brew,4.75,2,21,6
+1,Eastside,Mobile app,Tea,3.25,1.3,19,7
+1,Downtown,In store,Latte,5.25,8.7,52,4
+1,Eastside,In store,Latte,5.25,5.6,31,6
+1,Campus,Mobile app,Latte,5.25,4.8,59,6
+1,Campus,Mobile app,Latte,5.25,3.5,27,5
+1,Campus,Mobile app,Cold brew,4.75,1.2,20,5
+1,Campus,Mobile app,Drip coffee,2.95,2.2,34,6
+1,Campus,In store,Tea,3.25,10,20,5
+1,Eastside,In store,Drip coffee,2.95,5.1,22,7
+1,Campus,In store,Smoothie,6.75,10.7,20,4
+1,Campus,In store,Cold brew,4.75,11.4,22,3
+1,Campus,In store,Smoothie,6.75,10.9,18,3
+1,Campus,Mobile app,Latte,5.25,2.7,19,6
+1,Downtown,In store,Cold brew,4.75,9.3,20,5
+1,Downtown,In store,Cold brew,4.75,7.7,20,6
+1,Eastside,In store,Drip coffee,2.95,4.9,45,7
+1,Downtown,Mobile app,Smoothie,6.75,1,28,4
+1,Campus,Mobile app,Drip coffee,2.95,1.6,21,6
+1,Downtown,Mobile app,Smoothie,6.75,1,19,4
+1,Downtown,Mobile app,Cold brew,4.75,4.3,38,5
+1,Campus,Mobile app,Cold brew,4.75,4.1,25,4
+1,Eastside,In store,Drip coffee,2.95,5.4,19,6
+1,Campus,In store,Cold brew,4.75,12.8,20,5
+1,Campus,Mobile app,Smoothie,6.75,2.1,19,5
+1,Eastside,Mobile app,Latte,5.25,3.2,72,6
+1,Campus,Mobile app,Latte,5.25,1.4,71,7
+1,Downtown,In store,Drip coffee,2.95,7.9,19,6
+1,Downtown,Mobile app,Tea,3.25,1.2,25,6
+1,Campus,Mobile app,Cold brew,4.75,1.7,19,7
+1,Downtown,In store,Latte,5.25,8.1,20,5
+1,Campus,Mobile app,Latte,5.25,1.8,19,6
+1,Campus,Mobile app,Smoothie,6.75,2.6,19,5
+1,Eastside,In store,Tea,3.25,5,34,6
+1,Downtown,In store,Drip coffee,2.95,8.8,20,4
+1,Downtown,In store,Smoothie,6.75,7.4,20,5
+1,Downtown,Mobile app,Latte,5.25,1,23,6
+1,Campus,Mobile app,Smoothie,6.75,2,20,7
+2,Eastside,In store,Drip coffee,2.95,4.3,55,7
+2,Campus,Mobile app,Tea,3.25,0.2,22,6
+2,Downtown,In store,Drip coffee,2.95,4.7,20,6
+2,Downtown,In store,Drip coffee,2.95,6,27,6
+2,Campus,In store,Smoothie,6.75,7.1,24,6
+2,Downtown,In store,Cold brew,4.75,7.5,23,5
+2,Eastside,In store,Drip coffee,2.95,5.1,22,7
+2,Campus,Mobile app,Cold brew,4.75,0.3,20,7
+2,Downtown,In store,Latte,5.25,6.1,19,7
+2,Campus,Mobile app,Latte,5.25,1.5,20,5
+2,Eastside,In store,Cold brew,4.75,4.7,71,7
+2,Eastside,Mobile app,Drip coffee,2.95,0.5,62,7
+2,Campus,Mobile app,Smoothie,6.75,0.7,20,6
+2,Downtown,In store,Drip coffee,2.95,6.7,20,7
+2,Downtown,In store,Cold brew,4.75,5.6,36,6
+2,Campus,Mobile app,Tea,3.25,0.8,26,7
+2,Downtown,Mobile app,Tea,3.25,2.3,20,5
+2,Downtown,Mobile app,Latte,5.25,1.6,22,5
+2,Downtown,Mobile app,Latte,5.25,0.8,38,6
+2,Eastside,In store,Latte,5.25,5,22,7
+2,Campus,In store,Cold brew,4.75,8,20,6
+2,Downtown,In store,Smoothie,6.75,6.1,21,6
+2,Eastside,Mobile app,Tea,3.25,0.4,21,7
+2,Eastside,In store,Latte,5.25,6.5,23,6
+2,Downtown,In store,Drip coffee,2.95,12.7,19,2
+2,Campus,In store,Latte,5.25,7.6,39,7
+2,Eastside,In store,Drip coffee,2.95,4.8,54,5
+2,Campus,Mobile app,Cold brew,4.75,1.1,21,5
+2,Downtown,Mobile app,Smoothie,6.75,0,48,6
+2,Campus,Mobile app,Cold brew,4.75,1.3,38,7
+2,Campus,In store,Cold brew,4.75,8.3,19,4
+2,Eastside,In store,Latte,5.25,4.2,41,7
+2,Eastside,Mobile app,Latte,5.25,0.1,43,6
+2,Campus,In store,Drip coffee,2.95,8.7,59,5
+2,Campus,In store,Smoothie,6.75,7.7,21,6
+2,Eastside,In store,Smoothie,6.75,4.2,54,7
+2,Eastside,In store,Smoothie,6.75,4,26,6
+2,Campus,Mobile app,Smoothie,6.75,0.2,27,6
+2,Campus,In store,Latte,5.25,12.1,22,4
+2,Campus,In store,Smoothie,6.75,7.4,32,7
+3,Downtown,In store,Tea,3.25,5.3,65,6
+3,Downtown,In store,Smoothie,6.75,3.9,28,7
+3,Campus,Mobile app,Smoothie,6.75,0.2,19,7
+3,Campus,In store,Drip coffee,2.95,6,23,7
+3,Downtown,Mobile app,Latte,5.25,0.6,19,6
+3,Downtown,In store,Latte,5.25,4.3,62,7
+3,Eastside,In store,Cold brew,4.75,3.7,19,7
+3,Campus,Mobile app,Cold brew,4.75,0,21,6
+3,Eastside,In store,Drip coffee,2.95,5.7,21,6
+3,Campus,Mobile app,Smoothie,6.75,1.6,21,7
+3,Campus,Mobile app,Latte,5.25,0.8,21,6
+3,Campus,In store,Drip coffee,2.95,5.2,24,5
+3,Eastside,In store,Smoothie,6.75,6.4,26,7
+3,Campus,Mobile app,Latte,5.25,0.6,31,7
+3,Downtown,Mobile app,Cold brew,4.75,1.2,19,6
+3,Eastside,Mobile app,Drip coffee,2.95,2.4,58,5
+3,Downtown,In store,Smoothie,6.75,5.4,45,6
+3,Eastside,In store,Drip coffee,2.95,4.4,21,7
+3,Eastside,In store,Tea,3.25,5.2,27,7
+3,Campus,Mobile app,Cold brew,4.75,0.3,21,7
+3,Campus,In store,Cold brew,4.75,7.8,25,6
+3,Campus,In store,Smoothie,6.75,5.8,20,7
+3,Downtown,Mobile app,Latte,5.25,0,55,7
+3,Downtown,Mobile app,Tea,3.25,0.9,23,7
+3,Downtown,In store,Latte,5.25,4.1,19,7
+3,Downtown,Mobile app,Drip coffee,2.95,0.1,19,6
+3,Campus,In store,Drip coffee,2.95,5.4,21,6
+3,Campus,Mobile app,Latte,5.25,0.9,20,6
+3,Eastside,In store,Cold brew,4.75,5.6,20,7
+3,Campus,In store,Smoothie,6.75,4.9,21,7
+3,Downtown,Mobile app,Latte,5.25,0.9,72,6
+3,Eastside,Mobile app,Latte,5.25,0.1,27,7
+3,Eastside,In store,Latte,5.25,6.2,49,7
+3,Downtown,Mobile app,Drip coffee,2.95,0.7,20,6
+3,Downtown,In store,Drip coffee,2.95,6.8,22,6
+3,Downtown,Mobile app,Latte,5.25,4.2,21,6
+4,Eastside,In store,Latte,5.25,5.2,23,7
+4,Eastside,In store,Smoothie,6.75,4.6,20,6
+4,Downtown,In store,Drip coffee,2.95,3.8,34,7
+4,Downtown,In store,Cold brew,4.75,4.4,35,7
+4,Campus,In store,Cold brew,4.75,6.5,20,6
+4,Eastside,In store,Latte,5.25,4.1,18,7
+4,Downtown,Mobile app,Smoothie,6.75,0.1,27,6
+4,Eastside,Mobile app,Smoothie,6.75,1.3,38,6
+4,Downtown,Mobile app,Tea,3.25,0.9,29,6
+4,Downtown,In store,Latte,5.25,5.5,20,6
+4,Eastside,In store,Smoothie,6.75,4.3,56,4
+4,Eastside,In store,Cold brew,4.75,7.7,23,5
+4,Campus,In store,Tea,3.25,5.8,20,6
+4,Campus,Mobile app,Cold brew,4.75,0.8,18,7
+4,Downtown,In store,Cold brew,4.75,4.7,19,5
+4,Campus,In store,Latte,5.25,5,27,6
+4,Campus,In store,Latte,5.25,6.9,29,6
+4,Downtown,Mobile app,Cold brew,4.75,1.2,70,6
+4,Eastside,In store,Cold brew,4.75,3.3,22,6
+4,Eastside,Mobile app,Latte,5.25,0.2,71,6
+4,Downtown,In store,Cold brew,4.75,7,20,5
+4,Eastside,In store,Drip coffee,2.95,5.8,32,7
+4,Eastside,Mobile app,Cold brew,4.75,5.2,69,6
+4,Campus,Mobile app,Cold brew,4.75,0.7,21,7
+4,Campus,Mobile app,Latte,5.25,0.4,22,6
+4,Eastside,In store,Cold brew,4.75,8.6,20,5
+4,Campus,In store,Cold brew,4.75,5.5,60,4
+4,Eastside,In store,Latte,5.25,5.2,41,7
+4,Campus,Mobile app,Cold brew,4.75,1.9,21,7
+4,Eastside,In store,Latte,5.25,4.6,32,6
+4,Downtown,In store,Drip coffee,2.95,4.9,22,7
+4,Eastside,In store,Drip coffee,2.95,4.2,30,5
+4,Campus,In store,Latte,5.25,7,24,7
+4,Campus,In store,Latte,5.25,7.4,20,4
+4,Downtown,Mobile app,Drip coffee,2.95,0.2,19,6
+4,Downtown,Mobile app,Tea,3.25,0.7,22,7
+5,Campus,In store,Tea,3.25,7.7,21,5
+5,Downtown,In store,Drip coffee,2.95,5.9,56,7
+5,Downtown,In store,Cold brew,4.75,5,20,6
+5,Downtown,In store,Latte,5.25,4.2,31,6
+5,Downtown,Mobile app,Smoothie,6.75,0.8,19,5
+5,Eastside,In store,Drip coffee,2.95,5.4,27,7
+5,Campus,In store,Drip coffee,2.95,9.4,20,5
+5,Downtown,Mobile app,Tea,3.25,1.5,72,7
+5,Downtown,Mobile app,Latte,5.25,0.8,21,7
+5,Downtown,In store,Tea,3.25,5,50,7
+5,Campus,In store,Latte,5.25,6.7,24,6
+5,Campus,In store,Tea,3.25,7,21,5
+5,Campus,In store,Latte,5.25,6.2,19,5
+5,Campus,Mobile app,Latte,5.25,0.3,65,6
+5,Campus,Mobile app,Latte,5.25,1.4,23,7
+5,Eastside,In store,Drip coffee,2.95,4.8,41,6
+5,Eastside,In store,Latte,5.25,3.9,65,7
+5,Eastside,Mobile app,Latte,5.25,0,19,7
+5,Campus,Mobile app,Cold brew,4.75,0.2,19,7
+5,Campus,In store,Smoothie,6.75,6.7,20,6
+5,Downtown,Mobile app,Drip coffee,2.95,0,19,7
+5,Downtown,In store,Smoothie,6.75,4.9,46,7
+5,Downtown,Mobile app,Latte,5.25,0,29,6
+5,Campus,Mobile app,Latte,5.25,0,22,7
+5,Downtown,In store,Cold brew,4.75,4.8,26,7
+5,Downtown,In store,Drip coffee,2.95,4.7,20,5
+5,Eastside,In store,Drip coffee,2.95,11,18,4
+5,Campus,Mobile app,Latte,5.25,1.1,19,6
+5,Eastside,Mobile app,Drip coffee,2.95,1.6,19,7
+5,Campus,In store,Drip coffee,2.95,5.5,46,6
+5,Downtown,In store,Drip coffee,2.95,4.9,43,6
+5,Eastside,In store,Tea,3.25,9.4,45,4
+5,Campus,In store,Cold brew,4.75,9,19,6
+5,Campus,In store,Cold brew,4.75,6.7,24,5
+5,Campus,Mobile app,Drip coffee,2.95,0.6,18,6
+5,Downtown,In store,Drip coffee,2.95,4.5,41,5
+6,Downtown,Mobile app,Drip coffee,2.95,3.7,39,5
+6,Campus,In store,Cold brew,4.75,7,24,6
+6,Campus,In store,Latte,5.25,12,26,3
+6,Eastside,In store,Cold brew,4.75,4.5,23,6
+6,Downtown,In store,Smoothie,6.75,4.1,72,7
+6,Eastside,Mobile app,Drip coffee,2.95,0.6,49,7
+6,Downtown,Mobile app,Drip coffee,2.95,0,19,7
+6,Downtown,In store,Tea,3.25,6.5,19,6
+6,Downtown,In store,Latte,5.25,4,19,6
+6,Campus,Mobile app,Smoothie,6.75,0,29,5
+6,Downtown,Mobile app,Drip coffee,2.95,0,23,6
+6,Campus,In store,Smoothie,6.75,8.1,42,5
+6,Downtown,Mobile app,Latte,5.25,0,26,7
+6,Eastside,Mobile app,Latte,5.25,0.5,25,5
+6,Eastside,Mobile app,Smoothie,6.75,1.6,28,7
+6,Eastside,In store,Latte,5.25,3.4,33,6
+6,Eastside,Mobile app,Latte,5.25,0,48,7
+6,Downtown,In store,Cold brew,4.75,4.8,67,6
+6,Campus,Mobile app,Cold brew,4.75,2.9,22,6
+6,Campus,In store,Cold brew,4.75,6.3,52,6
+6,Campus,Mobile app,Tea,3.25,0.8,25,7
+6,Campus,Mobile app,Cold brew,4.75,1.2,19,6
+6,Campus,Mobile app,Latte,5.25,0,22,7
+6,Campus,Mobile app,Tea,3.25,1.1,23,6
+6,Campus,Mobile app,Latte,5.25,1.1,23,6
+6,Downtown,In store,Latte,5.25,6.9,57,4
+6,Eastside,In store,Drip coffee,2.95,4.6,56,6
+6,Campus,In store,Drip coffee,2.95,5.4,20,7
+6,Downtown,In store,Latte,5.25,7.3,21,5
+6,Campus,In store,Latte,5.25,5.6,18,6
+6,Campus,Mobile app,Smoothie,6.75,0.7,20,5
+6,Eastside,In store,Tea,3.25,4.4,33,7
+6,Campus,Mobile app,Cold brew,4.75,0,20,6
+6,Downtown,In store,Cold brew,4.75,5.7,35,6
+6,Campus,Mobile app,Smoothie,6.75,0,20,7
+6,Campus,Mobile app,Cold brew,4.75,0,19,5
+6,Campus,In store,Tea,3.25,5.8,19,5
+7,Downtown,Mobile app,Tea,3.25,0.6,34,7
+7,Downtown,Mobile app,Drip coffee,2.95,2,38,7
+7,Campus,In store,Latte,5.25,9.4,25,5
+7,Eastside,In store,Latte,5.25,6.2,44,6
+7,Eastside,In store,Tea,3.25,4.4,21,6
+7,Campus,In store,Latte,5.25,9.9,23,4
+7,Eastside,In store,Drip coffee,2.95,7.6,27,6
+7,Downtown,Mobile app,Latte,5.25,1.8,22,6
+7,Eastside,In store,Latte,5.25,5.7,22,5
+7,Eastside,In store,Drip coffee,2.95,7.5,19,6
+7,Campus,In store,Latte,5.25,14.5,22,3
+7,Campus,In store,Tea,3.25,10.1,19,6
+7,Downtown,In store,Latte,5.25,6.4,23,6
+7,Campus,Mobile app,Latte,5.25,1.4,20,7
+7,Campus,In store,Latte,5.25,8.5,20,6
+7,Campus,In store,Cold brew,4.75,10,19,6
+7,Campus,In store,Drip coffee,2.95,8,21,6
+7,Campus,In store,Drip coffee,2.95,10.8,23,4
+7,Eastside,In store,Cold brew,4.75,4.1,35,7
+7,Campus,Mobile app,Cold brew,4.75,1.4,27,5
+7,Campus,In store,Drip coffee,2.95,8.8,20,6
+7,Eastside,In store,Tea,3.25,5.9,53,5
+7,Eastside,Mobile app,Tea,3.25,0.6,30,6
+7,Eastside,In store,Drip coffee,2.95,4.5,24,5
+7,Campus,In store,Smoothie,6.75,10.1,21,5
+7,Campus,In store,Smoothie,6.75,9.4,20,4
+7,Downtown,In store,Drip coffee,2.95,7,69,3
+7,Campus,Mobile app,Latte,5.25,1.1,22,7
+7,Campus,Mobile app,Smoothie,6.75,0.7,21,6
+7,Eastside,In store,Tea,3.25,6.8,19,6
+7,Eastside,In store,Latte,5.25,6,19,6
+7,Campus,Mobile app,Smoothie,6.75,0.6,21,6
+7,Eastside,Mobile app,Tea,3.25,0,72,7
+7,Eastside,In store,Latte,5.25,5.3,19,6
+7,Downtown,In store,Smoothie,6.75,5.8,42,7
+7,Campus,Mobile app,Latte,5.25,2.2,23,5
+7,Eastside,In store,Cold brew,4.75,5.6,25,6
+7,Downtown,Mobile app,Latte,5.25,1,45,7
+7,Downtown,In store,Latte,5.25,6.2,24,5
+7,Campus,In store,Latte,5.25,11.4,19,5
+7,Campus,In store,Latte,5.25,9.9,21,6
+8,Campus,Mobile app,Cold brew,4.75,1.5,24,6
+8,Campus,In store,Drip coffee,2.95,9.9,19,5
+8,Downtown,Mobile app,Cold brew,4.75,1.6,21,6
+8,Campus,In store,Drip coffee,2.95,10.3,21,5
+8,Campus,In store,Cold brew,4.75,13.6,20,1
+8,Eastside,In store,Latte,5.25,6.2,41,5
+8,Campus,Mobile app,Drip coffee,2.95,4,18,6
+8,Downtown,In store,Drip coffee,2.95,7.5,23,5
+8,Eastside,In store,Drip coffee,2.95,4.7,26,7
+8,Downtown,In store,Drip coffee,2.95,7.8,48,6
+8,Campus,In store,Cold brew,4.75,9.5,49,4
+8,Campus,In store,Tea,3.25,10.8,21,3
+8,Campus,In store,Cold brew,4.75,10.8,45,6
+8,Campus,In store,Smoothie,6.75,11.9,18,3
+8,Downtown,In store,Drip coffee,2.95,8.2,38,6
+8,Downtown,In store,Drip coffee,2.95,8,51,4
+8,Campus,In store,Cold brew,4.75,11,43,2
+8,Campus,In store,Latte,5.25,12.5,19,3
+8,Campus,Mobile app,Drip coffee,2.95,1.7,22,5
+8,Campus,In store,Tea,3.25,10.7,19,3
+8,Eastside,In store,Latte,5.25,6.2,19,6
+8,Eastside,In store,Latte,5.25,4.7,20,6
+8,Campus,In store,Latte,5.25,10.8,58,4
+8,Downtown,In store,Latte,5.25,6.5,20,7
+8,Campus,In store,Tea,3.25,13.8,22,3
+8,Campus,In store,Drip coffee,2.95,9.7,20,4
+8,Campus,Mobile app,Latte,5.25,3.4,19,6
+8,Eastside,In store,Cold brew,4.75,6.2,42,5
+8,Campus,Mobile app,Latte,5.25,4.7,18,6
+8,Campus,In store,Latte,5.25,10.8,18,5
+8,Eastside,Mobile app,Drip coffee,2.95,0,36,7
+8,Campus,In store,Cold brew,4.75,15.6,20,2
+8,Eastside,Mobile app,Drip coffee,2.95,0.3,21,7
+8,Downtown,Mobile app,Drip coffee,2.95,4.3,53,4
+8,Downtown,In store,Drip coffee,2.95,7.2,22,6
+8,Campus,Mobile app,Cold brew,4.75,3.5,21,6
+8,Downtown,In store,Tea,3.25,6.7,41,6
+8,Campus,Mobile app,Tea,3.25,1.6,22,7
+8,Eastside,In store,Latte,5.25,6.3,45,7
+8,Eastside,In store,Tea,3.25,4.7,21,7
+8,Downtown,Mobile app,Latte,5.25,1.5,38,7
+8,Downtown,In store,Cold brew,4.75,7.3,18,5
+8,Downtown,In store,Latte,5.25,8.5,23,6
+8,Downtown,In store,Latte,5.25,6.8,39,4
+9,Eastside,In store,Smoothie,6.75,4.4,64,4
+9,Eastside,Mobile app,Cold brew,4.75,0,20,7
+9,Eastside,In store,Drip coffee,2.95,5,19,6
+9,Downtown,In store,Latte,5.25,5.5,29,4
+9,Downtown,In store,Tea,3.25,5.6,20,7
+9,Downtown,Mobile app,Latte,5.25,0.3,46,7
+9,Eastside,In store,Tea,3.25,7.6,22,5
+9,Campus,Mobile app,Cold brew,4.75,0,18,7
+9,Eastside,In store,Drip coffee,2.95,5.7,30,7
+9,Campus,In store,Cold brew,4.75,6.6,21,7
+9,Campus,Mobile app,Drip coffee,2.95,2,19,6
+9,Campus,In store,Cold brew,4.75,6,23,6
+9,Downtown,Mobile app,Cold brew,4.75,3,31,5
+9,Campus,In store,Latte,5.25,6.4,19,7
+9,Eastside,In store,Smoothie,6.75,7.2,40,6
+9,Downtown,Mobile app,Latte,5.25,3.1,38,4
+9,Downtown,In store,Latte,5.25,5.2,18,6
+9,Downtown,In store,Tea,3.25,5.2,37,7
+9,Eastside,In store,Drip coffee,2.95,6.6,38,3
+9,Downtown,In store,Drip coffee,2.95,8.4,22,5
+9,Downtown,In store,Drip coffee,2.95,5.3,32,7
+9,Downtown,Mobile app,Latte,5.25,2.4,29,5
+9,Eastside,In store,Drip coffee,2.95,4.4,20,7
+9,Eastside,In store,Tea,3.25,3.8,58,6
+9,Eastside,Mobile app,Smoothie,6.75,0.2,19,4
+9,Campus,In store,Cold brew,4.75,5.9,21,7
+9,Downtown,Mobile app,Latte,5.25,2.2,54,6
+9,Campus,In store,Cold brew,4.75,6.7,24,5
+9,Downtown,Mobile app,Latte,5.25,0.1,22,7
+9,Campus,Mobile app,Drip coffee,2.95,2.6,19,6
+9,Campus,Mobile app,Cold brew,4.75,1.2,20,7
+9,Campus,In store,Cold brew,4.75,6.2,35,6
+9,Eastside,In store,Latte,5.25,4.3,38,5
+9,Eastside,In store,Cold brew,4.75,5,47,6
+9,Downtown,Mobile app,Latte,5.25,0.6,18,6
+10,Campus,In store,Latte,5.25,5,40,6
+10,Downtown,In store,Latte,5.25,4.5,47,7
+10,Campus,In store,Cold brew,4.75,7,20,6
+10,Eastside,Mobile app,Smoothie,6.75,0.3,37,6
+10,Eastside,In store,Drip coffee,2.95,5.1,42,5
+10,Eastside,In store,Smoothie,6.75,4.3,19,6
+10,Downtown,In store,Drip coffee,2.95,4.8,20,5
+10,Downtown,In store,Latte,5.25,4.4,20,6
+10,Downtown,In store,Cold brew,4.75,4.1,21,7
+10,Downtown,Mobile app,Latte,5.25,0.4,35,6
+10,Eastside,In store,Latte,5.25,4.7,72,6
+10,Eastside,In store,Latte,5.25,6.3,21,6
+10,Campus,In store,Smoothie,6.75,7.6,21,5
+10,Campus,Mobile app,Cold brew,4.75,2.4,52,5
+10,Campus,Mobile app,Tea,3.25,0,28,7
+10,Campus,In store,Smoothie,6.75,5.9,63,5
+10,Eastside,In store,Tea,3.25,5,65,5
+10,Campus,Mobile app,Cold brew,4.75,1.5,29,5
+10,Campus,In store,Latte,5.25,5.5,22,6
+10,Campus,Mobile app,Cold brew,4.75,0.9,25,5
+10,Downtown,In store,Latte,5.25,7,21,5
+10,Campus,Mobile app,Latte,5.25,1.5,20,7
+10,Downtown,In store,Tea,3.25,6.1,26,5
+10,Downtown,In store,Drip coffee,2.95,5,20,6
+10,Campus,In store,Tea,3.25,7,20,6
+10,Downtown,In store,Tea,3.25,5,30,6
+10,Campus,In store,Latte,5.25,7.9,19,5
+10,Eastside,Mobile app,Drip coffee,2.95,0,39,6
+10,Campus,In store,Tea,3.25,6.6,21,6
+10,Downtown,In store,Cold brew,4.75,5.9,55,6
+10,Campus,In store,Latte,5.25,5.1,18,7
+10,Downtown,Mobile app,Latte,5.25,1.1,56,5
+10,Campus,In store,Cold brew,4.75,7.7,22,7
+10,Campus,Mobile app,Drip coffee,2.95,0.2,21,6
+10,Campus,In store,Cold brew,4.75,4.5,18,7
+11,Campus,Mobile app,Latte,5.25,1.5,20,6
+11,Downtown,In store,Latte,5.25,4.8,20,6
+11,Campus,Mobile app,Drip coffee,2.95,0,26,5
+11,Downtown,Mobile app,Tea,3.25,0.3,20,4
+11,Campus,In store,Latte,5.25,5.3,19,6
+11,Downtown,In store,Drip coffee,2.95,4.3,32,6
+11,Eastside,Mobile app,Latte,5.25,1.1,57,5
+11,Downtown,In store,Latte,5.25,5.1,21,6
+11,Eastside,In store,Latte,5.25,5,38,7
+11,Campus,In store,Smoothie,6.75,5.3,21,7
+11,Downtown,In store,Smoothie,6.75,10,19,4
+11,Campus,In store,Tea,3.25,9.9,19,5
+11,Campus,In store,Cold brew,4.75,5.8,20,6
+11,Eastside,In store,Smoothie,6.75,5.6,20,7
+11,Downtown,In store,Drip coffee,2.95,4.5,22,7
+11,Campus,In store,Tea,3.25,6.3,20,5
+11,Campus,In store,Drip coffee,2.95,6.7,21,6
+11,Campus,Mobile app,Smoothie,6.75,0.3,19,4
+11,Campus,Mobile app,Smoothie,6.75,0.1,19,7
+11,Campus,Mobile app,Tea,3.25,1.4,18,6
+11,Campus,In store,Tea,3.25,7.2,32,4
+11,Campus,Mobile app,Cold brew,4.75,2,19,5
+11,Campus,Mobile app,Smoothie,6.75,0,27,7
+11,Downtown,In store,Latte,5.25,4.5,35,7
+11,Downtown,In store,Tea,3.25,5.9,19,6
+11,Campus,Mobile app,Tea,3.25,0,20,6
+11,Campus,Mobile app,Cold brew,4.75,2,40,7
+11,Campus,Mobile app,Drip coffee,2.95,0,30,7
+11,Eastside,In store,Latte,5.25,5.2,20,6
+11,Downtown,Mobile app,Drip coffee,2.95,1.6,20,5
+11,Campus,In store,Cold brew,4.75,6.6,24,7
+11,Downtown,In store,Drip coffee,2.95,4.9,39,7
+11,Campus,In store,Tea,3.25,5.9,21,5
+11,Downtown,In store,Cold brew,4.75,5.6,59,6
+11,Campus,Mobile app,Latte,5.25,0,21,7
+11,Eastside,Mobile app,Smoothie,6.75,1,19,5
+11,Campus,In store,Cold brew,4.75,5.2,32,6
+12,Eastside,In store,Latte,5.25,6,54,6
+12,Eastside,In store,Latte,5.25,3.9,20,7
+12,Eastside,Mobile app,Smoothie,6.75,0.5,28,6
+12,Downtown,Mobile app,Latte,5.25,0.8,23,7
+12,Campus,In store,Latte,5.25,5.8,19,7
+12,Campus,In store,Smoothie,6.75,6.7,18,5
+12,Campus,In store,Latte,5.25,6.5,19,5
+12,Eastside,In store,Drip coffee,2.95,5.7,29,4
+12,Campus,In store,Latte,5.25,6.3,22,5
+12,Eastside,In store,Smoothie,6.75,3.9,54,5
+12,Downtown,Mobile app,Drip coffee,2.95,0,19,7
+12,Campus,Mobile app,Latte,5.25,0,21,6
+12,Downtown,In store,Drip coffee,2.95,4.1,55,7
+12,Eastside,In store,Tea,3.25,4.5,48,6
+12,Downtown,In store,Drip coffee,2.95,10.3,51,4
+12,Campus,Mobile app,Tea,3.25,4.5,47,5
+12,Campus,Mobile app,Smoothie,6.75,0,24,5
+12,Campus,Mobile app,Drip coffee,2.95,0,19,6
+12,Eastside,In store,Latte,5.25,5.2,20,6
+12,Downtown,Mobile app,Drip coffee,2.95,2,24,7
+12,Downtown,Mobile app,Drip coffee,2.95,0,24,7
+12,Campus,Mobile app,Latte,5.25,0.2,18,6
+12,Downtown,In store,Tea,3.25,7.5,21,6
+12,Campus,In store,Tea,3.25,5.2,36,6
+12,Eastside,In store,Latte,5.25,5.2,35,6
+12,Campus,In store,Latte,5.25,5.2,19,4
+12,Campus,In store,Cold brew,4.75,5.9,20,7
+12,Eastside,In store,Latte,5.25,4.8,35,7
+12,Campus,Mobile app,Tea,3.25,0,22,6
+12,Eastside,In store,Drip coffee,2.95,9,61,6
+12,Downtown,In store,Cold brew,4.75,3.9,20,6
+12,Campus,Mobile app,Tea,3.25,1.1,19,7
+12,Campus,Mobile app,Latte,5.25,0,18,7
+12,Eastside,Mobile app,Latte,5.25,1.4,20,6
+12,Downtown,Mobile app,Drip coffee,2.95,1.5,22,5
+12,Campus,Mobile app,Latte,5.25,0.2,19,6
+12,Eastside,In store,Latte,5.25,4.4,50,5
+13,Downtown,In store,Latte,5.25,5.5,22,5
+13,Downtown,In store,Smoothie,6.75,4.9,50,7
+13,Downtown,In store,Smoothie,6.75,4.5,42,6
+13,Downtown,In store,Smoothie,6.75,4.8,27,7
+13,Eastside,In store,Drip coffee,2.95,5.4,43,7
+13,Campus,Mobile app,Cold brew,4.75,2.8,20,6
+13,Eastside,In store,Smoothie,6.75,4,40,7
+13,Downtown,Mobile app,Latte,5.25,1.1,21,6
+13,Downtown,In store,Latte,5.25,4.5,67,5
+13,Downtown,Mobile app,Cold brew,4.75,0.3,56,7
+13,Eastside,In store,Drip coffee,2.95,4.9,54,6
+13,Campus,In store,Latte,5.25,7.6,24,5
+13,Campus,In store,Drip coffee,2.95,7,22,7
+13,Eastside,In store,Drip coffee,2.95,4.1,43,6
+13,Campus,Mobile app,Cold brew,4.75,0.5,22,5
+13,Eastside,Mobile app,Latte,5.25,0.2,20,6
+13,Downtown,Mobile app,Cold brew,4.75,0.5,33,5
+13,Campus,Mobile app,Cold brew,4.75,1,20,7
+13,Campus,Mobile app,Smoothie,6.75,0.9,20,5
+13,Campus,Mobile app,Latte,5.25,0,31,6
+13,Campus,In store,Latte,5.25,5.4,57,6
+13,Campus,In store,Cold brew,4.75,9,20,5
+13,Downtown,Mobile app,Latte,5.25,0,64,7
+13,Downtown,Mobile app,Cold brew,4.75,0.2,64,7
+13,Campus,In store,Smoothie,6.75,6,19,6
+13,Downtown,Mobile app,Latte,5.25,0,52,5
+13,Campus,In store,Cold brew,4.75,6.4,27,7
+13,Eastside,In store,Drip coffee,2.95,5.2,39,6
+13,Campus,Mobile app,Latte,5.25,0.9,26,7
+13,Campus,Mobile app,Latte,5.25,0.2,21,7
+13,Campus,Mobile app,Smoothie,6.75,0.6,25,6
+13,Downtown,In store,Latte,5.25,4.6,28,7
+13,Downtown,In store,Latte,5.25,5.5,26,7
+13,Campus,In store,Cold brew,4.75,9.1,33,5
+14,Downtown,Mobile app,Drip coffee,2.95,2.2,23,5
+14,Downtown,Mobile app,Latte,5.25,1,55,7
+14,Eastside,In store,Drip coffee,2.95,7.1,19,4
+14,Campus,Mobile app,Drip coffee,2.95,0,19,6
+14,Eastside,In store,Cold brew,4.75,4.3,57,6
+14,Eastside,In store,Tea,3.25,4.8,39,5
+14,Eastside,In store,Latte,5.25,7.8,20,5
+14,Campus,Mobile app,Drip coffee,2.95,0,19,7
+14,Downtown,In store,Drip coffee,2.95,3.9,20,6
+14,Campus,Mobile app,Latte,5.25,0,23,5
+14,Downtown,In store,Drip coffee,2.95,5.3,67,6
+14,Eastside,In store,Drip coffee,2.95,5.5,25,6
+14,Eastside,In store,Smoothie,6.75,4.7,19,6
+14,Eastside,Mobile app,Latte,5.25,1.6,19,6
+14,Eastside,In store,Latte,5.25,6.6,49,7
+14,Downtown,In store,Drip coffee,2.95,7.2,26,5
+14,Downtown,In store,Drip coffee,2.95,5.3,34,7
+15,Eastside,In store,Drip coffee,2.95,5.5,54,7
+15,Downtown,In store,Tea,3.25,7.9,22,4
+15,Campus,In store,Drip coffee,2.95,13,19,5
+15,Eastside,Mobile app,Tea,3.25,2.2,45,4
+15,Downtown,In store,Drip coffee,2.95,11,72,4
+15,Downtown,Mobile app,Latte,5.25,1.5,38,6
+15,Campus,In store,Latte,5.25,12.4,21,3
+15,Campus,In store,Latte,5.25,11,19,5
+15,Eastside,In store,Latte,5.25,7.3,24,6
+15,Eastside,Mobile app,Drip coffee,2.95,1.4,46,6
+15,Campus,Mobile app,Cold brew,4.75,2.7,20,5
+15,Downtown,Mobile app,Latte,5.25,2.2,19,6
+15,Campus,Mobile app,Drip coffee,2.95,4.8,21,5
+15,Eastside,Mobile app,Tea,3.25,2.5,62,6
+15,Campus,Mobile app,Drip coffee,2.95,1.6,18,7
+15,Campus,Mobile app,Latte,5.25,2.9,21,6
+15,Campus,Mobile app,Smoothie,6.75,1.5,22,6
+15,Eastside,In store,Smoothie,6.75,6.7,20,6
+15,Downtown,In store,Smoothie,6.75,8.9,23,6
+15,Downtown,In store,Latte,5.25,8.6,19,4
+15,Downtown,In store,Drip coffee,2.95,7.6,52,5
+15,Downtown,Mobile app,Latte,5.25,2.3,23,6
+15,Campus,In store,Smoothie,6.75,10.2,28,4
+15,Eastside,Mobile app,Tea,3.25,0.4,38,5
+15,Eastside,In store,Cold brew,4.75,4.9,19,6
+15,Downtown,Mobile app,Smoothie,6.75,0.8,19,6
+15,Eastside,Mobile app,Drip coffee,2.95,1,59,6
+15,Downtown,In store,Drip coffee,2.95,7.5,50,5
+15,Campus,In store,Cold brew,4.75,11.9,20,3
+15,Eastside,In store,Cold brew,4.75,6.3,72,6
+15,Campus,In store,Cold brew,4.75,12.2,48,3
+15,Campus,Mobile app,Tea,3.25,1.3,21,6
+15,Campus,Mobile app,Cold brew,4.75,2.9,23,5
+15,Downtown,In store,Latte,5.25,8.7,43,6
+15,Eastside,In store,Tea,3.25,9.1,21,5
+15,Downtown,In store,Latte,5.25,9,60,3
+15,Downtown,In store,Latte,5.25,11.8,20,4
+15,Campus,In store,Tea,3.25,12.2,19,6
+15,Downtown,Mobile app,Latte,5.25,2.3,57,6
+15,Downtown,In store,Tea,3.25,7.3,25,5
+15,Downtown,In store,Smoothie,6.75,7.9,18,3
+15,Downtown,Mobile app,Tea,3.25,1,32,6
+15,Downtown,In store,Latte,5.25,9.2,22,6
+15,Campus,In store,Cold brew,4.75,10.2,20,5
+15,Eastside,In store,Drip coffee,2.95,7.7,36,4
+16,Downtown,Mobile app,Cold brew,4.75,0.9,29,6
+16,Eastside,In store,Cold brew,4.75,6.1,21,7
+16,Campus,Mobile app,Cold brew,4.75,1.6,20,5
+16,Campus,In store,Latte,5.25,11.7,44,5
+16,Eastside,In store,Latte,5.25,5.1,50,7
+16,Downtown,In store,Cold brew,4.75,7.4,21,5
+16,Downtown,Mobile app,Latte,5.25,1.3,21,5
+16,Downtown,In store,Drip coffee,2.95,9.2,19,6
+16,Downtown,Mobile app,Drip coffee,2.95,2,33,7
+16,Eastside,In store,Smoothie,6.75,5.7,59,6
+16,Eastside,In store,Cold brew,4.75,4.8,37,7
+16,Campus,Mobile app,Latte,5.25,6.6,22,6
+16,Eastside,Mobile app,Cold brew,4.75,1.3,52,6
+16,Eastside,In store,Latte,5.25,4.8,34,7
+16,Eastside,Mobile app,Drip coffee,2.95,2.1,72,6
+16,Eastside,In store,Tea,3.25,9.5,39,5
+16,Downtown,In store,Drip coffee,2.95,8,20,6
+16,Campus,Mobile app,Latte,5.25,2.3,19,7
+16,Campus,In store,Cold brew,4.75,12.3,18,6
+16,Campus,Mobile app,Drip coffee,2.95,1.7,22,6
+16,Campus,Mobile app,Tea,3.25,2.2,21,6
+16,Downtown,Mobile app,Latte,5.25,1.7,20,5
+16,Campus,In store,Latte,5.25,13.6,19,5
+16,Eastside,In store,Latte,5.25,7.7,20,4
+16,Eastside,In store,Tea,3.25,6.2,23,6
+16,Eastside,In store,Drip coffee,2.95,5.1,72,7
+16,Downtown,Mobile app,Drip coffee,2.95,3.4,60,4
+16,Eastside,In store,Latte,5.25,5.5,34,7
+16,Campus,In store,Cold brew,4.75,13.7,23,2
+16,Campus,Mobile app,Latte,5.25,2.6,20,6
+16,Downtown,In store,Tea,3.25,10,19,4
+16,Campus,Mobile app,Drip coffee,2.95,2.4,56,6
+16,Eastside,Mobile app,Cold brew,4.75,0.2,56,7
+16,Eastside,In store,Latte,5.25,5.1,23,5
+16,Downtown,In store,Cold brew,4.75,8.5,59,6
+16,Downtown,In store,Drip coffee,2.95,7.6,20,5
+16,Campus,In store,Smoothie,6.75,10.5,22,3
+16,Downtown,In store,Drip coffee,2.95,8.9,28,5
+16,Campus,In store,Cold brew,4.75,17.9,21,2
+16,Downtown,Mobile app,Drip coffee,2.95,2.9,44,5
+16,Eastside,In store,Tea,3.25,8.6,22,5
+16,Campus,Mobile app,Latte,5.25,2,22,5
+16,Eastside,In store,Drip coffee,2.95,5.2,33,6
+16,Downtown,Mobile app,Latte,5.25,1.1,44,6
+16,Campus,In store,Cold brew,4.75,11,20,2`;
 
         // ==================== WIRING ====================
         const uploadArea = $('uploadArea'), fileInput = $('fileInput');
