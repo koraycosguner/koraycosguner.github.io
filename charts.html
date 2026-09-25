@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Charts and Frequency Distributions | Koray Cosguner</title>
+    <title>Tabulation Tables and Graphical Illustrations | Koray Cosguner</title>
     <meta name="robots" content="noindex,nofollow">
-    <meta name="description" content="Upload a CSV and build publication-quality charts with ggplot2 in your browser: bar, pie, histogram, box, violin, line, scatter and heatmap, with live design controls and PNG, JPEG or SVG export. Created by Dr. Koray Cosguner.">
+    <meta name="description" content="Simple and cross tabulations, and publication-quality charts with ggplot2 in your browser: bar, pie, histogram, box, violin, line, scatter and heatmap, with live design controls and PNG, JPEG or SVG export. Created by Dr. Koray Cosguner.">
     <link rel="icon" type="image/jpeg" href="KCFavicon.jpg">
 
     <!-- Google Analytics -->
@@ -213,17 +213,6 @@
         .upload-area { border: 2px dashed var(--border-strong); border-radius: 8px; padding: 2.5rem; text-align: center; cursor: pointer; transition: all 0.3s; margin-bottom: 1rem; }
         .upload-area:hover, .upload-area.dragover { border-color: var(--iu-crimson); background: rgba(153, 0, 0, 0.05); }
         .upload-area input[type="file"] { display: none; }
-        .paste-box { border: 1.5px dashed var(--border-strong); border-radius: 10px; padding: .9rem 1rem; margin-bottom: 1rem; background: var(--white); }
-        .paste-label { display: block; font-weight: 700; color: var(--text-dark); margin-bottom: .45rem; }
-        .paste-box textarea { width: 100%; box-sizing: border-box; padding: .7rem .8rem; border: 1.5px solid var(--border-strong); border-radius: 8px;
-                              font-family: inherit; font-size: .95rem; line-height: 1.5; resize: vertical; margin-bottom: .6rem; }
-        .paste-box textarea:focus { outline: none; border-color: var(--iu-crimson); box-shadow: 0 0 0 3px rgba(153,0,0,.1); }
-        .paste-actions { display: flex; align-items: center; gap: .8rem; }
-        .paste-link { background: none; border: 0; padding: 0; color: var(--text-light); font: inherit; font-size: .9rem; cursor: pointer; text-decoration: underline; }
-        .paste-done { display: flex; align-items: center; gap: .6rem; flex-wrap: wrap; margin-bottom: 1rem; padding: .6rem .9rem; border-radius: 10px;
-                      background: #eef6f2; color: #14543f; font-size: .92rem; font-weight: 600; }
-        .paste-done .paste-link { color: #14543f; font-weight: 500; }
-        .paste-box[hidden], .paste-done[hidden] { display: none !important; }
         .upload-icon { font-size: 2.5rem; color: var(--iu-crimson); margin-bottom: 0.5rem; }
         .upload-text { font-size: 1rem; color: var(--text-dark); }
         .upload-hint { font-size: 0.85rem; color: var(--text-light); margin-top: 0.4rem; }
@@ -348,6 +337,18 @@
             border-radius: 6px; font-size: 0.95rem; font-family: inherit; background: var(--white);
         }
         .form-group input[type="text"]:focus { outline: none; border-color: var(--iu-crimson); }
+
+        /* --- mode switch: simple tab / cross tab / graphs --- */
+        .mode-ask { margin: 2rem 0 0.7rem; font-size: 1.05rem; font-weight: 700; color: var(--text-dark); }
+        .mode-switch { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0.8rem; margin: 0 0 0.4rem; }
+        .mode-btn { display: flex; align-items: center; justify-content: center; gap: 0.55rem; padding: 1rem 0.9rem; border: 1px solid var(--border); border-radius: 10px; background: var(--white); color: var(--text-sub); font-size: 1.05rem; font-weight: 700; line-height: 1.2; font-family: inherit; text-align: left; cursor: pointer; transition: border-color .12s, box-shadow .12s, background .12s; }
+        .mode-btn:hover { border-color: var(--border-strong); box-shadow: 0 2px 8px rgba(0,0,0,.05); }
+        .mode-btn.active { border-color: var(--iu-crimson); background: rgba(153,0,0,.035); box-shadow: 0 0 0 1px var(--iu-crimson) inset; color: var(--iu-crimson); }
+        .mode-btn svg { flex: none; }
+        .mode-sub { display: block; font-size: 0.8rem; font-weight: 500; color: var(--text-sub); margin-top: 2px; }
+        @media (max-width: 620px) { .mode-btn { flex-direction: column; font-size: 0.86rem; padding: 0.7rem 0.4rem; } .mode-sub { display: none; } }
+        .tab-actions { margin-top: 0.8rem; display: flex; gap: 0.6rem; flex-wrap: wrap; }
+        #tabTable td.tot, #tabTable tr.tot td { font-weight: 700; background: var(--surface); }
 
         /* --- step 1: chart type gallery --- */
         .type-grid {
@@ -528,9 +529,10 @@
         </div>
 
         <section class="hero">
-            <h1>Charts and Frequency Distributions</h1>
+            <h1>Tabulation Tables and Graphical Illustrations</h1>
             <ul>
                 <li>Upload a CSV, pick a figure, and shape it with live controls, no coding required</li>
+                <li>Simple tabulations (frequency, percentage or a descriptive statistic by category) and cross tabulations (frequencies or row, column or table percentages)</li>
                 <li>Fourteen chart types: bar, grouped and stacked bar, lollipop, pie, donut, histogram, density, box, violin, line, area, scatter and heatmap</li>
                 <li>Themes, color palettes, labels, legends, sorting and data labels, all updating as you click</li>
                 <li>Export as PNG, JPEG or SVG, and download the frequency table behind any count-based figure</li>
@@ -556,8 +558,8 @@
             <div class="status-message" id="statusMessage" role="status" aria-live="polite"></div>
 
             <!-- ====================== 1. Upload ====================== -->
-            <h2 class="section-title">1. Upload or Paste Your Data</h2>
-            <p class="section-hint">A CSV with a header row, or a table pasted from a slide or a spreadsheet. Your data stay in your browser and never leave your machine.</p>
+            <h2 class="section-title">1. Upload Your Data</h2>
+            <p class="section-hint">A CSV file with one row per respondent (or store, market, product) and one column per variable, with the variable names in the first row. Your data stay in your browser and never leave your machine.</p>
             <div class="upload-area" id="uploadArea" role="button" tabindex="0" aria-label="Upload a CSV file. Activate to choose a file, or drag and drop one here.">
                 <input type="file" id="fileInput" accept=".csv" aria-label="Upload CSV file">
                 <div class="upload-icon">&#128202;</div>
@@ -565,19 +567,9 @@
                 <p class="upload-hint">CSV files only, with a header row</p>
             </div>
             <div style="display:flex; align-items:center; gap:.75rem; flex-wrap:wrap; margin-bottom:1rem;">
-                <button type="button" class="btn btn-secondary btn-sm" id="pasteOpenBtn">Paste a table</button>
                 <button type="button" class="btn btn-secondary btn-sm" id="loadExampleBtn">Try example data</button>
                 <span class="section-hint" style="margin-bottom:0;">The class coffee-shop survey: 600 customers, 7 variables. Every figure in the slides comes from it.</span>
             </div>
-            <div class="paste-box" id="pasteBox" hidden>
-                <label for="pasteData" class="paste-label">Paste your table here</label>
-                <textarea id="pasteData" spellcheck="false" rows="4" placeholder="Click here, then paste (Ctrl+V, or &#8984;V on a Mac). The first row should hold the column names."></textarea>
-                <div class="paste-actions">
-                    <button type="button" class="btn btn-primary btn-sm" id="usePasteBtn">Use this table</button>
-                    <button type="button" class="paste-link" id="pasteCancelBtn">Cancel</button>
-                </div>
-            </div>
-            <div class="paste-done" id="pasteDone" hidden></div>
             <div class="preview-note" id="previewNote" style="display:none;"></div>
             <div id="previewWrap" style="display:none;">
                 <h3 style="margin-bottom:.25rem; font-size:1.05rem; color:var(--text-dark);">Data Preview (first 8 rows)</h3>
@@ -585,6 +577,45 @@
             </div>
 
             <div id="afterUpload" style="display:none;">
+
+                <!-- ====================== what to make ====================== -->
+                <div class="mode-ask">What would you like to make?</div>
+                <div class="mode-switch" role="tablist" aria-label="What to make">
+                    <button type="button" class="mode-btn" data-mode="simple" role="tab"><svg width="30" height="30" viewBox="0 0 30 30" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="5" width="24" height="20" rx="2"/><path d="M3 11h24M11 5v20"/></svg><span>Simple tab<span class="mode-sub">One categorical variable</span></span></button>
+                    <button type="button" class="mode-btn" data-mode="cross" role="tab"><svg width="30" height="30" viewBox="0 0 30 30" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="5" width="24" height="20" rx="2"/><path d="M3 11h24M3 18h24M11 5v20M19 5v20"/></svg><span>Cross tab<span class="mode-sub">Two categorical variables</span></span></button>
+                    <button type="button" class="mode-btn active" data-mode="graph" role="tab"><svg width="30" height="30" viewBox="0 0 30 30" fill="currentColor"><rect x="4" y="15" width="5" height="11"/><rect x="12.5" y="8" width="5" height="18"/><rect x="21" y="12" width="5" height="14"/></svg><span>Graphs<span class="mode-sub">Fourteen kinds of figure</span></span></button>
+                </div>
+
+                <!-- ====================== tables ====================== -->
+                <div id="tableMode" hidden>
+                    <h2 class="section-title mt" id="tabTitle">2. Choose Your Variables</h2>
+                    <p class="section-hint" id="tabIntro"></p>
+                    <div class="form-row">
+                        <div class="form-group"><label for="tabRowVar">Row variable (categorical)</label><select id="tabRowVar"></select></div>
+                        <div class="form-group" id="tabColVarWrap"><label for="tabColVar">Column variable (categorical)</label><select id="tabColVar"></select></div>
+                        <div class="form-group"><label for="tabShow" id="tabShowLabel">Column</label><select id="tabShow"></select></div>
+                        <div class="form-group" id="tabPctWrap"><label for="tabPct">Percent of</label>
+                            <select id="tabPct"><option value="row">Each row (rows add to 100%)</option><option value="col">Each column (columns add to 100%)</option><option value="all">The whole table (all cells add to 100%)</option></select></div>
+                        <div class="form-group" id="tabNumWrap"><label for="tabNum">Descriptive statistic of (numeric)</label><select id="tabNum"></select></div>
+                        <div class="form-group" id="tabStatWrap"><label for="tabStat">Which statistic</label><select id="tabStat"></select></div>
+                    </div>
+                    <h2 class="section-title mt" id="tabOutTitle">3. Your Table</h2>
+                    <p class="section-hint" id="tabHint"></p>
+                    <div class="result-table-wrap"><table class="result-table" id="tabTable"></table></div>
+                    <div class="tab-actions"><button class="btn btn-secondary btn-sm" id="tabCsvBtn" type="button">Download table (CSV)</button></div>
+                    <details class="r-code">
+                        <summary>Show R code (with comments)</summary>
+                        <div class="code-wrap">
+                            <button type="button" class="copy-btn" id="copyTabRBtn" aria-label="Copy R code">
+                                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                                <span>Copy</span>
+                            </button>
+                            <pre id="tabR"></pre>
+                        </div>
+                    </details>
+                </div>
+
+                <div id="figureMode">
 
                 <!-- ====================== 2. Chart type ====================== -->
                 <h2 class="section-title mt">2. Choose a Figure</h2>
@@ -667,6 +698,7 @@
                         <pre id="rCodeFull"></pre>
                     </div>
                 </details>
+                </div> <!-- end figureMode -->
             </div>
         </div>
 
@@ -844,6 +876,7 @@ res`);
                 $('afterUpload').style.display = '';
                 buildTypeGallery();
                 selectType(firstUsableType());
+                if (mode !== 'graph') { buildTableControls(); renderTable(); }
                 hideStatus();
             } catch (err) {
                 showStatus('Could not profile the data: ' + (err.message || err), 'error', 8000);
@@ -1406,6 +1439,149 @@ res`;
             $('freqWrap').style.display = '';
             $('downloadFreqBtn').style.display = '';
         }
+
+        // ==================== TABLES: SIMPLE TAB AND CROSS TAB ====================
+        // Worked out here in the browser from the loaded CSV, so they appear at once.
+        let mode = 'graph', lastTabCSV = '', tabCache = { text: null, head: [], rows: [] };
+        function tabData() {
+            if (tabCache.text !== csvText) {
+                const all = parseCSV(csvText.replace(/\s+$/, '')).map(r => r.map(c => String(c).replace(/^"|"$/g, '')));
+                tabCache = { text: csvText, head: all[0] || [], rows: all.slice(1).filter(r => r.some(c => String(c).trim() !== '')) };
+            }
+            return tabCache;
+        }
+        const isMiss = v => v === undefined || String(v).trim() === '' || /^(NA|N\/A|null)$/i.test(String(v).trim());
+        const numOf = v => { const t = String(v).trim().replace(/[$,]/g, ''); return t !== '' && isFinite(+t) ? +t : null; };
+        function levelsOf(vals) {
+            const u = [...new Set(vals)];
+            return u.every(v => numOf(v) !== null) ? u.sort((a, b) => numOf(a) - numOf(b))
+                                                   : u.sort((a, b) => a.localeCompare(b, undefined, { numeric: true }));
+        }
+        const TSTAT = {
+            mean:   a => a.reduce((x, y) => x + y, 0) / a.length,
+            sum:    a => a.reduce((x, y) => x + y, 0),
+            median: a => { const b = a.slice().sort((x, y) => x - y), m = b.length >> 1; return b.length % 2 ? b[m] : (b[m - 1] + b[m]) / 2; },
+            min:    a => Math.min(...a),
+            max:    a => Math.max(...a),
+            range:  a => Math.max(...a) - Math.min(...a),
+            var:    a => { if (a.length < 2) return NaN; const m = TSTAT.mean(a); return a.reduce((x, y) => x + (y - m) ** 2, 0) / (a.length - 1); },
+            sd:     a => Math.sqrt(TSTAT.var(a)),
+            n:      a => a.length
+        };
+        const fmtNum = v => !isFinite(v) ? 'NA' : Number.isInteger(v) ? v.toLocaleString('en-US') : v.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        const fmtPct = v => isFinite(v) ? v.toFixed(1) + '%' : 'NA';
+
+        function setMode(m) {
+            mode = m;
+            document.querySelectorAll('.mode-btn').forEach(b => b.classList.toggle('active', b.dataset.mode === m));
+            $('tableMode').hidden = m === 'graph';
+            $('figureMode').hidden = m !== 'graph';
+            if (m !== 'graph') { buildTableControls(); renderTable(); }
+        }
+        document.querySelectorAll('.mode-btn').forEach(b => b.addEventListener('click', () => setMode(b.dataset.mode)));
+
+        function buildTableControls() {
+            const cross = mode === 'cross';
+            fill($('tabRowVar'), catVars, true);
+            fill($('tabColVar'), catVars, true);
+            if (cross && $('tabColVar').value === $('tabRowVar').value && catVars.length > 1)
+                $('tabColVar').value = catVars.find(v => v !== $('tabRowVar').value);
+            const opts = cross ? [['freq', 'Frequencies'], ['pct', 'Percentages']]
+                               : [['freq', 'Frequency'], ['pct', 'Percentage']].concat(numericVars.length ? [['stat', 'Descriptive statistic of another variable']] : []);
+            const prev = $('tabShow').value;
+            $('tabShow').innerHTML = opts.map(([v, t]) => `<option value="${v}">${t}</option>`).join('');
+            $('tabShow').value = opts.some(o => o[0] === prev) ? prev : 'freq';
+            $('tabShowLabel').textContent = cross ? 'Show' : 'Column';
+            fill($('tabNum'), numericVars, true);
+            if (!$('tabStat').options.length) $('tabStat').innerHTML = ALL_STATS.map(k => `<option value="${k}">${STATS[k].label}</option>`).join('');
+            const show = $('tabShow').value;
+            $('tabColVarWrap').hidden = !cross;
+            $('tabPctWrap').hidden = !(cross && show === 'pct');
+            $('tabNumWrap').hidden = $('tabStatWrap').hidden = !(!cross && show === 'stat');
+            $('tabIntro').textContent = cross
+                ? 'A cross tabulation shows how two categorical variables relate: the row variable (often the independent variable) against the column variable (often the dependent variable).'
+                : 'A simple tabulation puts the levels of one categorical variable in the rows, and a frequency, a percentage or a descriptive statistic of another variable in the column.';
+        }
+
+        function renderTable() {
+            const { head, rows } = tabData();
+            const cross = mode === 'cross', show = $('tabShow').value;
+            const rv = $('tabRowVar').value, ri = allVars.indexOf(rv);
+            if (ri < 0) { $('tabTable').innerHTML = ''; return; }
+            const rName = head[ri] || rv;
+            let H = [], B = [], T = null, hint = '', rcode = [];
+            const q = v => /[",\n]/.test(v) ? '"' + String(v).replace(/"/g, '""') + '"' : String(v);
+            const dv = n => /^[A-Za-z.][A-Za-z0-9._]*$/.test(n) ? `df$${n}` : `df[[${rStr(n)}]]`;
+            rcode.push('df <- read.csv("your_data.csv")   # your data, one row per respondent');
+            if (!cross) {
+                const keep = rows.filter(r => !isMiss(r[ri]));
+                const levs = levelsOf(keep.map(r => String(r[ri]).trim()));
+                if (show === 'stat') {
+                    const nv = $('tabNum').value, ni = allVars.indexOf(nv), st = $('tabStat').value, f = TSTAT[st];
+                    const nName = head[ni] || nv;
+                    const vals = lv => keep.filter(r => String(r[ri]).trim() === lv).map(r => numOf(r[ni])).filter(v => v !== null);
+                    H = [rName, STATS[st].y(nName), 'Values used'];
+                    const fs = v => ['mean', 'median', 'var', 'sd'].includes(st) && isFinite(v) ? v.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : fmtNum(v);
+                    B = levs.map(lv => { const a = vals(lv); return [lv, a.length ? fs(f(a)) : 'NA', a.length]; });
+                    const all = keep.map(r => numOf(r[ni])).filter(v => v !== null);
+                    T = ['All', all.length ? fs(f(all)) : 'NA', all.length];
+                    hint = `The ${STATS[st].word} of ${nName} for each level of ${rName}, and how many values it is based on.`;
+                    rcode.push(`# the ${STATS[st].word} of ${nv} in each level of ${rv}`);
+                    rcode.push(`aggregate(${nv} ~ ${rv}, data = df, FUN = ${STATS[st].rs})`);
+                } else {
+                    const cnt = levs.map(lv => keep.filter(r => String(r[ri]).trim() === lv).length), N = keep.length;
+                    if (show === 'pct') {
+                        H = [rName, 'Percentage']; B = levs.map((lv, i) => [lv, fmtPct(100 * cnt[i] / N)]); T = ['Total', '100.0%'];
+                        hint = `Each level's share of the ${N} rows with a value of ${rName}.`;
+                        rcode.push(`# each level's share of ${rv}, in %`, `round(100 * prop.table(table(${dv(rv)})), 1)`);
+                    } else {
+                        H = [rName, 'Frequency']; B = levs.map((lv, i) => [lv, cnt[i]]); T = ['Total', N];
+                        hint = `How many rows fall in each level of ${rName}.`;
+                        rcode.push(`# how many rows fall in each level of ${rv}, with the total`, `addmargins(table(${dv(rv)}))`);
+                    }
+                }
+            } else {
+                const cv = $('tabColVar').value, ci = allVars.indexOf(cv), cName = head[ci] || cv;
+                const keep = rows.filter(r => !isMiss(r[ri]) && !isMiss(r[ci]));
+                const rl = levelsOf(keep.map(r => String(r[ri]).trim())), cl = levelsOf(keep.map(r => String(r[ci]).trim()));
+                const M = rl.map(a => cl.map(b => keep.filter(r => String(r[ri]).trim() === a && String(r[ci]).trim() === b).length));
+                const rt = M.map(r => r.reduce((x, y) => x + y, 0)), ct = cl.map((_, j) => M.reduce((x, r) => x + r[j], 0)), N = keep.length;
+                H = [`${rName} ↓  ${cName} →`].concat(cl, ['Total']);
+                if (show === 'pct') {
+                    const base = $('tabPct').value;
+                    const den = (i, j) => base === 'row' ? rt[i] : base === 'col' ? ct[j] : N;
+                    B = rl.map((a, i) => [a].concat(M[i].map((c, j) => fmtPct(100 * c / den(i, j))), [fmtPct(base === 'col' ? 100 * rt[i] / N : base === 'row' ? 100 : 100 * rt[i] / N)]));
+                    T = ['Total'].concat(ct.map(c => fmtPct(base === 'col' ? 100 : 100 * c / N)), ['100.0%']);
+                    hint = base === 'row' ? `Each row adds to 100%: the split of ${cName} within each level of ${rName}. The Total row is the overall split.`
+                         : base === 'col' ? `Each column adds to 100%: the split of ${rName} within each level of ${cName}. The Total column is the overall split.`
+                         : `Every cell's share of all ${N} rows; the whole table adds to 100%.`;
+                    const m = base === 'row' ? ', 1' : base === 'col' ? ', 2' : '';
+                    rcode.push(`tab <- table(${dv(rv)}, ${dv(cv)})   # rows: ${rv}, columns: ${cv}`,
+                               `round(100 * prop.table(tab${m}), 1)   # ${base === 'row' ? 'each row adds to 100%' : base === 'col' ? 'each column adds to 100%' : 'all cells add to 100%'}`);
+                } else {
+                    B = rl.map((a, i) => [a].concat(M[i], [rt[i]]));
+                    T = ['Total'].concat(ct, [N]);
+                    hint = `How many rows fall in every combination of ${rName} (rows) and ${cName} (columns), with totals.`;
+                    rcode.push(`tab <- table(${dv(rv)}, ${dv(cv)})   # rows: ${rv}, columns: ${cv}`, `addmargins(tab)   # the counts, with row and column totals`);
+                }
+            }
+            const cell = (c, i, last) => `<td${i === last ? ' class="tot"' : ''}>${escapeHtml(c)}</td>`;
+            const lastCol = cross ? H.length - 1 : -1;
+            $('tabTable').innerHTML = '<thead><tr>' + H.map(h => `<th>${escapeHtml(h)}</th>`).join('') + '</tr></thead><tbody>' +
+                B.map(r => '<tr>' + r.map((c, i) => cell(c, i, lastCol)).join('') + '</tr>').join('') +
+                (T ? '<tr class="tot">' + T.map(c => `<td>${escapeHtml(c)}</td>`).join('') + '</tr>' : '') + '</tbody>';
+            $('tabHint').textContent = hint;
+            lastTabCSV = [H].concat(B, T ? [T] : []).map(r => r.map(q).join(',')).join('\n');
+            $('tabR').textContent = `# ${cross ? 'Cross tabulation' : 'Simple tabulation'} from the Charts tool\n` + rcode.join('\n');
+        }
+        ['tabRowVar', 'tabColVar', 'tabShow', 'tabPct', 'tabNum', 'tabStat'].forEach(id =>
+            $(id).addEventListener('change', () => { buildTableControls(); renderTable(); }));
+        $('tabCsvBtn').addEventListener('click', () => downloadCSV(lastTabCSV, mode === 'cross' ? 'cross-tab.csv' : 'simple-tab.csv'));
+        $('copyTabRBtn').addEventListener('click', async () => {
+            try { await navigator.clipboard.writeText($('tabR').textContent);
+                  const s = $('copyTabRBtn').querySelector('span'); s.textContent = 'Copied'; setTimeout(() => s.textContent = 'Copy', 1600); }
+            catch { showStatus('Could not copy to the clipboard.', 'error', 3000); }
+        });
 
         // ==================== R CODE FOR STUDENTS ====================
         function buildDisplayR(built) {
@@ -2327,33 +2503,6 @@ ${body.trim()}`;
         uploadArea.addEventListener('drop', e => { e.preventDefault(); uploadArea.classList.remove('dragover'); if (e.dataTransfer.files.length) handleFile(e.dataTransfer.files[0]); });
         fileInput.addEventListener('change', e => { if (e.target.files.length) handleFile(e.target.files[0]); e.target.value = ''; });
         $('loadExampleBtn').addEventListener('click', () => loadCsvText(EXAMPLE_CSV));
-        // pasted tables: a spreadsheet copy arrives tab-separated, so turn it into CSV first
-        function pastedToCsv(t) {
-            t = t.replace(/\r\n?/g, '\n').replace(/^\n+|\s+$/g, '');
-            if (!t.split('\n')[0].includes('\t')) return t;
-            const cell = c => /[",]/.test(c) ? '"' + c.replace(/"/g, '""') + '"' : c;
-            return t.split('\n').map(line => line.split('\t').map(c => cell(c.trim())).join(',')).join('\n');
-        }
-        function openPaste() { $('pasteBox').hidden = false; $('pasteDone').hidden = true; $('pasteData').value = ''; $('pasteData').focus(); }
-        function usePaste() {
-            const t = $('pasteData').value;
-            if (!t.trim()) { showStatus('Paste your table into the box first.', 'error', 4000); return; }
-            const csv = pastedToCsv(t), lines = csv.split('\n'), cols = lines[0].split(',').map(c => c.replace(/^"|"$/g, '').trim());
-            loadCsvText(csv);
-            $('previewNote').style.display = 'none';          // the green line below says it already
-            $('pasteBox').hidden = true;
-            $('pasteDone').hidden = false;
-            $('pasteDone').innerHTML = `&#10003; Table loaded: ${lines.length - 1} rows, ${cols.length} columns (${cols.map(escapeHtml).join(', ')}). It is shown in the preview below.` +
-                ' <button type="button" class="paste-link" id="pasteAgainBtn">Paste a different table</button>';
-            $('pasteAgainBtn').addEventListener('click', openPaste);
-        }
-        $('pasteOpenBtn').addEventListener('click', openPaste);
-        $('pasteCancelBtn').addEventListener('click', () => { $('pasteBox').hidden = true; });
-        $('usePasteBtn').addEventListener('click', usePaste);
-        $('pasteData').addEventListener('paste', () => setTimeout(usePaste, 0));
-        // a new file or the example replaces a pasted table
-        $('loadExampleBtn').addEventListener('click', () => { $('pasteDone').hidden = true; $('pasteBox').hidden = true; });
-        $('fileInput').addEventListener('change', () => { $('pasteDone').hidden = true; $('pasteBox').hidden = true; });
         $('varMain').addEventListener('change', () => { updateStat(); draw(); });
         $('varSecond').addEventListener('change', () => { updateStat(); draw(); });
         $('varValue').addEventListener('change', () => { updateStat(); draw(); });
