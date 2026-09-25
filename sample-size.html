@@ -623,6 +623,10 @@
                         <span>One column or many. A header row is detected automatically; empty cells are skipped.</span>
                     </label>
                     <div id="dsFileInfo" class="tk-fileinfo" hidden></div>
+                    <div class="form-group" id="dsColWrap" style="margin-top:.8rem;max-width:360px;" hidden>
+                        <label for="dsCol">Variable to show in detail</label>
+                        <select id="dsCol"></select>
+                    </div>
                 </div>
 
                 <div class="tk-row">
@@ -713,7 +717,7 @@
                 <div id="nFrom" class="tk-from" hidden></div>
                 <div class="tk-card" data-n-pane="summary">
                     <div class="form-group" style="max-width:320px;">
-                        <label for="nSd">Standard deviation (s, or &sigma; if you know it)</label>
+                        <label for="nSd">Sample standard deviation (s)</label>
                         <input type="number" id="nSd" step="any" min="0" placeholder="s">
                     </div>
                 </div>
@@ -733,6 +737,17 @@
                         <label for="nCol">Variable</label>
                         <select id="nCol"></select>
                     </div>
+                </div>
+                <div class="tk-card tk-sigma">
+                    <label class="tk-check" for="nKnowSigma"><input type="checkbox" id="nKnowSigma"> I know the true population standard deviation (&sigma;)</label>
+                    <div id="nSigmaWrap" style="margin-top:.6rem;display:flex;align-items:flex-end;gap:1rem;flex-wrap:wrap;" hidden>
+                        <div class="form-group" style="max-width:260px;margin:0;">
+                            <label for="nSigma">Population standard deviation (&sigma;)</label>
+                            <input type="number" id="nSigma" step="any" min="0" placeholder="&sigma;">
+                        </div>
+                        <div id="nSigmaSq" class="tk-note" style="margin:0 0 .6rem;"></div>
+                    </div>
+                    <div class="tk-note" style="margin-top:.45rem;">When &sigma; is known, &sigma;<sup>2</sup> replaces s<sup>2</sup> in the formula. It rarely is: it has to come from a census or earlier research.</div>
                 </div>
                 <div class="tk-card">
                     <div class="form-group" style="max-width:320px;">
@@ -913,6 +928,8 @@
                 var num = p.cols.filter(function (c) { return c.numeric; }), txt = p.cols.filter(function (c) { return !c.numeric; });
                 dsCsv = { name: file.name, cols: num, rows: p.rows };
                 dsSel = 0;
+                $('dsCol').innerHTML = num.map(function (c, i) { return '<option value="' + i + '">' + esc(c.name) + '</option>'; }).join('');
+                $('dsColWrap').hidden = !num.length;
                 info.innerHTML = '<b>' + esc(file.name) + '</b>: ' + fmt(p.rows, 0) + ' rows, ' + num.length + ' numeric column' + (num.length === 1 ? '' : 's') +
                     (p.header ? ', variable names read from the first row' : ', no variable names in the first row, so the columns are numbered') +
                     (txt.length ? ' (text columns skipped here: ' + txt.map(function (c) { return esc(c.name); }).join(', ') + '; chart them in Analytics Tool 2: Charts)' : '') + '.';
@@ -920,6 +937,7 @@
             });
         }
         $('dsFile').addEventListener('change', function () { if (this.files[0]) loadDsCsv(this.files[0]); });
+        $('dsCol').addEventListener('change', function () { dsSel = +this.value; describe(); });
         ['dragenter', 'dragover'].forEach(function (ev) { $('dsDrop').addEventListener(ev, function (e) { e.preventDefault(); this.classList.add('over'); }); });
         ['dragleave', 'drop'].forEach(function (ev) { $('dsDrop').addEventListener(ev, function (e) { e.preventDefault(); this.classList.remove('over'); }); });
         $('dsDrop').addEventListener('drop', function (e) { if (e.dataTransfer.files[0]) loadDsCsv(e.dataTransfer.files[0]); });
@@ -1059,7 +1077,7 @@
         }
         $('dsSummary').addEventListener('click', function (e) {
             var tr = e.target.closest('[data-sel]'); if (!tr) return;
-            dsSel = +tr.getAttribute('data-sel'); describe();
+            dsSel = +tr.getAttribute('data-sel'); $('dsCol').value = String(dsSel); describe();
         });
         $('dsData').addEventListener('input', function () { dsLabel = 'Your data'; describe(); });
         qsa('input[name="dskind"]').forEach(function (r) { r.addEventListener('change', describe); });
@@ -1195,6 +1213,7 @@
         function nSigma() {
             if (nMode === 'summary') {
                 var sd = num('nSd');
+                if (!isFinite(sd) && $('nKnowSigma').checked) return { s: NaN };
                 if (!isFinite(sd)) return { error: 'Fill in the standard deviation, or enter a test sample above.', quiet: true };
                 if (sd < 0) return { error: 'The standard deviation cannot be negative.' };
                 return { s: sd };
@@ -1221,15 +1240,19 @@
             if (d.error) { box.innerHTML = '<div class="' + (d.quiet ? 'ss-note' : 'ss-bad') + '">' + d.error + '</div>'; return; }
             if (d.fromData) given.innerHTML = '<div class="tk-given">From ' + esc(d.label) + ': n = <b>' + fmt(d.n, 0) + '</b> &middot; s = <b>' + fmt(d.s) + '</b>' +
                 (d.missing ? ' (' + fmt(d.missing, 0) + ' empty cell' + (d.missing === 1 ? '' : 's') + ' skipped)' : '') + '</div>';
+            var useSigma = $('nKnowSigma').checked, sigma = num('nSigma');
+            $('nSigmaSq').innerHTML = useSigma && sigma > 0 ? '&sigma;<sup>2</sup> = ' + fmt(sigma) + '<sup>2</sup> = <b>' + fmt(sigma * sigma) + '</b>' : '';
+            if (useSigma && !(sigma > 0)) { box.innerHTML = '<div class="ss-note">Enter &sigma;, or untick the box to use the sample s.</div>'; return; }
             if (!isFinite(e)) { box.innerHTML = '<div class="ss-note">Now fill in the allowed sampling error.</div>'; return; }
             if (e <= 0) { box.innerHTML = '<div class="ss-bad">The allowed sampling error must be greater than zero.</div>'; return; }
-            var sd = d.s;
+            var sd = useSigma ? sigma : d.s, sym = useSigma ? '&sigma;' : 's';
             box.innerHTML = '<div class="tk-cis">' + CI_LEVELS.map(function (L) {
                     var zz = zFor(L), raw = zz * zz * sd * sd / (e * e), n = Math.ceil(raw - 1e-9);
                     return '<div class="ss-out answer"><div class="ss-big">n = ' + fmt(n, 0) + '<small>at ' + L + '% confidence</small></div>' +
-                        '<div class="ss-work">n = <em>z</em><sup>2</sup>s<sup>2</sup> / e<sup>2</sup> = ' + zPow(L) + ' &middot; ' + fmt(sd) + '<sup>2</sup> / ' + fmt(e) + '<sup>2</sup>' +
+                        '<div class="ss-work">n = <em>z</em><sup>2</sup>' + sym + '<sup>2</sup> / e<sup>2</sup> = ' + zPow(L) + ' &middot; ' + fmt(sd) + '<sup>2</sup> / ' + fmt(e) + '<sup>2</sup>' +
                         ' = ' + fmt(raw) + ' &rarr; <em>' + fmt(n, 0) + '</em></div></div>';
                 }).join('') + '</div>' +
+                (useSigma ? '<div class="ss-note">Using the known population &sigma; = ' + fmt(sigma) + ' (&sigma;<sup>2</sup> = ' + fmt(sigma * sigma) + ') in place of the sample s.</div>' : '') +
                 '<div class="ss-note">Rounded up: a fractional respondent is not a respondent. Halving the allowed error multiplies the required sample by four, because n depends on e<sup>2</sup>.</div>';
         }
         function loadNCsv(file) {
@@ -1252,6 +1275,8 @@
         ['dragleave', 'drop'].forEach(function (ev) { $('nDrop').addEventListener(ev, function (e) { e.preventDefault(); this.classList.remove('over'); }); });
         $('nDrop').addEventListener('drop', function (e) { if (e.dataTransfer.files[0]) loadNCsv(e.dataTransfer.files[0]); });
         $('nData').addEventListener('input', nSize);
+        $('nKnowSigma').addEventListener('change', function () { $('nSigmaWrap').hidden = !this.checked; nSize(); });
+        $('nSigma').addEventListener('input', nSize);
         $('nCol').addEventListener('change', nSize);
         ['ciMean', 'ciSd', 'ciN'].forEach(function (id) { $(id).addEventListener('input', function () { $('ciFrom').hidden = true; ci(); }); });
         $('nSd').addEventListener('input', function () { $('nFrom').hidden = true; nSize(); });
