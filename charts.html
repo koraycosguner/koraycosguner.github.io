@@ -776,16 +776,40 @@
 
         // ==================== PALETTES ====================
         const PALETTES = {
-            crimson:   { name: 'IU Crimson',      kind: 'single',    colors: ['#990000'] },
-            ramp:      { name: 'Crimson ramp',    kind: 'ramp',      colors: ['#eccfcf', '#990000'] },
-            highlight: { name: 'Highlight',       kind: 'highlight', colors: ['#990000', '#d6d3d1'] },
+            teal:      { name: 'Teal',            kind: 'single',    colors: ['#2a9d8f'] },
+            indigo:    { name: 'Indigo',          kind: 'single',    colors: ['#3d5a80'] },
+            charcoal:  { name: 'Charcoal',        kind: 'single',    colors: ['#374151'] },
+            crimson:   { name: 'Crimson',         kind: 'single',    colors: ['#990000'] },
+            highlight: { name: 'Highlight',       kind: 'highlight', colors: ['#e76f51', '#d6d3d1'] },
             okabe:     { name: 'Colorblind safe', kind: 'qual',      colors: ['#0072B2','#D55E00','#009E73','#CC79A7','#E69F00','#56B4E9','#F0E442'] },
+            vivid:     { name: 'Vivid',           kind: 'qual',      colors: ['#4e79a7','#f28e2b','#e15759','#76b7b2','#59a14f','#edc948','#b07aa1','#9c755f'] },
             ocean:     { name: 'Ocean',           kind: 'qual',      colors: ['#1f4e79','#2a9d8f','#457b9d','#219ebc','#8ecae6','#023047'] },
-            warm:      { name: 'Warm',            kind: 'qual',      colors: ['#990000','#c1666b','#e76f51','#f4a261','#e9c46a','#d4a373'] },
+            warm:      { name: 'Warm',            kind: 'qual',      colors: ['#9b2226','#c1666b','#e76f51','#f4a261','#e9c46a','#d4a373'] },
             forest:    { name: 'Forest',          kind: 'qual',      colors: ['#1b4332','#2d6a4f','#40916c','#52b788','#74c69d','#95d5b2'] },
             slate:     { name: 'Slate',           kind: 'qual',      colors: ['#0f172a','#334155','#475569','#64748b','#94a3b8','#cbd5e1'] },
+            blues:     { name: 'Blues',           kind: 'ramp',      colors: ['#deebf7', '#6baed6', '#08519c'] },
+            ramp:      { name: 'Teal ramp',       kind: 'ramp',      colors: ['#d8f3ee', '#2a9d8f', '#134e4a'] },
             viridis:   { name: 'Viridis',         kind: 'ramp',      colors: ['#440154','#21918c','#fde725'] }
         };
+        // A polished starting design for each figure: its own palette and options.
+        // Students can change any of it; switching the figure type restarts from that type's default.
+        const DEFAULTS = {
+            bar:        { pal: 'highlight', flip: false, sort: true, labels: true },
+            barGrouped: { pal: 'okabe',     flip: false, labels: true },
+            barStacked: { pal: 'vivid',     flip: false, labels: true },
+            lollipop:   { pal: 'indigo',    flip: true,  sort: true, labels: true },
+            pie:        { pal: 'vivid',     sort: true,  labels: true },
+            donut:      { pal: 'ocean',     sort: true,  labels: true },
+            hist:       { pal: 'teal' },
+            density:    { pal: 'indigo' },
+            box:        { pal: 'ocean',     flip: false },
+            violin:     { pal: 'forest',    flip: false },
+            line:       { pal: 'indigo',    points: true },
+            area:       { pal: 'teal' },
+            scatter:    { pal: 'teal',      trend: true },
+            heatmap:    { pal: 'blues',     labels: true }
+        };
+        const DEF = k => DEFAULTS[k] || { pal: 'teal' };
         const THEMES = {
             editorial: 'Editorial (house)', minimal: 'Minimal', classic: 'Classic',
             light: 'Light', bw: 'Black and white', gray: 'Gray', void: 'Bare'
@@ -997,7 +1021,7 @@ res`);
         function buildDesignPanel() {
             const k = chartType;
             const palRow = Object.entries(PALETTES).map(([id, p]) => `
-                <label class="pal"><input type="radio" name="pal" value="${id}" ${id === 'crimson' ? 'checked' : ''}>
+                <label class="pal"><input type="radio" name="pal" value="${id}" ${id === DEF(k).pal ? 'checked' : ''}>
                     <span class="chips">${p.colors.slice(0,6).map(c => `<i style="background:${c}"></i>`).join('')}</span>
                     <span class="pname">${p.name}</span></label>`).join('');
 
@@ -1040,13 +1064,13 @@ res`);
             <div class="opt-block">
                 <div class="opt-title">Options</div>
                 <div class="chk-list">
-                    ${has(k,'flip')    ? `<label><input type="checkbox" id="optFlip" ${['bar','lollipop'].includes(k)?'checked':''}> Horizontal</label>` : ''}
-                    ${has(k,'sort')    ? `<label><input type="checkbox" id="optSort" checked> Sort by size</label>` : ''}
+                    ${has(k,'flip')    ? `<label><input type="checkbox" id="optFlip" ${DEF(k).flip ? 'checked' : ''}> Horizontal</label>` : ''}
+                    ${has(k,'sort')    ? `<label><input type="checkbox" id="optSort" ${DEF(k).sort !== false ? 'checked' : ''}> Sort by size</label>` : ''}
                     ${has(k,'labels')  ? `<label><input type="checkbox" id="optLabels" checked> Show data labels</label>` : ''}
                     ${has(k,'percent') ? `<label><input type="checkbox" id="optPct"> Label as percentages</label>` : ''}
                     ${has(k,'stack100')? `<label><input type="checkbox" id="opt100"> Scale to 100%</label>` : ''}
-                    ${has(k,'points')  ? `<label><input type="checkbox" id="optPoints" ${k==='line'?'checked':''}> Show points</label>` : ''}
-                    ${has(k,'trend')   ? `<label><input type="checkbox" id="optTrend"> Add trend line</label>` : ''}
+                    ${has(k,'points')  ? `<label><input type="checkbox" id="optPoints" ${DEF(k).points ? 'checked' : ''}> Show points</label>` : ''}
+                    ${has(k,'trend')   ? `<label><input type="checkbox" id="optTrend" ${DEF(k).trend ? 'checked' : ''}> Add trend line</label>` : ''}
                     <label><input type="checkbox" id="optGrid" checked> Grid lines</label>
                 </div>
                 ${has(k,'bins') ? `<div class="form-group" style="margin-top:.7rem;"><label for="optBins">Bins</label>
@@ -1129,7 +1153,7 @@ res`);
             return {
                 title: val('optTitle'), sub: val('optSub'), cap: val('optCap'),
                 xlab: val('optXlab'), ylab: val('optYlab'),
-                pal: (document.querySelector('input[name="pal"]:checked') || {}).value || 'crimson',
+                pal: (document.querySelector('input[name="pal"]:checked') || {}).value || DEF(chartType).pal,
                 theme: val('optTheme', 'editorial'), font: Number(val('optFont', 15)),
                 w, h, legend: val('optLegend', 'bottom'),
                 flip: chk('optFlip'), sort: chk('optSort'), labels: chk('optLabels'),
@@ -1317,7 +1341,7 @@ res`);
                 pre = stat ? aggR([['a', v1], ['b', v2]])
                            : `pd = as.data.frame(table(a = df[[${rStr(v1)}]], b = df[[${rStr(v2)}]]), stringsAsFactors = FALSE)\nnames(pd)[3] = "value"\npd = pd[!is.na(pd$a) & !is.na(pd$b), ]`;
                 if (!stat) tableKind = 'cross';
-                const ramp = PALETTES[o.pal].kind === 'ramp' ? PALETTES[o.pal].colors : ['#f7e9e9', '#990000'];
+                const ramp = PALETTES[o.pal].kind === 'ramp' ? PALETTES[o.pal].colors : PALETTES.blues.colors;
                 plot = `p = ggplot(pd, aes(a, b, fill = value)) + geom_tile(colour = "white", linewidth = 1.1) + scale_fill_gradientn(colours = ${rVec(ramp)})`;
                 // dark text on light tiles, white text on dark ones
                 if (o.labels) plot += ` + geom_text(aes(label = ${lbl('value')}, colour = ifelse(value > mean(range(value, na.rm = TRUE)), "white", "#111827")), size = ${(o.font*0.27).toFixed(2)}) + scale_colour_identity()`;
@@ -1828,7 +1852,7 @@ ${body.trim()}`;
                 }
                 if (o.labels && built.usePct) out.push(`counts$percent <- round(100 * counts$${y} / sum(counts$${y}), ${dec})`);
                 data = 'counts';
-                const ramp = P.kind === 'ramp' ? P.colors : ['#f7e9e9', '#990000'];
+                const ramp = P.kind === 'ramp' ? P.colors : PALETTES.blues.colors;
                 aes = `aes(x = row_cat, y = col_cat, fill = ${y})`;
                 L('geom_tile(colour = "white")', 'one tile per combination');
                 L(`scale_fill_gradient(low = ${q(ramp[0])}, high = ${q(ramp[ramp.length - 1])})`, `a bigger ${stat ? ST.word : 'count'} = a darker tile`);
