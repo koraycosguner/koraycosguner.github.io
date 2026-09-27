@@ -1,0 +1,1001 @@
+CustomerID,Age,Gender,Degree,MaritalStatus,Income,Race,PurchaseIncidence,SpendinginDollars
+1,30<=Age<=39,Male,Undergraduate Degree,Married,"Income<=$50,000",Black,Not Purchased,0
+2,40<=Age<=49,Female,Undergraduate Degree,Single,"Income>$100,000",White,Purchased,115
+3,Age<=29,Female,Undergraduate Degree,Married,"Income<=$50,000",Hispanic,Purchased,50
+4,40<=Age<=49,Male,Undergraduate Degree,Single,"Income<=$50,000",Hispanic,Not Purchased,0
+5,40<=Age<=49,Male,Undergraduate Degree,Married,"Income<=$50,000",White,Not Purchased,0
+6,40<=Age<=49,Female,Undergraduate Degree,Married,"$50,000<Income<=$100,000",Hispanic,Purchased,110
+7,Age>=50,Female,Undergraduate Degree,Married,"Income<=$50,000",White,Not Purchased,0
+8,40<=Age<=49,Male,Undergraduate Degree,Single,"$50,000<Income<=$100,000",Hispanic,Not Purchased,0
+9,40<=Age<=49,Male,Undergraduate Degree,Married,"$50,000<Income<=$100,000",White,Not Purchased,0
+10,Age<=29,Female,Undergraduate Degree,Married,"$50,000<Income<=$100,000",Black,Purchased,60
+11,40<=Age<=49,Female,Undergraduate Degree,Married,"$50,000<Income<=$100,000",Other,Not Purchased,0
+12,30<=Age<=39,Female,Undergraduate Degree,Married,"Income>$100,000",White,Purchased,95
+13,40<=Age<=49,Male,Undergraduate Degree,Single,"$50,000<Income<=$100,000",Asian,Not Purchased,0
+14,30<=Age<=39,Male,Undergraduate Degree,Single,"Income<=$50,000",Black,Purchased,65
+15,30<=Age<=39,Female,Undergraduate Degree,Married,"Income<=$50,000",White,Not Purchased,0
+16,30<=Age<=39,Male,Undergraduate Degree,Single,"Income<=$50,000",White,Not Purchased,0
+17,40<=Age<=49,Male,Undergraduate Degree,Married,"Income>$100,000",White,Not Purchased,0
+18,30<=Age<=39,Male,Undergraduate Degree,Single,"Income>$100,000",Hispanic,Not Purchased,0
+19,40<=Age<=49,Female,Undergraduate Degree,Single,"$50,000<Income<=$100,000",White,Not Purchased,0
+20,30<=Age<=39,Male,Undergraduate Degree,Married,"Income>$100,000",White,Not Purchased,0
+21,30<=Age<=39,Female,Undergraduate Degree,Married,"Income<=$50,000",White,Purchased,60
+22,40<=Age<=49,Male,Undergraduate Degree,Single,"Income<=$50,000",White,Not Purchased,0
+23,30<=Age<=39,Male,Undergraduate Degree,Single,"Income<=$50,000",White,Not Purchased,0
+24,40<=Age<=49,Female,Undergraduate Degree,Married,"Income<=$50,000",White,Purchased,90
+25,Age<=29,Male,Undergraduate Degree,Married,"$50,000<Income<=$100,000",White,Purchased,60
+26,40<=Age<=49,Female,Undergraduate Degree,Married,"Income<=$50,000",Black,Purchased,80
+27,Age>=50,Male,Undergraduate Degree,Married,"$50,000<Income<=$100,000",White,Not Purchased,0
+28,Age<=29,Male,Undergraduate Degree,Single,"Income<=$50,000",White,Purchased,20
+29,30<=Age<=39,Male,Graduate Degree,Married,"Income>$100,000",Black,Not Purchased,0
+30,Age>=50,Female,Graduate Degree,Single,"Income<=$50,000",Hispanic,Purchased,115
+31,Age>=50,Female,Graduate Degree,Single,"$50,000<Income<=$100,000",White,Purchased,125
+32,Age>=50,Female,Undergraduate Degree,Married,"Income<=$50,000",White,Not Purchased,0
+33,Age<=29,Female,Undergraduate Degree,Married,"$50,000<Income<=$100,000",Hispanic,Purchased,60
+34,Age<=29,Male,Undergraduate Degree,Married,"$50,000<Income<=$100,000",White,Purchased,70
+35,Age<=29,Female,Undergraduate Degree,Married,"Income>$100,000",Hispanic,Not Purchased,0
+36,Age<=29,Male,Undergraduate Degree,Single,"$50,000<Income<=$100,000",White,Not Purchased,0
+37,Age>=50,Female,Undergraduate Degree,Single,"$50,000<Income<=$100,000",White,Not Purchased,0
+38,40<=Age<=49,Female,Undergraduate Degree,Single,"$50,000<Income<=$100,000",Black,Not Purchased,0
+39,30<=Age<=39,Male,Undergraduate Degree,Married,"Income>$100,000",White,Purchased,95
+40,40<=Age<=49,Female,Undergraduate Degree,Single,"Income<=$50,000",White,Not Purchased,0
+41,Age>=50,Male,Undergraduate Degree,Married,"$50,000<Income<=$100,000",Asian,Purchased,125
+42,Age<=29,Female,Undergraduate Degree,Married,"$50,000<Income<=$100,000",Other,Purchased,40
+43,40<=Age<=49,Male,Graduate Degree,Single,"Income>$100,000",White,Not Purchased,0
+44,30<=Age<=39,Female,Undergraduate Degree,Single,"$50,000<Income<=$100,000",White,Not Purchased,0
+45,Age<=29,Female,Undergraduate Degree,Married,"Income<=$50,000",White,Purchased,50
+46,Age<=29,Male,Undergraduate Degree,Single,"Income<=$50,000",Hispanic,Not Purchased,0
+47,30<=Age<=39,Male,Undergraduate Degree,Single,"$50,000<Income<=$100,000",White,Not Purchased,0
+48,30<=Age<=39,Female,Undergraduate Degree,Single,"$50,000<Income<=$100,000",Hispanic,Purchased,100
+49,30<=Age<=39,Male,Undergraduate Degree,Married,"$50,000<Income<=$100,000",White,Not Purchased,0
+50,40<=Age<=49,Male,Undergraduate Degree,Married,"Income<=$50,000",White,Not Purchased,0
+51,30<=Age<=39,Female,Undergraduate Degree,Married,"Income<=$50,000",White,Purchased,65
+52,30<=Age<=39,Female,Undergraduate Degree,Single,"$50,000<Income<=$100,000",White,Not Purchased,0
+53,30<=Age<=39,Male,Undergraduate Degree,Married,"Income<=$50,000",White,Not Purchased,0
+54,40<=Age<=49,Female,Undergraduate Degree,Married,"$50,000<Income<=$100,000",Hispanic,Not Purchased,0
+55,Age>=50,Male,Undergraduate Degree,Single,"$50,000<Income<=$100,000",White,Not Purchased,0
+56,30<=Age<=39,Male,Graduate Degree,Married,"$50,000<Income<=$100,000",White,Purchased,110
+57,Age<=29,Female,Graduate Degree,Married,"Income<=$50,000",Other,Not Purchased,0
+58,30<=Age<=39,Female,Undergraduate Degree,Single,"Income<=$50,000",Black,Not Purchased,0
+59,Age<=29,Female,Undergraduate Degree,Married,"Income<=$50,000",Other,Not Purchased,0
+60,40<=Age<=49,Female,Undergraduate Degree,Married,"$50,000<Income<=$100,000",Hispanic,Purchased,85
+61,30<=Age<=39,Female,Graduate Degree,Married,"$50,000<Income<=$100,000",Black,Purchased,90
+62,Age>=50,Female,Undergraduate Degree,Married,"Income<=$50,000",White,Not Purchased,0
+63,40<=Age<=49,Male,Undergraduate Degree,Single,"Income<=$50,000",Black,Purchased,70
+64,30<=Age<=39,Male,Graduate Degree,Single,"Income<=$50,000",White,Purchased,70
+65,30<=Age<=39,Female,Graduate Degree,Married,"Income<=$50,000",White,Purchased,50
+66,30<=Age<=39,Male,Undergraduate Degree,Married,"Income<=$50,000",White,Purchased,70
+67,Age>=50,Female,Undergraduate Degree,Single,"Income<=$50,000",Black,Purchased,85
+68,40<=Age<=49,Male,Graduate Degree,Single,"$50,000<Income<=$100,000",White,Purchased,105
+69,Age>=50,Female,Undergraduate Degree,Single,"Income<=$50,000",Hispanic,Not Purchased,0
+70,Age<=29,Male,Undergraduate Degree,Married,"$50,000<Income<=$100,000",Hispanic,Not Purchased,0
+71,30<=Age<=39,Female,Undergraduate Degree,Married,"Income<=$50,000",Black,Not Purchased,0
+72,40<=Age<=49,Female,Undergraduate Degree,Single,"Income<=$50,000",Asian,Not Purchased,0
+73,Age<=29,Male,Undergraduate Degree,Married,"$50,000<Income<=$100,000",White,Not Purchased,0
+74,Age>=50,Female,Undergraduate Degree,Single,"$50,000<Income<=$100,000",White,Not Purchased,0
+75,Age<=29,Female,Undergraduate Degree,Married,"$50,000<Income<=$100,000",White,Not Purchased,0
+76,Age<=29,Male,Undergraduate Degree,Married,"Income<=$50,000",White,Not Purchased,0
+77,40<=Age<=49,Male,Undergraduate Degree,Single,"$50,000<Income<=$100,000",Other,Purchased,95
+78,30<=Age<=39,Female,Undergraduate Degree,Married,"Income<=$50,000",White,Not Purchased,0
+79,Age<=29,Female,Undergraduate Degree,Married,"Income>$100,000",White,Not Purchased,0
+80,40<=Age<=49,Female,Undergraduate Degree,Married,"Income<=$50,000",Asian,Not Purchased,0
+81,30<=Age<=39,Female,Undergraduate Degree,Married,"$50,000<Income<=$100,000",White,Purchased,75
+82,40<=Age<=49,Male,Undergraduate Degree,Single,"Income<=$50,000",White,Purchased,75
+83,40<=Age<=49,Male,Undergraduate Degree,Married,"Income<=$50,000",Asian,Not Purchased,0
+84,Age<=29,Female,Undergraduate Degree,Married,"Income<=$50,000",Black,Not Purchased,0
+85,30<=Age<=39,Female,Undergraduate Degree,Married,"Income<=$50,000",White,Not Purchased,0
+86,Age<=29,Female,Undergraduate Degree,Married,"Income<=$50,000",White,Purchased,35
+87,Age<=29,Male,Undergraduate Degree,Single,"Income>$100,000",White,Not Purchased,0
+88,40<=Age<=49,Male,Undergraduate Degree,Married,"Income>$100,000",White,Not Purchased,0
+89,Age>=50,Female,Undergraduate Degree,Married,"Income>$100,000",White,Purchased,155
+90,Age>=50,Male,Undergraduate Degree,Single,"Income<=$50,000",Black,Not Purchased,0
+91,Age<=29,Female,Undergraduate Degree,Married,"$50,000<Income<=$100,000",White,Not Purchased,0
+92,30<=Age<=39,Male,Undergraduate Degree,Single,"$50,000<Income<=$100,000",White,Not Purchased,0
+93,40<=Age<=49,Male,Undergraduate Degree,Married,"Income<=$50,000",White,Not Purchased,0
+94,40<=Age<=49,Male,Undergraduate Degree,Single,"Income<=$50,000",Asian,Not Purchased,0
+95,40<=Age<=49,Male,Undergraduate Degree,Single,"Income<=$50,000",Black,Not Purchased,0
+96,40<=Age<=49,Male,Undergraduate Degree,Single,"$50,000<Income<=$100,000",White,Not Purchased,0
+97,30<=Age<=39,Male,Undergraduate Degree,Single,"Income>$100,000",White,Purchased,90
+98,Age<=29,Male,Graduate Degree,Married,"Income<=$50,000",White,Not Purchased,0
+99,40<=Age<=49,Female,Undergraduate Degree,Married,"Income>$100,000",White,Not Purchased,0
+100,Age<=29,Female,Undergraduate Degree,Married,"$50,000<Income<=$100,000",Black,Purchased,45
+101,Age<=29,Male,Undergraduate Degree,Married,"Income<=$50,000",Hispanic,Not Purchased,0
+102,Age<=29,Male,Undergraduate Degree,Married,"$50,000<Income<=$100,000",White,Not Purchased,0
+103,Age<=29,Female,Undergraduate Degree,Married,"$50,000<Income<=$100,000",White,Purchased,50
+104,Age<=29,Female,Undergraduate Degree,Married,"Income<=$50,000",Asian,Not Purchased,0
+105,Age<=29,Male,Undergraduate Degree,Single,"$50,000<Income<=$100,000",Asian,Not Purchased,0
+106,30<=Age<=39,Male,Undergraduate Degree,Married,"Income<=$50,000",Black,Purchased,65
+107,40<=Age<=49,Male,Undergraduate Degree,Married,"Income<=$50,000",Asian,Purchased,80
+108,Age>=50,Male,Undergraduate Degree,Married,"$50,000<Income<=$100,000",Black,Not Purchased,0
+109,Age<=29,Female,Undergraduate Degree,Married,"$50,000<Income<=$100,000",Black,Not Purchased,0
+110,Age<=29,Female,Undergraduate Degree,Single,"Income<=$50,000",Asian,Not Purchased,0
+111,Age<=29,Female,Undergraduate Degree,Single,"Income>$100,000",Black,Purchased,90
+112,Age>=50,Male,Undergraduate Degree,Single,"Income<=$50,000",Other,Not Purchased,0
+113,30<=Age<=39,Male,Undergraduate Degree,Married,"Income<=$50,000",Black,Not Purchased,0
+114,40<=Age<=49,Male,Undergraduate Degree,Married,"$50,000<Income<=$100,000",White,Purchased,115
+115,30<=Age<=39,Male,Undergraduate Degree,Single,"Income<=$50,000",White,Not Purchased,0
+116,30<=Age<=39,Male,Undergraduate Degree,Married,"$50,000<Income<=$100,000",White,Not Purchased,0
+117,Age<=29,Male,Undergraduate Degree,Single,"Income<=$50,000",Black,Not Purchased,0
+118,Age<=29,Female,Undergraduate Degree,Married,"$50,000<Income<=$100,000",Hispanic,Purchased,65
+119,Age<=29,Female,Undergraduate Degree,Married,"$50,000<Income<=$100,000",Hispanic,Not Purchased,0
+120,Age<=29,Male,Undergraduate Degree,Married,"Income<=$50,000",White,Purchased,45
+121,30<=Age<=39,Female,Undergraduate Degree,Married,"Income<=$50,000",Other,Purchased,65
+122,Age<=29,Female,Undergraduate Degree,Married,"Income>$100,000",Hispanic,Not Purchased,0
+123,40<=Age<=49,Female,Undergraduate Degree,Married,"Income<=$50,000",White,Not Purchased,0
+124,40<=Age<=49,Male,Undergraduate Degree,Married,"Income<=$50,000",White,Not Purchased,0
+125,Age>=50,Female,Undergraduate Degree,Married,"$50,000<Income<=$100,000",White,Not Purchased,0
+126,Age<=29,Male,Undergraduate Degree,Married,"$50,000<Income<=$100,000",White,Not Purchased,0
+127,30<=Age<=39,Male,Undergraduate Degree,Married,"$50,000<Income<=$100,000",White,Purchased,80
+128,Age<=29,Female,Undergraduate Degree,Single,"Income<=$50,000",White,Not Purchased,0
+129,40<=Age<=49,Male,Graduate Degree,Married,"Income>$100,000",White,Not Purchased,0
+130,40<=Age<=49,Female,Undergraduate Degree,Married,"Income<=$50,000",Hispanic,Not Purchased,0
+131,Age<=29,Male,Undergraduate Degree,Single,"Income<=$50,000",Asian,Purchased,30
+132,30<=Age<=39,Male,Graduate Degree,Single,"$50,000<Income<=$100,000",White,Not Purchased,0
+133,Age<=29,Male,Undergraduate Degree,Married,"Income<=$50,000",Asian,Purchased,30
+134,30<=Age<=39,Male,Undergraduate Degree,Married,"Income<=$50,000",White,Not Purchased,0
+135,Age<=29,Male,Undergraduate Degree,Single,"Income<=$50,000",White,Purchased,35
+136,Age<=29,Female,Undergraduate Degree,Single,"$50,000<Income<=$100,000",White,Not Purchased,0
+137,40<=Age<=49,Female,Undergraduate Degree,Married,"Income<=$50,000",White,Not Purchased,0
+138,40<=Age<=49,Male,Undergraduate Degree,Single,"$50,000<Income<=$100,000",Hispanic,Not Purchased,0
+139,Age<=29,Male,Undergraduate Degree,Married,"$50,000<Income<=$100,000",Hispanic,Purchased,55
+140,30<=Age<=39,Female,Undergraduate Degree,Single,"Income>$100,000",Other,Not Purchased,0
+141,Age<=29,Male,Undergraduate Degree,Married,"Income>$100,000",White,Purchased,105
+142,Age<=29,Male,Undergraduate Degree,Married,"Income<=$50,000",Asian,Purchased,40
+143,Age>=50,Male,Undergraduate Degree,Married,"Income<=$50,000",Black,Not Purchased,0
+144,30<=Age<=39,Female,Undergraduate Degree,Married,"$50,000<Income<=$100,000",White,Purchased,85
+145,30<=Age<=39,Female,Undergraduate Degree,Married,"Income>$100,000",White,Not Purchased,0
+146,Age<=29,Female,Undergraduate Degree,Married,"$50,000<Income<=$100,000",White,Not Purchased,0
+147,40<=Age<=49,Female,Undergraduate Degree,Married,"$50,000<Income<=$100,000",White,Not Purchased,0
+148,40<=Age<=49,Male,Undergraduate Degree,Married,"Income>$100,000",Other,Not Purchased,0
+149,40<=Age<=49,Female,Undergraduate Degree,Married,"Income<=$50,000",Asian,Not Purchased,0
+150,40<=Age<=49,Male,Undergraduate Degree,Married,"Income<=$50,000",Asian,Not Purchased,0
+151,40<=Age<=49,Male,Undergraduate Degree,Single,"Income<=$50,000",White,Not Purchased,0
+152,Age>=50,Female,Undergraduate Degree,Married,"Income<=$50,000",White,Not Purchased,0
+153,Age<=29,Female,Undergraduate Degree,Married,"Income<=$50,000",Black,Not Purchased,0
+154,40<=Age<=49,Female,Undergraduate Degree,Married,"$50,000<Income<=$100,000",Hispanic,Purchased,90
+155,40<=Age<=49,Female,Undergraduate Degree,Married,"Income<=$50,000",White,Not Purchased,0
+156,Age<=29,Male,Undergraduate Degree,Married,"Income<=$50,000",Other,Purchased,30
+157,40<=Age<=49,Male,Undergraduate Degree,Single,"Income<=$50,000",Other,Not Purchased,0
+158,40<=Age<=49,Female,Undergraduate Degree,Single,"Income<=$50,000",Black,Not Purchased,0
+159,40<=Age<=49,Male,Undergraduate Degree,Single,"$50,000<Income<=$100,000",Hispanic,Not Purchased,0
+160,Age>=50,Female,Undergraduate Degree,Single,"Income<=$50,000",Black,Purchased,80
+161,Age<=29,Female,Undergraduate Degree,Single,"$50,000<Income<=$100,000",Asian,Not Purchased,0
+162,Age<=29,Male,Undergraduate Degree,Married,"Income<=$50,000",Asian,Not Purchased,0
+163,30<=Age<=39,Male,Undergraduate Degree,Single,"Income>$100,000",White,Purchased,115
+164,Age>=50,Male,Undergraduate Degree,Married,"Income>$100,000",White,Purchased,175
+165,Age<=29,Female,Undergraduate Degree,Married,"Income<=$50,000",White,Not Purchased,0
+166,Age<=29,Male,Undergraduate Degree,Single,"$50,000<Income<=$100,000",Black,Purchased,45
+167,Age<=29,Male,Undergraduate Degree,Married,"$50,000<Income<=$100,000",Hispanic,Purchased,60
+168,40<=Age<=49,Female,Undergraduate Degree,Married,"$50,000<Income<=$100,000",White,Purchased,100
+169,Age<=29,Female,Undergraduate Degree,Married,"$50,000<Income<=$100,000",White,Not Purchased,0
+170,40<=Age<=49,Male,Graduate Degree,Married,"Income<=$50,000",White,Purchased,100
+171,Age<=29,Male,Undergraduate Degree,Single,"Income>$100,000",Hispanic,Purchased,75
+172,30<=Age<=39,Female,Undergraduate Degree,Married,"Income<=$50,000",Hispanic,Not Purchased,0
+173,40<=Age<=49,Male,Undergraduate Degree,Married,"Income<=$50,000",White,Purchased,70
+174,40<=Age<=49,Female,Undergraduate Degree,Married,"$50,000<Income<=$100,000",White,Not Purchased,0
+175,40<=Age<=49,Female,Undergraduate Degree,Single,"Income<=$50,000",Hispanic,Not Purchased,0
+176,Age<=29,Female,Undergraduate Degree,Married,"Income<=$50,000",Hispanic,Not Purchased,0
+177,Age<=29,Male,Undergraduate Degree,Married,"$50,000<Income<=$100,000",White,Purchased,75
+178,Age<=29,Female,Undergraduate Degree,Married,"Income<=$50,000",White,Not Purchased,0
+179,Age<=29,Male,Graduate Degree,Single,"Income<=$50,000",White,Not Purchased,0
+180,40<=Age<=49,Female,Undergraduate Degree,Married,"Income<=$50,000",Black,Not Purchased,0
+181,Age>=50,Male,Undergraduate Degree,Single,"$50,000<Income<=$100,000",Black,Purchased,125
+182,Age<=29,Male,Undergraduate Degree,Married,"Income<=$50,000",Hispanic,Not Purchased,0
+183,30<=Age<=39,Female,Graduate Degree,Married,"Income<=$50,000",Hispanic,Purchased,80
+184,Age>=50,Female,Undergraduate Degree,Married,"Income<=$50,000",White,Not Purchased,0
+185,30<=Age<=39,Female,Undergraduate Degree,Single,"Income<=$50,000",White,Purchased,55
+186,Age>=50,Female,Undergraduate Degree,Married,"Income<=$50,000",Asian,Not Purchased,0
+187,Age<=29,Female,Undergraduate Degree,Married,"Income<=$50,000",Hispanic,Purchased,20
+188,30<=Age<=39,Female,Undergraduate Degree,Married,"Income<=$50,000",Asian,Not Purchased,0
+189,Age<=29,Male,Undergraduate Degree,Single,"$50,000<Income<=$100,000",Asian,Purchased,50
+190,Age<=29,Male,Undergraduate Degree,Married,"$50,000<Income<=$100,000",White,Not Purchased,0
+191,30<=Age<=39,Female,Undergraduate Degree,Married,"Income<=$50,000",Hispanic,Not Purchased,0
+192,40<=Age<=49,Female,Graduate Degree,Single,"Income>$100,000",White,Purchased,150
+193,30<=Age<=39,Male,Undergraduate Degree,Married,"$50,000<Income<=$100,000",White,Purchased,75
+194,Age<=29,Male,Undergraduate Degree,Married,"Income<=$50,000",White,Not Purchased,0
+195,40<=Age<=49,Male,Undergraduate Degree,Married,"Income>$100,000",White,Not Purchased,0
+196,30<=Age<=39,Female,Undergraduate Degree,Married,"$50,000<Income<=$100,000",Asian,Purchased,75
+197,Age<=29,Female,Undergraduate Degree,Single,"$50,000<Income<=$100,000",Asian,Purchased,50
+198,30<=Age<=39,Female,Undergraduate Degree,Married,"Income>$100,000",White,Not Purchased,0
+199,Age>=50,Male,Undergraduate Degree,Single,"$50,000<Income<=$100,000",Asian,Not Purchased,0
+200,30<=Age<=39,Female,Undergraduate Degree,Married,"$50,000<Income<=$100,000",Other,Not Purchased,0
+201,Age<=29,Female,Undergraduate Degree,Married,"$50,000<Income<=$100,000",Hispanic,Purchased,45
+202,Age<=29,Male,Undergraduate Degree,Married,"Income<=$50,000",White,Purchased,55
+203,Age<=29,Female,Undergraduate Degree,Married,"Income<=$50,000",White,Not Purchased,0
+204,Age>=50,Male,Undergraduate Degree,Single,"Income<=$50,000",White,Purchased,105
+205,Age<=29,Male,Undergraduate Degree,Married,"Income<=$50,000",Other,Not Purchased,0
+206,Age<=29,Male,Undergraduate Degree,Single,"Income<=$50,000",White,Not Purchased,0
+207,Age<=29,Female,Undergraduate Degree,Married,"Income<=$50,000",White,Not Purchased,0
+208,Age>=50,Male,Undergraduate Degree,Single,"Income<=$50,000",White,Purchased,100
+209,Age<=29,Female,Undergraduate Degree,Single,"Income>$100,000",White,Not Purchased,0
+210,Age<=29,Male,Undergraduate Degree,Married,"$50,000<Income<=$100,000",White,Not Purchased,0
+211,Age<=29,Male,Undergraduate Degree,Single,"$50,000<Income<=$100,000",Asian,Purchased,55
+212,30<=Age<=39,Male,Undergraduate Degree,Married,"Income<=$50,000",Hispanic,Not Purchased,0
+213,40<=Age<=49,Male,Undergraduate Degree,Married,"$50,000<Income<=$100,000",Black,Not Purchased,0
+214,Age<=29,Male,Undergraduate Degree,Single,"Income<=$50,000",White,Not Purchased,0
+215,Age>=50,Male,Undergraduate Degree,Single,"Income<=$50,000",White,Not Purchased,0
+216,40<=Age<=49,Male,Undergraduate Degree,Married,"Income>$100,000",White,Not Purchased,0
+217,Age<=29,Female,Undergraduate Degree,Married,"Income<=$50,000",Other,Purchased,40
+218,30<=Age<=39,Male,Undergraduate Degree,Single,"Income<=$50,000",White,Not Purchased,0
+219,30<=Age<=39,Female,Undergraduate Degree,Single,"Income<=$50,000",Black,Not Purchased,0
+220,Age>=50,Male,Undergraduate Degree,Single,"$50,000<Income<=$100,000",White,Purchased,115
+221,30<=Age<=39,Female,Graduate Degree,Married,"Income>$100,000",Hispanic,Purchased,110
+222,Age>=50,Male,Undergraduate Degree,Married,"Income<=$50,000",White,Not Purchased,0
+223,30<=Age<=39,Male,Graduate Degree,Married,"Income<=$50,000",White,Not Purchased,0
+224,40<=Age<=49,Male,Undergraduate Degree,Single,"$50,000<Income<=$100,000",Black,Not Purchased,0
+225,40<=Age<=49,Male,Undergraduate Degree,Single,"$50,000<Income<=$100,000",White,Not Purchased,0
+226,30<=Age<=39,Male,Undergraduate Degree,Married,"Income<=$50,000",Hispanic,Not Purchased,0
+227,30<=Age<=39,Male,Graduate Degree,Married,"$50,000<Income<=$100,000",White,Not Purchased,0
+228,Age<=29,Female,Undergraduate Degree,Married,"Income<=$50,000",Black,Purchased,45
+229,30<=Age<=39,Female,Undergraduate Degree,Married,"Income<=$50,000",White,Not Purchased,0
+230,Age<=29,Female,Undergraduate Degree,Single,"Income<=$50,000",White,Not Purchased,0
+231,30<=Age<=39,Female,Undergraduate Degree,Single,"Income<=$50,000",White,Purchased,50
+232,30<=Age<=39,Male,Undergraduate Degree,Single,"Income>$100,000",Asian,Not Purchased,0
+233,30<=Age<=39,Male,Undergraduate Degree,Married,"$50,000<Income<=$100,000",Asian,Not Purchased,0
+234,Age<=29,Male,Graduate Degree,Married,"$50,000<Income<=$100,000",Asian,Not Purchased,0
+235,Age>=50,Female,Undergraduate Degree,Married,"Income<=$50,000",White,Not Purchased,0
+236,40<=Age<=49,Female,Undergraduate Degree,Married,"Income<=$50,000",White,Not Purchased,0
+237,40<=Age<=49,Female,Undergraduate Degree,Married,"$50,000<Income<=$100,000",White,Not Purchased,0
+238,Age<=29,Male,Graduate Degree,Married,"$50,000<Income<=$100,000",White,Purchased,75
+239,Age<=29,Female,Undergraduate Degree,Single,"Income<=$50,000",Hispanic,Purchased,25
+240,30<=Age<=39,Female,Undergraduate Degree,Single,"Income<=$50,000",White,Not Purchased,0
+241,Age<=29,Male,Undergraduate Degree,Married,"Income<=$50,000",White,Not Purchased,0
+242,Age>=50,Female,Graduate Degree,Single,"$50,000<Income<=$100,000",White,Purchased,115
+243,Age<=29,Male,Undergraduate Degree,Married,"Income<=$50,000",White,Purchased,35
+244,Age>=50,Female,Undergraduate Degree,Single,"$50,000<Income<=$100,000",White,Purchased,125
+245,Age<=29,Female,Undergraduate Degree,Single,"$50,000<Income<=$100,000",White,Purchased,65
+246,Age>=50,Female,Undergraduate Degree,Single,"Income>$100,000",White,Purchased,130
+247,40<=Age<=49,Male,Undergraduate Degree,Married,"Income>$100,000",Hispanic,Purchased,160
+248,Age<=29,Female,Undergraduate Degree,Single,"Income<=$50,000",White,Not Purchased,0
+249,30<=Age<=39,Male,Undergraduate Degree,Married,"Income>$100,000",White,Not Purchased,0
+250,30<=Age<=39,Male,Undergraduate Degree,Married,"$50,000<Income<=$100,000",Other,Not Purchased,0
+251,40<=Age<=49,Female,Undergraduate Degree,Married,"Income<=$50,000",White,Not Purchased,0
+252,40<=Age<=49,Male,Undergraduate Degree,Single,"Income>$100,000",Hispanic,Not Purchased,0
+253,Age<=29,Male,Undergraduate Degree,Married,"Income>$100,000",White,Not Purchased,0
+254,40<=Age<=49,Female,Undergraduate Degree,Married,"Income<=$50,000",Black,Not Purchased,0
+255,Age<=29,Female,Undergraduate Degree,Single,"$50,000<Income<=$100,000",White,Not Purchased,0
+256,Age>=50,Female,Undergraduate Degree,Married,"Income>$100,000",White,Purchased,150
+257,40<=Age<=49,Female,Undergraduate Degree,Married,"Income<=$50,000",White,Not Purchased,0
+258,40<=Age<=49,Female,Undergraduate Degree,Single,"$50,000<Income<=$100,000",White,Not Purchased,0
+259,Age>=50,Male,Undergraduate Degree,Single,"Income<=$50,000",White,Not Purchased,0
+260,40<=Age<=49,Female,Undergraduate Degree,Married,"Income>$100,000",White,Purchased,140
+261,30<=Age<=39,Male,Undergraduate Degree,Single,"Income>$100,000",Black,Purchased,115
+262,Age>=50,Female,Undergraduate Degree,Married,"$50,000<Income<=$100,000",White,Not Purchased,0
+263,40<=Age<=49,Male,Undergraduate Degree,Single,"$50,000<Income<=$100,000",White,Purchased,100
+264,30<=Age<=39,Male,Undergraduate Degree,Married,"Income<=$50,000",White,Not Purchased,0
+265,Age>=50,Female,Graduate Degree,Married,"Income<=$50,000",Asian,Not Purchased,0
+266,Age<=29,Female,Undergraduate Degree,Married,"Income<=$50,000",Black,Not Purchased,0
+267,30<=Age<=39,Female,Undergraduate Degree,Single,"Income<=$50,000",Asian,Purchased,40
+268,Age<=29,Male,Undergraduate Degree,Single,"$50,000<Income<=$100,000",White,Purchased,65
+269,Age>=50,Male,Undergraduate Degree,Married,"Income>$100,000",White,Purchased,145
+270,Age<=29,Male,Undergraduate Degree,Married,"Income<=$50,000",White,Purchased,35
+271,40<=Age<=49,Male,Undergraduate Degree,Married,"Income<=$50,000",White,Not Purchased,0
+272,30<=Age<=39,Female,Undergraduate Degree,Married,"Income>$100,000",White,Not Purchased,0
+273,Age<=29,Male,Undergraduate Degree,Married,"$50,000<Income<=$100,000",White,Purchased,65
+274,30<=Age<=39,Male,Undergraduate Degree,Married,"$50,000<Income<=$100,000",White,Purchased,70
+275,Age<=29,Female,Undergraduate Degree,Married,"$50,000<Income<=$100,000",White,Not Purchased,0
+276,Age<=29,Male,Undergraduate Degree,Married,"$50,000<Income<=$100,000",White,Not Purchased,0
+277,30<=Age<=39,Female,Undergraduate Degree,Married,"Income<=$50,000",Black,Not Purchased,0
+278,40<=Age<=49,Female,Undergraduate Degree,Married,"Income<=$50,000",White,Not Purchased,0
+279,Age>=50,Female,Undergraduate Degree,Single,"$50,000<Income<=$100,000",Hispanic,Not Purchased,0
+280,40<=Age<=49,Female,Undergraduate Degree,Single,"$50,000<Income<=$100,000",White,Not Purchased,0
+281,Age>=50,Male,Undergraduate Degree,Married,"$50,000<Income<=$100,000",White,Not Purchased,0
+282,Age<=29,Male,Undergraduate Degree,Married,"$50,000<Income<=$100,000",White,Purchased,70
+283,Age>=50,Female,Undergraduate Degree,Single,"Income<=$50,000",White,Purchased,85
+284,Age<=29,Female,Undergraduate Degree,Married,"Income<=$50,000",Black,Purchased,45
+285,Age>=50,Female,Undergraduate Degree,Married,"$50,000<Income<=$100,000",Black,Not Purchased,0
+286,Age>=50,Male,Undergraduate Degree,Married,"$50,000<Income<=$100,000",White,Not Purchased,0
+287,40<=Age<=49,Male,Graduate Degree,Single,"$50,000<Income<=$100,000",White,Purchased,115
+288,30<=Age<=39,Male,Undergraduate Degree,Single,"$50,000<Income<=$100,000",Black,Purchased,65
+289,40<=Age<=49,Male,Undergraduate Degree,Married,"Income<=$50,000",White,Not Purchased,0
+290,Age<=29,Female,Undergraduate Degree,Married,"Income<=$50,000",White,Not Purchased,0
+291,Age>=50,Male,Graduate Degree,Married,"Income<=$50,000",Black,Not Purchased,0
+292,40<=Age<=49,Female,Undergraduate Degree,Single,"Income<=$50,000",White,Not Purchased,0
+293,Age>=50,Female,Undergraduate Degree,Married,"Income<=$50,000",White,Not Purchased,0
+294,Age<=29,Male,Undergraduate Degree,Single,"Income<=$50,000",Other,Purchased,35
+295,Age<=29,Female,Undergraduate Degree,Single,"Income<=$50,000",White,Purchased,25
+296,40<=Age<=49,Male,Undergraduate Degree,Single,"$50,000<Income<=$100,000",White,Not Purchased,0
+297,Age<=29,Female,Undergraduate Degree,Married,"Income<=$50,000",White,Purchased,45
+298,30<=Age<=39,Male,Undergraduate Degree,Single,"Income<=$50,000",White,Not Purchased,0
+299,30<=Age<=39,Male,Undergraduate Degree,Married,"Income<=$50,000",White,Not Purchased,0
+300,Age<=29,Female,Graduate Degree,Single,"$50,000<Income<=$100,000",Asian,Purchased,70
+301,40<=Age<=49,Male,Undergraduate Degree,Married,"Income<=$50,000",White,Not Purchased,0
+302,30<=Age<=39,Male,Undergraduate Degree,Single,"Income<=$50,000",Hispanic,Not Purchased,0
+303,40<=Age<=49,Female,Undergraduate Degree,Married,"$50,000<Income<=$100,000",White,Not Purchased,0
+304,Age<=29,Male,Undergraduate Degree,Married,"Income>$100,000",Hispanic,Not Purchased,0
+305,30<=Age<=39,Female,Undergraduate Degree,Married,"$50,000<Income<=$100,000",White,Not Purchased,0
+306,40<=Age<=49,Female,Undergraduate Degree,Married,"$50,000<Income<=$100,000",Hispanic,Not Purchased,0
+307,40<=Age<=49,Male,Undergraduate Degree,Single,"Income>$100,000",White,Not Purchased,0
+308,40<=Age<=49,Male,Undergraduate Degree,Married,"Income<=$50,000",White,Not Purchased,0
+309,40<=Age<=49,Male,Undergraduate Degree,Married,"Income<=$50,000",White,Not Purchased,0
+310,40<=Age<=49,Male,Undergraduate Degree,Married,"Income<=$50,000",Black,Not Purchased,0
+311,Age<=29,Male,Undergraduate Degree,Single,"$50,000<Income<=$100,000",Black,Purchased,40
+312,40<=Age<=49,Female,Undergraduate Degree,Married,"$50,000<Income<=$100,000",White,Not Purchased,0
+313,Age<=29,Male,Undergraduate Degree,Married,"Income>$100,000",Other,Not Purchased,0
+314,40<=Age<=49,Female,Undergraduate Degree,Single,"Income<=$50,000",White,Purchased,65
+315,Age>=50,Female,Undergraduate Degree,Married,"$50,000<Income<=$100,000",Black,Not Purchased,0
+316,Age>=50,Female,Undergraduate Degree,Married,"$50,000<Income<=$100,000",Hispanic,Not Purchased,0
+317,Age<=29,Male,Undergraduate Degree,Single,"$50,000<Income<=$100,000",White,Not Purchased,0
+318,30<=Age<=39,Female,Undergraduate Degree,Married,"Income<=$50,000",White,Purchased,70
+319,40<=Age<=49,Female,Undergraduate Degree,Married,"Income<=$50,000",White,Purchased,70
+320,40<=Age<=49,Female,Undergraduate Degree,Married,"Income<=$50,000",Hispanic,Not Purchased,0
+321,40<=Age<=49,Male,Undergraduate Degree,Single,"Income<=$50,000",White,Purchased,70
+322,30<=Age<=39,Male,Undergraduate Degree,Married,"Income<=$50,000",White,Not Purchased,0
+323,40<=Age<=49,Female,Undergraduate Degree,Married,"$50,000<Income<=$100,000",White,Not Purchased,0
+324,Age<=29,Male,Undergraduate Degree,Single,"Income<=$50,000",White,Purchased,40
+325,Age<=29,Female,Undergraduate Degree,Married,"Income>$100,000",Asian,Not Purchased,0
+326,40<=Age<=49,Female,Graduate Degree,Married,"Income<=$50,000",White,Not Purchased,0
+327,30<=Age<=39,Male,Undergraduate Degree,Married,"$50,000<Income<=$100,000",White,Not Purchased,0
+328,Age<=29,Female,Graduate Degree,Married,"$50,000<Income<=$100,000",Other,Purchased,115
+329,40<=Age<=49,Female,Undergraduate Degree,Married,"Income<=$50,000",White,Not Purchased,0
+330,30<=Age<=39,Female,Undergraduate Degree,Single,"Income<=$50,000",White,Not Purchased,0
+331,40<=Age<=49,Female,Undergraduate Degree,Single,"$50,000<Income<=$100,000",White,Purchased,80
+332,Age<=29,Male,Undergraduate Degree,Single,"Income>$100,000",Black,Purchased,85
+333,Age>=50,Male,Undergraduate Degree,Married,"Income<=$50,000",Asian,Not Purchased,0
+334,30<=Age<=39,Male,Undergraduate Degree,Single,"Income<=$50,000",Hispanic,Purchased,55
+335,Age>=50,Female,Undergraduate Degree,Single,"Income<=$50,000",White,Not Purchased,0
+336,40<=Age<=49,Female,Undergraduate Degree,Single,"Income<=$50,000",White,Not Purchased,0
+337,30<=Age<=39,Female,Undergraduate Degree,Single,"Income<=$50,000",White,Not Purchased,0
+338,30<=Age<=39,Female,Undergraduate Degree,Married,"$50,000<Income<=$100,000",White,Not Purchased,0
+339,Age<=29,Female,Graduate Degree,Married,"Income>$100,000",Other,Purchased,125
+340,Age>=50,Male,Undergraduate Degree,Single,"Income>$100,000",White,Not Purchased,0
+341,Age>=50,Female,Undergraduate Degree,Single,"Income<=$50,000",White,Not Purchased,0
+342,Age>=50,Female,Undergraduate Degree,Married,"Income>$100,000",Hispanic,Not Purchased,0
+343,30<=Age<=39,Female,Undergraduate Degree,Married,"Income>$100,000",Asian,Purchased,65
+344,Age<=29,Female,Undergraduate Degree,Married,"Income<=$50,000",Asian,Purchased,40
+345,30<=Age<=39,Male,Undergraduate Degree,Married,"Income>$100,000",Asian,Purchased,110
+346,Age<=29,Female,Undergraduate Degree,Married,"Income<=$50,000",Other,Not Purchased,0
+347,30<=Age<=39,Female,Undergraduate Degree,Married,"Income>$100,000",White,Not Purchased,0
+348,40<=Age<=49,Female,Undergraduate Degree,Married,"Income>$100,000",White,Not Purchased,0
+349,Age<=29,Female,Undergraduate Degree,Single,"Income<=$50,000",Other,Not Purchased,0
+350,30<=Age<=39,Female,Undergraduate Degree,Single,"Income>$100,000",White,Purchased,130
+351,30<=Age<=39,Female,Undergraduate Degree,Single,"Income<=$50,000",Asian,Not Purchased,0
+352,40<=Age<=49,Female,Undergraduate Degree,Married,"$50,000<Income<=$100,000",Hispanic,Not Purchased,0
+353,30<=Age<=39,Female,Undergraduate Degree,Married,"Income<=$50,000",Hispanic,Not Purchased,0
+354,Age>=50,Male,Undergraduate Degree,Single,"Income>$100,000",Black,Not Purchased,0
+355,Age<=29,Female,Undergraduate Degree,Single,"$50,000<Income<=$100,000",White,Not Purchased,0
+356,Age>=50,Female,Undergraduate Degree,Single,"$50,000<Income<=$100,000",Asian,Not Purchased,0
+357,Age>=50,Male,Undergraduate Degree,Single,"Income<=$50,000",Other,Not Purchased,0
+358,30<=Age<=39,Male,Undergraduate Degree,Married,"Income<=$50,000",Black,Not Purchased,0
+359,Age>=50,Male,Undergraduate Degree,Married,"$50,000<Income<=$100,000",White,Not Purchased,0
+360,Age<=29,Male,Undergraduate Degree,Single,"Income>$100,000",White,Not Purchased,0
+361,Age<=29,Female,Undergraduate Degree,Single,"Income>$100,000",White,Purchased,85
+362,Age<=29,Male,Undergraduate Degree,Married,"Income>$100,000",Black,Not Purchased,0
+363,30<=Age<=39,Male,Undergraduate Degree,Married,"$50,000<Income<=$100,000",White,Not Purchased,0
+364,30<=Age<=39,Female,Undergraduate Degree,Married,"Income<=$50,000",White,Not Purchased,0
+365,Age<=29,Female,Undergraduate Degree,Single,"Income<=$50,000",Other,Not Purchased,0
+366,Age<=29,Male,Undergraduate Degree,Single,"$50,000<Income<=$100,000",Black,Purchased,45
+367,Age<=29,Female,Undergraduate Degree,Single,"Income<=$50,000",White,Not Purchased,0
+368,30<=Age<=39,Male,Undergraduate Degree,Single,"Income<=$50,000",White,Not Purchased,0
+369,30<=Age<=39,Female,Undergraduate Degree,Single,"Income>$100,000",White,Not Purchased,0
+370,Age>=50,Female,Undergraduate Degree,Married,"Income>$100,000",White,Not Purchased,0
+371,40<=Age<=49,Male,Undergraduate Degree,Single,"Income<=$50,000",White,Not Purchased,0
+372,30<=Age<=39,Female,Undergraduate Degree,Married,"$50,000<Income<=$100,000",Black,Not Purchased,0
+373,30<=Age<=39,Male,Graduate Degree,Single,"Income<=$50,000",Hispanic,Purchased,70
+374,40<=Age<=49,Female,Undergraduate Degree,Single,"Income<=$50,000",White,Not Purchased,0
+375,Age<=29,Female,Undergraduate Degree,Single,"Income<=$50,000",Black,Not Purchased,0
+376,40<=Age<=49,Male,Undergraduate Degree,Married,"$50,000<Income<=$100,000",White,Not Purchased,0
+377,30<=Age<=39,Male,Undergraduate Degree,Married,"Income<=$50,000",White,Purchased,70
+378,Age>=50,Male,Undergraduate Degree,Married,"Income<=$50,000",White,Not Purchased,0
+379,30<=Age<=39,Male,Undergraduate Degree,Married,"Income>$100,000",Asian,Purchased,125
+380,40<=Age<=49,Male,Undergraduate Degree,Married,"Income<=$50,000",Black,Not Purchased,0
+381,40<=Age<=49,Female,Undergraduate Degree,Married,"$50,000<Income<=$100,000",White,Not Purchased,0
+382,Age<=29,Male,Undergraduate Degree,Single,"Income<=$50,000",White,Not Purchased,0
+383,40<=Age<=49,Male,Undergraduate Degree,Married,"Income<=$50,000",White,Not Purchased,0
+384,Age>=50,Male,Undergraduate Degree,Single,"Income<=$50,000",White,Not Purchased,0
+385,40<=Age<=49,Male,Undergraduate Degree,Married,"Income>$100,000",Other,Not Purchased,0
+386,Age<=29,Male,Undergraduate Degree,Married,"Income>$100,000",White,Purchased,85
+387,30<=Age<=39,Male,Graduate Degree,Married,"Income>$100,000",White,Purchased,155
+388,Age>=50,Female,Undergraduate Degree,Married,"Income<=$50,000",White,Purchased,105
+389,Age>=50,Female,Undergraduate Degree,Single,"$50,000<Income<=$100,000",Other,Purchased,100
+390,40<=Age<=49,Female,Graduate Degree,Single,"Income<=$50,000",White,Not Purchased,0
+391,Age<=29,Male,Undergraduate Degree,Married,"Income<=$50,000",Black,Not Purchased,0
+392,Age<=29,Female,Undergraduate Degree,Single,"Income<=$50,000",White,Purchased,40
+393,Age>=50,Female,Undergraduate Degree,Married,"Income<=$50,000",White,Not Purchased,0
+394,40<=Age<=49,Female,Undergraduate Degree,Married,"Income<=$50,000",Asian,Not Purchased,0
+395,Age>=50,Female,Undergraduate Degree,Single,"Income>$100,000",White,Purchased,135
+396,40<=Age<=49,Female,Undergraduate Degree,Single,"$50,000<Income<=$100,000",Asian,Not Purchased,0
+397,Age>=50,Female,Undergraduate Degree,Married,"$50,000<Income<=$100,000",White,Purchased,130
+398,40<=Age<=49,Male,Undergraduate Degree,Single,"$50,000<Income<=$100,000",White,Not Purchased,0
+399,40<=Age<=49,Male,Undergraduate Degree,Married,"Income<=$50,000",White,Not Purchased,0
+400,30<=Age<=39,Male,Undergraduate Degree,Married,"Income<=$50,000",Black,Not Purchased,0
+401,40<=Age<=49,Female,Undergraduate Degree,Married,"Income<=$50,000",White,Not Purchased,0
+402,40<=Age<=49,Male,Undergraduate Degree,Married,"Income<=$50,000",White,Not Purchased,0
+403,30<=Age<=39,Female,Undergraduate Degree,Single,"Income<=$50,000",White,Purchased,60
+404,30<=Age<=39,Female,Undergraduate Degree,Married,"Income>$100,000",Black,Not Purchased,0
+405,Age<=29,Female,Undergraduate Degree,Married,"Income<=$50,000",Black,Not Purchased,0
+406,Age<=29,Female,Undergraduate Degree,Married,"$50,000<Income<=$100,000",White,Not Purchased,0
+407,40<=Age<=49,Female,Undergraduate Degree,Married,"Income<=$50,000",Black,Not Purchased,0
+408,40<=Age<=49,Female,Undergraduate Degree,Married,"Income<=$50,000",Asian,Purchased,85
+409,40<=Age<=49,Male,Undergraduate Degree,Married,"$50,000<Income<=$100,000",Black,Not Purchased,0
+410,40<=Age<=49,Male,Undergraduate Degree,Married,"Income<=$50,000",White,Not Purchased,0
+411,Age>=50,Female,Undergraduate Degree,Married,"$50,000<Income<=$100,000",White,Purchased,110
+412,40<=Age<=49,Male,Undergraduate Degree,Single,"Income<=$50,000",White,Not Purchased,0
+413,Age<=29,Female,Undergraduate Degree,Married,"$50,000<Income<=$100,000",Black,Not Purchased,0
+414,40<=Age<=49,Male,Undergraduate Degree,Single,"Income>$100,000",White,Purchased,145
+415,Age>=50,Male,Undergraduate Degree,Married,"$50,000<Income<=$100,000",White,Not Purchased,0
+416,Age>=50,Male,Undergraduate Degree,Married,"$50,000<Income<=$100,000",Black,Not Purchased,0
+417,30<=Age<=39,Male,Undergraduate Degree,Married,"Income>$100,000",Asian,Purchased,120
+418,30<=Age<=39,Male,Undergraduate Degree,Single,"Income>$100,000",Black,Purchased,90
+419,40<=Age<=49,Male,Undergraduate Degree,Single,"$50,000<Income<=$100,000",White,Not Purchased,0
+420,40<=Age<=49,Female,Undergraduate Degree,Married,"$50,000<Income<=$100,000",White,Not Purchased,0
+421,30<=Age<=39,Female,Undergraduate Degree,Single,"Income>$100,000",White,Purchased,120
+422,Age<=29,Female,Undergraduate Degree,Single,"$50,000<Income<=$100,000",Black,Not Purchased,0
+423,Age<=29,Female,Undergraduate Degree,Single,"Income>$100,000",White,Purchased,55
+424,40<=Age<=49,Male,Undergraduate Degree,Married,"Income>$100,000",White,Not Purchased,0
+425,Age>=50,Male,Undergraduate Degree,Married,"$50,000<Income<=$100,000",White,Not Purchased,0
+426,Age<=29,Female,Undergraduate Degree,Married,"Income<=$50,000",Black,Not Purchased,0
+427,Age<=29,Male,Graduate Degree,Married,"Income<=$50,000",Hispanic,Purchased,50
+428,30<=Age<=39,Male,Undergraduate Degree,Single,"$50,000<Income<=$100,000",Hispanic,Purchased,65
+429,40<=Age<=49,Female,Undergraduate Degree,Single,"Income>$100,000",White,Purchased,115
+430,Age<=29,Female,Undergraduate Degree,Single,"$50,000<Income<=$100,000",White,Not Purchased,0
+431,Age>=50,Male,Undergraduate Degree,Married,"Income<=$50,000",White,Not Purchased,0
+432,30<=Age<=39,Female,Undergraduate Degree,Married,"Income<=$50,000",White,Not Purchased,0
+433,Age>=50,Female,Undergraduate Degree,Married,"$50,000<Income<=$100,000",Black,Not Purchased,0
+434,30<=Age<=39,Male,Undergraduate Degree,Single,"Income<=$50,000",White,Purchased,45
+435,Age<=29,Female,Undergraduate Degree,Single,"$50,000<Income<=$100,000",White,Not Purchased,0
+436,40<=Age<=49,Female,Undergraduate Degree,Married,"Income<=$50,000",White,Not Purchased,0
+437,Age<=29,Female,Undergraduate Degree,Married,"Income>$100,000",Black,Purchased,75
+438,30<=Age<=39,Male,Undergraduate Degree,Single,"Income<=$50,000",White,Not Purchased,0
+439,Age<=29,Male,Undergraduate Degree,Single,"$50,000<Income<=$100,000",White,Purchased,45
+440,Age<=29,Male,Graduate Degree,Married,"Income<=$50,000",Hispanic,Not Purchased,0
+441,30<=Age<=39,Female,Undergraduate Degree,Single,"$50,000<Income<=$100,000",White,Not Purchased,0
+442,Age>=50,Male,Undergraduate Degree,Married,"$50,000<Income<=$100,000",Asian,Purchased,105
+443,30<=Age<=39,Male,Undergraduate Degree,Married,"$50,000<Income<=$100,000",Hispanic,Purchased,80
+444,30<=Age<=39,Female,Undergraduate Degree,Single,"$50,000<Income<=$100,000",Asian,Not Purchased,0
+445,40<=Age<=49,Female,Undergraduate Degree,Single,"Income>$100,000",White,Not Purchased,0
+446,30<=Age<=39,Male,Undergraduate Degree,Married,"$50,000<Income<=$100,000",Hispanic,Not Purchased,0
+447,Age<=29,Male,Undergraduate Degree,Married,"$50,000<Income<=$100,000",White,Purchased,55
+448,40<=Age<=49,Male,Graduate Degree,Single,"$50,000<Income<=$100,000",White,Purchased,115
+449,Age<=29,Male,Undergraduate Degree,Married,"Income>$100,000",Hispanic,Purchased,60
+450,40<=Age<=49,Female,Undergraduate Degree,Single,"Income<=$50,000",White,Not Purchased,0
+451,Age>=50,Female,Undergraduate Degree,Married,"Income>$100,000",White,Not Purchased,0
+452,Age<=29,Female,Undergraduate Degree,Married,"$50,000<Income<=$100,000",Black,Not Purchased,0
+453,40<=Age<=49,Male,Undergraduate Degree,Married,"$50,000<Income<=$100,000",White,Purchased,105
+454,30<=Age<=39,Female,Graduate Degree,Single,"$50,000<Income<=$100,000",Black,Purchased,80
+455,40<=Age<=49,Male,Undergraduate Degree,Married,"Income<=$50,000",White,Not Purchased,0
+456,40<=Age<=49,Male,Graduate Degree,Married,"Income>$100,000",Hispanic,Not Purchased,0
+457,Age<=29,Male,Undergraduate Degree,Married,"Income<=$50,000",White,Not Purchased,0
+458,40<=Age<=49,Male,Undergraduate Degree,Married,"$50,000<Income<=$100,000",White,Not Purchased,0
+459,30<=Age<=39,Male,Undergraduate Degree,Single,"$50,000<Income<=$100,000",Other,Not Purchased,0
+460,30<=Age<=39,Female,Undergraduate Degree,Single,"Income<=$50,000",White,Not Purchased,0
+461,Age<=29,Female,Graduate Degree,Married,"Income<=$50,000",White,Not Purchased,0
+462,40<=Age<=49,Female,Undergraduate Degree,Married,"$50,000<Income<=$100,000",White,Not Purchased,0
+463,30<=Age<=39,Female,Undergraduate Degree,Single,"$50,000<Income<=$100,000",Hispanic,Not Purchased,0
+464,40<=Age<=49,Male,Undergraduate Degree,Married,"$50,000<Income<=$100,000",Asian,Purchased,100
+465,Age<=29,Male,Undergraduate Degree,Married,"Income<=$50,000",Black,Not Purchased,0
+466,40<=Age<=49,Male,Undergraduate Degree,Married,"Income<=$50,000",Asian,Not Purchased,0
+467,Age<=29,Male,Undergraduate Degree,Single,"Income<=$50,000",Hispanic,Not Purchased,0
+468,Age<=29,Female,Undergraduate Degree,Married,"Income<=$50,000",Hispanic,Purchased,5
+469,Age<=29,Female,Undergraduate Degree,Married,"Income<=$50,000",White,Not Purchased,0
+470,40<=Age<=49,Male,Undergraduate Degree,Married,"Income<=$50,000",Black,Not Purchased,0
+471,40<=Age<=49,Female,Undergraduate Degree,Married,"Income<=$50,000",Black,Purchased,95
+472,Age>=50,Female,Undergraduate Degree,Married,"Income>$100,000",Asian,Not Purchased,0
+473,40<=Age<=49,Male,Undergraduate Degree,Married,"Income<=$50,000",White,Not Purchased,0
+474,Age<=29,Male,Undergraduate Degree,Single,"Income<=$50,000",White,Purchased,30
+475,Age<=29,Female,Undergraduate Degree,Single,"Income<=$50,000",Other,Not Purchased,0
+476,30<=Age<=39,Female,Undergraduate Degree,Single,"Income<=$50,000",Black,Not Purchased,0
+477,Age<=29,Female,Undergraduate Degree,Single,"$50,000<Income<=$100,000",Black,Purchased,70
+478,Age<=29,Male,Undergraduate Degree,Married,"Income>$100,000",White,Not Purchased,0
+479,30<=Age<=39,Male,Undergraduate Degree,Single,"Income<=$50,000",White,Not Purchased,0
+480,40<=Age<=49,Male,Undergraduate Degree,Single,"Income>$100,000",White,Purchased,105
+481,40<=Age<=49,Male,Undergraduate Degree,Single,"Income<=$50,000",White,Not Purchased,0
+482,Age>=50,Male,Undergraduate Degree,Married,"Income<=$50,000",Hispanic,Not Purchased,0
+483,Age<=29,Female,Undergraduate Degree,Married,"Income<=$50,000",White,Not Purchased,0
+484,Age>=50,Male,Graduate Degree,Married,"Income>$100,000",Hispanic,Not Purchased,0
+485,40<=Age<=49,Male,Undergraduate Degree,Married,"Income<=$50,000",White,Purchased,85
+486,Age<=29,Male,Undergraduate Degree,Single,"Income<=$50,000",White,Purchased,30
+487,40<=Age<=49,Male,Undergraduate Degree,Single,"$50,000<Income<=$100,000",White,Not Purchased,0
+488,Age<=29,Male,Undergraduate Degree,Married,"$50,000<Income<=$100,000",White,Not Purchased,0
+489,Age>=50,Male,Undergraduate Degree,Married,"Income>$100,000",White,Purchased,125
+490,30<=Age<=39,Female,Undergraduate Degree,Single,"Income>$100,000",White,Not Purchased,0
+491,Age<=29,Female,Undergraduate Degree,Married,"Income<=$50,000",Hispanic,Not Purchased,0
+492,Age<=29,Female,Undergraduate Degree,Single,"Income<=$50,000",Hispanic,Not Purchased,0
+493,Age>=50,Female,Undergraduate Degree,Single,"Income<=$50,000",White,Not Purchased,0
+494,40<=Age<=49,Male,Undergraduate Degree,Married,"Income>$100,000",Asian,Not Purchased,0
+495,30<=Age<=39,Female,Undergraduate Degree,Married,"$50,000<Income<=$100,000",White,Purchased,70
+496,Age>=50,Male,Undergraduate Degree,Married,"Income>$100,000",Hispanic,Purchased,155
+497,Age>=50,Female,Undergraduate Degree,Single,"Income<=$50,000",White,Not Purchased,0
+498,40<=Age<=49,Male,Undergraduate Degree,Single,"Income<=$50,000",White,Not Purchased,0
+499,30<=Age<=39,Male,Undergraduate Degree,Single,"Income<=$50,000",Black,Not Purchased,0
+500,40<=Age<=49,Female,Undergraduate Degree,Married,"$50,000<Income<=$100,000",Hispanic,Purchased,90
+501,Age>=50,Female,Undergraduate Degree,Married,"Income<=$50,000",Black,Not Purchased,0
+502,Age<=29,Male,Undergraduate Degree,Single,"Income<=$50,000",White,Not Purchased,0
+503,30<=Age<=39,Male,Graduate Degree,Single,"Income<=$50,000",White,Not Purchased,0
+504,Age<=29,Male,Graduate Degree,Single,"$50,000<Income<=$100,000",White,Not Purchased,0
+505,30<=Age<=39,Male,Undergraduate Degree,Married,"$50,000<Income<=$100,000",White,Not Purchased,0
+506,Age<=29,Female,Undergraduate Degree,Single,"Income<=$50,000",Hispanic,Not Purchased,0
+507,40<=Age<=49,Male,Undergraduate Degree,Married,"Income<=$50,000",Black,Not Purchased,0
+508,30<=Age<=39,Female,Undergraduate Degree,Married,"Income>$100,000",Black,Not Purchased,0
+509,30<=Age<=39,Female,Graduate Degree,Married,"Income<=$50,000",Hispanic,Purchased,60
+510,30<=Age<=39,Male,Undergraduate Degree,Married,"Income>$100,000",White,Not Purchased,0
+511,30<=Age<=39,Male,Undergraduate Degree,Single,"$50,000<Income<=$100,000",Hispanic,Purchased,70
+512,Age<=29,Female,Undergraduate Degree,Married,"$50,000<Income<=$100,000",White,Not Purchased,0
+513,30<=Age<=39,Male,Undergraduate Degree,Married,"Income<=$50,000",Hispanic,Not Purchased,0
+514,Age<=29,Male,Undergraduate Degree,Married,"Income<=$50,000",Other,Purchased,20
+515,Age>=50,Female,Undergraduate Degree,Single,"Income<=$50,000",Hispanic,Purchased,80
+516,Age<=29,Female,Undergraduate Degree,Married,"Income>$100,000",Other,Not Purchased,0
+517,Age<=29,Male,Undergraduate Degree,Single,"$50,000<Income<=$100,000",White,Not Purchased,0
+518,30<=Age<=39,Female,Undergraduate Degree,Single,"$50,000<Income<=$100,000",White,Purchased,70
+519,Age<=29,Male,Undergraduate Degree,Single,"Income>$100,000",White,Not Purchased,0
+520,Age<=29,Male,Undergraduate Degree,Single,"Income<=$50,000",Asian,Not Purchased,0
+521,40<=Age<=49,Male,Undergraduate Degree,Single,"Income>$100,000",White,Purchased,145
+522,40<=Age<=49,Male,Undergraduate Degree,Married,"$50,000<Income<=$100,000",White,Purchased,125
+523,Age<=29,Male,Undergraduate Degree,Single,"Income<=$50,000",Black,Not Purchased,0
+524,Age<=29,Male,Undergraduate Degree,Single,"Income<=$50,000",White,Not Purchased,0
+525,Age<=29,Female,Undergraduate Degree,Single,"$50,000<Income<=$100,000",Asian,Purchased,65
+526,30<=Age<=39,Female,Undergraduate Degree,Married,"$50,000<Income<=$100,000",White,Not Purchased,0
+527,40<=Age<=49,Female,Undergraduate Degree,Married,"Income<=$50,000",White,Not Purchased,0
+528,Age<=29,Female,Undergraduate Degree,Married,"Income<=$50,000",White,Not Purchased,0
+529,Age<=29,Male,Undergraduate Degree,Single,"Income<=$50,000",Asian,Not Purchased,0
+530,40<=Age<=49,Male,Undergraduate Degree,Married,"Income<=$50,000",White,Purchased,90
+531,Age<=29,Male,Undergraduate Degree,Single,"Income<=$50,000",White,Purchased,35
+532,Age>=50,Female,Undergraduate Degree,Married,"$50,000<Income<=$100,000",White,Not Purchased,0
+533,Age<=29,Male,Undergraduate Degree,Single,"$50,000<Income<=$100,000",White,Not Purchased,0
+534,40<=Age<=49,Male,Graduate Degree,Single,"Income>$100,000",White,Not Purchased,0
+535,30<=Age<=39,Female,Undergraduate Degree,Married,"$50,000<Income<=$100,000",White,Purchased,75
+536,Age<=29,Female,Undergraduate Degree,Married,"Income<=$50,000",White,Not Purchased,0
+537,30<=Age<=39,Female,Undergraduate Degree,Single,"Income<=$50,000",White,Purchased,60
+538,30<=Age<=39,Female,Undergraduate Degree,Single,"Income<=$50,000",White,Not Purchased,0
+539,30<=Age<=39,Female,Undergraduate Degree,Single,"Income>$100,000",White,Purchased,85
+540,Age>=50,Female,Undergraduate Degree,Single,"Income<=$50,000",Other,Not Purchased,0
+541,40<=Age<=49,Female,Undergraduate Degree,Married,"Income<=$50,000",Asian,Not Purchased,0
+542,Age<=29,Female,Undergraduate Degree,Single,"Income<=$50,000",Other,Not Purchased,0
+543,Age>=50,Male,Undergraduate Degree,Married,"$50,000<Income<=$100,000",Black,Not Purchased,0
+544,Age>=50,Male,Undergraduate Degree,Single,"Income>$100,000",White,Not Purchased,0
+545,40<=Age<=49,Female,Undergraduate Degree,Single,"$50,000<Income<=$100,000",White,Purchased,110
+546,Age<=29,Male,Undergraduate Degree,Married,"Income<=$50,000",Black,Not Purchased,0
+547,30<=Age<=39,Male,Undergraduate Degree,Married,"Income<=$50,000",White,Not Purchased,0
+548,30<=Age<=39,Female,Undergraduate Degree,Single,"$50,000<Income<=$100,000",Asian,Purchased,80
+549,30<=Age<=39,Female,Undergraduate Degree,Married,"$50,000<Income<=$100,000",White,Not Purchased,0
+550,Age>=50,Female,Undergraduate Degree,Married,"$50,000<Income<=$100,000",White,Not Purchased,0
+551,Age>=50,Male,Undergraduate Degree,Single,"$50,000<Income<=$100,000",White,Not Purchased,0
+552,30<=Age<=39,Male,Undergraduate Degree,Single,"$50,000<Income<=$100,000",White,Not Purchased,0
+553,40<=Age<=49,Male,Undergraduate Degree,Single,"$50,000<Income<=$100,000",Other,Not Purchased,0
+554,30<=Age<=39,Male,Undergraduate Degree,Single,"Income<=$50,000",Asian,Not Purchased,0
+555,40<=Age<=49,Male,Undergraduate Degree,Married,"$50,000<Income<=$100,000",White,Purchased,90
+556,40<=Age<=49,Male,Undergraduate Degree,Married,"$50,000<Income<=$100,000",Hispanic,Purchased,110
+557,Age<=29,Male,Undergraduate Degree,Married,"$50,000<Income<=$100,000",White,Not Purchased,0
+558,30<=Age<=39,Female,Graduate Degree,Married,"Income<=$50,000",Black,Purchased,90
+559,30<=Age<=39,Female,Graduate Degree,Married,"Income<=$50,000",White,Not Purchased,0
+560,40<=Age<=49,Female,Undergraduate Degree,Married,"Income<=$50,000",White,Not Purchased,0
+561,Age>=50,Female,Undergraduate Degree,Married,"Income<=$50,000",Other,Not Purchased,0
+562,30<=Age<=39,Male,Undergraduate Degree,Single,"Income<=$50,000",White,Not Purchased,0
+563,30<=Age<=39,Female,Undergraduate Degree,Single,"Income<=$50,000",Black,Not Purchased,0
+564,40<=Age<=49,Female,Undergraduate Degree,Married,"Income<=$50,000",White,Not Purchased,0
+565,40<=Age<=49,Male,Undergraduate Degree,Married,"Income<=$50,000",White,Not Purchased,0
+566,30<=Age<=39,Female,Undergraduate Degree,Single,"Income<=$50,000",White,Not Purchased,0
+567,Age<=29,Female,Undergraduate Degree,Single,"$50,000<Income<=$100,000",White,Not Purchased,0
+568,Age>=50,Male,Undergraduate Degree,Married,"Income<=$50,000",White,Not Purchased,0
+569,40<=Age<=49,Female,Undergraduate Degree,Single,"Income>$100,000",Hispanic,Not Purchased,0
+570,40<=Age<=49,Male,Undergraduate Degree,Married,"$50,000<Income<=$100,000",Other,Not Purchased,0
+571,Age<=29,Male,Undergraduate Degree,Married,"Income>$100,000",White,Not Purchased,0
+572,Age>=50,Male,Undergraduate Degree,Married,"Income>$100,000",Hispanic,Not Purchased,0
+573,Age<=29,Female,Undergraduate Degree,Married,"$50,000<Income<=$100,000",White,Not Purchased,0
+574,Age>=50,Female,Undergraduate Degree,Single,"$50,000<Income<=$100,000",White,Purchased,90
+575,40<=Age<=49,Female,Graduate Degree,Married,"Income<=$50,000",Black,Purchased,95
+576,40<=Age<=49,Female,Undergraduate Degree,Married,"Income<=$50,000",White,Not Purchased,0
+577,Age<=29,Female,Undergraduate Degree,Married,"$50,000<Income<=$100,000",White,Not Purchased,0
+578,Age<=29,Male,Graduate Degree,Single,"Income<=$50,000",White,Not Purchased,0
+579,Age<=29,Female,Undergraduate Degree,Married,"Income<=$50,000",White,Purchased,50
+580,Age<=29,Male,Undergraduate Degree,Single,"Income<=$50,000",White,Not Purchased,0
+581,40<=Age<=49,Male,Graduate Degree,Married,"Income<=$50,000",White,Purchased,95
+582,Age<=29,Male,Undergraduate Degree,Married,"Income<=$50,000",White,Not Purchased,0
+583,40<=Age<=49,Male,Undergraduate Degree,Single,"Income<=$50,000",Hispanic,Not Purchased,0
+584,Age>=50,Female,Undergraduate Degree,Married,"$50,000<Income<=$100,000",White,Not Purchased,0
+585,Age<=29,Male,Undergraduate Degree,Single,"Income>$100,000",White,Not Purchased,0
+586,40<=Age<=49,Male,Graduate Degree,Married,"Income>$100,000",Asian,Purchased,170
+587,Age<=29,Male,Undergraduate Degree,Married,"Income<=$50,000",Hispanic,Not Purchased,0
+588,Age<=29,Male,Undergraduate Degree,Married,"$50,000<Income<=$100,000",White,Not Purchased,0
+589,Age>=50,Female,Undergraduate Degree,Married,"$50,000<Income<=$100,000",White,Purchased,105
+590,Age<=29,Female,Undergraduate Degree,Single,"Income>$100,000",White,Not Purchased,0
+591,Age>=50,Female,Undergraduate Degree,Married,"$50,000<Income<=$100,000",White,Not Purchased,0
+592,Age<=29,Male,Undergraduate Degree,Single,"Income>$100,000",White,Purchased,60
+593,Age<=29,Male,Undergraduate Degree,Married,"$50,000<Income<=$100,000",Black,Not Purchased,0
+594,Age<=29,Female,Graduate Degree,Single,"Income<=$50,000",White,Purchased,40
+595,30<=Age<=39,Male,Undergraduate Degree,Married,"Income<=$50,000",White,Purchased,65
+596,30<=Age<=39,Female,Graduate Degree,Single,"Income<=$50,000",White,Not Purchased,0
+597,30<=Age<=39,Female,Undergraduate Degree,Married,"$50,000<Income<=$100,000",White,Purchased,85
+598,40<=Age<=49,Female,Undergraduate Degree,Married,"Income>$100,000",Asian,Not Purchased,0
+599,30<=Age<=39,Female,Undergraduate Degree,Married,"Income<=$50,000",Hispanic,Not Purchased,0
+600,Age<=29,Female,Undergraduate Degree,Married,"Income<=$50,000",White,Purchased,40
+601,40<=Age<=49,Male,Undergraduate Degree,Single,"Income<=$50,000",Hispanic,Not Purchased,0
+602,Age<=29,Male,Undergraduate Degree,Married,"Income<=$50,000",White,Not Purchased,0
+603,Age<=29,Male,Undergraduate Degree,Married,"Income<=$50,000",Asian,Not Purchased,0
+604,40<=Age<=49,Male,Undergraduate Degree,Single,"$50,000<Income<=$100,000",Other,Not Purchased,0
+605,40<=Age<=49,Male,Undergraduate Degree,Married,"Income<=$50,000",White,Purchased,85
+606,30<=Age<=39,Male,Undergraduate Degree,Married,"$50,000<Income<=$100,000",Black,Not Purchased,0
+607,40<=Age<=49,Female,Undergraduate Degree,Married,"Income<=$50,000",White,Not Purchased,0
+608,40<=Age<=49,Female,Undergraduate Degree,Married,"Income<=$50,000",Hispanic,Purchased,60
+609,40<=Age<=49,Male,Graduate Degree,Married,"Income<=$50,000",Hispanic,Not Purchased,0
+610,30<=Age<=39,Male,Undergraduate Degree,Married,"Income<=$50,000",Hispanic,Not Purchased,0
+611,40<=Age<=49,Male,Undergraduate Degree,Married,"Income<=$50,000",Black,Not Purchased,0
+612,40<=Age<=49,Female,Undergraduate Degree,Married,"Income<=$50,000",White,Purchased,80
+613,Age<=29,Male,Undergraduate Degree,Married,"$50,000<Income<=$100,000",White,Not Purchased,0
+614,40<=Age<=49,Female,Undergraduate Degree,Married,"Income<=$50,000",Asian,Not Purchased,0
+615,Age<=29,Female,Undergraduate Degree,Married,"Income<=$50,000",White,Not Purchased,0
+616,30<=Age<=39,Female,Undergraduate Degree,Married,"$50,000<Income<=$100,000",Asian,Not Purchased,0
+617,30<=Age<=39,Female,Undergraduate Degree,Married,"Income>$100,000",Black,Not Purchased,0
+618,Age<=29,Male,Undergraduate Degree,Married,"Income>$100,000",Hispanic,Not Purchased,0
+619,Age<=29,Female,Graduate Degree,Married,"$50,000<Income<=$100,000",Hispanic,Purchased,65
+620,Age<=29,Male,Undergraduate Degree,Married,"Income<=$50,000",Hispanic,Purchased,30
+621,40<=Age<=49,Male,Undergraduate Degree,Married,"$50,000<Income<=$100,000",Asian,Not Purchased,0
+622,30<=Age<=39,Male,Undergraduate Degree,Married,"Income>$100,000",White,Not Purchased,0
+623,30<=Age<=39,Female,Undergraduate Degree,Married,"$50,000<Income<=$100,000",White,Not Purchased,0
+624,30<=Age<=39,Male,Undergraduate Degree,Married,"$50,000<Income<=$100,000",White,Purchased,80
+625,Age<=29,Male,Undergraduate Degree,Single,"$50,000<Income<=$100,000",Black,Purchased,65
+626,Age>=50,Male,Undergraduate Degree,Married,"$50,000<Income<=$100,000",Black,Not Purchased,0
+627,30<=Age<=39,Male,Undergraduate Degree,Married,"Income<=$50,000",White,Purchased,55
+628,Age>=50,Female,Undergraduate Degree,Single,"Income>$100,000",White,Not Purchased,0
+629,Age<=29,Female,Undergraduate Degree,Married,"Income<=$50,000",White,Purchased,40
+630,30<=Age<=39,Female,Undergraduate Degree,Single,"Income<=$50,000",Black,Not Purchased,0
+631,30<=Age<=39,Male,Graduate Degree,Married,"$50,000<Income<=$100,000",Asian,Not Purchased,0
+632,30<=Age<=39,Female,Undergraduate Degree,Married,"Income<=$50,000",Other,Not Purchased,0
+633,30<=Age<=39,Female,Undergraduate Degree,Married,"$50,000<Income<=$100,000",White,Not Purchased,0
+634,40<=Age<=49,Female,Undergraduate Degree,Single,"$50,000<Income<=$100,000",Hispanic,Not Purchased,0
+635,40<=Age<=49,Male,Undergraduate Degree,Single,"Income<=$50,000",White,Not Purchased,0
+636,40<=Age<=49,Female,Undergraduate Degree,Single,"Income>$100,000",White,Not Purchased,0
+637,Age>=50,Female,Undergraduate Degree,Married,"Income<=$50,000",Black,Purchased,95
+638,40<=Age<=49,Female,Undergraduate Degree,Single,"Income<=$50,000",White,Purchased,65
+639,30<=Age<=39,Female,Undergraduate Degree,Single,"$50,000<Income<=$100,000",Other,Purchased,75
+640,40<=Age<=49,Female,Undergraduate Degree,Married,"Income<=$50,000",White,Not Purchased,0
+641,30<=Age<=39,Female,Undergraduate Degree,Married,"$50,000<Income<=$100,000",Black,Not Purchased,0
+642,Age>=50,Female,Undergraduate Degree,Married,"$50,000<Income<=$100,000",White,Purchased,100
+643,30<=Age<=39,Female,Undergraduate Degree,Single,"Income<=$50,000",White,Not Purchased,0
+644,Age>=50,Male,Undergraduate Degree,Single,"Income<=$50,000",Other,Purchased,95
+645,40<=Age<=49,Female,Graduate Degree,Married,"$50,000<Income<=$100,000",White,Not Purchased,0
+646,40<=Age<=49,Female,Undergraduate Degree,Single,"$50,000<Income<=$100,000",Black,Purchased,80
+647,Age>=50,Female,Undergraduate Degree,Married,"$50,000<Income<=$100,000",Asian,Not Purchased,0
+648,Age<=29,Female,Undergraduate Degree,Single,"Income<=$50,000",White,Not Purchased,0
+649,Age<=29,Male,Undergraduate Degree,Married,"Income<=$50,000",Asian,Purchased,30
+650,40<=Age<=49,Female,Undergraduate Degree,Married,"Income<=$50,000",White,Not Purchased,0
+651,Age<=29,Male,Undergraduate Degree,Married,"Income<=$50,000",Hispanic,Purchased,35
+652,40<=Age<=49,Female,Undergraduate Degree,Single,"Income<=$50,000",Hispanic,Not Purchased,0
+653,30<=Age<=39,Female,Undergraduate Degree,Married,"$50,000<Income<=$100,000",Black,Not Purchased,0
+654,40<=Age<=49,Male,Undergraduate Degree,Single,"$50,000<Income<=$100,000",Hispanic,Purchased,90
+655,30<=Age<=39,Female,Undergraduate Degree,Single,"Income<=$50,000",Hispanic,Not Purchased,0
+656,Age>=50,Male,Undergraduate Degree,Single,"Income>$100,000",White,Not Purchased,0
+657,30<=Age<=39,Female,Undergraduate Degree,Married,"Income>$100,000",White,Not Purchased,0
+658,Age<=29,Female,Undergraduate Degree,Married,"$50,000<Income<=$100,000",Asian,Not Purchased,0
+659,Age<=29,Female,Undergraduate Degree,Single,"Income<=$50,000",White,Purchased,20
+660,Age>=50,Male,Undergraduate Degree,Married,"Income<=$50,000",White,Not Purchased,0
+661,Age>=50,Male,Undergraduate Degree,Married,"$50,000<Income<=$100,000",Black,Not Purchased,0
+662,Age<=29,Female,Undergraduate Degree,Married,"Income>$100,000",White,Not Purchased,0
+663,40<=Age<=49,Female,Undergraduate Degree,Married,"Income<=$50,000",White,Not Purchased,0
+664,40<=Age<=49,Female,Undergraduate Degree,Married,"$50,000<Income<=$100,000",White,Purchased,95
+665,30<=Age<=39,Male,Graduate Degree,Married,"Income<=$50,000",White,Purchased,85
+666,40<=Age<=49,Male,Undergraduate Degree,Single,"Income<=$50,000",Hispanic,Purchased,70
+667,30<=Age<=39,Male,Undergraduate Degree,Single,"Income>$100,000",Black,Not Purchased,0
+668,30<=Age<=39,Female,Undergraduate Degree,Married,"$50,000<Income<=$100,000",White,Not Purchased,0
+669,40<=Age<=49,Male,Graduate Degree,Married,"$50,000<Income<=$100,000",White,Purchased,120
+670,30<=Age<=39,Male,Undergraduate Degree,Single,"Income<=$50,000",White,Purchased,50
+671,Age>=50,Male,Undergraduate Degree,Single,"Income>$100,000",White,Purchased,135
+672,30<=Age<=39,Male,Undergraduate Degree,Single,"Income<=$50,000",White,Not Purchased,0
+673,30<=Age<=39,Male,Undergraduate Degree,Married,"Income<=$50,000",Other,Not Purchased,0
+674,Age>=50,Male,Undergraduate Degree,Married,"Income<=$50,000",Hispanic,Purchased,90
+675,Age<=29,Male,Undergraduate Degree,Married,"$50,000<Income<=$100,000",White,Not Purchased,0
+676,40<=Age<=49,Female,Undergraduate Degree,Married,"Income<=$50,000",Other,Not Purchased,0
+677,Age<=29,Female,Undergraduate Degree,Married,"Income<=$50,000",White,Purchased,40
+678,Age<=29,Male,Undergraduate Degree,Married,"$50,000<Income<=$100,000",White,Purchased,35
+679,30<=Age<=39,Male,Undergraduate Degree,Married,"$50,000<Income<=$100,000",Hispanic,Purchased,110
+680,Age<=29,Male,Undergraduate Degree,Married,"$50,000<Income<=$100,000",White,Purchased,60
+681,40<=Age<=49,Female,Undergraduate Degree,Married,"Income<=$50,000",Black,Purchased,90
+682,40<=Age<=49,Female,Undergraduate Degree,Single,"Income>$100,000",Hispanic,Purchased,115
+683,30<=Age<=39,Male,Undergraduate Degree,Single,"$50,000<Income<=$100,000",White,Purchased,60
+684,30<=Age<=39,Male,Undergraduate Degree,Single,"$50,000<Income<=$100,000",White,Not Purchased,0
+685,Age<=29,Female,Undergraduate Degree,Married,"Income<=$50,000",White,Purchased,50
+686,30<=Age<=39,Male,Undergraduate Degree,Single,"$50,000<Income<=$100,000",White,Not Purchased,0
+687,Age>=50,Female,Undergraduate Degree,Married,"Income>$100,000",Hispanic,Purchased,150
+688,Age<=29,Female,Undergraduate Degree,Married,"Income<=$50,000",White,Purchased,55
+689,40<=Age<=49,Female,Undergraduate Degree,Single,"$50,000<Income<=$100,000",Hispanic,Not Purchased,0
+690,Age>=50,Female,Undergraduate Degree,Single,"Income<=$50,000",White,Purchased,80
+691,30<=Age<=39,Female,Undergraduate Degree,Married,"Income<=$50,000",White,Not Purchased,0
+692,30<=Age<=39,Male,Undergraduate Degree,Married,"Income<=$50,000",White,Not Purchased,0
+693,Age<=29,Female,Undergraduate Degree,Married,"Income<=$50,000",Other,Purchased,40
+694,Age>=50,Female,Undergraduate Degree,Single,"Income<=$50,000",White,Not Purchased,0
+695,30<=Age<=39,Female,Undergraduate Degree,Single,"Income<=$50,000",Black,Not Purchased,0
+696,Age>=50,Male,Undergraduate Degree,Married,"$50,000<Income<=$100,000",Black,Not Purchased,0
+697,40<=Age<=49,Female,Undergraduate Degree,Married,"$50,000<Income<=$100,000",Other,Not Purchased,0
+698,40<=Age<=49,Female,Undergraduate Degree,Single,"Income<=$50,000",White,Not Purchased,0
+699,40<=Age<=49,Female,Undergraduate Degree,Single,"$50,000<Income<=$100,000",White,Not Purchased,0
+700,Age>=50,Female,Undergraduate Degree,Single,"Income<=$50,000",Hispanic,Purchased,85
+701,Age<=29,Female,Undergraduate Degree,Single,"Income<=$50,000",Asian,Not Purchased,0
+702,Age<=29,Female,Graduate Degree,Single,"Income<=$50,000",White,Purchased,30
+703,30<=Age<=39,Male,Undergraduate Degree,Married,"$50,000<Income<=$100,000",Black,Purchased,85
+704,Age>=50,Male,Undergraduate Degree,Single,"Income<=$50,000",White,Not Purchased,0
+705,Age>=50,Female,Undergraduate Degree,Single,"$50,000<Income<=$100,000",White,Purchased,115
+706,Age<=29,Female,Undergraduate Degree,Single,"Income>$100,000",White,Purchased,95
+707,40<=Age<=49,Male,Undergraduate Degree,Married,"Income<=$50,000",White,Not Purchased,0
+708,Age<=29,Female,Undergraduate Degree,Single,"$50,000<Income<=$100,000",White,Purchased,55
+709,30<=Age<=39,Male,Undergraduate Degree,Married,"Income>$100,000",Other,Not Purchased,0
+710,Age<=29,Male,Undergraduate Degree,Married,"$50,000<Income<=$100,000",White,Not Purchased,0
+711,30<=Age<=39,Female,Undergraduate Degree,Single,"Income<=$50,000",White,Not Purchased,0
+712,30<=Age<=39,Female,Undergraduate Degree,Married,"$50,000<Income<=$100,000",White,Not Purchased,0
+713,30<=Age<=39,Male,Undergraduate Degree,Married,"Income<=$50,000",White,Not Purchased,0
+714,Age>=50,Male,Undergraduate Degree,Married,"Income<=$50,000",White,Not Purchased,0
+715,30<=Age<=39,Male,Undergraduate Degree,Married,"$50,000<Income<=$100,000",Hispanic,Not Purchased,0
+716,30<=Age<=39,Female,Undergraduate Degree,Married,"$50,000<Income<=$100,000",White,Not Purchased,0
+717,40<=Age<=49,Male,Undergraduate Degree,Married,"Income<=$50,000",White,Not Purchased,0
+718,30<=Age<=39,Female,Undergraduate Degree,Married,"Income<=$50,000",Hispanic,Not Purchased,0
+719,Age>=50,Male,Graduate Degree,Single,"$50,000<Income<=$100,000",Other,Not Purchased,0
+720,30<=Age<=39,Male,Undergraduate Degree,Married,"$50,000<Income<=$100,000",White,Not Purchased,0
+721,40<=Age<=49,Female,Undergraduate Degree,Married,"Income>$100,000",White,Not Purchased,0
+722,40<=Age<=49,Female,Undergraduate Degree,Married,"Income<=$50,000",White,Not Purchased,0
+723,Age>=50,Female,Undergraduate Degree,Single,"Income>$100,000",Black,Not Purchased,0
+724,30<=Age<=39,Male,Undergraduate Degree,Married,"Income<=$50,000",Hispanic,Not Purchased,0
+725,40<=Age<=49,Male,Undergraduate Degree,Married,"$50,000<Income<=$100,000",White,Purchased,100
+726,40<=Age<=49,Male,Undergraduate Degree,Single,"Income>$100,000",Hispanic,Purchased,120
+727,Age>=50,Female,Undergraduate Degree,Married,"Income<=$50,000",White,Not Purchased,0
+728,Age>=50,Male,Undergraduate Degree,Married,"$50,000<Income<=$100,000",Hispanic,Not Purchased,0
+729,40<=Age<=49,Male,Undergraduate Degree,Single,"Income<=$50,000",Hispanic,Not Purchased,0
+730,Age<=29,Female,Graduate Degree,Single,"Income>$100,000",White,Not Purchased,0
+731,Age>=50,Male,Undergraduate Degree,Married,"Income<=$50,000",White,Not Purchased,0
+732,Age>=50,Female,Undergraduate Degree,Married,"Income<=$50,000",White,Not Purchased,0
+733,40<=Age<=49,Male,Undergraduate Degree,Married,"Income<=$50,000",Other,Purchased,75
+734,30<=Age<=39,Female,Undergraduate Degree,Single,"$50,000<Income<=$100,000",White,Purchased,85
+735,30<=Age<=39,Male,Undergraduate Degree,Single,"$50,000<Income<=$100,000",White,Not Purchased,0
+736,Age<=29,Male,Undergraduate Degree,Married,"Income<=$50,000",Black,Not Purchased,0
+737,Age>=50,Female,Undergraduate Degree,Married,"Income>$100,000",White,Not Purchased,0
+738,Age<=29,Female,Undergraduate Degree,Married,"Income<=$50,000",Asian,Not Purchased,0
+739,30<=Age<=39,Female,Undergraduate Degree,Married,"Income<=$50,000",White,Not Purchased,0
+740,Age>=50,Female,Undergraduate Degree,Single,"Income<=$50,000",Asian,Not Purchased,0
+741,30<=Age<=39,Female,Undergraduate Degree,Single,"Income>$100,000",White,Purchased,105
+742,Age<=29,Male,Undergraduate Degree,Married,"Income<=$50,000",White,Not Purchased,0
+743,Age<=29,Female,Undergraduate Degree,Married,"Income<=$50,000",White,Not Purchased,0
+744,30<=Age<=39,Female,Graduate Degree,Single,"Income>$100,000",White,Not Purchased,0
+745,30<=Age<=39,Female,Undergraduate Degree,Single,"$50,000<Income<=$100,000",White,Not Purchased,0
+746,Age>=50,Male,Undergraduate Degree,Single,"Income<=$50,000",Hispanic,Not Purchased,0
+747,Age>=50,Male,Undergraduate Degree,Single,"Income<=$50,000",Asian,Not Purchased,0
+748,Age<=29,Male,Undergraduate Degree,Single,"$50,000<Income<=$100,000",White,Not Purchased,0
+749,40<=Age<=49,Female,Undergraduate Degree,Single,"Income>$100,000",Hispanic,Not Purchased,0
+750,Age>=50,Female,Undergraduate Degree,Single,"$50,000<Income<=$100,000",White,Purchased,100
+751,30<=Age<=39,Female,Undergraduate Degree,Married,"$50,000<Income<=$100,000",Asian,Purchased,85
+752,30<=Age<=39,Female,Undergraduate Degree,Married,"$50,000<Income<=$100,000",White,Not Purchased,0
+753,Age<=29,Male,Undergraduate Degree,Married,"$50,000<Income<=$100,000",White,Not Purchased,0
+754,40<=Age<=49,Female,Undergraduate Degree,Married,"Income<=$50,000",White,Not Purchased,0
+755,Age<=29,Female,Undergraduate Degree,Single,"Income<=$50,000",White,Not Purchased,0
+756,30<=Age<=39,Female,Undergraduate Degree,Single,"$50,000<Income<=$100,000",White,Not Purchased,0
+757,Age<=29,Male,Undergraduate Degree,Single,"Income<=$50,000",White,Purchased,20
+758,30<=Age<=39,Female,Graduate Degree,Married,"Income>$100,000",White,Purchased,115
+759,40<=Age<=49,Male,Undergraduate Degree,Single,"$50,000<Income<=$100,000",White,Purchased,75
+760,40<=Age<=49,Female,Undergraduate Degree,Single,"Income<=$50,000",White,Not Purchased,0
+761,40<=Age<=49,Male,Undergraduate Degree,Single,"$50,000<Income<=$100,000",White,Not Purchased,0
+762,30<=Age<=39,Female,Undergraduate Degree,Single,"Income<=$50,000",White,Not Purchased,0
+763,Age<=29,Female,Undergraduate Degree,Single,"Income<=$50,000",Black,Not Purchased,0
+764,40<=Age<=49,Male,Undergraduate Degree,Married,"Income<=$50,000",White,Not Purchased,0
+765,40<=Age<=49,Female,Undergraduate Degree,Single,"Income<=$50,000",White,Not Purchased,0
+766,Age<=29,Male,Undergraduate Degree,Married,"$50,000<Income<=$100,000",White,Not Purchased,0
+767,30<=Age<=39,Female,Undergraduate Degree,Married,"Income<=$50,000",White,Not Purchased,0
+768,40<=Age<=49,Male,Undergraduate Degree,Married,"Income<=$50,000",White,Not Purchased,0
+769,30<=Age<=39,Male,Undergraduate Degree,Married,"$50,000<Income<=$100,000",White,Not Purchased,0
+770,30<=Age<=39,Female,Undergraduate Degree,Married,"Income<=$50,000",Hispanic,Not Purchased,0
+771,40<=Age<=49,Male,Undergraduate Degree,Single,"Income<=$50,000",White,Not Purchased,0
+772,Age<=29,Female,Undergraduate Degree,Single,"Income<=$50,000",Hispanic,Not Purchased,0
+773,40<=Age<=49,Male,Graduate Degree,Married,"Income>$100,000",White,Purchased,145
+774,40<=Age<=49,Female,Undergraduate Degree,Single,"$50,000<Income<=$100,000",White,Not Purchased,0
+775,40<=Age<=49,Female,Undergraduate Degree,Single,"$50,000<Income<=$100,000",Black,Not Purchased,0
+776,Age>=50,Female,Undergraduate Degree,Married,"Income<=$50,000",White,Not Purchased,0
+777,Age>=50,Male,Undergraduate Degree,Married,"$50,000<Income<=$100,000",White,Not Purchased,0
+778,40<=Age<=49,Male,Undergraduate Degree,Married,"Income<=$50,000",Asian,Not Purchased,0
+779,Age>=50,Male,Undergraduate Degree,Married,"$50,000<Income<=$100,000",White,Not Purchased,0
+780,40<=Age<=49,Male,Undergraduate Degree,Married,"$50,000<Income<=$100,000",White,Purchased,95
+781,Age<=29,Male,Undergraduate Degree,Married,"$50,000<Income<=$100,000",Asian,Purchased,45
+782,30<=Age<=39,Male,Undergraduate Degree,Single,"$50,000<Income<=$100,000",White,Purchased,70
+783,Age>=50,Female,Undergraduate Degree,Single,"Income<=$50,000",White,Not Purchased,0
+784,30<=Age<=39,Female,Undergraduate Degree,Married,"Income<=$50,000",White,Not Purchased,0
+785,30<=Age<=39,Male,Undergraduate Degree,Married,"Income<=$50,000",White,Not Purchased,0
+786,40<=Age<=49,Female,Undergraduate Degree,Single,"$50,000<Income<=$100,000",Black,Not Purchased,0
+787,30<=Age<=39,Male,Undergraduate Degree,Married,"Income<=$50,000",Asian,Not Purchased,0
+788,30<=Age<=39,Male,Undergraduate Degree,Single,"Income<=$50,000",White,Not Purchased,0
+789,Age<=29,Female,Undergraduate Degree,Married,"$50,000<Income<=$100,000",White,Purchased,45
+790,30<=Age<=39,Female,Undergraduate Degree,Single,"$50,000<Income<=$100,000",Asian,Not Purchased,0
+791,40<=Age<=49,Male,Undergraduate Degree,Married,"$50,000<Income<=$100,000",White,Not Purchased,0
+792,Age<=29,Female,Undergraduate Degree,Married,"Income>$100,000",Black,Not Purchased,0
+793,Age>=50,Male,Undergraduate Degree,Married,"Income<=$50,000",White,Not Purchased,0
+794,30<=Age<=39,Male,Undergraduate Degree,Married,"Income>$100,000",White,Not Purchased,0
+795,30<=Age<=39,Female,Undergraduate Degree,Married,"Income>$100,000",White,Purchased,95
+796,40<=Age<=49,Male,Graduate Degree,Married,"Income<=$50,000",White,Purchased,75
+797,30<=Age<=39,Female,Undergraduate Degree,Married,"$50,000<Income<=$100,000",White,Not Purchased,0
+798,Age<=29,Male,Undergraduate Degree,Single,"$50,000<Income<=$100,000",White,Not Purchased,0
+799,30<=Age<=39,Female,Undergraduate Degree,Married,"Income<=$50,000",Black,Not Purchased,0
+800,Age>=50,Female,Undergraduate Degree,Single,"$50,000<Income<=$100,000",White,Not Purchased,0
+801,40<=Age<=49,Female,Undergraduate Degree,Single,"Income>$100,000",White,Purchased,95
+802,Age<=29,Female,Undergraduate Degree,Single,"Income>$100,000",White,Not Purchased,0
+803,Age>=50,Male,Undergraduate Degree,Married,"Income>$100,000",Hispanic,Not Purchased,0
+804,Age<=29,Male,Undergraduate Degree,Married,"Income>$100,000",Asian,Purchased,75
+805,30<=Age<=39,Female,Graduate Degree,Single,"Income<=$50,000",Other,Purchased,55
+806,40<=Age<=49,Female,Undergraduate Degree,Married,"Income>$100,000",White,Purchased,135
+807,Age<=29,Female,Undergraduate Degree,Married,"Income>$100,000",Hispanic,Not Purchased,0
+808,Age>=50,Male,Undergraduate Degree,Single,"Income<=$50,000",Hispanic,Purchased,100
+809,Age<=29,Male,Undergraduate Degree,Married,"Income>$100,000",Other,Not Purchased,0
+810,Age<=29,Male,Graduate Degree,Married,"$50,000<Income<=$100,000",White,Purchased,85
+811,Age>=50,Male,Undergraduate Degree,Single,"$50,000<Income<=$100,000",White,Purchased,120
+812,40<=Age<=49,Male,Undergraduate Degree,Married,"Income>$100,000",Other,Not Purchased,0
+813,40<=Age<=49,Female,Graduate Degree,Single,"Income>$100,000",Hispanic,Not Purchased,0
+814,40<=Age<=49,Male,Undergraduate Degree,Single,"$50,000<Income<=$100,000",White,Not Purchased,0
+815,Age<=29,Female,Undergraduate Degree,Married,"$50,000<Income<=$100,000",Black,Purchased,45
+816,30<=Age<=39,Male,Undergraduate Degree,Married,"Income>$100,000",White,Not Purchased,0
+817,Age>=50,Female,Undergraduate Degree,Single,"Income<=$50,000",Hispanic,Not Purchased,0
+818,Age<=29,Female,Undergraduate Degree,Married,"Income>$100,000",Asian,Purchased,100
+819,30<=Age<=39,Male,Undergraduate Degree,Single,"Income<=$50,000",Asian,Purchased,50
+820,30<=Age<=39,Female,Undergraduate Degree,Single,"$50,000<Income<=$100,000",White,Not Purchased,0
+821,40<=Age<=49,Female,Undergraduate Degree,Married,"Income<=$50,000",Hispanic,Not Purchased,0
+822,Age>=50,Female,Undergraduate Degree,Married,"Income>$100,000",White,Not Purchased,0
+823,30<=Age<=39,Male,Undergraduate Degree,Single,"Income<=$50,000",White,Not Purchased,0
+824,30<=Age<=39,Male,Undergraduate Degree,Married,"Income<=$50,000",Hispanic,Not Purchased,0
+825,Age>=50,Male,Undergraduate Degree,Married,"$50,000<Income<=$100,000",White,Not Purchased,0
+826,Age>=50,Male,Undergraduate Degree,Single,"Income<=$50,000",Hispanic,Purchased,95
+827,40<=Age<=49,Female,Undergraduate Degree,Married,"Income>$100,000",Asian,Purchased,105
+828,Age<=29,Female,Graduate Degree,Single,"Income<=$50,000",White,Not Purchased,0
+829,40<=Age<=49,Male,Undergraduate Degree,Single,"Income>$100,000",White,Purchased,115
+830,40<=Age<=49,Male,Undergraduate Degree,Single,"Income<=$50,000",Asian,Not Purchased,0
+831,Age>=50,Female,Undergraduate Degree,Single,"Income<=$50,000",Hispanic,Not Purchased,0
+832,30<=Age<=39,Female,Undergraduate Degree,Married,"Income<=$50,000",White,Not Purchased,0
+833,30<=Age<=39,Male,Undergraduate Degree,Single,"$50,000<Income<=$100,000",White,Not Purchased,0
+834,Age<=29,Male,Undergraduate Degree,Married,"$50,000<Income<=$100,000",White,Purchased,75
+835,30<=Age<=39,Male,Undergraduate Degree,Single,"Income<=$50,000",Black,Not Purchased,0
+836,Age>=50,Male,Undergraduate Degree,Married,"Income<=$50,000",White,Purchased,90
+837,Age>=50,Male,Undergraduate Degree,Single,"Income<=$50,000",Black,Purchased,95
+838,40<=Age<=49,Male,Undergraduate Degree,Single,"$50,000<Income<=$100,000",White,Not Purchased,0
+839,Age>=50,Male,Undergraduate Degree,Single,"Income>$100,000",Hispanic,Purchased,95
+840,40<=Age<=49,Female,Undergraduate Degree,Single,"Income<=$50,000",White,Not Purchased,0
+841,40<=Age<=49,Female,Undergraduate Degree,Married,"Income<=$50,000",White,Purchased,85
+842,Age<=29,Male,Undergraduate Degree,Married,"Income<=$50,000",Other,Purchased,60
+843,30<=Age<=39,Male,Graduate Degree,Married,"Income<=$50,000",Other,Purchased,80
+844,Age>=50,Female,Undergraduate Degree,Single,"Income<=$50,000",White,Not Purchased,0
+845,Age<=29,Female,Undergraduate Degree,Married,"Income<=$50,000",White,Not Purchased,0
+846,Age>=50,Male,Undergraduate Degree,Married,"$50,000<Income<=$100,000",Asian,Not Purchased,0
+847,Age<=29,Male,Undergraduate Degree,Single,"$50,000<Income<=$100,000",White,Not Purchased,0
+848,40<=Age<=49,Female,Undergraduate Degree,Single,"Income<=$50,000",White,Not Purchased,0
+849,Age<=29,Male,Undergraduate Degree,Married,"Income<=$50,000",White,Not Purchased,0
+850,40<=Age<=49,Male,Undergraduate Degree,Married,"Income<=$50,000",White,Not Purchased,0
+851,30<=Age<=39,Male,Undergraduate Degree,Single,"$50,000<Income<=$100,000",Other,Not Purchased,0
+852,Age<=29,Male,Graduate Degree,Married,"$50,000<Income<=$100,000",White,Not Purchased,0
+853,30<=Age<=39,Male,Undergraduate Degree,Married,"Income<=$50,000",White,Purchased,50
+854,40<=Age<=49,Male,Undergraduate Degree,Married,"Income<=$50,000",Hispanic,Not Purchased,0
+855,40<=Age<=49,Female,Undergraduate Degree,Married,"$50,000<Income<=$100,000",White,Not Purchased,0
+856,30<=Age<=39,Male,Undergraduate Degree,Married,"$50,000<Income<=$100,000",White,Purchased,80
+857,40<=Age<=49,Male,Undergraduate Degree,Married,"$50,000<Income<=$100,000",White,Not Purchased,0
+858,40<=Age<=49,Female,Undergraduate Degree,Married,"Income>$100,000",Hispanic,Not Purchased,0
+859,40<=Age<=49,Male,Undergraduate Degree,Married,"Income>$100,000",White,Purchased,140
+860,Age<=29,Female,Undergraduate Degree,Married,"$50,000<Income<=$100,000",White,Purchased,50
+861,Age<=29,Male,Undergraduate Degree,Married,"Income<=$50,000",Hispanic,Not Purchased,0
+862,40<=Age<=49,Male,Undergraduate Degree,Single,"$50,000<Income<=$100,000",White,Not Purchased,0
+863,40<=Age<=49,Female,Undergraduate Degree,Single,"$50,000<Income<=$100,000",White,Not Purchased,0
+864,40<=Age<=49,Female,Undergraduate Degree,Single,"$50,000<Income<=$100,000",Hispanic,Purchased,90
+865,40<=Age<=49,Female,Undergraduate Degree,Single,"Income<=$50,000",White,Not Purchased,0
+866,40<=Age<=49,Female,Undergraduate Degree,Single,"Income<=$50,000",White,Not Purchased,0
+867,40<=Age<=49,Male,Undergraduate Degree,Married,"Income<=$50,000",White,Not Purchased,0
+868,Age<=29,Female,Graduate Degree,Single,"$50,000<Income<=$100,000",Other,Purchased,65
+869,30<=Age<=39,Male,Undergraduate Degree,Married,"$50,000<Income<=$100,000",White,Purchased,60
+870,40<=Age<=49,Female,Undergraduate Degree,Married,"$50,000<Income<=$100,000",White,Not Purchased,0
+871,Age>=50,Female,Undergraduate Degree,Married,"Income<=$50,000",White,Purchased,95
+872,Age>=50,Female,Undergraduate Degree,Married,"$50,000<Income<=$100,000",White,Purchased,120
+873,30<=Age<=39,Female,Graduate Degree,Married,"$50,000<Income<=$100,000",White,Not Purchased,0
+874,30<=Age<=39,Female,Undergraduate Degree,Single,"Income<=$50,000",White,Not Purchased,0
+875,40<=Age<=49,Female,Undergraduate Degree,Married,"Income<=$50,000",White,Not Purchased,0
+876,40<=Age<=49,Male,Undergraduate Degree,Married,"Income>$100,000",White,Purchased,150
+877,Age<=29,Female,Undergraduate Degree,Single,"Income<=$50,000",Black,Purchased,15
+878,Age<=29,Female,Undergraduate Degree,Married,"Income<=$50,000",White,Purchased,30
+879,30<=Age<=39,Male,Undergraduate Degree,Married,"$50,000<Income<=$100,000",Hispanic,Not Purchased,0
+880,Age<=29,Female,Undergraduate Degree,Married,"Income<=$50,000",White,Purchased,55
+881,30<=Age<=39,Male,Undergraduate Degree,Single,"$50,000<Income<=$100,000",White,Not Purchased,0
+882,30<=Age<=39,Male,Undergraduate Degree,Married,"Income<=$50,000",White,Not Purchased,0
+883,30<=Age<=39,Female,Undergraduate Degree,Married,"$50,000<Income<=$100,000",Other,Not Purchased,0
+884,Age<=29,Female,Undergraduate Degree,Single,"$50,000<Income<=$100,000",Hispanic,Purchased,50
+885,30<=Age<=39,Male,Undergraduate Degree,Married,"$50,000<Income<=$100,000",White,Not Purchased,0
+886,30<=Age<=39,Male,Graduate Degree,Single,"Income<=$50,000",White,Not Purchased,0
+887,Age<=29,Female,Undergraduate Degree,Married,"$50,000<Income<=$100,000",Asian,Purchased,70
+888,30<=Age<=39,Female,Undergraduate Degree,Married,"Income>$100,000",Asian,Not Purchased,0
+889,30<=Age<=39,Female,Undergraduate Degree,Married,"$50,000<Income<=$100,000",Black,Purchased,80
+890,30<=Age<=39,Female,Undergraduate Degree,Married,"Income>$100,000",White,Not Purchased,0
+891,Age<=29,Female,Graduate Degree,Married,"Income>$100,000",Black,Not Purchased,0
+892,Age>=50,Female,Undergraduate Degree,Married,"$50,000<Income<=$100,000",Asian,Not Purchased,0
+893,Age<=29,Female,Undergraduate Degree,Single,"$50,000<Income<=$100,000",Asian,Purchased,50
+894,30<=Age<=39,Female,Undergraduate Degree,Single,"$50,000<Income<=$100,000",White,Not Purchased,0
+895,Age<=29,Male,Undergraduate Degree,Married,"Income>$100,000",Asian,Not Purchased,0
+896,40<=Age<=49,Female,Undergraduate Degree,Single,"Income<=$50,000",Asian,Not Purchased,0
+897,Age>=50,Female,Undergraduate Degree,Single,"$50,000<Income<=$100,000",Hispanic,Not Purchased,0
+898,30<=Age<=39,Female,Undergraduate Degree,Single,"$50,000<Income<=$100,000",White,Purchased,80
+899,Age<=29,Male,Undergraduate Degree,Married,"$50,000<Income<=$100,000",White,Not Purchased,0
+900,Age>=50,Male,Undergraduate Degree,Single,"Income<=$50,000",Hispanic,Not Purchased,0
+901,Age<=29,Female,Undergraduate Degree,Married,"Income<=$50,000",Asian,Purchased,30
+902,30<=Age<=39,Male,Undergraduate Degree,Married,"$50,000<Income<=$100,000",Asian,Purchased,65
+903,Age>=50,Female,Undergraduate Degree,Single,"Income<=$50,000",Hispanic,Not Purchased,0
+904,Age>=50,Female,Undergraduate Degree,Married,"Income<=$50,000",White,Not Purchased,0
+905,Age<=29,Female,Undergraduate Degree,Married,"Income<=$50,000",White,Purchased,35
+906,30<=Age<=39,Female,Undergraduate Degree,Married,"Income<=$50,000",Black,Purchased,40
+907,Age>=50,Male,Undergraduate Degree,Single,"Income>$100,000",White,Not Purchased,0
+908,30<=Age<=39,Male,Undergraduate Degree,Married,"$50,000<Income<=$100,000",Black,Purchased,95
+909,30<=Age<=39,Male,Undergraduate Degree,Married,"Income>$100,000",White,Purchased,115
+910,30<=Age<=39,Female,Undergraduate Degree,Single,"Income<=$50,000",White,Not Purchased,0
+911,Age<=29,Male,Undergraduate Degree,Single,"Income<=$50,000",Hispanic,Purchased,20
+912,Age>=50,Male,Undergraduate Degree,Married,"$50,000<Income<=$100,000",Asian,Not Purchased,0
+913,30<=Age<=39,Female,Undergraduate Degree,Married,"$50,000<Income<=$100,000",Black,Purchased,80
+914,Age>=50,Female,Undergraduate Degree,Married,"Income>$100,000",White,Not Purchased,0
+915,30<=Age<=39,Female,Undergraduate Degree,Single,"Income>$100,000",Black,Not Purchased,0
+916,40<=Age<=49,Male,Graduate Degree,Single,"Income<=$50,000",White,Purchased,75
+917,Age<=29,Female,Undergraduate Degree,Single,"Income<=$50,000",White,Purchased,35
+918,Age<=29,Male,Graduate Degree,Single,"Income<=$50,000",White,Not Purchased,0
+919,Age<=29,Male,Undergraduate Degree,Married,"$50,000<Income<=$100,000",Hispanic,Not Purchased,0
+920,Age>=50,Male,Undergraduate Degree,Married,"Income>$100,000",White,Purchased,160
+921,Age>=50,Female,Undergraduate Degree,Married,"Income<=$50,000",White,Not Purchased,0
+922,40<=Age<=49,Male,Undergraduate Degree,Single,"Income<=$50,000",White,Not Purchased,0
+923,40<=Age<=49,Female,Undergraduate Degree,Single,"$50,000<Income<=$100,000",White,Not Purchased,0
+924,Age>=50,Male,Undergraduate Degree,Married,"Income>$100,000",White,Not Purchased,0
+925,Age<=29,Male,Undergraduate Degree,Single,"Income>$100,000",Hispanic,Not Purchased,0
+926,Age>=50,Male,Undergraduate Degree,Married,"Income<=$50,000",White,Not Purchased,0
+927,30<=Age<=39,Male,Undergraduate Degree,Married,"Income>$100,000",White,Purchased,110
+928,Age<=29,Female,Undergraduate Degree,Married,"Income>$100,000",White,Not Purchased,0
+929,Age<=29,Female,Undergraduate Degree,Single,"$50,000<Income<=$100,000",White,Not Purchased,0
+930,30<=Age<=39,Female,Undergraduate Degree,Married,"Income<=$50,000",White,Purchased,60
+931,30<=Age<=39,Male,Undergraduate Degree,Single,"$50,000<Income<=$100,000",White,Not Purchased,0
+932,Age<=29,Female,Undergraduate Degree,Married,"Income<=$50,000",Black,Not Purchased,0
+933,Age<=29,Male,Undergraduate Degree,Married,"$50,000<Income<=$100,000",White,Purchased,60
+934,30<=Age<=39,Male,Undergraduate Degree,Single,"$50,000<Income<=$100,000",White,Not Purchased,0
+935,Age<=29,Female,Undergraduate Degree,Married,"Income<=$50,000",White,Not Purchased,0
+936,Age>=50,Male,Undergraduate Degree,Single,"$50,000<Income<=$100,000",White,Not Purchased,0
+937,Age<=29,Male,Graduate Degree,Married,"Income<=$50,000",Black,Not Purchased,0
+938,30<=Age<=39,Female,Undergraduate Degree,Married,"Income<=$50,000",Black,Not Purchased,0
+939,30<=Age<=39,Male,Undergraduate Degree,Married,"$50,000<Income<=$100,000",White,Not Purchased,0
+940,30<=Age<=39,Male,Undergraduate Degree,Married,"$50,000<Income<=$100,000",White,Not Purchased,0
+941,30<=Age<=39,Female,Graduate Degree,Single,"Income>$100,000",White,Purchased,120
+942,Age>=50,Male,Undergraduate Degree,Married,"$50,000<Income<=$100,000",White,Purchased,85
+943,30<=Age<=39,Male,Undergraduate Degree,Married,"Income<=$50,000",White,Not Purchased,0
+944,Age<=29,Female,Undergraduate Degree,Single,"Income<=$50,000",White,Not Purchased,0
+945,Age<=29,Male,Undergraduate Degree,Married,"Income<=$50,000",White,Not Purchased,0
+946,40<=Age<=49,Male,Undergraduate Degree,Married,"Income<=$50,000",Asian,Not Purchased,0
+947,Age>=50,Female,Undergraduate Degree,Single,"Income<=$50,000",White,Not Purchased,0
+948,40<=Age<=49,Male,Undergraduate Degree,Married,"Income<=$50,000",Other,Not Purchased,0
+949,Age>=50,Male,Graduate Degree,Married,"Income<=$50,000",White,Not Purchased,0
+950,Age<=29,Female,Undergraduate Degree,Single,"$50,000<Income<=$100,000",White,Not Purchased,0
+951,Age<=29,Male,Undergraduate Degree,Married,"$50,000<Income<=$100,000",Hispanic,Purchased,60
+952,30<=Age<=39,Male,Graduate Degree,Single,"Income<=$50,000",Black,Not Purchased,0
+953,40<=Age<=49,Female,Undergraduate Degree,Single,"$50,000<Income<=$100,000",White,Not Purchased,0
+954,30<=Age<=39,Female,Undergraduate Degree,Single,"Income<=$50,000",White,Not Purchased,0
+955,30<=Age<=39,Female,Graduate Degree,Married,"Income<=$50,000",Hispanic,Not Purchased,0
+956,Age<=29,Female,Undergraduate Degree,Single,"Income<=$50,000",White,Purchased,15
+957,40<=Age<=49,Female,Graduate Degree,Married,"$50,000<Income<=$100,000",Other,Not Purchased,0
+958,Age<=29,Male,Undergraduate Degree,Married,"$50,000<Income<=$100,000",Asian,Purchased,35
+959,Age<=29,Female,Graduate Degree,Single,"$50,000<Income<=$100,000",White,Purchased,65
+960,Age<=29,Male,Undergraduate Degree,Married,"Income<=$50,000",Black,Not Purchased,0
+961,30<=Age<=39,Female,Undergraduate Degree,Married,"Income<=$50,000",White,Purchased,55
+962,Age<=29,Male,Graduate Degree,Married,"Income>$100,000",White,Purchased,115
+963,Age<=29,Male,Undergraduate Degree,Married,"Income<=$50,000",Asian,Not Purchased,0
+964,Age<=29,Male,Undergraduate Degree,Married,"$50,000<Income<=$100,000",White,Not Purchased,0
+965,30<=Age<=39,Male,Undergraduate Degree,Single,"Income<=$50,000",White,Purchased,55
+966,40<=Age<=49,Male,Undergraduate Degree,Single,"Income>$100,000",Asian,Not Purchased,0
+967,30<=Age<=39,Female,Undergraduate Degree,Married,"$50,000<Income<=$100,000",Asian,Not Purchased,0
+968,30<=Age<=39,Female,Undergraduate Degree,Married,"Income>$100,000",Black,Not Purchased,0
+969,40<=Age<=49,Female,Undergraduate Degree,Single,"Income<=$50,000",White,Not Purchased,0
+970,30<=Age<=39,Male,Undergraduate Degree,Married,"Income>$100,000",Asian,Not Purchased,0
+971,30<=Age<=39,Female,Undergraduate Degree,Single,"$50,000<Income<=$100,000",White,Purchased,70
+972,40<=Age<=49,Female,Undergraduate Degree,Single,"Income>$100,000",White,Not Purchased,0
+973,40<=Age<=49,Male,Undergraduate Degree,Married,"Income<=$50,000",White,Not Purchased,0
+974,40<=Age<=49,Female,Undergraduate Degree,Married,"$50,000<Income<=$100,000",White,Purchased,95
+975,Age<=29,Male,Undergraduate Degree,Single,"Income<=$50,000",Black,Purchased,20
+976,Age<=29,Female,Undergraduate Degree,Single,"Income<=$50,000",White,Not Purchased,0
+977,40<=Age<=49,Male,Undergraduate Degree,Single,"Income<=$50,000",Hispanic,Not Purchased,0
+978,30<=Age<=39,Male,Undergraduate Degree,Single,"Income<=$50,000",White,Not Purchased,0
+979,Age>=50,Male,Undergraduate Degree,Single,"Income>$100,000",White,Not Purchased,0
+980,Age<=29,Male,Undergraduate Degree,Single,"Income<=$50,000",White,Purchased,20
+981,40<=Age<=49,Female,Undergraduate Degree,Single,"$50,000<Income<=$100,000",Hispanic,Purchased,85
+982,40<=Age<=49,Male,Undergraduate Degree,Single,"$50,000<Income<=$100,000",White,Not Purchased,0
+983,Age<=29,Male,Undergraduate Degree,Married,"Income<=$50,000",Black,Not Purchased,0
+984,30<=Age<=39,Male,Undergraduate Degree,Married,"Income<=$50,000",White,Not Purchased,0
+985,Age>=50,Male,Undergraduate Degree,Married,"Income<=$50,000",White,Not Purchased,0
+986,Age<=29,Male,Undergraduate Degree,Married,"$50,000<Income<=$100,000",White,Not Purchased,0
+987,Age>=50,Male,Undergraduate Degree,Married,"Income<=$50,000",White,Not Purchased,0
+988,40<=Age<=49,Female,Graduate Degree,Single,"$50,000<Income<=$100,000",Hispanic,Not Purchased,0
+989,30<=Age<=39,Male,Undergraduate Degree,Married,"Income>$100,000",Black,Purchased,110
+990,Age<=29,Male,Graduate Degree,Married,"Income<=$50,000",White,Purchased,55
+991,30<=Age<=39,Female,Undergraduate Degree,Married,"$50,000<Income<=$100,000",Asian,Not Purchased,0
+992,Age<=29,Male,Undergraduate Degree,Married,"$50,000<Income<=$100,000",Hispanic,Not Purchased,0
+993,Age<=29,Female,Undergraduate Degree,Single,"$50,000<Income<=$100,000",White,Not Purchased,0
+994,Age>=50,Female,Undergraduate Degree,Married,"Income<=$50,000",White,Not Purchased,0
+995,Age<=29,Female,Undergraduate Degree,Married,"Income<=$50,000",White,Purchased,30
+996,30<=Age<=39,Male,Undergraduate Degree,Married,"Income<=$50,000",White,Not Purchased,0
+997,Age>=50,Male,Undergraduate Degree,Married,"$50,000<Income<=$100,000",Other,Not Purchased,0
+998,40<=Age<=49,Female,Undergraduate Degree,Single,"$50,000<Income<=$100,000",White,Purchased,75
+999,Age<=29,Male,Undergraduate Degree,Married,"Income<=$50,000",White,Not Purchased,0
+1000,Age<=29,Male,Undergraduate Degree,Married,"$50,000<Income<=$100,000",Asian,Not Purchased,0

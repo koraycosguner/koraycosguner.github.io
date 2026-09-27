@@ -436,8 +436,13 @@
                 return;
             }
             const reader = new FileReader();
-            reader.onload = ev => {
-                csvText = ev.target.result;
+            reader.onload = ev => loadCsvText(ev.target.result);
+            reader.readAsText(file);
+        }
+
+        function loadCsvText(text, sourceName) {
+            {
+                csvText = text;
                 const parsed = parseCSV(csvText);
                 if (parsed.headers.length === 0) {
                     showStatus('Could not parse CSV.', 'error', 5000);
@@ -451,10 +456,38 @@
                 renderConfig();
                 renderParams();
                 $('resultsContainer').classList.remove('visible');
-                showStatus(`Loaded ${rows.length.toLocaleString()} rows × ${columnNames.length} columns.`, 'success', 3000);
-            };
-            reader.readAsText(file);
+                showStatus(`Loaded ${sourceName ? sourceName + ': ' : ''}${rows.length.toLocaleString()} rows × ${columnNames.length} columns.`, 'success', 4000);
+            }
         }
+
+        // ==================== CLASS DATASET FROM A LINK ====================
+        // htest-tool.html?data=Candies&test=paired-t opens the class file data/m303/Candies.csv with that test chosen.
+        // The sign-in redirect drops the query string, so both ride along in sessionStorage until the page is signed in.
+        const TEST_IDS = ['one-sample-t', 'paired-t', 'independent-t', 'anova', 'chi-square'];
+        const pendingLink = (function () {
+            const q = new URLSearchParams(location.search);
+            let d = q.get('data'), t = q.get('test');
+            try {
+                if (d) sessionStorage.setItem('classData', JSON.stringify({ d, t }));
+                else ({ d, t } = JSON.parse(sessionStorage.getItem('classData') || '{}'));
+            } catch (e) {}
+            if (!d || !/^[A-Za-z0-9_-]{1,80}$/.test(d)) return null;
+            return { d, t: TEST_IDS.includes(t) ? t : null };
+        })();
+        function whenSignedIn(cb) {
+            // #main-content only shows after sign-in; before that the page may still redirect to login.html
+            const m = document.getElementById('main-content');
+            if (!m || m.style.display === 'block') return cb();
+            const iv = setInterval(() => { if (m.style.display === 'block') { clearInterval(iv); cb(); } }, 200);
+        }
+        if (pendingLink) whenSignedIn(() => {
+            try { sessionStorage.removeItem('classData'); } catch (e) {}
+            if (pendingLink.t) { const card = document.querySelector(`.test-card[data-test="${pendingLink.t}"]`); if (card) card.click(); }
+            fetch(`data/m303/${pendingLink.d}.csv`, { cache: 'no-cache' })
+                .then(r => { if (!r.ok) throw new Error(r.status); return r.text(); })
+                .then(text => loadCsvText(text, pendingLink.d + '.csv'))
+                .catch(() => showStatus(`Could not load ${pendingLink.d}.csv. Upload it instead.`, 'error', 6000));
+        });
 
         function renderPreview() {
             let html = '<thead><tr>';
