@@ -2298,6 +2298,43 @@ for (col in names(data)) {
         // GO
         // ============================================================
         initWebR();
+
+        // ============================================================
+        // CLASS DATASETS FROM A LINK
+        // ============================================================
+        // A link such as mlogit-tool.html?data=PurchasePredictionRFM opens data/m303/PurchasePredictionRFM.csv.
+        // The sign-in redirect drops the query string, so the name rides along in sessionStorage.
+        // A file with two or more Choice_* columns is loaded in wide format; anything else in long format.
+        (function () {
+            const ok = n => typeof n === 'string' && /^[A-Za-z0-9_-]{1,80}$/.test(n);
+            let name = new URLSearchParams(location.search).get('data');
+            try {
+                if (ok(name)) sessionStorage.setItem('classData', name);
+                else name = sessionStorage.getItem('classData');
+            } catch (e) {}
+            if (!ok(name)) return;
+            const whenSignedIn = cb => {
+                const m = document.getElementById('main-content');
+                if (!m || m.style.display === 'block') return cb();
+                const t = setInterval(() => { if (m.style.display === 'block') { clearInterval(t); cb(); } }, 200);
+            };
+            whenSignedIn(async () => {
+                try { sessionStorage.removeItem('classData'); } catch (e) {}
+                try {
+                    const r = await fetch(`data/m303/${name}.csv`, { cache: 'no-cache' });
+                    if (!r.ok) throw new Error(r.status);
+                    const text = await r.text();
+                    const head = (text.split(/\r?\n/)[0] || '').split(',').map(h => h.replace(/^"|"$/g, '').trim());
+                    const shape = head.filter(h => /^Choice_/.test(h)).length >= 2 ? 'wide' : 'long';
+                    const radio = document.querySelector(`input[name="dataShape"][value="${shape}"]`);
+                    if (radio && !radio.checked) { radio.checked = true; radio.dispatchEvent(new Event('change', { bubbles: true })); }
+                    fileInput.value = '';
+                    if (ingestCSV(text)) showStatus(`Loaded ${name}.csv (${shape} format). Configure the choice data below.`, 'success', 6000);
+                } catch (e) {
+                    showStatus(`Could not load ${name}.csv. Upload it instead.`, 'error', 6000);
+                }
+            });
+        })();
     </script>
 </body>
 </html>
