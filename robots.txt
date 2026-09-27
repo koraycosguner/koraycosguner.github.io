@@ -14,6 +14,7 @@ Disallow: /profit-optimizer.html
 Disallow: /conjoint-design.html
 Disallow: /conjoint-analysis.html
 Disallow: /latent-class.html
+Disallow: /latent-class-shiny.html
 Disallow: /PEM.html
 Disallow: /QEAT.html
 Disallow: /PED_Calculation.html

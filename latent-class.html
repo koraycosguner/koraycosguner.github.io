@@ -3,8 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Latent Class Regression Tool - Setup | Koray Cosguner</title>
+    <title>Latent Class Regression (Browser) | Koray Cosguner</title>
     <meta name="robots" content="noindex,nofollow">
+    <meta name="description" content="Estimate latent class (finite mixture) Linear, Poisson, and Binary Logistic regressions in your browser with the flexmix R package via WebR, with no R install required. Created by Dr. Koray Cosguner.">
+    <link rel="icon" type="image/jpeg" href="KCFavicon.jpg">
+
     <!-- Google Analytics -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-CTZ8G4EYLR"></script>
     <script>
@@ -13,1546 +16,1555 @@
       gtag('js', new Date());
       gtag('config', 'G-CTZ8G4EYLR');
     </script>
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary: #990000;
-            --primary-dark: #7a0000;
-            --success: #16a34a;
-            --danger: #dc2626;
-            --warning: #f59e0b;
-            --bg: #f8fafc;
-            --card-bg: #ffffff;
-            --text-dark: #1e293b;
-            --text-light: #64748b;
-            --border: #e2e8f0;
+            --iu-crimson: #990000;
+            --iu-crimson-dark: #7a0000;
+            --text-dark: #333;
+            --text-light: #666;
+            --bg-light: #f5f5f5;
+            --white: #fff;
+            --border: #ddd;
+            --green: #15803d;
+            --green-bg: #dcfce7;
+            /* Neutral ink for the figures this tool draws (segment-size bars, BIC chart). */
+            --fig-ink: #475569;
+            --fig-ink-strong: #1e293b;
+            --fig-grid: #e5e7eb;
         }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-size: 18px;
             font-family: 'Outfit', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background: var(--bg);
-            color: var(--text-dark);
             line-height: 1.6;
-            padding: 2rem;
-        }
-
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-        }
-
-        h1 {
-            text-align: center;
-            margin-bottom: 0.5rem;
             color: var(--text-dark);
+            background-color: var(--bg-light);
         }
 
-        .subtitle {
-            text-align: center;
-            color: var(--text-light);
-            margin-bottom: 2rem;
+        main { max-width: 1200px; margin: 0 auto; padding: 2rem; }
+        .hero { text-align: center; padding: 3rem 0; }
+        .hero h1 { font-size: 1.8rem; color: var(--text-dark); margin-bottom: 0.5rem; }
+        .hero ul { text-align: left; display: inline-block; margin: 0 auto; padding-left: 1.5rem; color: var(--text-light); font-size: 1rem; line-height: 1.8; }
+
+        .tool-container { background: var(--white); border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); padding: 2rem; margin-top: 2rem; }
+        .section-title { font-size: 1.3rem; color: var(--iu-crimson); margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 2px solid var(--iu-crimson); }
+        .section-title.mt { margin-top: 2rem; }
+        .section-hint { font-size: 0.9rem; color: var(--text-light); margin-bottom: 1rem; }
+        .sub-title { margin-top: 1.5rem; margin-bottom: 0.5rem; color: var(--text-dark); font-size: 1.1rem; }
+
+        .disclaimer { background: #fef2f2; border: 1px solid #fecaca; border-radius: 8px; padding: 1rem 1.25rem; margin-bottom: 2rem; }
+        .disclaimer-title { font-weight: 700; color: var(--iu-crimson); margin-bottom: 0.5rem; }
+        .disclaimer ul { margin: 0; padding-left: 1.25rem; color: var(--text-light); font-size: 0.9rem; }
+        .disclaimer li { margin-bottom: 0.25rem; }
+
+        .loading-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.96); display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 9999; }
+        .loading-overlay.hidden { display: none; }
+        .spinner { width: 60px; height: 60px; border: 4px solid var(--border); border-top-color: var(--iu-crimson); border-radius: 50%; animation: spin 1s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .loading-text { margin-top: 1rem; font-size: 1.1rem; color: var(--text-light); }
+        .loading-stage { margin-top: 0.5rem; font-size: 0.85rem; color: #999; }
+
+        .upload-area { border: 2px dashed var(--border); border-radius: 8px; padding: 3rem; text-align: center; cursor: pointer; transition: all 0.3s; margin-bottom: 1.5rem; }
+        .upload-area:hover, .upload-area.dragover { border-color: var(--iu-crimson); background: rgba(153, 0, 0, 0.05); }
+        .upload-area input[type="file"] { display: none; }
+        .upload-icon { font-size: 3rem; color: var(--iu-crimson); margin-bottom: 1rem; }
+        .upload-text { font-size: 1.1rem; color: var(--text-dark); }
+        .upload-hint { font-size: 0.9rem; color: var(--text-light); margin-top: 0.5rem; }
+
+        .form-group { margin-bottom: 1.25rem; }
+        .form-group label { display: block; font-weight: 600; margin-bottom: 0.4rem; color: var(--text-dark); }
+        .form-group select, .form-group input[type="text"], .form-group input[type="number"] {
+            width: 100%; padding: 0.65rem 0.75rem; border: 1px solid var(--border);
+            border-radius: 6px; font-size: 1rem; font-family: inherit; background: var(--white);
+        }
+        .form-group select:focus, .form-group input:focus { outline: none; border-color: var(--iu-crimson); }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+        .form-row.three { grid-template-columns: 1fr 1fr 1fr; }
+        @media (max-width: 720px) { .form-row, .form-row.three { grid-template-columns: 1fr; } }
+        .field-hint { color: #767676; font-weight: 400; font-size: 0.85rem; margin-left: 0.4rem; }
+        .field-note { font-size: 0.8rem; color: var(--text-light); margin-top: 0.35rem; font-style: italic; }
+
+        .radio-row { display: flex; gap: 0.65rem; flex-wrap: wrap; }
+        .radio-row label { display: inline-flex; align-items: center; gap: 0.4rem; font-weight: 500; cursor: pointer; padding: 0.4rem 0.85rem; border-radius: 6px; border: 1px solid var(--border); background: var(--white); font-size: 0.9rem; margin-bottom: 0; }
+        .radio-row label:has(input:checked) { border-color: var(--iu-crimson); background: rgba(153,0,0,0.04); color: var(--iu-crimson); font-weight: 600; }
+        .radio-row input[type="radio"] { accent-color: var(--iu-crimson); }
+        .model-type-radio { display: grid !important; grid-template-columns: repeat(3, 1fr); gap: 0.85rem; }
+        .model-type-radio label { width: 100%; padding: 0.7rem 1rem; justify-content: center; text-align: center; }
+        @media (max-width: 760px) { .model-type-radio { grid-template-columns: 1fr; } }
+
+        .var-checkbox-list { border: 1px solid var(--border); border-radius: 6px; padding: 0.75rem 1rem; max-height: 240px; overflow-y: auto; background: var(--white); }
+        .var-checkbox-list label { display: block; padding: 0.25rem 0; font-size: 0.92rem; cursor: pointer; font-weight: 400; margin-bottom: 0; }
+        .var-checkbox-list label.disabled { color: var(--text-light); cursor: not-allowed; opacity: 0.55; }
+        .var-checkbox-list input[type="checkbox"] { accent-color: var(--iu-crimson); margin-right: 0.5rem; }
+        .var-checkbox-list .var-tag { font-size: 0.75rem; color: var(--text-light); margin-left: 0.4rem; font-style: italic; }
+        .var-list-empty { color: var(--text-light); font-style: italic; font-size: 0.88rem; margin: 0.2rem 0; }
+
+        .btn { display: inline-block; padding: 0.75rem 2rem; font-size: 1rem; font-weight: 600; text-align: center; border: none; border-radius: 6px; cursor: pointer; transition: all 0.2s; font-family: inherit; }
+        .btn-primary { background: var(--iu-crimson); color: var(--white); }
+        .btn-primary:hover:not(:disabled) { background: var(--iu-crimson-dark); }
+        .btn-primary:disabled { background: var(--text-light); cursor: not-allowed; opacity: 0.6; }
+        .btn-secondary { background: var(--white); color: var(--iu-crimson); border: 2px solid var(--iu-crimson); }
+        .btn-secondary:hover:not(:disabled) { background: var(--iu-crimson); color: var(--white); }
+        .btn-secondary:disabled { opacity: 0.5; cursor: not-allowed; }
+        .btn-small { padding: 0.45rem 1rem; font-size: 0.85rem; }
+        .button-group { display: flex; gap: 1rem; margin-top: 1.5rem; flex-wrap: wrap; }
+
+        .data-preview { margin-top: 1.5rem; display: none; }
+        .data-preview.visible { display: block; }
+        .preview-table-container { overflow-x: auto; max-height: 280px; border: 1px solid var(--border); border-radius: 6px; }
+        .preview-table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+        .preview-table th, .preview-table td { padding: 0.5rem 0.85rem; text-align: left; border-bottom: 1px solid var(--border); }
+        .preview-table th { background: var(--iu-crimson); color: var(--white); position: sticky; top: 0; z-index: 1; }
+        .preview-table tr:hover { background: rgba(153, 0, 0, 0.04); }
+        .preview-meta { font-size: 0.85rem; color: var(--text-light); margin-top: 0.5rem; }
+
+        .status-message { padding: 0.85rem 1rem; border-radius: 6px; margin-bottom: 1rem; display: none; font-size: 0.95rem; }
+        .status-message.visible { display: block; }
+        .status-message.error { background: #fee2e2; color: #991b1b; border: 1px solid #fecaca; }
+        .status-message.success { background: #d1fae5; color: #065f46; border: 1px solid #a7f3d0; }
+        .status-message.info { background: #dbeafe; color: #1e40af; border: 1px solid #bfdbfe; }
+        .status-message.warning { background: #fffbeb; color: #92400e; border: 1px solid #fde68a; }
+
+        /* Compare-k panel: same blue panel the sibling tools use for optional steps */
+        .compare-section { margin-top: 1.75rem; padding: 1.25rem; background: #f0f9ff; border: 1px solid #bae6fd; border-radius: 8px; }
+        .compare-section h3 { color: #0369a1; margin-bottom: 0.5rem; font-size: 1.05rem; }
+        .compare-section p.hint { font-size: 0.9rem; color: var(--text-light); margin-bottom: 0.85rem; }
+        .compare-controls { display: flex; gap: 0.75rem; align-items: flex-end; flex-wrap: wrap; }
+        .compare-controls .form-group { margin-bottom: 0; }
+        .compare-controls input { width: 110px !important; }
+        .btn-blue { background: var(--white); color: #0369a1; border: 2px solid #0369a1; padding: 0.55rem 1.25rem; font-size: 0.9rem; }
+        .btn-blue:hover:not(:disabled) { background: #0369a1; color: var(--white); }
+        .btn-blue:disabled { opacity: 0.5; cursor: not-allowed; }
+        .compare-result { margin-top: 1rem; display: none; }
+        .compare-result.visible { display: block; }
+        .compare-table { width: 100%; border-collapse: collapse; font-size: 0.88rem; background: var(--white); }
+        .compare-table th, .compare-table td { padding: 0.45rem 0.7rem; border: 1px solid #bae6fd; text-align: right; font-variant-numeric: tabular-nums; }
+        .compare-table th { background: #e0f2fe; color: #0c4a6e; font-weight: 600; }
+        .compare-table td:first-child, .compare-table th:first-child { text-align: center; }
+        .compare-table tr.best td { background: #f8fafc; font-weight: 700; color: var(--fig-ink-strong); }
+        .best-pill { display: inline-block; font-size: 0.68rem; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase; padding: 0.05rem 0.4rem; border-radius: 999px; background: var(--fig-ink-strong); color: var(--white); margin-left: 0.35rem; vertical-align: middle; }
+        .use-k-btn { background: var(--white); color: #0369a1; border: 1px solid #7dd3fc; border-radius: 4px; padding: 0.2rem 0.55rem; font-size: 0.78rem; cursor: pointer; font-family: inherit; }
+        .use-k-btn:hover { background: #e0f2fe; }
+        .bic-chart { margin-top: 1rem; background: var(--white); border: 1px solid #bae6fd; border-radius: 6px; padding: 0.5rem 0.5rem 0.25rem; }
+        .bic-chart svg { display: block; width: 100%; max-width: 760px; height: auto; margin: 0 auto; }
+        .bic-chart .pt { cursor: default; }
+        .compare-note { font-size: 0.82rem; color: #0c4a6e; margin-top: 0.6rem; }
+
+        /* Results */
+        .results-container { margin-top: 2rem; display: none; }
+        .results-container.visible { display: block; }
+        .seg-warning { display: none; font-size: 0.9rem; color: #92400e; background: #fffbeb; border: 1px solid #fde68a; border-radius: 6px; padding: 0.65rem 0.85rem; margin-bottom: 1rem; }
+        .seg-warning.visible { display: block; }
+
+        .fit-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 0.75rem; margin: 1rem 0 0.5rem; }
+        .fit-stat { background: #fafafa; border: 1px solid var(--border); border-radius: 8px; padding: 0.85rem 1rem; }
+        .fit-stat .label { font-size: 0.75rem; color: var(--text-light); text-transform: uppercase; letter-spacing: 0.6px; font-weight: 600; }
+        .fit-stat .value { font-size: 1.3rem; color: var(--iu-crimson); font-weight: 700; margin-top: 0.2rem; font-variant-numeric: tabular-nums; }
+        .copy-hint { font-size: 0.8rem; color: var(--text-light); font-style: italic; margin-top: 0.4rem; }
+
+        .size-table { width: 100%; border-collapse: collapse; font-size: 0.9rem; background: var(--white); }
+        .size-table th, .size-table td { padding: 0.55rem 0.9rem; border: 1px solid var(--border); text-align: right; font-variant-numeric: tabular-nums; }
+        .size-table th { background: var(--iu-crimson); color: var(--white); font-weight: 600; }
+        .size-table td:first-child, .size-table th:first-child { text-align: left; }
+        .size-table td.bar-cell { width: 34%; text-align: left; }
+        .size-bar-track { position: relative; height: 12px; background: #f1f5f9; border-radius: 4px; overflow: hidden; }
+        .size-bar { position: absolute; left: 0; top: 0; bottom: 0; background: var(--fig-ink); border-radius: 0 4px 4px 0; }
+
+        .segment-block { margin-top: 1rem; border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
+        .segment-head { display: flex; justify-content: space-between; align-items: baseline; gap: 0.75rem; flex-wrap: wrap; padding: 0.6rem 0.9rem; background: #fafafa; border-bottom: 1px solid var(--border); }
+        .segment-head .seg-name { font-weight: 700; color: var(--iu-crimson-dark); font-size: 1rem; }
+        .segment-head .seg-meta { font-size: 0.85rem; color: var(--text-light); font-variant-numeric: tabular-nums; }
+        .segment-block .table-wrap { overflow-x: auto; }
+        .coef-table { width: 100%; border-collapse: collapse; font-size: 0.9rem; background: var(--white); }
+        .coef-table th, .coef-table td { padding: 0.55rem 0.9rem; text-align: right; border-bottom: 1px solid var(--border); border-right: 1px solid var(--border); font-variant-numeric: tabular-nums; }
+        .coef-table th:last-child, .coef-table td:last-child { border-right: none; }
+        .coef-table tr:last-child td { border-bottom: none; }
+        .coef-table th { background: var(--iu-crimson); color: var(--white); font-weight: 600; }
+        .coef-table td:first-child, .coef-table th:first-child { text-align: left; }
+        .coef-table tr:hover td { background: rgba(153,0,0,0.03); }
+        .coef-table td:not(:first-child), .coef-table th:not(:first-child), .size-table td:not(:first-child), .assign-table td { white-space: nowrap; }
+        .coef-sig { color: var(--green); font-weight: 600; }
+        .coef-insig { color: #b91c1c; }
+
+        /* Estimated equations: yellow panel like the sibling tools */
+        .equation-section { margin-top: 1.5rem; padding: 1.25rem; background: #fefce8; border: 1px solid #fde047; border-radius: 8px; }
+        .equation-section h4 { margin-bottom: 0.75rem; color: #854d0e; font-size: 1rem; }
+        .significance-selector { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem; flex-wrap: wrap; }
+        .significance-selector > label { font-size: 0.85rem; color: var(--text-dark); font-weight: 500; }
+        .significance-options { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+        .significance-options input[type="radio"] { display: none; }
+        .significance-options label { padding: 0.4rem 0.75rem; border: 1px solid #fde047; border-radius: 4px; cursor: pointer; font-size: 0.8rem; background: var(--white); color: #854d0e; transition: all 0.2s; }
+        .significance-options label:hover { background: #fef3c7; }
+        .significance-options input[type="radio"]:checked + label { background: #fde047; border-color: #eab308; font-weight: 600; }
+        .equation-box-container { position: relative; }
+        .equation-box { background: var(--white); padding: 1rem 1.25rem; padding-right: 5rem; border-radius: 6px; border: 1px solid #fde047; font-family: 'Courier New', Courier, monospace; font-size: 0.9rem; line-height: 1.65; overflow-x: auto; white-space: pre-wrap; word-break: break-word; max-height: 480px; overflow-y: auto; }
+        .copy-equation-btn { position: absolute; top: 0.5rem; right: 0.5rem; background: #fef3c7; border: 1px solid #fde047; border-radius: 4px; padding: 0.35rem 0.7rem; cursor: pointer; font-size: 0.75rem; color: #854d0e; transition: all 0.2s; font-family: inherit; }
+        .copy-equation-btn:hover { background: #fde047; }
+        .copy-equation-btn.copied { background: #86efac; border-color: #22c55e; color: #166534; }
+        .equation-note { font-size: 0.82rem; color: #854d0e; font-style: italic; margin-top: 0.6rem; }
+        .equation-actions { display: flex; gap: 0.5rem; margin-top: 0.75rem; flex-wrap: wrap; }
+
+        /* Assignments: light gray panel like the sibling prediction panel */
+        .assign-section { margin-top: 1.5rem; padding: 1.25rem; background: var(--bg-light); border-radius: 8px; border: 1px solid var(--border); }
+        .assign-section h3 { color: var(--text-dark); font-size: 1.1rem; margin-bottom: 0.4rem; }
+        .assign-meta { font-size: 0.88rem; color: var(--text-light); margin-bottom: 0.75rem; }
+        .assign-table { width: 100%; border-collapse: collapse; font-size: 0.88rem; background: var(--white); }
+        .assign-table th, .assign-table td { padding: 0.45rem 0.8rem; border: 1px solid var(--border); text-align: right; font-variant-numeric: tabular-nums; }
+        .assign-table th { background: #f1f1f1; color: var(--text-dark); font-weight: 600; }
+        .assign-table td:first-child, .assign-table th:first-child { text-align: left; }
+
+        .results-output { background: #1e1e1e; color: #d4d4d4; font-family: 'Monaco', 'Menlo', 'Courier New', monospace; font-size: 0.85rem; padding: 1.25rem; border-radius: 8px; overflow-x: auto; white-space: pre; line-height: 1.5; max-height: 500px; overflow-y: auto; }
+
+        footer { text-align: center; padding: 2rem; color: var(--text-light); font-size: 0.9rem; }
+
+        /* ============ Mobile: tablet & below ============ */
+        @media (max-width: 768px) {
+            body { font-size: 16px; }
+            main { padding: 1rem; }
+            .tool-container { padding: 1.25rem; }
+            .hero { padding: 1.5rem 0; }
+            .hero h1 { font-size: 1.4rem; }
+            .hero ul { padding-left: 1.25rem; font-size: 0.92rem; line-height: 1.6; }
+            .section-title { font-size: 1.15rem; }
+            .section-title.mt { margin-top: 1.5rem; }
+            .button-group { flex-direction: column; }
+            .button-group .btn { width: 100%; }
+            body > div:first-of-type { padding-left: 1rem !important; padding-right: 1rem !important; }
+            .disclaimer { padding: 0.85rem 1rem; }
+            .disclaimer ul { font-size: 0.85rem; }
+            .preview-table { font-size: 0.82rem; }
+            .preview-table th, .preview-table td { padding: 0.4rem 0.5rem; }
+            .coef-table, .size-table, .assign-table, .compare-table { font-size: 0.82rem; }
+            .coef-table th, .coef-table td, .size-table th, .size-table td { padding: 0.45rem 0.6rem; }
+            .compare-table th, .compare-table td { padding: 0.4rem 0.45rem; }
+            .equation-box { font-size: 0.82rem; padding: 0.85rem 1rem; padding-right: 4rem; }
+            .results-output { font-size: 0.78rem; padding: 0.85rem 1rem; }
+            .fit-stats { grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 0.5rem; }
+            .fit-stat { padding: 0.6rem 0.75rem; }
+            .fit-stat .value { font-size: 1.05rem; }
+            .loading-text { font-size: 1rem; }
+            .loading-stage { font-size: 0.78rem; }
         }
 
-        .card {
-            background: var(--card-bg);
-            border-radius: 12px;
-            padding: 1.5rem;
-            margin-bottom: 1.5rem;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        /* ============ Mobile: phone-specific tightening ============ */
+        @media (max-width: 480px) {
+            main { padding: 0.6rem; }
+            .tool-container { padding: 1rem; border-radius: 8px; }
+            .hero { padding: 1rem 0 0.75rem; }
+            .hero h1 { font-size: 1.2rem; }
+            .section-title { font-size: 1.05rem; padding-bottom: 0.35rem; }
+            .upload-area { padding: 1.5rem 1rem; }
+            .upload-icon { font-size: 2rem; }
+            .upload-text { font-size: 0.95rem; }
+            .upload-hint { font-size: 0.8rem; }
+            .form-group label { font-size: 0.95rem; }
+            .field-hint { display: block; margin-left: 0; margin-top: 0.15rem; font-size: 0.78rem; }
+            .form-group select, .form-group input[type="text"], .form-group input[type="number"] { padding: 0.55rem 0.6rem; font-size: 0.95rem; }
+            .radio-row label { padding: 0.5rem 0.7rem; font-size: 0.85rem; }
+            .var-checkbox-list { padding: 0.6rem 0.75rem; max-height: 200px; }
+            .var-checkbox-list label { font-size: 0.85rem; }
+            .compare-section { padding: 1rem; }
+            .size-table .bar-cell { display: none; }
+            .size-table td:first-child { white-space: nowrap; }
+            .assign-section { padding: 1rem; }
+            footer { padding: 1.25rem 1rem; font-size: 0.82rem; }
         }
 
-        .card-title {
-            font-size: 1.1rem;
-            font-weight: 600;
-            margin-bottom: 1rem;
-            color: var(--text-dark);
-        }
-
-        /* Disclaimer */
-        .disclaimer {
-            background: #fef3c7;
-            border: 1px solid #f59e0b;
-            border-radius: 8px;
-            padding: 1rem;
-            margin-bottom: 1.5rem;
-            font-size: 0.9rem;
-        }
-
-        .disclaimer-title {
-            font-weight: 600;
-            color: #92400e;
-            margin-bottom: 0.5rem;
-        }
-
-        .disclaimer ul {
-            margin-left: 1.25rem;
-            color: #78350f;
-        }
-
-        .disclaimer li {
-            margin-bottom: 0.25rem;
-        }
-
-        /* Requirements */
-        .requirements {
-            background: #dbeafe;
-            border: 1px solid #3b82f6;
-            border-radius: 8px;
-            padding: 1rem;
-            margin-bottom: 1.5rem;
-        }
-
-        .requirements-title {
-            font-weight: 600;
-            color: #1e40af;
-            margin-bottom: 0.5rem;
-        }
-
-        .requirements ul {
-            margin-left: 1.25rem;
-            color: #1e3a8a;
-        }
-
-        /* Steps */
-        .step {
-            display: flex;
-            gap: 1rem;
-            margin-bottom: 1.5rem;
-            padding-bottom: 1.5rem;
-            border-bottom: 1px solid var(--border);
-        }
-
-        .step:last-child {
-            border-bottom: none;
-            margin-bottom: 0;
-            padding-bottom: 0;
-        }
-
-        .step-number {
-            flex-shrink: 0;
-            width: 36px;
-            height: 36px;
-            background: var(--primary);
-            color: white;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 600;
-        }
-
-        .step-content {
-            flex: 1;
-        }
-
-        .step-title {
-            font-weight: 600;
-            margin-bottom: 0.5rem;
-            color: var(--text-dark);
-        }
-
-        .step-description {
-            color: var(--text-light);
-            font-size: 0.95rem;
-        }
-
-        /* Code block */
-        .code-block {
-            background: #1e293b;
-            color: #e2e8f0;
-            padding: 1rem;
-            border-radius: 8px;
-            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
-            font-size: 0.9rem;
-            overflow-x: auto;
-            margin: 0.75rem 0;
-        }
-
-        .code-block code {
-            color: #4ade80;
-        }
-
-        /* Links */
-        a {
-            color: var(--primary);
-            text-decoration: none;
-        }
-
-        a:hover {
-            text-decoration: underline;
-        }
-
-        /* Download button */
-        .btn {
-            display: inline-block;
-            padding: 0.75rem 1.5rem;
-            background: var(--primary);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-size: 1rem;
-            font-weight: 500;
-            cursor: pointer;
-            text-decoration: none;
-            margin-top: 0.5rem;
-        }
-
-        .btn:hover {
-            background: var(--primary-dark);
-            text-decoration: none;
-        }
-
-        /* Features list */
-        .features {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1rem;
-            margin-top: 1rem;
-        }
-
-        .feature {
-            background: var(--bg);
-            padding: 1rem;
-            border-radius: 8px;
-        }
-
-        .feature-title {
-            font-weight: 600;
-            margin-bottom: 0.25rem;
-            color: var(--text-dark);
-        }
-
-        .feature-desc {
-            font-size: 0.85rem;
-            color: var(--text-light);
-        }
-
-        /* Mobile Responsiveness */
-        @media (max-width: 640px) {
-            body { padding: 1rem; font-size: 16px; }
-            h1 { font-size: 1.3rem; }
-            .subtitle { font-size: 0.85rem; }
-            .card { padding: 1rem; }
-            .step { flex-direction: column; gap: 0.75rem; }
-            .step-number { width: 32px; height: 32px; font-size: 0.9rem; }
-            .btn { width: 100%; text-align: center; }
-            .code-block { font-size: 0.8rem; padding: 0.75rem; }
-        }
-    
-        :focus-visible { outline: 2px solid currentColor; outline-offset: 2px; }
         html, body { overflow-x: hidden; }
+        html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+        :focus-visible { outline: 2px solid currentColor; outline-offset: 2px; }
     </style>
-    <link rel="icon" type="image/jpeg" href="KCFavicon.jpg">
 </head>
 <body>
-<!-- Auth check -->
-<div id="loading-screen" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: white; display: flex; align-items: center; justify-content: center; z-index: 9999;">
-    <p style="color: #64748b;">Loading...</p>
-</div>
-<div id="main-content" style="display: none;">
-    <div style="position: sticky; top: 0; z-index: 100; background: rgba(248,250,252,0.85); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); max-width: 800px; margin: 0 auto 10px auto; padding: 10px 0;">
+    <!-- Auth gate: shown until Firebase resolves the sign-in state. -->
+    <div id="loading-screen" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: #fff; display: flex; align-items: center; justify-content: center; z-index: 100000; padding: 1rem;">
+        <p style="color: #666; font-family: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif; text-align: center; max-width: 420px;">Loading...</p>
+    </div>
+
+    <div id="main-content" style="display: none;">
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="spinner"></div>
+        <p class="loading-text" id="loadingText">Loading WebR (R in your browser)...</p>
+        <p class="loading-stage" id="loadingStage">First load may take 30-60 seconds</p>
+    </div>
+
+    <!-- Back-to-tools link (no brand nav), matching the sibling tools. -->
+    <div style="max-width: 1200px; margin: 0 auto; padding: 20px 2rem 0;">
         <a href="tools.html" style="display: inline-flex; align-items: center; gap: 6px; color: #64748b; text-decoration: none; font-size: 0.9rem; font-weight: 500;">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
             Back to Analytics and Pricing Tools
         </a>
     </div>
-    <div class="container">
-        <h1>Latent Class Regression Tool</h1>
-        <p class="subtitle">Estimate segment-level regression models using the flexmix package</p>
 
-        <!-- Disclaimer -->
+    <main>
+        <section class="hero">
+            <h1>Latent Class Regression</h1>
+            <ul>
+                <li>Estimate segment-level (finite mixture) regressions with the <code>flexmix</code> R package, with no R install required</li>
+                <li>Linear, Poisson, or Binary Logistic regression, with 1 to 10 segments</li>
+                <li>Group repeated rows by a Consumer / Household ID so each ID belongs to one segment</li>
+                <li>View segment sizes, per-segment coefficients, AIC / BIC, and segment-specific equations</li>
+                <li>Compare several numbers of segments by BIC, download ID-to-segment assignments and an R script</li>
+            </ul>
+        </section>
+
         <div class="disclaimer">
             <div class="disclaimer-title">Disclaimer</div>
             <ul>
-                <li><strong>Results may contain errors.</strong> The output from this tool may be inaccurate, incomplete, or incorrect. Users should independently verify all results before relying on them.</li>
-                <li><strong>No warranty.</strong> This tool is provided "as is" without any warranty of any kind.</li>
-                <li><strong>User assumes all risk.</strong> Users assume full and complete responsibility for reviewing, validating, and determining suitability of any output.</li>
+                <li><strong>Results may contain errors.</strong> Output may be inaccurate or incomplete. Verify all results independently.</li>
+                <li><strong>No warranty.</strong> Provided "as is" without any warranty.</li>
+                <li><strong>Privacy:</strong> Data never leaves your browser &mdash; everything runs locally in WebAssembly.</li>
             </ul>
-        </div>
-
-        <!-- Requirements -->
-        <div class="requirements">
-            <div class="requirements-title">Requirements</div>
-            <ul>
-                <li><strong>R</strong> - Statistical programming language (<a href="https://cran.r-project.org/" target="_blank">Download R</a>)</li>
-                <li><strong>RStudio</strong> - IDE for R (<a href="https://posit.co/download/rstudio-desktop/" target="_blank">Download RStudio</a>)</li>
-            </ul>
-        </div>
-
-        <!-- Setup Instructions -->
-        <div class="card">
-            <div class="card-title">Setup Instructions</div>
-
-            <div class="step">
-                <div class="step-number">1</div>
-                <div class="step-content">
-                    <div class="step-title">Install R and RStudio</div>
-                    <div class="step-description">
-                        If you don't have R and RStudio installed, download and install them from the links above. Install R first, then RStudio.
-                    </div>
-                </div>
-            </div>
-
-            <div class="step">
-                <div class="step-number">2</div>
-                <div class="step-content">
-                    <div class="step-title">Download and Open the App</div>
-                    <div class="step-description">
-                        Download the app file and open it in RStudio:
-                    </div>
-                    <button class="btn" id="downloadBtn">Download Latent_Class_Regression.R</button>
-                    <div class="step-description" style="margin-top: 0.75rem;">
-                        In RStudio: File → Open File → Select the downloaded <code>Latent_Class_Regression.R</code>
-                    </div>
-                </div>
-            </div>
-
-            <div class="step">
-                <div class="step-number">3</div>
-                <div class="step-content">
-                    <div class="step-title">Run the App</div>
-                    <div class="step-description">
-                        With <code>Latent_Class_Regression.R</code> open in RStudio, click the <strong>"Run App"</strong> button in the top-right corner of the editor panel. The app will open in a new window or your web browser.
-                    </div>
-                    <div class="step-description" style="margin-top: 0.5rem;">
-                        <strong>Note:</strong> On first run, the app will automatically install the required R packages (<code>shiny</code> and <code>flexmix</code>). This may take a minute.
-                    </div>
-                    <div class="step-description" style="margin-top: 0.5rem;">
-                        <strong>Tip:</strong> To open in fullscreen/external browser, click the "Open in Browser" button in the app window, or use the dropdown next to "Run App" and select "Run External".
-                    </div>
-                </div>
+            <div style="margin-top: 0.85rem; padding-top: 0.85rem; border-top: 1px solid rgba(153, 0, 0, 0.2); font-size: 0.9rem;">
+                <strong>📧 Report issues:</strong> Email Dr. Cosguner at <a href="mailto:kcosgun@iu.edu" style="color: var(--iu-crimson); font-weight: 600;">kcosgun@iu.edu</a>.
             </div>
         </div>
 
-        <!-- Features -->
-        <div class="card">
-            <div class="card-title">Features</div>
-            <div class="features">
-                <div class="feature">
-                    <div class="feature-title">CSV Data Upload</div>
-                    <div class="feature-desc">Upload your dataset in CSV format</div>
+        <div class="tool-container">
+
+            <div class="status-message" id="statusMessage" role="status" aria-live="polite"></div>
+
+            <!-- ============================== 1. Upload ============================== -->
+            <h2 class="section-title" id="uploadSection">1. Upload Your Data</h2>
+            <p class="section-hint">Upload a CSV with headers in the first row. Panel data work best: several rows (for example, weeks) per consumer or household, with a column that identifies the consumer or household.</p>
+            <div class="upload-area" id="uploadArea" role="button" tabindex="0" aria-label="Upload a CSV file: click, or press Enter or Space, or drag and drop">
+                <input type="file" id="fileInput" accept=".csv">
+                <div class="upload-icon" aria-hidden="true">📊</div>
+                <p class="upload-text">Click to upload or drag and drop a CSV</p>
+                <p class="upload-hint">CSV only</p>
+            </div>
+            <div style="text-align: center; margin: -0.5rem 0 1.5rem;">
+                <button type="button" class="btn btn-secondary" id="loadExampleBtn" style="padding: 0.5rem 1.25rem; font-size: 0.9rem;">Load Example Data (Weekly Purchases, 2 Segments)</button>
+            </div>
+            <div class="data-preview" id="dataPreview">
+                <h3 style="margin-bottom: 0.5rem; font-size: 1.05rem; color: var(--text-dark);">Data Preview (first 8 rows)</h3>
+                <div class="preview-table-container">
+                    <table class="preview-table" id="previewTable"></table>
                 </div>
-                <div class="feature">
-                    <div class="feature-title">Three Model Types</div>
-                    <div class="feature-desc">Linear, Poisson, or Binary Logistic regression</div>
+                <p class="preview-meta" id="previewMeta"></p>
+                <button type="button" class="btn btn-secondary btn-small" id="downloadDataBtn" style="display: none; margin-top: 0.5rem;">Download Example CSV</button>
+            </div>
+
+            <!-- ============================== 2. Model spec ============================== -->
+            <div id="modelConfig" style="display: none;">
+                <h2 class="section-title mt" id="specSection">2. Specify the Model</h2>
+                <p class="section-hint">A latent class regression splits the sample into <em>k</em> unobserved segments and estimates a separate regression for each one. Pick the regression type that fits your dependent variable.</p>
+
+                <div class="form-group">
+                    <label>Regression Type</label>
+                    <div class="radio-row model-type-radio" id="modelTypeGroup">
+                        <label><input type="radio" name="modelType" value="gaussian" checked> Linear</label>
+                        <label><input type="radio" name="modelType" value="poisson"> Poisson (counts)</label>
+                        <label><input type="radio" name="modelType" value="binomial"> Binary Logistic (0/1)</label>
+                    </div>
                 </div>
-                <div class="feature">
-                    <div class="feature-title">Segment Selection</div>
-                    <div class="feature-desc">Specify the number of latent segments (1-10)</div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="depVar">Dependent Variable (Y)</label>
+                        <select id="depVar"><option value="">-- Select --</option></select>
+                    </div>
+                    <div class="form-group">
+                        <label for="idVar">Consumer / Household ID <span class="field-hint">(optional)</span></label>
+                        <select id="idVar"><option value="">(None: each row is independent)</option></select>
+                        <p class="field-note">With an ID, all rows of the same consumer or household are assigned to the same segment (the <code>| ID</code> term in flexmix).</p>
+                    </div>
                 </div>
-                <div class="feature">
-                    <div class="feature-title">Consumer/HH ID Grouping</div>
-                    <div class="feature-desc">Cluster observations by Consumer or Household ID</div>
+
+                <div class="form-group">
+                    <label>Independent Variables (X) <span class="field-hint">(categorical columns are dummy-coded)</span></label>
+                    <div id="ivVars" class="var-checkbox-list"><p class="var-list-empty">No variables available yet.</p></div>
                 </div>
-                <div class="feature">
-                    <div class="feature-title">Segment Estimates</div>
-                    <div class="feature-desc">View coefficients, std. errors, and p-values for each segment</div>
+
+                <div class="form-row three">
+                    <div class="form-group">
+                        <label for="numSegments">Number of Segments (k)</label>
+                        <input type="number" id="numSegments" value="2" min="1" max="10" step="1">
+                        <p class="field-note">1 to 10. k = 1 is a standard (one-segment) regression.</p>
+                    </div>
+                    <div class="form-group">
+                        <label for="nrep">Random Restarts</label>
+                        <input type="number" id="nrep" value="5" min="1" max="50" step="1">
+                        <p class="field-note">The model is estimated from this many random starting points; the best fit (highest log-likelihood) is kept.</p>
+                    </div>
+                    <div class="form-group">
+                        <label for="seed">Random Seed</label>
+                        <input type="number" id="seed" value="123" step="1">
+                        <p class="field-note">Use the same seed to reproduce the same results.</p>
+                    </div>
                 </div>
-                <div class="feature">
-                    <div class="feature-title">Model Fit Statistics</div>
-                    <div class="feature-desc">AIC, BIC, and segment sizes (prior probabilities)</div>
+
+                <div class="button-group">
+                    <button class="btn btn-primary" id="runButton" disabled>Estimate Model</button>
+                    <button class="btn btn-secondary" id="resetButton">Reset</button>
+                </div>
+
+                <!-- Optional: choose k by BIC -->
+                <div class="compare-section" id="compareSection">
+                    <h3>Not Sure How Many Segments? Compare by BIC (Optional)</h3>
+                    <p class="hint">Estimates the model for k = 1, 2, &hellip;, K segments with the settings above (same restarts and seed for every k) and reports the fit of each. Lower BIC is better; pick the k where BIC is lowest or stops improving much.</p>
+                    <div class="compare-controls">
+                        <div class="form-group">
+                            <label for="compareMaxK" style="font-size: 0.9rem;">Up to K =</label>
+                            <input type="number" id="compareMaxK" value="5" min="2" max="10" step="1">
+                        </div>
+                        <button class="btn btn-blue" id="compareButton" disabled>Compare k = 1 to K</button>
+                    </div>
+                    <div class="compare-result" id="compareResult">
+                        <div style="overflow-x: auto;"><table class="compare-table" id="compareTable"></table></div>
+                        <div class="bic-chart" id="bicChart" aria-label="BIC by number of segments"></div>
+                        <p class="compare-note" id="compareNote"></p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ============================== 3. Results ============================== -->
+            <div class="results-container" id="resultsContainer">
+                <h2 class="section-title mt">3. Results</h2>
+                <div class="seg-warning" id="segWarning"></div>
+
+                <h3 class="sub-title" style="margin-top: 0;">Model Fit</h3>
+                <div class="fit-stats" id="fitStats"></div>
+                <p class="copy-hint" id="restartNote"></p>
+
+                <h3 class="sub-title">Segment Sizes</h3>
+                <div style="overflow-x: auto;"><table class="size-table" id="sizeTable"></table></div>
+                <p class="copy-hint">Segment size is the estimated share of the sample in each segment (the segment's prior probability, <code>model@prior</code>).</p>
+
+                <h3 class="sub-title">Segment Coefficient Estimates</h3>
+                <div id="segmentTables"></div>
+                <p class="copy-hint">Estimates, standard errors, and p-values come from <code>summary(refit(model))</code>. Select a table and copy (Ctrl+C / Cmd+C) to paste into Excel.</p>
+                <p class="copy-hint" style="font-style: normal;">Color key: <span style="color: var(--green); font-weight: 600;">green</span> = significant at p &lt; 0.05; <span style="color: #b91c1c; font-weight: 600;">red</span> = not significant (p &ge; 0.10); default color = 0.05 &le; p &lt; 0.10.</p>
+                <div style="margin-top: 0.75rem; display: flex; gap: 0.75rem; align-items: center; flex-wrap: wrap;">
+                    <label for="coefCsvDecimals" style="font-size: 0.9rem; color: var(--text-dark);">Decimals:</label>
+                    <select id="coefCsvDecimals" style="padding: 0.35rem 0.5rem; font-size: 0.9rem; border: 1px solid var(--border); border-radius: 6px; background: var(--white);">
+                        <option value="full">Full (R output)</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option value="4" selected>4</option>
+                        <option value="6">6</option>
+                        <option value="8">8</option>
+                    </select>
+                    <button class="btn btn-secondary btn-small" id="downloadCoefCsvBtn">Download Estimates CSV</button>
+                </div>
+
+                <!-- Yellow equation panel -->
+                <div class="equation-section" id="equationSection">
+                    <h4>Segment-Specific Equations</h4>
+                    <div class="significance-selector">
+                        <label>Include coefficients with:</label>
+                        <div class="significance-options">
+                            <input type="radio" name="sigLevel" id="sigAll" value="all" checked>
+                            <label for="sigAll">Any p-value</label>
+                            <input type="radio" name="sigLevel" id="sig10" value="0.10">
+                            <label for="sig10">p &lt; 0.10</label>
+                            <input type="radio" name="sigLevel" id="sig05" value="0.05">
+                            <label for="sig05">p &lt; 0.05</label>
+                            <input type="radio" name="sigLevel" id="sig01" value="0.01">
+                            <label for="sig01">p &lt; 0.01</label>
+                        </div>
+                    </div>
+                    <div class="equation-box-container">
+                        <pre class="equation-box" id="equationsBox"></pre>
+                        <button class="copy-equation-btn" id="copyEquationsBtn">Copy</button>
+                    </div>
+                    <p class="equation-note" id="equationNote"></p>
+                    <div class="equation-actions">
+                        <button class="btn btn-secondary btn-small" id="downloadEquationsBtn">Download as TXT</button>
+                    </div>
+                </div>
+
+                <!-- Segment assignments -->
+                <div class="assign-section" id="assignSection">
+                    <h3 id="assignTitle">Segment Assignments</h3>
+                    <p class="assign-meta" id="assignMeta"></p>
+                    <div style="overflow-x: auto;"><table class="assign-table" id="assignTable"></table></div>
+                    <div style="margin-top: 0.85rem;">
+                        <button class="btn btn-secondary btn-small" id="downloadAssignBtn">Download Assignments CSV</button>
+                    </div>
+                </div>
+
+                <h3 class="sub-title">Full R Output</h3>
+                <pre class="results-output" id="rawOutput"></pre>
+                <div style="margin-top: 0.85rem;">
+                    <button class="btn btn-secondary" id="downloadScriptBtn" style="padding: 0.55rem 1.25rem; font-size: 0.9rem;">Download R Script</button>
                 </div>
             </div>
         </div>
+    </main>
 
-        <!-- Troubleshooting -->
-        <div class="card">
-            <div class="card-title">Troubleshooting</div>
+    <footer>
+        <p>&copy; 2026 Koray Cosguner. All Rights Reserved.</p>
+    </footer>
 
-            <div style="margin-bottom: 1rem;">
-                <strong>App doesn't open</strong>
-                <div class="step-description">Make sure you have the <code>Latent_Class_Regression.R</code> file open in RStudio's editor (not just in the file browser), then click "Run App".</div>
-            </div>
+    </div> <!-- end main-content -->
 
-            <div style="margin-bottom: 1rem;">
-                <strong>Package installation fails</strong>
-                <div class="step-description">Try running these commands manually in the Console:</div>
-                <div class="code-block">
-<code>install.packages("shiny")</code>
-<code>install.packages("flexmix")</code>
-                </div>
-            </div>
-
-            <div style="margin-bottom: 1rem;">
-                <strong>Model fails to converge</strong>
-                <div class="step-description">Try reducing the number of segments, or check that your data has enough variation. The flexmix algorithm may need more observations per segment.</div>
-            </div>
-
-            <div>
-                <strong>"Run App" button not visible</strong>
-                <div class="step-description">Make sure the file is saved with a <code>.R</code> extension. RStudio only shows the "Run App" button for R files that contain Shiny code.</div>
-            </div>
-        </div>
-    </div>
-
+    <!-- Firebase auth gate -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js" integrity="sha384-yuGdyIzzYtOBlBG6JOWn+Ey9kpq7HocusNuxEGyyohr1eEyXpeEyehIIXC/hznw4" crossorigin="anonymous"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js" integrity="sha384-lI+CxEx/bCvWP1b0OK13j5HTrTZP7yf1xle8TVOFq2smz6KC1RChTarRV/RHP5PP" crossorigin="anonymous"></script>
     <script>
-        document.getElementById('downloadBtn').addEventListener('click', function() {
-            const rCode = `# Latent Class Regression Tool - Shiny App
-#
-# TO RUN THIS APP:
-#   1. Open this file in RStudio
-#   2. Click "Run App" button (top right of editor)
-#   OR run in console: shiny::runApp()
-#
-# TIP: To run in fullscreen/external browser, use:
-#   options(shiny.launch.browser = TRUE)
-#   shiny::runApp()
-
-# Auto-install required packages if missing
-if (!require("shiny", quietly = TRUE)) {
-  install.packages("shiny", repos = "https://cloud.r-project.org")
-}
-if (!require("flexmix", quietly = TRUE)) {
-  install.packages("flexmix", repos = "https://cloud.r-project.org")
-}
-
-library(shiny)
-library(flexmix)
-
-ui = fluidPage(
-  # Custom CSS
-  tags$head(
-    tags$style(HTML("
-      body {
-        font-family: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-        background: #f8fafc;
-        padding: 20px;
-      }
-      .container-fluid {
-        max-width: 900px;
-        margin: 0 auto;
-        padding: 0 20px;
-      }
-      h1 {
-        text-align: center;
-        color: #1e293b;
-        margin-bottom: 5px;
-      }
-      .subtitle {
-        text-align: center;
-        color: #64748b;
-        margin-bottom: 30px;
-      }
-      .card {
-        background: white;
-        border-radius: 12px;
-        padding: 20px;
-        margin-bottom: 20px;
-        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-      }
-      .card-title {
-        font-size: 1.1rem;
-        font-weight: 600;
-        margin-bottom: 15px;
-        color: #1e293b;
-      }
-      .btn-primary {
-        background: #990000;
-        border: none;
-        padding: 10px 20px;
-        border-radius: 8px;
-      }
-      .btn-primary:hover {
-        background: #7a0000;
-      }
-      .btn-success {
-        background: #16a34a;
-        border: none;
-        padding: 10px 20px;
-        border-radius: 8px;
-      }
-      .btn-success:hover {
-        background: #15803d;
-      }
-      .stat-box {
-        background: #f8fafc;
-        border-radius: 8px;
-        padding: 15px;
-        text-align: center;
-        margin-bottom: 10px;
-      }
-      .stat-value {
-        font-size: 1.5rem;
-        font-weight: 700;
-        color: #990000;
-      }
-      .stat-label {
-        font-size: 0.85rem;
-        color: #64748b;
-      }
-      .disclaimer {
-        background: #fef3c7;
-        border: 1px solid #f59e0b;
-        border-radius: 8px;
-        padding: 15px;
-        margin-bottom: 20px;
-        font-size: 0.9rem;
-      }
-      .disclaimer-title {
-        font-weight: 600;
-        color: #92400e;
-        margin-bottom: 8px;
-      }
-      .disclaimer ul {
-        margin-left: 20px;
-        color: #78350f;
-        margin-bottom: 0;
-      }
-      .table {
-        font-size: 0.9rem;
-      }
-      .nav-tabs .nav-link.active {
-        background: #990000;
-        color: white;
-        border: none;
-      }
-      .nav-tabs .nav-link {
-        color: #64748b;
-        border: none;
-        border-radius: 6px;
-        margin-right: 5px;
-      }
-      .help-text {
-        font-size: 0.85rem;
-        color: #64748b;
-        margin-top: 5px;
-      }
-      .segment-header {
-        background: #990000;
-        color: white;
-        padding: 10px 15px;
-        border-radius: 8px 8px 0 0;
-        font-weight: 600;
-      }
-      .segment-body {
-        background: #f8fafc;
-        border: 1px solid #e2e8f0;
-        border-top: none;
-        border-radius: 0 0 8px 8px;
-        padding: 15px;
-        margin-bottom: 15px;
-        overflow-x: auto;
-      }
-      .segment-size {
-        font-size: 0.9rem;
-        color: #64748b;
-      }
-      pre.r-script {
-        background: #1e293b;
-        color: #e2e8f0;
-        padding: 15px;
-        border-radius: 8px;
-        font-size: 0.85rem;
-        overflow-x: auto;
-      }
-      .form-group {
-        max-width: 500px;
-        margin-left: auto;
-        margin-right: auto;
-      }
-      .shiny-input-container {
-        width: 100% !important;
-      }
-      .center-content {
-        max-width: 500px;
-        margin-left: auto;
-        margin-right: auto;
-      }
-      .data-preview {
-        background: #f8fafc;
-        border: 1px solid #e2e8f0;
-        border-radius: 8px;
-        padding: 15px;
-        margin-top: 15px;
-        overflow-x: auto;
-      }
-      .data-preview h5 {
-        margin-bottom: 10px;
-        color: #1e293b;
-      }
-      .data-preview table {
-        font-size: 0.85rem;
-        width: 100%;
-      }
-      .btn-secondary {
-        background: #64748b;
-        border: none;
-        padding: 8px 16px;
-        border-radius: 8px;
-        color: white;
-      }
-      .btn-secondary:hover {
-        background: #475569;
-      }
-    "))
-  ),
-
-  # Title
-  h1("Shiny App for Latent Class Regression Analysis"),
-  p(class = "subtitle", "Estimate segment-level regression models using the \\"flexmix\\" package in R."),
-
-  # Disclaimer
-  div(class = "disclaimer",
-    div(class = "disclaimer-title", "Disclaimer"),
-    tags$ul(
-      tags$li(tags$strong("Results may contain errors."), " The output from this tool may be inaccurate, incomplete, or incorrect. Users should independently verify all results."),
-      tags$li(tags$strong("No warranty."), " This tool is provided \\"as is\\" without any warranty of any kind."),
-      tags$li(tags$strong("User assumes all risk."), " Users assume full responsibility for reviewing and validating any output.")
-    )
-  ),
-
-  # Top-to-bottom layout
-  # Step 1: Data Upload
-  div(class = "card",
-    div(class = "card-title", "1. Upload Data"),
-    div(class = "center-content",
-      fileInput("file", "Choose CSV File",
-        accept = c("text/csv", "text/comma-separated-values", ".csv")
-      ),
-      p(class = "help-text", "Upload a CSV file with headers in the first row."),
-      div(style = "margin-top: 10px;",
-        actionButton("load_example", "Load Example Data", class = "btn-secondary", style = "margin-right: 8px;"),
-        downloadButton("download_example", "Download Example CSV", class = "btn-secondary")
-      ),
-      p(class = "help-text", "No data yet? Load a built-in example (household spending, 2 segments) to try the tool right away.")
-    ),
-    # Data preview
-    uiOutput("data_preview")
-  ),
-
-  # Model Setup (conditional)
-  uiOutput("model_setup_card"),
-
-  # Run button (conditional)
-  uiOutput("run_card"),
-
-  # Results
-  div(\`aria-live\` = "polite", uiOutput("results_card"))
-)
-
-server = function(input, output, session) {
-
-  # Reactive values
-  data = reactiveVal(NULL)
-  model_result = reactiveVal(NULL)
-
-  # Helper: format p-values, showing <0.0001 for very small values
-  format_pval = function(p) {
-    ifelse(is.na(p), "NA",
-      ifelse(p < 1e-4, "<0.0001", sprintf("%.4f", p)))
-  }
-
-  # Helper: built-in example dataset (household spending, two latent segments)
-  make_example_data = function() {
-    set.seed(2024)
-    n_hh = 120
-    obs_per = 5
-    hh = rep(1:n_hh, each = obs_per)
-    seg = rep(ifelse(1:n_hh <= n_hh / 2, 1, 2), each = obs_per)
-    Nn = length(hh)
-    income = round(runif(Nn, 20, 100), 1)
-    age = round(runif(Nn, 20, 70))
-    ads_seen = rpois(Nn, 3)
-    noise = rnorm(Nn, 0, 2)
-    spend = ifelse(seg == 1,
-                   10 + 0.3 * income + 0.2 * age + 0.5 * ads_seen,
-                   60 - 0.4 * income + 0.8 * age + 3 * ads_seen) + noise
-    data.frame(household_id = hh, spend = round(spend, 2),
-               income = income, age = age, ads_seen = ads_seen)
-  }
-
-  # Helper: fit the latent class (or k=1 GLM) model and return a result list.
-  # Used by both the Run button and the Load Example Data button.
-  fit_lc_model = function(df, dv, ivs, consumer_id, model_type, num_segments, seed) {
-    formula_str = paste(dv, "~", paste(ivs, collapse = " + "))
-    if (consumer_id != "") {
-      formula_str = paste(formula_str, "|", consumer_id)
-    }
-    model_formula = as.formula(formula_str)
-
-    set.seed(seed)
-
-    if (model_type == "gaussian") {
-      model_family = FLXMRglm(family = "gaussian")
-    } else if (model_type == "poisson") {
-      model_family = FLXMRglm(family = "poisson")
-    } else {
-      model_family = FLXMRglm(family = "binomial")
-    }
-
-    if (num_segments == 1) {
-      fam = switch(model_type,
-        "gaussian" = gaussian(),
-        "poisson" = poisson(),
-        "binomial" = binomial()
-      )
-      fit = glm(as.formula(paste(dv, "~", paste(ivs, collapse = " + "))),
-                data = df, family = fam)
-
-      clusters_glm = NULL
-      if (consumer_id != "") {
-        unique_ids = unique(df[[consumer_id]])
-        clusters_glm = data.frame(
-          ID = unique_ids,
-          Segment = rep(1, length(unique_ids))
-        )
-        colnames(clusters_glm) = c(consumer_id, "Segment")
-      }
-
-      list(
-        type = "glm",
-        fit = fit,
-        k = 1,
-        k_requested = 1,
-        model_type = model_type,
-        formula = formula_str,
-        dv = dv,
-        ivs = ivs,
-        consumer_id = consumer_id,
-        clusters = clusters_glm,
-        seed = seed
-      )
-
-    } else {
-      fit = stepFlexmix(
-        model_formula,
-        data = df,
-        k = num_segments,
-        model = model_family,
-        nrep = 3
-      )
-
-      actual_k = fit@k
-
-      clusters = NULL
-      if (consumer_id != "") {
-        clusters = unique(cbind(df[[consumer_id]], clusters(fit)))
-        colnames(clusters) = c(consumer_id, "Segment")
-      }
-
-      refit_fit = refit(fit)
-
-      list(
-        type = "flexmix",
-        fit = fit,
-        refit_model = refit_fit,
-        k_requested = num_segments,
-        k = actual_k,
-        model_type = model_type,
-        formula = formula_str,
-        dv = dv,
-        ivs = ivs,
-        consumer_id = consumer_id,
-        clusters = clusters,
-        seed = seed
-      )
-    }
-  }
-
-  # Download the example dataset as CSV
-  output$download_example = downloadHandler(
-    filename = function() "latent_class_example.csv",
-    content = function(file) {
-      write.csv(make_example_data(), file, row.names = FALSE)
-    }
-  )
-
-  # Load the example dataset and estimate a 2-segment model right away
-  observeEvent(input$load_example, {
-    df = make_example_data()
-    data(df)
-    model_result(NULL)
-
-    # Reflect the example choices in the setup controls
-    updateSelectInput(session, "dv", selected = "spend")
-    updateSelectInput(session, "ivs", selected = c("income", "age", "ads_seen"))
-    updateSelectInput(session, "consumer_id", selected = "household_id")
-    updateSelectInput(session, "model_type", selected = "gaussian")
-    updateNumericInput(session, "num_segments", value = 2)
-    updateNumericInput(session, "seed", value = 123)
-
-    tryCatch({
-      withProgress(message = "Estimating example model...", {
-        result = fit_lc_model(df, "spend", c("income", "age", "ads_seen"),
-                              "household_id", "gaussian", 2, 123)
-        model_result(result)
-      })
-      showNotification("Example data loaded and a 2-segment model was estimated. Explore the result tabs below.",
-                       type = "message", duration = 8)
-    }, error = function(e) {
-      showNotification(paste("Could not estimate the example model:", e$message), type = "error")
-    })
-  })
-
-  # Load data
-  observeEvent(input$file, {
-    req(input$file)
-    tryCatch({
-      df = read.csv(input$file$datapath, stringsAsFactors = FALSE)
-      data(df)
-      model_result(NULL)
-      showNotification(paste("Loaded", nrow(df), "rows and", ncol(df), "columns."), type = "message")
-    }, error = function(e) {
-      showNotification(paste("Error loading file:", e$message), type = "error")
-    })
-  })
-
-  # Data preview
-  output$data_preview = renderUI({
-    df = data()
-    if (is.null(df)) return(NULL)
-
-    div(class = "data-preview",
-      h5(paste0("Data Preview (", nrow(df), " rows, ", ncol(df), " columns)")),
-      tableOutput("preview_table")
-    )
-  })
-
-  # Preview table (first 10 rows)
-  output$preview_table = renderTable({
-    df = data()
-    if (is.null(df)) return(NULL)
-    head(df, 10)
-  }, rownames = FALSE)
-
-  # Model setup card
-  output$model_setup_card = renderUI({
-    df = data()
-    if (is.null(df)) return(NULL)
-
-    cols = names(df)
-
-    div(class = "card",
-      div(class = "card-title", "2. Model Specification"),
-      div(class = "center-content",
-        selectInput("dv", "Dependent Variable (Y)", choices = cols),
-
-        selectInput("ivs", "Independent Variables (X)",
-          choices = cols,
-          multiple = TRUE
-        ),
-
-        selectInput("consumer_id", "Consumer/HH ID (for clustering)",
-          choices = c("(None)" = "", cols),
-          selected = ""
-        ),
-        p(class = "help-text", "Select a variable that identifies consumers or households. Leave empty if each row is independent."),
-
-        selectInput("model_type", "Regression Type",
-          choices = c(
-            "Linear Regression" = "gaussian",
-            "Poisson Regression" = "poisson",
-            "Binary Logistic Regression" = "binomial"
-          )
-        ),
-
-        numericInput("num_segments", "Number of Segments (k)",
-          value = 2, min = 1, max = 10, step = 1
-        ),
-        p(class = "help-text", "Set k=1 for a standard (non-segmented) model."),
-
-        numericInput("seed", "Seed Selection",
-          value = 123, min = 1, step = 1
-        ),
-        p(class = "help-text", "For reproducibility, choose the same seed next time you run.")
-      )
-    )
-  })
-
-  # Run card
-  output$run_card = renderUI({
-    df = data()
-    if (is.null(df)) return(NULL)
-
-    div(class = "card",
-      div(class = "card-title", "3. Run Model"),
-      div(class = "center-content",
-        actionButton("run_model", "Run Latent Class Model", class = "btn-success", style = "width: 100%;")
-      )
-    )
-  })
-
-  # Run model
-  observeEvent(input$run_model, {
-    df = data()
-    req(df, input$dv, input$ivs)
-
-    if (length(input$ivs) == 0) {
-      showNotification("Please select at least one independent variable.", type = "error")
-      return()
-    }
-
-    # Check if DV is in IVs
-    if (input$dv %in% input$ivs) {
-      showNotification("Dependent variable cannot also be an independent variable.", type = "error")
-      return()
-    }
-
-    # Validate number of segments and seed are usable whole numbers
-    if (is.na(input$num_segments) || input$num_segments < 1 ||
-        input$num_segments != round(input$num_segments)) {
-      showNotification("Please enter a whole number of segments (1 or more).", type = "error")
-      return()
-    }
-    if (is.na(input$seed)) {
-      showNotification("Please enter a seed (a positive whole number) so results can be reproduced.", type = "error")
-      return()
-    }
-
-    # The Consumer/HH ID identifies rows, so it cannot be a model variable
-    if (input$consumer_id != "" && input$dv == input$consumer_id) {
-      showNotification("The Consumer/HH ID cannot be the dependent variable. Choose a different Y.", type = "error")
-      return()
-    }
-    if (input$consumer_id != "" && input$consumer_id %in% input$ivs) {
-      showNotification("The Consumer/HH ID cannot be an independent variable. Remove it from X.", type = "error")
-      return()
-    }
-
-    # Screen for missing values in the selected variables
-    model_vars = c(input$dv, input$ivs)
-    if (input$consumer_id != "") model_vars = c(model_vars, input$consumer_id)
-    complete_rows = complete.cases(df[, model_vars, drop = FALSE])
-    n_dropped = sum(!complete_rows)
-    if (n_dropped > 0) {
-      df = df[complete_rows, , drop = FALSE]
-      if (nrow(df) == 0) {
-        showNotification("Every row has a missing value in the selected variables. Please clean your data before running.", type = "error")
-        return()
-      }
-      showNotification(
-        paste0("Dropped ", n_dropped, " row(s) with missing values in the selected variables. Estimating on ", nrow(df), " complete rows."),
-        type = "warning", duration = 8
-      )
-    }
-
-    # Family-specific checks on the dependent variable
-    dv_vals = df[[input$dv]]
-    if (input$model_type == "binomial") {
-      if (!all(dv_vals %in% c(0, 1))) {
-        showNotification("Binary Logistic Regression needs a 0/1 dependent variable. Recode your Y so it only contains 0 and 1.", type = "error")
-        return()
-      }
-    } else if (input$model_type == "poisson") {
-      dv_num = suppressWarnings(as.numeric(as.character(dv_vals)))
-      if (any(is.na(dv_num))) {
-        showNotification("Poisson Regression needs a numeric count dependent variable.", type = "error")
-        return()
-      }
-      if (any(dv_num < 0) || any(dv_num != round(dv_num))) {
-        showNotification("Poisson Regression needs a non-negative whole-number (count) dependent variable.", type = "error")
-        return()
-      }
-    }
-
-    tryCatch({
-      withProgress(message = "Estimating model...", {
-
-        result = fit_lc_model(df, input$dv, input$ivs, input$consumer_id,
-                              input$model_type, input$num_segments, input$seed)
-        model_result(result)
-
-        # Check if fewer segments were identified
-        if (result$type == "flexmix" && result$k < result$k_requested) {
-          showNotification(
-            paste0("Note: Only ", result$k, " segments could be identified (requested ", result$k_requested, "). The model converged to fewer segments."),
-            type = "warning",
-            duration = 10
-          )
-        } else {
-          showNotification("Model estimated successfully!", type = "message")
-        }
-      })
-
-    }, error = function(e) {
-      showNotification(paste("Error:", e$message), type = "error")
-    })
-  })
-
-  # Results card
-  output$results_card = renderUI({
-    result = model_result()
-    if (is.null(result)) {
-      return(
-        div(class = "card",
-          div(class = "card-title", "Results"),
-          div(style = "text-align: center; padding: 60px; color: #64748b;",
-            "Upload data and run a model to see results here."
-          )
-        )
-      )
-    }
-
-    div(class = "card",
-      div(class = "card-title", "Results"),
-      tabsetPanel(
-        tabPanel("Segment Estimates",
-          div(style = "margin-top: 15px;",
-            uiOutput("segment_estimates")
-          )
-        ),
-        tabPanel("Equations",
-          div(style = "margin-top: 15px;",
-            uiOutput("equations_output")
-          )
-        ),
-        tabPanel("Segment Sizes",
-          div(style = "margin-top: 15px;",
-            uiOutput("segment_sizes")
-          )
-        ),
-        if (!is.null(result$clusters)) {
-          tabPanel("Consumer/HH Assignments",
-            div(style = "margin-top: 15px;",
-              downloadButton("download_assignments", "Download Assignments (CSV)", class = "btn-secondary"),
-              p(style = "font-size: 0.85rem; color: #64748b; margin-top: 10px;",
-                paste0("Showing ", min(100, nrow(as.data.frame(result$clusters))), " of ",
-                       nrow(as.data.frame(result$clusters)), " consumer/household assignments. Download the full list as CSV above.")
-              ),
-              div(class = "data-preview",
-                tableOutput("consumer_assignments")
-              ),
-              p(style = "font-size: 0.85rem; color: #64748b; font-style: italic;",
-                if (result$k == 1) {
-                  "With only one segment, all consumers/households are assigned to Segment 1."
-                } else {
-                  "Shows which segment each consumer/household is assigned to."
+        (function () {
+            const firebaseConfig = {
+                apiKey: "AIzaSyBg3LJDwVIRGWtFZb_mM_CSRJMNCJUta20",
+                authDomain: "iu-pricing-tools.firebaseapp.com",
+                projectId: "iu-pricing-tools",
+                storageBucket: "iu-pricing-tools.firebasestorage.app",
+                messagingSenderId: "659335573790",
+                appId: "1:659335573790:web:00013a166787efecb3d90f",
+                measurementId: "G-NGKNY08XWP"
+            };
+            let authResolved = false;
+            // If Firebase's CDN is blocked or auth never resolves, don't hang forever:
+            // after 12s show a plain message in place of the loading state.
+            const failTimer = setTimeout(function () {
+                if (!authResolved) {
+                    const ls = document.getElementById('loading-screen');
+                    if (ls) ls.innerHTML = '<p style="color: #666; font-family: \'Outfit\', -apple-system, sans-serif; text-align: center; max-width: 420px;">Could not reach the sign-in service. Check your connection and reload this page.</p>';
                 }
-              )
-            )
-          )
-        },
-        tabPanel("R Script",
-          div(style = "margin-top: 15px;",
-            p(style = "color: #64748b;", "Use this R script to reproduce the analysis:"),
-            verbatimTextOutput("r_script"),
-            downloadButton("download_script", "Download R Script", class = "btn-secondary")
-          )
-        )
-      )
-    )
-  })
-
-  # Segment estimates
-  output$segment_estimates = renderUI({
-    result = model_result()
-    if (is.null(result)) return(NULL)
-
-    if (result$type == "glm") {
-      # Standard GLM - coefficient table first, then fit stats
-      fit = result$fit
-      aic_val = round(AIC(fit), 2)
-      bic_val = round(BIC(fit), 2)
-      ll_val = round(as.numeric(logLik(fit)), 2)
-
-      tagList(
-        # Coefficient table first
-        div(style = "margin-bottom: 20px;",
-          div(class = "segment-header", "Segment 1 (100% of sample)"),
-          div(class = "segment-body",
-            tableOutput("coef_table_single")
-          )
-        ),
-        # Model fit stats row after the table
-        h4("Model Fit Statistics", style = "margin-bottom: 15px;"),
-        fluidRow(
-          column(4, div(class = "stat-box", div(class = "stat-value", format(aic_val, big.mark = ",")), div(class = "stat-label", "AIC"))),
-          column(4, div(class = "stat-box", div(class = "stat-value", format(bic_val, big.mark = ",")), div(class = "stat-label", "BIC"))),
-          column(4, div(class = "stat-box", div(class = "stat-value", format(ll_val, big.mark = ",")), div(class = "stat-label", "Log-Likelihood")))
-        ),
-        p(style = "font-size: 0.85rem; color: #64748b; margin: 10px 0;",
-          "Lower AIC/BIC values indicate better model fit. Compare models with different numbers of segments.")
-      )
-
-    } else {
-      # Flexmix model - add fit stats and show coefficient tables
-      fit = result$fit
-      refit_mod = result$refit_model
-      k = result$k
-      k_requested = result$k_requested
-      aic_val = round(AIC(fit), 2)
-      bic_val = round(BIC(fit), 2)
-      ll_val = round(as.numeric(logLik(fit)), 2)
-
-      # Warning message if fewer segments were identified
-      segment_warning = NULL
-      if (k < k_requested) {
-        segment_warning = div(
-          style = "background: #fef3c7; border: 1px solid #f59e0b; border-radius: 8px; padding: 12px 15px; margin-bottom: 15px;",
-          tags$strong(style = "color: #92400e;", "Note: "),
-          span(style = "color: #78350f;",
-            paste0("You requested ", k_requested, " segments, but only ", k, " segments could be identified. ",
-                   "The model converged to fewer segments due to insufficient variation in the data or overlap between segments.")
-          )
-        )
-      }
-
-      # Build the per-segment table shells (the tables render via coef_table_seg_i)
-      segment_tables = lapply(1:k, function(i) {
-        div(style = "margin-bottom: 20px;",
-          div(class = "segment-header",
-            paste0("Segment ", i, " (", round(fit@prior[i] * 100, 1), "% of sample)")
-          ),
-          div(class = "segment-body",
-            tableOutput(paste0("coef_table_seg_", i))
-          )
-        )
-      })
-
-      tagList(
-        # Warning if fewer segments
-        segment_warning,
-        # Segment coefficient tables first
-        segment_tables,
-        # Model fit stats row after the tables
-        h4("Model Fit Statistics", style = "margin-bottom: 15px;"),
-        fluidRow(
-          column(4, div(class = "stat-box", div(class = "stat-value", format(aic_val, big.mark = ",")), div(class = "stat-label", "AIC"))),
-          column(4, div(class = "stat-box", div(class = "stat-value", format(bic_val, big.mark = ",")), div(class = "stat-label", "BIC"))),
-          column(4, div(class = "stat-box", div(class = "stat-value", format(ll_val, big.mark = ",")), div(class = "stat-label", "Log-Likelihood")))
-        ),
-        p(style = "font-size: 0.85rem; color: #64748b; margin: 10px 0;",
-          "Lower AIC/BIC values indicate better model fit. Compare models with different numbers of segments.")
-      )
-    }
-  })
-
-  # Single segment table (for GLM)
-  output$coef_table_single = renderTable({
-    result = model_result()
-    if (is.null(result) || result$type != "glm") return(NULL)
-
-    coefs = summary(result$fit)$coefficients
-    # Linear (gaussian) GLM reports t values; Poisson/logistic report z values
-    stat_label = if (result$model_type == "gaussian") "t value" else "z value"
-    out = data.frame(
-      Variable = rownames(coefs),
-      Estimate = round(coefs[, 1], 4),
-      Std.Error = round(coefs[, 2], 4),
-      Stat = round(coefs[, 3], 4),
-      P.Value = format_pval(coefs[, 4]),
-      stringsAsFactors = FALSE,
-      check.names = FALSE
-    )
-    names(out) = c("Variable", "Estimate", "Std. Error", stat_label, "p-value")
-    out
-  }, rownames = FALSE, digits = 4)
-
-  # Dynamic segment tables for flexmix
-  observe({
-    result = model_result()
-    if (is.null(result) || result$type != "flexmix") return()
-
-    refit_mod = result$refit_model
-    k = result$k
-
-    lapply(1:k, function(i) {
-      local({
-        seg_i = i
-        output[[paste0("coef_table_seg_", seg_i)]] = renderTable({
-          result = model_result()
-          if (is.null(result) || result$type != "flexmix") return(NULL)
-
-          comp_name = paste0("Comp.", seg_i)
-          coef_matrix = result$refit_model@components[[1]][[comp_name]]
-
-          out = data.frame(
-            Variable = rownames(coef_matrix),
-            Estimate = round(coef_matrix[, 1], 4),
-            Std.Error = round(coef_matrix[, 2], 4),
-            Stat = round(coef_matrix[, 3], 4),
-            P.Value = format_pval(coef_matrix[, 4]),
-            stringsAsFactors = FALSE,
-            check.names = FALSE
-          )
-          names(out) = c("Variable", "Estimate", "Std. Error", "z value", "p-value")
-          out
-        }, rownames = FALSE, digits = 4)
-      })
-    })
-  })
-
-  # Segment sizes
-  output$segment_sizes = renderUI({
-    result = model_result()
-    if (is.null(result)) return(NULL)
-
-    if (result$type == "glm") {
-      return(
-        div(style = "padding: 20px; text-align: center; color: #64748b;",
-          "Only one segment (standard GLM). All observations belong to the same segment."
-        )
-      )
-    }
-
-    tagList(
-      h4("Segment Sizes", style = "margin-bottom: 15px; color: #1e293b;"),
-      tableOutput("segment_size_table"),
-      p(style = "margin-top: 15px; font-size: 0.9rem; color: #64748b;",
-        "Segment sizes represent the prior probability of each segment (proportion of sample)."
-      )
-    )
-  })
-
-  # Segment size table
-  output$segment_size_table = renderTable({
-    result = model_result()
-    if (is.null(result) || result$type != "flexmix") return(NULL)
-
-    fit = result$fit
-    priors = fit@prior
-    k = length(priors)
-
-    data.frame(
-      Segment = paste("Segment", 1:k),
-      Size = paste0(round(priors * 100, 1), "%"),
-      Count = paste0("~", round(priors * sum(fit@size), 0), " observations")
-    )
-  }, rownames = FALSE)
-
-  # Consumer/HH assignments table (preview of first 100 rows)
-  output$consumer_assignments = renderTable({
-    result = model_result()
-    if (is.null(result) || is.null(result$clusters)) return(NULL)
-
-    head(as.data.frame(result$clusters), 100)
-  }, rownames = FALSE)
-
-  # Download the full Consumer/HH assignments as CSV
-  output$download_assignments = downloadHandler(
-    filename = function() "segment_assignments.csv",
-    content = function(file) {
-      result = model_result()
-      if (is.null(result) || is.null(result$clusters)) return()
-      write.csv(as.data.frame(result$clusters), file, row.names = FALSE)
-    }
-  )
-
-  # Helper: build equation string from coefficients
-  build_equation = function(coefs, dv, model_type, seg_label = "") {
-    # coefs is a named vector of estimates
-    terms = c()
-    intercept_val = NULL
-
-    for (i in seq_along(coefs)) {
-      varname = names(coefs)[i]
-      est = coefs[i]
-      if (varname == "(Intercept)") {
-        intercept_val = est
-      } else if (!is.na(est) && est != 0) {
-        # Clean variable name: remove backticks, factor() wrappers
-        clean = varname
-        clean = gsub("factor\\\\(([^)]+)\\\\)", "\\\\1", clean)
-        clean = gsub("\`", "", clean)
-        if (est >= 0) {
-          terms = c(terms, paste0(" + ", trimws(formatC(est, format = "g", digits = 4)), " * ", clean))
-        } else {
-          terms = c(terms, paste0(" - ", trimws(formatC(abs(est), format = "g", digits = 4)), " * ", clean))
-        }
-      }
-    }
-
-    # Build linear predictor
-    if (!is.null(intercept_val)) {
-      linear_pred = paste0(trimws(formatC(intercept_val, format = "g", digits = 4)), paste(terms, collapse = ""))
-    } else {
-      linear_pred = paste(terms, collapse = "")
-    }
-
-    # Segment suffix for variable names
-    seg_suffix = if (seg_label != "") paste0("_", seg_label) else ""
-
-    # Wrap based on model type
-    if (model_type == "gaussian") {
-      eq = paste0(dv, seg_suffix, " = ", linear_pred)
-    } else if (model_type == "poisson") {
-      eq = paste0("Mean_", dv, seg_suffix, " = EXP(", linear_pred, ")")
-    } else {
-      eq = paste0("Prob_", dv, seg_suffix, " = EXP(eta", seg_suffix, ") / (1 + EXP(eta", seg_suffix, "))")
-      eq = paste0(eq, "\\nwhere eta", seg_suffix, " = ", linear_pred)
-    }
-
-    return(eq)
-  }
-
-  # Equations output
-  output$equations_output = renderUI({
-    result = model_result()
-    if (is.null(result)) return(NULL)
-
-    dv = result$dv
-    mt = result$model_type
-
-    lines = c()
-    note = ""
-
-    if (result$type == "glm") {
-      # Single segment GLM
-      coefs = coef(result$fit)
-      lines = c(lines, build_equation(coefs, dv, mt, "Seg1"))
-      lines = c(lines, paste0("Size_Seg1 = 1.0000"))
-
-    } else {
-      # Flexmix model - one equation per segment
-      refit_mod = result$refit_model
-      k = result$k
-      fit = result$fit
-
-      for (i in 1:k) {
-        comp_name = paste0("Comp.", i)
-        coef_matrix = refit_mod@components[[1]][[comp_name]]
-        coefs = coef_matrix[, 1]
-        names(coefs) = rownames(coef_matrix)
-        seg_label = paste0("Seg", i)
-        lines = c(lines, build_equation(coefs, dv, mt, seg_label))
-      }
-
-      # Add segment sizes
-      for (i in 1:k) {
-        lines = c(lines, paste0("Size_Seg", i, " = ", formatC(round(fit@prior[i], 4), format = "f", digits = 4)))
-      }
-    }
-
-    # Build note based on model type
-    if (mt == "poisson") {
-      note = "Note: Poisson regression uses a log link, so the mean is obtained by exponentiating the linear predictor."
-    } else if (mt == "binomial") {
-      note = paste0("Note: Prob_", dv, " = Pr(", dv, " = 1). If you are interested in Pr(", dv, " = 0), calculate 1 - Prob_", dv, ".")
-    }
-
-    eq_text = paste(lines, collapse = "\\n")
-    eq_id = paste0("eq_text_", sample(1000:9999, 1))
-
-    tagList(
-      div(style = "position: relative;",
-        tags$button(
-          id = paste0("copy_", eq_id),
-          style = "position: absolute; top: 10px; right: 10px; background: #475569; color: white; border: none; padding: 6px 12px; border-radius: 6px; font-size: 0.8rem; cursor: pointer; z-index: 1;",
-          onclick = paste0("var text = document.getElementById('", eq_id, "').innerText; var ta = document.createElement('textarea'); ta.value = text; ta.style.position = 'fixed'; ta.style.left = '-9999px'; document.body.appendChild(ta); ta.select(); document.execCommand('copy'); document.body.removeChild(ta); var btn = document.getElementById('copy_", eq_id, "'); btn.innerText = 'Copied!'; setTimeout(function() { btn.innerText = 'Copy'; }, 2000);"),
-          "Copy"
-        ),
-        pre(id = eq_id,
-          style = "white-space: pre-wrap; word-wrap: break-word; font-size: 0.9rem; background: #1e293b; color: #e2e8f0; padding: 15px; padding-right: 80px; border-radius: 8px; margin-bottom: 10px;",
-          eq_text
-        )
-      ),
-      if (note != "") {
-        p(style = "font-size: 0.85rem; color: #64748b; font-style: italic;", note)
-      }
-    )
-  })
-
-  # R Script
-  output$r_script = renderText({
-    result = model_result()
-    if (is.null(result)) return("")
-
-    if (result$type == "glm") {
-      # Standard GLM script
-      family_str = switch(result$model_type,
-        "gaussian" = "gaussian()",
-        "poisson" = "poisson()",
-        "binomial" = "binomial()"
-      )
-
-      script = paste0(
-        "# Latent Class Regression Analysis\\n",
-        "# Generated by Latent Class Regression Tool\\n\\n",
-        "# Load data\\n",
-        "data = read.csv(\\"your_data.csv\\")\\n\\n",
-        "# Standard GLM (k = 1)\\n",
-        "model = glm(\\n",
-        "    ", result$dv, " ~ ", paste(result$ivs, collapse = " + "), ",\\n",
-        "    data = data,\\n",
-        "    family = ", family_str, "\\n",
-        ")\\n\\n",
-        "# View results\\n",
-        "summary(model)\\n"
-      )
-
-    } else {
-      # Flexmix script
-      formula_str = paste(result$dv, "~", paste(result$ivs, collapse = " + "))
-      if (!is.null(result$consumer_id) && result$consumer_id != "") {
-        formula_str = paste(formula_str, "|", result$consumer_id)
-      }
-
-      family_str = switch(result$model_type,
-        "gaussian" = '\\"gaussian\\"',
-        "poisson" = '\\"poisson\\"',
-        "binomial" = '\\"binomial\\"'
-      )
-
-      script = paste0(
-        "# Latent Class Regression Analysis\\n",
-        "# Generated by Latent Class Regression Tool\\n\\n",
-        "# Install and load required packages\\n",
-        "if (!require(flexmix)) install.packages(\\"flexmix\\")\\n",
-        "library(flexmix)\\n\\n",
-        "# Load data\\n",
-        "data = read.csv(\\"your_data.csv\\")\\n\\n",
-        "# Set seed for reproducibility\\n",
-        "set.seed(", result$seed, ")\\n\\n",
-        "# Run latent class model (nrep = 3 matches the app, so results reproduce)\\n",
-        "model = stepFlexmix(\\n",
-        "    ", formula_str, ",\\n",
-        "    data = data,\\n",
-        "    k = ", result$k_requested, ",\\n",
-        "    model = FLXMRglm(family = ", family_str, "),\\n",
-        "    nrep = 3\\n",
-        ")\\n\\n",
-        "# Model fit statistics\\n",
-        "cat(\\"AIC:\\", AIC(model), \\"\\\\n\\")\\n",
-        "cat(\\"BIC:\\", BIC(model), \\"\\\\n\\")\\n",
-        "cat(\\"Log-Likelihood:\\", logLik(model), \\"\\\\n\\\\n\\")\\n\\n",
-        "# View segment sizes (prior probabilities)\\n",
-        "model@prior\\n\\n",
-        "# View segment-level coefficients with std. errors\\n",
-        "refit_model = refit(model)\\n",
-        "summary(refit_model)\\n\\n",
-        "# Get segment assignments\\n",
-        "clusters(model)\\n"
-      )
-    }
-
-    script
-  })
-
-  # Download R script
-  output$download_script = downloadHandler(
-    filename = function() {
-      "latent_class_regression.R"
-    },
-    content = function(file) {
-      result = model_result()
-      if (is.null(result)) return()
-
-      # Same script generation as above but write to file
-      if (result$type == "glm") {
-        family_str = switch(result$model_type,
-          "gaussian" = "gaussian()",
-          "poisson" = "poisson()",
-          "binomial" = "binomial()"
-        )
-
-        script = paste0(
-          "# Latent Class Regression Analysis\\n",
-          "# Generated by Latent Class Regression Tool\\n\\n",
-          "data = read.csv(\\"your_data.csv\\")\\n\\n",
-          "model = glm(\\n",
-          "    ", result$dv, " ~ ", paste(result$ivs, collapse = " + "), ",\\n",
-          "    data = data,\\n",
-          "    family = ", family_str, "\\n",
-          ")\\n\\n",
-          "summary(model)\\n"
-        )
-
-      } else {
-        formula_str = paste(result$dv, "~", paste(result$ivs, collapse = " + "))
-        if (!is.null(result$consumer_id) && result$consumer_id != "") {
-          formula_str = paste(formula_str, "|", result$consumer_id)
-        }
-
-        family_str = switch(result$model_type,
-          "gaussian" = '\\"gaussian\\"',
-          "poisson" = '\\"poisson\\"',
-          "binomial" = '\\"binomial\\"'
-        )
-
-        script = paste0(
-          "# Latent Class Regression Analysis\\n",
-          "# Generated by Latent Class Regression Tool\\n\\n",
-          "if (!require(flexmix)) install.packages(\\"flexmix\\")\\n",
-          "library(flexmix)\\n\\n",
-          "data = read.csv(\\"your_data.csv\\")\\n\\n",
-          "set.seed(", result$seed, ")\\n\\n",
-          "model = stepFlexmix(\\n",
-          "    ", formula_str, ",\\n",
-          "    data = data,\\n",
-          "    k = ", result$k_requested, ",\\n",
-          "    model = FLXMRglm(family = ", family_str, "),\\n",
-          "    nrep = 3\\n",
-          ")\\n\\n",
-          "cat(\\"AIC:\\", AIC(model), \\"\\\\n\\")\\n",
-          "cat(\\"BIC:\\", BIC(model), \\"\\\\n\\")\\n\\n",
-          "model@prior\\n\\n",
-          "refit_model = refit(model)\\n",
-          "summary(refit_model)\\n\\n",
-          "clusters(model)\\n"
-        )
-      }
-
-      writeLines(script, file)
-    }
-  )
-}
-
-shinyApp(ui = ui, server = server)
-`;
-
-            const blob = new Blob([rCode], { type: 'text/plain' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = 'Latent_Class_Regression.R';
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
-        });
+            }, 12000);
+            try {
+                firebase.initializeApp(firebaseConfig);
+                firebase.auth().onAuthStateChanged(function (user) {
+                    authResolved = true;
+                    clearTimeout(failTimer);
+                    if (user) {
+                        document.getElementById('loading-screen').style.display = 'none';
+                        document.getElementById('main-content').style.display = 'block';
+                    } else {
+                        window.location.href = 'login.html?next=' + encodeURIComponent(window.location.pathname.split('/').pop());
+                    }
+                });
+            } catch (e) {
+                // firebase undefined (CDN blocked) or init error: the 12s fallback handles the UI.
+                console.error(e);
+            }
+        })();
     </script>
 
-</div> <!-- end main-content -->
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js" integrity="sha384-yuGdyIzzYtOBlBG6JOWn+Ey9kpq7HocusNuxEGyyohr1eEyXpeEyehIIXC/hznw4" crossorigin="anonymous"></script>
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js" integrity="sha384-lI+CxEx/bCvWP1b0OK13j5HTrTZP7yf1xle8TVOFq2smz6KC1RChTarRV/RHP5PP" crossorigin="anonymous"></script>
-<script>
-    const firebaseConfig = {
-        apiKey: "AIzaSyBg3LJDwVIRGWtFZb_mM_CSRJMNCJUta20",
-        authDomain: "iu-pricing-tools.firebaseapp.com",
-        projectId: "iu-pricing-tools",
-        storageBucket: "iu-pricing-tools.firebasestorage.app",
-        messagingSenderId: "659335573790",
-        appId: "1:659335573790:web:00013a166787efecb3d90f",
-        measurementId: "G-NGKNY08XWP"
-    };
-    // If the sign-in service cannot be reached (offline, ad-blocker, campus
-    // filtering), do not hang on "Loading..." forever: show an actionable message.
-    var authResolved = false;
-    function showAuthError() {
-        var ls = document.getElementById('loading-screen');
-        if (ls) {
-            ls.innerHTML = '<p style="color: #64748b; max-width: 420px; text-align: center; padding: 0 20px;">Could not reach the sign-in service. Check your connection and reload this page.</p>';
-        }
-    }
-    var authFallbackTimer = setTimeout(function() {
-        if (!authResolved) showAuthError();
-    }, 12000);
+    <script type="module">
+        // Pinned to a specific WebR release (not "latest") so an upstream breaking
+        // change cannot alter this tool's runtime underfoot. Bump deliberately after testing.
+        import { WebR } from 'https://webr.r-wasm.org/v0.5.4/webr.mjs';
 
-    try {
-        firebase.initializeApp(firebaseConfig);
-        firebase.auth().onAuthStateChanged(function(user) {
-            authResolved = true;
-            clearTimeout(authFallbackTimer);
-            if (user) {
-                document.getElementById('loading-screen').style.display = 'none';
-                document.getElementById('main-content').style.display = 'block';
+        // ============================================================
+        // STATE
+        // ============================================================
+        let webR = null;
+        let webRReady = false;   // true only after init + flexmix are fully loaded
+        let busy = false;        // an estimation or comparison is running
+        let columnNames = [];
+        let rows = [];
+        let columnTypes = {};    // header -> 'numeric' | 'text'
+        let sourceName = 'your_data.csv';
+        let exampleCSV = null;   // text of the built-in example, when loaded
+        let lastResult = null;
+        let lastCompare = null;
+
+        const $ = (id) => document.getElementById(id);
+
+        // ============================================================
+        // STATUS / LOADING
+        // ============================================================
+        let statusTimer = null;
+        function showStatus(msg, type = 'info', autoHideMs = 0) {
+            const el = $('statusMessage');
+            el.textContent = msg;
+            el.className = `status-message visible ${type}`;
+            clearTimeout(statusTimer);
+            if (autoHideMs > 0) statusTimer = setTimeout(() => el.classList.remove('visible'), autoHideMs);
+        }
+        function setLoadingStage(stage) { $('loadingStage').textContent = stage; }
+        function setLoadingText(text)   { $('loadingText').textContent = text; }
+
+        // ============================================================
+        // R HELPERS (defined once in the WebR session)
+        // ============================================================
+        // The restart loop is driven from JavaScript, one flexmix() call per restart, so the
+        // page can report progress. It is the same loop stepFlexmix() runs internally
+        // (set.seed once, then nrep calls to flexmix(), keeping the first fit with the highest
+        // log-likelihood), so the R script's stepFlexmix(..., nrep = ) call reproduces it exactly.
+        const R_HELPERS = String.raw`
+suppressPackageStartupMessages(library(flexmix))
+.lc = new.env()
+.lc_prep = function(path, dv, ivs, id, family, factors, formula_str) {
+    d = read.csv(path, stringsAsFactors = FALSE, check.names = FALSE)
+    vars = unique(c(dv, ivs, if (nzchar(id)) id))
+    miss = setdiff(vars, names(d))
+    if (length(miss)) stop("Column not found in the data: ", miss[1])
+    coerced = character(0)
+    for (v in setdiff(c(dv, ivs), factors)) {
+        if (!is.numeric(d[[v]])) { d[[v]] = suppressWarnings(as.numeric(d[[v]])); coerced = c(coerced, v) }
+    }
+    for (v in factors) d[[v]] = factor(d[[v]])
+    n0 = nrow(d)
+    d = d[complete.cases(d[, vars, drop = FALSE]), , drop = FALSE]
+    if (nrow(d) == 0) stop("Every row has a missing value in the selected variables. Please clean your data or pick other variables.")
+    y = d[[dv]]
+    if (family == "binomial" && !all(y %in% c(0, 1)))
+        stop("Binary Logistic Regression needs a 0/1 dependent variable, but ", dv, " has other values. Recode Y to 0 and 1, or pick another regression type.")
+    if (family == "poisson" && (any(y < 0) || any(y != round(y))))
+        stop("Poisson Regression needs a count dependent variable (whole numbers 0, 1, 2, ...), but ", dv, " has negative or decimal values. Use Linear Regression instead.")
+    for (v in factors) if (nlevels(droplevels(d[[v]])) < 2) stop("The categorical variable ", v, " has only one value, so it cannot be used as a predictor.")
+    for (v in setdiff(ivs, factors)) if (length(unique(d[[v]])) < 2) stop("The variable ", v, " has the same value in every row, so it cannot be used as a predictor.")
+    .lc$data = d
+    .lc$formula = as.formula(formula_str)
+    .lc$model = FLXMRglm(family = family)
+    list(n = nrow(d), dropped = n0 - nrow(d), ngroups = if (nzchar(id)) length(unique(d[[id]])) else nrow(d), coerced = coerced)
+}
+.lc_start = function(seed) {
+    .lc$best = NULL
+    .lc$fit = NULL
+    invisible(gc())
+    set.seed(seed)
+    .lc$lls = numeric(0)
+    .lc$errs = character(0)
+    invisible(TRUE)
+}
+.lc_rep = function(k) {
+    x = try(flexmix(.lc$formula, data = .lc$data, k = k, model = .lc$model), silent = TRUE)
+    if (inherits(x, "try-error")) {
+        .lc$lls = c(.lc$lls, NA)
+        .lc$errs = c(.lc$errs, conditionMessage(attr(x, "condition")))
+        return(NA_real_)
+    }
+    ll = as.numeric(logLik(x))
+    .lc$lls = c(.lc$lls, ll)
+    if (is.null(.lc$best) || ll > as.numeric(logLik(.lc$best))) .lc$best = x
+    ll
+}
+.lc_fail_msg = function() {
+    paste0("The model could not be estimated in any restart",
+           if (length(.lc$errs)) paste0(" (R said: ", .lc$errs[1], ")") else "",
+           ". Try fewer segments, more restarts, or check your data.")
+}
+.lc_compare_row = function(k) {
+    fit = .lc$best
+    if (is.null(fit)) return(list(k = k, found = NA, ll = NA, df = NA, aic = NA, bic = NA))
+    list(k = k, found = fit@k, ll = as.numeric(logLik(fit)), df = attr(logLik(fit), "df"), aic = AIC(fit), bic = BIC(fit))
+}
+.lc_finish = function(id, call_str, seed) {
+    fit = .lc$best
+    if (is.null(fit)) stop(.lc_fail_msg())
+    fit@call = str2lang(call_str)
+    .lc$fit = fit
+    K = fit@k
+    rf = tryCatch(refit(fit), error = function(e) NULL)
+    pars = parameters(fit)
+    if (!is.matrix(pars)) pars = as.matrix(pars)
+    coefs = lapply(seq_len(K), function(i) {
+        if (!is.null(rf)) {
+            m = rf@components[[1]][[i]]
+            rn = rownames(m); m = matrix(as.numeric(m), nrow = length(rn))
+            list(names = gsub("\x60", "", rn), est = m[, 1], se = m[, 2], stat = m[, 3], p = m[, 4])
+        } else {
+            rn = rownames(pars); keep = grepl("^coef\\.", rn)
+            list(names = gsub("\x60", "", sub("^coef\\.", "", rn[keep])), est = unname(pars[keep, i]),
+                 se = rep(NA_real_, sum(keep)), stat = rep(NA_real_, sum(keep)), p = rep(NA_real_, sum(keep)))
+        }
+    })
+    sigma = if ("sigma" %in% rownames(pars)) unname(pars["sigma", ]) else numeric(0)
+    d = .lc$data
+    cl = clusters(fit)
+    post = posterior(fit)
+    if (nzchar(id)) { first = !duplicated(d[[id]]); ids = as.character(d[[id]][first]) }
+    else { first = rep(TRUE, nrow(d)); ids = rownames(d) }
+    ll = logLik(fit)
+    out = c(paste0("> set.seed(", seed, ")"),
+            paste0("> model = ", call_str),
+            "", "> summary(model)", capture.output(summary(fit)),
+            "", "> model@prior", capture.output(print(fit@prior)),
+            "", "> parameters(model)", capture.output(print(pars)),
+            "", "> summary(refit(model))",
+            if (!is.null(rf)) capture.output(summary(rf)) else "(refit failed: standard errors are not available for this model)")
+    list(k = K, prior = unname(fit@prior), ll = as.numeric(ll), df = attr(ll, "df"),
+         aic = AIC(fit), bic = BIC(fit), iter = fit@iter, converged = fit@converged,
+         nobs = nrow(d), lls = .lc$lls, coefs = coefs, sigma = sigma, refit_ok = !is.null(rf),
+         ids = ids, seg = as.integer(cl[first]), post = as.numeric(post[first, , drop = FALSE]),
+         obs_per_seg = tabulate(cl, K), text = paste(out, collapse = "\n"))
+}
+`;
+
+        // Convert webR's toJs() tree into plain JS: named lists -> objects,
+        // unnamed lists -> arrays, atomic vectors -> arrays (NA -> null).
+        function rPlain(o) {
+            if (o === null || typeof o !== 'object') return o;
+            if (o.type === 'null') return null;
+            if (o.type === 'list') {
+                if (o.names && o.names.length) {
+                    const r = {};
+                    o.names.forEach((n, i) => { r[n] = rPlain(o.values[i]); });
+                    return r;
+                }
+                return o.values.map(rPlain);
+            }
+            if ('values' in o) return Array.from(o.values);
+            return o;
+        }
+        const sc = (a) => Array.isArray(a) ? a[0] : a;
+
+        // Evaluate R code that returns a list; errors come back as {error: message}.
+        async function rCall(code) {
+            const wrapped = `tryCatch({ ${code} }, error = function(e) list(error = conditionMessage(e)))`;
+            const res = await webR.evalR(wrapped);
+            try {
+                const js = rPlain(await res.toJs());
+                if (js && typeof js === 'object' && !Array.isArray(js) && js.error) throw new Error(sc(js.error));
+                return js;
+            } finally {
+                webR.destroy(res);
+            }
+        }
+
+        // ============================================================
+        // INIT WEBR + INSTALL FLEXMIX
+        // ============================================================
+        async function initWebR() {
+            try {
+                setLoadingText('Loading WebR…');
+                webR = new WebR();
+                await webR.init();
+                setLoadingText('Installing flexmix package and dependencies…');
+                setLoadingStage('Downloading compiled R packages (cached after first load)');
+                await webR.installPackages(['flexmix'], { quiet: true });
+                setLoadingText('Preparing R session…');
+                await webR.evalRVoid(R_HELPERS);
+                webRReady = true;
+                $('loadingOverlay').classList.add('hidden');
+                updateRunEnabled();
+                if (rows.length === 0) showStatus('Ready. Upload a CSV to begin.', 'success', 4000);
+            } catch (err) {
+                $('loadingOverlay').innerHTML = `
+                    <div style="text-align:center; padding:2rem; max-width:520px;">
+                        <p style="color:#991b1b; font-size:1.2rem; font-weight:600;">Failed to load WebR / flexmix</p>
+                        <p style="color:#666; margin-top:1rem; font-size:0.9rem;">${escapeHtml(err.message)}</p>
+                        <p style="color:#666; margin-top:0.5rem; font-size:0.85rem;">Reload the page to try again.</p>
+                    </div>
+                `;
+            }
+        }
+
+        // ============================================================
+        // CSV PARSING (supports quoted fields)
+        // ============================================================
+        function parseCSV(text) {
+            const lines = text.replace(/^﻿/, '').replace(/\r\n/g, '\n').replace(/\r/g, '\n').split('\n').filter(l => l.trim().length > 0);
+            if (lines.length < 2) return { headers: [], rows: [] };
+            const headers = splitCSVLine(lines[0]);
+            const out = [];
+            for (let i = 1; i < lines.length; i++) {
+                const cells = splitCSVLine(lines[i]);
+                if (cells.length === 0) continue;
+                const obj = {};
+                headers.forEach((h, idx) => { obj[h] = cells[idx] !== undefined ? cells[idx] : ''; });
+                out.push(obj);
+            }
+            return { headers, rows: out };
+        }
+        function splitCSVLine(line) {
+            const result = []; let cur = ''; let inQuotes = false;
+            for (let i = 0; i < line.length; i++) {
+                const c = line[i];
+                if (inQuotes) {
+                    if (c === '"' && line[i + 1] === '"') { cur += '"'; i++; }
+                    else if (c === '"') { inQuotes = false; }
+                    else { cur += c; }
+                } else {
+                    if (c === ',') { result.push(cur); cur = ''; }
+                    else if (c === '"') { inQuotes = true; }
+                    else { cur += c; }
+                }
+            }
+            result.push(cur);
+            return result.map(s => s.trim());
+        }
+        function detectColumnTypes() {
+            columnTypes = {};
+            for (const h of columnNames) {
+                let numCount = 0, total = 0;
+                for (const r of rows.slice(0, Math.min(rows.length, 500))) {
+                    const v = r[h];
+                    if (v === undefined || v === null || v === '' || v === 'NA') continue;
+                    total++;
+                    if (!isNaN(parseFloat(v)) && isFinite(v)) numCount++;
+                }
+                columnTypes[h] = (total > 0 && numCount / total >= 0.8) ? 'numeric' : 'text';
+            }
+        }
+
+        // ============================================================
+        // UPLOAD
+        // ============================================================
+        const uploadArea = $('uploadArea');
+        const fileInput  = $('fileInput');
+        uploadArea.addEventListener('click', () => fileInput.click());
+        uploadArea.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ' || e.key === 'Spacebar') { e.preventDefault(); fileInput.click(); }
+        });
+        uploadArea.addEventListener('dragover', (e) => { e.preventDefault(); uploadArea.classList.add('dragover'); });
+        uploadArea.addEventListener('dragleave', () => uploadArea.classList.remove('dragover'));
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.classList.remove('dragover');
+            if (e.dataTransfer.files.length > 0) handleFile(e.dataTransfer.files[0]);
+        });
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) handleFile(e.target.files[0]);
+        });
+
+        function handleFile(file) {
+            if (!file.name.toLowerCase().endsWith('.csv')) {
+                showStatus('Please upload a .csv file.', 'error', 4000);
+                return;
+            }
+            const reader = new FileReader();
+            reader.onload = (ev) => { if (ingestCSV(ev.target.result, file.name)) showStatus(`Loaded ${rows.length.toLocaleString()} rows × ${columnNames.length} columns.`, 'success', 3000); };
+            reader.readAsText(file);
+        }
+
+        // Parse CSV text (upload, example, or class-data link) and wire up the UI.
+        function ingestCSV(text, name, isExample = false) {
+            if (busy) { showStatus('Please wait for the current estimation to finish.', 'info', 4000); return false; }
+            const { headers, rows: parsedRows } = parseCSV(text);
+            if (headers.length === 0 || parsedRows.length === 0) {
+                showStatus('Could not parse CSV. Is it empty or malformed?', 'error', 5000);
+                return false;
+            }
+            resetForNewData();
+            columnNames = headers;
+            rows = parsedRows;
+            sourceName = name || 'your_data.csv';
+            exampleCSV = isExample ? text : null;
+            $('downloadDataBtn').style.display = isExample ? 'inline-block' : 'none';
+            detectColumnTypes();
+            renderPreview();
+            populateSelectors();
+            $('modelConfig').style.display = 'block';
+            return true;
+        }
+
+        function renderPreview() {
+            let html = '<thead><tr>';
+            columnNames.forEach(h => { html += `<th>${escapeHtml(h)}</th>`; });
+            html += '</tr></thead><tbody>';
+            rows.slice(0, 8).forEach(row => {
+                html += '<tr>';
+                columnNames.forEach(h => { html += `<td>${escapeHtml(row[h] ?? '')}</td>`; });
+                html += '</tr>';
+            });
+            html += '</tbody>';
+            $('previewTable').innerHTML = html;
+            $('previewMeta').textContent = `${rows.length.toLocaleString()} total rows · ${columnNames.length} columns`;
+            $('dataPreview').classList.add('visible');
+        }
+
+        function resetForNewData() {
+            lastResult = null;
+            lastCompare = null;
+            $('resultsContainer').classList.remove('visible');
+            $('compareResult').classList.remove('visible');
+            $('segWarning').classList.remove('visible');
+            ['fitStats', 'sizeTable', 'segmentTables', 'assignTable', 'compareTable', 'bicChart'].forEach(id => { $(id).innerHTML = ''; });
+            ['equationsBox', 'rawOutput', 'restartNote', 'equationNote', 'assignMeta', 'compareNote'].forEach(id => { $(id).textContent = ''; });
+            const sigAll = $('sigAll'); if (sigAll) sigAll.checked = true;
+        }
+
+        // ============================================================
+        // MODEL SPECIFICATION CONTROLS
+        // ============================================================
+        function populateSelectors() {
+            const opts = columnNames.map(c => `<option value="${escapeHtml(c)}">${escapeHtml(c)}${columnTypes[c] === 'text' ? ' (categorical)' : ''}</option>`).join('');
+            $('depVar').innerHTML = '<option value="">-- Select --</option>' + opts;
+            $('idVar').innerHTML = '<option value="">(None: each row is independent)</option>' + columnNames.map(c => `<option value="${escapeHtml(c)}">${escapeHtml(c)}</option>`).join('');
+            // Preselect an obvious consumer/household ID column (e.g., ConsumerID, household_id).
+            const idGuess = columnNames.find(c => /ID$/.test(c) || /(^|[_.\s])id$/i.test(c));
+            if (idGuess) $('idVar').value = idGuess;
+            renderIVList();
+        }
+
+        function renderIVList() {
+            const dv = $('depVar').value, id = $('idVar').value;
+            const checked = new Set(Array.from($('ivVars').querySelectorAll('input.iv-cb:checked')).map(i => i.value));
+            if (columnNames.length === 0) {
+                $('ivVars').innerHTML = '<p class="var-list-empty">No variables available yet.</p>';
+                return;
+            }
+            $('ivVars').innerHTML = columnNames.map(c => {
+                const blocked = c === dv || c === id;
+                const why = c === dv ? 'dependent variable' : (c === id ? 'ID variable' : '');
+                const tag = blocked ? `<span class="var-tag">(${why})</span>` : (columnTypes[c] === 'text' ? '<span class="var-tag">(categorical: dummy-coded)</span>' : '');
+                return `<label class="${blocked ? 'disabled' : ''}"><input type="checkbox" class="iv-cb" value="${escapeHtml(c)}"${blocked ? ' disabled' : ''}${!blocked && checked.has(c) ? ' checked' : ''}>${escapeHtml(c)}${tag}</label>`;
+            }).join('');
+            updateRunEnabled();
+        }
+        $('depVar').addEventListener('change', renderIVList);
+        $('idVar').addEventListener('change', renderIVList);
+        $('ivVars').addEventListener('change', updateRunEnabled);
+
+        function selectedIVs() {
+            return Array.from($('ivVars').querySelectorAll('input.iv-cb:checked')).filter(i => !i.disabled).map(i => i.value);
+        }
+
+        function updateRunEnabled() {
+            const ok = webRReady && !busy && rows.length > 0 && $('depVar').value && selectedIVs().length > 0;
+            $('runButton').disabled = !ok;
+            $('compareButton').disabled = !ok;
+        }
+
+        // ============================================================
+        // RESET
+        // ============================================================
+        $('resetButton').addEventListener('click', () => {
+            if (busy) return;
+            columnNames = []; rows = []; exampleCSV = null; sourceName = 'your_data.csv';
+            resetForNewData();
+            fileInput.value = '';
+            $('dataPreview').classList.remove('visible');
+            $('modelConfig').style.display = 'none';
+            $('ivVars').innerHTML = '<p class="var-list-empty">No variables available yet.</p>';
+            document.querySelector('input[name="modelType"][value="gaussian"]').checked = true;
+            $('numSegments').value = 2; $('nrep').value = 5; $('seed').value = 123; $('compareMaxK').value = 5;
+            $('statusMessage').classList.remove('visible');
+            updateRunEnabled();
+        });
+
+        // ============================================================
+        // BUILD THE MODEL SPEC (shared by Estimate and Compare)
+        // ============================================================
+        const R_RESERVED = new Set(['if','else','repeat','while','function','for','next','break','TRUE','FALSE','NULL','Inf','NaN','NA','NA_integer_','NA_real_','NA_character_','in']);
+        function isSyntactic(n) { return /^([A-Za-z]|[.](?![0-9]))[A-Za-z0-9._]*$/.test(n) && !R_RESERVED.has(n); }
+        function rName(n) { return isSyntactic(n) ? n : '`' + String(n).replace(/`/g, '') + '`'; }
+        function rCol(n) { return isSyntactic(n) ? `data$${n}` : `data[["${rEsc(n)}"]]`; }
+        function rEsc(s) { return String(s).replace(/\\/g, '\\\\').replace(/"/g, '\\"'); }
+        function rStr(s) { return `"${rEsc(s)}"`; }
+
+        function readInt(id, lo, hi, label) {
+            const raw = $(id).value.trim();
+            const v = Number(raw);
+            if (raw === '' || !Number.isInteger(v) || v < lo || v > hi) {
+                throw new Error(`${label} must be a whole number from ${lo} to ${hi}.`);
+            }
+            return v;
+        }
+
+        function buildSpec() {
+            const family = document.querySelector('input[name="modelType"]:checked').value;
+            const dv = $('depVar').value;
+            const id = $('idVar').value;
+            const ivs = selectedIVs();
+            if (!dv) throw new Error('Pick a dependent variable (Y).');
+            if (ivs.length === 0) throw new Error('Pick at least one independent variable (X).');
+            if (columnTypes[dv] === 'text') throw new Error(`The dependent variable "${dv}" is not numeric. Pick a numeric Y (for Binary Logistic, a 0/1 column).`);
+            const k = readInt('numSegments', 1, 10, 'Number of segments');
+            const nrep = readInt('nrep', 1, 50, 'Random restarts');
+            const seedRaw = $('seed').value.trim();
+            const seed = Number(seedRaw);
+            if (seedRaw === '' || !Number.isInteger(seed) || Math.abs(seed) > 2147483647) throw new Error('Random seed must be a whole number.');
+            const factors = ivs.filter(v => columnTypes[v] === 'text');
+            const lhs = family === 'binomial' ? `cbind(${rName(dv)}, 1 - ${rName(dv)})` : rName(dv);
+            const rhs = ivs.map(rName).join(' + ');
+            const formulaStr = `${lhs} ~ ${rhs}${id ? ' | ' + rName(id) : ''}`;
+            return { family, dv, id, ivs, factors, k, nrep, seed, formulaStr };
+        }
+
+        function callString(spec, k) {
+            return `stepFlexmix(${spec.formulaStr}, data = data, k = ${k}, nrep = ${spec.nrep}, model = FLXMRglm(family = "${spec.family}"))`;
+        }
+
+        async function prepareData(spec) {
+            const csv = serializeCSV(columnNames, rows);
+            await webR.FS.writeFile('/tmp/lc_data.csv', new TextEncoder().encode(csv));
+            const rv = (a) => `c(${a.map(rStr).join(', ')})`;
+            const prep = await rCall(`.lc_prep("/tmp/lc_data.csv", ${rStr(spec.dv)}, ${spec.ivs.length ? rv(spec.ivs) : 'character(0)'}, ${rStr(spec.id)}, "${spec.family}", ${spec.factors.length ? rv(spec.factors) : 'character(0)'}, ${rStr(spec.formulaStr)})`);
+            return { n: sc(prep.n), dropped: sc(prep.dropped), ngroups: sc(prep.ngroups), coerced: prep.coerced || [] };
+        }
+
+        // Run nrep restarts for one k; onRep(m) is called before each restart.
+        async function runRestarts(spec, k, onRep) {
+            await webR.evalRVoid(`.lc_start(${spec.seed})`);
+            for (let m = 1; m <= spec.nrep; m++) {
+                onRep(m);
+                await webR.evalRVoid(`.lc_rep(${k})`);
+            }
+        }
+
+        function setBusy(on, label) {
+            busy = on;
+            $('runButton').textContent = on && label === 'run' ? 'Estimating…' : 'Estimate Model';
+            $('compareButton').textContent = on && label === 'compare' ? 'Comparing…' : 'Compare k = 1 to K';
+            $('resetButton').disabled = on;
+            $('loadExampleBtn').disabled = on;
+            updateRunEnabled();
+        }
+
+        function startClock(fmt) {
+            const t0 = performance.now();
+            let msg = '';
+            const tick = () => showStatus(`${msg} (${((performance.now() - t0) / 1000).toFixed(0)} s elapsed)`, 'info');
+            const timer = setInterval(tick, 1000);
+            return {
+                set(m) { msg = m; tick(); },
+                stop() { clearInterval(timer); return (performance.now() - t0) / 1000; }
+            };
+        }
+
+        // ============================================================
+        // ESTIMATE
+        // ============================================================
+        $('runButton').addEventListener('click', runEstimation);
+
+        async function runEstimation() {
+            if (busy) return;
+            let spec;
+            try { spec = buildSpec(); } catch (e) { showStatus(e.message, 'error'); return; }
+            setBusy(true, 'run');
+            const clock = startClock();
+            try {
+                clock.set('Sending data to R…');
+                const prep = await prepareData(spec);
+                await runRestarts(spec, spec.k, (m) => clock.set(`Estimating ${spec.k} segment${spec.k > 1 ? 's' : ''}: random restart ${m} of ${spec.nrep}`));
+                clock.set('Computing standard errors (refit)…');
+                const r = await rCall(`.lc_finish(${rStr(spec.id)}, ${rStr(callString(spec, spec.k))}, ${spec.seed})`);
+                const secs = clock.stop();
+                lastResult = {
+                    spec, prep, secs,
+                    k: sc(r.k), prior: r.prior, ll: sc(r.ll), df: sc(r.df), aic: sc(r.aic), bic: sc(r.bic),
+                    iter: sc(r.iter), converged: sc(r.converged), nobs: sc(r.nobs), lls: r.lls,
+                    coefs: r.coefs.map(c => ({ names: c.names, est: c.est, se: c.se, stat: c.stat, p: c.p })),
+                    sigma: r.sigma || [], refitOk: sc(r.refit_ok), ids: r.ids, seg: r.seg, post: r.post,
+                    obsPerSeg: r.obs_per_seg, text: sc(r.text)
+                };
+                lastResult.rScript = buildRScript(lastResult);
+                renderResults();
+                $('resultsContainer').classList.add('visible');
+                const notes = [];
+                if (prep.dropped > 0) notes.push(`${prep.dropped.toLocaleString()} row(s) with missing values were dropped`);
+                if (lastResult.k < spec.k) notes.push(`only ${lastResult.k} of the ${spec.k} requested segments were kept`);
+                showStatus(`Model estimated in ${secs.toFixed(1)} s: ${lastResult.k} segment${lastResult.k > 1 ? 's' : ''}, ${prep.n.toLocaleString()} rows${spec.id ? `, ${prep.ngroups.toLocaleString()} IDs` : ''}.${notes.length ? ' Note: ' + notes.join('; ') + '.' : ''}`, notes.length ? 'warning' : 'success', notes.length ? 0 : 8000);
+                $('resultsContainer').scrollIntoView({ behavior: 'smooth', block: 'start' });
+            } catch (err) {
+                clock.stop();
+                console.error(err);
+                showStatus('Error: ' + err.message, 'error');
+            } finally {
+                setBusy(false);
+            }
+        }
+
+        // ============================================================
+        // COMPARE k = 1..K
+        // ============================================================
+        $('compareButton').addEventListener('click', runCompare);
+
+        async function runCompare() {
+            if (busy) return;
+            let spec, maxK;
+            try {
+                spec = buildSpec();
+                maxK = readInt('compareMaxK', 2, 10, 'K');
+            } catch (e) { showStatus(e.message, 'error'); return; }
+            setBusy(true, 'compare');
+            const clock = startClock();
+            try {
+                clock.set('Sending data to R…');
+                const prep = await prepareData(spec);
+                const out = [];
+                for (let k = 1; k <= maxK; k++) {
+                    await runRestarts(spec, k, (m) => clock.set(`Comparing: k = ${k} of ${maxK}, random restart ${m} of ${spec.nrep}`));
+                    const row = await rCall(`.lc_compare_row(${k})`);
+                    out.push({ k, found: sc(row.found), ll: sc(row.ll), df: sc(row.df), aic: sc(row.aic), bic: sc(row.bic) });
+                }
+                const secs = clock.stop();
+                lastCompare = { spec, maxK, rows: out, secs, prep };
+                renderCompare();
+                if (lastResult) lastResult.rScript = buildRScript(lastResult);
+                showStatus(`Compared k = 1 to ${maxK} in ${secs.toFixed(1)} s.`, 'success', 8000);
+                $('compareResult').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            } catch (err) {
+                clock.stop();
+                console.error(err);
+                showStatus('Error: ' + err.message, 'error');
+            } finally {
+                setBusy(false);
+            }
+        }
+
+        function renderCompare() {
+            const { rows: cr, spec } = lastCompare;
+            const valid = cr.filter(r => isFiniteNum(r.bic));
+            const best = valid.length ? valid.reduce((a, b) => (b.bic < a.bic ? b : a)) : null;
+            const f2 = (x) => isFiniteNum(x) ? x.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : 'NA';
+            $('compareTable').innerHTML = `
+                <thead><tr><th>k</th><th>Segments kept</th><th>Log-Likelihood</th><th>Parameters</th><th>AIC</th><th>BIC</th><th></th></tr></thead>
+                <tbody>${cr.map(r => `
+                    <tr class="${best && r.k === best.k ? 'best' : ''}">
+                        <td>${r.k}</td>
+                        <td>${isFiniteNum(r.found) ? r.found : 'failed'}</td>
+                        <td>${f2(r.ll)}</td>
+                        <td>${isFiniteNum(r.df) ? r.df : 'NA'}</td>
+                        <td>${f2(r.aic)}</td>
+                        <td>${f2(r.bic)}${best && r.k === best.k ? '<span class="best-pill">lowest</span>' : ''}</td>
+                        <td><button type="button" class="use-k-btn" data-k="${r.k}">Use k = ${r.k}</button></td>
+                    </tr>`).join('')}
+                </tbody>`;
+            $('compareTable').querySelectorAll('.use-k-btn').forEach(b => b.addEventListener('click', () => {
+                $('numSegments').value = b.dataset.k;
+                $('numSegments').focus();
+                showStatus(`Number of segments set to ${b.dataset.k}. Click Estimate Model to see the segments.`, 'info', 5000);
+            }));
+            renderBicChart(cr, best);
+            const dropped = cr.filter(r => isFiniteNum(r.found) && r.found < r.k).map(r => r.k);
+            $('compareNote').textContent =
+                `${spec.nrep} random restart${spec.nrep > 1 ? 's' : ''} per k, seed ${spec.seed} reset for every k, so each row matches a single run with that k. ` +
+                (dropped.length ? `For k = ${dropped.join(', ')}, flexmix removed segments that became too small (under 5% of the sample), so fewer segments were kept. ` : '') +
+                'BIC penalizes extra parameters more than AIC does; when the two disagree, BIC usually points to a more compact segmentation.';
+            $('compareResult').classList.add('visible');
+        }
+
+        // Single-series line chart of BIC by k (neutral ink, lowest BIC emphasized).
+        function renderBicChart(cr, best) {
+            const pts = cr.filter(r => isFiniteNum(r.bic));
+            if (pts.length < 2) { $('bicChart').innerHTML = ''; return; }
+            const W = 640, H = 240, m = { l: 78, r: 20, t: 24, b: 40 };
+            const ks = cr.map(r => r.k);
+            const kMin = Math.min(...ks), kMax = Math.max(...ks);
+            let lo = Math.min(...pts.map(p => p.bic)), hi = Math.max(...pts.map(p => p.bic));
+            const pad = (hi - lo) * 0.12 || Math.abs(hi) * 0.01 || 1;
+            lo -= pad; hi += pad;
+            const x = (k) => m.l + (kMax === kMin ? 0.5 : (k - kMin) / (kMax - kMin)) * (W - m.l - m.r);
+            const y = (v) => m.t + (1 - (v - lo) / (hi - lo)) * (H - m.t - m.b);
+            const ticks = niceTicks(lo, hi, 4);
+            const fmt = (v) => Math.abs(hi) >= 10000 ? Math.round(v).toLocaleString() : v.toLocaleString(undefined, { maximumFractionDigits: 1 });
+            let s = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="BIC for k = ${kMin} to ${kMax}; lowest at k = ${best ? best.k : 'NA'}">`;
+            s += `<text x="${m.l}" y="14" font-size="12" fill="#475569" font-weight="600">BIC by number of segments (lower is better)</text>`;
+            ticks.forEach(t => {
+                s += `<line x1="${m.l}" x2="${W - m.r}" y1="${y(t)}" y2="${y(t)}" stroke="var(--fig-grid)" stroke-width="1"/>`;
+                s += `<text x="${m.l - 8}" y="${y(t) + 4}" font-size="11" fill="#64748b" text-anchor="end">${fmt(t)}</text>`;
+            });
+            ks.forEach(k => { s += `<text x="${x(k)}" y="${H - m.b + 18}" font-size="11" fill="#64748b" text-anchor="middle">${k}</text>`; });
+            s += `<text x="${(m.l + W - m.r) / 2}" y="${H - 6}" font-size="11" fill="#64748b" text-anchor="middle">Number of segments (k)</text>`;
+            s += `<polyline fill="none" stroke="var(--fig-ink)" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" points="${pts.map(p => `${x(p.k)},${y(p.bic)}`).join(' ')}"/>`;
+            pts.forEach(p => {
+                const isBest = best && p.k === best.k;
+                s += `<g class="pt"><title>k = ${p.k}: BIC ${p.bic.toFixed(2)}</title>` +
+                     `<circle cx="${x(p.k)}" cy="${y(p.bic)}" r="12" fill="transparent"/>` +
+                     `<circle cx="${x(p.k)}" cy="${y(p.bic)}" r="${isBest ? 6 : 4.5}" fill="${isBest ? 'var(--fig-ink-strong)' : 'var(--fig-ink)'}" stroke="#fff" stroke-width="2"/></g>`;
+                if (isBest) s += `<text x="${x(p.k)}" y="${y(p.bic) - 12}" font-size="11" fill="#1e293b" font-weight="700" text-anchor="middle">lowest</text>`;
+            });
+            s += '</svg>';
+            $('bicChart').innerHTML = s;
+        }
+        function niceTicks(lo, hi, n) {
+            const span = hi - lo, step0 = span / n;
+            const mag = Math.pow(10, Math.floor(Math.log10(step0)));
+            const step = [1, 2, 2.5, 5, 10].map(f => f * mag).find(st => st >= step0) || step0;
+            const out = [];
+            for (let v = Math.ceil(lo / step) * step; v <= hi + 1e-9; v += step) out.push(v);
+            return out;
+        }
+
+        // ============================================================
+        // RESULTS RENDERING
+        // ============================================================
+        function renderResults() {
+            const r = lastResult;
+            const w = $('segWarning');
+            if (r.k < r.spec.k) {
+                w.textContent = `You requested ${r.spec.k} segments, but only ${r.k} could be kept: flexmix removes a segment when its share of the sample falls below 5% during estimation. Try fewer segments, or compare k values by BIC.`;
+                w.classList.add('visible');
+            } else w.classList.remove('visible');
+            renderFitStats();
+            renderSizes();
+            renderSegmentTables();
+            renderEquations();
+            renderAssignments();
+            $('rawOutput').textContent = r.text;
+        }
+
+        function renderFitStats() {
+            const r = lastResult;
+            const f2 = (x) => isFiniteNum(x) ? x.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : 'NA';
+            const items = [
+                { label: 'Segments (k)', value: r.k },
+                { label: 'Observations', value: r.nobs.toLocaleString() },
+            ];
+            if (r.spec.id) items.push({ label: `Unique ${r.spec.id}s`, value: r.prep.ngroups.toLocaleString() });
+            items.push(
+                { label: 'Log-Likelihood', value: f2(r.ll) },
+                { label: 'AIC', value: f2(r.aic) },
+                { label: 'BIC', value: f2(r.bic) },
+                { label: 'Parameters', value: r.df }
+            );
+            $('fitStats').innerHTML = items.map(i => `<div class="fit-stat"><div class="label">${escapeHtml(i.label)}</div><div class="value">${i.value}</div></div>`).join('');
+            const lls = (r.lls || []).map(v => isFiniteNum(v) ? v.toFixed(2) : 'failed');
+            $('restartNote').textContent = `Lower AIC / BIC values indicate better fit when comparing models with different numbers of segments. Log-likelihood of each of the ${lls.length} random restart${lls.length > 1 ? 's' : ''}: ${lls.join(', ')}; the highest is kept.`;
+        }
+
+        function renderSizes() {
+            const r = lastResult;
+            const nIds = r.ids.length;
+            const counts = new Array(r.k).fill(0);
+            r.seg.forEach(s => { counts[s - 1]++; });
+            const unit = r.spec.id ? `${r.spec.id}s assigned` : 'Rows assigned';
+            const maxPrior = Math.max(...r.prior);
+            $('sizeTable').innerHTML = `
+                <thead><tr><th>Segment</th><th>Size (share)</th><th class="bar-cell" aria-hidden="true"></th><th>${escapeHtml(unit)}</th><th>Observations assigned</th></tr></thead>
+                <tbody>${r.prior.map((p, i) => `
+                    <tr>
+                        <td>Segment ${i + 1}</td>
+                        <td>${p.toFixed(4)} (${(p * 100).toFixed(1)}%)</td>
+                        <td class="bar-cell"><div class="size-bar-track"><div class="size-bar" style="width:${(p / maxPrior * 100).toFixed(1)}%"></div></div></td>
+                        <td>${counts[i].toLocaleString()} (${(counts[i] / nIds * 100).toFixed(1)}%)</td>
+                        <td>${(r.obsPerSeg[i] || 0).toLocaleString()}</td>
+                    </tr>`).join('')}
+                </tbody>`;
+        }
+
+        function renderSegmentTables() {
+            const r = lastResult;
+            const num = (x, d = 4) => isFiniteNum(x) ? x.toFixed(d) : 'NA';
+            const statLabel = 'z value';
+            $('segmentTables').innerHTML = r.coefs.map((c, i) => {
+                const body = c.names.map((nm, j) => {
+                    const p = c.p[j];
+                    const cls = isFiniteNum(p) ? (p < 0.05 ? 'coef-sig' : (p < 0.10 ? '' : 'coef-insig')) : '';
+                    return `<tr><td>${escapeHtml(nm)}</td><td class="${cls}">${num(c.est[j])}</td><td>${num(c.se[j])}</td><td>${num(c.stat[j], 3)}</td><td class="${cls}">${formatP(p)}</td></tr>`;
+                }).join('');
+                const sigma = r.sigma.length > i && isFiniteNum(r.sigma[i]) ? ` · residual SD (sigma) = ${r.sigma[i].toFixed(4)}` : '';
+                return `
+                    <div class="segment-block" id="segmentBlock${i + 1}">
+                        <div class="segment-head"><span class="seg-name">Segment ${i + 1}</span><span class="seg-meta">size ${r.prior[i].toFixed(4)} (${(r.prior[i] * 100).toFixed(1)}% of sample)${sigma}</span></div>
+                        <div class="table-wrap"><table class="coef-table">
+                            <thead><tr><th>Variable</th><th>Estimate</th><th>Std. Error</th><th>${statLabel}</th><th>p-value</th></tr></thead>
+                            <tbody>${body}</tbody>
+                        </table></div>
+                    </div>`;
+            }).join('') + (r.refitOk ? '' : '<p class="copy-hint" style="color:#92400e;">refit() failed for this model, so standard errors and p-values are not available; estimates are from parameters(model).</p>');
+        }
+
+        function formatP(p) {
+            if (!isFiniteNum(p)) return 'NA';
+            return p < 0.0001 ? '< 0.0001' : p.toFixed(4);
+        }
+
+        // ============================================================
+        // SEGMENT-SPECIFIC EQUATIONS
+        // ============================================================
+        document.querySelectorAll('input[name="sigLevel"]').forEach(el => el.addEventListener('change', () => { if (lastResult) renderEquations(); }));
+
+        function linearPredictor(c, threshold) {
+            let s = '';
+            c.names.forEach((nm, j) => {
+                const p = c.p[j];
+                const keep = threshold >= 1 || (isFiniteNum(p) && p < threshold);
+                const v = keep ? round4(c.est[j]) : 0;
+                if (nm === '(Intercept)') {
+                    if (v !== 0) s = v.toFixed(4) + s;
+                    return;
+                }
+                if (v === 0) return;
+                const sign = v < 0 ? ' - ' : ' + ';
+                s += `${sign}${Math.abs(v).toFixed(4)} * ${nm}`;
+            });
+            s = s.replace(/^ \+ /, '').replace(/^ - /, '-');
+            return s === '' ? '0' : s;
+        }
+
+        function renderEquations() {
+            const r = lastResult;
+            const sel = document.querySelector('input[name="sigLevel"]:checked').value;
+            const threshold = sel === 'all' ? 1 : parseFloat(sel);
+            const dv = r.spec.dv, fam = r.spec.family;
+            const title = { gaussian: 'Linear regression', poisson: 'Poisson regression, log link', binomial: 'Binary logistic regression, logit link' }[fam];
+            const lines = [`# Segment-Specific Equations (${title})`, ''];
+            r.coefs.forEach((c, i) => {
+                const lp = linearPredictor(c, threshold);
+                lines.push(`Segment ${i + 1} (size = ${r.prior[i].toFixed(4)})`);
+                if (fam === 'poisson') lines.push(`Mean(${dv}) = EXP(${lp})`);
+                else if (fam === 'binomial') lines.push(`Prob(${dv} = 1) = EXP(${lp}) / (1 + EXP(${lp}))`);
+                else lines.push(`${dv} = ${lp}`);
+                lines.push('');
+            });
+            lines.push('# Segment Sizes');
+            r.prior.forEach((p, i) => lines.push(`Size_Seg${i + 1} = ${p.toFixed(4)}`));
+            $('equationsBox').textContent = lines.join('\n');
+            const notes = [];
+            if (fam === 'poisson') notes.push('Poisson regression uses a log link, so each segment\'s mean is EXP() of its linear predictor.');
+            if (fam === 'binomial') notes.push(`Prob(${dv} = 1) is the probability that ${dv} equals 1; for Pr(${dv} = 0), use 1 minus it.`);
+            if (r.spec.factors.length) notes.push(`Categorical variables are dummy-coded: a term like ${r.spec.factors[0]}Level equals 1 for that level and 0 otherwise; the first level (alphabetically) is the baseline.`);
+            if (threshold < 1) notes.push('Coefficients that do not pass the selected p-value cutoff are set to 0 (dropped from the equation).');
+            $('equationNote').textContent = notes.join(' ');
+        }
+
+        // ============================================================
+        // SEGMENT ASSIGNMENTS
+        // ============================================================
+        function renderAssignments() {
+            const r = lastResult;
+            const idLabel = r.spec.id || 'Row';
+            $('assignTitle').textContent = r.spec.id ? `Segment Assignments (${r.spec.id})` : 'Segment Assignments (rows)';
+            const n = r.ids.length;
+            const shown = Math.min(10, n);
+            $('assignMeta').textContent = (r.spec.id
+                ? `Each ${r.spec.id} is assigned to the segment with its highest posterior probability. All rows of the same ${r.spec.id} share one segment. `
+                : 'No ID was selected, so each row is assigned on its own (Row = row number in your file). ') +
+                `Showing ${shown} of ${n.toLocaleString()}; download the CSV for all of them, with each segment's posterior probability.`;
+            let html = `<thead><tr><th>${escapeHtml(idLabel)}</th><th>Segment</th><th>Posterior prob. of that segment</th></tr></thead><tbody>`;
+            for (let i = 0; i < shown; i++) {
+                const s = r.seg[i];
+                html += `<tr><td>${escapeHtml(r.ids[i])}</td><td>${s}</td><td>${r.post[(s - 1) * n + i].toFixed(4)}</td></tr>`;
+            }
+            $('assignTable').innerHTML = html + '</tbody>';
+        }
+
+        $('downloadAssignBtn').addEventListener('click', () => {
+            const r = lastResult; if (!r) return;
+            const n = r.ids.length;
+            const head = [r.spec.id || 'Row', 'Segment', ...r.prior.map((_, j) => `Prob_Seg${j + 1}`)];
+            const lines = [head.map(csvEsc).join(',')];
+            for (let i = 0; i < n; i++) {
+                const row = [r.ids[i], r.seg[i]];
+                for (let j = 0; j < r.k; j++) row.push(r.post[j * n + i].toFixed(6));
+                lines.push(row.map(csvEsc).join(','));
+            }
+            downloadBlob(lines.join('\n'), 'segment_assignments.csv', 'text/csv');
+        });
+
+        // ============================================================
+        // R SCRIPT (reproduces the run in desktop R)
+        // ============================================================
+        function buildRScript(r) {
+            const s = r.spec;
+            const L = [];
+            L.push('# Latent Class Regression (Analytics Tool 8), reproduced in desktop R');
+            L.push('# Install flexmix once if needed: install.packages("flexmix")');
+            L.push('library(flexmix)');
+            L.push('');
+            L.push('# Load the data (save the CSV in your working directory first)');
+            L.push(`data = read.csv(${rStr(sourceName)}, check.names = FALSE)`);
+            if (r.prep.coerced.length) {
+                L.push('');
+                L.push('# Treat these columns as numbers (non-numeric entries become missing)');
+                r.prep.coerced.forEach(v => L.push(`${rCol(v)} = suppressWarnings(as.numeric(${rCol(v)}))`));
+            }
+            if (s.factors.length) {
+                L.push('');
+                L.push('# Categorical predictors are dummy-coded');
+                s.factors.forEach(v => L.push(`${rCol(v)} = factor(${rCol(v)})`));
+            }
+            if (r.prep.dropped > 0) {
+                L.push('');
+                L.push(`# Keep rows with no missing values in the model variables (${r.prep.dropped} row(s) dropped)`);
+                const vars = [s.dv, ...s.ivs, ...(s.id ? [s.id] : [])];
+                L.push(`data = data[complete.cases(data[, c(${vars.map(rStr).join(', ')})]), ]`);
+            }
+            L.push('');
+            L.push(`# Estimate the model: ${s.k} segment${s.k > 1 ? 's' : ''}, best of ${s.nrep} random restart${s.nrep > 1 ? 's' : ''}`);
+            L.push(`set.seed(${s.seed})`);
+            L.push('model = stepFlexmix(');
+            L.push(`    ${s.formulaStr},`);
+            L.push('    data = data,');
+            L.push(`    k = ${s.k},`);
+            L.push(`    nrep = ${s.nrep},`);
+            L.push(`    model = FLXMRglm(family = "${s.family}")`);
+            L.push(')');
+            L.push('');
+            L.push('# Fit statistics: log-likelihood, AIC, BIC');
+            L.push('logLik(model)');
+            L.push('AIC(model)');
+            L.push('BIC(model)');
+            L.push('');
+            L.push('# Segment sizes');
+            L.push('model@prior');
+            L.push('');
+            L.push('# Segment-specific coefficients with standard errors and p-values');
+            L.push('summary(refit(model))');
+            L.push('');
+            if (s.id) {
+                L.push(`# Segment assignment of each ${s.id}`);
+                L.push(`assignments = unique(data.frame(${rName(s.id)} = ${rCol(s.id)}, Segment = clusters(model)${isSyntactic(s.id) ? '' : ', check.names = FALSE'}))`);
             } else {
-                window.location.href = 'login.html?next=' + encodeURIComponent(window.location.pathname.split('/').pop());
+                L.push('# Segment assignment of each row');
+                L.push('assignments = data.frame(Row = rownames(data), Segment = clusters(model))');
+            }
+            L.push('head(assignments)');
+            L.push('# write.csv(assignments, "segment_assignments.csv", row.names = FALSE)');
+            const K = lastCompare ? lastCompare.maxK : 5;
+            L.push('');
+            L.push(`# Optional: compare k = 1 to ${K} segments by BIC (lower is better)`);
+            L.push(`# for (k in 1:${K}) {`);
+            L.push(`#     set.seed(${s.seed})`);
+            L.push(`#     m = stepFlexmix(${s.formulaStr}, data = data, k = k, nrep = ${s.nrep},`);
+            L.push(`#                     model = FLXMRglm(family = "${s.family}"), verbose = FALSE)`);
+            L.push('#     cat("k =", k, " segments kept =", m@k, " BIC =", BIC(m), "\\n")');
+            L.push('# }');
+            return L.join('\n') + '\n';
+        }
+
+        // ============================================================
+        // DOWNLOADS / COPY
+        // ============================================================
+        $('copyEquationsBtn').addEventListener('click', (e) => {
+            const btn = e.currentTarget;
+            const text = $('equationsBox').textContent;
+            const done = () => {
+                btn.textContent = '✓ Copied'; btn.classList.add('copied');
+                setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 1500);
+            };
+            if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(done, () => fallbackCopy(text, done));
+            else fallbackCopy(text, done);
+        });
+        function fallbackCopy(text, done) {
+            const ta = document.createElement('textarea');
+            ta.value = text; ta.style.position = 'fixed'; ta.style.left = '-9999px';
+            document.body.appendChild(ta); ta.select();
+            try { document.execCommand('copy'); done(); } catch (e) { /* ignore */ }
+            document.body.removeChild(ta);
+        }
+        $('downloadEquationsBtn').addEventListener('click', () => {
+            downloadBlob($('equationsBox').textContent, 'segment_equations.txt', 'text/plain');
+        });
+        $('downloadScriptBtn').addEventListener('click', () => {
+            if (!lastResult) return;
+            downloadBlob(lastResult.rScript, 'latent_class_regression.R', 'text/plain');
+        });
+        $('downloadDataBtn').addEventListener('click', () => {
+            if (exampleCSV) downloadBlob(exampleCSV, sourceName, 'text/csv');
+        });
+        $('downloadCoefCsvBtn').addEventListener('click', () => {
+            const r = lastResult;
+            if (!r) { showStatus('No estimates to download. Estimate a model first.', 'error', 4000); return; }
+            const decSel = $('coefCsvDecimals').value;
+            const fmt = (v) => {
+                if (!isFiniteNum(v)) return 'NA';
+                return decSel === 'full' ? String(v) : v.toFixed(parseInt(decSel, 10));
+            };
+            const lines = [['Segment', 'Segment Size', 'Variable', 'Estimate', 'Std. Error', 'z value', 'p-value'].map(csvEsc).join(',')];
+            r.coefs.forEach((c, i) => c.names.forEach((nm, j) => {
+                lines.push([i + 1, fmt(r.prior[i]), nm, fmt(c.est[j]), fmt(c.se[j]), fmt(c.stat[j]), fmt(c.p[j])].map(csvEsc).join(','));
+            }));
+            downloadBlob(lines.join('\n'), 'latent_class_estimates.csv', 'text/csv');
+        });
+        function downloadBlob(text, filename, type) {
+            const blob = new Blob([text], { type });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url; a.download = filename;
+            document.body.appendChild(a); a.click();
+            document.body.removeChild(a); URL.revokeObjectURL(url);
+        }
+
+        // ============================================================
+        // BUILT-IN EXAMPLE (weekly purchases, 2 latent segments)
+        // ============================================================
+        // 150 households x 12 weeks. A price-sensitive segment (60%) and a less
+        // price-sensitive, larger-basket segment (40%); weekly price is shared by all
+        // households. Quantity is Poisson, so a 2-segment Poisson model recovers it.
+        function buildExampleCSV() {
+            let a = 0x2545f491 >>> 0;
+            const rnd = () => {   // mulberry32: exact in JavaScript
+                a = (a + 0x6D2B79F5) >>> 0;
+                let t = Math.imul(a ^ (a >>> 15), 1 | a);
+                t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+                return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+            };
+            const rpois = (mu) => { const L = Math.exp(-mu); let k = 0, p = 1; do { k++; p *= rnd(); } while (p > L); return k - 1; };
+            const nH = 150, nW = 12;
+            const price = Array.from({ length: nW }, () => +(2 + rnd() * 3).toFixed(2));
+            const lines = ['HouseholdID,Week,Quantity,Price,HouseholdSize'];
+            for (let h = 1; h <= nH; h++) {
+                const seg = rnd() < 0.6 ? 1 : 2;
+                const size = 1 + Math.floor(rnd() * 5);
+                for (let w = 1; w <= nW; w++) {
+                    const p = price[w - 1];
+                    const mu = seg === 1 ? Math.exp(2.6 - 0.9 * p + 0.15 * size) : Math.exp(1.0 - 0.15 * p + 0.3 * size);
+                    lines.push(`${h},${w},${rpois(mu)},${p},${size}`);
+                }
+            }
+            return lines.join('\n');
+        }
+
+        $('loadExampleBtn').addEventListener('click', () => {
+            fileInput.value = '';
+            if (!ingestCSV(buildExampleCSV(), 'latent_class_example.csv', true)) return;
+            document.querySelector('input[name="modelType"][value="poisson"]').checked = true;
+            $('depVar').value = 'Quantity';
+            $('idVar').value = 'HouseholdID';
+            renderIVList();
+            ['Price', 'HouseholdSize'].forEach(v => { const cb = $('ivVars').querySelector(`input.iv-cb[value="${v}"]`); if (cb) cb.checked = true; });
+            $('numSegments').value = 2;
+            updateRunEnabled();
+            if (webRReady) {
+                showStatus('Example loaded. Estimating a 2-segment Poisson model…', 'info');
+                runEstimation();
+            } else {
+                showStatus('Example loaded. WebR is still starting up: click Estimate Model once it is ready.', 'info', 8000);
             }
         });
-    } catch (e) {
-        clearTimeout(authFallbackTimer);
-        showAuthError();
-    }
-</script>
+
+        // ============================================================
+        // UTILITIES
+        // ============================================================
+        function serializeCSV(headers, data) {
+            const esc = (v) => {
+                const s = v === undefined || v === null ? '' : String(v);
+                return /[",\n\r]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s;
+            };
+            const lines = [headers.map(esc).join(',')];
+            for (const r of data) lines.push(headers.map(h => esc(r[h])).join(','));
+            return lines.join('\n');
+        }
+        function csvEsc(v) {
+            if (v === null || v === undefined) return '';
+            const s = String(v);
+            return /[",\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
+        }
+        function isFiniteNum(x) { return typeof x === 'number' && isFinite(x); }
+        function round4(x) { return Math.round(x * 10000) / 10000; }
+        function escapeHtml(s)  { return String(s).replace(/[&<>"']/g, ch => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch])); }
+
+        // ============================================================
+        // GO
+        // ============================================================
+        initWebR();
+
+        // ============================================================
+        // CLASS DATASETS FROM A LINK
+        // ============================================================
+        // A link such as latent-class.html?data=FreshFarmData opens data/m303/FreshFarmData.csv.
+        // The sign-in redirect drops the query string, so the name rides along in sessionStorage.
+        (function () {
+            const ok = n => typeof n === 'string' && /^[A-Za-z0-9_-]{1,80}$/.test(n);
+            let name = new URLSearchParams(location.search).get('data');
+            try {
+                if (ok(name)) sessionStorage.setItem('classData', name);
+                else name = sessionStorage.getItem('classData');
+            } catch (e) {}
+            if (!ok(name)) return;
+            const whenSignedIn = cb => {
+                const m = document.getElementById('main-content');
+                if (!m || m.style.display === 'block') return cb();
+                const t = setInterval(() => { if (m.style.display === 'block') { clearInterval(t); cb(); } }, 200);
+            };
+            whenSignedIn(async () => {
+                try { sessionStorage.removeItem('classData'); } catch (e) {}
+                try {
+                    const r = await fetch(`data/m303/${name}.csv`, { cache: 'no-cache' });
+                    if (!r.ok) throw new Error(r.status);
+                    const text = await r.text();
+                    fileInput.value = '';
+                    if (ingestCSV(text, `${name}.csv`)) showStatus(`Loaded ${name}.csv. Specify the model below.`, 'success', 6000);
+                } catch (e) {
+                    showStatus(`Could not load ${name}.csv. Upload it instead.`, 'error', 6000);
+                }
+            });
+        })();
+    </script>
 </body>
 </html>
