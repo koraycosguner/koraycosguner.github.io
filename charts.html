@@ -2548,16 +2548,16 @@ ${body.trim()}`;
         });
 
         // ==================== CLASS DATASETS FROM A LINK ====================
-        // A link such as charts.html?data=coffee_survey opens a class dataset directly.
+        // A link such as charts.html?data=coffee_survey opens data/m303/coffee_survey.csv directly.
         // The sign-in redirect drops the query string, so the name rides along in sessionStorage.
-        const CLASS_DATA = ['coffee_survey', 'computer_choice', 'online_shoppers', 'diamondanalysis'];
+        const isClassData = name => typeof name === 'string' && /^[A-Za-z0-9_-]{1,80}$/.test(name);
         const pendingData = (function () {
             let name = new URLSearchParams(location.search).get('data');
             try {
-                if (name && CLASS_DATA.includes(name)) sessionStorage.setItem('classData', name);
+                if (isClassData(name)) sessionStorage.setItem('classData', name);
                 else name = sessionStorage.getItem('classData');
             } catch (e) {}
-            return CLASS_DATA.includes(name) ? name : null;
+            return isClassData(name) ? name : null;
         })();
         function whenSignedIn(cb) {
             // the page only shows #main-content after sign-in; before that the tool may still redirect to login.html

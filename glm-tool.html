@@ -704,6 +704,12 @@
             border: 1px solid var(--border);
         }
 
+        .corr-vars { display: flex; flex-wrap: wrap; gap: 0.4rem 0.9rem; }
+        .corr-vars label { display: inline-flex; align-items: center; gap: 0.35rem; font-size: 0.9rem; color: var(--text-dark); cursor: pointer; }
+        .corr-table td.corr-cell b { display: block; font-size: 0.95rem; color: var(--text-dark); }
+        .corr-table td.corr-cell span { display: block; font-size: 0.78rem; color: var(--text-light); }
+        .corr-table td.corr-cell.sig b { color: var(--iu-crimson); }
+        .corr-table td.corr-diag { color: var(--text-light); text-align: center; }
         .desc-stats-table th {
             background: var(--iu-crimson);
             color: var(--white);
@@ -957,6 +963,16 @@
                 </div>
                 <p class="copy-hint">Select the table and copy (Ctrl+C / Cmd+C) to paste into Excel.</p>
                 <p style="font-size: 0.8rem; color: var(--text-light); font-style: italic; margin-top: 0.25rem;">Note: For each variable, missing values are excluded from the calculations of descriptive statistics.</p>
+            </div>
+
+            <!-- Correlations -->
+            <div class="desc-stats-container" id="corrContainer">
+                <h3 style="margin-bottom: 0.5rem; color: var(--text-dark);">Correlations</h3>
+                <p style="font-size: 0.9rem; color: var(--text-light); margin-bottom: 0.6rem;">Pick two or more numeric variables. Each cell shows Pearson&rsquo;s correlation coefficient r, its p-value, and n (rows where both variables are present).</p>
+                <div class="corr-vars" id="corrVars"></div>
+                <button type="button" class="btn btn-secondary" id="corrRun" style="margin-top: 0.6rem; padding: 0.45rem 1.1rem; font-size: 0.9rem;" disabled>Compute Correlations</button>
+                <div id="corrOut" style="overflow-x: auto; margin-top: 0.75rem;"></div>
+                <p class="copy-hint" id="corrHint" style="display:none;">Select the table and copy (Ctrl+C / Cmd+C) to paste into Excel.</p>
             </div>
 
             <!-- Data Filter Section -->
@@ -1707,6 +1723,33 @@
             reader.readAsText(file);
         }
 
+        // Class dataset from a link: glm-tool.html?data=<name> loads data/m303/<name>.csv once signed in.
+        // The sign-in redirect drops the query string, so the name rides along in sessionStorage.
+        (function () {
+            let d = new URLSearchParams(location.search).get('data');
+            try {
+                if (d) sessionStorage.setItem('classData', JSON.stringify({ d }));
+                else ({ d } = JSON.parse(sessionStorage.getItem('classData') || '{}'));
+            } catch (e) {}
+            if (!d || !/^[A-Za-z0-9_-]{1,80}$/.test(d)) return;
+            const whenSignedIn = (cb) => {
+                const m = document.getElementById('main-content');
+                if (!m || m.style.display === 'block') return cb();
+                const iv = setInterval(() => { if (m.style.display === 'block') { clearInterval(iv); cb(); } }, 200);
+            };
+            whenSignedIn(() => {
+                try { sessionStorage.removeItem('classData'); } catch (e) {}
+                fetch(`data/m303/${d}.csv`, { cache: 'no-cache' })
+                    .then(r => { if (!r.ok) throw new Error(r.status); return r.text(); })
+                    .then(text => {
+                        const { headers, data, skipped } = parseCSV(text);
+                        if (!headers.length || !data.length) throw new Error('empty');
+                        loadDataset(headers, data, text, d + '.csv', skipped);
+                    })
+                    .catch(() => showStatus(`Could not load ${d}.csv. Upload it instead.`, 'error'));
+            });
+        })();
+
         // Upload area events
         uploadArea.addEventListener('click', () => fileInput.click());
 
@@ -2232,6 +2275,7 @@ summary(model)
             dependentVar.innerHTML = '<option value="">-- Select dependent variable --</option>';
             independentVars.innerHTML = '';
             document.getElementById('descStatsContainer').classList.remove('visible');
+            document.getElementById('corrContainer').classList.remove('visible');
 
             // Remove any column count notes
             const existingNotes = dataPreview.querySelectorAll('.column-count-note');
@@ -2332,7 +2376,75 @@ summary(model)
             html += '</tbody>';
             descStatsTable.innerHTML = html;
             descStatsContainer.classList.add('visible');
+            initCorrelationUI(headers);
         }
+
+        // =====================================================
+        // CORRELATIONS: Pearson r, p-value and n for each pair (R cor.test via WebR)
+        // =====================================================
+        function initCorrelationUI(headers) {
+            const numeric = headers.filter(h => csvData.columnTypes[h] === 'numeric');
+            const box = document.getElementById('corrVars');
+            box.innerHTML = numeric.map(h => `<label><input type="checkbox" class="corr-var" value="${escapeHtml(h)}"> ${escapeHtml(h)}</label>`).join('');
+            document.getElementById('corrOut').innerHTML = '';
+            document.getElementById('corrHint').style.display = 'none';
+            const btn = document.getElementById('corrRun');
+            const sync = () => { btn.disabled = box.querySelectorAll('.corr-var:checked').length < 2; };
+            box.querySelectorAll('.corr-var').forEach(cb => cb.addEventListener('change', sync));
+            sync();
+            document.getElementById('corrContainer').classList.toggle('visible', numeric.length >= 2);
+        }
+
+        async function runCorrelations() {
+            const vars = [...document.querySelectorAll('#corrVars .corr-var:checked')].map(cb => cb.value);
+            if (vars.length < 2) return;
+            if (!webR) { showStatus('WebR is still loading. Please wait a moment.', 'info'); return; }
+            const out = document.getElementById('corrOut');
+            out.innerHTML = '<p style="color: var(--text-light);">Computing correlations...</p>';
+            const csvEscaped = dataToCSV(getDataForAnalysis(), csvData.headers)
+                .replace(/\\/g, '\\\\').replace(/"/g, '\\"').replace(/\n/g, '\\n').replace(/\r/g, '');
+            const rVars = 'c(' + vars.map(v => '"' + v.replace(/\\/g, '\\\\').replace(/"/g, '\\"') + '"').join(',') + ')';
+            const rCode = `
+                data = read.csv(text = "${csvEscaped}", stringsAsFactors = FALSE, check.names = FALSE)
+                vars = ${rVars}
+                res = c()
+                for (i in seq_along(vars)) for (j in seq_along(vars)) if (i < j) {
+                    x = suppressWarnings(as.numeric(data[[vars[i]]])); y = suppressWarnings(as.numeric(data[[vars[j]]]))
+                    ok = !is.na(x) & !is.na(y)
+                    ct = tryCatch(cor.test(x[ok], y[ok]), error = function(e) NULL)
+                    r = if (is.null(ct)) NA else unname(ct$estimate); p = if (is.null(ct)) NA else ct$p.value
+                    res = c(res, paste(i, j, ifelse(is.na(r), "NA", format(r, digits = 15)), ifelse(is.na(p), "NA", format(p, digits = 15)), sum(ok), sep = "|"))
+                }
+                paste(res, collapse = ";")`;
+            try {
+                const result = await webR.evalR(rCode);
+                const js = await result.toJs();
+                const text = Array.isArray(js.values) ? js.values[0] : js.values;
+                const cells = {};
+                String(text).split(';').filter(Boolean).forEach(line => {
+                    const [i, j, r, p, n] = line.split('|');
+                    cells[`${+i - 1},${+j - 1}`] = { r: r === 'NA' ? null : +r, p: p === 'NA' ? null : +p, n: +n };
+                });
+                let html = '<table class="desc-stats-table corr-table"><thead><tr><th></th>' + vars.map(v => `<th>${escapeHtml(v)}</th>`).join('') + '</tr></thead><tbody>';
+                vars.forEach((vi, i) => {
+                    html += `<tr><td style="text-align:left;font-weight:600;">${escapeHtml(vi)}</td>`;
+                    vars.forEach((vj, j) => {
+                        if (i === j) { html += '<td class="corr-diag">1</td>'; return; }
+                        const c = cells[i < j ? `${i},${j}` : `${j},${i}`];
+                        if (!c || c.r === null) { html += '<td class="corr-diag">NA</td>'; return; }
+                        const sig = c.p !== null && c.p < 0.05;
+                        html += `<td class="corr-cell${sig ? ' sig' : ''}"><b>r = ${c.r.toFixed(3)}</b><span>p ${c.p < 0.0001 ? '&lt; 0.0001' : '= ' + c.p.toFixed(4)}</span><span>n = ${c.n}</span></td>`;
+                    });
+                    html += '</tr>';
+                });
+                html += '</tbody></table><p style="font-size: 0.8rem; color: var(--text-light); margin-top: 0.4rem;">Correlations with p-value &lt; 0.05 are shown in color.</p>';
+                out.innerHTML = html;
+                document.getElementById('corrHint').style.display = '';
+            } catch (err) {
+                out.innerHTML = `<p style="color:#991b1b;">Could not compute the correlations: ${escapeHtml(err.message || String(err))}</p>`;
+            }
+        }
+        document.getElementById('corrRun').addEventListener('click', runCorrelations);
 
         // Store equation params for regeneration when significance level changes
         let lastEquationParams = null;
