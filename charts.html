@@ -1248,21 +1248,21 @@ res`);
                 const constFill = P.kind === 'single' ? `, fill = ${single}` : '';
                 const geom = k === 'bar'
                     ? `geom_col(width = 0.66${constFill})`
-                    : `geom_segment(aes(xend = ${sortExpr('cat','value')}, y = 0, yend = value), linewidth = 1.1, colour = ${single}) + geom_point(size = 3.6${constFill ? ', colour = ' + single : ''})`;
+                    : `geom_segment(aes(xend = ${sortExpr('cat','value')}, y = 0, yend = value), linewidth = 1.3, colour = ${single}) + geom_point(size = 6.5${constFill ? ', colour = ' + single : ''})`;
                 const sc = scaleCall(o, null, 'fill');
                 plot = `p = ggplot(pd, aes(${sortExpr('cat','value')}, value${fillAes})) + ${geom}`;
                 if (sc) plot += ` + ${sc}`;
                 // a lollipop's dot is wider than a bar end, so its label sits further out
-                const just = k === 'lollipop' ? (o.flip ? 'hjust = -0.75' : 'vjust = -1.3') : (o.flip ? 'hjust = -0.25' : 'vjust = -0.5');
+                const just = k === 'lollipop' ? (o.flip ? 'hjust = -1.0' : 'vjust = -1.8') : (o.flip ? 'hjust = -0.25' : 'vjust = -0.5');
                 if (o.labels) plot += ` + geom_text(aes(label = ${lbl('value')}), ${just}, size = ${(o.font*0.3).toFixed(2)}, fontface = "bold", colour = "#374151")`;
                 plot += ` + scale_y_continuous(expand = expansion(mult = c(0, ${o.labels ? 0.24 : 0.05})))`;   // room for the value labels, on a narrow canvas too
                 plot += ` + ${labsCall(o, null, valueLab)} + ${themeCall(o)}${flipLine}`;
-                // Editorial: when the bars carry their own numbers, the value axis and its
-                // gridlines are saying the same thing a third time. Drop them.
+                // Editorial: when the bars carry their own numbers, the value axis numbers and
+                // gridlines say the same thing again, so drop them; keep the axis title, which
+                // says what the bars measure.
                 if (o.theme === 'editorial' && o.labels) {
                     plot += ` + theme(panel.grid = element_blank(), ` +
                             `axis.text.${o.flip ? 'x' : 'y'} = element_blank(), ` +
-                            `axis.title.${o.flip ? 'x' : 'y'} = element_blank(), ` +
                             `axis.ticks = element_blank())`;
                 }
                 plot += ` + theme(legend.position = "none")`;   // the axis already names every bar
@@ -1717,7 +1717,7 @@ ${body.trim()}`;
                 else {
                     const constCol = P.kind === 'single' ? `, colour = ${q(main)}` : '';
                     L(`geom_segment(aes(xend = ${x}, y = 0, yend = ${y})${constCol})`, 'the stick');
-                    L(`geom_point(size = 3.5${constCol})`, 'the dot at the end');
+                    L(`geom_point(size = 6.5${constCol})`, 'the dot at the end');
                 }
                 if (P.kind === 'qual') L(`scale_${ak}_manual(values = my_colors)`, 'use our colors');
                 if (P.kind === 'ramp') L(`scale_${ak}_gradient(low = ${q(P.colors[0])}, high = ${q(P.colors[P.colors.length - 1])})`, 'taller bars get darker');
@@ -1916,7 +1916,7 @@ ${body.trim()}`;
 
         // ==================== EXAMPLE DATA ====================
         // The class dataset: a simulated exit survey of 600 customers at a three-store coffee chain.
-        const EXAMPLE_CSV = `Week,Store,Channel,Drink,Price,Wait_minutes,Age,Satisfaction
+        const EXAMPLE_CSV = `Week,Store,Channel,Drink,Price,Wait_Minutes,Age,Satisfaction
 1,Campus,Mobile app,Tea,3.25,5.6,47,5
 1,Campus,Mobile app,Latte,5.25,2.7,19,6
 1,Downtown,In store,Tea,3.25,10.8,69,6
@@ -2547,6 +2547,38 @@ ${body.trim()}`;
             catch { showStatus('Could not copy to the clipboard.', 'error', 3000); }
         });
 
+        // ==================== CLASS DATASETS FROM A LINK ====================
+        // A link such as charts.html?data=coffee_survey opens a class dataset directly.
+        // The sign-in redirect drops the query string, so the name rides along in sessionStorage.
+        const CLASS_DATA = ['coffee_survey', 'computer_choice', 'online_shoppers', 'diamondanalysis'];
+        const pendingData = (function () {
+            let name = new URLSearchParams(location.search).get('data');
+            try {
+                if (name && CLASS_DATA.includes(name)) sessionStorage.setItem('classData', name);
+                else name = sessionStorage.getItem('classData');
+            } catch (e) {}
+            return CLASS_DATA.includes(name) ? name : null;
+        })();
+        function whenSignedIn(cb) {
+            // the page only shows #main-content after sign-in; before that the tool may still redirect to login.html
+            var m = document.getElementById('main-content');
+            if (!m || m.style.display === 'block') return cb();
+            var t = setInterval(function () { if (m.style.display === 'block') { clearInterval(t); cb(); } }, 200);
+        }
+        async function loadClassData() {
+            if (!pendingData) return;
+            await new Promise(whenSignedIn);
+            try { sessionStorage.removeItem('classData'); } catch (e) {}
+            try {
+                showStatus(`Loading ${pendingData}.csv...`, 'info');
+                const r = await fetch(`data/m303/${pendingData}.csv`, { cache: 'no-cache' });
+                if (!r.ok) throw new Error(r.status);
+                loadCsvText(await r.text());
+            } catch (e) {
+                showStatus(`Could not load ${pendingData}.csv. Upload it instead.`, 'error', 6000);
+            }
+        }
+
         // ==================== BOOT ====================
         (async function init() {
             try {
@@ -2560,7 +2592,8 @@ ${body.trim()}`;
                 await webR.evalR('library(ggplot2); invisible(TRUE)');
                 webrReady = true;
                 $('loadingOverlay').classList.add('hidden');
-                showStatus('Ready. Upload a CSV, or try the example data.', 'success', 4000);
+                if (pendingData) loadClassData();
+                else showStatus('Ready. Upload a CSV, or try the example data.', 'success', 4000);
             } catch (err) {
                 $('loadingOverlay').innerHTML = `<div style="text-align:center; padding:2rem; max-width:520px;">
                     <p style="color:#991b1b; font-size:1.2rem; font-weight:600;">Failed to load WebR</p>

@@ -935,26 +935,63 @@
             r.readAsText(file);
         }
         function loadDsCsv(file) {
-            readFile(file, function (text) {
+            readFile(file, function (text) { loadDsText(file.name, text); });
+        }
+        function loadDsText(fileName, text) {
+            (function () {
+                var file = { name: fileName };
                 var p = parseCSV(text), info = $('dsFileInfo');
                 info.hidden = false;
                 if (!p) { dsCsv = null; info.innerHTML = '<span class="ss-bad">The file looks empty.</span>'; describe(); return; }
                 var num = p.cols.filter(function (c) { return c.numeric; }), txt = p.cols.filter(function (c) { return !c.numeric; });
                 dsCsv = { name: file.name, cols: num, rows: p.rows };
+                // start on the first real variable, not an identifier column such as SKU or ID
                 dsSel = 0;
+                while (dsSel < num.length - 1 && /^(sku|id|.*_id|respondent|customer)$/i.test(num[dsSel].name.trim())) dsSel++;
                 $('dsCol').innerHTML = num.map(function (c, i) { return '<option value="' + i + '">' + esc(c.name) + '</option>'; }).join('');
+                $('dsCol').value = String(dsSel);
                 $('dsColWrap').hidden = !num.length;
                 info.innerHTML = '<b>' + esc(file.name) + '</b>: ' + fmt(p.rows, 0) + ' rows, ' + num.length + ' numeric column' + (num.length === 1 ? '' : 's') +
                     (p.header ? ', variable names read from the first row' : ', no variable names in the first row, so the columns are numbered') +
                     (txt.length ? ' (text columns skipped here: ' + txt.map(function (c) { return esc(c.name); }).join(', ') + '; chart them in Analytics Tool 2: Charts)' : '') + '.';
                 describe();
-            });
+            })();
         }
         $('dsFile').addEventListener('change', function () { if (this.files[0]) loadDsCsv(this.files[0]); });
         $('dsCol').addEventListener('change', function () { dsSel = +this.value; describe(); });
         ['dragenter', 'dragover'].forEach(function (ev) { $('dsDrop').addEventListener(ev, function (e) { e.preventDefault(); this.classList.add('over'); }); });
         ['dragleave', 'drop'].forEach(function (ev) { $('dsDrop').addEventListener(ev, function (e) { e.preventDefault(); this.classList.remove('over'); }); });
         $('dsDrop').addEventListener('drop', function (e) { if (e.dataTransfer.files[0]) loadDsCsv(e.dataTransfer.files[0]); });
+
+        /* ---- a class dataset from a link: sample-size.html?data=diamondanalysis#descriptives ---- */
+        /* The sign-in redirect keeps the #tab but drops the query, so the name rides along in sessionStorage. */
+        var CLASS_DATA = ['coffee_survey', 'computer_choice', 'online_shoppers', 'diamondanalysis'];
+        var pendingData = (function () {
+            var name = new URLSearchParams(location.search).get('data');
+            try {
+                if (name && CLASS_DATA.indexOf(name) >= 0) sessionStorage.setItem('classData', name);
+                else name = sessionStorage.getItem('classData');
+            } catch (e) {}
+            return CLASS_DATA.indexOf(name) >= 0 ? name : null;
+        })();
+        function whenSignedIn(cb) {
+            // the page only shows #main-content after sign-in; before that the tool may still redirect to login.html
+            var m = document.getElementById('main-content');
+            if (!m || m.style.display === 'block') return cb();
+            var t = setInterval(function () { if (m.style.display === 'block') { clearInterval(t); cb(); } }, 200);
+        }
+        if (pendingData) whenSignedIn(function () {
+            try { sessionStorage.removeItem('classData'); } catch (e) {}
+            var csvBtn = document.querySelector('[data-ds-mode="csv"]');
+            if (csvBtn) csvBtn.click();
+            fetch('data/m303/' + pendingData + '.csv', { cache: 'no-cache' })
+                .then(function (r) { if (!r.ok) throw new Error(r.status); return r.text(); })
+                .then(function (text) { loadDsText(pendingData + '.csv', text); })
+                .catch(function () {
+                    var info = $('dsFileInfo'); info.hidden = false;
+                    info.innerHTML = '<span class="ss-bad">Could not load ' + esc(pendingData) + '.csv. Upload it instead.</span>';
+                });
+        });
 
         /* ---- the statistics ---- */
         function stats(vals, wts, pop) {
