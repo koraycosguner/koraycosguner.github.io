@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Ecology Expedition · Yusuf’s 7th Grade Quizzes</title>
+  <meta name="description" content="Explore ecology with Yusuf: quiz missions, interactive science labs, a complete field guide, and practice for Ecology Part 1.">
+  <link rel="icon" href="/favicon.svg"><link rel="stylesheet" href="ecology.css">
+</head>
+<body>
+  <a class="skip" href="#main">Skip to activity</a>
+  <header class="top"><a class="brand" href="/">Y<span>7</span><span class="brand-label">Yusuf’s quiz club<small>THE SCIENCE COLLECTION</small></span></a><a class="back-link" href="/subjects/science/">All science quizzes ↗</a><button id="sound" class="icon-button" aria-pressed="false" aria-label="Turn sound on">Sound off</button></header>
+  <div class="app-shell">
+    <aside class="rail"><div class="expedition-mark">E<span>01</span></div><p class="rail-label">ECOLOGY<br>PART ONE</p><nav aria-label="Ecology activities"><button class="nav active" data-view="base" aria-current="page"><span aria-hidden="true">◈</span> Base camp</button><button class="nav" data-view="lab"><span aria-hidden="true">⚗</span> Discovery lab</button><button class="nav" data-view="guide"><span aria-hidden="true">▤</span> Field guide</button><button class="nav" data-view="progress"><span aria-hidden="true">☆</span> My expedition</button></nav><div class="ranger-card"><span class="mini-label">RANGER LEVEL</span><strong id="rank">Curious explorer</strong><div class="meter"><span id="mastery-bar"></span></div><span id="mastery-label">0 questions mastered</span><small>Progress stays on this device.</small></div><a class="rail-home" href="/">← All subjects</a></aside>
+    <main id="main" tabindex="-1">
+      <section id="view-base" class="view">
+        <div class="section-top"><span class="overline">YOUR NEXT ADVENTURE</span><span class="unit-tag">Grade 7 · Unit 1 major</span></div>
+        <div class="master-note"><strong>Master Quiz</strong><p>All four ecology topics in one complete challenge. Your score appears after the first 10 answers, then updates with every answer: correct out of answered, plus a grade out of 100.</p><button class="primary" id="start-master">Play all 72 questions ↗</button></div>
+        <section class="welcome"><div class="welcome-copy"><span class="chapter">MISSION: UNDERSTAND A LIVING WORLD</span><h1>Ecology<br><span>Expedition.</span></h1><p>Hey Yusuf. A whole world is connected.<br>Let’s find out how it works.</p><div class="welcome-actions"><button class="primary" id="start-all">Master Quiz · 72 questions <span aria-hidden="true">↗</span></button><button class="quiet" id="quick-quiz">Quick Mix · 20 questions</button></div><div class="adventure-facts"><span>Both cover all 4 topics</span><span>Score reveal after 10 answers</span><span>No time pressure</span></div></div><div class="welcome-art" id="welcome-art"><img src="forest-ecosystem.png" width="1536" height="1024" alt="A colorful forest diorama with a flowing river, an owl, a fox, a deer, a rabbit, and mushrooms"><div class="art-caption"><span>FIELD SITE 01</span><strong>The connected forest</strong></div></div></section>
+        <div id="practice-invite"></div>
+        <div class="heading-row"><div><span class="overline">CHOOSE YOUR TRAIL</span><h2>One ecosystem. Four big ideas.</h2></div><p>Start anywhere. Explore them all.</p></div>
+        <div class="missions" id="missions"></div>
+        <section class="lab-invite"><span class="lab-symbol" aria-hidden="true">⚗</span><div><span class="overline">LEARN BY DOING</span><h2>Less guessing. More discovering.</h2><p>Build a food chain, move energy through a pyramid, and follow nature’s cycles.</p></div><button class="secondary" data-view="lab">Enter discovery lab ↗</button></section>
+      </section>
+      <section id="view-quiz" class="view" hidden></section>
+      <section id="view-lab" class="view" hidden></section>
+      <section id="view-guide" class="view" hidden></section>
+      <section id="view-progress" class="view" hidden></section>
+      <footer><span>Made for Yusuf · Keep wondering.</span><span>Ecology Part 1 · Study, explore, repeat.</span></footer>
+    </main>
+  </div>
+  <div id="toast" class="toast" role="status" hidden></div>
+  <script src="content.js"></script><script src="question-visuals.js"></script><script src="ecology.js"></script>
+</body>
+</html>

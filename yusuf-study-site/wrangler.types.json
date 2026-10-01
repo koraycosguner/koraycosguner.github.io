@@ -1,0 +1,6 @@
+{
+  "name": "yusuf-study-site-types",
+  "main": "worker/index.ts",
+  "compatibility_date": "2026-05-15",
+  "compatibility_flags": ["nodejs_compat"]
+}
