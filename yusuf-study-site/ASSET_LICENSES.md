@@ -15,3 +15,10 @@ are preserved. The source package did not provide a separate asset-license manif
 
 Parent-provided class worksheets and scanned charts are private teaching references.
 They are not distributed with the application or committed.
+# Rikki garden illustration
+
+`public/quizzes/rikki-tikki-tavi/garden-adventure.webp` is original artwork generated
+for this study adventure with imagegen, then encoded as WebP for loading efficiency.
+It illustrates a mongoose, cobra, and tailorbird in a garden; it is not a verified
+depiction of the story's exact setting. No worksheet photographs or private references
+were included in the generation request.

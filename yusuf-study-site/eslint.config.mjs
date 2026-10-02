@@ -14,6 +14,8 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    "worker-configuration.d.ts", // generated Cloudflare runtime declarations
+    "public/quizzes/**", // inherited standalone quiz scripts, preserved unchanged
   ]),
   eslint.configs.recommended,
   ...tseslint.configs.recommended,
@@ -23,6 +25,11 @@ const eslintConfig = defineConfig([
   jsxA11y.flatConfigs.recommended,
   next.configs["core-web-vitals"],
   {
+    rules: {
+      // Full document links also serve the inherited standalone HTML quizzes.
+      "@next/next/no-html-link-for-pages": "off",
+      "no-empty": ["error", { allowEmptyCatch: true }],
+    },
     languageOptions: {
       globals: {
         ...globals.browser,
@@ -34,6 +41,13 @@ const eslintConfig = defineConfig([
       react: {
         version: "detect",
       },
+    },
+  },
+  {
+    files: ["spanish/SpanishApp.tsx", "rikki/RikkiApp.tsx"],
+    rules: {
+      // Browser-local saves must hydrate after SSR and report storage failures.
+      "react-hooks/set-state-in-effect": "off",
     },
   },
 ]);

@@ -290,6 +290,7 @@ img { display: block; max-width: 100%; }
 .subject-math { background: #b8d9ff; }
 .subject-spanish { background: #ffb9a8; }
 .subject-science { background: #a9ded7; }
+.subject-language { background: #c6dfb1; }
 
 .ready-label {
   position: absolute;

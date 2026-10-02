@@ -34,6 +34,8 @@ function StationDialog({stationId,item,progress,update,close,speak,canSpeak}:{st
  useEffect(()=>{restoreFocus.current=document.activeElement as HTMLElement;dialog.current?.showModal();return()=>{restoreFocus.current?.focus()}},[]);
  const qid=station.questionIds[index];const q=qid==='plural-hay'?inventoryPluralQuestion(progress.inventory):qid?.startsWith('inventory-')?inventoryQuestion(qid.replace('inventory-',''),progress.inventory):questionById(qid);const chosen=vocabulary.find(v=>v[0]===selected);
  const complete=()=>{if(index+1<station.questionIds.length)setIndex(i=>i+1);else {update(p=>completeMission(p,station.id));setFinished(true);}};
+ // Backdrop clicking supplements native Escape and the visible Close button.
+ // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-noninteractive-element-interactions
  return <dialog ref={dialog} className="station-dialog" onCancel={e=>{e.preventDefault();close()}} onClick={e=>{if(e.target===dialog.current)close()}} aria-labelledby="station-title"><div className="dialog-top"><span className="station-number">{stations.indexOf(station)+1}</span><div><p className="eyebrow">{station.name}</p><h2 id="station-title">{station.title}</h2></div><button className="close-dialog" onClick={close} aria-label="Close conversation">×</button></div><div className="dialog-content">
  {stationId==='teacher'&&<p className="scene-context" lang="es">Bienvenido, Yusuf. Soy la profesora Abarca. Vamos a conocer la clase.</p>}
  {stationId==='mateo'&&<p className="scene-context" lang="es">¡Hola! Soy Mateo. Soy estudiante. Me gusta la música. ¿Y tú?</p>}

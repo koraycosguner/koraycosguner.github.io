@@ -5,7 +5,8 @@ import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
 import {stations} from './content';
 
 export default function Classroom({onSelect,onFallback,unlocked,band=false}:{onSelect:(station:string,item?:string)=>void;onFallback:()=>void;unlocked:boolean;band?:boolean}) {
- const host=useRef<HTMLDivElement>(null);const move=useRef<(x:number,z:number)=>void>(()=>{});const reset=useRef<()=>void>(()=>{});const [hover,setHover]=useState('Selecciona una persona o un objeto');const selection=useRef(onSelect);selection.current=onSelect;
+ const host=useRef<HTMLDivElement>(null);const move=useRef<(x:number,z:number)=>void>(()=>{});const reset=useRef<()=>void>(()=>{});const [hover,setHover]=useState('Selecciona una persona o un objeto');const selection=useRef(onSelect);
+ useEffect(()=>{selection.current=onSelect},[onSelect]);
  useEffect(()=>{
   const element=host.current!;let renderer:THREE.WebGLRenderer;
   try{renderer=new THREE.WebGLRenderer({antialias:true,alpha:false});}catch{onFallback();return;}
@@ -21,7 +22,7 @@ export default function Classroom({onSelect,onFallback,unlocked,band=false}:{onS
   box(11,.2,10,'#bbccc8',0,-.1,0);for(let i=-5;i<6;i++)box(.025,.01,10,'#9fb4b2',i,.01,0);for(let i=-4;i<5;i++)box(11,.01,.025,'#9fb4b2',0,.012,i);
   box(11,4,.18,'#edf0df',0,2,-5);box(.18,4,10,'#f3e2b5',-5.5,2,0);box(11,.2,.2,'#d4966b',0,.35,-4.85);
   for(const z of [-3,0,3]){tag(box(.05,1.5,1.7,'#7fc1dd',-5.38,2.35,z),'supplies','ventana');box(.08,.06,1.9,'#faf8ea',-5.32,2.35,z);box(.08,1.65,.05,'#faf8ea',-5.32,2.35,z);}
-  const board=tag(box(4,1.7,.12,'#225647',0,2.2,-4.8),'doctor','pizarra');box(4.2,.1,.24,'#dbbb83',0,1.3,-4.75);label(band?'¡Somos músicos!':'Mis clases y mis compañeros',0,3.35,-4.6,'doctor');
+  tag(box(4,1.7,.12,'#225647',0,2.2,-4.8),'doctor','pizarra');box(4.2,.1,.24,'#dbbb83',0,1.3,-4.75);label(band?'¡Somos músicos!':'Mis clases y mis compañeros',0,3.35,-4.6,'doctor');
   tag(box(.9,2.8,.13,unlocked?'#e5a63e':'#718595',-4,1.4,-4.78),'band','puerta');label(unlocked?'Sala de música':'Música · 4 misiones',-4,3.05,-4.5,'band');
   const clock=tag(mesh(new THREE.CylinderGeometry(.37,.37,.08,32),'#faf8ea',3,3,-4.8),'supplies','reloj');clock.rotation.x=Math.PI/2;box(.025,.25,.02,'#173342',3,3.11,-4.73);box(.22,.025,.02,'#173342',3.1,3,-4.72);
   function desk(x:number,z:number,color='#dca873'){tag(box(1.65,.13,.9,color,x,1,z),'supplies','escritorio');for(const dx of [-.65,.65])for(const dz of [-.32,.32])box(.08,.95,.08,'#637e87',x+dx,.5,z+dz);tag(box(.65,.12,.62,'#e6b744',x,.56,z+1),'supplies','silla');box(.65,.62,.1,'#e6b744',x,.94,z+1.27);for(const dx of [-.25,.25])box(.07,.55,.07,'#637e87',x+dx,.25,z+1);}

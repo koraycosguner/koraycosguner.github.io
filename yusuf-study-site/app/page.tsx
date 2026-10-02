@@ -10,6 +10,15 @@ type Subject = {
 
 const subjects: Subject[] = [
   {
+    name: "Language Arts",
+    initial: "Aa",
+    note: "Rikki-Tikki-Tavi adventure",
+    description: "Explore story techniques through short lessons, examples, and challenges.",
+    className: "subject-language",
+    href: "/subjects/language-arts/",
+    ready: true,
+  },
+  {
     name: "Social Sciences",
     initial: "S",
     note: "1 quiz ready",
@@ -111,9 +120,13 @@ export default function Home() {
             <div className="subject-grid">
               {subjects.map((subject) => <SubjectTile subject={subject} key={subject.name} />)}
             </div>
+            <a className="latest-quiz" href="/quizzes/rikki-tikki-tavi/">
+              <span><small>Latest adventure</small>Rikki-Tikki-Tavi</span>
+              <strong aria-hidden="true">★</strong>
+            </a>
             <a className="latest-quiz" href="/quizzes/ecology/">
-              <span><small>Latest quiz</small>Ecology Expedition</span>
-              <strong aria-hidden="true">→</strong>
+              <span><small>Science adventure</small>Ecology Expedition</span>
+              <strong aria-hidden="true">⚗</strong>
             </a>
           </aside>
         </section>

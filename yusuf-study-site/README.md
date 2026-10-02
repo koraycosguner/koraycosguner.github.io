@@ -4,6 +4,16 @@ A growing, multi-subject practice hub for Yusuf's seventh-grade classes.
 
 ## Current content
 
+- **Language Arts — Rikki-Tikki-Tavi Study Adventure**
+  - Five complete narrative-technique lessons: point of view, personification,
+    foreshadowing, suspense and tension, and imagery.
+  - One idea per screen, labeled story paraphrases, quick checks, memory challenges,
+    encouraging retry feedback, stars, and saved lesson positions.
+  - Eight-question Fast Review, eight-question mixed practice, four explicit
+    multiple-technique challenges, and a ten-question final with targeted review.
+  - Characterization contains only its supplied introduction and is clearly pending.
+    Its definition-review questions do not count toward the five complete techniques.
+  - Open `/quizzes/rikki-tikki-tavi/` or choose Language Arts on the homepage.
 - **Social Sciences**
   - **Learn About the Middle East** - a 26-question interactive geography quiz
     covering countries, capitals, rivers, seas, and political features.
@@ -40,10 +50,18 @@ Requires Node 22.13+ and pnpm. Versions are pinned in `pnpm-lock.yaml`.
 When this project is stored inside the personal GitHub repository, run these commands
 from **yusuf-study-site/**. The folder is a complete application with its own root;
 putting it in the repository does not mount it at `/yusuf-study-site/` on GitHub Pages.
-No live deployment is part of this change.
+The existing live site uses Sites hosting. GitHub is the editable source copy;
+pushing this folder alone does not deploy it through GitHub Pages.
 
 ## Editing and controls
 
+- `rikki/content.ts`: all Rikki lessons, paraphrased examples, questions, answer keys,
+  source labels, memory diagrams, and pending-section notices.
+- `rikki/RikkiApp.tsx`: topic picker and one-screen learning/practice flows.
+- `rikki/learning.ts`: defensive browser-local saves, first-answer evidence,
+  idempotent stars, and targeted review.
+- `rikki/rikki.css`: responsive field-journal styling and reduced-motion handling.
+- `app/quizzes/rikki-tikki-tavi/` and `app/subjects/language-arts/`: adventure and shelf.
 - `spanish/content.ts`: vocabulary, pronouns, SER, DOCTOR, questions and missions.
 - `spanish/learning.ts`: answer validation, private local saves, grade calculations.
 - `spanish/SpanishApp.tsx`: exploration, conversations, guide, quiz and grade history.
@@ -62,10 +80,32 @@ An unfinished quiz session restarts after a reload; completed results and skill 
 remain saved. Saves are device/browser local and do not sync between devices.
 Resetting Spanish requires confirmation and touches only `yusuf.spanish.unit2.v1`.
 
+Rikki saves use the separate `yusuf.rikki.v1` key. Reset requires confirmation and
+preserves other subjects. A lesson resumes from its saved screen via **Resume**;
+an unfinished practice round restarts after reload. Completed rounds and weak concepts
+remain saved. Final mastery requires both questions for a technique to be correct on
+the first try. Retrying still earns a question's star once and never removes access.
+A successful targeted round clears that review need without rewriting the original
+final result. Challenge Mode records round results without assigning a single-concept
+diagnosis to a question that intentionally combines techniques.
+
+## Adding worksheet sections
+
+Keep content in `rikki/content.ts`. When new pages arrive, review their definitions,
+questions, evidence, and the learner's reasoning before adding material. Add or update
+a lesson's `status`, `explanation`, `memoryHook`, `example`, optional short `details`,
+`quickCheck`, and `memoryCheck`; also add its memory diagram in `visualMemory`.
+Promote a complete section in `TechniqueId` and `completeTechniqueIds`, and add at least
+two final questions with unique IDs for it. Progress totals and final mastery then adapt
+automatically. Do not use pending sections in final mastery. Update source labels and
+tests, then run the validation commands below. Exact quotations require verified story
+text; otherwise retain the **Story example (paraphrased)** label.
+
 ## Validation
 
 ```bash
 pnpm typecheck
+pnpm lint
 pnpm test
 pnpm build
 pnpm test:production
@@ -90,6 +130,13 @@ and all three scanned PDF pages. Private originals and the handoff ZIP are exclu
 Git and public assets. All new conversations, classmates, origin examples, and schedules
 are fictional; teacher dialogue is a practice simulation. See `CONTENT_NOTES.md` for
 ambiguities and the limited mapping to official Fulton County goals.
+
+Rikki content follows the supplied typed handoff. Original worksheet photographs and
+a full story edition were not supplied in this turn and were not independently inspected.
+Existing correct reasoning listed in the handoff is reinforced through the examples.
+No direct quotations are presented as Kipling's text. Missing worksheet content stays
+pending, and new practice questions are labeled separately from supplied quick checks.
+The original handoff and private learner information are not copied into the repository.
 
 ## Production build
 
