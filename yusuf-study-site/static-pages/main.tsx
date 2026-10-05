@@ -14,6 +14,9 @@ const routes:Record<string,ComponentType>={
   '/quizzes/spanish/unit-2/checkpoint/':lazy(()=>import('../app/quizzes/spanish/unit-2/checkpoint/page')),
   '/quizzes/spanish/unit-2/quiz/':lazy(()=>import('../app/quizzes/spanish/unit-2/quiz/page')),
   '/quizzes/spanish/unit-2/guide/':lazy(()=>import('../app/quizzes/spanish/unit-2/guide/page')),
+  '/quizzes/spanish/unit-2/learn/':lazy(()=>import('../app/quizzes/spanish/unit-2/learn/page')),
+  '/quizzes/spanish/unit-2/test-prep/':lazy(()=>import('../app/quizzes/spanish/unit-2/test-prep/page')),
+  '/quizzes/spanish/unit-2/proficiency/':lazy(()=>import('../app/quizzes/spanish/unit-2/proficiency/page')),
   '/quizzes/rikki-tikki-tavi/':lazy(()=>import('../app/quizzes/rikki-tikki-tavi/page')),
 };
 class LoadBoundary extends Component<{children:ReactNode},{failed:boolean}> {

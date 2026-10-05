@@ -1,2 +1,2 @@
-import StoryApp from '../../../spanish/StoryApp';
-export default function Page() { return <StoryApp />; }
+import ProficiencyApp from '../../../spanish/ProficiencyApp';
+export default function Page() { return <ProficiencyApp />; }

@@ -2,6 +2,14 @@
 
 A growing, multi-subject practice hub for Yusuf's seventh-grade classes.
 
+## Spanish proficiency revision — October 5, 2026
+
+The new Unit 2 revision is prepared on **feature/spanish-proficiency-prep** for review
+and a feature-branch push. It has **not been deployed**. The published GitHub Pages
+baseline remains commit `61ae563`; a feature-branch push alone does not change that site.
+The latest build brief requests no live deployment. Keep publication as a separate,
+explicitly authorized action.
+
 ## Current content
 
 - **Language Arts — Rikki-Tikki-Tavi Study Adventure**
@@ -22,7 +30,28 @@ A growing, multi-subject practice hub for Yusuf's seventh-grade classes.
     five discovery labs, 42 vocabulary cards, and 18 study notes.
     Open `/quizzes/ecology/` or use the Science shelf.
     Quiz progress and optional sound preferences are stored only in the current browser.
-- **Spanish — Un día en la escuela**
+- **Spanish — Unit 2 learn, practice, and proficiency prep**
+  - `/quizzes/spanish/` now connects four study paths: Learn, Practice in context,
+    Unit 2 Vocabulary & Grammar Test Prep, and Full Practice Proficiency Test.
+  - Ten short lessons lead immediately to 30 guided practice questions. Lessons teach
+    pronouns, visual IN / TO / ABOUT perspective, WHO → PRONOUN → SER, articles,
+    HAY, backpack and classroom vocabulary, subjects, descriptions, and DOCTOR uses.
+  - Balanced mixed rounds contain 12 questions following the same school day, from
+    arrival through the backpack, classroom, schedule, friends, and band room.
+  - The full practice test contains **88 questions and 94 scored responses**. Six
+    questions pair pronoun choice with SER; eight use Cierto/Falso. Four connected
+    reading passages support 11 questions. All other choices use exactly three options.
+  - Forty fresh targeted-review questions cover 22 separate skills, with at least two
+    distinct examples available for each skill. Review appears in batches of up to six.
+    Readiness requires two varied independent first answers after a concern; repeating
+    the same question or correcting an answer does not create mastery evidence.
+  - Clear progress, large choices, optional English and speech, a collapsible field guide,
+    saved sessions, and Pause & save support small steps. Full-test hints and the in-app
+    guide are unavailable during an active test; answers appear only after submission.
+  - Scores are local practice results. The full-test score uses the first response to
+    each of the 94 steps; a later correction never rewrites that score. Skill labels are
+    **Ready**, **A little more practice**, and **Review this**.
+- **Spanish — preserved Un día en la escuela adventure**
   - A connected, seven-stop school-day adventure with Sra. Abarca and recurring fictional
     classmates Mateo, Sofía, Carlos and Ana. Forty short interactions build toward a band-room finale.
   - Twenty-four contextual three-choice conversations, eight step-by-step sentence builders,
@@ -51,6 +80,12 @@ pnpm dev
 Then open `http://localhost:3000`.
 
 Spanish: `http://localhost:3000/quizzes/spanish/`
+
+Short lessons: `http://localhost:3000/quizzes/spanish/unit-2/learn/`
+
+Mixed test prep: `http://localhost:3000/quizzes/spanish/unit-2/test-prep/`
+
+Full proficiency practice: `http://localhost:3000/quizzes/spanish/unit-2/proficiency/`
 
 Connected story: `http://localhost:3000/quizzes/spanish/unit-2/`
 
@@ -83,7 +118,7 @@ The preview command requires Python 3. Open
 Keep the preview server running while checking the build.
 
 The static output is **pages-dist/yusufs-quizzes/**. It contains the browser bundles,
-images, and an `index.html` for each of 13 routes, so direct links and reloads work
+images, and an `index.html` for each of 16 routes, so direct links and reloads work
 without a server-side application. It reuses the existing learning components and
 original Ecology and Social Sciences activities. It does not need a database,
 Cloudflare credentials, or a learner account.
@@ -96,11 +131,17 @@ does not update the website. The repository's existing GitHub Pages deployment f
 personal website's root files and other folders when updating this directory.
 
 `vite.pages.config.ts` applies the `/yusufs-quizzes/` prefix to this build's links and
-assets. `pages/routes.ts` lists the React routes, and `scripts/build-pages.mjs` creates
+assets. `static-pages/routes.ts` lists the React routes, and `scripts/build-pages.mjs` creates
 their direct entry points and adjusts the generated Ecology navigation. These steps
 leave the original Sites paths and source activities intact. Add any new React route
-to both `pages/routes.ts` and the component map in `pages/main.tsx` before rebuilding.
+to both `static-pages/routes.ts` and the component map in `static-pages/main.tsx` before rebuilding.
 Do not hand-edit generated bundles; edit the source and rebuild instead.
+The static entry folder is named **static-pages/**, not **pages/**, to avoid Vinext
+interpreting the static-build entry as its reserved Pages Router directory.
+
+For this proficiency revision, commit and push the source and regenerated output on the
+feature branch only. Do not push that branch into `main` or trigger a deployment without
+new authorization. The published baseline can remain available while the revision is reviewed.
 
 ## Editing and controls
 
@@ -111,6 +152,14 @@ Do not hand-edit generated bundles; edit the source and rebuild instead.
   idempotent stars, and targeted review.
 - `rikki/rikki.css`: responsive field-journal styling and reduced-motion handling.
 - `app/quizzes/rikki-tikki-tavi/` and `app/subjects/language-arts/`: adventure and shelf.
+- `spanish/proficiency-content.ts`: editable test bank, fresh review bank, guided checks,
+  exact answer keys, visible inventories, perspective metadata, and source-scope labels.
+- `spanish/ProficiencyLessons.tsx`: ten short teaching modules and contextual vocabulary.
+- `spanish/ProficiencyApp.tsx`: Spanish study hub, lessons, mixed practice, full test,
+  pause/resume, result screens, and targeted review.
+- `spanish/proficiency-learning.ts`: separate defensive saves, first-answer scoring,
+  balanced mixed rounds, fresh review selection, and evidence for 22 skills.
+- `spanish/proficiency.css`: responsive lesson, question, and result layouts.
 - `spanish/story-content.ts`: editable school-day dialogue, three-choice banks, builders,
   accepted responses, visible inventory snapshots and fresh review turns.
 - `spanish/StoryApp.tsx`: connected story, checkpoint, visual inventory and band reward.
@@ -137,8 +186,16 @@ Spanish browser voice. Escape closes conversations, and native dialogs manage fo
 Reduced-motion preferences disable camera damping and interface animation.
 
 Saved progress resumes across reloads and route changes in the same browser.
-An unfinished quiz session restarts after a reload; completed results and skill evidence
-remain saved. Saves are device/browser local and do not sync between devices.
+The new lessons and proficiency flows use **yusuf.spanish.proficiency.v1**. An active
+question, selected choice, feedback state, and position in a two-step question survive
+reload. The learner can resume the session or view the latest completed result.
+Guided practice always counts as supported learning; hint or guide use is recorded
+before an answer. Repeated examples do not supply new independent readiness evidence.
+Resetting this prep record requires confirmation and preserves the adventure, earlier
+quiz results, and other subjects. First-response evidence stays in the browser only.
+
+The earlier 60-question quiz restarts an unfinished session after a reload; its completed
+results and skill evidence remain saved. Saves are device/browser local and do not sync between devices.
 Browser storage is also separate for each origin: GitHub Pages, the older Sites
 address, and local previews each start with their own progress. Moving to the GitHub
 Pages address does not transfer or erase progress saved on the older address.
@@ -158,7 +215,7 @@ remain saved. Final mastery requires both questions for a technique to be correc
 the first try. Retrying still earns a question's star once and never removes access.
 A successful targeted round clears that review need without rewriting the original
 final result. Challenge Mode records round results without assigning a single-concept
-diagnosis to a question that intentionally combines techniques.
+classification to a question that intentionally combines techniques.
 
 ## Adding worksheet sections
 
@@ -173,6 +230,8 @@ tests, then run the validation commands below. Exact quotations require verified
 text; otherwise retain the **Story example (paraphrased)** label.
 
 ## Validation
+
+See [SPANISH_PROFICIENCY_REPORT.md](SPANISH_PROFICIENCY_REPORT.md) for the October 5 revision’s actual results and remaining verification limits.
 
 ```bash
 pnpm typecheck
@@ -194,6 +253,11 @@ TEST_BASE_URL=http://localhost:4173 TEST_PATH_PREFIX=/yusufs-quizzes pnpm test:b
 
 The path prefix directs learning-interaction tests to the same subdirectory used
 online. The Pages-specific checks cover direct routes, subject navigation, and assets.
+The proficiency tests cover curriculum breadth and keys, lesson-to-practice flow,
+perspective and paired steps, first-answer scoring, supported retries, resumable sessions,
+targeted review, defensive storage, desktop/mobile layouts, and preserved subject links.
+Run the commands for the checkout being reviewed; this README does not substitute for
+the actual validation results reported with the feature-branch delivery.
 
 `worker-configuration.d.ts` contains generated Cloudflare runtime types needed by the
 inherited source. Refresh them with `pnpm types` if the runtime configuration changes.
@@ -212,6 +276,12 @@ and all three scanned PDF pages. Private originals and the handoff ZIP are exclu
 Git and public assets. All new conversations, classmates, origin examples, and schedules
 are fictional; teacher dialogue is a practice simulation. See `CONTENT_NOTES.md` for
 ambiguities and the limited mapping to official Fulton County goals.
+
+The final proficiency brief also names a separate Nouns and Articles handout and a later
+SER chart image. Those two additional artifacts were not present in the available package
+and were not inspected. This revision uses the original DOCX article table, supplied
+pronoun/SER charts, and examples explicitly included in the new brief. Fresh questions
+practice those skills without reproducing an actual test or claiming an official answer key.
 
 Rikki content follows the supplied typed handoff. Original worksheet photographs and
 a full story edition were not supplied in this turn and were not independently inspected.

@@ -2,7 +2,7 @@ import {defineConfig, type Plugin} from 'vite';
 import react from '@vitejs/plugin-react';
 import ts from 'typescript';
 import {resolve} from 'node:path';
-import {pagesBase} from './pages/routes';
+import {pagesBase} from './static-pages/routes';
 
 const sourceRoot=import.meta.dirname;
 /** Only this static build rewrites URL literals. Sites source remains root-mounted. */
@@ -26,7 +26,7 @@ function subpathUrls():Plugin {
   }};
 }
 export default defineConfig({
-  root:resolve(sourceRoot,'pages'),
+  root:resolve(sourceRoot,'static-pages'),
   base:pagesBase,
   publicDir:resolve(sourceRoot,'public'),
   plugins:[subpathUrls(),react()],

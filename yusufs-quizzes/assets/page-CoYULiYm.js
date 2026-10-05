@@ -1,1 +1,0 @@
-import{t as e}from"./index-CjyyeD4G.js";import{t}from"./SpanishApp-aYKUAA3k.js";var n=e();function r(){return(0,n.jsx)(t,{view:`adventure`})}export{r as default};
