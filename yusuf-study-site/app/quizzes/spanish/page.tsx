@@ -1,2 +1,2 @@
-import SpanishApp from "../../../spanish/SpanishApp";
-export default function Page() { return <SpanishApp view="hub" />; }
+import StoryApp from '../../../spanish/StoryApp';
+export default function Page() { return <StoryApp />; }

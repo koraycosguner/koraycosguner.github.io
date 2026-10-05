@@ -1,0 +1,26 @@
+import {useEffect,useRef,useState} from 'react';
+import {adjectives, doctor, pronouns, subjects, vocabulary} from './content';
+import {allStoryTurns, type StoryProgress} from './story-learning';
+
+export default function StoryGuide({progress,close}:{progress:StoryProgress;close:()=>void}) {
+  const [section,setSection]=useState('ser');
+  const [search,setSearch]=useState('');
+  const dialog=useRef<HTMLDialogElement>(null);
+  useEffect(()=>{const before=document.activeElement as HTMLElement;dialog.current?.showModal();return()=>before?.focus()},[]);
+  const encountered=new Set<string>(allStoryTurns.filter(t=>progress.evidence[t.id]?.complete&&t.serUse).map(t=>t.serUse!));
+  return <dialog ref={dialog} className="day-guide" aria-labelledby="day-guide-title" onCancel={e=>{e.preventDefault();close()}}>
+    <div className="day-guide-top"><div><span className="day-kicker">A mano, siempre</span><h2 id="day-guide-title">Mi guía de campo</h2></div><button onClick={close} aria-label="Cerrar la guía">×</button></div>
+    <label htmlFor="day-guide-section">¿Qué buscas?</label>
+    <select id="day-guide-section" value={section} onChange={e=>setSection(e.target.value)}>
+      <option value="ser">Personas → pronombres → SER</option><option value="hay">Hay + artículos</option><option value="objects">Objetos de la clase</option><option value="classes">Clases + gustos</option><option value="phrases">Frases útiles</option><option value="adjectives">Adjetivos</option><option value="doctor">Mis descubrimientos de SER</option>
+    </select>
+    {section==='ser'&&<><p className="day-guide-note" lang="es"><b>Yo</b> hablo de mí. <b>Tú</b>: hablo contigo. <b>Él / ella</b>: hablo de otra persona.</p><table><caption>¿Quién? → ¿Qué forma?</caption><thead><tr><th>Persona</th>{progress.english&&<th>English</th>}<th>SER</th></tr></thead><tbody>{pronouns.map(([es,en,form])=><tr key={es}><th scope="row" lang="es">{es}</th>{progress.english&&<td>{en}</td>}<td lang="es"><b>{form}</b></td></tr>)}</tbody></table><p lang="es">Mateo y yo → nosotros → somos.<br/>Hablo <b>a</b> Ana y Sofía → ustedes → son.<br/>Hablo <b>de</b> Ana y Sofía → ellas → son.</p><small>Vosotros / vosotras → sois: principalmente en España. Él = he; el = the. Tú = you; tu = your.</small></>}
+    {section==='hay'&&<div className="day-guide-lines"><p>Hay un lápiz. Hay dos lápices.<br/><b>Hay</b> no cambia.</p><p>¿Hay tijeras?<br/>Sí, hay. / No, no hay.</p><p>un libro → unos libros<br/>la mochila → las mochilas<br/>un lápiz → unos lápices</p><p>El mapa · la mesa · el escritorio</p>{progress.english&&<small>Hay = there is / there are. Articles agree in number and gender. Mapa is masculine.</small>}</div>}
+    {section==='objects'&&<><label htmlFor="day-word-search">Busca un objeto</label><input id="day-word-search" value={search} onChange={e=>setSearch(e.target.value)} placeholder="lápiz…"/><div className="day-word-list">{vocabulary.filter(v=>v.join(' ').toLowerCase().includes(search.toLowerCase())).map(([id,es,en,line])=><details key={id}><summary>{es}</summary><p>{line}</p>{progress.english&&<small>{en}</small>}</details>)}</div><small>La goma = glue en esta lista. La carpeta: palabra extra del ejercicio.</small></>}
+    {section==='classes'&&<><p>¿Qué clases tienes?<br/><b>Tengo la clase de español.</b></p><p>¿Qué clases te gustan?<br/><b>A mí me gusta la música.<br/>A mí me gustan las matemáticas.</b></p><p>No me gusta la música.<br/>No me gustan las ciencias.</p><div className="day-subjects">{subjects.map(s=><span key={s}>{s}</span>)}</div>{progress.english&&<small>Gusta / gustan agrees with the thing liked, not the person.</small>}</>}
+    {section==='phrases'&&<div className="day-guide-lines">{['¿Quién eres? → Soy Yusuf.','¿Tú eres estudiante? → Sí, soy estudiante.','¿Qué usas en la clase? → Yo uso un lápiz.','¿Qué hay? → Hay un cuaderno.','¿Qué clases tienes? → Tengo la clase de arte.','¿Cómo es Mateo? → Es simpático.','¿Cómo son tus clases? → Son divertidas.','¿De dónde eres? → Soy de…'].map(p=><p key={p}>{p}</p>)}<small>Los orígenes y horarios del juego son ficticios. No tienes que compartir información personal.</small></div>}
+    {section==='adjectives'&&<><p>Mateo ayuda: es <b>simpático</b>.<br/>Ana organiza: es <b>organizada</b>.<br/>Ana y Sofía son <b>organizadas</b>.</p><div className="day-word-list">{adjectives.map(a=>{const [es,en]=a.split(' — ');return <details key={a}><summary>{es}</summary><p>{en}</p></details>})}</div><p>fácil → fáciles · difícil → difíciles</p></>}
+    {section==='doctor'&&<><p>{encountered.size} / {doctor.length} descubrimientos en tu historia.</p>{doctor.map(([letter,name,example,explanation])=><details className="day-ser-discovery" key={name} open={encountered.has(name)}><summary><span>{encountered.has(name)?'✓':letter}</span>{name}</summary><p>{example}</p>{progress.english&&<small>{explanation}</small>}</details>)}<small>Descripción y características se superponen. DOCTOR es una ayuda para recordar, no una regla de «permanente».</small></>}
+    <a className="day-guide-source" href="/quizzes/spanish/unit-2/guide/">Guía completa y notas de las fuentes ↗</a>
+  </dialog>;
+}

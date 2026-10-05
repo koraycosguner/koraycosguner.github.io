@@ -22,3 +22,17 @@ for this study adventure with imagegen, then encoded as WebP for loading efficie
 It illustrates a mongoose, cobra, and tailorbird in a garden; it is not a verified
 depiction of the story's exact setting. No worksheet photographs or private references
 were included in the generation request.
+
+# Spanish school-day illustrations
+
+The six original illustrations in `public/quizzes/spanish/school-day/` were generated with
+built-in imagegen for this application: friends, backpack, classes, teamwork, conversation,
+and band. They depict fictional practice characters and a fictional school, not likenesses
+of the real teacher or learner. No private worksheet, portrait or family information was
+provided to the image generator. Images contain no instructional text and are decorative;
+the application's inventory and schedule panels define the scored facts.
+
+Delivery images are 1280×853 WebP, quality 85, approximately 1 MB together. Proportional
+resizing and format compression were applied. No external image CDN is required.
+The same classroom illustration supports the welcome and supplies scenes. The full
+selected prompt set is in `SPANISH_VISUALS.md`.

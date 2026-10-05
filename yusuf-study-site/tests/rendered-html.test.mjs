@@ -7,5 +7,6 @@ test('production build includes real subject hub, Spanish and original Ecology a
  await access(new URL('../dist/client/quizzes/ecology/content.js',import.meta.url));
  await access(new URL('../dist/client/quizzes/rikki-tikki-tavi/garden-adventure.webp',import.meta.url));
  assert.match(home,/subjects\/language-arts/);
+ for(const name of ['friends','backpack','classes','teamwork','conversation','band'])await access(new URL('../dist/client/quizzes/spanish/school-day/'+name+'.webp',import.meta.url));
  const bank=await readFile(new URL('../dist/client/quizzes/ecology/content.js',import.meta.url),'utf8');assert.match(bank,/questions/);
 });

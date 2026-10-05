@@ -22,15 +22,19 @@ A growing, multi-subject practice hub for Yusuf's seventh-grade classes.
     five discovery labs, 42 vocabulary cards, and 18 study notes.
     Open `/quizzes/ecology/` or use the Science shelf.
     Quiz progress and optional sound preferences are stored only in the current browser.
-- **Spanish — Unit 2: Mis clases y mis compañeros**
-  - A navigable, stylized Three.js classroom and equivalent 2D station navigation.
-  - Eight short missions: teacher, classmate, classroom objects, shared backpack inventory,
-    fictional schedule, changing perspective, DOCTOR, and a band-room reward after four missions.
-  - A complete field guide, an 8-question practice session, a **60-question graded quiz**,
-    and fresh targeted review examples. Percentage and letter grades use independent first
-    responses. Hints/corrections are separate; these are practice grades, not school-issued grades.
-  - Progress and the latest ten practice grades stay only in this browser. No analytics,
-    account, microphone, or backend is used for Spanish learner data.
+- **Spanish — Un día en la escuela**
+  - A connected, seven-stop school-day adventure with Sra. Abarca and recurring fictional
+    classmates Mateo, Sofía, Carlos and Ana. Forty short interactions build toward a band-room finale.
+  - Twenty-four contextual three-choice conversations, eight step-by-step sentence builders,
+    then eight supported short responses. Wrong answers give a clue and allow immediate retry;
+    a short explanation appears after success. No countdown or lost access.
+  - Six original, optimized school illustrations, visual backpack changes, a fictional schedule,
+    discoverable classroom objects and a compact field guide with gradually encountered SER uses.
+  - Fourteen fresh concept-based review conversations and a separate eight-step checkpoint.
+  - The existing **60-question graded quiz**, complete field guide, original navigable Three.js
+    classroom and equivalent 2D station navigation remain available.
+  - Story progress and completed quiz grades stay only in this browser. No analytics, account,
+    microphone, uploaded responses or learner-data backend is used.
 - Math remains a future shelf.
 
 ## Local development
@@ -44,7 +48,13 @@ Then open `http://localhost:3000`.
 
 Spanish: `http://localhost:3000/quizzes/spanish/`
 
+Connected story: `http://localhost:3000/quizzes/spanish/unit-2/`
+
+Checkpoint: `http://localhost:3000/quizzes/spanish/unit-2/checkpoint/`
+
 Big graded quiz: `http://localhost:3000/quizzes/spanish/unit-2/quiz/`
+
+Preserved 3D / 2D exploration: `http://localhost:3000/quizzes/spanish/unit-2/explore/`
 
 Requires Node 22.13+ and pnpm. Versions are pinned in `pnpm-lock.yaml`.
 When this project is stored inside the personal GitHub repository, run these commands
@@ -62,6 +72,14 @@ pushing this folder alone does not deploy it through GitHub Pages.
   idempotent stars, and targeted review.
 - `rikki/rikki.css`: responsive field-journal styling and reduced-motion handling.
 - `app/quizzes/rikki-tikki-tavi/` and `app/subjects/language-arts/`: adventure and shelf.
+- `spanish/story-content.ts`: editable school-day dialogue, three-choice banks, builders,
+  accepted responses, visible inventory snapshots and fresh review turns.
+- `spanish/StoryApp.tsx`: connected story, checkpoint, visual inventory and band reward.
+- `spanish/StoryGuide.tsx`: compact vocabulary, grammar and gradually encountered SER reference.
+- `spanish/story-learning.ts`: separate story save, first-response evidence, hint persistence,
+  scene unlocking and concept-based review.
+- `spanish/story.css`: responsive story layout and reduced-motion support.
+- `public/quizzes/spanish/school-day/`: six original WebP illustrations (about 1 MB total).
 - `spanish/content.ts`: vocabulary, pronouns, SER, DOCTOR, questions and missions.
 - `spanish/learning.ts`: answer validation, private local saves, grade calculations.
 - `spanish/SpanishApp.tsx`: exploration, conversations, guide, quiz and grade history.
@@ -78,7 +96,12 @@ Reduced-motion preferences disable camera damping and interface animation.
 Saved progress resumes across reloads and route changes in the same browser.
 An unfinished quiz session restarts after a reload; completed results and skill evidence
 remain saved. Saves are device/browser local and do not sync between devices.
-Resetting Spanish requires confirmation and touches only `yusuf.spanish.unit2.v1`.
+The story uses `yusuf.spanish.school-day.v1`; its reset preserves the graded quiz and other
+subjects. Hints used before an answer persist through reload. Story scene progress resumes,
+while an unfinished checkpoint restarts. The legacy exploration/quiz reset still touches only
+`yusuf.spanish.unit2.v1`. The two backpack activities are separate: the story shows exact
+before/after snapshots; free exploration and the graded quiz use the editable legacy inventory.
+Practice grades use first answers, with hinted answers and corrections tracked separately.
 
 Rikki saves use the separate `yusuf.rikki.v1` key. Reset requires confirmation and
 preserves other subjects. A lesson resumes from its saved screen via **Resume**;
