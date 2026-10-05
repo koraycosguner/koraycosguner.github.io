@@ -57,3 +57,36 @@ Use case: stylized-concept. Asset type: immersive landscape scene for a Spanish 
 Consistent cast bible (only include people explicitly requested in this scene): Sra. Abarca is a friendly adult woman teacher with dark curly shoulder-length hair and a teal cardigan; Mateo is a 12–13-year-old boy with short dark curls and a coral hoodie; Sofía is a 12–13-year-old girl with brown skin, two braids and a mustard jacket; Carlos is a 12–13-year-old boy with black straight hair and a cobalt shirt; Ana is a 12–13-year-old girl with light brown skin, a dark bob and a lavender jacket.
 No text anywhere, no letters, no labels, no numbers, no logos, no watermarks. All signs, books and displays have abstract art only. Anatomically plausible characters and functional believable objects. Not babyish, not generic icons, not a UI mockup.
 Scene: An exciting but warm school music-room reward scene: Mateo plays a small age-appropriate acoustic drum kit, Sofía strums an acoustic guitar, Carlos plays a keyboard, and Ana plays a trumpet. Four fictional young students performing together confidently and having fun, plausible safe instrument positions and functional instrument construction. Small classroom performance platform with amber and teal stage lighting, acoustic panels and warm wood, an inviting room with cinematic depth. Celebratory school-band finale, energetic yet warm, no concert crowds and no text.
+
+## October 5 classroom and object atlas
+
+The main classroom now uses a polished image-backed interactive 2D scene. Optional
+3D exploration remains genuine Three.js geometry and received lighting, material,
+furniture, plant, shelf and procedural-character improvements. Illustrated sprites
+and portrait crops are not represented as 3D character models.
+
+### classroom-panorama (complete)
+
+Use case: stylized-concept
+Asset type: production game environment raster, navigable image-backed 2D classroom with semantic hotspots; no game interface.
+Primary request: Create a polished, inviting, professional-quality modern middle-school Spanish classroom environment. One landscape image, 1536x1024 composition, premium stylized 3D game environment with believable physical geometry, architectural detail and convincing objects.
+Scene/backdrop: eye-level viewpoint from just inside a classroom doorway, looking across a lived-in learning room. Include coherent walls, floor and ceiling; organized rows or clusters of student desks with properly connected chair legs, a teacher's board and a clean whiteboard, a wall clock with simple ticks but no numbers, bookshelves of closed blank-spined books, tall windows, potted window plants, an art desk, and a visible doorway opening toward the hall. Classroom architecture must feel spatially coherent.
+Composition/framing: landscape wide view with useful clean foreground desks and distinct, clearly readable room landmarks. Keep the room welcoming and well furnished but avoid crowding. Make the whiteboard, bookshelf, windows, teacher area and art desk easy to distinguish.
+Style/medium: premium polished stylized 3D illustration, gently rounded realistic objects and refined materials, rendered with convincing ambient occlusion and soft contact shadows. Rich professional environmental art; restrained stylization, no cheap low-poly shapes or flat pictograms.
+Lighting/mood: warm natural daylight with soft directional sunlight and subtle interior fill; bright, calm, tactile and inviting.
+Color palette: teal, coral and amber accents with warm cream walls and light wood, harmonious and sophisticated.
+Constraints: No people. No text, letters, numbers, logos, signs or watermarks anywhere. Books, boards and objects have blank surfaces. No UI, labels, hotspots, interface overlays, frames or split panels. Every desk, chair and object must be physically plausible.
+
+### supplies-atlas (complete)
+
+Use case: scientific-educational
+Asset type: exact 3-by-3 school-object sprite atlas for CSS cell cropping and object recognition tasks.
+Primary request: Create ONE square image containing exactly nine isolated high-quality polished 3D school objects in an evenly spaced 3x3 grid. The background must be genuinely transparent RGBA, not white and not a checkerboard. Each object occupies its own equal square cell with a large empty transparent gutter, generous edge clearance, consistent visual scale, and no object or shadow crossing into another cell.
+Exact row-major order, left to right then top to bottom:
+TOP ROW: one ordinary yellow wooden pencil with graphite point; one separate pink rectangular pencil eraser; one closed coral spiral-bound notebook.
+MIDDLE ROW: one pair of blunt classroom scissors; one transparent plain straight ruler; one neat small stack of closed books.
+BOTTOM ROW: one simple handheld calculator; one cobalt-blue zippered pencil pouch; one purple glue stick with its cap visible, easily recognizable.
+Style/medium: same polished stylized 3D realistic-cute treatment for every item, convincing material details, crisp clean silhouettes and restrained gently rounded forms; premium educational game asset quality.
+Composition/framing: strict regular equal-cell 3-by-3 layout, all nine object centers at the exact cell centers; consistent softly elevated three-quarter view from the same direction, isolated objects with minimal subtle soft contact shadows. Long pencil and ruler must fit completely within their cells. Notebook must clearly show its coil binding. Scissors must show two rounded blade tips and two handle loops. Calculator has tactile blank buttons and a blank display. Pouch has visible zipper. Glue stick is clearly a cylindrical glue-stick container with a cap, not a pencil or marker.
+Color palette: cheerful yellow, pink, coral, teal, cream, cobalt and purple; distinct recognizable materials and silhouettes.
+Constraints: Exactly nine objects and no duplicates or extra items. Absolutely no letters, text, numbers, tick labels, logos, watermarks, labels, grid lines, border or background decoration. Ruler is blank and transparent with no measurement digits or marks. Books have blank spines and covers. True transparent alpha background.

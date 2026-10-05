@@ -36,3 +36,15 @@ Delivery images are 1280×853 WebP, quality 85, approximately 1 MB together. Pro
 resizing and format compression were applied. No external image CDN is required.
 The same classroom illustration supports the welcome and supplies scenes. The full
 selected prompt set is in `SPANISH_VISUALS.md`.
+
+## October 5 classroom and object assets
+
+`classroom-panorama.webp` is a newly generated polished environment illustration, 1280×853,
+162,068 bytes. `supplies-atlas.webp` is a generated 3×3 object atlas, 1254×1254 RGBA,
+261,550 bytes. Its true alpha and equal cells are retained for CSS sprite display.
+Both were generated with built-in imagegen without private images or reference documents.
+Only proportional resizing and WebP encoding were applied. Exact prompts are in
+`SPANISH_VISUALS.md`. The illustrated classroom is a 2D scene with semantic hotspots;
+it is not a navigable 3D model. The optional navigable classroom is actual Three.js geometry.
+Portraits use CSS cropping of the existing fictional `friends.webp` illustration.
+No new third-party models, textures, fonts, or asset licenses are required.

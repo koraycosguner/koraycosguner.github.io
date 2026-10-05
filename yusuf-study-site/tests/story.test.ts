@@ -2,6 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {storyScenes,storyTurns,reviewTurns} from '../spanish/story-content.ts';
 import {availableScene,completedScene,conceptEvidence,matchesStoryAnswer,markStorySupport,newStory,parseStory,recordStoryAttempt,STORY_KEY,suggestedReview} from '../spanish/story-learning.ts';
+import {responseBuilders,choiceGloss,choiceObject} from '../spanish/intuitive.ts';
 import {STORAGE_KEY} from '../spanish/learning.ts';
 
 const get=(id:string)=>storyTurns.find(t=>t.id===id)!;
@@ -72,4 +73,17 @@ test('story save is separate from historical quiz grades and includes no typed l
   const q=get('final-self');const p=recordStoryAttempt(newStory(),q,true,false);
   assert.deepEqual(Object.keys(p.evidence[q.id]).sort(),['assisted','attempts','complete','firstCorrect']);
   assert.equal(JSON.stringify(p).includes(q.model),false);
+});
+
+test('guided defaults and migration preserve explicit learner preferences',()=>{
+ assert.equal(newStory().english,true);assert.equal(newStory().guided,true);
+ const old={...newStory(),english:false};delete (old as Partial<typeof old>).guided;
+ assert.equal(parseStory(JSON.stringify(old)).english,false);assert.equal(parseStory(JSON.stringify(old)).guided,true);
+ assert.equal(parseStory(JSON.stringify({...newStory(),guided:false})).guided,false);
+});
+test('word-tile support for every formerly typed turn validates the complete sentence',()=>{
+ const responses=storyTurns.filter(t=>t.kind==='response');assert.equal(responses.length,8);
+ for(const turn of responses){const steps=responseBuilders[turn.id];assert.ok(steps);for(const step of steps){assert.equal(step.options.length,3);assert.equal(step.options.filter(v=>v===step.answer).length,1)}assert.ok(matchesStoryAnswer(turn,steps.map(s=>s.answer).join(' ')),turn.id);}
+ assert.equal(choiceGloss('Yo'),'I');assert.equal(choiceGloss('Nosotros'),'we');assert.equal(choiceObject('dos lápices'),'lapiz');assert.equal(choiceObject('lapicero'),undefined);
+ assert.equal(choiceGloss('El libro es de Ana.'),'The book belongs to Ana.');
 });

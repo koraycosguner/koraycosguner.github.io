@@ -103,3 +103,8 @@ The folder is editable source; a GitHub push does not publish this Vinext applic
 through GitHub Pages. This revision is for the feature branch `feature/spanish-school-day`
 in `https://github.com/koraycosguner/koraycosguner.github.io`.
 No live deployment, main-branch merge or force-push is part of this revision.
+
+## October 5 follow-up
+
+See `SPANISH_INTUITIVE_REPORT.md` for the subsequent beginner-flow and classroom graphics
+update and its current validation. The earlier results above describe the preceding revision.

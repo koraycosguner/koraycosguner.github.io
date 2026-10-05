@@ -3,7 +3,7 @@ export const STORAGE_KEY='yusuf.spanish.unit2.v1';
 export type SkillResult={firstCorrect:number;firstTotal:number;independentCorrect:number;corrections:number;hints:number};
 export type PracticeGrade={date:number;total:number;correct:number;percent:number;letter:string};
 export type Progress={version:1;discoveries:string[];missions:string[];inventory:Record<string,number>;skills:Partial<Record<Skill,SkillResult>>;xp:number;bandReward:boolean;english:boolean;mode:'2d'|'3d';quiet:boolean;grades:PracticeGrade[]};
-export const emptyProgress=():Progress=>({version:1,discoveries:[],missions:[],inventory:{...initialInventory},skills:{},xp:0,bandReward:false,english:true,mode:'3d',quiet:true,grades:[]});
+export const emptyProgress=():Progress=>({version:1,discoveries:[],missions:[],inventory:{...initialInventory},skills:{},xp:0,bandReward:false,english:true,mode:'2d',quiet:true,grades:[]});
 export function practiceGrade(correct:number,total:number,date=Date.now()):PracticeGrade{const percent=total?Math.round(correct/total*100):0;return {date,total,correct,percent,letter:percent>=90?'A':percent>=80?'B':percent>=70?'C':percent>=60?'D':'More practice'};}
 const normalize=(s:string)=>s.normalize('NFC').toLocaleLowerCase('es').trim().replace(/[¡!¿?.,;:]/g,'').replace(/\s+/g,' ');
 const accentless=(s:string)=>s.normalize('NFD').replace(/[\u0300-\u036f]/g,'');
@@ -23,7 +23,7 @@ export function parseProgress(raw:string|null):Progress {
  for(const id of Object.keys(fresh.inventory))fresh.inventory[id]=Math.min(5,count(p.inventory?.[id]));
  for(const id of Object.keys(skillLabels) as Skill[]){const s=p.skills?.[id];if(s&&typeof s==='object'){const total=count(s.firstTotal); fresh.skills[id]={firstTotal:total,firstCorrect:Math.min(total,count(s.firstCorrect)),independentCorrect:Math.min(total,count(s.independentCorrect)),corrections:count(s.corrections),hints:count(s.hints)};}}
  fresh.grades=Array.isArray(p.grades)?p.grades.filter((g:PracticeGrade)=>g&&Number.isFinite(g.date)&&g.total>0&&g.total<=100&&g.correct>=0&&g.correct<=g.total).slice(-10).map((g:PracticeGrade)=>practiceGrade(count(g.correct),count(g.total),g.date)):[];
- fresh.xp=count(p.xp);fresh.bandReward=p.bandReward===true;fresh.english=p.english!==false;fresh.quiet=p.quiet!==false;fresh.mode=p.mode==='2d'?'2d':'3d';return fresh;
+ fresh.xp=count(p.xp);fresh.bandReward=p.bandReward===true;fresh.english=p.english!==false;fresh.quiet=p.quiet!==false;fresh.mode=p.mode==='3d'?'3d':'2d';return fresh;
 }
 export function loadProgress(storage:Pick<Storage,'getItem'>):{progress:Progress;warning:string} {try{return {progress:parseProgress(storage.getItem(STORAGE_KEY)),warning:''}}catch{return {progress:emptyProgress(),warning:'Your save could not be read. You can still play; a new save starts here.'}}}
 export function saveProgress(storage:Pick<Storage,'setItem'>,progress:Progress){try{storage.setItem(STORAGE_KEY,JSON.stringify(progress));return ''}catch{return 'Saving is unavailable in this browser. Your progress lasts for this visit.'}}

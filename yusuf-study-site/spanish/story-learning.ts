@@ -5,10 +5,10 @@ export const allStoryTurns = storyScenes.flatMap(scene => scene.turns);
 const allTurns = [...allStoryTurns, ...reviewTurns];
 export type StoryEvidence = {attempts:number; firstCorrect:boolean; assisted:boolean; complete:boolean};
 export type StoryProgress = {
-  version:1; started:boolean; cursor:string; english:boolean;
+  version:1; started:boolean; cursor:string; english:boolean; guided:boolean;
   evidence:Record<string,StoryEvidence>; seenObjects:string[];
 };
-export const newStory = ():StoryProgress => ({version:1, started:false, cursor:allStoryTurns[0].id, english:false, evidence:{}, seenObjects:[]});
+export const newStory = ():StoryProgress => ({version:1, started:false, cursor:allStoryTurns[0].id, english:true, guided:true, evidence:{}, seenObjects:[]});
 const normalize = (value:string) => value.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLocaleLowerCase('es').trim().replace(/[¡!¿?.,;:]/g,'').replace(/\s+/g,' ');
 export function matchesStoryAnswer(turn:Pick<StoryTurn,'answers'>, answer:string) {
   return !!answer.trim() && turn.answers.some(accepted => normalize(accepted) === normalize(answer));
@@ -51,7 +51,7 @@ export function availableScene(progress:StoryProgress, sceneIndex:number) {
 export function parseStory(raw:string|null):StoryProgress {
   if(!raw)return newStory();
   const saved=JSON.parse(raw); if(!saved||saved.version!==1)throw Error('Unknown story save');
-  const progress=newStory(); progress.started=saved.started===true; progress.english=saved.english===true;
+  const progress=newStory(); progress.started=saved.started===true; progress.english=saved.english!==false; progress.guided=saved.guided!==false;
   for(const turn of allTurns) {
     const e=saved.evidence?.[turn.id];
     if(e&&typeof e==='object'&&Number.isSafeInteger(e.attempts)&&e.attempts>=0) {

@@ -26,13 +26,17 @@ A growing, multi-subject practice hub for Yusuf's seventh-grade classes.
   - A connected, seven-stop school-day adventure with Sra. Abarca and recurring fictional
     classmates Mateo, Sofía, Carlos and Ana. Forty short interactions build toward a band-room finale.
   - Twenty-four contextual three-choice conversations, eight step-by-step sentence builders,
-    then eight supported short responses. Wrong answers give a clue and allow immediate retry;
-    a short explanation appears after success. No countdown or lost access.
-  - Six original, optimized school illustrations, visual backpack changes, a fictional schedule,
+    plus eight short responses that now default to word tiles, with typing optional.
+    First encounters show a worked example. Wrong answers give a clue and allow immediate retry.
+    Short action headings, English help, picture choices and breaks after three turns support beginners.
+    No countdown, lives, penalties or lost access.
+  - Eight original, optimized school illustrations/atlases, visual backpack changes, a fictional schedule,
     discoverable classroom objects and a compact field guide with gradually encountered SER uses.
   - Fourteen fresh concept-based review conversations and a separate eight-step checkpoint.
   - The existing **60-question graded quiz**, complete field guide, original navigable Three.js
-    classroom and equivalent 2D station navigation remain available.
+    classroom and equivalent 2D station navigation remain available. The illustrated interactive
+    classroom is the default exploration view; the optional 3D room now has rounded furniture,
+    wood flooring, plants, shelves, expressive procedural characters and improved lighting.
   - Story progress and completed quiz grades stay only in this browser. No analytics, account,
     microphone, uploaded responses or learner-data backend is used.
 - Math remains a future shelf.
@@ -79,11 +83,15 @@ pushing this folder alone does not deploy it through GitHub Pages.
 - `spanish/story-learning.ts`: separate story save, first-response evidence, hint persistence,
   scene unlocking and concept-based review.
 - `spanish/story.css`: responsive story layout and reduced-motion support.
-- `public/quizzes/spanish/school-day/`: six original WebP illustrations (about 1 MB total).
+- `public/quizzes/spanish/school-day/`: eight original WebP illustrations/atlases (about 1.4 MB total).
 - `spanish/content.ts`: vocabulary, pronouns, SER, DOCTOR, questions and missions.
 - `spanish/learning.ts`: answer validation, private local saves, grade calculations.
 - `spanish/SpanishApp.tsx`: exploration, conversations, guide, quiz and grade history.
-- `spanish/Classroom.tsx`: original programmatic classroom geometry and controls.
+- `spanish/Classroom.tsx`: navigable programmatic 3D classroom geometry, lighting and controls.
+- `spanish/IllustratedRoom.tsx`, `room.css`: semantic clickable illustrated classroom and accessible list.
+- `spanish/intuitive.ts`, `LearningVisuals.tsx`, `learning-visuals.css`: editable models, word tiles,
+  short actions, translations, portrait crops and picture vocabulary.
+- `spanish/useSpanishSpeech.ts`: optional on-demand browser Spanish voice.
 - `spanish/spanish.css`, `spanish/grades.css`: responsive styling.
 - `app/quizzes/spanish/`: direct-loadable routes; `app/page.tsx` activates the Spanish shelf.
 
@@ -97,7 +105,9 @@ Saved progress resumes across reloads and route changes in the same browser.
 An unfinished quiz session restarts after a reload; completed results and skill evidence
 remain saved. Saves are device/browser local and do not sync between devices.
 The story uses `yusuf.spanish.school-day.v1`; its reset preserves the graded quiz and other
-subjects. Hints used before an answer persist through reload. Story scene progress resumes,
+subjects. Hints used before an answer persist through reload. Worked examples, word-tile support and classroom help are recorded as supported practice,
+not independent first-answer evidence. New saves start with English help and guidance enabled;
+existing explicit preferences are preserved. Story scene progress resumes,
 while an unfinished checkpoint restarts. The legacy exploration/quiz reset still touches only
 `yusuf.spanish.unit2.v1`. The two backpack activities are separate: the story shows exact
 before/after snapshots; free exploration and the graded quiz use the editable legacy inventory.
@@ -166,3 +176,5 @@ The original handoff and private learner information are not copied into the rep
 ```bash
 pnpm build
 ```
+
+The October 5 beginner-flow and graphics update is documented in `SPANISH_INTUITIVE_REPORT.md`.
