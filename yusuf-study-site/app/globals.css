@@ -604,6 +604,7 @@ a:focus-visible { outline: 4px solid rgba(29, 145, 136, 0.35); outline-offset: 5
   .text-link { width: fit-content; }
   .quick-facts { gap: 10px; }
   .subject-board { padding: 20px; border-radius: 22px; box-shadow: 8px 8px 0 var(--gold); }
+  .subject-board::before { right: 0; top: -22px; width: 64px; height: 64px; }
   .subject-grid { grid-template-columns: 1fr; }
   .subject-tile { min-height: 88px; }
   .quiz-library { padding: 82px 0; }

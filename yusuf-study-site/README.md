@@ -61,11 +61,46 @@ Big graded quiz: `http://localhost:3000/quizzes/spanish/unit-2/quiz/`
 Preserved 3D / 2D exploration: `http://localhost:3000/quizzes/spanish/unit-2/explore/`
 
 Requires Node 22.13+ and pnpm. Versions are pinned in `pnpm-lock.yaml`.
-When this project is stored inside the personal GitHub repository, run these commands
-from **yusuf-study-site/**. The folder is a complete application with its own root;
-putting it in the repository does not mount it at `/yusuf-study-site/` on GitHub Pages.
-The existing live site uses Sites hosting. GitHub is the editable source copy;
-pushing this folder alone does not deploy it through GitHub Pages.
+When working in `koraycosguner/koraycosguner.github.io`, run these commands from
+**yusuf-study-site/**, which contains the editable application source.
+The original Sites development and production commands remain available. The separate
+GitHub Pages build below publishes the complete hub at `/yusufs-quizzes/`.
+
+## GitHub Pages build and preview
+
+The publication address is **https://koraycosguner.github.io/yusufs-quizzes/**.
+This includes Spanish, Ecology, Rikki-Tikki-Tavi, and Social Sciences, with a homepage
+that links to all available subjects. Math is still a future shelf.
+
+```bash
+pnpm build:pages
+pnpm preview:pages
+```
+
+The preview command requires Python 3. Open
+`http://localhost:4173/yusufs-quizzes/`, or go directly to
+`http://localhost:4173/yusufs-quizzes/quizzes/spanish/unit-2/`.
+Keep the preview server running while checking the build.
+
+The static output is **pages-dist/yusufs-quizzes/**. It contains the browser bundles,
+images, and an `index.html` for each of 13 routes, so direct links and reloads work
+without a server-side application. It reuses the existing learning components and
+original Ecology and Social Sciences activities. It does not need a database,
+Cloudflare credentials, or a learner account.
+
+For publication, copy the contents of that generated folder into the repository-root
+**yusufs-quizzes/** directory. Commit the editable **yusuf-study-site/** source and
+the generated **yusufs-quizzes/** output together. Publishing the source folder alone
+does not update the website. The repository's existing GitHub Pages deployment from
+`main` serves the generated directory after its deployment completes. Preserve the
+personal website's root files and other folders when updating this directory.
+
+`vite.pages.config.ts` applies the `/yusufs-quizzes/` prefix to this build's links and
+assets. `pages/routes.ts` lists the React routes, and `scripts/build-pages.mjs` creates
+their direct entry points and adjusts the generated Ecology navigation. These steps
+leave the original Sites paths and source activities intact. Add any new React route
+to both `pages/routes.ts` and the component map in `pages/main.tsx` before rebuilding.
+Do not hand-edit generated bundles; edit the source and rebuild instead.
 
 ## Editing and controls
 
@@ -104,6 +139,9 @@ Reduced-motion preferences disable camera damping and interface animation.
 Saved progress resumes across reloads and route changes in the same browser.
 An unfinished quiz session restarts after a reload; completed results and skill evidence
 remain saved. Saves are device/browser local and do not sync between devices.
+Browser storage is also separate for each origin: GitHub Pages, the older Sites
+address, and local previews each start with their own progress. Moving to the GitHub
+Pages address does not transfer or erase progress saved on the older address.
 The story uses `yusuf.spanish.school-day.v1`; its reset preserves the graded quiz and other
 subjects. Hints used before an answer persist through reload. Worked examples, word-tile support and classroom help are recorded as supported practice,
 not independent first-answer evidence. New saves start with English help and guidance enabled;
@@ -147,6 +185,16 @@ pnpm exec playwright install chromium
 pnpm test:browser
 ```
 
+To test the GitHub Pages build, keep `pnpm preview:pages` running and use:
+
+```bash
+pnpm build:pages
+TEST_BASE_URL=http://localhost:4173 TEST_PATH_PREFIX=/yusufs-quizzes pnpm test:browser
+```
+
+The path prefix directs learning-interaction tests to the same subdirectory used
+online. The Pages-specific checks cover direct routes, subject navigation, and assets.
+
 `worker-configuration.d.ts` contains generated Cloudflare runtime types needed by the
 inherited source. Refresh them with `pnpm types` if the runtime configuration changes.
 `wrangler.types.json` is for type generation; deployment configuration remains unchanged.
@@ -155,7 +203,8 @@ inherited source. Refresh them with `pnpm types` if the runtime configuration ch
 
 The original study-site source was retrieved from its authorized Sites source repository
 at commit `2b3f9a4`. Ecology and Social Sciences are the original source and assets,
-not reconstructions. The original Ecology directory is unchanged by this implementation.
+not reconstructions. The original Ecology source directory is unchanged; the Pages
+build only adjusts its generated navigation links for the publication subdirectory.
 Third-party classroom rendering uses MIT-licensed Three.js; see `ASSET_LICENSES.md`.
 
 Spanish vocabulary and SER were checked against both pages of the supplied class DOCX
@@ -171,10 +220,13 @@ No direct quotations are presented as Kipling's text. Missing worksheet content 
 pending, and new practice questions are labeled separately from supplied quick checks.
 The original handoff and private learner information are not copied into the repository.
 
-## Production build
+## Original Sites production build
 
 ```bash
 pnpm build
 ```
+
+This retains the inherited Sites build. Use `pnpm build:pages` for GitHub Pages.
+Publishing to GitHub Pages does not update the older `chatgpt.site` address.
 
 The October 5 beginner-flow and graphics update is documented in `SPANISH_INTUITIVE_REPORT.md`.

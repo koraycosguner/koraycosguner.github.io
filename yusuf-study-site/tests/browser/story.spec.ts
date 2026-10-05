@@ -1,9 +1,10 @@
 import {test,expect,type Page} from '@playwright/test';
+import {studyPath} from './paths';
 import {storyScenes,storyTurns,type StoryTurn} from '../../spanish/story-content';
 import {responseBuilders} from '../../spanish/intuitive';
 import {newStory,recordStoryAttempt,markStorySupport,STORY_KEY,type StoryProgress} from '../../spanish/story-learning';
 const root='/quizzes/spanish/unit-2/';
-async function open(page:Page,path=root){await page.goto(path);await expect(page.locator('.school-day,.spanish-app')).toHaveAttribute('data-ready','true')}
+async function open(page:Page,path=root){await page.goto(studyPath(path));await expect(page.locator('.school-day,.spanish-app')).toHaveAttribute('data-ready','true')}
 async function tryNow(page:Page){if(await page.locator('.learn-example').count())await page.getByRole('button',{name:/^(Now I try|Ahora yo)/}).click()}
 async function answer(page:Page,q:StoryTurn){
   await tryNow(page);
@@ -87,7 +88,7 @@ test('mobile and tablet, keyboard builder focus, double click guard, guide and t
 
 test('corrupted and blocked saves, safe supported typing and all eight illustrations load',async({page})=>{
   await page.addInitScript(key=>localStorage.setItem(key,'broken'),STORY_KEY);await open(page);await expect(page.locator('.day-save-warning')).toContainText('No se pudo leer');
-  for(const name of ['friends','backpack','classes','teamwork','conversation','band','classroom-panorama','supplies-atlas']){const response=await page.request.get('/quizzes/spanish/school-day/'+name+'.webp');expect(response.status()).toBe(200);expect(response.headers()['content-type']).toContain('image/webp')}
+  for(const name of ['friends','backpack','classes','teamwork','conversation','band','classroom-panorama','supplies-atlas']){const response=await page.request.get(studyPath('/quizzes/spanish/school-day/'+name+'.webp'));expect(response.status()).toBe(200);expect(response.headers()['content-type']).toContain('image/webp')}
   await page.addInitScript(()=>{Storage.prototype.getItem=function(){throw Error('blocked')};Storage.prototype.setItem=function(){throw Error('blocked')}});await page.reload();await expect(page.locator('.day-save-warning')).toContainText('Guardado no disponible');await page.getByRole('button',{name:'Entrar en la clase',exact:false}).click();await answer(page,storyTurns[0]);await next(page);await expect(page.locator('.day-turn')).toHaveAttribute('data-turn','welcome-yo');
 });
 
