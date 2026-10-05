@@ -4,8 +4,11 @@ Checked October 5, 2026. This revision updates the existing application; it is n
 reconstruction. The authorized destination is
 `koraycosguner/koraycosguner.github.io`, branch `feature/spanish-proficiency-prep`.
 The branch includes editable source in `yusuf-study-site/` and generated preview-ready
-output in `yusufs-quizzes/`. It does not deploy the live website. The published baseline
-remains `main` at `61ae563fea6657b05f8cdbc3c17a94f4f992e593`.
+output in `yusufs-quizzes/`. Initial delivery was feature-only at GitHub commit `8076ec2`.
+The owner subsequently authorized publication on October 5, 2026. This release promotes
+that tested revision to `main`, whose previous published baseline was
+`61ae563fea6657b05f8cdbc3c17a94f4f992e593`.
+The public study hub is https://koraycosguner.github.io/yusufs-quizzes/.
 
 ## Delivered
 
@@ -117,5 +120,6 @@ pnpm preview:pages
 
 Open `http://localhost:4173/yusufs-quizzes/quizzes/spanish/`.
 For development, use `pnpm dev` and `http://localhost:3000/quizzes/spanish/`.
-The README contains all test commands and editing guidance. Do not merge this feature
-branch into `main` or publish it without authorization to deploy this revision.
+The README contains all test commands and editing guidance. Publication of this revision
+is authorized; the deployment should be verified at the public GitHub Pages address
+separately from confirmation of the Git push.

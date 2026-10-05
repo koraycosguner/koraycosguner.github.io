@@ -138,8 +138,9 @@ The static source entry is `static-pages/`, avoiding Vinext's reserved `pages/` 
 The GitHub Pages build now provides direct HTML entry points for **16 routes**, including
 the three new study modes. The generated output remains `pages-dist/yusufs-quizzes/`.
 
-This revision is prepared on `feature/spanish-proficiency-prep` for a feature-branch push;
-it is **not deployed**. The published baseline remains `61ae563`. The final brief explicitly
-requests no live deployment, so source/output review and publication are separate actions.
-Content and interaction test commands are listed in the README. Actual validation results
-are reported at delivery rather than inferred from the presence of test files.
+This revision was tested and pushed as `8076ec2` on `feature/spanish-proficiency-prep`.
+The owner then explicitly authorized publication on October 5, 2026, superseding the
+brief's initial feature-only restriction. The authorized release promotes the tested
+source and generated output to `main`; the prior public baseline was `61ae563`.
+Content and interaction test commands are listed in the README, with actual results
+in `SPANISH_PROFICIENCY_REPORT.md`.

@@ -4,11 +4,11 @@ A growing, multi-subject practice hub for Yusuf's seventh-grade classes.
 
 ## Spanish proficiency revision — October 5, 2026
 
-The new Unit 2 revision is prepared on **feature/spanish-proficiency-prep** for review
-and a feature-branch push. It has **not been deployed**. The published GitHub Pages
-baseline remains commit `61ae563`; a feature-branch push alone does not change that site.
-The latest build brief requests no live deployment. Keep publication as a separate,
-explicitly authorized action.
+The Unit 2 revision was developed and tested on **feature/spanish-proficiency-prep**
+(commit `8076ec2` in the GitHub repository). The owner subsequently authorized updating
+the public website on October 5, 2026. This release promotes that tested source and static
+output to **main**, the existing GitHub Pages publication branch.
+Public study hub: **https://koraycosguner.github.io/yusufs-quizzes/**.
 
 ## Current content
 
@@ -139,9 +139,10 @@ Do not hand-edit generated bundles; edit the source and rebuild instead.
 The static entry folder is named **static-pages/**, not **pages/**, to avoid Vinext
 interpreting the static-build entry as its reserved Pages Router directory.
 
-For this proficiency revision, commit and push the source and regenerated output on the
-feature branch only. Do not push that branch into `main` or trigger a deployment without
-new authorization. The published baseline can remain available while the revision is reviewed.
+This proficiency revision has explicit publication authorization. Its tested feature
+commit is promoted to `main` together with the generated output; the existing GitHub
+Pages service publishes that branch. For future revisions, verify deployment authorization
+and the live result separately from a successful source push.
 
 ## Editing and controls
 
