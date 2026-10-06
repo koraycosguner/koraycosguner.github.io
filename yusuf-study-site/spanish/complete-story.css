@@ -1,0 +1,35 @@
+.ws-activity{width:100%;max-width:46rem;margin:0 auto;color:#183e33;line-height:1.55;font-size:1.1rem}
+.ws-activity *{box-sizing:border-box}
+.ws-activity h2{font-size:clamp(1.5rem,4vw,2rem);line-height:1.2;margin:.4rem 0 1rem;color:#183e33}
+.ws-activity h2:focus{outline:none}
+.ws-activity p{margin:.65rem 0}
+.ws-progress{font-size:.88rem;font-weight:700;letter-spacing:.025em;color:#496258}
+.ws-intro{max-width:39rem}
+.ws-directions{font-size:.93rem;color:#496258}
+.ws-bank{display:flex;flex-wrap:wrap;gap:.6rem;margin:1.25rem 0 1.6rem}
+.ws-activity button{font:inherit;touch-action:manipulation;color:#183e33}
+.ws-word{background:#fff;border:2px solid #819c8c;border-radius:.7rem;min-height:48px;max-width:100%;padding:.55rem .8rem;cursor:grab;font-weight:700}
+.ws-word[aria-pressed=true]{background:#dfeee3;border-color:#183e33;box-shadow:0 0 0 2px #183e33}
+.ws-word.ws-used{background:#f1f3ec;border-style:dashed}
+.ws-used-label{font-size:.8rem;font-weight:400}
+.ws-paragraph{font-size:clamp(1.04rem,2.5vw,1.25rem);background:#fffdf7;border:1px solid #dce2d4;border-radius:1rem;padding:1rem 1.2rem}
+.ws-line{display:block;margin:.4rem 0 .85rem;overflow-wrap:break-word}
+.ws-line:last-child{margin-bottom:.4rem}
+.ws-blank{display:inline-block;vertical-align:baseline;background:#f1f5ef;border:0;border-bottom:2px solid #537666;border-radius:.3rem;min-height:46px;max-width:100%;padding:.25rem .55rem;margin:.12rem .12rem;font-weight:700;cursor:pointer}
+.ws-correct{background:#e3f0e4;border-bottom-color:#235d3a}
+.ws-retry{background:#fff0dc;border-bottom-color:#986019}
+.ws-feedback{min-height:3.5rem;font-size:.98rem}
+.ws-help{background:#f2f4ec;border-left:3px solid #547761;padding:.6rem .9rem;font-size:.95rem;margin:.8rem 0}
+.ws-help p{margin:.25rem 0}
+.ws-actions{display:flex;align-items:center;flex-wrap:wrap;gap:.75rem;margin:1rem 0}
+.ws-primary,.ws-secondary,.ws-help-toggle{min-height:48px;border-radius:.65rem;padding:.65rem 1rem;border:2px solid #254f3d;cursor:pointer;font-weight:700}
+.ws-activity .ws-primary{color:#fff;background:#254f3d}
+.ws-secondary,.ws-help-toggle{background:transparent}
+.ws-help-toggle{font-size:.9rem;border:0;text-decoration:underline;text-underline-offset:.2em}
+.ws-activity button:disabled{cursor:default;opacity:.68}
+.ws-activity .ws-blank:disabled{opacity:1}
+.ws-activity button:focus-visible{outline:3px solid #123f30;outline-offset:4px}
+.ws-notice{font-size:.9rem;color:#6a501b}
+.ws-summary{font-size:1.15rem}
+@media(max-width:420px){.ws-paragraph{padding:.8rem}.ws-bank{gap:.5rem}.ws-word{padding:.5rem .7rem}.ws-actions{align-items:stretch}.ws-primary{flex:1}.ws-feedback{min-height:0}}
+@media(prefers-reduced-motion:reduce){.ws-activity *{scroll-behavior:auto}}

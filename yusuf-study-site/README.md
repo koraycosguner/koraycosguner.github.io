@@ -301,3 +301,17 @@ This retains the inherited Sites build. Use `pnpm build:pages` for GitHub Pages.
 Publishing to GitHub Pages does not update the older `chatgpt.site` address.
 
 The October 5 beginner-flow and graphics update is documented in `SPANISH_INTUITIVE_REPORT.md`.
+
+## Calm Unit 2 study guide (October 6)
+
+The Spanish hub has four primary modes. New entry points under `/quizzes/spanish/unit-2/`:
+`study/`, `story-practice/`, `complete-story/`, `practice-test/`, and the Learn-linked
+`study-guide/`. Existing activity routes and browser saves remain intact.
+
+The current implementation is `spanish/Unit2StudyApp.tsx`, with curriculum in
+`study-content.ts`, state/scoring in `study-learning.ts`, and paragraph interaction in
+`CompleteStory.tsx`. New logic tests are included in `pnpm test`; browser coverage is
+in `tests/browser/study.spec.ts` and `tests/browser/word-story.spec.ts`.
+
+See `SPANISH_CALM_REPORT.md` for actual verification, delivery details, and source limits.
+This feature branch is not authorization to deploy.

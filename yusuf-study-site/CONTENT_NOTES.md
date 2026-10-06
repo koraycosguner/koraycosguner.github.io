@@ -144,3 +144,39 @@ brief's initial feature-only restriction. The authorized release promotes the te
 source and generated output to `main`; the prior public baseline was `61ae563`.
 Content and interaction test commands are listed in the README, with actual results
 in `SPANISH_PROFICIENCY_REPORT.md`.
+
+## Calm study-guide update — October 6, 2026
+
+The latest MASTER brief supersedes the earlier dashboard-style brief. The Spanish home
+now presents four choices: Learn, Story Practice, Complete the Story, and Unit 2 Practice
+Test. The earlier adventure, quiz, field guide and proficiency routes remain available
+at their existing URLs; Ecology and other subjects are preserved.
+
+- Fourteen mini-lessons present one example at a time before two to four questions
+  (47 guided questions altogether). Sra. Abarca’s Study Guide Review is a separate
+  ten-stage sequence reached from Learn.
+- Story Practice contains 28 connected school-day scenes and 30 responses. The
+  pronoun → SER → adjective scaffold displays each decision separately.
+- Complete the Story contains four original paragraphs and 20 blanks. Each small
+  bank contains one unused distractor. Words support desktop drag, touch tap, and
+  keyboard selection, placement, moving, replacement, and removal.
+- The new test contains 90 questions and 93 scored responses, including explicit
+  Spain/vosotros/vosotras/sois, formal usted, SER + de ownership, adjective gender
+  and plural agreement, seven Cierto/Falso questions, readings, and connected blanks.
+- Help opens only the relevant reference and closes on progression. First responses,
+  corrections, and assistance are recorded separately. The test reports practice
+  accuracy, not a school-issued grade or proficiency certification. No lives or XP.
+- New progress is browser-local under `yusuf.spanish.calm.v1` and
+  `spanish.wordstories.v1`. Earlier Spanish and other-subject records are unchanged.
+  Starting a new question activity requires confirmation when an answered run is unfinished.
+
+The five available source pages (two vocabulary pages, two pronoun/SER pages, one
+DOCTOR page) were visually reviewed again. The additional Nouns + Articles handout,
+later SER image, and actual Sra. Abarca Study Guide photographs were not available
+among the supplied materials. Their concepts and formats are taken from the latest
+brief’s explicit transcription; no unseen worksheet or actual test is represented as
+reviewed. New examples are original. Class-list meanings such as la goma = glue and
+la prueba = quiz are contextual, not claims of universal Spanish usage.
+
+This update is a feature-branch delivery only. It does not change either production
+site until the owner separately authorizes publication. See `SPANISH_CALM_REPORT.md`.

@@ -1,0 +1,1 @@
+import{t as e}from"./index-CGKgTYJL.js";import{t}from"./Unit2StudyApp-Cj4jvB9C.js";var n=e();function r(){return(0,n.jsx)(t,{entry:`guide`})}export{r as default};

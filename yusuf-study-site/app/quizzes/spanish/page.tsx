@@ -1,2 +1,2 @@
-import ProficiencyApp from '../../../spanish/ProficiencyApp';
-export default function Page() { return <ProficiencyApp />; }
+import Unit2StudyApp from '../../../spanish/Unit2StudyApp';
+export default function Page(){return <Unit2StudyApp/>;}

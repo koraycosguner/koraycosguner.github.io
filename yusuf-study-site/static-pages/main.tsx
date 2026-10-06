@@ -4,6 +4,11 @@ import {pagesBase} from './routes';
 import '../app/globals.css';
 
 const routes:Record<string,ComponentType>={
+  '/quizzes/spanish/unit-2/study/':lazy(()=>import('../app/quizzes/spanish/unit-2/study/page')),
+  '/quizzes/spanish/unit-2/story-practice/':lazy(()=>import('../app/quizzes/spanish/unit-2/story-practice/page')),
+  '/quizzes/spanish/unit-2/complete-story/':lazy(()=>import('../app/quizzes/spanish/unit-2/complete-story/page')),
+  '/quizzes/spanish/unit-2/practice-test/':lazy(()=>import('../app/quizzes/spanish/unit-2/practice-test/page')),
+  '/quizzes/spanish/unit-2/study-guide/':lazy(()=>import('../app/quizzes/spanish/unit-2/study-guide/page')),
   '/':lazy(()=>import('../app/page')),
   '/subjects/science/':lazy(()=>import('../app/subjects/science/page')),
   '/subjects/social-sciences/':lazy(()=>import('../app/subjects/social-sciences/page')),
