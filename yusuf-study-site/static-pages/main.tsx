@@ -4,6 +4,13 @@ import {pagesBase} from './routes';
 import '../app/globals.css';
 
 const routes:Record<string,ComponentType>={
+  '/quizzes/spanish/unit-2/learn-with-pictures/':lazy(()=>import('../app/quizzes/spanish/unit-2/learn-with-pictures/page')),
+  '/quizzes/spanish/unit-2/practice/':lazy(()=>import('../app/quizzes/spanish/unit-2/practice/page')),
+  '/quizzes/spanish/unit-2/vocabulary/':lazy(()=>import('../app/quizzes/spanish/unit-2/vocabulary/page')),
+  '/quizzes/spanish/unit-2/listening/':lazy(()=>import('../app/quizzes/spanish/unit-2/listening/page')),
+  '/quizzes/spanish/unit-2/test/':lazy(()=>import('../app/quizzes/spanish/unit-2/test/page')),
+  '/quizzes/spanish/unit-2/progress/':lazy(()=>import('../app/quizzes/spanish/unit-2/progress/page')),
+
   '/quizzes/spanish/unit-2/study/':lazy(()=>import('../app/quizzes/spanish/unit-2/study/page')),
   '/quizzes/spanish/unit-2/story-practice/':lazy(()=>import('../app/quizzes/spanish/unit-2/story-practice/page')),
   '/quizzes/spanish/unit-2/complete-story/':lazy(()=>import('../app/quizzes/spanish/unit-2/complete-story/page')),

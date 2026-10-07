@@ -5,7 +5,7 @@ import {STUDY_KEY,emptyStudy,startStudy,type StudySaved} from '../../spanish/stu
 import type {StudyQuestion} from '../../spanish/study-types';
 
 const root='/quizzes/spanish/unit-2/';
-async function open(page:Page,route='/quizzes/spanish/'){
+async function open(page:Page,route=root+'study/'){
   await page.goto(studyPath(route));
   await expect(page.locator('.u2-shell')).toHaveAttribute('data-ready','true');
 }
@@ -27,15 +27,13 @@ async function answer(page:Page,q:StudyQuestion){
   }
 }
 
-test('calm Spanish home has exactly four major choices and keeps links inside the hosted path',async({page})=>{
-  const errors:string[]=[];page.on('pageerror',e=>errors.push(e.message));await open(page);
-  await expect(page.locator('.u2-modes>a')).toHaveCount(4);
-  await expect(page.locator('.u2-mode h2')).toHaveText(['Learn','Story Practice','Complete the Story','Unit 2 Practice Test']);
-  for(const [i,route] of ['study/','story-practice/','complete-story/','practice-test/'].entries()){
-    await expect(page.locator('.u2-modes>a').nth(i)).toHaveAttribute('href',studyPath(root+route));
-  }
-  await expect(page.locator('.u2-home')).not.toContainText(/XP|lives remaining|hearts remaining/i);
-  await page.locator('.u2-mode').first().click();await expect(page.locator('.u2-lesson')).toBeVisible();
+test('Spanish tutor home keeps six simple paths and access to earlier lesson records',async({page})=>{
+  const errors:string[]=[];page.on('pageerror',e=>errors.push(e.message));await page.goto(studyPath('/quizzes/spanish/'));
+  await expect(page.locator('.tc-shell')).toHaveAttribute('data-ready','true');await expect(page.locator('.tc-paths>a')).toHaveCount(6);
+  await expect(page.locator('.tc-paths>a span')).toHaveText(['Learn','Practice','Vocabulary','Listening','Test','My Progress']);
+  for(const [i,route] of ['learn-with-pictures/','practice/','vocabulary/','listening/','test/','progress/'].entries())await expect(page.locator('.tc-paths>a').nth(i)).toHaveAttribute('href',studyPath(root+route));
+  await expect(page.locator('.tc-mission')).not.toContainText(/XP|lives remaining|hearts remaining/i);
+  await page.getByText('More Unit 2 activities',{exact:true}).click();await page.getByRole('link',{name:'Earlier lesson record',exact:true}).click();await expect(page.locator('.u2-lesson')).toBeVisible();
   expect(errors).toEqual([]);
 });
 
@@ -190,10 +188,10 @@ test('starting a different activity keeps the saved run unless replacement is co
   await expect(page.locator('.u2-question')).toHaveAttribute('data-question',testQuestions[0].id);
 });
 
-test('home screenshots at phone and desktop retain four uncluttered choices',async({page},info)=>{
+test('home screenshots at phone and desktop retain six simple study paths',async({page},info)=>{
   for(const width of [390,1280]){
-    await page.setViewportSize({width,height:900});await open(page);
-    await expect(page.locator('.u2-modes>a')).toHaveCount(4);
+    await page.setViewportSize({width,height:900});await page.goto(studyPath('/quizzes/spanish/'));
+    await expect(page.locator('.tc-shell')).toHaveAttribute('data-ready','true');await expect(page.locator('.tc-paths>a')).toHaveCount(6);
     expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
     await page.screenshot({path:info.outputPath(`study-home-${width}.png`),fullPage:true});
   }

@@ -1,0 +1,1 @@
+import{t as e}from"./index-DGTfVboY.js";import{t}from"./TutorCenter-EUQRL1U-.js";var n=e();function r(){return(0,n.jsx)(t,{entry:`practice`})}export{r as default};

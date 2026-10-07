@@ -1,0 +1,15 @@
+.tutor-visual{display:inline-flex;width:100%;max-width:430px;aspect-ratio:3/2;align-items:center;justify-content:center;overflow:hidden;border-radius:22px;background:#f1f4e9;border:1px solid #dde5d6;isolation:isolate;vertical-align:middle;flex-shrink:1;min-width:0}
+.tutor-visual>span{display:flex;align-items:center;justify-content:center;width:100%;height:100%;min-width:0}
+.tutor-visual svg{display:block;width:100%;height:100%;max-height:290px}
+.tutor-visual svg text{font-family:inherit;font-weight:650}
+.tutor-visual svg text:not([fill]){fill:#244b45}
+.tutor-visual svg text:not([font-size]){font-size:17px}
+.tutor-visual img{display:block;width:100%;height:100%;object-fit:contain}
+.tutor-visual.is-scene{background:#fff6e7}
+.tutor-visual[data-visual="escuela"] img,.tutor-visual[data-visual="clase"] img,.tutor-visual[data-visual="mochila"] img{object-fit:cover}
+.tutor-visual .tutor-object-atlas{display:block;position:relative;width:62%;height:auto;aspect-ratio:1;overflow:hidden;background-image:url('/quizzes/spanish/school-day/supplies-atlas.webp');background-size:300% 300%;background-position:var(--atlas-x) var(--atlas-y);background-repeat:no-repeat}
+.tutor-object-atlas>img{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none}
+.tutor-visual.is-compact{max-width:220px;min-height:80px;border-radius:15px}
+.tutor-visual.is-compact svg{max-height:150px}
+@media(max-width:420px){.tutor-visual{border-radius:16px}.tutor-visual.is-compact{min-height:70px}}
+@media(prefers-reduced-motion:reduce){.tutor-visual *{animation:none!important;transition:none!important}}

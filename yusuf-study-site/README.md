@@ -2,13 +2,35 @@
 
 A growing, multi-subject practice hub for Yusuf's seventh-grade classes.
 
-## Spanish proficiency revision — October 5, 2026
+## Current Spanish tutor — October 7, 2026
 
-The Unit 2 revision was developed and tested on **feature/spanish-proficiency-prep**
-(commit `8076ec2` in the GitHub repository). The owner subsequently authorized updating
-the public website on October 5, 2026. This release promotes that tested source and static
-output to **main**, the existing GitHub Pages publication branch.
-Public study hub: **https://koraycosguner.github.io/yusufs-quizzes/**.
+Public hub: **https://koraycosguner.github.io/yusufs-quizzes/**.
+Spanish home: **https://koraycosguner.github.io/yusufs-quizzes/quizzes/spanish/**.
+
+Start studying creates a short guided session with tiny teaching frames, picture and
+listening activities, word banks, retrieval, and a pause checkpoint. Learn, Practice,
+Vocabulary, Listening, Test, and My Progress are separate simple entry points.
+The new test contains 18 questions and saves first-answer scores by skill group;
+misses lead to fresh targeted practice. The earlier long tests and school-day adventure
+remain available under **More Unit 2 activities**, with their existing saves preserved.
+
+The tutor uses the separate browser-local key `yusuf.spanish.tutor.v1`. It does not upload
+progress or use an account, microphone, or learner-data service. Spanish speech uses an
+available device/browser Spanish voice, with a reading fallback when unavailable. Clues,
+worked examples and reading fallback are recorded separately from independent evidence.
+Readiness is a limited practice estimate, never a promise about a school assessment.
+
+Editable source:
+- `spanish/TutorCenter.tsx`, `tutor.css`: screens and responsive controls.
+- `spanish/tutor-content.ts`, `tutor-types.ts`: validated lessons, words and questions.
+- `spanish/tutor-learning.ts`: selection, scoring, correction, progress and persistence.
+- `spanish/TutorVisual.tsx`, `tutor-visuals.css`: instructional images and diagrams.
+- `spanish/useTutorAudio.ts`, `tutor-audio.ts`: voice selection and audio lifecycle.
+- `public/quizzes/spanish/tutor/`: optimized original instructional artwork.
+
+See `TUTOR_ACCEPTANCE_REPORT.md` for the final audit, `TUTOR_CONTENT_AUDIT.md` and
+`TUTOR_COVERAGE.md` for curriculum decisions, and `TUTOR_MEDIA_NOTES.md` for art provenance,
+generation prompts and audio limitations.
 
 ## Current content
 
@@ -30,8 +52,8 @@ Public study hub: **https://koraycosguner.github.io/yusufs-quizzes/**.
     five discovery labs, 42 vocabulary cards, and 18 study notes.
     Open `/quizzes/ecology/` or use the Science shelf.
     Quiz progress and optional sound preferences are stored only in the current browser.
-- **Spanish — Unit 2 learn, practice, and proficiency prep**
-  - `/quizzes/spanish/` now connects four study paths: Learn, Practice in context,
+- **Spanish — preserved proficiency prep**
+  - The earlier proficiency revision retains four study paths: Learn, Practice in context,
     Unit 2 Vocabulary & Grammar Test Prep, and Full Practice Proficiency Test.
   - Ten short lessons lead immediately to 30 guided practice questions. Lessons teach
     pronouns, visual IN / TO / ABOUT perspective, WHO → PRONOUN → SER, articles,
@@ -118,7 +140,7 @@ The preview command requires Python 3. Open
 Keep the preview server running while checking the build.
 
 The static output is **pages-dist/yusufs-quizzes/**. It contains the browser bundles,
-images, and an `index.html` for each of 16 routes, so direct links and reloads work
+images, and an `index.html` for each of 27 routes, so direct links and reloads work
 without a server-side application. It reuses the existing learning components and
 original Ecology and Social Sciences activities. It does not need a database,
 Cloudflare credentials, or a learner account.
@@ -139,7 +161,7 @@ Do not hand-edit generated bundles; edit the source and rebuild instead.
 The static entry folder is named **static-pages/**, not **pages/**, to avoid Vinext
 interpreting the static-build entry as its reserved Pages Router directory.
 
-This proficiency revision has explicit publication authorization. Its tested feature
+The October 7 tutor revision has explicit publication authorization. Its tested feature
 commit is promoted to `main` together with the generated output; the existing GitHub
 Pages service publishes that branch. For future revisions, verify deployment authorization
 and the live result separately from a successful source push.
@@ -232,7 +254,7 @@ text; otherwise retain the **Story example (paraphrased)** label.
 
 ## Validation
 
-See [SPANISH_PROFICIENCY_REPORT.md](SPANISH_PROFICIENCY_REPORT.md) for the October 5 revision’s actual results and remaining verification limits.
+See [TUTOR_ACCEPTANCE_REPORT.md](TUTOR_ACCEPTANCE_REPORT.md) for the current revision’s actual results and remaining verification limits. Earlier reports describe earlier releases.
 
 ```bash
 pnpm typecheck
@@ -304,14 +326,14 @@ The October 5 beginner-flow and graphics update is documented in `SPANISH_INTUIT
 
 ## Calm Unit 2 study guide (October 6)
 
-The Spanish hub has four primary modes. New entry points under `/quizzes/spanish/unit-2/`:
+This earlier revision provided four primary modes. Its preserved entry points under `/quizzes/spanish/unit-2/`:
 `study/`, `story-practice/`, `complete-story/`, `practice-test/`, and the Learn-linked
 `study-guide/`. Existing activity routes and browser saves remain intact.
 
-The current implementation is `spanish/Unit2StudyApp.tsx`, with curriculum in
+The preserved implementation is `spanish/Unit2StudyApp.tsx`, with curriculum in
 `study-content.ts`, state/scoring in `study-learning.ts`, and paragraph interaction in
 `CompleteStory.tsx`. New logic tests are included in `pnpm test`; browser coverage is
 in `tests/browser/study.spec.ts` and `tests/browser/word-story.spec.ts`.
 
 See `SPANISH_CALM_REPORT.md` for actual verification, delivery details, and source limits.
-This feature branch is not authorization to deploy.
+The October 7 tutor publication is separately authorized by the owner.

@@ -1,0 +1,1 @@
+import{t as e}from"./index-DGTfVboY.js";import{t}from"./SpanishApp-CGzrlp9A.js";var n=e();function r(){return(0,n.jsx)(t,{view:`guide`})}export{r as default};

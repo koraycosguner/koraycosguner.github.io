@@ -1,0 +1,1 @@
+import{t as e}from"./index-DGTfVboY.js";import{t}from"./Unit2StudyApp-CtzlLRgl.js";var n=e();function r(){return(0,n.jsx)(t,{entry:`complete`})}export{r as default};

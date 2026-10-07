@@ -1,2 +1,2 @@
-import Unit2StudyApp from '../../../spanish/Unit2StudyApp';
-export default function Page(){return <Unit2StudyApp/>;}
+import TutorCenter from '../../../spanish/TutorCenter';
+export default function Page(){return <TutorCenter/>;}

@@ -1,6 +1,13 @@
 /** Static entry points; each gets its own index.html for direct links and refreshes. */
 export const pagesBase = '/yusufs-quizzes/';
 export const pageRoutes = [
+  '/quizzes/spanish/unit-2/learn-with-pictures/',
+  '/quizzes/spanish/unit-2/practice/',
+  '/quizzes/spanish/unit-2/vocabulary/',
+  '/quizzes/spanish/unit-2/listening/',
+  '/quizzes/spanish/unit-2/test/',
+  '/quizzes/spanish/unit-2/progress/',
+
   '/quizzes/spanish/unit-2/study/',
   '/quizzes/spanish/unit-2/story-practice/',
   '/quizzes/spanish/unit-2/complete-story/',

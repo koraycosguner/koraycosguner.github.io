@@ -48,3 +48,17 @@ Only proportional resizing and WebP encoding were applied. Exact prompts are in
 it is not a navigable 3D model. The optional navigable classroom is actual Three.js geometry.
 Portraits use CSS cropping of the existing fictional `friends.webp` illustration.
 No new third-party models, textures, fonts, or asset licenses are required.
+
+## October 7 Spanish tutor instructional media
+
+The computadora.webp, almuerzo.webp, and libro.webp files in
+public/quizzes/spanish/tutor/ are original illustrations generated for this app
+with built-in imagegen. They contain no real-person likenesses, private worksheets,
+learner data or branded logos. Only proportional resizing and WebP encoding were
+applied. They are served locally, without a third-party image CDN. Exact prompts,
+dimensions and byte sizes are recorded in TUTOR_MEDIA_NOTES.md.
+
+Teaching diagrams in spanish/TutorVisual.tsx are original editable SVG/React code.
+They reuse existing local school-day artwork and the supplies atlas where appropriate.
+The audio hook uses browser-provided Spanish speech synthesis; no prerecorded voice
+library or proprietary voice files are redistributed.
