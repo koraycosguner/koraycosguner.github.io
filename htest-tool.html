@@ -256,8 +256,6 @@
                 <h2 class="section-title mt">3. Configure Test</h2>
                 <div id="configBody"></div>
 
-                <h2 class="section-title mt">4. Test Parameters</h2>
-                <div id="paramsBody"></div>
 
                 <div class="button-group">
                     <button class="btn btn-primary" id="runButton" disabled>Run Test</button>
@@ -267,11 +265,10 @@
 
             <!-- ============================== Results ============================== -->
             <div class="results-container" id="resultsContainer" aria-live="polite">
-                <h2 class="section-title mt">5. Results</h2>
+                <h2 class="section-title mt">4. Results</h2>
                 <div id="resultsHeader" style="font-size: 0.95rem; color: var(--text-light); margin-bottom: 0.5rem;"></div>
                 <div class="stat-grid" id="resultsStats"></div>
                 <div id="resultsExtra"></div>
-                <div class="verdict" id="resultsVerdict"></div>
                 <div style="display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap; margin-top: 1.5rem; margin-bottom: 0.5rem;">
                     <h3 style="margin: 0; color: var(--text-dark); font-size: 1.05rem;">Full R Output</h3>
                     <button type="button" class="btn btn-secondary btn-sm" id="copyOutputBtn">Copy output</button>
@@ -738,65 +735,11 @@ F       Like</pre>
             c.querySelectorAll('input').forEach(el => el.addEventListener('input', updateRunEnabled));
         }
 
-        function renderParams() {
-            const p = $('paramsBody');
-            // Most tests share alternative + alpha; chi-square doesn't use alternative.
-            const isChi = selectedTest === 'chi-square';
-            const isAnova = selectedTest === 'anova';
-            const showAlt = !isChi && !isAnova;
-            p.innerHTML = `
-                ${showAlt ? `
-                <div class="form-group">
-                    <label>Alternative Hypothesis</label>
-                    <div class="radio-row">
-                        <label><input type="radio" name="alt" value="two.sided" checked> two-tailed (≠)</label>
-                        <label><input type="radio" name="alt" value="greater"> right-tailed (&gt;)</label>
-                        <label><input type="radio" name="alt" value="less"> left-tailed (&lt;)</label>
-                    </div>
-                    <p style="font-size: 0.82rem; color: var(--text-light); margin-top: 0.4rem; font-style: italic;">
-                        Null: mean equals the comparison value &middot; Alternative: mean differs (two-tailed), mean is larger (right-tailed), or mean is smaller (left-tailed).
-                    </p>
-                </div>` : `
-                <div class="form-group">
-                    <p style="font-size: 0.82rem; color: var(--text-light); margin: 0; padding: 0.6rem 0.85rem; background: #f5f5f5; border-radius: 6px; border-left: 3px solid var(--iu-crimson);">
-                        ${selectedTest === 'anova'
-                            ? 'F-test is inherently <strong>two-tailed</strong>: tests whether at least one group mean differs from the others.'
-                            : 'Chi-square test is inherently <strong>two-tailed</strong>: tests whether observed counts differ from those expected under independence.'}
-                    </p>
-                </div>`}
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="cfg-alpha">Significance Level (α)</label>
-                        <select id="cfg-alpha">
-                            <option value="0.05" selected>0.05</option>
-                            <option value="0.10">0.10</option>
-                            <option value="0.01">0.01</option>
-                        </select>
-                    </div>
-                    ${(!isChi && !isAnova) ? `
-                    <div class="form-group">
-                        <label for="cfg-conf">Confidence Level</label>
-                        <select id="cfg-conf">
-                            <option value="0.95" selected>95%</option>
-                            <option value="0.90">90%</option>
-                            <option value="0.99">99%</option>
-                        </select>
-                    </div>` : ''}
-                </div>`;
-            p.querySelectorAll('select, input').forEach(el => el.addEventListener('change', updateRunEnabled));
-            // Keep the confidence level in step with the significance level
-            // (conf = 1 - alpha) so a two-sided verdict and its interval agree.
-            // The user can still override the confidence level afterward.
-            const alphaSel = $('cfg-alpha');
-            const confSel = $('cfg-conf');
-            if (alphaSel && confSel) {
-                const CONF_FOR_ALPHA = { '0.05': '0.95', '0.10': '0.90', '0.01': '0.99' };
-                alphaSel.addEventListener('change', () => {
-                    const match = CONF_FOR_ALPHA[alphaSel.value];
-                    if (match) confSel.value = match;
-                });
-            }
-        }
+        // 2026-10-07: the tail choice, significance level and confidence level were removed at the
+        // instructor's request. The tool reports the two-tailed p-value and the sample mean(s); students
+        // apply the decision rule themselves (two-tailed: p < 0.05; one-tailed: check the direction of
+        // the means first, then whether p / 2 < 0.05), as in the course slides. No verdict is shown.
+        function renderParams() { /* no parameters */ }
 
         function updateRunEnabled() {
             let ok = false;
@@ -872,10 +815,8 @@ F       Like</pre>
                 // Write CSV to WebR's virtual filesystem.
                 await webR.FS.writeFile('/tmp/htest_data.csv', new TextEncoder().encode(csvText));
 
-                const alpha = parseFloat($('cfg-alpha') ? $('cfg-alpha').value : '0.05');
-                const conf  = $('cfg-conf') ? parseFloat($('cfg-conf').value) : 0.95;
-                const altRadio = document.querySelector('input[name="alt"]:checked');
-                const alt = altRadio ? altRadio.value : 'two.sided';
+                const conf = 0.95;          // two-sided interval, shown only in the full R output
+                const alt  = 'two.sided';   // the tool always reports the two-tailed p-value
 
                 let rCode = `data = read.csv("/tmp/htest_data.csv", stringsAsFactors = FALSE, check.names = FALSE)
 # coerce numerics
@@ -912,7 +853,7 @@ for (col in names(data)) {
                ',"mean":', .jn(.fit$estimate), ',"n":', length(.x), '}:END')
 .summary_text = paste(capture.output(print(.fit)), collapse="\\n")
 paste0(.json, "\\n---\\n", .summary_text)`;
-                        metaJson = { x, mu, alt, conf, alpha, label: `One-sample t-test on ${x} (μ₀ = ${mu})` };
+                        metaJson = { x, mu, alt, conf, label: `One-sample t-test on ${x} (μ₀ = ${mu})` };
                         break;
                     }
                     case 'paired-t': {
@@ -928,7 +869,7 @@ ok = !is.na(.x) & !is.na(.y); .x = .x[ok]; .y = .y[ok]
                ',"n":', length(.x), '}:END')
 .summary_text = paste(capture.output(print(.fit)), collapse="\\n")
 paste0(.json, "\\n---\\n", .summary_text)`;
-                        metaJson = { x, y, alt, conf, alpha, label: `Paired t-test on (${x}, ${y})` };
+                        metaJson = { x, y, alt, conf, label: `Paired t-test on (${x}, ${y})` };
                         break;
                     }
                     case 'independent-t': {
@@ -949,7 +890,7 @@ if (length(levels(.g)) != 2) stop("Grouping variable must have exactly 2 unique 
                ',"g1":"', .jesc(.lvls[1]), '","g2":"', .jesc(.lvls[2]), '"}:END')
 .summary_text = paste(capture.output(print(.fit)), collapse="\\n")
 paste0(.json, "\\n---\\n", .summary_text)`;
-                        metaJson = { x, g, varEq, alt, conf, alpha, label: `Independent t-test: ${x} by ${g}` };
+                        metaJson = { x, g, varEq, alt, conf, label: `Independent t-test: ${x} by ${g}` };
                         break;
                     }
                     case 'anova': {
@@ -973,7 +914,7 @@ ${tukeyR}
 .summary_text = paste(capture.output(print(.s)), collapse="\\n")
 .means_block = paste(capture.output(print(.means)), collapse="\\n")
 paste0(.json, "\\n---\\n", .summary_text, "\\n\\nGroup means:\\n", .means_block, "\\n", .tukey_text)`;
-                        metaJson = { x, g, posthoc, alpha, label: `One-way ANOVA: ${x} by ${g}` };
+                        metaJson = { x, g, posthoc, label: `One-way ANOVA: ${x} by ${g}` };
                         break;
                     }
                     case 'chi-square': {
@@ -1001,7 +942,7 @@ ok = !is.na(.x) & !is.na(.y) & .x != "" & .y != ""; .x = .x[ok]; .y = .y[ok]
 paste0(.json, "\\n---\\n", .summary_text,
        "\\n\\nObserved counts:\\n", .tab_text,
        "\\n\\nExpected counts (under independence):\\n", .exp_text)`;
-                        metaJson = { x, y, chiSim, chiCorrect, alpha, label: `Chi-square test of independence: ${x} × ${y}` };
+                        metaJson = { x, y, chiSim, chiCorrect, label: `Chi-square test of independence: ${x} × ${y}` };
                         break;
                     }
                 }
@@ -1059,24 +1000,10 @@ paste0(.json, "\\n---\\n", .summary_text,
         function hypothesisText(meta) {
             const altSym = (alt) => alt === 'two.sided' ? '\u2260' : (alt === 'greater' ? '>' : '<');
             switch (selectedTest) {
-                case 'one-sample-t': {
-                    return {
-                        H0: `\u03BC = ${meta.mu}`,
-                        H1: `\u03BC ${altSym(meta.alt)} ${meta.mu}`
-                    };
-                }
-                case 'paired-t': {
-                    return {
-                        H0: `\u03BC<sub>${escapeHtml(meta.x)}</sub> = \u03BC<sub>${escapeHtml(meta.y)}</sub>  (mean difference = 0)`,
-                        H1: `\u03BC<sub>${escapeHtml(meta.x)}</sub> ${altSym(meta.alt)} \u03BC<sub>${escapeHtml(meta.y)}</sub>`
-                    };
-                }
-                case 'independent-t': {
-                    return {
-                        H0: 'Mean<sub>1</sub> = Mean<sub>2</sub>',
-                        H1: `Mean<sub>1</sub> ${altSym(meta.alt)} Mean<sub>2</sub>`
-                    };
-                }
+                case 'one-sample-t':
+                case 'paired-t':
+                case 'independent-t':
+                    return { H0: '', H1: '' };
                 case 'anova': {
                     return {
                         H0: 'All group means are equal',
@@ -1095,37 +1022,27 @@ paste0(.json, "\\n---\\n", .summary_text,
 
         function renderResults(s, summary, meta) {
             const h = hypothesisText(meta);
-            $('resultsHeader').innerHTML = `<div style="font-weight:600;color:var(--text-dark);margin-bottom:0.4rem;">${escapeHtml(meta.label)}</div>
+            $('resultsHeader').innerHTML = `<div style="font-weight:600;color:var(--text-dark);margin-bottom:0.4rem;">${escapeHtml(meta.label)}</div>` + (!h.H0 ? '' : `
                 <div style="display:grid;grid-template-columns:auto 1fr;gap:0.4rem 0.8rem;font-size:0.9rem;line-height:1.5;">
                     <div style="font-weight:700;color:var(--iu-crimson);">H<sub>0</sub>:</div><div>${h.H0}</div>
                     <div style="font-weight:700;color:var(--iu-crimson);">H<sub>1</sub>:</div><div>${h.H1}</div>
-                </div>`;
+                </div>`);
             const stats = [];
             const extras = [];
             switch (selectedTest) {
                 case 'one-sample-t':
-                    stats.push({ label: 't-statistic', value: fmt(s.stat) });
-                    stats.push({ label: 'df', value: fmt(s.df, 2) });
-                    stats.push({ label: 'p-value', value: fmtP(s.p) });
                     stats.push({ label: 'Sample mean', value: fmt(s.mean), secondary: `n = ${s.n}` });
-                    stats.push({ label: `${(meta.conf*100).toFixed(0)}% CI`, value: fmtCI(s.ciLo, s.ciHi) });
+                    stats.push({ label: 'Two-tailed p-value', value: fmtP(s.p) });
                     break;
                 case 'paired-t':
-                    stats.push({ label: 't-statistic', value: fmt(s.stat) });
-                    stats.push({ label: 'df', value: fmt(s.df, 2) });
-                    stats.push({ label: 'p-value', value: fmtP(s.p) });
-                    stats.push({ label: `Mean 1 (${escapeHtml(meta.x)})`, value: fmt(s.mean1) });
+                    stats.push({ label: `Mean 1 (${escapeHtml(meta.x)})`, value: fmt(s.mean1), secondary: `n = ${s.n} pairs` });
                     stats.push({ label: `Mean 2 (${escapeHtml(meta.y)})`, value: fmt(s.mean2) });
-                    stats.push({ label: 'Mean diff (1 − 2)', value: fmt(s.mean), secondary: `n = ${s.n} pairs` });
-                    stats.push({ label: `${(meta.conf*100).toFixed(0)}% CI for diff`, value: fmtCI(s.ciLo, s.ciHi) });
+                    stats.push({ label: 'Two-tailed p-value', value: fmtP(s.p) });
                     break;
                 case 'independent-t':
-                    stats.push({ label: 't-statistic', value: fmt(s.stat) });
-                    stats.push({ label: 'df', value: fmt(s.df, 2) });
-                    stats.push({ label: 'p-value', value: fmtP(s.p) });
                     stats.push({ label: `Mean (${escapeHtml(s.g1)})`, value: fmt(s.mean1) });
-                    stats.push({ label: `Mean (${escapeHtml(s.g2)})`, value: fmt(s.mean2) });
-                    stats.push({ label: `${(meta.conf*100).toFixed(0)}% CI for diff`, value: fmtCI(s.ciLo, s.ciHi) });
+                    stats.push({ label: `Mean (${escapeHtml(s.g2)})`, value: fmt(s.mean2), secondary: `n = ${s.n}` });
+                    stats.push({ label: 'Two-tailed p-value', value: fmtP(s.p) });
                     break;
                 case 'anova':
                     stats.push({ label: 'F-statistic', value: fmt(s.stat) });
@@ -1151,19 +1068,6 @@ paste0(.json, "\\n---\\n", .summary_text,
                 </div>
             `).join('');
             $('resultsExtra').innerHTML = extras.join('');
-
-            // Verdict. Guard against a null / non-numeric p-value (e.g. a
-            // degenerate fit): null < alpha would otherwise wrongly read as "reject".
-            if (s.p === null || s.p === undefined || isNaN(s.p)) {
-                $('resultsVerdict').className = 'verdict fail-to-reject';
-                $('resultsVerdict').innerHTML = `<strong>No decision.</strong> The p-value could not be computed for this test, so no reject or fail-to-reject conclusion can be drawn. Check your data and the full R output below.`;
-            } else {
-                const reject = s.p < meta.alpha;
-                $('resultsVerdict').className = 'verdict ' + (reject ? 'reject' : 'fail-to-reject');
-                $('resultsVerdict').innerHTML = reject
-                    ? `<strong>Reject H₀</strong> at α = ${meta.alpha}. The p-value (${fmtP(s.p)}) is below the threshold, so the observed data are unlikely under the null hypothesis.`
-                    : `<strong>Fail to reject H₀</strong> at α = ${meta.alpha}. The p-value (${fmtP(s.p)}) is above the threshold, so the data are consistent with the null hypothesis.`;
-            }
 
             $('rawOutput').textContent = summary.trim();
             $('resultsContainer').classList.add('visible');
