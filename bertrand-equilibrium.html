@@ -678,7 +678,7 @@
                 </div>
 
                 <div class="param-hint" style="margin-top: 1rem; text-align: center;">
-                    Note: b<sub>i</sub> > 0 (higher own price reduces demand), c<sub>i</sub> > 0 (higher rival price increases demand)
+                    Note: b<sub>i</sub> is the size of the own-price effect (higher own price reduces demand). You may also type the regression slope with its minus sign, such as &minus;38.032. c<sub>i</sub> > 0 (higher rival price increases demand)
                 </div>
             </div>
 
@@ -996,13 +996,15 @@
 
         function getParams() {
             if (inputMode === 'manual') {
+                // The own-price effect may be typed either as the size of the effect (38.032) or as the
+                // regression slope with its sign (-38.032); both mean "demand falls by 38.032 per $1".
                 return {
                     a1: parseFloat(document.getElementById('a1').value),
-                    b1: parseFloat(document.getElementById('b1').value),
+                    b1: Math.abs(parseFloat(document.getElementById('b1').value)),
                     c1: parseFloat(document.getElementById('c1').value),
                     mc1: parseFloat(document.getElementById('mc1').value),
                     a2: parseFloat(document.getElementById('a2').value),
-                    b2: parseFloat(document.getElementById('b2').value),
+                    b2: Math.abs(parseFloat(document.getElementById('b2').value)),
                     c2: parseFloat(document.getElementById('c2').value),
                     mc2: parseFloat(document.getElementById('mc2').value)
                 };
@@ -1027,7 +1029,7 @@
                 return 'Base demand (a₁, a₂) must be positive.';
             }
             if (p.b1 <= 0 || p.b2 <= 0) {
-                return 'Own-price effects (b₁, b₂) must be positive.';
+                return 'Own-price effects (b₁, b₂) cannot be zero.';
             }
             if (p.c1 < 0 || p.c2 < 0) {
                 return 'Cross-price effects (c₁, c₂) should be non-negative for substitutes.';

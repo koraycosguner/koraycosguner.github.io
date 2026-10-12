@@ -1580,32 +1580,62 @@
             }
             clearInlineError('regUploadError');
             const reader = new FileReader();
-            reader.onload = (e) => {
-                try {
-                    regCsvData = parseRegCSV(e.target.result);
-                    regCsvData.raw = e.target.result;
-                    if (regCsvData.data.length === 0) {
-                        showInlineError('regUploadError', 'No usable data rows were found in this file. Check that it is a comma-separated CSV with a header row.');
-                        return;
-                    }
-                    displayRegPreview(regCsvData.headers, regCsvData.data);
-                    populateRegDropdowns(regCsvData.headers, regCsvData.data);
-                    document.getElementById('regDataPreview').style.display = 'block';
-                    document.getElementById('regColumnMapping').style.display = 'block';
-                    const skippedNote = regCsvData.skipped > 0
-                        ? ` ${regCsvData.skipped} malformed row(s) were skipped (column count did not match the header).`
-                        : '';
-                    document.getElementById('regDataInfo').textContent =
-                        `Loaded ${regCsvData.data.length} rows × ${regCsvData.headers.length} columns.${skippedNote}`;
-                    // Reset previous results
-                    regCoefficients = null;
-                    document.getElementById('regressionResults').style.display = 'none';
-                } catch (error) {
-                    showInlineError('regUploadError', 'Error parsing CSV: ' + error.message);
-                }
-            };
+            reader.onload = (e) => loadRegText(e.target.result);
             reader.readAsText(file);
         }
+
+        // Shared by the file upload and the class-data link (?data=<name>).
+        function loadRegText(text) {
+            try {
+                regCsvData = parseRegCSV(text);
+                regCsvData.raw = text;
+                if (regCsvData.data.length === 0) {
+                    showInlineError('regUploadError', 'No usable data rows were found in this file. Check that it is a comma-separated CSV with a header row.');
+                    return;
+                }
+                displayRegPreview(regCsvData.headers, regCsvData.data);
+                populateRegDropdowns(regCsvData.headers, regCsvData.data);
+                document.getElementById('regDataPreview').style.display = 'block';
+                document.getElementById('regColumnMapping').style.display = 'block';
+                const skippedNote = regCsvData.skipped > 0
+                    ? ` ${regCsvData.skipped} malformed row(s) were skipped (column count did not match the header).`
+                    : '';
+                document.getElementById('regDataInfo').textContent =
+                    `Loaded ${regCsvData.data.length} rows × ${regCsvData.headers.length} columns.${skippedNote}`;
+                // Reset previous results
+                regCoefficients = null;
+                document.getElementById('regressionResults').style.display = 'none';
+            } catch (error) {
+                showInlineError('regUploadError', 'Error parsing CSV: ' + error.message);
+            }
+        }
+
+        // Class dataset from a link: competitive-channel.html?data=<name> opens the Run Regression tab and loads
+        // data/m303/<name>.csv once signed in. The sign-in redirect drops the query string, so the name rides
+        // along in sessionStorage (same mechanism as glm-tool.html).
+        (function () {
+            let d = new URLSearchParams(location.search).get('data');
+            try {
+                if (d) sessionStorage.setItem('classDataCC', JSON.stringify({ d }));
+                else ({ d } = JSON.parse(sessionStorage.getItem('classDataCC') || '{}'));
+            } catch (e) {}
+            if (!d || !/^[A-Za-z0-9_-]{1,80}$/.test(d)) return;
+            const whenSignedIn = (cb) => {
+                const m = document.getElementById('main-content');
+                if (!m || m.style.display === 'block') return cb();
+                const iv = setInterval(() => { if (m.style.display === 'block') { clearInterval(iv); cb(); } }, 200);
+            };
+            const start = () => whenSignedIn(() => {
+                try { sessionStorage.removeItem('classDataCC'); } catch (e) {}
+                const regBtn = Array.from(document.querySelectorAll('.mode-toggle button')).find(b => /Regression/i.test(b.textContent));
+                if (regBtn) switchInputMode('regression', regBtn);
+                fetch(`data/m303/${d}.csv`, { cache: 'no-cache' })
+                    .then(r => { if (!r.ok) throw new Error(r.status); return r.text(); })
+                    .then(text => { clearInlineError('regUploadError'); loadRegText(text); })
+                    .catch(() => showInlineError('regUploadError', `Could not load ${d}.csv. Upload it instead.`));
+            });
+            if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start); else start();
+        })();
 
         function displayRegPreview(headers, data) {
             const table = document.getElementById('regPreviewTable');
