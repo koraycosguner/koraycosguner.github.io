@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Copy | Koray Cosguner</title>
+<style>
+  body { margin:0; font-family:-apple-system, "Helvetica Neue", Helvetica, Arial, sans-serif; background:#f8fafc; color:#1e293b; }
+  main { max-width:760px; margin:56px auto; padding:0 20px; }
+  h1 { font-size:20px; margin:0 0 6px; }
+  p { color:#64748b; margin:0 0 18px; font-size:15px; }
+  pre { white-space:pre-wrap; word-break:break-word; background:#fff; border:1px solid #e2e8f0; border-radius:10px; padding:18px 20px; font:15px/1.55 ui-monospace, Menlo, Consolas, monospace; margin:0 0 16px; }
+  button { font:700 16px/1 inherit; padding:12px 20px; border-radius:8px; border:1.5px solid #990000; background:#990000; color:#fff; cursor:pointer; }
+  button.done { background:#fff; color:#990000; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Copy this text</h1>
+  <p>Opened from the lecture notes. Click Copy, then paste it into the web tool.</p>
+  <pre id="t"></pre>
+  <button id="b" type="button">Copy</button>
+</main>
+<script>
+  // The text travels in the URL fragment (after #), so it never reaches a server.
+  var raw = location.hash.replace(/^#/, "");
+  var text = ""; try { text = decodeURIComponent(raw); } catch (e) { text = raw; }
+  document.getElementById("t").textContent = text || "(nothing to copy)";
+  var b = document.getElementById("b");
+  b.addEventListener("click", function () {
+    var ok = function () { b.textContent = "Copied"; b.className = "done"; setTimeout(function () { b.textContent = "Copy"; b.className = ""; }, 1600); };
+    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(ok, sel); else sel();
+    function sel() { var r = document.createRange(); r.selectNodeContents(document.getElementById("t")); var s = getSelection(); s.removeAllRanges(); s.addRange(r); try { document.execCommand("copy"); ok(); } catch (e) {} }
+  });
+</script>
+</body>
+</html>
