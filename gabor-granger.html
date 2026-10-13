@@ -656,12 +656,6 @@
             font-weight: 600;
         }
 
-        .results-table tr.optimal td:first-child::before {
-            content: "* ";
-            color: var(--iu-crimson);
-            font-weight: 700;
-        }
-
         /* Interpretation Section */
         .interpretation {
             background: var(--bg-light);
@@ -1364,6 +1358,7 @@
                                 <th>Price Point</th>
                                 <th>Purchase Intent (%)</th>
                                 <th>Revenue Index</th>
+                                <th>Price Elasticity</th>
                             </tr>
                         </thead>
                         <tbody id="resultsBody">
@@ -1371,6 +1366,7 @@
                     </table>
                 </div>
                 <p style="font-size: 0.85rem; color: var(--text-light); margin-top: 0.5rem;" id="tableFootnote">* Indicates revenue-maximizing price point</p>
+                <p style="font-size: 0.85rem; color: var(--text-light); margin-top: 0.25rem;">Price elasticity is the % change in purchase intent divided by the % change in price, measured from the row above. Below -1, demand is elastic.</p>
 
                 <!-- Interpretation -->
                 <div class="interpretation" id="interpretationSection">
@@ -1701,71 +1697,100 @@
             Papa.parse(file, {
                 header: true,
                 skipEmptyLines: true,
-                complete: function(results) {
-                    // Filter out benign "UndetectableDelimiter" warning (common with single-column CSVs)
-                    const realErrors = results.errors.filter(e => e.type !== 'Delimiter');
-                    if (realErrors.length > 0) {
-                        showStatus('Error parsing CSV: ' + realErrors[0].message, 'error');
-                        return;
-                    }
-
-                    // Find the WTP column (case-insensitive)
-                    const columns = results.meta.fields;
-                    let wtpColumn = columns.find(col => col.toLowerCase() === 'wtp');
-
-                    // Also try common alternatives
-                    if (!wtpColumn) {
-                        wtpColumn = columns.find(col =>
-                            col.toLowerCase().includes('wtp') ||
-                            col.toLowerCase().includes('willingness') ||
-                            col.toLowerCase() === 'maxwtp' ||
-                            col.toLowerCase() === 'max_wtp'
-                        );
-                    }
-
-                    // If still not found and there's only one column, use it
-                    if (!wtpColumn && columns.length === 1) {
-                        wtpColumn = columns[0];
-                    }
-
-                    if (!wtpColumn) {
-                        showStatus('Could not find a WTP column. Please ensure your CSV has a column named "wtp".', 'error');
-                        return;
-                    }
-
-                    // Extract WTP values
-                    // Keep zero (and any below-minimum) values: these are "never-buyers" who
-                    // reject every offered price. They must stay in the denominator so purchase
-                    // intent is not overstated. They never count as buyers at any positive price.
-                    const wtpValues = [];
-                    results.data.forEach(row => {
-                        const val = parseFloat(row[wtpColumn]);
-                        if (!isNaN(val) && val >= 0) {
-                            wtpValues.push(val);
-                        }
-                    });
-
-                    if (wtpValues.length < 10) {
-                        showStatus('Need at least 10 valid WTP values. Found: ' + wtpValues.length, 'error');
-                        return;
-                    }
-
-                    // Show data preview
-                    showWtpDataPreview(wtpValues, wtpColumn);
-
-                    // Store WTP values for later analysis
-                    window.loadedWtpValues = wtpValues;
-
-                    // Show the settings section
-                    document.getElementById('wtpCsvSettingsSection').style.display = 'block';
-
-                    showStatus(`Loaded ${wtpValues.length} WTP values from "${wtpColumn}" column. Click "Run Analysis" to proceed.`, 'success');
-                },
+                complete: onWtpCsvParsed,
                 error: function(error) {
                     showStatus('Error reading file: ' + error.message, 'error');
                 }
             });
         }
+
+        // Shared by the file upload and the class dataset link below.
+        function onWtpCsvParsed(results) {
+            // Filter out benign "UndetectableDelimiter" warning (common with single-column CSVs)
+            const realErrors = results.errors.filter(e => e.type !== 'Delimiter');
+            if (realErrors.length > 0) {
+                showStatus('Error parsing CSV: ' + realErrors[0].message, 'error');
+                return;
+            }
+
+            // Find the WTP column (case-insensitive)
+            const columns = results.meta.fields;
+            let wtpColumn = columns.find(col => col.toLowerCase() === 'wtp');
+
+            // Also try common alternatives
+            if (!wtpColumn) {
+                wtpColumn = columns.find(col =>
+                    col.toLowerCase().includes('wtp') ||
+                    col.toLowerCase().includes('willingness') ||
+                    col.toLowerCase() === 'maxwtp' ||
+                    col.toLowerCase() === 'max_wtp'
+                );
+            }
+
+            // If still not found and there's only one column, use it
+            if (!wtpColumn && columns.length === 1) {
+                wtpColumn = columns[0];
+            }
+
+            if (!wtpColumn) {
+                showStatus('Could not find a WTP column. Please ensure your CSV has a column named "wtp".', 'error');
+                return;
+            }
+
+            // Extract WTP values
+            // Keep zero (and any below-minimum) values: these are "never-buyers" who
+            // reject every offered price. They must stay in the denominator so purchase
+            // intent is not overstated. They never count as buyers at any positive price.
+            const wtpValues = [];
+            results.data.forEach(row => {
+                const val = parseFloat(row[wtpColumn]);
+                if (!isNaN(val) && val >= 0) {
+                    wtpValues.push(val);
+                }
+            });
+
+            if (wtpValues.length < 10) {
+                showStatus('Need at least 10 valid WTP values. Found: ' + wtpValues.length, 'error');
+                return;
+            }
+
+            // Show data preview
+            showWtpDataPreview(wtpValues, wtpColumn);
+
+            // Store WTP values for later analysis
+            window.loadedWtpValues = wtpValues;
+
+            // Show the settings section
+            document.getElementById('wtpCsvSettingsSection').style.display = 'block';
+
+            showStatus(`Loaded ${wtpValues.length} WTP values from "${wtpColumn}" column. Click "Run Analysis" to proceed.`, 'success');
+        }
+
+        // Class dataset from a link: gabor-granger.html?data=<name> loads data/m303/<name>.csv once signed in.
+        // The sign-in redirect drops the query string, so the name rides along in sessionStorage.
+        (function () {
+            let d = new URLSearchParams(location.search).get('data');
+            try {
+                if (d) sessionStorage.setItem('classDataGG', JSON.stringify({ d }));
+                else ({ d } = JSON.parse(sessionStorage.getItem('classDataGG') || '{}'));
+            } catch (e) {}
+            if (!d || !/^[A-Za-z0-9_-]{1,80}$/.test(d)) return;
+            const whenSignedIn = (cb) => {
+                const m = document.getElementById('main-content');
+                if (!m || m.style.display === 'block') return cb();
+                const iv = setInterval(() => { if (m.style.display === 'block') { clearInterval(iv); cb(); } }, 200);
+            };
+            whenSignedIn(() => {
+                try { sessionStorage.removeItem('classDataGG'); } catch (e) {}
+                fetch(`data/m303/${d}.csv`, { cache: 'no-cache' })
+                    .then(r => { if (!r.ok) throw new Error(r.status); return r.text(); })
+                    .then(text => {
+                        setWtpInputMode('csv');
+                        Papa.parse(text, { header: true, skipEmptyLines: true, complete: onWtpCsvParsed });
+                    })
+                    .catch(() => showStatus(`Could not load ${d}.csv. Upload it instead.`, 'error'));
+            });
+        })();
 
         function handleFile(file) {
             if (!file.name.endsWith('.csv')) {
@@ -1987,6 +2012,20 @@
             return currency + value.toFixed(2);
         }
 
+        // Price elasticity of one step in the results table: the percent change in purchase
+        // intent divided by the percent change in price, from the row above to this row.
+        function stepElasticity(data, idx) {
+            if (idx === 0) return null;
+            const prev = data[idx - 1], cur = data[idx];
+            if (!(prev.price > 0) || !(prev.intent > 0) || cur.price === prev.price) return null;
+            const e = ((cur.intent - prev.intent) / prev.intent) / ((cur.price - prev.price) / prev.price);
+            return isFinite(e) ? e : null;
+        }
+
+        function formatElasticity(e) {
+            return e === null ? '-' : e.toFixed(2);
+        }
+
         function displayResults() {
             const { data, revenueOptimalIndex, profitOptimalIndex, currency, cost } = analysisResults;
             const revenueOptimal = data[revenueOptimalIndex];
@@ -2020,6 +2059,7 @@
                         <th>Purchase Intent (%)</th>
                         <th>Revenue Index</th>
                         <th>Profit Index</th>
+                        <th>Price Elasticity</th>
                     </tr>
                 `;
             } else {
@@ -2028,6 +2068,7 @@
                         <th>Price Point</th>
                         <th>Purchase Intent (%)</th>
                         <th>Revenue Index</th>
+                        <th>Price Elasticity</th>
                     </tr>
                 `;
             }
@@ -2058,6 +2099,7 @@
                             <td>${item.intent.toFixed(1)}%</td>
                             <td>${item.revenueIndex.toFixed(2)}</td>
                             <td>${item.profitIndex.toFixed(2)}</td>
+                            <td>${formatElasticity(stepElasticity(data, idx))}</td>
                         </tr>
                     `;
                 } else {
@@ -2066,6 +2108,7 @@
                             <td>${marker}${formatPrice(item.price, currency)}</td>
                             <td>${item.intent.toFixed(1)}%</td>
                             <td>${item.revenueIndex.toFixed(2)}</td>
+                            <td>${formatElasticity(stepElasticity(data, idx))}</td>
                         </tr>
                     `;
                 }
@@ -2560,6 +2603,7 @@
                         <th>Purchase Intent (%)</th>
                         <th>Revenue Index</th>
                         <th>Profit Index</th>
+                        <th>Price Elasticity</th>
                     </tr>
                 `;
             } else {
@@ -2568,6 +2612,7 @@
                         <th>Price Point</th>
                         <th>Purchase Intent (%)</th>
                         <th>Revenue Index</th>
+                        <th>Price Elasticity</th>
                     </tr>
                 `;
             }
@@ -2598,6 +2643,7 @@
                             <td>${item.intent.toFixed(1)}%</td>
                             <td>${item.revenueIndex.toFixed(2)}</td>
                             <td>${item.profitIndex.toFixed(2)}</td>
+                            <td>${formatElasticity(stepElasticity(data, idx))}</td>
                         </tr>
                     `;
                 } else {
@@ -2606,6 +2652,7 @@
                             <td>${marker}${formatPrice(item.price, currency)}</td>
                             <td>${item.intent.toFixed(1)}%</td>
                             <td>${item.revenueIndex.toFixed(2)}</td>
+                            <td>${formatElasticity(stepElasticity(data, idx))}</td>
                         </tr>
                     `;
                 }
@@ -2856,16 +2903,19 @@
             }
             csv += '\nDetailed Results\n';
             if (cost !== null) {
-                csv += 'Price,Purchase Intent (%),Revenue Index,Profit Index,Is Revenue Optimal,Is Profit Optimal\n';
+                csv += 'Price,Purchase Intent (%),Revenue Index,Profit Index,Price Elasticity,Is Revenue Optimal,Is Profit Optimal\n';
             } else {
-                csv += 'Price,Purchase Intent (%),Revenue Index,Is Optimal\n';
+                csv += 'Price,Purchase Intent (%),Revenue Index,Price Elasticity,Is Optimal\n';
             }
 
             data.forEach((item, idx) => {
+                // Blank on the first row, where there is no lower price to compare with.
+                const e = stepElasticity(data, idx);
+                const elasticity = e === null ? '' : e.toFixed(2);
                 if (cost !== null) {
-                    csv += `${item.price.toFixed(2)},${item.intent.toFixed(1)},${item.revenueIndex.toFixed(2)},${item.profitIndex.toFixed(2)},${idx === revenueOptimalIndex ? 'Yes' : 'No'},${idx === profitOptimalIndex ? 'Yes' : 'No'}\n`;
+                    csv += `${item.price.toFixed(2)},${item.intent.toFixed(1)},${item.revenueIndex.toFixed(2)},${item.profitIndex.toFixed(2)},${elasticity},${idx === revenueOptimalIndex ? 'Yes' : 'No'},${idx === profitOptimalIndex ? 'Yes' : 'No'}\n`;
                 } else {
-                    csv += `${item.price.toFixed(2)},${item.intent.toFixed(1)},${item.revenueIndex.toFixed(2)},${idx === revenueOptimalIndex ? 'Yes' : 'No'}\n`;
+                    csv += `${item.price.toFixed(2)},${item.intent.toFixed(1)},${item.revenueIndex.toFixed(2)},${elasticity},${idx === revenueOptimalIndex ? 'Yes' : 'No'}\n`;
                 }
             });
 

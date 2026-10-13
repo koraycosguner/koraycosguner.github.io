@@ -822,7 +822,7 @@ function refreshSummary() {
     ).join(' ');
     const baseLabelNote = profilesData ? ' Base levels detected from profiles.' : '';
     summaryBox.innerHTML = '<strong>' + designData.length + ' profiles</strong>, <strong>' +
-        respondentColumns.length + ' respondents</strong>, <strong>' +
+        respondentColumns.length + (respondentColumns.length === 1 ? ' respondent' : ' respondents') + '</strong>, <strong>' +
         attributes.length + ' attributes</strong>' + baseLabelNote + '<br>' + badgesHtml;
 }
 
@@ -863,8 +863,8 @@ function checkBothUploaded() {
     if (dummyColumns.length < 2) {
         showBanner('step1Banner', 'The design matrix must have at least 2 dummy variable columns. Found columns: ' + escapeHtml(designCols.join(', ')), 'error'); return;
     }
-    if (respondentColumns.length < 2) {
-        showBanner('step1Banner', 'The ratings file must have at least 2 respondent columns.', 'error'); return;
+    if (respondentColumns.length < 1) {
+        showBanner('step1Banner', 'The ratings file must have at least 1 respondent column.', 'error'); return;
     }
 
     // Spot-check: can we parse the first dummy value?
@@ -892,7 +892,7 @@ function checkBothUploaded() {
     ).join(' ');
     const baseLabelNote = profilesData ? ' Base levels detected from profiles.' : '';
     summaryBox.innerHTML = '<strong>' + designData.length + ' profiles</strong>, <strong>' +
-        respondentColumns.length + ' respondents</strong>, <strong>' +
+        respondentColumns.length + (respondentColumns.length === 1 ? ' respondent' : ' respondents') + '</strong>, <strong>' +
         attributes.length + ' attributes</strong>' + baseLabelNote + '<br>' + badgesHtml;
 
     // Preview tables
@@ -944,6 +944,12 @@ function detectAttributes(columns) {
                     profilesData.map(row => String(row[matchCol] ?? '').trim()).filter(v => v !== '')
                 );
                 // Base = value present in profiles but not matching any dummy level
+                // Show each dummy level under the name the profiles file uses for it
+                // ("4K Touch" instead of the column suffix "4K_Touch").
+                dummyLevels.forEach(l => {
+                    const shown = [...allValues].find(v => l.name === v || l.name.replace(/_/g, ' ') === v || l.name === v.replace(/ /g, '_'));
+                    if (shown !== undefined) l.name = shown;
+                });
                 const baseValues = [...allValues].filter(v => !valueMatchesAnyLevel(v, dummyLevels));
                 if (baseValues.length === 1) {
                     baseName = baseValues[0];
@@ -2015,6 +2021,48 @@ function loadExampleData() {
     // Auto-run the regression so results appear immediately.
     if (designData && ratingsData) runRegression();
 }
+
+// Class dataset from a link: conjoint-analysis.html?data=<name> loads data/m303/<name>_Dummy_Profiles.csv and
+// <name>_Ratings.csv (plus <name>_Profiles.csv when it exists) once signed in, then runs the regression.
+// The sign-in redirect drops the query string, so the name rides along in sessionStorage.
+(function () {
+    let d = new URLSearchParams(location.search).get('data');
+    try {
+        if (d) sessionStorage.setItem('classDataCA', JSON.stringify({ d }));
+        else ({ d } = JSON.parse(sessionStorage.getItem('classDataCA') || '{}'));
+    } catch (e) {}
+    if (!d || !/^[A-Za-z0-9_-]{1,60}$/.test(d)) return;
+    const whenSignedIn = (cb) => {
+        const m = document.getElementById('main-content');
+        if (!m || m.style.display === 'block') return cb();
+        const iv = setInterval(() => { if (m.style.display === 'block') { clearInterval(iv); cb(); } }, 200);
+    };
+    const get = (suffix, optional) => fetch(`data/m303/${d}_${suffix}.csv`, { cache: 'no-cache' })
+        .then(r => { if (!r.ok) { if (optional) return null; throw new Error(r.status); } return r.text(); })
+        .then(text => text === null ? null : cleanParsedData(Papa.parse(text, { header: true, skipEmptyLines: true }).data));
+    whenSignedIn(() => {
+        try { sessionStorage.removeItem('classDataCA'); } catch (e) {}
+        Promise.all([get('Dummy_Profiles'), get('Ratings'), get('Profiles', true)])
+            .then(([design, ratings, profiles]) => {
+                designData = design;
+                ratingsData = ratings;
+                profilesData = profiles;
+                document.getElementById('designFileName').textContent = '\u2713 ' + d + '_Dummy_Profiles.csv';
+                document.getElementById('ratingsFileName').textContent = '\u2713 ' + d + '_Ratings.csv';
+                document.getElementById('designUploadArea').classList.add('loaded');
+                document.getElementById('ratingsUploadArea').classList.add('loaded');
+                if (profiles) {
+                    document.getElementById('profilesFileName').textContent = '\u2713 ' + d + '_Profiles.csv';
+                    document.getElementById('profilesUploadArea').classList.add('loaded');
+                }
+                clearBanner('step1Banner');
+                resetDownstream();
+                checkBothUploaded();
+                if (document.getElementById('runAnalysis').style.display !== 'none') runRegression();
+            })
+            .catch(() => showBanner('step1Banner', 'Could not load the class dataset "' + escapeHtml(d) + '". Upload the CSV files instead.', 'error'));
+    });
+})();
 
 // Let Enter in the threshold field update the segmentation (Enter-to-calculate).
 document.getElementById('thresholdInput').addEventListener('keydown', function(e) {

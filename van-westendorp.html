@@ -1151,26 +1151,52 @@
             Papa.parse(file, {
                 header: true,
                 skipEmptyLines: true,
-                complete: function(results) {
-                    const realErrors = results.errors.filter(e => e.type !== 'Delimiter');
-                    if (realErrors.length > 0) {
-                        showStatus('Error parsing CSV: ' + realErrors[0].message, 'error');
-                        return;
-                    }
-
-                    csvData = results;
-                    columnNames = results.meta.fields;
-
-                    showDataPreview();
-                    populateColumnSelectors();
-                    mappingCard.style.display = 'block';
-                    showStatus(`Loaded ${results.data.length} rows with ${columnNames.length} columns.`, 'success');
-                },
+                complete: onCsvParsed,
                 error: function(error) {
                     showStatus('Error reading file: ' + error.message, 'error');
                 }
             });
         }
+
+        // Shared by the file upload and the class dataset link below.
+        function onCsvParsed(results) {
+            const realErrors = results.errors.filter(e => e.type !== 'Delimiter');
+            if (realErrors.length > 0) {
+                showStatus('Error parsing CSV: ' + realErrors[0].message, 'error');
+                return;
+            }
+
+            csvData = results;
+            columnNames = results.meta.fields;
+
+            showDataPreview();
+            populateColumnSelectors();
+            mappingCard.style.display = 'block';
+            showStatus(`Loaded ${results.data.length} rows with ${columnNames.length} columns.`, 'success');
+        }
+
+        // Class dataset from a link: van-westendorp.html?data=<name> loads data/m303/<name>.csv once signed in.
+        // The sign-in redirect drops the query string, so the name rides along in sessionStorage.
+        (function () {
+            let d = new URLSearchParams(location.search).get('data');
+            try {
+                if (d) sessionStorage.setItem('classDataVW', JSON.stringify({ d }));
+                else ({ d } = JSON.parse(sessionStorage.getItem('classDataVW') || '{}'));
+            } catch (e) {}
+            if (!d || !/^[A-Za-z0-9_-]{1,80}$/.test(d)) return;
+            const whenSignedIn = (cb) => {
+                const m = document.getElementById('main-content');
+                if (!m || m.style.display === 'block') return cb();
+                const iv = setInterval(() => { if (m.style.display === 'block') { clearInterval(iv); cb(); } }, 200);
+            };
+            whenSignedIn(() => {
+                try { sessionStorage.removeItem('classDataVW'); } catch (e) {}
+                fetch(`data/m303/${d}.csv`, { cache: 'no-cache' })
+                    .then(r => { if (!r.ok) throw new Error(r.status); return r.text(); })
+                    .then(text => Papa.parse(text, { header: true, skipEmptyLines: true, complete: onCsvParsed }))
+                    .catch(() => showStatus(`Could not load ${d}.csv. Upload it instead.`, 'error'));
+            });
+        })();
 
         function showDataPreview() {
             const thead = previewTable.querySelector('thead');
