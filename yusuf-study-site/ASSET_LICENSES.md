@@ -62,3 +62,16 @@ Teaching diagrams in spanish/TutorVisual.tsx are original editable SVG/React cod
 They reuse existing local school-day artwork and the supplies atlas where appropriate.
 The audio hook uses browser-provided Spanish speech synthesis; no prerecorded voice
 library or proprietary voice files are redistributed.
+
+## October 19 Unit 3 instructional media
+
+The files `public/quizzes/spanish/unit-3/arrival.webp` and `departure.webp` are
+original illustrations generated for this app using built-in imagegen. They show
+fictional students, with no real-person photographs, private records or teacher
+surnames. No third-party image library or CDN is required. Source prompts, sizes,
+and processing details are in `UNIT3_MEDIA_NOTES.md`.
+
+The calendar, class schedule, school map, clocks, spatial examples and image-failure
+fallbacks in `spanish/unit3/Unit3Visual.tsx` are original editable React/HTML/SVG.
+The timetable and map are explicitly fictional practice examples. No original
+teacher documents or unlicensed third-party art are redistributed.

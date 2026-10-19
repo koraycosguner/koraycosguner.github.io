@@ -2,6 +2,41 @@
 
 A growing, multi-subject practice hub for Yusuf's seventh-grade classes.
 
+## Spanish Unit 3 — October 19, 2026
+
+**Mi Día en la Escuela y Mi Horario** is an additive module at
+`/quizzes/spanish/unit-3/`. Open it from the new Unit 3 link on Spanish home.
+The feature branch contains source and generated GitHub Pages files; publishing
+requires a separate production release. A branch push alone does not update the public site.
+
+Five illustrated stories each lead to six questions and two checks. The module
+also has two tap/drag word-bank stories, a focused study-guide review, and a
+32-question mixed practice test. First answers determine the practice grade;
+optional retries cannot rewrite it. Fresh review targets weaker categories.
+Progress uses the separate browser-local key `yusuf.spanish.unit3.v1`.
+
+Edit `spanish/unit3/content.ts` for the curriculum, `learning.ts` for learning
+rules, `Unit3App.tsx` / `unit3.css` for screens, and `Unit3Visual.tsx` /
+`visuals.css` for editable maps, calendars, clocks and diagrams. Two original
+illustrations are under `public/quizzes/spanish/unit-3/`.
+
+Run the GitHub Pages preview locally:
+
+```bash
+pnpm install
+pnpm build:pages
+python3 -m http.server 4176 --bind 127.0.0.1 --directory pages-dist
+```
+
+Then open `http://127.0.0.1:4176/yusufs-quizzes/quizzes/spanish/unit-3/`.
+Alternatively, `pnpm dev` serves the same source without the `/yusufs-quizzes` prefix.
+Use Node 22.13 or newer and the pnpm version in `package.json`.
+
+See `UNIT3_ACCEPTANCE_REPORT.md`, `UNIT3_CONTENT_AUDIT.md` and
+`UNIT3_MEDIA_NOTES.md` for checks, content decisions and asset provenance.
+Teacher Unit 3 source sheets and exact period bell times were not supplied.
+The model timetable is explicitly fictional; the supplied class order is preserved.
+
 ## Current Spanish tutor — October 7, 2026
 
 Public hub: **https://koraycosguner.github.io/yusufs-quizzes/**.

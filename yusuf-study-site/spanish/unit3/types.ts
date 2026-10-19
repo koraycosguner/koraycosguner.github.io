@@ -1,0 +1,10 @@
+export type U3Skill='estar'|'ser-estar'|'prepositions'|'places'|'days'|'months'|'numbers'|'ordinals'|'dates'|'time'|'schedule'|'start-end';
+export type U3Visual={kind:'arrival'|'calendar'|'schedule'|'map'|'departure'|'clock'|'relation';hour?:number;minute?:number;period?:number;day?:string;month?:string;date?:number;relation?:string};
+export type U3Choice={id:string;label:string};
+export type U3Question={id:string;skill:U3Skill;storyId?:string;format:'choice'|'order'|'bank';prompt:string;context?:string;choices:U3Choice[];answer:string[];explanation:string;hint:string;visual?:U3Visual;test:boolean;parallelGroup:string;segments?:string[]};
+export type U3Story={id:string;title:string;subtitle:string;paragraph:string;english:string;visual:U3Visual;questionIds:string[];checkpointIds:string[]};
+export type U3Reference={skill:U3Skill;title:string;entries:{spanish:string;english:string}[]};
+export type U3Mode='story'|'review'|'test'|'complete'|'targeted';
+export type U3Evidence={sessionId:number;questionId:string;first:string[];correct:boolean;assisted:boolean;order:number;mode:U3Mode};
+export type U3Session={id:number;mode:U3Mode;storyId?:string;ids:string[];index:number;selection:string[];feedback:boolean;hint:boolean;complete:boolean;remediationIds?:string[];retry?:boolean};
+export type U3Saved={version:1;nextSession:number;session:U3Session|null;evidence:U3Evidence[];completedStories:string[];seen:string[]};

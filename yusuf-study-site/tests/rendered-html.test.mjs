@@ -10,3 +10,9 @@ test('production build includes real subject hub, Spanish and original Ecology a
  for(const name of ['friends','backpack','classes','teamwork','conversation','band','classroom-panorama','supplies-atlas'])await access(new URL('../dist/client/quizzes/spanish/school-day/'+name+'.webp',import.meta.url));
  const bank=await readFile(new URL('../dist/client/quizzes/ecology/content.js',import.meta.url),'utf8');assert.match(bank,/questions/);
 });
+
+test('production build preserves the new Unit 3 instructional artwork and source routes',async()=>{
+ for(const name of ['arrival','departure'])await access(new URL('../dist/client/quizzes/spanish/unit-3/'+name+'.webp',import.meta.url));
+ for(const route of ['', 'complete-story/', 'study-guide/', 'practice-test/'])await access(new URL('../app/quizzes/spanish/unit-3/'+route+'page.tsx',import.meta.url));
+ const home=await readFile(new URL('../spanish/TutorCenter.tsx',import.meta.url),'utf8');assert.match(home,/quizzes\/spanish\/unit-3/);
+});

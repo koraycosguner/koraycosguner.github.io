@@ -4,6 +4,10 @@ import {pagesBase} from './routes';
 import '../app/globals.css';
 
 const routes:Record<string,ComponentType>={
+  '/quizzes/spanish/unit-3/':lazy(()=>import('../app/quizzes/spanish/unit-3/page')),
+  '/quizzes/spanish/unit-3/complete-story/':lazy(()=>import('../app/quizzes/spanish/unit-3/complete-story/page')),
+  '/quizzes/spanish/unit-3/study-guide/':lazy(()=>import('../app/quizzes/spanish/unit-3/study-guide/page')),
+  '/quizzes/spanish/unit-3/practice-test/':lazy(()=>import('../app/quizzes/spanish/unit-3/practice-test/page')),
   '/quizzes/spanish/unit-2/learn-with-pictures/':lazy(()=>import('../app/quizzes/spanish/unit-2/learn-with-pictures/page')),
   '/quizzes/spanish/unit-2/practice/':lazy(()=>import('../app/quizzes/spanish/unit-2/practice/page')),
   '/quizzes/spanish/unit-2/vocabulary/':lazy(()=>import('../app/quizzes/spanish/unit-2/vocabulary/page')),
@@ -39,6 +43,7 @@ class LoadBoundary extends Component<{children:ReactNode},{failed:boolean}> {
 let path=window.location.pathname.slice(pagesBase.length-1).replace(/\/index\.html$/,'/');
 if(!path.endsWith('/'))path+='/';
 const Page=routes[path];
-if(path.includes('spanish'))document.title='Spanish · Yusuf’s Study Club';
+if(path.includes('/unit-3/'))document.title='Spanish Unit 3 · Yusuf’s Study Club';
+else if(path.includes('spanish'))document.title='Spanish · Yusuf’s Study Club';
 else if(path.includes('rikki'))document.title='Rikki-Tikki-Tavi · Yusuf’s Study Club';
 createRoot(document.getElementById('root')!).render(<LoadBoundary><Suspense fallback={<p style={{font:'18px system-ui',padding:'2rem',color:'#173c43'}}>Opening your activity…</p>}>{Page?<Page/>:<main><h1>Choose your next activity</h1><a href={pagesBase}>All subjects</a></main>}</Suspense></LoadBoundary>);

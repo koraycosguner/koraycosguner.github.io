@@ -38,8 +38,8 @@ const subjects: Subject[] = [
   {
     name: "Spanish",
     initial: "Ñ",
-    note: "Unit 2 adventure",
-    description: "Explore a classroom, meet classmates, and practice Spanish in context.",
+    note: "Units 2 & 3 ready",
+    description: "Explore the classroom and follow a school day with stories, pictures, and practice.",
     className: "subject-spanish",
     href: "/quizzes/spanish/",
     ready: true,

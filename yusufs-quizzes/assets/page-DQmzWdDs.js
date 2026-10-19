@@ -1,1 +1,0 @@
-import{t as e}from"./index-DGTfVboY.js";import{t}from"./StoryApp-CRPSI36e.js";var n=e();function r(){return(0,n.jsx)(t,{})}export{r as default};
