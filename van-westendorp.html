@@ -256,6 +256,15 @@
             border-color: var(--iu-crimson);
         }
 
+        /* How-to-read table under the chart: one row per price point */
+        .vw-read { width: 100%; max-width: 1000px; margin: 0.5rem auto 0; border-collapse: collapse; font-size: 0.88rem; color: #333; }
+        .vw-read th { text-align: left; font-weight: 600; color: var(--text-light); border-bottom: 2px solid var(--border); padding: 0.45rem 0.6rem; }
+        .vw-read td { text-align: left; vertical-align: top; border-bottom: 1px solid var(--border); padding: 0.5rem 0.6rem; line-height: 1.45; }
+        .vw-read td:nth-child(2) { font-weight: 700; white-space: nowrap; }
+        .vw-read td:first-child { white-space: nowrap; }
+        @media (max-width: 640px) { .vw-read { font-size: 0.8rem; } .vw-read td:first-child { white-space: normal; } }
+        .vw-sr-only { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+
         .form-hint {
             font-size: 0.8rem;
             color: var(--text-light);
@@ -972,15 +981,23 @@
                 <div class="chart-container">
                     <canvas id="psmChart" role="img" aria-label="Van Westendorp price sensitivity chart"></canvas>
                 </div>
-                <p id="chartSummary" class="form-hint" style="text-align:center; margin-top:-0.5rem;"></p>
-                <!-- How to read the chart: the two curves that cross at each point, in the slides' terms. -->
-                <p class="form-hint vw-note" style="text-align:center; margin-top:0.75rem;">
-                    <label for="showAnswerCurves" style="cursor: pointer;"><input type="checkbox" id="showAnswerCurves" onchange="toggleAnswerCurves()"> Also show the Bargain and Expensive answer curves (before they are flipped)</label>
-                </p>
-                <p class="form-hint vw-note" style="text-align:center; margin-top:0.25rem;">
-                    <strong>Floor:</strong> Too Cheap meets Not a Bargain. <strong>Optimal:</strong> Too Cheap meets Too Expensive.
-                    <strong>Market:</strong> Not a Bargain meets Not Expensive (the same price where Bargain meets Expensive). <strong>Ceiling:</strong> Too Expensive meets Not Expensive.<br>
-                    Not a Bargain = 100% &minus; Bargain. Not Expensive = 100% &minus; Expensive. The shaded band is the acceptable price range.
+                <p id="chartSummary" class="vw-sr-only"></p>
+                <!-- How to read the chart: one row per price point, with the two curves that cross there and why the point has its name. -->
+                <div style="overflow-x:auto;">
+                <table class="vw-read">
+                    <thead>
+                        <tr><th>Price point</th><th>Price</th><th>Where the curves cross</th><th>Why it has this name</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td><strong>Floor</strong><br>Point of Marginal Cheapness (PMC)</td><td id="readPmc">-</td><td>Too Cheap meets Expensive</td><td>The edge of &ldquo;too cheap&rdquo;: below it, more people call the price too cheap than call it expensive.</td></tr>
+                        <tr><td><strong>Optimal</strong><br>Optimal Price Point (OPP)</td><td id="readOpp">-</td><td>Too Cheap meets Too Expensive</td><td>As many people reject the price as too cheap as reject it as too expensive: the least resistance.</td></tr>
+                        <tr><td><strong>Market</strong><br>Indifference Price Point (IPP)</td><td id="readIpp">-</td><td>Bargain meets Expensive</td><td>As many people call the price a bargain as call it expensive: buyers are indifferent, so it is the price they expect to see.</td></tr>
+                        <tr><td><strong>Ceiling</strong><br>Point of Marginal Expensiveness (PME)</td><td id="readPme">-</td><td>Bargain meets Too Expensive</td><td>The edge of &ldquo;too expensive&rdquo;: above it, more people call the price too expensive than call it a bargain.</td></tr>
+                    </tbody>
+                </table>
+                </div>
+                <p class="form-hint" style="text-align:center; margin-top:0.5rem;">
+                    The shaded band, from the Floor to the Ceiling, is the acceptable price range.
                 </p>
 
                 <!-- Export Section -->
@@ -1434,9 +1451,10 @@
                         (tooExpensive.filter(v => v <= p).length / n) * 100
                     );
 
-                    // Derive "Not Cheap" and "Not Expensive" curves as the complements of
-                    // the Cheap and Expensive curves. PMC is where "Too Cheap" crosses
-                    // "Not Cheap"; PME is where "Too Expensive" crosses "Not Expensive" (F1).
+                    // "Not Cheap" and "Not Expensive" are the complements of
+                    // the Cheap and Expensive curves. They are not used for the price points any more
+                    // (2026-10-20: the four points come from the four answer curves, as in the course
+                    // source); they stay in the analysis results only.
                     const notCheap = cumCheap.map(v => 100 - v);
                     const notExpensive = cumExpensive.map(v => 100 - v);
 
@@ -1464,11 +1482,13 @@
                     // IPP: Cheap vs Expensive
                     const ipp = findIntersection(cumCheap, cumExpensive);
 
-                    // PMC: Too Cheap vs Not Cheap
-                    const pmc = findIntersection(cumTooCheap, notCheap);
+                    // Floor (PMC): Too Cheap vs Expensive. The four price points use only the four
+                    // answer curves, as in the course's source slides (Too Cheap, Bargain, Expensive,
+                    // Too Expensive); the complement curves above are kept for the CSV only.
+                    const pmc = findIntersection(cumTooCheap, cumExpensive);
 
-                    // PME: Too Expensive vs Not Expensive
-                    const pme = findIntersection(cumTooExpensive, notExpensive);
+                    // Ceiling (PME): Bargain vs Too Expensive
+                    const pme = findIntersection(cumCheap, cumTooExpensive);
 
                     // Store results
                     analysisResults = {
@@ -1552,6 +1572,10 @@
             createChart(pricePoints, cumTooCheap, cumCheap, cumExpensive, cumTooExpensive, notCheap, notExpensive, { opp, ipp, pmc, pme });
 
             // Text alternative for the chart (F14), in price order with the slide terms.
+            [['readPmc', pmc], ['readOpp', opp], ['readIpp', ipp], ['readPme', pme]].forEach(([id, v]) => {
+                const cell = document.getElementById(id);
+                if (cell) cell.textContent = (v === null || v === undefined || isNaN(v)) ? 'not found' : formatPrice(v);
+            });
             const summaryEl = document.getElementById('chartSummary');
             if (summaryEl) {
                 summaryEl.textContent = 'Key price points: Floor (PMC) ' + formatPrice(pmc) +
@@ -1566,20 +1590,6 @@
             // Show results
             resultsContainer.classList.add('visible');
             resultsContainer.scrollIntoView({ behavior: 'smooth' });
-        }
-
-        // The chart shows the classic four curves; this box adds the Bargain and Expensive
-        // answer curves (datasets 4 and 5) before they are flipped into Not a Bargain and Not Expensive.
-        function showAnswerCurves() {
-            const box = document.getElementById('showAnswerCurves');
-            return !!(box && box.checked);
-        }
-
-        function toggleAnswerCurves() {
-            if (!psmChart) return;
-            const on = showAnswerCurves();
-            [4, 5].forEach(i => psmChart.setDatasetVisibility(i, on));
-            psmChart.update();
         }
 
         function createChart(pricePoints, cumTooCheap, cumCheap, cumExpensive, cumTooExpensive, notCheap, notExpensive, points) {
@@ -1617,8 +1627,8 @@
             const markers = [
                 { value: points.pmc, y: curveAt(cumTooCheap, points.pmc), label: 'Floor (PMC)', short: 'Floor' },
                 { value: points.opp, y: curveAt(cumTooCheap, points.opp), label: 'Optimal (OPP)', short: 'Optimal' },
-                { value: points.ipp, y: curveAt(notCheap, points.ipp), label: 'Market (IPP)', short: 'Market' },   // where Not a Bargain meets Not Expensive
-                { value: points.pme, y: curveAt(cumTooExpensive, points.pme), label: 'Ceiling (PME)', short: 'Ceiling' }
+                { value: points.ipp, y: curveAt(cumCheap, points.ipp), label: 'Market (IPP)', short: 'Market' },
+                { value: points.pme, y: curveAt(cumCheap, points.pme), label: 'Ceiling (PME)', short: 'Ceiling' }
             ];
             const hasRange = points.pmc !== null && points.pme !== null && points.pme > points.pmc;
 
@@ -1688,11 +1698,9 @@
                 type: 'line',
                 data: {
                     datasets: [
-                        // The classic Van Westendorp chart: four curves, two falling (Too Cheap,
-                        // Not Expensive) and two rising (Not a Bargain, Too Expensive). Their four
-                        // crossings are the four price points. The Bargain and Expensive answer
-                        // curves (before they are flipped) are datasets 4 and 5, hidden unless the
-                        // "show answer curves" box is ticked.
+                        // The four answer curves, named as in the survey and on the slides: two fall
+                        // (Too Cheap, Bargain) and two rise (Expensive, Too Expensive). Their four
+                        // crossings are the four price points.
                         {
                             label: 'Too Cheap',
                             data: xy(cumTooCheap),
@@ -1704,20 +1712,20 @@
                             pointRadius: 0
                         },
                         {
-                            label: 'Not Expensive',
-                            data: xy(notExpensive),
-                            borderColor: '#3b82f6',
-                            backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                            label: 'Bargain',
+                            data: xy(cumCheap),
+                            borderColor: '#f97316',
+                            backgroundColor: 'rgba(249, 115, 22, 0.1)',
                             borderWidth: 2.5,
                             fill: false,
                             tension: 0,
                             pointRadius: 0
                         },
                         {
-                            label: 'Not a Bargain',
-                            data: xy(notCheap),
-                            borderColor: '#f97316',
-                            backgroundColor: 'rgba(249, 115, 22, 0.1)',
+                            label: 'Expensive',
+                            data: xy(cumExpensive),
+                            borderColor: '#3b82f6',
+                            backgroundColor: 'rgba(59, 130, 246, 0.1)',
                             borderWidth: 2.5,
                             fill: false,
                             tension: 0,
@@ -1732,30 +1740,6 @@
                             fill: false,
                             tension: 0,
                             pointRadius: 0
-                        },
-                        {
-                            label: 'Bargain (answers)',
-                            data: xy(cumCheap),
-                            borderColor: '#fdba74',
-                            backgroundColor: 'rgba(253, 186, 116, 0.1)',
-                            borderWidth: 2,
-                            borderDash: [6, 4],
-                            fill: false,
-                            tension: 0,
-                            pointRadius: 0,
-                            hidden: !showAnswerCurves()
-                        },
-                        {
-                            label: 'Expensive (answers)',
-                            data: xy(cumExpensive),
-                            borderColor: '#93c5fd',
-                            backgroundColor: 'rgba(147, 197, 253, 0.1)',
-                            borderWidth: 2,
-                            borderDash: [6, 4],
-                            fill: false,
-                            tension: 0,
-                            pointRadius: 0,
-                            hidden: !showAnswerCurves()
                         }
                     ]
                 },
@@ -1777,7 +1761,7 @@
                         },
                         legend: {
                             position: 'bottom',
-                            onClick: function() {},   // the checkbox, not the legend, shows or hides the answer curves
+                            onClick: function() {},   // four curves, always shown
                             // Line samples show each curve's color, width and dash pattern
                             // (the default point-style legend uses the point's style, which
                             // has no dash, so the dataset's own line style is copied over).
@@ -1916,10 +1900,10 @@
             csv += `Currency,${symbol || '(none)'}\n\n`;
             csv += 'Key Price Points\n';
             csv += 'Price Point,Price,Where the Curves Cross\n';
-            csv += `Floor: Point of Marginal Cheapness (PMC),${num(pmc)},Too Cheap = Not Cheap\n`;
+            csv += `Floor: Point of Marginal Cheapness (PMC),${num(pmc)},Too Cheap = Expensive\n`;
             csv += `Optimal: Optimal Price Point (OPP),${num(opp)},Too Cheap = Too Expensive\n`;
             csv += `Market: Indifference Price Point (IPP),${num(ipp)},Cheap/Bargain = Expensive\n`;
-            csv += `Ceiling: Point of Marginal Expensiveness (PME),${num(pme)},Too Expensive = Not Expensive\n`;
+            csv += `Ceiling: Point of Marginal Expensiveness (PME),${num(pme)},Bargain = Too Expensive\n`;
             csv += `Acceptable Price Range (Floor to Ceiling),${num(pmc)} to ${num(pme)}\n\n`;
             csv += `Sample Size (rows used),${n}\n`;
             if (exclusions) {
