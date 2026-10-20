@@ -7,7 +7,8 @@
 <meta name="theme-color" content="#f5f3ef">
 <title>Kiseki Survey</title>
 <!-- Class demo of a Gabor-Granger survey (M455, Meeting 18). Nothing is stored or sent: the answers stay on this page.
-     Each visitor sees the six prices either low to high or high to low, chosen at random, as the slides recommend. -->
+     Each visitor sees the six prices either low to high or high to low, chosen at random, as the slides recommend.
+     Low to high stops at the first no; high to low stops at the first yes (the remaining answers follow). -->
 <style>
   :root {
     --ink: #1c1917;
@@ -128,8 +129,8 @@
           <div class="price" id="price" aria-live="polite">$35?</div>
         </div>
         <div class="btns">
-          <button type="button">Yes</button>
-          <button type="button">No</button>
+          <button type="button" data-a="yes">Yes</button>
+          <button type="button" data-a="no">No</button>
         </div>
       </div>
       <button type="button" class="back" id="back">&larr; Back</button>
@@ -145,6 +146,7 @@
   // Nothing leaves this page: no storage, no network requests.
   const PRICES = [35, 40, 45, 50, 55, 60];
   const order = Math.random() < 0.5 ? PRICES.slice() : PRICES.slice().reverse();   // counterbalanced: low to high, or high to low
+  const rising = order[0] < order[1];
   let k = 0;
   const step = document.getElementById('step');
   const priceEl = document.getElementById('price');
@@ -157,7 +159,7 @@
   function show() {
     priceEl.textContent = '$' + order[k] + '?';
     [...segs.children].forEach((d, i) => { d.className = i < k ? 'done' : i === k ? 'now' : ''; });
-    count.textContent = 'Price ' + (k + 1) + ' of ' + order.length;
+    count.textContent = 'Price ' + (k + 1) + ' of up to ' + order.length;
     back.classList.toggle('on', k > 0);
     buttons.forEach(b => { b.classList.remove('picked'); b.disabled = false; });
     step.classList.remove('step'); void step.offsetWidth; step.classList.add('step');
@@ -167,8 +169,10 @@
     buttons.forEach(x => x.disabled = true);
     b.classList.add('picked');
     setTimeout(() => {
+      // low to high: the first no ends it (no at every higher price); high to low: the first yes ends it
+      const done = rising ? b.dataset.a === 'no' : b.dataset.a === 'yes';
       k += 1;
-      if (k < order.length) { show(); return; }
+      if (!done && k < order.length) { show(); return; }
       document.getElementById('survey').style.display = 'none';
       const t = document.getElementById('thanks');
       t.classList.add('on');
