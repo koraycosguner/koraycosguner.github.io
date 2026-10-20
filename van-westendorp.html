@@ -954,7 +954,7 @@
                     <div class="price-point-card highlight">
                         <div class="price-point-label">Market Price (IPP)</div>
                         <div class="price-point-value" id="ippValue">-</div>
-                        <div class="price-point-desc">Equal shares call it a bargain versus expensive. The price consumers would expect to see on the shelf.</div>
+                        <div class="price-point-desc">Equal shares call it a bargain and expensive. The price consumers would expect to see on the shelf.</div>
                     </div>
                     <div class="price-point-card">
                         <div class="price-point-label">Ceiling Price (PME)</div>
@@ -973,6 +973,12 @@
                     <canvas id="psmChart" role="img" aria-label="Van Westendorp price sensitivity chart"></canvas>
                 </div>
                 <p id="chartSummary" class="form-hint" style="text-align:center; margin-top:-0.5rem;"></p>
+                <!-- How to read the chart: the two curves that cross at each point, in the slides' terms. -->
+                <p class="form-hint vw-note" style="text-align:center; margin-top:0.25rem;">
+                    <strong>Floor:</strong> Too Cheap meets Not Cheap. <strong>Optimal:</strong> Too Cheap meets Too Expensive.
+                    <strong>Market:</strong> Cheap/Bargain meets Expensive. <strong>Ceiling:</strong> Too Expensive meets Not Expensive.<br>
+                    Not Cheap = 100% &minus; Cheap/Bargain. Not Expensive = 100% &minus; Expensive. The shaded band is the acceptable price range.
+                </p>
 
                 <!-- Export Section -->
                 <div class="export-section">
@@ -1512,10 +1518,21 @@
             return { mean, std, median, min, max, n };
         }
 
+        // Round half away from zero at the shown precision. toFixed alone rounds the
+        // binary value, so an exact half can round down (the Kiseki class file has a
+        // Cheap mean of exactly 40.565, which toFixed shows as 40.56). Trimming to 12
+        // significant digits first removes that noise, so the tool matches hand
+        // calculations and Excel (40.57).
+        function fixed(value, decimals) {
+            const f = Math.pow(10, decimals);
+            const scaled = Number((Math.abs(value) * f).toPrecision(12));
+            return (Math.sign(value) * Math.round(scaled) / f).toFixed(decimals);
+        }
+
         function formatPrice(value) {
             if (value === null || value === undefined) return '-';
             const symbol = currencySymbol.value;
-            return symbol + value.toFixed(2);
+            return symbol + fixed(value, 2);
         }
 
         function displayResults() {
@@ -1531,12 +1548,13 @@
             // Create chart (with complement curves and OPP/IPP/PMC/PME markers, F6)
             createChart(pricePoints, cumTooCheap, cumCheap, cumExpensive, cumTooExpensive, notCheap, notExpensive, { opp, ipp, pmc, pme });
 
-            // Text alternative for the chart (F14)
+            // Text alternative for the chart (F14), in price order with the slide terms.
             const summaryEl = document.getElementById('chartSummary');
             if (summaryEl) {
-                summaryEl.textContent = 'Key price points: Optimal (OPP) ' + formatPrice(opp) +
-                    ', Market (IPP) ' + formatPrice(ipp) + ', Floor (PMC) ' + formatPrice(pmc) +
-                    ', Ceiling (PME) ' + formatPrice(pme) + '.';
+                summaryEl.textContent = 'Key price points: Floor (PMC) ' + formatPrice(pmc) +
+                    ', Optimal (OPP) ' + formatPrice(opp) + ', Market (IPP) ' + formatPrice(ipp) +
+                    ', Ceiling (PME) ' + formatPrice(pme) +
+                    '. Acceptable price range: ' + formatPrice(pmc) + ' to ' + formatPrice(pme) + '.';
             }
 
             // Create stats table
@@ -1554,76 +1572,97 @@
                 psmChart.destroy();
             }
 
-            // Downsample for smoother rendering
-            const sampleRate = Math.max(1, Math.floor(pricePoints.length / 50));
-            const keep = (_, i) => i % sampleRate === 0;
-            const sampledPrices = pricePoints.filter(keep);
-            const sampledTooCheap = cumTooCheap.filter(keep);
-            const sampledCheap = cumCheap.filter(keep);
-            const sampledExpensive = cumExpensive.filter(keep);
-            const sampledTooExpensive = cumTooExpensive.filter(keep);
-            const sampledNotCheap = (notCheap || []).filter(keep);
-            const sampledNotExpensive = (notExpensive || []).filter(keep);
-
-            const N = sampledPrices.length;
-            const span = N > 1 ? (sampledPrices[N - 1] - sampledPrices[0]) : 0;
+            // Plot every point of the 101-point price grid on a linear price axis. The
+            // straight segments between grid points are exactly what findIntersection
+            // interpolates, so each marker sits on the crossing the student sees, and the
+            // axis gets round-dollar ticks instead of grid prices such as $33 or $49.
+            const sym = currencySymbol.value;
+            const xy = curve => pricePoints.map((p, i) => ({ x: p, y: curve[i] }));
+            const first = pricePoints[0], last = pricePoints[pricePoints.length - 1];
+            const span = last - first;
             // Choose tick precision so narrow price ranges do not show duplicate labels (F16d).
             const tickDecimals = span < 5 ? 2 : (span < 20 ? 1 : 0);
 
-            // Map a price value to an x pixel on the (offset:false) category axis, so the
-            // OPP/IPP/PMC/PME markers land exactly where the curves cross (F6).
-            function priceToX(value, chartArea) {
-                if (value === null || value === undefined || isNaN(value) || N < 2) return null;
-                const first = sampledPrices[0], last = sampledPrices[N - 1];
-                let f;
-                if (value <= first) f = 0;
-                else if (value >= last) f = N - 1;
-                else {
-                    let i = 0;
-                    while (i < N - 1 && sampledPrices[i + 1] < value) i++;
-                    const lo = sampledPrices[i], hi = sampledPrices[i + 1];
-                    f = i + (hi > lo ? (value - lo) / (hi - lo) : 0);
-                }
-                return chartArea.left + (f / (N - 1)) * (chartArea.right - chartArea.left);
+            // Height of a curve at a price (linear between grid points), for the crossing dots.
+            function curveAt(curve, value) {
+                if (value === null || value === undefined || isNaN(value)) return null;
+                if (value <= first) return curve[0];
+                if (value >= last) return curve[curve.length - 1];
+                let i = 0;
+                while (i < pricePoints.length - 2 && pricePoints[i + 1] < value) i++;
+                const t = (value - pricePoints[i]) / (pricePoints[i + 1] - pricePoints[i]);
+                return curve[i] + t * (curve[i + 1] - curve[i]);
             }
 
+            // The four price points in price order, named as on the slides. Each dot
+            // sits where its two curves cross.
+            const ink = '#1e293b';
             const markers = [
-                { value: points ? points.opp : null, label: 'OPP', color: '#16a34a' },
-                { value: points ? points.ipp : null, label: 'IPP', color: '#990000' },
-                { value: points ? points.pmc : null, label: 'PMC', color: '#0ea5e9' },
-                { value: points ? points.pme : null, label: 'PME', color: '#9333ea' }
+                { value: points.pmc, y: curveAt(cumTooCheap, points.pmc), label: 'Floor (PMC)', short: 'Floor' },
+                { value: points.opp, y: curveAt(cumTooCheap, points.opp), label: 'Optimal (OPP)', short: 'Optimal' },
+                { value: points.ipp, y: curveAt(cumCheap, points.ipp), label: 'Market (IPP)', short: 'Market' },
+                { value: points.pme, y: curveAt(cumTooExpensive, points.pme), label: 'Ceiling (PME)', short: 'Ceiling' }
             ];
+            const hasRange = points.pmc !== null && points.pme !== null && points.pme > points.pmc;
 
-            // Custom plugin: draw vertical dashed markers + labels for the four price points.
+            // Custom plugin: shade the acceptable price range (Floor to Ceiling) behind the
+            // curves, then draw a dashed line, a dot and a label for each price point.
             const markerPlugin = {
                 id: 'vwMarkers',
-                afterDatasetsDraw(chart) {
-                    const chartArea = chart.chartArea;
-                    const c = chart.ctx;
+                beforeDatasetsDraw(chart) {
+                    if (!hasRange) return;
+                    const a = chart.chartArea, xs = chart.scales.x, c = chart.ctx;
+                    const x1 = xs.getPixelForValue(points.pmc), x2 = xs.getPixelForValue(points.pme);
                     c.save();
+                    c.fillStyle = 'rgba(100, 116, 139, 0.13)';
+                    c.fillRect(x1, a.top, x2 - x1, a.bottom - a.top);
+                    c.restore();
+                },
+                afterDatasetsDraw(chart) {
+                    const a = chart.chartArea, xs = chart.scales.x, ys = chart.scales.y, c = chart.ctx;
+                    c.save();
+                    c.font = '700 11px Outfit, sans-serif';
+                    c.textBaseline = 'top';
+                    const narrow = (a.right - a.left) < 480;   // phones: drop the acronyms
                     markers.forEach((m, idx) => {
-                        const x = priceToX(m.value, chartArea);
-                        if (x === null) return;
+                        if (m.value === null || m.value === undefined || isNaN(m.value)) return;
+                        const x = xs.getPixelForValue(m.value);
                         c.beginPath();
                         c.setLineDash([5, 4]);
                         c.lineWidth = 1.5;
-                        c.strokeStyle = m.color;
-                        c.moveTo(x, chartArea.top);
-                        c.lineTo(x, chartArea.bottom);
+                        c.strokeStyle = ink;
+                        c.moveTo(x, a.top);
+                        c.lineTo(x, a.bottom);
                         c.stroke();
                         c.setLineDash([]);
-                        c.font = '700 11px Outfit, sans-serif';
-                        c.textBaseline = 'top';
-                        const labelText = m.label + ' ' + formatPrice(m.value);
+                        if (m.y !== null) {
+                            c.beginPath();
+                            c.arc(x, ys.getPixelForValue(m.y), 5, 0, 2 * Math.PI);
+                            c.fillStyle = ink;
+                            c.fill();
+                            c.lineWidth = 2;
+                            c.strokeStyle = '#ffffff';
+                            c.stroke();
+                        }
+                        // Labels stagger down from the top so close prices do not overlap.
+                        const labelText = (narrow ? m.short : m.label) + ' ' + formatPrice(m.value);
                         const tw = c.measureText(labelText).width;
-                        const ty = chartArea.top + 4 + idx * 16;
+                        const ty = a.top + 4 + idx * 16;
                         let tx = x + 4;
-                        if (tx + tw > chartArea.right) tx = x - 4 - tw;
-                        c.fillStyle = 'rgba(255,255,255,0.85)';
+                        if (tx + tw > a.right) tx = x - 4 - tw;
+                        c.fillStyle = 'rgba(255,255,255,0.9)';
                         c.fillRect(tx - 2, ty - 1, tw + 4, 14);
-                        c.fillStyle = m.color;
+                        c.fillStyle = ink;
                         c.fillText(labelText, tx, ty);
                     });
+                    // Name the shaded band just above the plot area, clear of the curves.
+                    if (hasRange) {
+                        const x1 = xs.getPixelForValue(points.pmc), x2 = xs.getPixelForValue(points.pme);
+                        c.font = '600 11px Outfit, sans-serif';
+                        c.textAlign = 'center';
+                        c.fillStyle = '#475569';
+                        c.fillText('Acceptable price range', (x1 + x2) / 2, a.top - 15);
+                    }
                     c.restore();
                 }
             };
@@ -1631,11 +1670,10 @@
             psmChart = new Chart(ctx, {
                 type: 'line',
                 data: {
-                    labels: sampledPrices.map(p => p.toFixed(2)),
                     datasets: [
                         {
                             label: 'Too Cheap',
-                            data: sampledTooCheap,
+                            data: xy(cumTooCheap),
                             borderColor: '#ef4444',
                             backgroundColor: 'rgba(239, 68, 68, 0.1)',
                             borderWidth: 2.5,
@@ -1645,7 +1683,7 @@
                         },
                         {
                             label: 'Cheap/Bargain',
-                            data: sampledCheap,
+                            data: xy(cumCheap),
                             borderColor: '#f97316',
                             backgroundColor: 'rgba(249, 115, 22, 0.1)',
                             borderWidth: 2.5,
@@ -1656,7 +1694,7 @@
                         },
                         {
                             label: 'Expensive',
-                            data: sampledExpensive,
+                            data: xy(cumExpensive),
                             borderColor: '#3b82f6',
                             backgroundColor: 'rgba(59, 130, 246, 0.1)',
                             borderWidth: 2.5,
@@ -1666,7 +1704,7 @@
                         },
                         {
                             label: 'Too Expensive',
-                            data: sampledTooExpensive,
+                            data: xy(cumTooExpensive),
                             borderColor: '#8b5cf6',
                             backgroundColor: 'rgba(139, 92, 246, 0.1)',
                             borderWidth: 2.5,
@@ -1675,22 +1713,29 @@
                             tension: 0,
                             pointRadius: 0
                         },
+                        // The two complement curves take a lighter shade of the curve they
+                        // mirror (Not Cheap = 100% - Cheap/Bargain, Not Expensive = 100% -
+                        // Expensive), instead of two near-identical greys.
                         {
                             label: 'Not Cheap',
-                            data: sampledNotCheap,
-                            borderColor: '#9ca3af',
-                            borderWidth: 1.5,
-                            borderDash: [2, 3],
+                            data: xy(notCheap),
+                            borderColor: '#fb923c',
+                            backgroundColor: 'rgba(251, 146, 60, 0.1)',
+                            borderWidth: 2.5,
+                            borderDash: [1, 4],
+                            borderCapStyle: 'round',
                             fill: false,
                             tension: 0,
                             pointRadius: 0
                         },
                         {
                             label: 'Not Expensive',
-                            data: sampledNotExpensive,
-                            borderColor: '#6b7280',
-                            borderWidth: 1.5,
-                            borderDash: [2, 3],
+                            data: xy(notExpensive),
+                            borderColor: '#60a5fa',
+                            backgroundColor: 'rgba(96, 165, 250, 0.1)',
+                            borderWidth: 2.5,
+                            borderDash: [1, 4],
+                            borderCapStyle: 'round',
                             fill: false,
                             tension: 0,
                             pointRadius: 0
@@ -1715,43 +1760,58 @@
                         },
                         legend: {
                             position: 'bottom',
+                            // Line samples show each curve's color, width and dash pattern
+                            // (the default point-style legend uses the point's style, which
+                            // has no dash, so the dataset's own line style is copied over).
                             labels: {
                                 usePointStyle: true,
-                                padding: 20
+                                pointStyle: 'line',
+                                pointStyleWidth: 26,
+                                padding: 14,
+                                generateLabels: function(chart) {
+                                    const items = Chart.defaults.plugins.legend.labels.generateLabels(chart);
+                                    items.forEach(item => {
+                                        const ds = chart.data.datasets[item.datasetIndex];
+                                        item.strokeStyle = ds.borderColor;
+                                        item.lineWidth = ds.borderWidth;
+                                        item.lineDash = ds.borderDash || [];
+                                    });
+                                    return items;
+                                }
                             }
                         },
                         tooltip: {
                             callbacks: {
                                 title: function(items) {
-                                    return currencySymbol.value + parseFloat(items[0].label).toFixed(2);
+                                    return sym + fixed(items[0].parsed.x, 2);
                                 },
                                 label: function(context) {
-                                    return context.dataset.label + ': ' + context.parsed.y.toFixed(1) + '%';
+                                    return context.dataset.label + ': ' + fixed(context.parsed.y, 1) + '%';
                                 }
                             }
                         }
                     },
                     scales: {
                         x: {
-                            offset: false,
+                            type: 'linear',
+                            min: first,
+                            max: last,
                             title: {
                                 display: true,
-                                text: 'Price (' + currencySymbol.value + ')',
+                                text: sym ? 'Price (' + sym + ')' : 'Price',
                                 font: { weight: '600' }
                             },
                             ticks: {
-                                callback: function(value, index) {
-                                    if (index % 5 === 0) {
-                                        return currencySymbol.value + parseFloat(this.getLabelForValue(value)).toFixed(tickDecimals);
-                                    }
-                                    return '';
+                                includeBounds: false,
+                                callback: function(value) {
+                                    return sym + Number(value).toFixed(tickDecimals);
                                 }
                             }
                         },
                         y: {
                             title: {
                                 display: true,
-                                text: 'Cumulative Percentage (%)',
+                                text: 'Share of respondents (%)',
                                 font: { weight: '600' }
                             },
                             min: 0,
@@ -1782,38 +1842,38 @@
                         <tbody>
                             <tr style="border-bottom: 1px solid var(--border);">
                                 <td style="padding: 12px; font-weight: 600;">Mean</td>
-                                <td style="padding: 12px; text-align: right;">${symbol}${stats.tooCheap.mean.toFixed(2)}</td>
-                                <td style="padding: 12px; text-align: right;">${symbol}${stats.cheap.mean.toFixed(2)}</td>
-                                <td style="padding: 12px; text-align: right;">${symbol}${stats.expensive.mean.toFixed(2)}</td>
-                                <td style="padding: 12px; text-align: right;">${symbol}${stats.tooExpensive.mean.toFixed(2)}</td>
+                                <td style="padding: 12px; text-align: right;">${symbol}${fixed(stats.tooCheap.mean, 2)}</td>
+                                <td style="padding: 12px; text-align: right;">${symbol}${fixed(stats.cheap.mean, 2)}</td>
+                                <td style="padding: 12px; text-align: right;">${symbol}${fixed(stats.expensive.mean, 2)}</td>
+                                <td style="padding: 12px; text-align: right;">${symbol}${fixed(stats.tooExpensive.mean, 2)}</td>
                             </tr>
                             <tr style="border-bottom: 1px solid var(--border); background: var(--bg-light);">
                                 <td style="padding: 12px; font-weight: 600;">Median</td>
-                                <td style="padding: 12px; text-align: right;">${symbol}${stats.tooCheap.median.toFixed(2)}</td>
-                                <td style="padding: 12px; text-align: right;">${symbol}${stats.cheap.median.toFixed(2)}</td>
-                                <td style="padding: 12px; text-align: right;">${symbol}${stats.expensive.median.toFixed(2)}</td>
-                                <td style="padding: 12px; text-align: right;">${symbol}${stats.tooExpensive.median.toFixed(2)}</td>
+                                <td style="padding: 12px; text-align: right;">${symbol}${fixed(stats.tooCheap.median, 2)}</td>
+                                <td style="padding: 12px; text-align: right;">${symbol}${fixed(stats.cheap.median, 2)}</td>
+                                <td style="padding: 12px; text-align: right;">${symbol}${fixed(stats.expensive.median, 2)}</td>
+                                <td style="padding: 12px; text-align: right;">${symbol}${fixed(stats.tooExpensive.median, 2)}</td>
                             </tr>
                             <tr style="border-bottom: 1px solid var(--border);">
                                 <td style="padding: 12px; font-weight: 600;">Std Dev</td>
-                                <td style="padding: 12px; text-align: right;">${symbol}${stats.tooCheap.std.toFixed(2)}</td>
-                                <td style="padding: 12px; text-align: right;">${symbol}${stats.cheap.std.toFixed(2)}</td>
-                                <td style="padding: 12px; text-align: right;">${symbol}${stats.expensive.std.toFixed(2)}</td>
-                                <td style="padding: 12px; text-align: right;">${symbol}${stats.tooExpensive.std.toFixed(2)}</td>
+                                <td style="padding: 12px; text-align: right;">${symbol}${fixed(stats.tooCheap.std, 2)}</td>
+                                <td style="padding: 12px; text-align: right;">${symbol}${fixed(stats.cheap.std, 2)}</td>
+                                <td style="padding: 12px; text-align: right;">${symbol}${fixed(stats.expensive.std, 2)}</td>
+                                <td style="padding: 12px; text-align: right;">${symbol}${fixed(stats.tooExpensive.std, 2)}</td>
                             </tr>
                             <tr style="border-bottom: 1px solid var(--border); background: var(--bg-light);">
                                 <td style="padding: 12px; font-weight: 600;">Min</td>
-                                <td style="padding: 12px; text-align: right;">${symbol}${stats.tooCheap.min.toFixed(2)}</td>
-                                <td style="padding: 12px; text-align: right;">${symbol}${stats.cheap.min.toFixed(2)}</td>
-                                <td style="padding: 12px; text-align: right;">${symbol}${stats.expensive.min.toFixed(2)}</td>
-                                <td style="padding: 12px; text-align: right;">${symbol}${stats.tooExpensive.min.toFixed(2)}</td>
+                                <td style="padding: 12px; text-align: right;">${symbol}${fixed(stats.tooCheap.min, 2)}</td>
+                                <td style="padding: 12px; text-align: right;">${symbol}${fixed(stats.cheap.min, 2)}</td>
+                                <td style="padding: 12px; text-align: right;">${symbol}${fixed(stats.expensive.min, 2)}</td>
+                                <td style="padding: 12px; text-align: right;">${symbol}${fixed(stats.tooExpensive.min, 2)}</td>
                             </tr>
                             <tr style="background: var(--bg-light);">
                                 <td style="padding: 12px; font-weight: 600;">Max</td>
-                                <td style="padding: 12px; text-align: right;">${symbol}${stats.tooCheap.max.toFixed(2)}</td>
-                                <td style="padding: 12px; text-align: right;">${symbol}${stats.cheap.max.toFixed(2)}</td>
-                                <td style="padding: 12px; text-align: right;">${symbol}${stats.expensive.max.toFixed(2)}</td>
-                                <td style="padding: 12px; text-align: right;">${symbol}${stats.tooExpensive.max.toFixed(2)}</td>
+                                <td style="padding: 12px; text-align: right;">${symbol}${fixed(stats.tooCheap.max, 2)}</td>
+                                <td style="padding: 12px; text-align: right;">${symbol}${fixed(stats.cheap.max, 2)}</td>
+                                <td style="padding: 12px; text-align: right;">${symbol}${fixed(stats.expensive.max, 2)}</td>
+                                <td style="padding: 12px; text-align: right;">${symbol}${fixed(stats.tooExpensive.max, 2)}</td>
                             </tr>
                         </tbody>
                     </table>
@@ -1825,16 +1885,23 @@
         document.getElementById('exportCSV').addEventListener('click', () => {
             if (!analysisResults) return;
 
-            const { opp, ipp, pmc, pme, stats, n, exclusions } = analysisResults;
+            const { opp, ipp, pmc, pme, stats, n, exclusions,
+                    pricePoints, cumTooCheap, cumCheap, cumExpensive, cumTooExpensive, notCheap, notExpensive } = analysisResults;
             const symbol = currencySymbol.value;
+            // Prices stay numeric, with the currency stated once (as in Pricing Tool 11), so
+            // the file opens cleanly in Excel. Points are listed in price order with the
+            // slide term (Floor, Optimal, Market, Ceiling) next to the textbook name.
+            const num = v => (v === null || v === undefined) ? 'N/A' : fixed(v, 2);
 
-            let csv = 'Van Westendorp Price Sensitivity Analysis Results\n\n';
+            let csv = 'Van Westendorp Price Sensitivity Analysis Results\n';
+            csv += `Currency,${symbol || '(none)'}\n\n`;
             csv += 'Key Price Points\n';
-            csv += `Optimal Price Point (OPP),${symbol}${opp?.toFixed(2) || 'N/A'}\n`;
-            csv += `Indifference Price Point (IPP),${symbol}${ipp?.toFixed(2) || 'N/A'}\n`;
-            csv += `Point of Marginal Cheapness (PMC),${symbol}${pmc?.toFixed(2) || 'N/A'}\n`;
-            csv += `Point of Marginal Expensiveness (PME),${symbol}${pme?.toFixed(2) || 'N/A'}\n`;
-            csv += `Acceptable Price Range,${symbol}${pmc?.toFixed(2) || 'N/A'} to ${symbol}${pme?.toFixed(2) || 'N/A'}\n\n`;
+            csv += 'Price Point,Price,Where the Curves Cross\n';
+            csv += `Floor: Point of Marginal Cheapness (PMC),${num(pmc)},Too Cheap = Not Cheap\n`;
+            csv += `Optimal: Optimal Price Point (OPP),${num(opp)},Too Cheap = Too Expensive\n`;
+            csv += `Market: Indifference Price Point (IPP),${num(ipp)},Cheap/Bargain = Expensive\n`;
+            csv += `Ceiling: Point of Marginal Expensiveness (PME),${num(pme)},Too Expensive = Not Expensive\n`;
+            csv += `Acceptable Price Range (Floor to Ceiling),${num(pmc)} to ${num(pme)}\n\n`;
             csv += `Sample Size (rows used),${n}\n`;
             if (exclusions) {
                 csv += `Total rows in file,${exclusions.totalRows}\n`;
@@ -1844,11 +1911,20 @@
             csv += `\n`;
             csv += 'Descriptive Statistics\n';
             csv += 'Metric,Too Cheap,Cheap/Bargain,Expensive,Too Expensive\n';
-            csv += `Mean,${stats.tooCheap.mean.toFixed(2)},${stats.cheap.mean.toFixed(2)},${stats.expensive.mean.toFixed(2)},${stats.tooExpensive.mean.toFixed(2)}\n`;
-            csv += `Median,${stats.tooCheap.median.toFixed(2)},${stats.cheap.median.toFixed(2)},${stats.expensive.median.toFixed(2)},${stats.tooExpensive.median.toFixed(2)}\n`;
-            csv += `Std Dev,${stats.tooCheap.std.toFixed(2)},${stats.cheap.std.toFixed(2)},${stats.expensive.std.toFixed(2)},${stats.tooExpensive.std.toFixed(2)}\n`;
-            csv += `Min,${stats.tooCheap.min.toFixed(2)},${stats.cheap.min.toFixed(2)},${stats.expensive.min.toFixed(2)},${stats.tooExpensive.min.toFixed(2)}\n`;
-            csv += `Max,${stats.tooCheap.max.toFixed(2)},${stats.cheap.max.toFixed(2)},${stats.expensive.max.toFixed(2)},${stats.tooExpensive.max.toFixed(2)}\n`;
+            csv += `Mean,${fixed(stats.tooCheap.mean, 2)},${fixed(stats.cheap.mean, 2)},${fixed(stats.expensive.mean, 2)},${fixed(stats.tooExpensive.mean, 2)}\n`;
+            csv += `Median,${fixed(stats.tooCheap.median, 2)},${fixed(stats.cheap.median, 2)},${fixed(stats.expensive.median, 2)},${fixed(stats.tooExpensive.median, 2)}\n`;
+            csv += `Std Dev,${fixed(stats.tooCheap.std, 2)},${fixed(stats.cheap.std, 2)},${fixed(stats.expensive.std, 2)},${fixed(stats.tooExpensive.std, 2)}\n`;
+            csv += `Min,${fixed(stats.tooCheap.min, 2)},${fixed(stats.cheap.min, 2)},${fixed(stats.expensive.min, 2)},${fixed(stats.tooExpensive.min, 2)}\n`;
+            csv += `Max,${fixed(stats.tooCheap.max, 2)},${fixed(stats.cheap.max, 2)},${fixed(stats.expensive.max, 2)},${fixed(stats.tooExpensive.max, 2)}\n`;
+
+            // The six curves on the tool's 101-point price grid, so the chart can be
+            // re-plotted or checked in Excel.
+            csv += '\nCurve Data (% of respondents at each price)\n';
+            csv += 'Price,Too Cheap,Cheap/Bargain,Expensive,Too Expensive,Not Cheap,Not Expensive\n';
+            pricePoints.forEach((p, i) => {
+                csv += [p, cumTooCheap[i], cumCheap[i], cumExpensive[i], cumTooExpensive[i], notCheap[i], notExpensive[i]]
+                    .map(v => fixed(v, 2)).join(',') + '\n';
+            });
 
             const blob = new Blob([csv], { type: 'text/csv' });
             const url = URL.createObjectURL(blob);
@@ -1872,13 +1948,22 @@
         });
 
         // Load example data: 50 synthetic, guaranteed-consistent respondents (F7).
+        // Each respondent has a reference price near $16 and answers in proportion to it,
+        // so Too Cheap and Too Expensive answers overlap across people, as in real surveys,
+        // and the curves genuinely cross. (The old draws never overlapped: every too-cheap
+        // price was below every too-expensive price, so the Optimal point always fell
+        // where Too Cheap reached 0%.)
         function generateExampleData() {
             const rows = [];
+            const between = (lo, hi) => lo + Math.random() * (hi - lo);
             for (let i = 0; i < 50; i++) {
-                const a = 8 + Math.random() * 6;        // too cheap  (~8-14)
-                const b = a + 2 + Math.random() * 4;    // cheap      (+2-6)
-                const c = b + 3 + Math.random() * 5;    // expensive  (+3-8)
-                const d = c + 3 + Math.random() * 6;    // too exp.   (+3-9)
+                // Reference price: normal with mean $16 and SD $3 (Box-Muller), at least $8.
+                const z = Math.sqrt(-2 * Math.log(1 - Math.random())) * Math.cos(2 * Math.PI * Math.random());
+                const r = Math.max(8, 16 + 3 * z);
+                const a = r * between(0.55, 0.80);      // too cheap
+                const b = r * between(0.82, 0.97);      // cheap
+                const c = r * between(1.08, 1.30);      // expensive
+                const d = r * between(1.35, 1.75);      // too expensive
                 rows.push({
                     too_cheap: a.toFixed(2),
                     cheap: b.toFixed(2),
