@@ -52,7 +52,13 @@ test('the lesson keeps supplied years without misdating every Leeuwenhoek observ
   assert.match(scenes[4].sentences.join(' '), /1858 book/);
   const notes = JSON.stringify(sourceNotes);
   assert.match(notes, /1674/); assert.match(notes, /1676/); assert.match(notes, /1855/); assert.match(notes, /Remak/);
-  assert.match(notes, /not available for direct comparison/);
+  assert.match(notes, /checked against the Unit Map/);
+  assert.match(notes, /Inquiry slide 29 reverses those two/);
+  assert.match(notes, /not the full Concept 1 assessment/);
+  assert.doesNotMatch(notes, /not available for direct comparison|alignment is not yet verified/);
+  assert.doesNotMatch(question('quiz-principle-one').prompt, /first|second/);
+  assert.doesNotMatch(question('review-one-cell').prompt, /first|second/);
+  for(const choice of question('quiz-principle-match').choices)assert.doesNotMatch(choice.label, /Part [123]/);
   assert.match(notes, /No authenticated portrait/);
   assert.doesNotMatch(JSON.stringify(questions), /first.*bacteria.*1673|Virchow alone|invented the microscope/i);
 });

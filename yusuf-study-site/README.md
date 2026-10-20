@@ -401,8 +401,9 @@ Word worksheet and separate key, rebuilt by `scripts/build-cells-worksheet.py`.
 Local progress uses `yusuf.science.cells.concept1.v1`; no account, submission endpoint
 or learner record is added to the repository. Existing subject progress is untouched.
 
-The three classroom originals named in the brief were unavailable; this lesson follows
-the detailed supplied brief and verified historical sources. Exact teacher-material
-alignment remains unverified. See `CELLS_CONTENT_AUDIT.md`, `CELLS_MEDIA_NOTES.md`,
+The three classroom originals have now been inspected. The five-scientist timeline
+and principles agree with those materials; the inquiry deck and notes reverse the
+first two principles, so practice tests meaning rather than list positions. This
+lesson covers the Cell Theory/scientists portion, not the full Concept 1 unit map. See `CELLS_CONTENT_AUDIT.md`, `CELLS_MEDIA_NOTES.md`,
 and `CELLS_ACCEPTANCE_REPORT.md` for content boundaries, asset provenance and checks.
 This delivery is a feature-branch push only, with no live deployment.

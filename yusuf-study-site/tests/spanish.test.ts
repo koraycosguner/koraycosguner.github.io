@@ -12,4 +12,14 @@ test('discoveries, missions and band reward grant points once',()=>{let p=discov
 test('first attempts, hints, corrections, targeted skills and grade calculations stay separate',()=>{let p=recordAnswer(emptyProgress(),'ser',false,true,false);p=recordAnswer(p,'ser',true,false,false);assert.equal(p.skills.ser?.firstTotal,1);assert.equal(p.skills.ser?.firstCorrect,0);assert.equal(p.skills.ser?.corrections,1);p=recordAnswer(p,'likes',true,true,true);assert.equal(p.skills.likes?.independentCorrect,0);assert.equal(p.skills.likes?.hints,1);assert.deepEqual(missedSkills(p),['ser','likes']);assert.equal(practiceGrade(54,60,1).percent,90);assert.equal(practiceGrade(54,60,1).letter,'A');assert.equal(practiceGrade(30,60,1).letter,'More practice');});
 test('save/resume, corrupt/blocked storage, safe parsing and separate Spanish namespace',()=>{const p=completeMission(discover(emptyProgress(),'libro'),'teacher');p.grades.push(practiceGrade(48,60,1));let value='',key='';assert.equal(saveProgress({setItem:(k,v)=>{key=k;value=v}},p),'');assert.equal(key,STORAGE_KEY);assert.deepEqual(parseProgress(value),p);assert.match(loadProgress({getItem:()=>'{broken'}).warning,/could not/);assert.match(loadProgress({getItem:()=>{throw Error()}}).warning,/could not/);assert.match(saveProgress({setItem:()=>{throw Error()}},p),/unavailable/);const malformed=parseProgress(JSON.stringify({version:1,inventory:{lapiz:-9},xp:-4,missions:['teacher','teacher','fake'],skills:{ser:{firstTotal:1,firstCorrect:900}}}));assert.equal(malformed.xp,0);assert.equal(malformed.inventory.lapiz,0);assert.deepEqual(malformed.missions,['teacher']);assert.equal(malformed.skills.ser?.firstCorrect,1);});
 test('shuffling preserves answer IDs',()=>{const q=questionById('map');for(let i=0;i<10;i++)assert.deepEqual(shuffle(q.options!).map(o=>o.id).sort(),q.options!.map(o=>o.id).sort());});
-test('no private originals or credentials in public filenames',async()=>{const names=await readdir(new URL('../public/',import.meta.url),{recursive:true});assert.ok(!names.some(n=>/private-references|\.pdf$|\.docx$|handoff|\.env/i.test(n)));});
+test('public documents are limited to authored Cells worksheets; private originals and credentials stay excluded',async()=>{
+  const names=await readdir(new URL('../public/',import.meta.url),{recursive:true});
+  const authoredDocuments=new Set([
+    'quizzes/cells/concept-1/cell-theory-worksheet.docx',
+    'quizzes/cells/concept-1/cell-theory-answer-key.docx',
+  ]);
+  for(const name of names){
+    assert.doesNotMatch(name,/private-references|handoff|\.env/i,name);
+    if(/\.(pdf|docx|pptx)$/i.test(name))assert.ok(authoredDocuments.has(name),`Unexpected public document: ${name}`);
+  }
+});

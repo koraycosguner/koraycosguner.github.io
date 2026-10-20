@@ -1,1 +1,0 @@
-import{t as e}from"./index-BtrgYJpi.js";import{t}from"./SpanishApp-BV0jPyQ8.js";var n=e();function r(){return(0,n.jsx)(t,{view:`quiz`})}export{r as default};

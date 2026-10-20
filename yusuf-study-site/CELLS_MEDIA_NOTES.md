@@ -55,6 +55,19 @@ filling and LibreOffice rendering were checked. The blank DOCX files alone are
 included in public assets; intermediate PDFs, page images and the filled example
 remain outside the repository.
 
+### Worksheet source alignment correction
+
+The original classroom references became available after the initial build.
+Inquiry slide 29 lists the basic-unit statement before the made-of-cells statement;
+the Notes and supplied brief use the reverse order. Worksheet Section E and its
+separate answer key now use named ideas (“made of cells,” “basic unit,” and
+“cells from existing cells”) so either source order leads to the same answer.
+Section A retains the Notes/brief display order. The classroom originals remain
+private; no original pages are included in the documents or public assets.
+After this correction, both documents were rendered again with bundled LibreOffice
+and all six final pages were inspected. The worksheet retains all 27 unlocked
+controls, including its five extended-response fields; no layout defects appeared.
+
 ## Exact prompt set (built-in tool)
 
 ### hooke

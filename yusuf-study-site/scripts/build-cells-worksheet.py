@@ -222,7 +222,7 @@ def build_worksheet():
         doc.add_paragraph('   '.join(f'{letter}  {label}' for letter, label in zip('ABC', choices)))
         response(doc, f'multiple_choice_{i+1}', 'My answer: ')
     doc.add_heading('E Connect a discovery to a principle', 1)
-    doc.add_paragraph('Write 1, 2 or 3 for the principle most directly supported. 1 = made of cells; 2 = basic unit of structure and function; 3 = cells from existing cells.')
+    doc.add_paragraph('Write the idea most directly supported by each statement. Use: made of cells; basic unit; cells from existing cells.')
     for i, statement in enumerate([
         'Plants and animals are made of cells.',
         'Cells build organisms and carry out basic life functions.',
@@ -258,7 +258,7 @@ def build_key():
     doc.add_heading('D Multiple choice', 1)
     doc.add_paragraph('1 A  Hooke\n2 B  Schleiden\n3 C  Schleiden and Schwann\n4 A  Virchow\n5 B  Cork contains tiny compartments')
     doc.add_heading('E Discovery to principle', 1)
-    doc.add_paragraph('1 → Part 1; 2 → Part 2; 3 → Part 3. Focus on what organisms are made of, the role of the cell, and the origin of new cells.')
+    doc.add_paragraph('Plants and animals are made of cells → made of cells.\nCells build organisms and carry out basic life functions → basic unit.\nA dividing cell produces new cells → cells from existing cells.')
     page(doc, 'F Examples of written responses')
     titles = ['The three principles', 'How Hooke opened new questions', 'The plant and animal connection', 'The contribution of Virchow', 'Why microscopes mattered']
     for i, (_, answer) in enumerate(TYPED):

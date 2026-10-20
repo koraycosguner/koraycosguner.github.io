@@ -2,9 +2,32 @@
 
 ## Source boundaries
 
-The lesson follows the supplied **Concept 1: The Story of Cell Theory** build brief. The three named classroom documents—*Unit Map: Cells and Body Systems*, *Cell Theory Inquiry 2021*, and *Cell Theory 2024 Notes*—were not available in the current attachments or project. A targeted filename search of Documents and Downloads did not locate them. Exact agreement with those originals and the teacher's assessment cannot be certified. No copy of a classroom document is included in the public assets or commits.
+The lesson follows the supplied **Concept 1: The Story of Cell Theory** build brief. After the first implementation, the user supplied the location of all three classroom originals. The four-page *Unit Map: Cells and Body Systems*, the 39-slide *Cell Theory Inquiry 2021*, and the one-page *Cell Theory 2024 Notes* have now been inspected, including rendered pages and slides with image-only text. Their private file hashes match the provided provenance manifest. No original, extracted image, rendered source page, private manifest or private conversation link is included in public assets or commits.
 
 The supplied five-scientist order and timeline are preserved: **Robert Hooke (1665), Anton van Leeuwenhoek (1673), Matthias Schleiden (1838), Theodor Schwann (1839), Rudolf Virchow (1858)**. These are lesson markers supplied in the brief; see the historical qualifications below. The lesson does not claim that a single scientist completed the whole theory or that only these five scientists contributed.
+
+## Comparison with the classroom originals
+
+| Classroom reference | Finding and implementation |
+| --- | --- |
+| Unit Map, page 1, Concept 1 | Chronology, scientists and discoveries, and timeline construction match this lesson. The broader Concept 1 also includes Brown/Janssen, microscope operation and focusing, specimen drawing, and prokaryotic/eukaryotic comparisons. Those are outside the requested five-scientist story; the site now states that scope explicitly. The wider unit vocabulary also names Chatton. |
+| Inquiry slides 34–38 | Hooke 1665/cork/name cells; Leeuwenhoek 1673/microscope and animalcules; Schleiden 1838/plants; Schwann 1839/animals; Virchow 1858/cells from other cells agree with the lesson. The presentation places Virchow before Schleiden/Schwann in its slide sequence; the lesson correctly sorts the events by their dates. |
+| Notes, page 1, development section | The cork → plant → animal → existing-cell connections agree. The notes use “1830s” for plant work; the deck supplies the more specific 1838 marker. |
+| Notes, page 1, theory statements | Made of one or more cells; basic unit of structure/function; cells from cells agree with the lesson and keys. The note sheet is unfilled, so omitted words are not represented as an official teacher answer key. |
+| Inquiry slide 29, embedded image | The first two ideas appear in the opposite order from the Notes and build brief. The site keeps the requested/Notes display order and discloses the difference. Quiz, review and principle-matching choices use meaning rather than first/second list-position recall. The Word worksheet/key match named ideas in Section E. |
+| Inquiry slides 26–31 | Single-celled life, cell functions, improved instruments and accumulated observations support the explanatory material. The concept map now explicitly describes a scientific theory as an explanation supported by evidence. |
+
+All 39 web task answer keys and the five written-response models were compared with the classroom content. No scientist, date-order or scientific-concept answer-ID changes were necessary. Existing saved responses therefore remain interpretable. Practice questions and written-response models remain independently authored; they are not a reproduction of the teacher’s assessment.
+
+## Ambiguities and source errors handled
+
+- **Principle numbering:** Slide 29 orders “basic unit” before “made of cells”; the Notes reverse them. Neither order changes the science. The previous quiz prompt asking for the “first part” now asks what living organisms are made of. Matching choices omit numbered prefixes; review explanations use the ideas themselves. Scientist questions about the first two principles together and cells-from-cells remain consistent under both orders.
+- **Hooke portrait:** Slides 34 and 39 contain an image whose embedded attribution identifies Jan Baptist van Helmont. It is not used as a portrait of Hooke. The website continues to use conceptual instruments and diagrams.
+- **Unkeyed blanks:** The Notes include open blanks without an answer key, including a three-word phrase after the Virchow passage. No definitive missing phrase is invented or graded.
+- **Beyond this lesson:** The Notes’ prokaryote description contains a confusing parenthetical about a cell wall; it is not reused as a definition. Inquiry slide 18 references a sample 11 although the activity supplies only ten numbered samples. Neither issue is imported into the lesson’s questions.
+- **Historical compression:** The 1673 and 1858 classroom markers remain; the existing historical caveats below distinguish the reports, subsequent observations, earlier researchers and publication dates.
+
+Classroom comparison is complete for the requested Cell Theory/scientists scope. It does not establish full unit coverage, an official test answer key, or a separate standards-alignment certification.
 
 ## Historical verification and date qualifications
 
@@ -37,4 +60,4 @@ The five typed worksheet responses are open-ended self-review with sample ideas,
 
 `node --experimental-strip-types --test tests/cells-content.test.ts`: **10 passed, 0 failed**. These tests verify key resolution and uniqueness, all requested names/dates, short connected scenes, historical caveats, exact principles, quiz size/format/skill coverage, scientist and concept keys, fresh review separation, worksheet coverage, completed word-bank sentences and private-data exclusions.
 
-The content tests do not establish teacher-document equivalence or browser usability. Those are separate boundaries: the originals remain unavailable, and the application/browser audit is reported in the acceptance report.
+The content tests guard the inspected facts and numbering conflict, but do not replace the manual comparison with classroom sources. Browser usability and delivery checks are recorded separately in the acceptance report.

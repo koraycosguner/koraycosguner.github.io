@@ -1,1 +1,0 @@
-import{t as e}from"./index-BtrgYJpi.js";import{t}from"./CellsApp-Ci73uElP.js";var n=e();function r(){return(0,n.jsx)(t,{entry:`paragraph`})}export{r as default};

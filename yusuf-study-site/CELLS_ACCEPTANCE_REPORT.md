@@ -25,6 +25,8 @@ Validated October 19, 2026 (local time). This is an addition to the existing sou
 
 ## Actual checks
 
+The source-verification follow-up reran type checking, lint, all 173 unit tests, all 9 Cells browser cases, both builds and the 3 production checks after regenerating the Word files. The 67 existing-subject browser regressions and broader illustration screenshots below were completed for the initial implementation; they were not rerun for this content-only follow-up. No existing-subject learning implementation changed.
+
 - `pnpm typecheck`: passed.
 - `pnpm lint`: passed with **0 errors and 21 warnings**, all native-image recommendations. The static build uses precompressed local images without a runtime image server.
 - `pnpm test`: **173 passed, 0 failed**, including 10 new Cells content tests and 19 new Cells learning-engine tests.
@@ -39,11 +41,17 @@ Validated October 19, 2026 (local time). This is an addition to the existing sou
 
 The first new browser run passed 7 of 8 cases and exposed lost focus after canceling an activity-change dialog. Explicit focus restoration fixed it. Review also corrected non-bank tile labels, added focus handling for practice feedback/retry, prevented the hidden skip link from appearing in full-page captures, and shortened default placement instructions. The final 9-case run includes the fixes plus tablet-touch and document-download coverage.
 
+The source-verification follow-up initially passed 172/173 unit tests: the existing public-file privacy check rejected all DOCX files, including the two newly authored worksheet downloads. This revealed that the earlier all-pass unit result did not cover the final DOCX-containing public directory. The check now allows only those two exact authored paths, while continuing to reject private-source/credential filenames and all other PDF, DOCX or PPTX files. The final rerun against the complete public directory passed 173/173. Both rebuilt documents were again rendered and all six pages inspected; all 27 editable controls remain intact.
+
 Nonfatal build warnings remain for the inherited large Spanish/3D chunk and Vinext's inability to classify some routes statically. Production and Pages builds still succeed. Browser testing used Chromium, including touch emulation; this is not a claim of a separate physical-device or Safari audit.
 
 ## Source verification boundary
 
-The detailed supplied build brief was available and followed. The three classroom originals—Unit Map: Cells and Body Systems, Cell Theory Inquiry 2021, and Cell Theory 2024 Notes—were not found in the workspace or supplied attachments. Their locations were requested while implementation continued. **Exact alignment with those originals and the teacher's assessment remains unverified.**
+After the initial implementation, the user supplied the location of all three classroom originals. The four-page Unit Map: Cells and Body Systems, 39-slide Cell Theory Inquiry 2021, and one-page Cell Theory 2024 Notes were read and visually inspected, including image-only slide text. Their private hashes match the source manifest. All five scientists, classroom timeline markers, three principles, 39 web task keys and five written-response models were compared with those materials.
+
+The Notes and Inquiry slide 29 list the first two principles in opposite orders. The lesson preserves the Notes/build-brief display order and discloses the conflict. Quiz and review questions now test the ideas rather than first/second list positions; matching options and Word worksheet Section E use named ideas. No answer IDs or saved-progress keys changed. The concept map also defines a scientific theory as an explanation supported by evidence.
+
+The Unit Map's full Concept 1 additionally includes Brown/Janssen, microscope skills, specimen drawings and prokaryotic/eukaryotic comparisons. This implementation covers the requested Cell Theory/scientists portion; the quiz is now labeled **Cell Theory quiz** and the source notes state the limited scope. It is not an official teacher assessment or complete unit review. Unfilled source blanks and other source issues are recorded in the content audit, not turned into definitive graded answers.
 
 Historical sources were checked independently. The requested years are retained, with concise notes distinguishing Leeuwenhoek's 1673 correspondence milestone from later microorganism observations and Virchow's 1858 book from earlier cells-from-cells work. No ambiguous historical “first” is graded. Details and source links are in `CELLS_CONTENT_AUDIT.md`; artwork prompts and scientific limitations are in `CELLS_MEDIA_NOTES.md`.
 

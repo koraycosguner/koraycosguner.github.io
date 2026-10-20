@@ -1,1 +1,0 @@
-import{t as e}from"./index-BtrgYJpi.js";import{t}from"./Unit3App-C4YbTu6P.js";var n=e();function r(){return(0,n.jsx)(t,{entry:`test`})}export{r as default};
