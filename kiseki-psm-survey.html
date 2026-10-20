@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow">
+<meta name="theme-color" content="#f5f3ef">
+<title>Kiseki Survey</title>
+<!-- Class demo of a Price Sensitivity Meter survey (M455, Meeting 18). Nothing is stored or sent: the answers stay on this page. -->
+<style>
+  :root {
+    --ink: #1c1917;
+    --text: #292524;
+    --muted: #78716c;
+    --line: #e7e5e4;
+    --soft: #f5f5f4;
+    --bg: #f5f3ef;
+    --card: #ffffff;
+    --gold: #a16207;
+    --gold-soft: #fdf6e3;
+    --warn: #b42318;
+    --warn-bg: #fef3f2;
+    --serif: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif;
+    --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font: 16px/1.6 var(--sans);
+    -webkit-font-smoothing: antialiased;
+    padding: max(20px, env(safe-area-inset-top)) 16px max(32px, env(safe-area-inset-bottom));
+  }
+  .page { max-width: 1060px; margin: 0 auto; display: grid; grid-template-columns: minmax(0, 1.08fr) minmax(0, 1fr); gap: 24px; align-items: start; }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 20px; box-shadow: 0 1px 2px rgba(28, 25, 23, 0.04), 0 12px 32px rgba(28, 25, 23, 0.07); overflow: hidden; }
+
+  /* product */
+  .hero { display: block; width: 100%; height: auto; aspect-ratio: 1100 / 574; object-fit: cover; background: #2a2420; }
+  .prod-body { padding: 26px 28px 30px; }
+  .eyebrow { font-size: 12px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--gold); }
+  .prod h1 { font-family: var(--serif); font-weight: 600; font-size: 30px; line-height: 1.15; color: var(--ink); margin-top: 6px; }
+  .prod .sub { font-family: var(--serif); font-size: 18px; color: var(--muted); margin-top: 4px; }
+  .tagline { font-family: var(--serif); font-style: italic; font-size: 20px; color: var(--ink); margin: 20px 0 8px; padding-top: 18px; border-top: 1px solid var(--line); }
+  .prod p { margin-bottom: 12px; }
+  .prod h2 { font-size: 13px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink); margin: 20px 0 10px; }
+  .feats { list-style: none; display: grid; gap: 12px; }
+  .feats li { display: grid; grid-template-columns: 22px 1fr; gap: 10px; align-items: start; }
+  .feats svg { margin-top: 3px; }
+  .feats b { color: var(--ink); }
+
+  /* survey */
+  .survey { position: sticky; top: 20px; padding: 26px 26px 28px; }
+  .s-top { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; }
+  .s-title { font-family: var(--serif); font-size: 22px; font-weight: 600; color: var(--ink); }
+  .s-meta { font-size: 13px; color: var(--muted); white-space: nowrap; }
+  .bar { height: 4px; border-radius: 4px; background: var(--soft); margin: 12px 0 14px; overflow: hidden; }
+  .bar i { display: block; height: 100%; width: 0; background: var(--gold); border-radius: 4px; transition: width 0.25s ease; }
+  .intro { color: var(--muted); font-size: 15px; margin-bottom: 16px; }
+  .q { border: 1px solid var(--line); border-radius: 14px; padding: 14px 16px 16px; margin-bottom: 12px; transition: border-color 0.15s, background 0.15s; }
+  .q:focus-within { border-color: var(--ink); }
+  .q.done { background: #fcfbf9; }
+  .q label { display: grid; grid-template-columns: 26px 1fr; gap: 10px; font-size: 16px; font-weight: 500; color: var(--ink); line-height: 1.4; cursor: text; }
+  .q .n { width: 26px; height: 26px; border-radius: 50%; background: var(--soft); color: var(--muted); font-size: 13px; font-weight: 700; display: grid; place-items: center; margin-top: -1px; transition: background 0.15s, color 0.15s; }
+  .q.done .n { background: var(--ink); color: #fff; }
+  .money { position: relative; margin: 10px 0 0 36px; }
+  .money span { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--muted); font-weight: 600; pointer-events: none; }
+  .money input { width: 100%; font: 600 18px/1.2 var(--sans); padding: 12px 14px 12px 30px; border: 1px solid #d6d3d1; border-radius: 10px; background: #fff; color: var(--ink); -moz-appearance: textfield; }
+  .money input::-webkit-outer-spin-button, .money input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+  .money input:focus { outline: none; border-color: var(--ink); box-shadow: 0 0 0 3px rgba(161, 98, 7, 0.18); }
+  .money input.bad { border-color: var(--warn); background: var(--warn-bg); }
+  .msg { display: none; margin: 4px 0 12px; padding: 10px 14px; border-radius: 10px; background: var(--warn-bg); color: var(--warn); font-size: 14px; }
+  .msg.on { display: block; }
+  .submit { width: 100%; margin-top: 6px; font: 700 16px/1 var(--sans); padding: 17px; border-radius: 12px; border: 0; background: var(--ink); color: #fff; cursor: pointer; transition: transform 0.08s, background 0.15s; }
+  .submit:hover { background: #000; }
+  .submit:active { transform: scale(0.99); }
+  .submit:focus-visible { outline: 3px solid rgba(161, 98, 7, 0.45); outline-offset: 3px; }
+
+  /* thank you */
+  .thanks { display: none; text-align: center; padding: 36px 8px 24px; }
+  .thanks.on { display: block; }
+  .thanks:focus { outline: none; }
+  .tick { width: 72px; height: 72px; margin: 0 auto 18px; }
+  .tick circle { stroke: var(--gold); stroke-width: 2.5; fill: var(--gold-soft); }
+  .tick path { stroke: var(--ink); stroke-width: 3.2; fill: none; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 40; stroke-dashoffset: 40; }
+  .thanks.on .tick path { animation: draw 0.45s 0.1s ease-out forwards; }
+  @keyframes draw { to { stroke-dashoffset: 0; } }
+  .thanks h3 { font-family: var(--serif); font-size: 24px; font-weight: 600; color: var(--ink); margin-bottom: 6px; }
+  .thanks p { color: var(--muted); }
+  @media (prefers-reduced-motion: reduce) { .thanks.on .tick path { animation: none; stroke-dashoffset: 0; } .bar i { transition: none; } }
+
+  @media (max-width: 820px) {
+    body { padding: max(12px, env(safe-area-inset-top)) 12px max(28px, env(safe-area-inset-bottom)); }
+    .page { grid-template-columns: 1fr; gap: 14px; }
+    .card { border-radius: 18px; }
+    .prod-body { padding: 20px 18px 22px; }
+    .prod h1 { font-size: 26px; }
+    .survey { position: static; padding: 22px 16px 22px; }
+  }
+</style>
+</head>
+<body>
+<main class="page">
+  <article class="card prod">
+    <img class="hero" src="kiseki-survey-photo.jpg" alt="Four cut-crystal whiskey glasses in a row on a dark wooden bar." width="1100" height="574">
+    <div class="prod-body">
+      <div class="eyebrow">Set of 4</div>
+      <h1>The Kiseki</h1>
+      <div class="sub">Hand-Polished Japanese Whiskey Glasses</div>
+      <p class="tagline">Elevate the Ritual.</p>
+      <p>Whiskey isn&rsquo;t just a drink; it&rsquo;s a pause button on a busy world. The Kiseki Collection was designed to honor that moment. Inspired by the sharp, geometric precision of traditional Edo Kiriko craftsmanship, these glasses transform a simple pour into a sensory experience.</p>
+      <p>The deep, diamond-cut lattice pattern captures the ambient light of your home bar, making your golden spirits glow from within. With a substantial, weighted base, they offer a reassuring stability in the hand, perfect for the slow sip of a single malt or the crisp finish of a classic Highball.</p>
+      <h2>Why you&rsquo;ll love them</h2>
+      <ul class="feats">
+        <li><svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l8 9-8 9-8-9z" fill="none" stroke="#a16207" stroke-width="1.8" stroke-linejoin="round"/></svg><span><b>Weighted Balance:</b> A heavy bottom (approx. 350g) provides a premium, grounded feel.</span></li>
+        <li><svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l8 9-8 9-8-9z" fill="none" stroke="#a16207" stroke-width="1.8" stroke-linejoin="round"/></svg><span><b>Brilliant Clarity:</b> Crafted from ultra-clear, lead-free crystal glass to showcase the true color of your spirits.</span></li>
+        <li><svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l8 9-8 9-8-9z" fill="none" stroke="#a16207" stroke-width="1.8" stroke-linejoin="round"/></svg><span><b>The Perfect Pour:</b> The wide brim accommodates large ice spheres or whiskey stones without crowding the glass.</span></li>
+      </ul>
+    </div>
+  </article>
+
+  <section class="card survey" aria-label="Survey">
+    <form id="survey" novalidate>
+      <div class="s-top"><div class="s-title">Kiseki survey</div><div class="s-meta" id="meta">0 of 4 answered</div></div>
+      <div class="bar" aria-hidden="true"><i id="fill"></i></div>
+      <p class="intro">Answer each question with a price in dollars. There are no right or wrong answers.</p>
+      <div class="q"><label for="q1"><span class="n">1</span><span>At what price would you question its quality?</span></label><div class="money"><span>$</span><input id="q1" type="number" inputmode="decimal" min="0" step="any" autocomplete="off"></div></div>
+      <div class="q"><label for="q2"><span class="n">2</span><span>At what price is it a great buy for the money?</span></label><div class="money"><span>$</span><input id="q2" type="number" inputmode="decimal" min="0" step="any" autocomplete="off"></div></div>
+      <div class="q"><label for="q3"><span class="n">3</span><span>At what price is it getting expensive, but still worth it?</span></label><div class="money"><span>$</span><input id="q3" type="number" inputmode="decimal" min="0" step="any" autocomplete="off"></div></div>
+      <div class="q"><label for="q4"><span class="n">4</span><span>At what price would you refuse to buy?</span></label><div class="money"><span>$</span><input id="q4" type="number" inputmode="decimal" min="0" step="any" autocomplete="off"></div></div>
+      <div class="msg" id="msg" role="alert"></div>
+      <button class="submit" type="submit">Submit</button>
+    </form>
+    <div class="thanks" id="thanks" tabindex="-1">
+      <svg class="tick" viewBox="0 0 72 72" aria-hidden="true"><circle cx="36" cy="36" r="33"/><path d="M23 37.5l9 9 17-19"/></svg>
+      <h3>Thank you for your participation.</h3>
+      <p>Your responses have been recorded.</p>
+    </div>
+  </section>
+</main>
+<script>
+  // Nothing leaves this page: no storage, no network requests.
+  const form = document.getElementById('survey');
+  const msg = document.getElementById('msg');
+  const inputs = ['q1', 'q2', 'q3', 'q4'].map(id => document.getElementById(id));
+  const fill = document.getElementById('fill');
+  const meta = document.getElementById('meta');
+  const ok = el => el.value.trim() !== '' && Number(el.value) > 0;
+
+  function progress() {
+    const n = inputs.filter(ok).length;
+    inputs.forEach(el => el.closest('.q').classList.toggle('done', ok(el)));
+    fill.style.width = (n / inputs.length * 100) + '%';
+    meta.textContent = n + ' of ' + inputs.length + ' answered';
+  }
+  inputs.forEach(el => el.addEventListener('input', () => { el.classList.remove('bad'); progress(); }));
+
+  form.addEventListener('submit', e => {
+    e.preventDefault();
+    inputs.forEach(el => el.classList.remove('bad'));
+    const missing = inputs.filter(el => !ok(el));
+    if (missing.length) {
+      missing.forEach(el => el.classList.add('bad'));
+      msg.textContent = 'Please enter a price for every question.';
+      msg.classList.add('on');
+      missing[0].focus();
+      return;
+    }
+    const vals = inputs.map(el => Number(el.value));
+    for (let i = 1; i < vals.length; i++) {
+      if (vals[i] < vals[i - 1]) {
+        inputs[i - 1].classList.add('bad');
+        inputs[i].classList.add('bad');
+        msg.textContent = 'Please check your answers: each price should be at least as high as the one above it.';
+        msg.classList.add('on');
+        inputs[i].focus();
+        return;
+      }
+    }
+    msg.classList.remove('on');
+    form.style.display = 'none';
+    const t = document.getElementById('thanks');
+    t.classList.add('on');
+    t.focus();
+    t.closest('.survey').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
+</script>
+</body>
+</html>
