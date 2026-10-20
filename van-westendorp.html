@@ -974,10 +974,13 @@
                 </div>
                 <p id="chartSummary" class="form-hint" style="text-align:center; margin-top:-0.5rem;"></p>
                 <!-- How to read the chart: the two curves that cross at each point, in the slides' terms. -->
+                <p class="form-hint vw-note" style="text-align:center; margin-top:0.75rem;">
+                    <label for="showAnswerCurves" style="cursor: pointer;"><input type="checkbox" id="showAnswerCurves" onchange="toggleAnswerCurves()"> Also show the Bargain and Expensive answer curves (before they are flipped)</label>
+                </p>
                 <p class="form-hint vw-note" style="text-align:center; margin-top:0.25rem;">
-                    <strong>Floor:</strong> Too Cheap meets Not Cheap. <strong>Optimal:</strong> Too Cheap meets Too Expensive.
-                    <strong>Market:</strong> Cheap/Bargain meets Expensive. <strong>Ceiling:</strong> Too Expensive meets Not Expensive.<br>
-                    Not Cheap = 100% &minus; Cheap/Bargain. Not Expensive = 100% &minus; Expensive. The shaded band is the acceptable price range.
+                    <strong>Floor:</strong> Too Cheap meets Not a Bargain. <strong>Optimal:</strong> Too Cheap meets Too Expensive.
+                    <strong>Market:</strong> Not a Bargain meets Not Expensive (the same price where Bargain meets Expensive). <strong>Ceiling:</strong> Too Expensive meets Not Expensive.<br>
+                    Not a Bargain = 100% &minus; Bargain. Not Expensive = 100% &minus; Expensive. The shaded band is the acceptable price range.
                 </p>
 
                 <!-- Export Section -->
@@ -1565,6 +1568,20 @@
             resultsContainer.scrollIntoView({ behavior: 'smooth' });
         }
 
+        // The chart shows the classic four curves; this box adds the Bargain and Expensive
+        // answer curves (datasets 4 and 5) before they are flipped into Not a Bargain and Not Expensive.
+        function showAnswerCurves() {
+            const box = document.getElementById('showAnswerCurves');
+            return !!(box && box.checked);
+        }
+
+        function toggleAnswerCurves() {
+            if (!psmChart) return;
+            const on = showAnswerCurves();
+            [4, 5].forEach(i => psmChart.setDatasetVisibility(i, on));
+            psmChart.update();
+        }
+
         function createChart(pricePoints, cumTooCheap, cumCheap, cumExpensive, cumTooExpensive, notCheap, notExpensive, points) {
             const ctx = document.getElementById('psmChart').getContext('2d');
 
@@ -1600,7 +1617,7 @@
             const markers = [
                 { value: points.pmc, y: curveAt(cumTooCheap, points.pmc), label: 'Floor (PMC)', short: 'Floor' },
                 { value: points.opp, y: curveAt(cumTooCheap, points.opp), label: 'Optimal (OPP)', short: 'Optimal' },
-                { value: points.ipp, y: curveAt(cumCheap, points.ipp), label: 'Market (IPP)', short: 'Market' },
+                { value: points.ipp, y: curveAt(notCheap, points.ipp), label: 'Market (IPP)', short: 'Market' },   // where Not a Bargain meets Not Expensive
                 { value: points.pme, y: curveAt(cumTooExpensive, points.pme), label: 'Ceiling (PME)', short: 'Ceiling' }
             ];
             const hasRange = points.pmc !== null && points.pme !== null && points.pme > points.pmc;
@@ -1671,6 +1688,11 @@
                 type: 'line',
                 data: {
                     datasets: [
+                        // The classic Van Westendorp chart: four curves, two falling (Too Cheap,
+                        // Not Expensive) and two rising (Not a Bargain, Too Expensive). Their four
+                        // crossings are the four price points. The Bargain and Expensive answer
+                        // curves (before they are flipped) are datasets 4 and 5, hidden unless the
+                        // "show answer curves" box is ticked.
                         {
                             label: 'Too Cheap',
                             data: xy(cumTooCheap),
@@ -1682,21 +1704,20 @@
                             pointRadius: 0
                         },
                         {
-                            label: 'Cheap/Bargain',
-                            data: xy(cumCheap),
-                            borderColor: '#f97316',
-                            backgroundColor: 'rgba(249, 115, 22, 0.1)',
+                            label: 'Not Expensive',
+                            data: xy(notExpensive),
+                            borderColor: '#3b82f6',
+                            backgroundColor: 'rgba(59, 130, 246, 0.1)',
                             borderWidth: 2.5,
-                            borderDash: [6, 3],
                             fill: false,
                             tension: 0,
                             pointRadius: 0
                         },
                         {
-                            label: 'Expensive',
-                            data: xy(cumExpensive),
-                            borderColor: '#3b82f6',
-                            backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                            label: 'Not a Bargain',
+                            data: xy(notCheap),
+                            borderColor: '#f97316',
+                            backgroundColor: 'rgba(249, 115, 22, 0.1)',
                             borderWidth: 2.5,
                             fill: false,
                             tension: 0,
@@ -1708,37 +1729,33 @@
                             borderColor: '#8b5cf6',
                             backgroundColor: 'rgba(139, 92, 246, 0.1)',
                             borderWidth: 2.5,
-                            borderDash: [6, 3],
-                            fill: false,
-                            tension: 0,
-                            pointRadius: 0
-                        },
-                        // The two complement curves take a lighter shade of the curve they
-                        // mirror (Not Cheap = 100% - Cheap/Bargain, Not Expensive = 100% -
-                        // Expensive), instead of two near-identical greys.
-                        {
-                            label: 'Not Cheap',
-                            data: xy(notCheap),
-                            borderColor: '#fb923c',
-                            backgroundColor: 'rgba(251, 146, 60, 0.1)',
-                            borderWidth: 2.5,
-                            borderDash: [1, 4],
-                            borderCapStyle: 'round',
                             fill: false,
                             tension: 0,
                             pointRadius: 0
                         },
                         {
-                            label: 'Not Expensive',
-                            data: xy(notExpensive),
-                            borderColor: '#60a5fa',
-                            backgroundColor: 'rgba(96, 165, 250, 0.1)',
-                            borderWidth: 2.5,
-                            borderDash: [1, 4],
-                            borderCapStyle: 'round',
+                            label: 'Bargain (answers)',
+                            data: xy(cumCheap),
+                            borderColor: '#fdba74',
+                            backgroundColor: 'rgba(253, 186, 116, 0.1)',
+                            borderWidth: 2,
+                            borderDash: [6, 4],
                             fill: false,
                             tension: 0,
-                            pointRadius: 0
+                            pointRadius: 0,
+                            hidden: !showAnswerCurves()
+                        },
+                        {
+                            label: 'Expensive (answers)',
+                            data: xy(cumExpensive),
+                            borderColor: '#93c5fd',
+                            backgroundColor: 'rgba(147, 197, 253, 0.1)',
+                            borderWidth: 2,
+                            borderDash: [6, 4],
+                            fill: false,
+                            tension: 0,
+                            pointRadius: 0,
+                            hidden: !showAnswerCurves()
                         }
                     ]
                 },
@@ -1760,6 +1777,7 @@
                         },
                         legend: {
                             position: 'bottom',
+                            onClick: function() {},   // the checkbox, not the legend, shows or hides the answer curves
                             // Line samples show each curve's color, width and dash pattern
                             // (the default point-style legend uses the point's style, which
                             // has no dash, so the dataset's own line style is copied over).
@@ -1768,6 +1786,7 @@
                                 pointStyle: 'line',
                                 pointStyleWidth: 26,
                                 padding: 14,
+                                filter: function(item) { return !item.hidden; },
                                 generateLabels: function(chart) {
                                     const items = Chart.defaults.plugins.legend.labels.generateLabels(chart);
                                     items.forEach(item => {
