@@ -75,3 +75,17 @@ The calendar, class schedule, school map, clocks, spatial examples and image-fai
 fallbacks in `spanish/unit3/Unit3Visual.tsx` are original editable React/HTML/SVG.
 The timetable and map are explicitly fictional practice examples. No original
 teacher documents or unlicensed third-party art are redistributed.
+
+## October 19 Cell Theory story media
+
+The five WebP files in `public/quizzes/cells/concept-1/` are original conceptual
+historical illustrations generated for this app with built-in imagegen. They are
+not authentic portraits or archival depictions. Hooke is represented by a microscope;
+other researchers have no visible faces. No private documents or personal photographs
+were supplied to the generator. No external image service or third-party asset pack
+is required at runtime. Proportional resizing and WebP encoding were applied.
+
+The observation diagrams and image-failure alternatives in
+`science/cells/CellVisual.tsx` are original editable SVG/React work. Exact prompts,
+scientific caveats, inspection notes, dimensions and byte sizes are documented in
+`CELLS_MEDIA_NOTES.md`.

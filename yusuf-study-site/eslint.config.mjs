@@ -47,7 +47,7 @@ const eslintConfig = defineConfig([
     },
   },
   {
-    files: ["spanish/unit3/Unit3App.tsx", "spanish/TutorCenter.tsx", "spanish/SpanishApp.tsx", "spanish/StoryApp.tsx", "spanish/ProficiencyApp.tsx", "spanish/Unit2StudyApp.tsx", "spanish/CompleteStory.tsx", "rikki/RikkiApp.tsx"],
+    files: ["science/cells/CellsApp.tsx", "spanish/unit3/Unit3App.tsx", "spanish/TutorCenter.tsx", "spanish/SpanishApp.tsx", "spanish/StoryApp.tsx", "spanish/ProficiencyApp.tsx", "spanish/Unit2StudyApp.tsx", "spanish/CompleteStory.tsx", "rikki/RikkiApp.tsx"],
     rules: {
       // Browser-local saves must hydrate after SSR and report storage failures.
       "react-hooks/set-state-in-effect": "off",

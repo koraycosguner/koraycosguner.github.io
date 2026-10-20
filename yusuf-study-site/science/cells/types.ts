@@ -1,0 +1,10 @@
+export type ScientistId='hooke'|'leeuwenhoek'|'schleiden'|'schwann'|'virchow';
+export type CellSkill='scientists'|'principles'|'chronology'|'microscopes'|'evidence';
+export type CellScene={id:ScientistId;name:string;year:number;title:string;sentences:string[];discovery:string;why:string;bridge:string};
+export type CellPrinciple={id:string;number:number;title:string;statement:string;explanation:string;scientists:ScientistId[]};
+export type CellQuestion={id:string;skill:CellSkill;format:'choice'|'order'|'bank'|'match';prompt:string;context?:string;choices:{id:string;label:string}[];answer:string[];slots?:string[];segments?:string[];explanation:string;hint:string;section?:string;quiz:boolean;review:boolean};
+export type CellTypedPrompt={id:string;prompt:string;hint:string;model:string};
+export type CellMode='worksheet'|'paragraph'|'timeline'|'quiz'|'review';
+export type CellEvidence={sessionId:number;questionId:string;first:string[];correct:boolean;assisted:boolean;mode:CellMode};
+export type CellSession={id:number;mode:CellMode;ids:string[];index:number;selection:string[];undo:string[][];feedback:boolean;hint:boolean;retry:boolean;complete:boolean};
+export type CellSaved={version:1;storyIndex:number;typed:Record<string,string>;modelsSeen:string[];nextSession:number;session:CellSession|null;evidence:CellEvidence[];seen:string[]};

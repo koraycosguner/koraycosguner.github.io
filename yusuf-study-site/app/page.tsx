@@ -47,7 +47,7 @@ const subjects: Subject[] = [
   {
     name: "Science",
     initial: "⚗",
-    note: "1 quiz ready",
+    note: "Cells & Ecology ready",
     description: "Life, Earth, matter, energy, and experiments.",
     className: "subject-science",
     href: "/subjects/science/",
@@ -143,7 +143,7 @@ export default function Home() {
                 <>
                   <div className="library-card-top">
                     <span className={`large-subject-icon ${subject.className}`} aria-hidden="true">{subject.initial}</span>
-                    <span className={subject.ready ? "availability ready" : "availability"}>{subject.ready ? "1 quiz" : "Coming next"}</span>
+                    <span className={subject.ready ? "availability ready" : "availability"}>{subject.ready ? "Open shelf" : "Coming next"}</span>
                   </div>
                   <h3>{subject.name}</h3>
                   <p>{subject.description}</p>

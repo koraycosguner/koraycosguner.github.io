@@ -1,1 +1,0 @@
-import{t as e}from"./index-DzTzqMtZ.js";import{t}from"./Unit2StudyApp-4lEZPod6.js";var n=e();function r(){return(0,n.jsx)(t,{entry:`story`})}export{r as default};

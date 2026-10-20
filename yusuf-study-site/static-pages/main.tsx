@@ -4,6 +4,12 @@ import {pagesBase} from './routes';
 import '../app/globals.css';
 
 const routes:Record<string,ComponentType>={
+  '/subjects/science/cells/':lazy(()=>import('../app/subjects/science/cells/page')),
+  '/subjects/science/cells/concept-1/':lazy(()=>import('../app/subjects/science/cells/concept-1/page')),
+  '/subjects/science/cells/concept-1/worksheet/':lazy(()=>import('../app/subjects/science/cells/concept-1/worksheet/page')),
+  '/subjects/science/cells/concept-1/paragraph/':lazy(()=>import('../app/subjects/science/cells/concept-1/paragraph/page')),
+  '/subjects/science/cells/concept-1/quiz/':lazy(()=>import('../app/subjects/science/cells/concept-1/quiz/page')),
+
   '/quizzes/spanish/unit-3/':lazy(()=>import('../app/quizzes/spanish/unit-3/page')),
   '/quizzes/spanish/unit-3/complete-story/':lazy(()=>import('../app/quizzes/spanish/unit-3/complete-story/page')),
   '/quizzes/spanish/unit-3/study-guide/':lazy(()=>import('../app/quizzes/spanish/unit-3/study-guide/page')),
@@ -43,7 +49,8 @@ class LoadBoundary extends Component<{children:ReactNode},{failed:boolean}> {
 let path=window.location.pathname.slice(pagesBase.length-1).replace(/\/index\.html$/,'/');
 if(!path.endsWith('/'))path+='/';
 const Page=routes[path];
-if(path.includes('/unit-3/'))document.title='Spanish Unit 3 · Yusuf’s Study Club';
+if(path.includes('/cells/'))document.title='Cell Theory & Scientists · Yusuf’s Study Club';
+else if(path.includes('/unit-3/'))document.title='Spanish Unit 3 · Yusuf’s Study Club';
 else if(path.includes('spanish'))document.title='Spanish · Yusuf’s Study Club';
 else if(path.includes('rikki'))document.title='Rikki-Tikki-Tavi · Yusuf’s Study Club';
 createRoot(document.getElementById('root')!).render(<LoadBoundary><Suspense fallback={<p style={{font:'18px system-ui',padding:'2rem',color:'#173c43'}}>Opening your activity…</p>}>{Page?<Page/>:<main><h1>Choose your next activity</h1><a href={pagesBase}>All subjects</a></main>}</Suspense></LoadBoundary>);

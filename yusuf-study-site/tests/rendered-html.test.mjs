@@ -16,3 +16,10 @@ test('production build preserves the new Unit 3 instructional artwork and source
  for(const route of ['', 'complete-story/', 'study-guide/', 'practice-test/'])await access(new URL('../app/quizzes/spanish/unit-3/'+route+'page.tsx',import.meta.url));
  const home=await readFile(new URL('../spanish/TutorCenter.tsx',import.meta.url),'utf8');assert.match(home,/quizzes\/spanish\/unit-3/);
 });
+
+test('production build includes the Cells lesson, its five images and separate practice routes',async()=>{
+ for(const name of ['cell-theory-worksheet','cell-theory-answer-key']){const file=await readFile(new URL('../dist/client/quizzes/cells/concept-1/'+name+'.docx',import.meta.url));assert.equal(file.subarray(0,2).toString(),'PK');}
+ for(const name of ['hooke','leeuwenhoek','schleiden','schwann','virchow'])await access(new URL('../dist/client/quizzes/cells/concept-1/'+name+'.webp',import.meta.url));
+ for(const route of ['', 'worksheet/', 'paragraph/', 'quiz/'])await access(new URL('../app/subjects/science/cells/concept-1/'+route+'page.tsx',import.meta.url));
+ const science=await readFile(new URL('../app/subjects/science/page.tsx',import.meta.url),'utf8');assert.match(science,/subjects\/science\/cells/);assert.match(science,/Ecology Expedition/);
+});

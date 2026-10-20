@@ -372,3 +372,37 @@ in `tests/browser/study.spec.ts` and `tests/browser/word-story.spec.ts`.
 
 See `SPANISH_CALM_REPORT.md` for actual verification, delivery details, and source limits.
 The October 7 tutor publication is separately authorized by the owner.
+
+
+## Cell Theory story and practice (October 19)
+
+Science → Cells → Concept 1 is implemented in `science/cells/`. The five illustrated
+story scenes lead to a concept map, an interactive timeline, a six-section worksheet,
+a word-bank paragraph, and a separate 18-question quiz with fresh targeted review.
+The five typed worksheet explanations are editable self-review, not automatically graded.
+
+Entry point: `/subjects/science/cells/concept-1/`. Separate direct-loadable routes:
+`worksheet/`, `paragraph/`, and `quiz/`. On GitHub Pages, prepend `/yusufs-quizzes`.
+For a local preview:
+
+```bash
+pnpm install --frozen-lockfile
+pnpm build:pages
+pnpm preview:pages
+# Open http://localhost:4173/yusufs-quizzes/subjects/science/cells/concept-1/
+```
+
+Edit `content.ts` for story text, keys, prompts and historical notes; `learning.ts` for
+save/interaction/grading rules; `CellsApp.tsx` and `cells.css` for the interface; and
+`CellVisual.tsx` for editable teaching diagrams. The five compressed illustrations
+are in `public/quizzes/cells/concept-1/`. The same folder includes an original editable
+Word worksheet and separate key, rebuilt by `scripts/build-cells-worksheet.py`.
+
+Local progress uses `yusuf.science.cells.concept1.v1`; no account, submission endpoint
+or learner record is added to the repository. Existing subject progress is untouched.
+
+The three classroom originals named in the brief were unavailable; this lesson follows
+the detailed supplied brief and verified historical sources. Exact teacher-material
+alignment remains unverified. See `CELLS_CONTENT_AUDIT.md`, `CELLS_MEDIA_NOTES.md`,
+and `CELLS_ACCEPTANCE_REPORT.md` for content boundaries, asset provenance and checks.
+This delivery is a feature-branch push only, with no live deployment.

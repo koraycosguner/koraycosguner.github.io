@@ -1,6 +1,11 @@
 /** Static entry points; each gets its own index.html for direct links and refreshes. */
 export const pagesBase = '/yusufs-quizzes/';
 export const pageRoutes = [
+  '/subjects/science/cells/',
+  '/subjects/science/cells/concept-1/',
+  '/subjects/science/cells/concept-1/worksheet/',
+  '/subjects/science/cells/concept-1/paragraph/',
+  '/subjects/science/cells/concept-1/quiz/',
   '/quizzes/spanish/unit-3/',
   '/quizzes/spanish/unit-3/complete-story/',
   '/quizzes/spanish/unit-3/study-guide/',

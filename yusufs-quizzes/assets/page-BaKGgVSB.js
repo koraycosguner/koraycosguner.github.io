@@ -1,1 +1,0 @@
-import{t as e}from"./index-DzTzqMtZ.js";import{t}from"./TutorCenter-D_LuBvW0.js";var n=e();function r(){return(0,n.jsx)(t,{entry:`practice`})}export{r as default};
