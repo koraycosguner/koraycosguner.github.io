@@ -1625,14 +1625,33 @@
                 // original names, and the backticks in the coefficient names are stripped
                 // in R before the results come back.
                 const bt = (n) => '`' + String(n).replace(/`/g, '') + '`';
+                // A per-alt-slope variable that never varies within the reference alternative
+                // (an outside option whose price is always 0) cannot carry a reference slope:
+                // that column is all zeros and mlogit stops with "system is exactly singular".
+                // Such a variable goes to part 2 instead, which fixes the reference slope at 0
+                // (the model Chosen ~ 0 | Price in the lecture notes). It stays in varsAltCS,
+                // so the prediction form still asks for one value per alternative.
+                const constantAtRef = (v) => {
+                    let seen;
+                    for (const r of longRows) {
+                        if (String(r[altVar]) !== String(reflevel)) continue;
+                        const val = String(r[v]);
+                        if (seen === undefined) seen = val;
+                        else if (seen !== val) return false;
+                    }
+                    return true;
+                };
+                const refFixedCS = varsAltCS.filter(constantAtRef);
+                const part3Vars  = varsAltCS.filter(v => !refFixedCS.includes(v));
+                const part2Vars  = [...varsAltCI, ...refFixedCS];
                 const part1 = varsSingle.length > 0 ? varsSingle.map(bt).join(' + ') : '0';
                 let part2;
                 if (interceptType === 'alt_specific') {
-                    part2 = varsAltCI.length > 0 ? varsAltCI.map(bt).join(' + ') : '1';
+                    part2 = part2Vars.length > 0 ? part2Vars.map(bt).join(' + ') : '1';
                 } else {
-                    part2 = varsAltCI.length > 0 ? '0 + ' + varsAltCI.map(bt).join(' + ') : '0';
+                    part2 = part2Vars.length > 0 ? '0 + ' + part2Vars.map(bt).join(' + ') : '0';
                 }
-                const part3 = varsAltCS.length > 0 ? varsAltCS.map(bt).join(' + ') : null;
+                const part3 = part3Vars.length > 0 ? part3Vars.map(bt).join(' + ') : null;
                 const formulaStr = part3 !== null
                     ? `${bt(choiceVar)} ~ ${part1} | ${part2} | ${part3}`
                     : `${bt(choiceVar)} ~ ${part1} | ${part2}`;

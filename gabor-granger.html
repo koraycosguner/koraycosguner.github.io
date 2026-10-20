@@ -126,6 +126,21 @@
             font-size: 0.95rem;
         }
 
+        /* Notes under the results (prices covered, never-buyers, ties) */
+        .gg-notes ul {
+            margin: 0.25rem 0 0;
+            padding-left: 1.2rem;
+        }
+
+        .gg-notes li {
+            margin-bottom: 0.3rem;
+        }
+
+        .gg-notes li strong {
+            display: inline;
+            font-size: inherit;
+        }
+
         /* Input Mode Toggle */
         .input-mode-toggle {
             display: flex;
@@ -970,7 +985,7 @@
 
             <div class="info-box">
                 <strong>How Gabor-Granger Works</strong>
-                Each survey respondent gives the highest price they would pay (their willingness-to-pay, or WTP). From these individual values the tool builds a demand curve: the share of respondents willing to buy at each price. It then finds the price that maximizes revenue (Price × Purchase Intent). You can paste the WTP values below or upload a CSV.
+                Each respondent answers yes or no to &ldquo;Would you buy at this price?&rdquo; at several prices. Their willingness-to-pay (WTP) is the highest price they said yes to; a respondent who said no at every price gets a WTP of 0. From these values the tool builds a demand curve: the share of respondents who would buy at each price (purchase intent). It then finds the price that maximizes revenue (Price × Purchase Intent). You can paste the WTP values below or upload a CSV.
             </div>
 
             <!-- Removed: Aggregated Data Section -->
@@ -1186,7 +1201,7 @@
 50
 35
 40"></textarea>
-                        <p class="form-hint">Enter numeric values only (currency symbols are ignored). Enter 0 for a respondent who would not buy at any price. Press Ctrl+Enter (Cmd+Enter on Mac) to run the analysis.</p>
+                        <p class="form-hint">Enter numeric values only (currency symbols are ignored). Enter 0 for a respondent who said no at every price. Press Ctrl+Enter (Cmd+Enter on Mac) to run the analysis.</p>
                     </div>
 
                     <div style="display: flex; gap: 1.5rem; flex-wrap: wrap; margin: 1.5rem 0;">
@@ -1235,15 +1250,15 @@
                             </tr>
                             <tr>
                                 <td class="column-name">wtp</td>
-                                <td>Each respondent's maximum willingness-to-pay</td>
+                                <td>The highest price the respondent said yes to (0 = said no at every price)</td>
                                 <td>30, 45, 50, 35, 40</td>
                             </tr>
                         </table>
                     </div>
 
                     <!-- Upload Area -->
-                    <div class="upload-area" id="wtpUploadArea">
-                        <input type="file" id="wtpFileInput" accept=".csv" style="display: none;">
+                    <div class="upload-area" id="wtpUploadArea" role="button" tabindex="0" aria-label="Upload a CSV file. Press Enter or Space to open the file picker.">
+                        <input type="file" id="wtpFileInput" accept=".csv" style="display: none;" aria-label="CSV file with one willingness-to-pay value per respondent">
                         <div class="upload-icon">📁</div>
                         <p class="upload-text">Click to upload or drag and drop</p>
                         <p class="upload-hint">CSV files only (max 10MB)</p>
@@ -1339,6 +1354,12 @@
                     </div>
                 </div>
 
+                <!-- About these results: what the numbers cover (filled in by displayResultsRaw) -->
+                <div class="info-box gg-notes" id="ggNotes" style="display: none; margin-top: 1rem;" role="note">
+                    <strong>About these results</strong>
+                    <ul id="ggNotesList"></ul>
+                </div>
+
                 <!-- Charts -->
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
                     <div class="chart-container">
@@ -1366,7 +1387,7 @@
                     </table>
                 </div>
                 <p style="font-size: 0.85rem; color: var(--text-light); margin-top: 0.5rem;" id="tableFootnote">* Indicates revenue-maximizing price point</p>
-                <p style="font-size: 0.85rem; color: var(--text-light); margin-top: 0.25rem;">Price elasticity is the % change in purchase intent divided by the % change in price, measured from the row above. Below -1, demand is elastic.</p>
+                <p style="font-size: 0.85rem; color: var(--text-light); margin-top: 0.25rem;">Price elasticity: the % change in purchase intent divided by the % change in price, moving from the price in the row above to this row (so the first row has none). Between 0 and &minus;1, demand is inelastic; below &minus;1, it is elastic (price sensitive). The revenue index tends to rise on inelastic steps and fall on elastic ones.</p>
 
                 <!-- Interpretation -->
                 <div class="interpretation" id="interpretationSection">
@@ -1477,11 +1498,15 @@
         const resultsContainer = document.getElementById('resultsContainer');
 
         // Show status message
+        // Clear any pending hide timer so a newer message is not cut short (as in Pricing Tool 10).
+        let statusTimer = null;
         function showStatus(message, type) {
+            if (statusTimer) clearTimeout(statusTimer);
             statusMessage.textContent = message;
             statusMessage.className = `status-message visible ${type}`;
-            setTimeout(() => {
+            statusTimer = setTimeout(() => {
                 statusMessage.classList.remove('visible');
+                statusTimer = null;
             }, 5000);
         }
 
@@ -1667,6 +1692,14 @@
 
         wtpUploadArea.addEventListener('click', () => wtpFileInput.click());
 
+        // Keyboard access for the upload area: Enter/Space open the picker.
+        wtpUploadArea.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ' || e.key === 'Spacebar') {
+                e.preventDefault();
+                wtpFileInput.click();
+            }
+        });
+
         wtpUploadArea.addEventListener('dragover', (e) => {
             e.preventDefault();
             wtpUploadArea.classList.add('dragover');
@@ -1691,6 +1724,11 @@
         function handleWtpFile(file) {
             if (!file.name.endsWith('.csv')) {
                 showStatus('Please upload a CSV file.', 'error');
+                return;
+            }
+
+            if (file.size > 10 * 1024 * 1024) {
+                showStatus('File size exceeds 10MB limit.', 'error');
                 return;
             }
 
@@ -1741,11 +1779,16 @@
             // Keep zero (and any below-minimum) values: these are "never-buyers" who
             // reject every offered price. They must stay in the denominator so purchase
             // intent is not overstated. They never count as buyers at any positive price.
+            // Currency symbols, thousands commas and spaces are ignored, as in the text box.
+            // Rows that are blank, non-numeric or negative are skipped and counted.
             const wtpValues = [];
+            let skippedRows = 0;
             results.data.forEach(row => {
-                const val = parseFloat(row[wtpColumn]);
+                const val = parseFloat(String(row[wtpColumn] ?? '').replace(/[$€£¥₹,\s]/g, ''));
                 if (!isNaN(val) && val >= 0) {
                     wtpValues.push(val);
+                } else {
+                    skippedRows++;
                 }
             });
 
@@ -1763,7 +1806,8 @@
             // Show the settings section
             document.getElementById('wtpCsvSettingsSection').style.display = 'block';
 
-            showStatus(`Loaded ${wtpValues.length} WTP values from "${wtpColumn}" column. Click "Run Analysis" to proceed.`, 'success');
+            const skippedNote = skippedRows > 0 ? ` (${skippedRows} blank or non-numeric row${skippedRows === 1 ? '' : 's'} skipped)` : '';
+            showStatus(`Loaded ${wtpValues.length} WTP values from "${wtpColumn}" column${skippedNote}. Click "Run Analysis" to proceed.`, 'success');
         }
 
         // Class dataset from a link: gabor-granger.html?data=<name> loads data/m303/<name>.csv once signed in.
@@ -2007,9 +2051,19 @@
             }, 500);
         }
 
+        // Round half away from zero at the shown precision. toFixed alone rounds the
+        // binary value, so an exact half can round down (35 x 84.5% = 29.575 showed as
+        // 29.57 while 25 x 94.5% = 23.625 showed as 23.63). Trimming to 12 significant
+        // digits first removes that noise, so the tool matches hand calculations and Excel.
+        function fixed(value, decimals) {
+            const f = Math.pow(10, decimals);
+            const scaled = Number((Math.abs(value) * f).toPrecision(12));
+            return (Math.sign(value) * Math.round(scaled) / f).toFixed(decimals);
+        }
+
         function formatPrice(value, currency) {
             if (value === null || value === undefined) return '-';
-            return currency + value.toFixed(2);
+            return currency + fixed(value, 2);
         }
 
         // Price elasticity of one step in the results table: the percent change in purchase
@@ -2023,24 +2077,25 @@
         }
 
         function formatElasticity(e) {
-            return e === null ? '-' : e.toFixed(2);
+            return e === null ? '-' : fixed(e, 2);
         }
 
         function displayResults() {
             const { data, revenueOptimalIndex, profitOptimalIndex, currency, cost } = analysisResults;
             const revenueOptimal = data[revenueOptimalIndex];
+            document.getElementById('ggNotes').style.display = 'none'; // notes are for raw WTP runs
 
             // Update revenue metrics
             document.getElementById('optimalPrice').textContent = formatPrice(revenueOptimal.price, currency);
-            document.getElementById('maxRevenue').textContent = revenueOptimal.revenueIndex.toFixed(2);
-            document.getElementById('optimalIntent').textContent = revenueOptimal.intent.toFixed(1) + '%';
+            document.getElementById('maxRevenue').textContent = fixed(revenueOptimal.revenueIndex, 2);
+            document.getElementById('optimalIntent').textContent = fixed(revenueOptimal.intent, 1) + '%';
 
             // Update profit metrics (if cost provided)
             const profitMetrics = document.getElementById('profitMetrics');
             if (cost !== null && profitOptimalIndex !== null) {
                 const profitOptimal = data[profitOptimalIndex];
                 document.getElementById('profitOptimalPrice').textContent = formatPrice(profitOptimal.price, currency);
-                document.getElementById('maxProfit').textContent = profitOptimal.profitIndex.toFixed(2);
+                document.getElementById('maxProfit').textContent = fixed(profitOptimal.profitIndex, 2);
                 document.getElementById('displayCost').textContent = formatPrice(cost, currency);
                 profitMetrics.style.display = 'grid';
             } else {
@@ -2096,9 +2151,9 @@
                     return `
                         <tr class="${rowClass}" style="${isProfitOptimal && !isRevenueOptimal ? 'background: rgba(6, 95, 70, 0.15);' : ''}">
                             <td>${marker}${formatPrice(item.price, currency)}</td>
-                            <td>${item.intent.toFixed(1)}%</td>
-                            <td>${item.revenueIndex.toFixed(2)}</td>
-                            <td>${item.profitIndex.toFixed(2)}</td>
+                            <td>${fixed(item.intent, 1)}%</td>
+                            <td>${fixed(item.revenueIndex, 2)}</td>
+                            <td>${fixed(item.profitIndex, 2)}</td>
                             <td>${formatElasticity(stepElasticity(data, idx))}</td>
                         </tr>
                     `;
@@ -2106,8 +2161,8 @@
                     return `
                         <tr class="${rowClass}">
                             <td>${marker}${formatPrice(item.price, currency)}</td>
-                            <td>${item.intent.toFixed(1)}%</td>
-                            <td>${item.revenueIndex.toFixed(2)}</td>
+                            <td>${fixed(item.intent, 1)}%</td>
+                            <td>${fixed(item.revenueIndex, 2)}</td>
                             <td>${formatElasticity(stepElasticity(data, idx))}</td>
                         </tr>
                     `;
@@ -2131,7 +2186,7 @@
         }
 
         function createCharts(data, revenueOptimalIndex, profitOptimalIndex, currency, cost) {
-            const labels = data.map(d => currency + d.price.toFixed(2));
+            const labels = data.map(d => currency + fixed(d.price, 2));
             const intentData = data.map(d => d.intent);
             const revenueData = data.map(d => d.revenueIndex);
             const profitData = cost !== null ? data.map(d => d.profitIndex) : null;
@@ -2177,7 +2232,7 @@
                         tooltip: {
                             callbacks: {
                                 label: function(context) {
-                                    return 'Purchase Intent: ' + context.parsed.y.toFixed(1) + '%';
+                                    return 'Purchase Intent: ' + fixed(context.parsed.y, 1) + '%';
                                 }
                             }
                         }
@@ -2261,7 +2316,7 @@
                             callbacks: {
                                 label: function(context) {
                                     const name = context.dataset.label || 'Index';
-                                    return name + ': ' + context.parsed.y.toFixed(2);
+                                    return name + ': ' + fixed(context.parsed.y, 2);
                                 }
                             }
                         }
@@ -2322,7 +2377,7 @@
         }
 
         function loadSampleRawWtp() {
-            // Generate sample WTP data for 100 respondents
+            // Sample WTP data for 90 respondents (10 + 20 + 40 + 20)
             // Simulating a product with WTP concentrated around $25-40
             // This distribution will show different optimal prices for revenue vs profit
             const sampleWtps = [
@@ -2343,7 +2398,8 @@
 
             document.getElementById('wtpTextarea').value = sampleWtps.join('\n');
             document.getElementById('rawUnitCost').value = '18.00';
-            showStatus('Sample data loaded: 100 respondents\' WTP values. Unit cost set to $18.00 (try adjusting to see how optimal prices change).', 'success');
+            // The count comes from the array (the message used to say 100; the sample has 90).
+            showStatus(`Sample data loaded: ${sampleWtps.length} respondents' WTP values. Unit cost set to $18.00 (try adjusting to see how optimal prices change).`, 'success');
         }
 
         function clearWtpCsvData() {
@@ -2422,52 +2478,23 @@
                     return;
                 }
 
-                // Calculate demand at various price points using LINEAR INTERPOLATION
-                // This allows finding optimal prices between observed WTP values
-                const minPrice = 0; // Start at $0
-                const maxPrice = Math.max(...uniqueWtps); // End at max WTP
-
-                // Create many price points for smooth curve and optimization
-                const numPoints = 500;
-                const priceStep = (maxPrice - minPrice) / numPoints;
-
-                // Build interpolated demand curve
-                // At each price, interpolate between the step function values
-                const demandData = [];
-
-                for (let i = 0; i <= numPoints; i++) {
-                    const price = minPrice + i * priceStep;
-
-                    // Calculate interpolated demand
-                    // Find the two adjacent WTP values that bracket this price
-                    const exactDemand = wtpValues.filter(wtp => wtp >= price).length / n * 100;
-
-                    // For smoother curve, use linear interpolation between WTP points
-                    let intent = exactDemand;
-
-                    // Find neighboring WTP values for interpolation
-                    const lowerWtps = uniqueWtps.filter(w => w < price);
-                    const higherWtps = uniqueWtps.filter(w => w >= price);
-
-                    if (lowerWtps.length > 0 && higherWtps.length > 0) {
-                        const lowerWtp = lowerWtps[lowerWtps.length - 1];
-                        const higherWtp = higherWtps[0];
-                        const lowerDemand = wtpValues.filter(wtp => wtp >= lowerWtp).length / n * 100;
-                        const higherDemand = wtpValues.filter(wtp => wtp >= higherWtp).length / n * 100;
-
-                        // Linear interpolation
-                        if (higherWtp !== lowerWtp) {
-                            const t = (price - lowerWtp) / (higherWtp - lowerWtp);
-                            intent = lowerDemand + t * (higherDemand - lowerDemand);
-                        }
-                    }
-
+                // Purchase intent, revenue index and profit index at every candidate price
+                // (with a price ladder, every tested price). The charts plot exactly these
+                // points: no smoothing, and nothing below the lowest or above the highest
+                // price, where the data say nothing. (The old charts drew an interpolated,
+                // smoothed curve from $0 and marked the optimum at the nearest grid price.)
+                const demandData = uniqueWtps.map(price => {
+                    const willBuy = wtpValues.filter(wtp => wtp >= price).length;
+                    const intent = (willBuy / n) * 100;
                     const revenueIndex = price * (intent / 100);
                     const profitIndex = cost !== null ? (price - cost) * (intent / 100) : null;
-                    demandData.push({ price, intent, revenueIndex, profitIndex });
-                }
+                    return { price, intent, revenueIndex, profitIndex };
+                });
 
-                // Find optimal prices using step-function demand at unique WTP values
+                // Find the optimal prices at the candidate prices (exact for the step-function
+                // demand). A new maximum must beat the old one by more than a rounding hair,
+                // so a tie always goes to the lower price and floating-point noise cannot flip it.
+                const TIE = 1e-9;
                 let maxRevenue = 0;
                 let optimalRevenuePrice = 0;
                 let optimalRevenueIntent = 0;
@@ -2476,24 +2503,24 @@
                 let optimalProfitPrice = 0;
                 let optimalProfitIntent = 0;
 
-                uniqueWtps.forEach(price => {
-                    const willBuy = wtpValues.filter(wtp => wtp >= price).length;
-                    const intent = (willBuy / n) * 100;
-                    const revenueIndex = price * (intent / 100);
-                    const profitIndex = cost !== null ? (price - cost) * (intent / 100) : null;
-
-                    if (revenueIndex > maxRevenue) {
-                        maxRevenue = revenueIndex;
-                        optimalRevenuePrice = price;
-                        optimalRevenueIntent = intent;
+                demandData.forEach(d => {
+                    if (d.revenueIndex > maxRevenue + TIE) {
+                        maxRevenue = d.revenueIndex;
+                        optimalRevenuePrice = d.price;
+                        optimalRevenueIntent = d.intent;
                     }
-
-                    if (cost !== null && profitIndex !== null && profitIndex > maxProfit) {
-                        maxProfit = profitIndex;
-                        optimalProfitPrice = price;
-                        optimalProfitIntent = intent;
+                    if (cost !== null && d.profitIndex > maxProfit + TIE) {
+                        maxProfit = d.profitIndex;
+                        optimalProfitPrice = d.price;
+                        optimalProfitIntent = d.intent;
                     }
                 });
+
+                // Every price that ties the maximum; the reported price is the lowest of them.
+                const revenueTies = demandData.filter(d => Math.abs(d.revenueIndex - maxRevenue) <= TIE).map(d => d.price);
+                const profitTies = cost !== null
+                    ? demandData.filter(d => Math.abs(d.profitIndex - maxProfit) <= TIE).map(d => d.price)
+                    : [];
 
                 // Normalize revenue/profit index to per-unit basis
                 const normalizedRevenue = maxRevenue;
@@ -2503,6 +2530,13 @@
                 // Flag this so the results present the least-loss price with a clear warning
                 // instead of showing it as a genuine profit optimum.
                 const profitViable = cost !== null ? (maxProfit > 0) : null;
+
+                // What the data cover, for the notes under the results: the lowest and highest
+                // prices evaluated, and how many respondents sit at the highest one (with a
+                // price ladder they said yes at every price, so their true WTP may be higher).
+                const lowestPrice = uniqueWtps[0];
+                const highestPrice = uniqueWtps[uniqueWtps.length - 1];
+                const atHighest = wtpValues.filter(w => w >= highestPrice).length;
 
                 // Build results data (sample some price points for table display)
                 const samplePrices = [];
@@ -2519,13 +2553,7 @@
                 }
                 samplePrices.sort((a, b) => a - b);
 
-                const tableData = samplePrices.map((price) => {
-                    const willBuy = wtpValues.filter(wtp => wtp >= price).length;
-                    const intent = (willBuy / n) * 100;
-                    const revenueIndex = price * (intent / 100);
-                    const profitIndex = cost !== null ? (price - cost) * (intent / 100) : null;
-                    return { price, intent, revenueIndex, profitIndex };
-                });
+                const tableData = samplePrices.map(price => demandData.find(d => d.price === price));
 
                 // Find indices
                 const revenueOptimalIdx = tableData.findIndex(d => d.price === optimalRevenuePrice);
@@ -2547,12 +2575,21 @@
                     optimalProfitIntent,
                     normalizedProfit,
                     profitViable,
-                    demandCurve: demandData
+                    demandCurve: demandData,
+                    revenueTies,
+                    profitTies,
+                    lowestPrice,
+                    highestPrice,
+                    atHighest,
+                    pricesEvaluated: uniqueWtps.length
                 };
 
+                // Report success first: displayResultsRaw may replace it with a warning (no
+                // price covers the unit cost), which used to be overwritten straight away.
+                const k = uniqueWtps.length;
+                showStatus(`Analysis complete: ${n} respondents, ${k} price${k === 1 ? '' : 's'} evaluated (${formatPrice(lowestPrice, currency)} to ${formatPrice(highestPrice, currency)}).`, 'success');
                 displayResultsRaw();
                 loadingOverlay.classList.add('hidden');
-                showStatus(`Analysis complete: ${n} respondents analyzed. The optimum is evaluated at every observed WTP, which is exact for the empirical demand curve.`, 'success');
             }, 500);
         }
 
@@ -2560,39 +2597,82 @@
             const {
                 data, revenueOptimalIndex, profitOptimalIndex, currency, cost,
                 sampleSize, neverBuyers, optimalRevenuePrice, optimalRevenueIntent, normalizedRevenue,
-                optimalProfitPrice, optimalProfitIntent, normalizedProfit, profitViable, demandCurve
+                optimalProfitPrice, optimalProfitIntent, normalizedProfit, profitViable, demandCurve,
+                revenueTies, profitTies, lowestPrice, highestPrice, atHighest, pricesEvaluated
             } = analysisResults;
+            const money = v => formatPrice(v, currency);
 
             // Update revenue metrics
-            document.getElementById('optimalPrice').textContent = formatPrice(optimalRevenuePrice, currency);
-            document.getElementById('maxRevenue').textContent = normalizedRevenue.toFixed(2);
-            document.getElementById('optimalIntent').textContent = optimalRevenueIntent.toFixed(1) + '%';
+            document.getElementById('optimalPrice').textContent = money(optimalRevenuePrice);
+            document.getElementById('maxRevenue').textContent = fixed(normalizedRevenue, 2);
+            document.getElementById('optimalIntent').textContent = fixed(optimalRevenueIntent, 1) + '%';
+            // Flag a tie on the card itself; the notes below name the tied prices.
+            document.getElementById('optimalPrice').nextElementSibling.textContent =
+                revenueTies.length > 1 ? 'Best price for revenue (a tie: lowest shown)' : 'Best price for revenue';
 
             // Update profit metrics (if cost provided)
             const profitMetrics = document.getElementById('profitMetrics');
             const profitPriceLabel = document.querySelector('#profitMetrics .metric-card:first-child .metric-label');
             const profitPriceDesc = document.querySelector('#profitMetrics .metric-card:first-child .metric-desc');
             if (cost !== null && profitOptimalIndex !== null) {
-                document.getElementById('profitOptimalPrice').textContent = formatPrice(optimalProfitPrice, currency);
-                document.getElementById('maxProfit').textContent = normalizedProfit.toFixed(2);
-                document.getElementById('displayCost').textContent = formatPrice(cost, currency);
+                document.getElementById('profitOptimalPrice').textContent = money(optimalProfitPrice);
+                document.getElementById('maxProfit').textContent = fixed(normalizedProfit, 2);
+                document.getElementById('displayCost').textContent = money(cost);
                 // F10 guard: if no tested price covers the unit cost, there is no profitable
                 // price. Present the least-loss price honestly instead of as a profit optimum.
                 if (profitViable === false) {
                     if (profitPriceLabel) profitPriceLabel.textContent = 'Least-Loss Price';
                     if (profitPriceDesc) profitPriceDesc.textContent = 'No tested price covers the unit cost';
-                    showStatus(`No tested price covers the unit cost of ${formatPrice(cost, currency)}, so no price is profitable. The price shown (${formatPrice(optimalProfitPrice, currency)}) is the least-loss option.`, 'error');
+                    showStatus(`No tested price covers the unit cost of ${money(cost)}, so no price is profitable. The price shown (${money(optimalProfitPrice)}) is the least-loss option.`, 'error');
                 } else {
                     if (profitPriceLabel) profitPriceLabel.textContent = 'Profit-Maximizing Price';
-                    if (profitPriceDesc) profitPriceDesc.textContent = 'Best price for profit';
+                    if (profitPriceDesc) profitPriceDesc.textContent =
+                        profitTies.length > 1 ? 'Best price for profit (a tie: lowest shown)' : 'Best price for profit';
                 }
                 profitMetrics.style.display = 'grid';
             } else {
                 profitMetrics.style.display = 'none';
             }
 
+            // Notes: what the numbers cover, in plain terms (tested prices, never-buyers,
+            // respondents at the top price, ties, optima at the edge of the range).
+            const pct = k => fixed(k / sampleSize * 100, 1) + '%';
+            const have = k => (k === 1 ? 'has' : 'have');
+            const listPrices = ps => ps.map(money).join(', ').replace(/, ([^,]*)$/, ' and $1');
+            const notes = [];
+            notes.push(`<strong>Prices covered:</strong> ${money(lowestPrice)} to ${money(highestPrice)} (${pricesEvaluated} price${pricesEvaluated === 1 ? '' : 's'}: each willingness-to-pay value in the data, which for a price ladder are the tested prices). The results say nothing about prices outside this range, and the charts only join these prices with straight lines.`);
+            if (neverBuyers > 0) {
+                notes.push(`<strong>Never-buyers:</strong> ${neverBuyers} of ${sampleSize} respondents (${pct(neverBuyers)}) ${have(neverBuyers)} a WTP of 0: they said no at every price. They never buy, but they still count, so every purchase intent is a share of all ${sampleSize}.`);
+            }
+            if (pricesEvaluated > 1) {
+                notes.push(`<strong>Top of the range:</strong> ${atHighest} of ${sampleSize} respondents (${pct(atHighest)}) ${have(atHighest)} a WTP of ${money(highestPrice)}, the highest in the data. If that was the highest price tested, they said yes at every price and their true WTP may be higher, so how many would buy above ${money(highestPrice)} is unknown.`);
+            }
+            if (revenueTies.length > 1) {
+                notes.push(`<strong>Tie:</strong> ${listPrices(revenueTies)} give the same revenue index (${fixed(normalizedRevenue, 2)}). The tool reports the lowest, ${money(revenueTies[0])}.`);
+            }
+            if (cost !== null && profitTies.length > 1) {
+                notes.push(`<strong>Tie:</strong> ${listPrices(profitTies)} give the same profit index (${fixed(normalizedProfit, 2)}). The tool reports the lowest, ${money(profitTies[0])}.`);
+            }
+            const edge = (what, price) => {
+                if (pricesEvaluated < 2) return;
+                if (price === highestPrice) {
+                    notes.push(`<strong>Edge of the range:</strong> the ${what} is the highest price evaluated, ${money(price)}. A higher price might do even better; only data on higher prices can tell.`);
+                } else if (price === lowestPrice) {
+                    notes.push(`<strong>Edge of the range:</strong> the ${what} is the lowest price evaluated, ${money(price)}. A lower price might do even better; only data on lower prices can tell.`);
+                }
+            };
+            edge('revenue-maximizing price', optimalRevenuePrice);
+            if (cost !== null) {
+                edge(profitViable === false ? 'least-loss price' : 'profit-maximizing price', optimalProfitPrice);
+            }
+            if (cost !== null && profitViable === false) {
+                notes.push(`<strong>No profitable price:</strong> no price evaluated covers the unit cost of ${money(cost)}, so every profit index is negative. ${money(optimalProfitPrice)} is only the price that loses the least.`);
+            }
+            document.getElementById('ggNotesList').innerHTML = notes.map(t => `<li>${t}</li>`).join('');
+            document.getElementById('ggNotes').style.display = 'block';
+
             // Create charts using demand curve data
-            createChartsFromDemandCurve(demandCurve, optimalRevenuePrice, optimalProfitPrice, currency, cost);
+            createChartsFromDemandCurve(demandCurve, optimalRevenuePrice, optimalProfitPrice, currency, cost, profitViable);
 
             // Update table headers
             const thead = document.getElementById('resultsHead');
@@ -2639,19 +2719,19 @@
                 if (cost !== null) {
                     return `
                         <tr class="${rowClass}" style="${isProfitOptimal && !isRevenueOptimal ? 'background: rgba(6, 95, 70, 0.15);' : ''}">
-                            <td>${marker}${formatPrice(item.price, currency)}</td>
-                            <td>${item.intent.toFixed(1)}%</td>
-                            <td>${item.revenueIndex.toFixed(2)}</td>
-                            <td>${item.profitIndex.toFixed(2)}</td>
+                            <td>${marker}${money(item.price)}</td>
+                            <td>${fixed(item.intent, 1)}%</td>
+                            <td>${fixed(item.revenueIndex, 2)}</td>
+                            <td>${fixed(item.profitIndex, 2)}</td>
                             <td>${formatElasticity(stepElasticity(data, idx))}</td>
                         </tr>
                     `;
                 } else {
                     return `
                         <tr class="${rowClass}">
-                            <td>${marker}${formatPrice(item.price, currency)}</td>
-                            <td>${item.intent.toFixed(1)}%</td>
-                            <td>${item.revenueIndex.toFixed(2)}</td>
+                            <td>${marker}${money(item.price)}</td>
+                            <td>${fixed(item.intent, 1)}%</td>
+                            <td>${fixed(item.revenueIndex, 2)}</td>
                             <td>${formatElasticity(stepElasticity(data, idx))}</td>
                         </tr>
                     `;
@@ -2679,68 +2759,114 @@
             resultsContainer.scrollIntoView({ behavior: 'smooth' });
         }
 
-        function createChartsFromDemandCurve(demandData, revenueOptimal, profitOptimal, currency, cost) {
-            // Sample data for smoother charts
-            const sampleRate = Math.max(1, Math.floor(demandData.length / 30));
-            const sampled = demandData.filter((_, i) => i % sampleRate === 0);
-
-            const labels = sampled.map(d => currency + d.price.toFixed(2));
-            const intentData = sampled.map(d => d.intent);
-            const revenueData = sampled.map(d => d.revenueIndex);
-            const profitData = cost !== null ? sampled.map(d => d.profitIndex) : null;
-
-            // Find the sampled grid point nearest each optimal price. An exact match rarely
-            // lands on the sampled grid (spacing ~ maxWTP/30), so pick the closest index.
-            function nearestSampledIdx(target) {
-                let best = -1, bestDiff = Infinity;
-                sampled.forEach((d, i) => {
-                    const diff = Math.abs(d.price - target);
-                    if (diff < bestDiff) { bestDiff = diff; best = i; }
-                });
-                return best;
-            }
-            const revenueOptimalIdx = nearestSampledIdx(revenueOptimal);
-            const profitOptimalIdx = cost !== null ? nearestSampledIdx(profitOptimal) : -1;
-
-            // Helper: an array of nulls with one marker value, so a scatter dataset can
-            // highlight a single point on top of a category-axis line chart.
-            const markerAt = (idx, value) => labels.map((_, i) => (i === idx ? value : null));
+        function createChartsFromDemandCurve(demandData, revenueOptimal, profitOptimal, currency, cost, profitViable) {
+            // One point per price the tool evaluated, on a linear price axis with round
+            // ticks, joined by straight lines as on the slides. The optimum markers sit
+            // exactly on the reported prices and carry their own labels.
+            const money = v => formatPrice(v, currency);
+            const xy = key => demandData.map(d => ({ x: d.price, y: d[key] }));
+            const showPoints = demandData.length <= 40;
+            const lo = demandData[0].price, hi = demandData[demandData.length - 1].price;
+            const span = hi - lo;
+            const pad = span > 0 ? span * 0.03 : Math.max(1, lo * 0.1); // keep edge points whole
+            const tickDecimals = span < 5 ? 2 : (span < 20 ? 1 : 0);
+            const rev = demandData.find(d => d.price === revenueOptimal);
+            const prof = cost !== null ? demandData.find(d => d.price === profitOptimal) : null;
+            const profitWord = profitViable === false ? 'Least-loss' : 'Profit max';
 
             // Destroy existing charts
             if (demandChart) demandChart.destroy();
             if (revenueChart) revenueChart.destroy();
 
+            // A labeled, hollow marker on one point (the label is drawn by markerLabels).
+            const marker = (label, x, y, color, text, below) => ({
+                label,
+                data: [{ x, y }],
+                markerLabel: text,
+                labelBelow: below,
+                borderColor: color,
+                backgroundColor: '#ffffff',
+                pointRadius: 7,
+                pointHoverRadius: 8,
+                pointBorderColor: color,
+                pointBorderWidth: 3,
+                showLine: false,
+                fill: false
+            });
+
+            // Write each marker's label beside it, kept inside the plot area.
+            const markerLabels = {
+                id: 'ggMarkerLabels',
+                afterDatasetsDraw(chart) {
+                    const c = chart.ctx, a = chart.chartArea;
+                    c.save();
+                    c.font = '700 11px Outfit, sans-serif';
+                    c.textBaseline = 'middle';
+                    chart.data.datasets.forEach((ds, i) => {
+                        if (!ds.markerLabel || !chart.isDatasetVisible(i)) return;
+                        const pt = chart.getDatasetMeta(i).data[0];
+                        if (!pt) return;
+                        const tw = c.measureText(ds.markerLabel).width;
+                        let tx = pt.x + 10;
+                        if (tx + tw > a.right) tx = pt.x - 10 - tw;
+                        tx = Math.max(a.left + 3, Math.min(tx, a.right - tw - 3)); // narrow (phone) charts
+                        const ty = Math.min(Math.max(pt.y + (ds.labelBelow ? 18 : -18), a.top + 8), a.bottom - 8);
+                        c.fillStyle = 'rgba(255,255,255,0.9)';
+                        c.fillRect(tx - 3, ty - 8, tw + 6, 16);
+                        c.fillStyle = ds.pointBorderColor;
+                        c.fillText(ds.markerLabel, tx, ty);
+                    });
+                    c.restore();
+                }
+            };
+
+            // Shared price axis; the bounds are not labeled, so ticks stay round.
+            const priceAxis = () => ({
+                type: 'linear',
+                min: lo - pad,
+                max: hi + pad,
+                title: { display: true, text: currency ? 'Price (' + currency + ')' : 'Price', font: { weight: '600' } },
+                ticks: {
+                    includeBounds: false,
+                    callback: function(value) { return currency + Number(value).toFixed(tickDecimals); }
+                }
+            });
+            const tooltip = (decimals, unit) => ({
+                callbacks: {
+                    title: items => money(items[0].parsed.x),
+                    label: context => context.dataset.label + ': ' + fixed(context.parsed.y, decimals) + unit
+                }
+            });
+
             // Demand Curve Chart
+            const demandSets = [{
+                label: 'Purchase Intent (%)',
+                data: xy('intent'),
+                borderColor: '#990000',
+                backgroundColor: 'rgba(153, 0, 0, 0.1)',
+                borderWidth: 3,
+                fill: true,
+                tension: 0,
+                pointRadius: showPoints ? 4 : 0,
+                pointBackgroundColor: '#990000',
+                pointBorderColor: '#ffffff',
+                pointBorderWidth: 1.5
+            }, marker('Revenue-optimal price', revenueOptimal, rev.intent, '#990000',
+                      `Revenue max ${money(revenueOptimal)}: ${fixed(rev.intent, 1)}% buy`, false)];
+            if (prof) {
+                demandSets.push(marker(profitViable === false ? 'Least-loss price' : 'Profit-optimal price', profitOptimal, prof.intent, '#065f46',
+                    `${profitWord} ${money(profitOptimal)}: ${fixed(prof.intent, 1)}% buy`, true));
+            }
+
             const demandCtx = document.getElementById('demandChart').getContext('2d');
             demandChart = new Chart(demandCtx, {
                 type: 'line',
-                data: {
-                    labels: labels,
-                    datasets: [{
-                        label: 'Purchase Intent (%)',
-                        data: intentData,
-                        borderColor: '#990000',
-                        backgroundColor: 'rgba(153, 0, 0, 0.1)',
-                        borderWidth: 3,
-                        fill: true,
-                        tension: 0.4,
-                        pointRadius: 0
-                    }, {
-                        label: 'Revenue-optimal price',
-                        data: markerAt(revenueOptimalIdx, intentData[revenueOptimalIdx]),
-                        borderColor: '#990000',
-                        backgroundColor: '#ffffff',
-                        pointRadius: 6,
-                        pointHoverRadius: 7,
-                        pointBorderColor: '#990000',
-                        pointBorderWidth: 3,
-                        showLine: false,
-                        fill: false
-                    }]
-                },
+                data: { datasets: demandSets },
+                plugins: [markerLabels],
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
+                    interaction: { mode: 'nearest', axis: 'x', intersect: false },
                     plugins: {
                         title: {
                             display: true,
@@ -2749,18 +2875,11 @@
                             color: '#990000',
                             padding: { bottom: 20 }
                         },
-                        legend: { display: false }
+                        legend: { display: false },
+                        tooltip: tooltip(1, '%')
                     },
                     scales: {
-                        x: {
-                            title: { display: true, text: 'Price', font: { weight: '600' } },
-                            ticks: {
-                                maxTicksLimit: 8,
-                                callback: function(value, index) {
-                                    return index % 4 === 0 ? this.getLabelForValue(value) : '';
-                                }
-                            }
-                        },
+                        x: priceAxis(),
                         y: {
                             title: { display: true, text: 'Purchase Intent (%)', font: { weight: '600' } },
                             min: 0,
@@ -2770,66 +2889,50 @@
                 }
             });
 
-            // Revenue & Profit Curve Chart
-            const revenueCtx = document.getElementById('revenueChart').getContext('2d');
+            // Revenue & Profit Chart
             const datasets = [{
                 label: 'Revenue Index',
-                data: revenueData,
+                data: xy('revenueIndex'),
                 borderColor: '#990000',
-                backgroundColor: 'rgba(153, 0, 0, 0.3)',
-                borderWidth: 2,
+                backgroundColor: 'rgba(153, 0, 0, 0.15)',
+                borderWidth: 2.5,
                 fill: true,
-                tension: 0.4,
-                pointRadius: 0
+                tension: 0,
+                pointRadius: showPoints ? 3.5 : 0,
+                pointBackgroundColor: '#990000'
             }];
 
-            if (cost !== null && profitData) {
+            if (prof) {
                 datasets.push({
                     label: 'Profit Index',
-                    data: profitData,
+                    data: xy('profitIndex'),
                     borderColor: '#065f46',
-                    backgroundColor: 'rgba(6, 95, 70, 0.3)',
-                    borderWidth: 2,
+                    backgroundColor: 'rgba(6, 95, 70, 0.15)',
+                    borderWidth: 2.5,
                     fill: true,
-                    tension: 0.4,
-                    pointRadius: 0
+                    tension: 0,
+                    pointRadius: showPoints ? 3.5 : 0,
+                    pointBackgroundColor: '#065f46'
                 });
             }
 
-            // Highlight the revenue optimum (and profit optimum, if any) on the chart.
-            datasets.push({
-                label: 'Revenue optimum',
-                data: markerAt(revenueOptimalIdx, revenueData[revenueOptimalIdx]),
-                borderColor: '#990000',
-                backgroundColor: '#ffffff',
-                pointRadius: 7,
-                pointHoverRadius: 8,
-                pointBorderColor: '#990000',
-                pointBorderWidth: 3,
-                showLine: false,
-                fill: false
-            });
-            if (cost !== null && profitData && profitOptimalIdx >= 0) {
-                datasets.push({
-                    label: 'Profit optimum',
-                    data: markerAt(profitOptimalIdx, profitData[profitOptimalIdx]),
-                    borderColor: '#065f46',
-                    backgroundColor: '#ffffff',
-                    pointRadius: 7,
-                    pointHoverRadius: 8,
-                    pointBorderColor: '#065f46',
-                    pointBorderWidth: 3,
-                    showLine: false,
-                    fill: false
-                });
+            // Mark and label the revenue optimum (and the profit optimum, if any).
+            datasets.push(marker('Revenue optimum', revenueOptimal, rev.revenueIndex, '#990000',
+                `Revenue max ${money(revenueOptimal)} (${fixed(rev.revenueIndex, 2)})`, false));
+            if (prof) {
+                datasets.push(marker(profitViable === false ? 'Least-loss price' : 'Profit optimum', profitOptimal, prof.profitIndex, '#065f46',
+                    `${profitWord} ${money(profitOptimal)} (${fixed(prof.profitIndex, 2)})`, true));
             }
 
+            const revenueCtx = document.getElementById('revenueChart').getContext('2d');
             revenueChart = new Chart(revenueCtx, {
                 type: 'line',
-                data: { labels, datasets },
+                data: { datasets },
+                plugins: [markerLabels],
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
+                    interaction: { mode: 'nearest', axis: 'x', intersect: false },
                     plugins: {
                         title: {
                             display: true,
@@ -2840,19 +2943,14 @@
                         },
                         legend: {
                             display: cost !== null,
-                            position: 'bottom'
-                        }
+                            position: 'bottom',
+                            // The markers carry their own labels, so only the two curves are listed.
+                            labels: { filter: (item, chartData) => !chartData.datasets[item.datasetIndex].markerLabel }
+                        },
+                        tooltip: tooltip(2, '')
                     },
                     scales: {
-                        x: {
-                            title: { display: true, text: 'Price', font: { weight: '600' } },
-                            ticks: {
-                                maxTicksLimit: 8,
-                                callback: function(value, index) {
-                                    return index % 4 === 0 ? this.getLabelForValue(value) : '';
-                                }
-                            }
-                        },
+                        x: priceAxis(),
                         y: {
                             title: { display: true, text: 'Index Value', font: { weight: '600' } },
                             beginAtZero: true
@@ -2870,13 +2968,13 @@
                     <li><strong>Profit-Maximizing Price:</strong> The price that maximizes profit after subtracting unit cost. This may differ from the revenue-maximizing price because higher margins can offset lower demand.</li>
                     <li><strong>Revenue Index:</strong> Shows relative revenue potential at each price (Price × Purchase Intent).</li>
                     <li><strong>Profit Index:</strong> Shows relative profit potential at each price ((Price - Cost) × Purchase Intent).</li>
-                    ${isRawWtp ? '<li><strong>Optimal price:</strong> The optimum is evaluated at every observed WTP value, which is exact for the empirical (step-function) demand curve: revenue rises within each price interval, so the best price always lands on an observed WTP. The line chart smooths the curve for readability only.</li>' : ''}
+                    ${isRawWtp ? '<li><strong>Prices checked:</strong> The tool computes purchase intent at every willingness-to-pay value in the data (with a price ladder, every tested price) and picks the best of these prices. The charts plot exactly these prices, joined by straight lines.</li>' : ''}
                 `;
             } else {
                 list.innerHTML = `
                     <li><strong>Optimal Price:</strong> The price that generates the most potential revenue by balancing what you charge with how many customers will buy.</li>
                     <li><strong>Revenue Index:</strong> Shows relative revenue potential at each price. Higher numbers mean better combinations of price and demand.</li>
-                    ${isRawWtp ? '<li><strong>Optimal price:</strong> The optimum is evaluated at every observed WTP value, which is exact for the empirical (step-function) demand curve: revenue rises within each price interval, so the best price always lands on an observed WTP. The line chart smooths the curve for readability only.</li>' : ''}
+                    ${isRawWtp ? '<li><strong>Prices checked:</strong> The tool computes purchase intent at every willingness-to-pay value in the data (with a price ladder, every tested price) and picks the best of these prices. The charts plot exactly these prices, joined by straight lines.</li>' : ''}
                 `;
             }
         }
@@ -2891,15 +2989,32 @@
             // the tool and into Excel. The currency is stated once in a header row.
             const currencyLabel = currency ? currency : '(none)';
 
+            const r = analysisResults;
             let csv = 'Gabor-Granger Price Analysis Results\n';
             csv += `Currency,${currencyLabel}\n\n`;
             csv += 'Key Findings\n';
-            csv += `Revenue-Maximizing Price,${data[revenueOptimalIndex].price.toFixed(2)}\n`;
-            csv += `Maximum Revenue Index,${data[revenueOptimalIndex].revenueIndex.toFixed(2)}\n`;
-            csv += `Purchase Intent at Optimal (%),${data[revenueOptimalIndex].intent.toFixed(1)}\n`;
+            csv += `Revenue-Maximizing Price,${fixed(data[revenueOptimalIndex].price, 2)}\n`;
+            csv += `Maximum Revenue Index,${fixed(data[revenueOptimalIndex].revenueIndex, 2)}\n`;
+            csv += `Purchase Intent at Optimal (%),${fixed(data[revenueOptimalIndex].intent, 1)}\n`;
             if (cost !== null && profitOptimalIndex !== null) {
-                csv += `Profit-Maximizing Price,${data[profitOptimalIndex].price.toFixed(2)}\n`;
-                csv += `Maximum Profit Index,${data[profitOptimalIndex].profitIndex.toFixed(2)}\n`;
+                // Same label as the page when no price covers the unit cost.
+                const priceLabel = r.profitViable === false ? 'Least-Loss Price (no price covers the unit cost)' : 'Profit-Maximizing Price';
+                csv += `Unit Cost,${fixed(cost, 2)}\n`;
+                csv += `${priceLabel},${fixed(data[profitOptimalIndex].price, 2)}\n`;
+                csv += `Maximum Profit Index,${fixed(data[profitOptimalIndex].profitIndex, 2)}\n`;
+                csv += `Purchase Intent at Profit-Maximizing Price (%),${fixed(data[profitOptimalIndex].intent, 1)}\n`;
+            }
+            // Raw WTP runs: what the data cover (the same facts as the notes on the page).
+            if (r.rawWtpMode) {
+                const ties = ps => ps.length > 1 ? ps.map(p => fixed(p, 2)).join(' / ') : 'None';
+                csv += '\nData Coverage\n';
+                csv += `Respondents,${r.sampleSize}\n`;
+                csv += `Never-Buyers (WTP of 0),${r.neverBuyers}\n`;
+                csv += `Lowest Price Evaluated,${fixed(r.lowestPrice, 2)}\n`;
+                csv += `Highest Price Evaluated,${fixed(r.highestPrice, 2)}\n`;
+                csv += `Respondents at the Highest Price (true WTP may be higher),${r.atHighest}\n`;
+                csv += `Prices Tied for Maximum Revenue,${ties(r.revenueTies)}\n`;
+                if (cost !== null) csv += `Prices Tied for Maximum Profit,${ties(r.profitTies)}\n`;
             }
             csv += '\nDetailed Results\n';
             if (cost !== null) {
@@ -2911,11 +3026,11 @@
             data.forEach((item, idx) => {
                 // Blank on the first row, where there is no lower price to compare with.
                 const e = stepElasticity(data, idx);
-                const elasticity = e === null ? '' : e.toFixed(2);
+                const elasticity = e === null ? '' : fixed(e, 2);
                 if (cost !== null) {
-                    csv += `${item.price.toFixed(2)},${item.intent.toFixed(1)},${item.revenueIndex.toFixed(2)},${item.profitIndex.toFixed(2)},${elasticity},${idx === revenueOptimalIndex ? 'Yes' : 'No'},${idx === profitOptimalIndex ? 'Yes' : 'No'}\n`;
+                    csv += `${fixed(item.price, 2)},${fixed(item.intent, 1)},${fixed(item.revenueIndex, 2)},${fixed(item.profitIndex, 2)},${elasticity},${idx === revenueOptimalIndex ? 'Yes' : 'No'},${idx === profitOptimalIndex ? 'Yes' : 'No'}\n`;
                 } else {
-                    csv += `${item.price.toFixed(2)},${item.intent.toFixed(1)},${item.revenueIndex.toFixed(2)},${elasticity},${idx === revenueOptimalIndex ? 'Yes' : 'No'}\n`;
+                    csv += `${fixed(item.price, 2)},${fixed(item.intent, 1)},${fixed(item.revenueIndex, 2)},${elasticity},${idx === revenueOptimalIndex ? 'Yes' : 'No'}\n`;
                 }
             });
 
