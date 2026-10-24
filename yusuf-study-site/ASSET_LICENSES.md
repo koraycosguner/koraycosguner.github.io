@@ -89,3 +89,14 @@ The observation diagrams and image-failure alternatives in
 `science/cells/CellVisual.tsx` are original editable SVG/React work. Exact prompts,
 scientific caveats, inspection notes, dimensions and byte sizes are documented in
 `CELLS_MEDIA_NOTES.md`.
+
+
+## Sentence Studio — Phrases vs. Clauses (2026-10-24)
+
+Thirteen original AI-generated fictional teaching scenes are stored in
+`public/quizzes/phrases-clauses/`: puppy, bus, train, dinner, trail, mural, book,
+playground, park, snow, bell, bird and movie (WebP). Generated with the built-in
+ImageGen tool, inspected individually and optimized locally; no third-party
+photo was copied. Exact prompts and final sizes are in `ELA_MEDIA_NOTES.md`.
+They depict fictional people and places, not Yusuf, family members or classmates.
+The supplied worksheet photographs are private teaching sources, not web assets.

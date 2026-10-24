@@ -12,8 +12,8 @@ const subjects: Subject[] = [
   {
     name: "Language Arts",
     initial: "Aa",
-    note: "Rikki-Tikki-Tavi adventure",
-    description: "Explore story techniques through short lessons, examples, and challenges.",
+    note: "Grammar & story adventures",
+    description: "Build complete sentences and explore story techniques through short, visual lessons.",
     className: "subject-language",
     href: "/subjects/language-arts/",
     ready: true,

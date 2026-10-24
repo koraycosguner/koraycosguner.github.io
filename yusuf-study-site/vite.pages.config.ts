@@ -8,7 +8,7 @@ const sourceRoot=import.meta.dirname;
 /** Only this static build rewrites URL literals. Sites source remains root-mounted. */
 function subpathUrls():Plugin {
   return {name:'study-pages-subpath',enforce:'pre',transform(code,id){
-    if(!/\.[jt]sx?$/.test(id)||!['app','spanish','rikki','science'].some(dir=>id.startsWith(resolve(sourceRoot,dir)+'/')))return;
+    if(!/\.[jt]sx?$/.test(id)||!['app','spanish','rikki','science','ela'].some(dir=>id.startsWith(resolve(sourceRoot,dir)+'/')))return;
     const file=ts.createSourceFile(id,code,ts.ScriptTarget.Latest,true,ts.ScriptKind.TSX);
     const changes:{start:number;end:number;value:string}[]=[];
     function visit(node:ts.Node){

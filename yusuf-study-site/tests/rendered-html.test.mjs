@@ -23,3 +23,10 @@ test('production build includes the Cells lesson, its five images and separate p
  for(const route of ['', 'worksheet/', 'paragraph/', 'quiz/'])await access(new URL('../app/subjects/science/cells/concept-1/'+route+'page.tsx',import.meta.url));
  const science=await readFile(new URL('../app/subjects/science/page.tsx',import.meta.url),'utf8');assert.match(science,/subjects\/science\/cells/);assert.match(science,/Ecology Expedition/);
 });
+
+test('production build includes Sentence Studio, all thirteen teaching scenes and separate ELA routes',async()=>{
+ for(const name of ['puppy','bus','train','dinner','trail','mural','book','playground','park','snow','bell','bird','movie'])await access(new URL('../dist/client/quizzes/phrases-clauses/'+name+'.webp',import.meta.url));
+ for(const route of ['', 'learn/', 'level-1/', 'level-2/', 'level-3/', 'level-4/', 'review/', 'test/', 'builder/'])await access(new URL('../app/quizzes/phrases-clauses/'+route+'page.tsx',import.meta.url));
+ const shelf=await readFile(new URL('../app/subjects/language-arts/page.tsx',import.meta.url),'utf8');assert.match(shelf,/quizzes\/phrases-clauses/);assert.match(shelf,/quizzes\/rikki-tikki-tavi/);
+ const app=await readFile(new URL('../ela/ElaApp.tsx',import.meta.url),'utf8');assert.doesNotMatch(app,/private-references|codex-clipboard|fetch\(/);
+});

@@ -4,6 +4,16 @@ import {pagesBase} from './routes';
 import '../app/globals.css';
 
 const routes:Record<string,ComponentType>={
+  '/quizzes/phrases-clauses/':lazy(()=>import('../app/quizzes/phrases-clauses/page')),
+  '/quizzes/phrases-clauses/learn/':lazy(()=>import('../app/quizzes/phrases-clauses/learn/page')),
+  '/quizzes/phrases-clauses/level-1/':lazy(()=>import('../app/quizzes/phrases-clauses/level-1/page')),
+  '/quizzes/phrases-clauses/level-2/':lazy(()=>import('../app/quizzes/phrases-clauses/level-2/page')),
+  '/quizzes/phrases-clauses/level-3/':lazy(()=>import('../app/quizzes/phrases-clauses/level-3/page')),
+  '/quizzes/phrases-clauses/level-4/':lazy(()=>import('../app/quizzes/phrases-clauses/level-4/page')),
+  '/quizzes/phrases-clauses/review/':lazy(()=>import('../app/quizzes/phrases-clauses/review/page')),
+  '/quizzes/phrases-clauses/test/':lazy(()=>import('../app/quizzes/phrases-clauses/test/page')),
+  '/quizzes/phrases-clauses/builder/':lazy(()=>import('../app/quizzes/phrases-clauses/builder/page')),
+
   '/subjects/science/cells/':lazy(()=>import('../app/subjects/science/cells/page')),
   '/subjects/science/cells/concept-1/':lazy(()=>import('../app/subjects/science/cells/concept-1/page')),
   '/subjects/science/cells/concept-1/worksheet/':lazy(()=>import('../app/subjects/science/cells/concept-1/worksheet/page')),
@@ -49,7 +59,8 @@ class LoadBoundary extends Component<{children:ReactNode},{failed:boolean}> {
 let path=window.location.pathname.slice(pagesBase.length-1).replace(/\/index\.html$/,'/');
 if(!path.endsWith('/'))path+='/';
 const Page=routes[path];
-if(path.includes('/cells/'))document.title='Cell Theory & Scientists · Yusuf’s Study Club';
+if(path.includes('/phrases-clauses/'))document.title='Phrases vs. Clauses · Yusuf’s Sentence Studio';
+else if(path.includes('/cells/'))document.title='Cell Theory & Scientists · Yusuf’s Study Club';
 else if(path.includes('/unit-3/'))document.title='Spanish Unit 3 · Yusuf’s Study Club';
 else if(path.includes('spanish'))document.title='Spanish · Yusuf’s Study Club';
 else if(path.includes('rikki'))document.title='Rikki-Tikki-Tavi · Yusuf’s Study Club';

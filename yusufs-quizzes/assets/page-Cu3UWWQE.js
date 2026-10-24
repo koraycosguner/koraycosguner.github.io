@@ -1,0 +1,1 @@
+import{t as e}from"./index-fvNIv0h3.js";import{t}from"./TutorCenter-BXOW8G4n.js";var n=e();function r(){return(0,n.jsx)(t,{entry:`vocabulary`})}export{r as default};

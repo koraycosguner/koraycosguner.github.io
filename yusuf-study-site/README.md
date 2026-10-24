@@ -2,6 +2,36 @@
 
 A growing, multi-subject practice hub for Yusuf's seventh-grade classes.
 
+## Phrases vs. Clauses — Sentence Studio (October 24, 2026)
+
+Open `/quizzes/phrases-clauses/` from the Language Arts shelf. This adds to the
+existing site; Rikki-Tikki-Tavi, Science, Ecology and Spanish are preserved.
+
+Eight visual basics lead to four worksheet levels. Each level starts with two
+guided examples, followed by all of its exact teacher questions (23 total).
+There is also a 12-question mixed review, a two-step tap/keyboard sentence
+builder, and a 19-question practice test: 16 automatically checked tasks plus
+three written responses awaiting self-check. One point is awarded per complete
+automatic task, including both fields on subject/verb items. Help and retries
+are separate from first-answer evidence; test answers appear at the end.
+
+The two embedded-clause examples retain their complete teacher wording but
+highlight the exact relative clause being classified. The complete book
+sentence is never taught as dependent. Writing accepts the learner's own
+sentences; no keyword or exact-string grammar grader is used. Saved writing
+remains editable across activities. Progress uses only the local browser key
+`yusuf.ela.phrases-clauses.v1`, without uploads or accounts.
+
+Edit `ela/content.ts` for teaching content/keys, `ela/learning.ts` and `types.ts`
+for state/scoring, and `ela/ElaApp.tsx` / `ela.css` for the interface. Thirteen
+original optimized scenes live in `public/quizzes/phrases-clauses/`. The source
+worksheet photographs remain ignored in `private-references/`.
+
+Use the same setup and preview commands below; the ELA preview is
+`http://127.0.0.1:4176/yusufs-quizzes/quizzes/phrases-clauses/` when the preview
+server is running. See `ELA_CONTENT_AUDIT.md`, `ELA_MEDIA_NOTES.md` and
+`ELA_ACCEPTANCE_REPORT.md` for source decisions, exact art prompts and checks.
+
 ## Spanish Unit 3 — October 19, 2026
 
 **Mi Día en la Escuela y Mi Horario** is an additive module at
