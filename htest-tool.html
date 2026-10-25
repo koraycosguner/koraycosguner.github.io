@@ -715,13 +715,6 @@ F       Like</pre>
                             </div>
                         </div>
                         <div class="form-group">
-                            <label>Continuity correction <span class="field-hint">(Yates, only affects 2x2 tables)</span></label>
-                            <div class="radio-row">
-                                <label><input type="radio" name="chiCorrect" value="none" checked> Off (matches the textbook formula, sum of (O - E)² / E)</label>
-                                <label><input type="radio" name="chiCorrect" value="yates"> On (Yates correction, R's default for 2x2)</label>
-                            </div>
-                        </div>
-                        <div class="form-group">
                             <label>p-value computation</label>
                             <div class="radio-row">
                                 <label><input type="radio" name="chiSim" value="asymp" checked> Asymptotic (chi-square approximation)</label>
@@ -897,12 +890,13 @@ paste0(.json, "\\n---\\n", .summary_text)`;
                         const x = $('cfg-x').value, g = $('cfg-g').value;
                         const posthoc = document.querySelector('input[name="posthoc"]:checked').value;
                         // Tukey HSD: the rows of TukeyHSD() follow combn() order (level j minus level i, i < j), so the
-                        // pair names come from the levels themselves (a level name may contain "-").
+                        // pair names come from the levels themselves (a level name may contain "-"). Each row is shown
+                        // as "earlier level vs. later level" with the difference earlier minus later.
                         const tukeyR = posthoc === 'tukey' ? `
 .tk = TukeyHSD(.fit)
 .tm = .tk[[1]]
 .cmb = combn(length(.lvls), 2)
-.tk_json = paste0(',"tukey":[', paste(sapply(seq_len(ncol(.cmb)), function(i) paste0('{"a":"', .jesc(.lvls[.cmb[2, i]]), '","b":"', .jesc(.lvls[.cmb[1, i]]), '","diff":', .jn(.tm[i, "diff"]), ',"p":', .jn(.tm[i, "p adj"]), '}')), collapse = ','), ']')
+.tk_json = paste0(',"tukey":[', paste(sapply(seq_len(ncol(.cmb)), function(i) paste0('{"a":"', .jesc(.lvls[.cmb[1, i]]), '","b":"', .jesc(.lvls[.cmb[2, i]]), '","diff":', .jn(-.tm[i, "diff"]), ',"p":', .jn(.tm[i, "p adj"]), '}')), collapse = ','), ']')
 .tukey_text = paste(capture.output(print(.tk)), collapse="\\n")
 ` : `
 .tk_json = ""
@@ -910,7 +904,16 @@ paste0(.json, "\\n---\\n", .summary_text)`;
 `;
                         rCode += `
 .x = suppressWarnings(as.numeric(data[["${rEsc(x)}"]])); .g = as.factor(data[["${rEsc(g)}"]])
-ok = !is.na(.x) & !is.na(.g); .x = .x[ok]; .g = .g[ok]
+ok = !is.na(.x) & !is.na(.g); .x = .x[ok]; .g = droplevels(.g[ok])
+# Order groups by the numbers in their labels when every label has one (Age<=29, 30<=Age<=39, ..., Age>=50;
+# Income<=$50,000, $50,000<Income<=$100,000, Income>$100,000), so the groups and the pairs read in their natural
+# order; otherwise R's alphabetical order stays.
+.nums = lapply(levels(.g), function(l) as.numeric(gsub(",", "", regmatches(l, gregexpr("[0-9][0-9,]*([.][0-9]+)?", l))[[1]])))
+if (all(lengths(.nums) > 0)) {
+    .k = max(lengths(.nums))
+    .key = as.data.frame(do.call(rbind, lapply(.nums, function(v) c(v, rep(-Inf, .k - length(v))))))
+    .g = factor(.g, levels = levels(.g)[do.call(order, unname(as.list(.key)))])
+}
 .fit = aov(.x ~ .g)
 .s = summary(.fit)
 .fstat = .s[[1]][["F value"]][1]
@@ -1071,8 +1074,8 @@ paste0(.json, "\\n---\\n", .summary_text,
                     }
                     break;
                 case 'chi-square': {
-                    const is2x2 = s.nr === 2 && s.nc === 2;
-                    const corrNote = (!s.simulated && is2x2) ? (s.yates ? 'Yates corrected' : 'uncorrected') : undefined;
+                    // No continuity correction (the Yates option was removed 2026-10-24): always the Pearson chi-square.
+                    const corrNote = undefined;
                     stats.push({ label: 'χ² statistic', value: fmt(s.stat), secondary: corrNote });
                     stats.push({ label: 'df', value: s.simulated ? 'n/a (simulated)' : s.df });
                     stats.push({ label: 'p-value', value: fmtP(s.p) });
