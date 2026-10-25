@@ -238,6 +238,16 @@
             border-radius: 6px; font-size: 0.95rem; font-family: inherit; background: var(--white);
         }
         .attr-row input[type="text"]:focus { outline: none; border-color: var(--iu-crimson); }
+        /* Bulk paste: one attribute per line, "Name: level, level, ..." */
+        .bulk-paste { margin-top: 1.5rem; padding: 1rem 1.1rem; border: 1px dashed var(--border); border-radius: 8px; background: #fafafa; }
+        .bulk-paste h3 { font-size: 1rem; margin: 0 0 0.35rem; color: var(--text-dark); }
+        .bulk-paste p { font-size: 0.85rem; color: var(--text-light); margin: 0 0 0.6rem; }
+        .bulk-paste textarea { width: 100%; min-height: 9.5rem; padding: 0.6rem 0.7rem; border: 1px solid var(--border); border-radius: 6px;
+            font: 0.92rem/1.5 Menlo, Monaco, Consolas, "Courier New", monospace; background: var(--white); resize: vertical; }
+        .bulk-paste textarea:focus { outline: none; border-color: var(--iu-crimson); }
+        .bulk-paste .button-group { margin-top: 0.75rem; }
+        .bulk-error { display: none; margin-top: 0.6rem; font-size: 0.88rem; color: #991b1b; white-space: pre-line; }
+        .bulk-error.visible { display: block; }
         .attr-row .remove-col { display: flex; align-items: flex-end; height: 100%; padding-top: 1.25rem; }
         .levels-count { font-size: 0.78rem; color: #6b7280; margin-top: 0.35rem; }
         .row-error { grid-column: 1 / -1; color: #991b1b; font-size: 0.82rem; margin-top: 0.2rem; display: none; }
@@ -451,6 +461,17 @@
                     Add attribute
                 </button>
                 <button class="btn btn-secondary btn-sm" id="resetBtn" type="button">Reset to example</button>
+            </div>
+
+            <div class="bulk-paste">
+                <h3>Or paste all attributes at once</h3>
+                <p>One attribute per line: the name, a colon, then its levels separated by commas (write 1000, not 1,000). Fill rows replaces the rows above.</p>
+                <textarea id="bulkInput" spellcheck="false" aria-label="Attributes, one per line"
+                          placeholder="Brand: A, B, C&#10;Price: Low, Mid, High&#10;Size: Small, Large"></textarea>
+                <div class="button-group">
+                    <button class="btn btn-secondary btn-sm" id="bulkFillBtn" type="button">Fill rows</button>
+                </div>
+                <div class="bulk-error" id="bulkError" role="alert"></div>
             </div>
 
             <!-- ============================== 2. Design Statistics ============================== -->
@@ -840,6 +861,42 @@
             renderAttrTable();
             afterEdit();
             hideStatus();
+        });
+
+        // Bulk paste: "Name: level, level, ..." per line. Every line is checked first;
+        // the rows are replaced only when all lines are valid.
+        function parseBulk(text) {
+            const out = [], errors = [];
+            String(text || '').split(/\r?\n/).forEach((raw, i) => {
+                const line = raw.trim();
+                if (!line) return;
+                const cut = line.indexOf(':');
+                if (cut < 0) { errors.push(`Line ${i + 1}: add a colon after the attribute name (e.g., Brand: A, B, C).`); return; }
+                const name = line.slice(0, cut).trim();
+                const levels = parseLevels(line.slice(cut + 1));
+                if (!name) { errors.push(`Line ${i + 1}: the attribute name is missing before the colon.`); return; }
+                if (levels.length < 2) { errors.push(`Line ${i + 1}: ${name} needs at least 2 levels, separated by commas.`); return; }
+                out.push({ name, levelsText: levels.join(', ') });
+            });
+            if (!out.length && !errors.length) errors.push('Paste at least one attribute line first.');
+            return { attrs: out, errors };
+        }
+        $('bulkFillBtn').addEventListener('click', () => {
+            const err = $('bulkError');
+            const r = parseBulk($('bulkInput').value);
+            if (r.errors.length) {
+                err.textContent = r.errors.join('\n');
+                err.classList.add('visible');
+                return;
+            }
+            err.textContent = '';
+            err.classList.remove('visible');
+            attrs = r.attrs;
+            renderAttrTable();
+            invalidateResults();
+            afterEdit();
+            showStatus(`Filled ${r.attrs.length} attribute${r.attrs.length === 1 ? '' : 's'} from the pasted text. Check the rows, then click Generate Fractional Design.`, 'success', 5000);
+            $('attrTable').scrollIntoView({ behavior: 'smooth', block: 'start' });
         });
 
         // Changing the requested profile count invalidates the current design and
