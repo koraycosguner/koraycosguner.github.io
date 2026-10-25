@@ -1,0 +1,3 @@
+Profile,Brand_Dell,Brand_HP,Brand_Lenovo,Processor_i5,Processor_i7,Processor_i9,Screen_4K,Screen_4K_Touch,RAM_16GB,RAM_32GB,HDD_1TB,HDD_2TB,Price_1500,Price_2000,Price_2500
+Laptop A,1,0,0,0,1,0,0,1,0,0,1,0,1,0,0
+Laptop B,0,1,0,0,0,0,0,0,1,0,1,0,0,1,0

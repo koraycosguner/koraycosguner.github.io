@@ -1636,51 +1636,7 @@ function loadProductsCSV(input) {
         header: true,
         skipEmptyLines: true,
         complete: function(results) {
-            const rows = results.data;
-            if (rows.length === 0) {
-                const st = document.getElementById('productsCSVStatus');
-                st.textContent = 'That CSV had no data rows.';
-                st.style.color = 'var(--danger)';
-                return;
-            }
-
-            // Clear existing options
-            document.getElementById('productOptions').innerHTML = '';
-            optionCount = 0;
-
-            // For each row, create a product option and set dropdowns
-            rows.forEach((row, ri) => {
-                addProductOption();
-                const optionDiv = document.getElementById('option-' + optionCount);
-                const nameInput = optionDiv.querySelector('.option-name-input');
-
-                // Use "Profile" column or row name if available, otherwise "Product N"
-                const profileName = row['Profile'] || row['profile'] || row['Name'] || row['name'] || ('Product ' + (ri + 1));
-                nameInput.value = profileName;
-
-                // Set each attribute's dropdown based on dummy values
-                const selects = optionDiv.querySelectorAll('select');
-                attributes.forEach((attr, ai) => {
-                    const sel = selects[ai];
-                    // Find which level is active (has dummy=1)
-                    let selectedLevel = 0; // default to base level
-                    for (let li = 0; li < attr.levels.length; li++) {
-                        const level = attr.levels[li];
-                        if (level.dummyCol !== null) {
-                            const val = parseFloat(row[level.dummyCol]);
-                            if (val === 1) {
-                                selectedLevel = li;
-                                break;
-                            }
-                        }
-                    }
-                    sel.value = selectedLevel;
-                });
-            });
-
-            document.getElementById('productsCSVStatus').textContent =
-                '✓ Loaded ' + rows.length + ' products from ' + file.name;
-            document.getElementById('productsCSVStatus').style.color = 'var(--success)';
+            fillProductOptions(cleanParsedData(results.data), fileName);
         },
         error: function(err) {
             const st = document.getElementById('productsCSVStatus');
@@ -1688,6 +1644,54 @@ function loadProductsCSV(input) {
             st.style.color = 'var(--danger)';
         }
     });
+}
+
+// Turn dummy-coded product rows (uploaded, or loaded with a class dataset) into simulator options.
+function fillProductOptions(rows, fileName) {
+    if (!rows || rows.length === 0) {
+        const st = document.getElementById('productsCSVStatus');
+        st.textContent = 'That CSV had no data rows.';
+        st.style.color = 'var(--danger)';
+        return;
+    }
+
+    // Clear existing options
+    document.getElementById('productOptions').innerHTML = '';
+    optionCount = 0;
+
+    // For each row, create a product option and set dropdowns
+    rows.forEach((row, ri) => {
+        addProductOption();
+        const optionDiv = document.getElementById('option-' + optionCount);
+        const nameInput = optionDiv.querySelector('.option-name-input');
+
+        // Use "Profile" column or row name if available, otherwise "Product N"
+        const profileName = row['Profile'] || row['profile'] || row['Name'] || row['name'] || ('Product ' + (ri + 1));
+        nameInput.value = profileName;
+
+        // Set each attribute's dropdown based on dummy values
+        const selects = optionDiv.querySelectorAll('select');
+        attributes.forEach((attr, ai) => {
+            const sel = selects[ai];
+            // Find which level is active (has dummy=1)
+            let selectedLevel = 0; // default to base level
+            for (let li = 0; li < attr.levels.length; li++) {
+                const level = attr.levels[li];
+                if (level.dummyCol !== null) {
+                    const val = parseFloat(row[level.dummyCol]);
+                    if (val === 1) {
+                        selectedLevel = li;
+                        break;
+                    }
+                }
+            }
+            sel.value = selectedLevel;
+        });
+    });
+
+    document.getElementById('productsCSVStatus').textContent =
+        '✓ Loaded ' + rows.length + ' products from ' + fileName;
+    document.getElementById('productsCSVStatus').style.color = 'var(--success)';
 }
 
 function runSimulation() {
@@ -2023,7 +2027,8 @@ function loadExampleData() {
 }
 
 // Class dataset from a link: conjoint-analysis.html?data=<name> loads data/m303/<name>_Dummy_Profiles.csv and
-// <name>_Ratings.csv (plus <name>_Profiles.csv when it exists) once signed in, then runs the regression.
+// <name>_Ratings.csv (plus <name>_Profiles.csv when it exists) once signed in, then runs the regression;
+// <name>_New_Products.csv, when it exists, fills the Step 5 simulator.
 // The sign-in redirect drops the query string, so the name rides along in sessionStorage.
 (function () {
     let d = new URLSearchParams(location.search).get('data');
@@ -2059,6 +2064,10 @@ function loadExampleData() {
                 resetDownstream();
                 checkBothUploaded();
                 if (document.getElementById('runAnalysis').style.display !== 'none') runRegression();
+                // Optional <name>_New_Products.csv: the products to simulate in Step 5.
+                return get('New_Products', true).then(products => {
+                    if (products && products.length && attributes.length) fillProductOptions(products, d + '_New_Products.csv');
+                });
             })
             .catch(() => showBanner('step1Banner', 'Could not load the class dataset "' + escapeHtml(d) + '". Upload the CSV files instead.', 'error'));
     });
