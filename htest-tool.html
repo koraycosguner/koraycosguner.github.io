@@ -896,7 +896,18 @@ paste0(.json, "\\n---\\n", .summary_text)`;
                     case 'anova': {
                         const x = $('cfg-x').value, g = $('cfg-g').value;
                         const posthoc = document.querySelector('input[name="posthoc"]:checked').value;
-                        const tukeyR = posthoc === 'tukey' ? `\n.tk = TukeyHSD(.fit)\n.tukey_text = paste(capture.output(print(.tk)), collapse="\\n")\n` : `\n.tukey_text = ""\n`;
+                        // Tukey HSD: the rows of TukeyHSD() follow combn() order (level j minus level i, i < j), so the
+                        // pair names come from the levels themselves (a level name may contain "-").
+                        const tukeyR = posthoc === 'tukey' ? `
+.tk = TukeyHSD(.fit)
+.tm = .tk[[1]]
+.cmb = combn(length(.lvls), 2)
+.tk_json = paste0(',"tukey":[', paste(sapply(seq_len(ncol(.cmb)), function(i) paste0('{"a":"', .jesc(.lvls[.cmb[2, i]]), '","b":"', .jesc(.lvls[.cmb[1, i]]), '","diff":', .jn(.tm[i, "diff"]), ',"p":', .jn(.tm[i, "p adj"]), '}')), collapse = ','), ']')
+.tukey_text = paste(capture.output(print(.tk)), collapse="\\n")
+` : `
+.tk_json = ""
+.tukey_text = ""
+`;
                         rCode += `
 .x = suppressWarnings(as.numeric(data[["${rEsc(x)}"]])); .g = as.factor(data[["${rEsc(g)}"]])
 ok = !is.na(.x) & !is.na(.g); .x = .x[ok]; .g = .g[ok]
@@ -908,9 +919,9 @@ ok = !is.na(.x) & !is.na(.g); .x = .x[ok]; .g = .g[ok]
 .p = .s[[1]][["Pr(>F)"]][1]
 .means = tapply(.x, .g, mean, na.rm=TRUE)
 .lvls = levels(.g)
-.json = paste0('RES:{"stat":', .jn(.fstat), ',"df1":', .jn(.df1), ',"df2":', .jn(.df2), ',"p":', .jn(.p),
-               ',"n":', length(.x), ',"groups":', length(.lvls), '}:END')
 ${tukeyR}
+.json = paste0('RES:{"stat":', .jn(.fstat), ',"df1":', .jn(.df1), ',"df2":', .jn(.df2), ',"p":', .jn(.p),
+               ',"n":', length(.x), ',"groups":', length(.lvls), .tk_json, '}:END')
 .summary_text = paste(capture.output(print(.s)), collapse="\\n")
 .means_block = paste(capture.output(print(.means)), collapse="\\n")
 paste0(.json, "\\n---\\n", .summary_text, "\\n\\nGroup means:\\n", .means_block, "\\n", .tukey_text)`;
@@ -1049,6 +1060,15 @@ paste0(.json, "\\n---\\n", .summary_text,
                     stats.push({ label: 'df', value: `${s.df1}, ${s.df2}` });
                     stats.push({ label: 'p-value', value: fmtP(s.p) });
                     stats.push({ label: 'Groups', value: s.groups, secondary: `n = ${s.n}` });
+                    if (s.tukey && s.tukey.length) {
+                        extras.push(`
+                <h3 style="margin: 1.5rem 0 0; color: var(--text-dark); font-size: 1.05rem;">Post-hoc Test: Tukey HSD</h3>
+                <div style="font-size: 0.85rem; color: var(--text-light); margin-top: 0.3rem;">Each pair of groups compared; the p-values are adjusted for making several comparisons. Difference = mean of the first group minus mean of the second.</div>
+                <table class="extra-table">
+                    <tr><th>Comparison</th><th>Difference in means</th><th>p-value (Tukey)</th></tr>
+                    ${s.tukey.map(r => `<tr><td>${escapeHtml(r.a)} vs. ${escapeHtml(r.b)}</td><td>${fmt(r.diff)}</td><td>${fmtP(r.p)}</td></tr>`).join('')}
+                </table>`);
+                    }
                     break;
                 case 'chi-square': {
                     const is2x2 = s.nr === 2 && s.nc === 2;
