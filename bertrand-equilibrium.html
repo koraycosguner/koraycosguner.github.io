@@ -500,6 +500,34 @@
         .tab-content { display: none; }
         .tab-content.active { display: block; }
 
+        /* Best Response Calculator */
+        .br-calc-inputs .input-row label { width: 210px; }
+        .br-calc-inputs select {
+            padding: 0.5rem 0.75rem;
+            font-size: 0.95rem;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            background: white;
+        }
+        .br-calc-inputs select:focus {
+            outline: none;
+            border-color: var(--iu-crimson);
+            box-shadow: 0 0 0 2px rgba(153, 0, 0, 0.1);
+        }
+        .br-calc-work {
+            font-family: 'Georgia', serif;
+            font-size: 1rem;
+            margin: 1rem 0;
+            padding: 0.75rem 1rem;
+            background: #f8fafc;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+        }
+        .br-calc-work .brand1 { color: var(--brand1); font-weight: 600; }
+        .br-calc-work .brand2 { color: var(--brand2); font-weight: 600; }
+        .br-calc-note { font-size: 0.85rem; color: var(--text-light); margin-top: 0.75rem; }
+        .br-calc-warn { font-size: 0.85rem; color: #b45309; margin-top: 0.75rem; }
+
         /* Comparison Table */
         .comparison-table {
             width: 100%;
@@ -785,6 +813,7 @@
             <div class="tool-container">
                 <div class="tabs">
                     <div class="tab active" onclick="switchTab('chart')">Best Response Chart</div>
+                    <div class="tab" onclick="switchTab('bestResponse')">Best Response Calculator</div>
                     <div class="tab" onclick="switchTab('comparison')">Equilibrium vs Collusion</div>
                 </div>
 
@@ -796,6 +825,26 @@
                     <div class="chart-container">
                         <canvas id="brChart"></canvas>
                     </div>
+                </div>
+
+                <div id="bestResponseTab" class="tab-content">
+                    <p style="color: var(--text-light); margin-bottom: 1rem; font-size: 0.9rem;">
+                        Fix one brand's price and find the price that maximizes the other brand's profit, using that brand's best response function.
+                    </p>
+                    <div class="br-calc-inputs">
+                        <div class="input-row">
+                            <label for="brWho">Find the best price of</label>
+                            <select id="brWho" onchange="calculateBestResponse()">
+                                <option value="1">Brand 1</option>
+                                <option value="2">Brand 2</option>
+                            </select>
+                        </div>
+                        <div class="input-row">
+                            <label for="brRival" id="brRivalLabel">when Brand 2's price (P<sub>2</sub>) is</label>
+                            <input type="number" id="brRival" step="any" placeholder="price" oninput="calculateBestResponse()">
+                        </div>
+                    </div>
+                    <div id="brCalcOut" aria-live="polite"></div>
                 </div>
 
                 <div id="comparisonTab" class="tab-content">
@@ -1122,6 +1171,7 @@
             displayResults();
             updateChart();
             updateComparison();
+            calculateBestResponse();
         }
 
         function calculateCollusion(p) {
@@ -1366,6 +1416,62 @@
                     <td style="${diffColor}">${diffStr}</td>
                 </tr>`;
             }).join('');
+        }
+
+        // Best response to a fixed rival price: Brand i's price on its best response function,
+        // P_i* = intercept_i + slope_i * P_j, with the quantities and profits of both brands at those prices.
+        function calculateBestResponse() {
+            const out = document.getElementById('brCalcOut');
+            const who = document.getElementById('brWho').value === '2' ? 2 : 1;
+            const other = who === 1 ? 2 : 1;
+            document.getElementById('brRivalLabel').innerHTML = `when Brand ${other}'s price (P<sub>${other}</sub>) is`;
+
+            const r = lastResult;
+            if (!r) { out.innerHTML = ''; return; }
+            const rival = parseFloat(document.getElementById('brRival').value);
+            if (isNaN(rival)) {
+                out.innerHTML = `<p class="br-calc-note">Enter Brand ${other}'s price to see Brand ${who}'s best response. At Brand ${other}'s equilibrium price, $${(other === 1 ? r.p1Star : r.p2Star).toFixed(2)}, the best response is Brand ${who}'s equilibrium price.</p>`;
+                return;
+            }
+            if (rival < 0) {
+                out.innerHTML = `<p class="br-calc-warn">Brand ${other}'s price cannot be negative.</p>`;
+                return;
+            }
+
+            const p = r.params;
+            const intercept = who === 1 ? r.br1_intercept : r.br2_intercept;
+            const slope = who === 1 ? r.br1_slope : r.br2_slope;
+            const best = intercept + slope * rival;
+            const P1 = who === 1 ? best : rival;
+            const P2 = who === 1 ? rival : best;
+            const q1 = p.a1 - p.b1 * P1 + p.c1 * P2;
+            const q2 = p.a2 - p.b2 * P2 + p.c2 * P1;
+            const pr1 = (P1 - p.mc1) * q1;
+            const pr2 = (P2 - p.mc2) * q2;
+
+            const card = (n, label, price, q, profit) => `
+                <div class="result-card brand${n}">
+                    <h4>Brand ${n}: ${label}</h4>
+                    <div class="result-value"><span class="label">Price</span><span class="value">${price.toFixed(2)}</span></div>
+                    <div class="result-value"><span class="label">Quantity Sold</span><span class="value">${q.toFixed(2)}</span></div>
+                    <div class="result-value"><span class="label">Profit</span><span class="value">${profit.toFixed(2)}</span></div>
+                </div>`;
+            const cards = who === 1
+                ? card(1, 'best response', P1, q1, pr1) + card(2, 'price held fixed', P2, q2, pr2)
+                : card(1, 'price held fixed', P1, q1, pr1) + card(2, 'best response', P2, q2, pr2);
+
+            const sign = slope >= 0 ? '+' : '−';
+            let html = `<div class="br-calc-work"><span class="brand${who}">P<sub>${who}</sub>*</span> = ${intercept.toFixed(2)} ${sign} ${Math.abs(slope).toFixed(4)} × <span class="brand${other}">${rival.toFixed(2)}</span> = <strong>${best.toFixed(2)}</strong></div>`;
+            html += `<div class="results-grid">${cards}</div>`;
+
+            const qOwn = who === 1 ? q1 : q2;
+            const mcOwn = who === 1 ? p.mc1 : p.mc2;
+            if (qOwn < 0) {
+                html += `<p class="br-calc-warn">At this rival price, Brand ${who}'s quantity is negative: the linear demand is outside its range. Check the price.</p>`;
+            } else if (best < mcOwn) {
+                html += `<p class="br-calc-warn">The best response is below Brand ${who}'s marginal cost, so Brand ${who} loses money on every unit.</p>`;
+            }
+            out.innerHTML = html;
         }
 
         function switchTab(tab) {
