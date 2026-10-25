@@ -1313,12 +1313,21 @@
             coefTable.innerHTML = html;
         }
 
-        // Format numbers for display
+        // Format numbers for display: four decimals, but four significant digits
+        // below 0.001, where four decimals would print 0.0001 or 0.0000
         function formatNumber(num) {
             if (num === null || num === undefined || num === 'NA') return 'NA';
             const n = parseFloat(num);
             if (!isFinite(n)) return 'NA';
+            if (n !== 0 && Math.abs(n) < 0.001) return smallNumber(n);
             return n.toFixed(4);
+        }
+
+        // Four significant digits for |n| < 0.001 (e.g. -0.0001293), in plain notation
+        // down to 1e-6 and in scientific notation below that
+        function smallNumber(n) {
+            if (Math.abs(n) < 1e-6) return n.toExponential(3);
+            return n.toPrecision(4);
         }
 
         // Format p-values
@@ -2512,14 +2521,13 @@ summary(model)
         function formatCoefficient(num) {
             const absNum = Math.abs(num);
             if (absNum === 0) return '0';
-            if (absNum >= 0.0001) {
-                // For numbers >= 0.0001, use 4 decimal places but trim trailing zeros
+            if (absNum >= 0.001) {
+                // For numbers >= 0.001, use 4 decimal places but trim trailing zeros
                 return parseFloat(num.toFixed(4)).toString();
             }
-            // For very small numbers, use enough decimals to show significant digits
-            // Find first significant digit and show 4 significant figures
-            const str = num.toExponential(4);
-            return str;
+            // Smaller numbers keep 4 significant figures (e.g. 0.0001293, not 0.0001),
+            // so the equation students copy into other tools stays accurate
+            return smallNumber(num);
         }
 
         // Build equation from coefficients

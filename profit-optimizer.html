@@ -2639,11 +2639,20 @@ c(${valueExpr}, ${parExpr}, ${convExpr})
                 // (convergence code 0). L-BFGS-B stopping at maxit (1) or reporting
                 // warnings (51/52) must not show the green "✓ Cross-checked" state.
                 const converged = webrBest.__convergence === 0;
-                if (converged) {
+                // ...and only when both paths reach the same objective (within 0.1%).
+                // Two different answers usually mean the objective has more than one
+                // peak (or a corner at a bound) inside the bounds, so say so.
+                const agree = Math.abs(jsBest.__objective - webrBest.__objective) <= Math.max(1e-3 * scale, 1e-6);
+                if (converged && agree) {
                     // Show both objectives so it's clear R ran and produced its own value,
                     // not just rubber-stamped the JS answer.
                     setVerificationStatus('verified',
                         `✓ Cross-checked with R. JS: ${format3(jsBest.__objective)}, R: ${format3(webrBest.__objective)}`);
+                } else if (converged) {
+                    const shown = rIsBetter ? 'R' : 'JS';
+                    const better = goal === 'maximize' ? 'higher' : 'lower';
+                    setVerificationStatus('failed',
+                        `JS and R found different solutions (JS: ${format3(jsBest.__objective)}, R: ${format3(webrBest.__objective)}). Showing the ${shown} solution, which has the ${better} ${escapeHtml(objVar)}. The function may have more than one peak within these bounds: check the bounds or try narrower ones.`);
                 } else {
                     setVerificationStatus('failed',
                         `R did not fully converge (code ${webrBest.__convergence}); showing the best answer found. JS: ${format3(jsBest.__objective)}, R: ${format3(webrBest.__objective)}`);
