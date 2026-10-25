@@ -291,12 +291,6 @@
         .copy-btn.copied { background: #16a34a; border-color: #16a34a; color: #fff; }
 
         /* Generation options (number of profiles) */
-        .gen-options { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 1rem; margin-top: 1.25rem; }
-        .gen-options .field { display: flex; flex-direction: column; gap: 0.3rem; }
-        .gen-options label { font-weight: 600; font-size: 0.78rem; color: var(--text-light); text-transform: uppercase; letter-spacing: 0.04em; }
-        .gen-options input[type="number"] { width: 150px; padding: 0.6rem 0.7rem; border: 1px solid var(--border); border-radius: 6px; font-size: 0.95rem; font-family: inherit; background: var(--white); }
-        .gen-options input[type="number"]:focus { outline: none; border-color: var(--iu-crimson); }
-        .gen-hint { font-size: 0.8rem; color: var(--text-light); margin-top: 0.45rem; }
         .field-error { color: #991b1b; font-size: 0.82rem; margin-top: 0.3rem; display: none; }
         .field-error.visible { display: block; }
 
@@ -479,15 +473,6 @@
             <p class="section-hint">The full factorial count is the product of the number of levels across all attributes. The fractional design selects an efficient subset.</p>
             <div class="stat-grid" id="statGrid"></div>
 
-            <div class="gen-options">
-                <div class="field">
-                    <label for="nProfilesInput">Number of profiles (optional)</label>
-                    <input type="number" id="nProfilesInput" min="1" step="1" inputmode="numeric"
-                           placeholder="auto" autocomplete="off" aria-describedby="nProfilesHint">
-                </div>
-            </div>
-            <p class="gen-hint" id="nProfilesHint">Leave blank to use the recommended default. <span id="nProfilesRec"></span></p>
-            <div class="field-error" id="nProfilesError"></div>
             <div class="status-message" id="sizeWarning" role="status" aria-live="polite" style="margin-top:1rem;"></div>
 
             <div class="button-group">
@@ -569,17 +554,6 @@
         const MAX_TABLE_ROWS = 500;
 
         const $ = (id) => document.getElementById(id);
-
-        // Number of estimated parameters for a main-effects model: intercept + (levels - 1) per attribute.
-        // This mirrors ncol(model.matrix(~ ., full)) in R and drives the default profile count.
-        function modelParams(validAttrs) {
-            return validAttrs.reduce((sum, p) => sum + (p.levels.length - 1), 0) + 1;
-        }
-        // The default profile count R will use when the user leaves the field blank: parameters + 5,
-        // never above the full factorial size.
-        function defaultProfileCount(validAttrs, full) {
-            return Math.min(full, modelParams(validAttrs) + 5);
-        }
 
         function showStatus(msg, type = 'info', autoHideMs = 0) {
             const el = $('statusMessage');
@@ -731,12 +705,8 @@
             showRowErrors(v.errorsByRow);
             renderStats(v);
 
-            const validAttrs = v.parsed.filter(p => p.name && p.levels.length >= 2);
             const full = fullFactorial(v.parsed);
             const tooBig = full > MAX_FULL;
-
-            updateProfileHint(validAttrs, full);
-            const pv = validateProfileInput(validAttrs, full);
 
             const warn = $('sizeWarning');
             if (tooBig) {
@@ -748,7 +718,7 @@
                 warn.className = 'status-message';
             }
 
-            $('generateBtn').disabled = !(v.ok && webrReady && !tooBig && pv.ok);
+            $('generateBtn').disabled = !(v.ok && webrReady && !tooBig);
         }
 
         // A generation is only valid for the attributes it was run on. Whenever the
@@ -761,56 +731,6 @@
                 lastFracN = null;
                 $('resultsContainer').classList.remove('visible');
             }
-        }
-
-        // Show the recommended default profile count and the valid range under the input.
-        function updateProfileHint(validAttrs, full) {
-            const rec = $('nProfilesRec');
-            const input = $('nProfilesInput');
-            if (!rec || !input) return;
-            if (validAttrs.length >= 2 && full > 0 && full <= MAX_FULL) {
-                const params = modelParams(validAttrs);
-                const def = defaultProfileCount(validAttrs, full);
-                rec.textContent = 'Recommended: ' + def.toLocaleString() +
-                    ' (parameters + 5). Valid range: ' + params.toLocaleString() +
-                    ' to ' + full.toLocaleString() + ' (full factorial).';
-                input.min = params;
-                input.max = full;
-            } else {
-                rec.textContent = '';
-                input.removeAttribute('max');
-            }
-        }
-
-        // Validate the optional "number of profiles" field. Blank is valid and means
-        // "use the recommended default". Returns { ok, value } (value null when blank).
-        function validateProfileInput(validAttrs, full) {
-            const input = $('nProfilesInput');
-            const err = $('nProfilesError');
-            if (!input || !err) return { ok: true, value: null };
-            const raw = (input.value || '').trim();
-            const clear = () => { err.classList.remove('visible'); err.textContent = ''; };
-            if (raw === '') { clear(); return { ok: true, value: null }; }
-            const n = Number(raw);
-            if (!Number.isInteger(n) || n <= 0) {
-                err.textContent = 'Enter a whole number of profiles, or leave blank for the default.';
-                err.classList.add('visible'); return { ok: false, value: null };
-            }
-            if (validAttrs.length >= 2 && full > 0) {
-                const params = modelParams(validAttrs);
-                if (n < params) {
-                    err.textContent = 'Use at least ' + params.toLocaleString() +
-                        ' profiles: you need one per model parameter to estimate every effect.';
-                    err.classList.add('visible'); return { ok: false, value: null };
-                }
-                if (n > full) {
-                    err.textContent = 'The full factorial only has ' + full.toLocaleString() +
-                        ' profiles; request that many or fewer.';
-                    err.classList.add('visible'); return { ok: false, value: null };
-                }
-            }
-            clear();
-            return { ok: true, value: n };
         }
 
         function fullFactorial(parsed) {
@@ -853,7 +773,6 @@
         });
         $('resetBtn').addEventListener('click', () => {
             attrs = EXAMPLE.map(e => ({ name: e.name, levelsText: e.levelsText }));
-            $('nProfilesInput').value = '';
             lastProfilesCSV = '';
             lastDummyCSV = '';
             lastFracN = null;
@@ -899,14 +818,7 @@
             $('attrTable').scrollIntoView({ behavior: 'smooth', block: 'start' });
         });
 
-        // Changing the requested profile count invalidates the current design and
-        // re-validates the field (blank is allowed, out-of-range disables Generate).
-        $('nProfilesInput').addEventListener('input', () => {
-            invalidateResults();
-            afterEdit();
-        });
-
-        // Enter in any attribute field (or the count field) generates, when allowed.
+        // Enter in any attribute field generates, when allowed.
         function generateOnEnter(e) {
             if (e.key === 'Enter') {
                 e.preventDefault();
@@ -916,7 +828,6 @@
         $('attrTable').addEventListener('keydown', e => {
             if (e.target.classList.contains('attr-name') || e.target.classList.contains('attr-levels')) generateOnEnter(e);
         });
-        $('nProfilesInput').addEventListener('keydown', generateOnEnter);
 
         // ==================== INIT WEBR ====================
         let webrBootStarted = false;
@@ -1258,8 +1169,6 @@ ${tail}`;
                     MAX_FULL.toLocaleString() + ' limit for in-browser generation. Reduce the attributes or levels.', 'error', 6000);
                 return;
             }
-            const pv = validateProfileInput(validAttrs, full);
-            if (!pv.ok) { showStatus('Fix the number of profiles, or leave it blank for the default.', 'error', 5000); return; }
 
             const btn = $('generateBtn');
             const originalLabel = btn.textContent;
@@ -1269,7 +1178,7 @@ ${tail}`;
                 btn.textContent = 'Generating...';
                 showStatus('Running the design generation in R...', 'info');
 
-                const program = buildRProgram(v.parsed, pv.value);
+                const program = buildRProgram(v.parsed);
                 result = await webR.evalR(program);
                 const obj = await result.toJs();
                 let out;
