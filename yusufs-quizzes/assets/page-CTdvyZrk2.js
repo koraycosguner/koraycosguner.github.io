@@ -1,0 +1,1 @@
+import{t as e}from"./index-D5_bRSVG.js";import{t}from"./CellsApp-AkLUPVPv.js";var n=e();function r(){return(0,n.jsx)(t,{entry:`quiz`})}export{r as default};

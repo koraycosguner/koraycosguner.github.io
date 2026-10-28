@@ -7,6 +7,7 @@ import './ela.css';
 type View='home'|'learn'|'intro'|'activity'|'results';
 type Entry='home'|'learn'|Exclude<ElaMode,'targeted'>;
 const levels=['level-1','level-2','level-3','level-4'] as const;
+const nextActivity:Partial<Record<ElaMode,ElaMode>>={'level-1':'level-2','level-2':'level-3','level-3':'level-4','level-4':'review',review:'test'};
 function Highlight({text,subject,verb,focus}:{text:string;subject?:string;verb?:string;focus?:string}){
  const terms=[...(subject?[{word:subject,kind:'subject'}]:[]),...(verb?[{word:verb,kind:'verb'}]:[]),...(focus?[{word:focus,kind:'focus'}]:[])];
  const segments:{start:number;end:number;kind:string}[]=[];
@@ -42,10 +43,11 @@ export default function ElaApp({entry='home'}:{entry?:Entry}){
  function submit(){const next=submitEla(saved);setSaved(next);if(next.session?.phase==='complete')setView('results');}
  function goNext(){setHelp(false);const next=nextEla(saved);setSaved(next);if(next.session?.phase==='complete')setView('results');}
  const result=session?scoreSession(session):null;
+ const following=session?nextActivity[session.mode]:undefined;
  const chapter=view==='learn'?lessons[saved.lessonIndex]:null;
  const practice=view==='activity'&&current&&session;
  return <div className="ela-app"><a className="ela-skip" href="#ela-main">Skip to activity</a><header className="ela-header"><a href="/" className="ela-brand"><span aria-hidden="true">Y</span>Yusuf’s study club</a><a href="/subjects/language-arts/">Language Arts shelf <span aria-hidden="true">↗</span></a></header>
- <main id="ela-main" className={`ela-main ${view==='activity'?'ela-active':''}`} aria-busy={!ready}>
+ <main id="ela-main" tabIndex={-1} className={`ela-main ${view==='activity'?'ela-active':''}`} aria-busy={!ready}>
  <nav className="ela-breadcrumb" aria-label="Breadcrumb"><a href="/subjects/language-arts/">Language Arts</a><span aria-hidden="true">/</span>{view==='home'?<span>Phrases & Clauses</span>:<button onClick={()=>setView('home')}>Phrases & Clauses</button>}</nav>
  {notice&&<p className="ela-notice" role="status">{notice}</p>}
  {view==='home'&&<>
@@ -82,7 +84,7 @@ export default function ElaApp({entry='home'}:{entry?:Entry}){
  {result.missed.length>0&&<section className="ela-results-list"><h2>Questions to look at again</h2>{result.missed.map(id=>{const q=questionById(id)!,r=session.responses[id];return <details key={id}><summary>{q.focus??q.text}</summary><p>Your first answer: {answerLabel(q,r?.first??{})}</p><p><strong>Correct idea:</strong> {answerLabel(q,solution(q))}</p><p>{q.explanation}</p></details>;})}</section>}
  {result.written>0&&<section className="ela-results-list"><h2>Your writing · self-check</h2><p>Read, compare, and revise. These answers are never automatically marked wrong.</p>{session.ids.filter(id=>questionById(id)!.format==='write').map(id=>{const q=questionById(id)!,r=session.responses[id];return <details key={id}><summary>{q.text}{r?.checks.every(Boolean)?' · Self-checked':''}</summary><label className="ela-writing-label" htmlFor={'writing-'+id}>My complete sentence</label><textarea id={'writing-'+id} rows={4} maxLength={6000} value={r?.current.text??''} onChange={e=>setSaved(s=>editResultWriting(s,id,e.target.value))}/>{r&&readyAnswer(q,r.current)&&<WritingReview q={q} response={r} onCheck={index=>setSaved(s=>checkWriting(s,id,index))}/>}</details>;})}</section>}
  <details className="ela-more"><summary>Skill-by-skill first-answer record</summary><p>These counts include this module’s practice sessions. Paired questions contribute to both subject and verb skills.</p><ul className="ela-record">{Object.entries(stats(saved)).filter(([,r])=>r.total).map(([key,r])=><li key={key}><b>{skillLabels[key as keyof typeof skillLabels]}</b><span>{r.correct} of {r.total} · {r.helped} with help</span></li>)}</ul></details>
- <div className="ela-actions"><button className="ela-primary" onClick={()=>setView('home')}>Back to Sentence Studio →</button><button onClick={()=>choose(session.mode)}>Practice this activity again</button></div>
+ <div className="ela-actions">{following&&<button className="ela-primary" onClick={()=>choose(following)}>{following.startsWith('level-')?`Continue to Level ${following.slice(-1)}`:following==='review'?'Continue to Study Review':'Continue to Practice Test'} →</button>}<button className={following?'':'ela-primary'} onClick={()=>setView('home')}>Back to Sentence Studio →</button><button onClick={()=>choose(session.mode)}>Practice this activity again</button></div>
  </>}
  </main><footer className="ela-footer"><a href="/">All subjects</a><span>At your pace · Progress stays on this browser</span><button className="ela-text-button" onClick={()=>setConfirm('reset')}>Reset this ELA module</button></footer>
  {confirm&&<Confirm kind={confirm} onClose={()=>setConfirm(null)} onConfirm={()=>{if(confirm==='replace'){launch();return;}const next=newEla();try{localStorage.removeItem(ELA_KEY);setNotice('');}catch{setNotice('Storage is unavailable. This tab’s ELA practice has been reset.');}setSaved(next);setCorrupt(false);setConfirm(null);setView('home');}}/>}

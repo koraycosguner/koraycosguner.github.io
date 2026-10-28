@@ -80,3 +80,23 @@ Use Node 22.13+ and pnpm 11.19.0. In `yusuf-study-site`, run `pnpm install`,
 uses `http://127.0.0.1:4176/yusufs-quizzes/quizzes/phrases-clauses/`.
 
 Commit and deployment identifiers are reported only after their remote state is verified.
+
+
+## October 28 repeat-brief audit
+
+The re-supplied build brief is byte-for-byte identical to the October 24 brief. The existing module was extended in place rather than duplicated. All four re-supplied worksheet photographs were inspected again; the 23 prompts and answer keys match the transcription above, including the running verb form and the two relative-clause scope clarifications.
+
+This revision adds a clear next activity after each of Levels 1–4 and the mixed review, so the learner can move through the sequence without finding the next level on the home screen. Checked answer choices and placed sentence parts retain full opacity during feedback. The keyboard skip target is explicitly focusable. The browser suite checks these behaviors and now captures written-response screens at an actual 390 px phone width after the general viewport checks.
+
+The feature branch is based on the completed Cell Lab branch, preserving that work and every other subject. Public deployment is excluded by section 17 of the re-supplied brief. Original worksheet images remain ignored and private.
+
+Verification on this revision:
+
+- Unit suite: **221 passed, 0 failed**; TypeScript passed.
+- Final focused ELA browser run: **11 passed, 0 failed**, including all 23 teacher items, writing, score/review, keyboard skip activation, next-level progression, full-opacity checked answers, storage fallback, and touch/keyboard builder.
+- Full browser run: **97 passed and 1 failed** in 6.9 minutes. The single failure was the new skip-link test assuming the first Tab would start at the top of the document; the app intentionally focuses its main heading on load. The test now focuses the skip link before activating it. Its final passing result is included in the 11-case rerun. All **98 unique browser cases** are covered by passing results (87 other subjects + 11 ELA).
+- Pages and framework production builds passed; **5 production artifact checks passed**; Pages includes 58 routes.
+- Lint: **0 errors, 23 existing native-image warnings**.
+- Desktop, phone, tablet and narrow 320 px checks passed with no horizontal overflow. Phone writing and relative-clause screenshots were visually inspected. Four private worksheet images are ignored and untracked.
+
+The latest public site was not deployed or modified. Use the README setup commands to restart the local preview.

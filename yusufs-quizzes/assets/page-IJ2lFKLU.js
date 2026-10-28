@@ -1,0 +1,1 @@
+import{t as e}from"./index-D5_bRSVG.js";import{t}from"./ElaApp-iB8OiP17.js";var n=e();function r(){return(0,n.jsx)(t,{entry:`test`})}export{r as default};

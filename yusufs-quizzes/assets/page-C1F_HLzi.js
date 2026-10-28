@@ -1,0 +1,1 @@
+import{t as e}from"./index-D5_bRSVG.js";import{t}from"./SpanishApp-CUt1CIVF.js";var n=e();function r(){return(0,n.jsx)(t,{view:`adventure`})}export{r as default};

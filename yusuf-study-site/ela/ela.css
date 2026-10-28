@@ -12,3 +12,6 @@
 /* A fixed skip link stays visually hidden even in full-page captures after scrolling. */
 .ela-app .ela-skip{opacity:0;pointer-events:none}.ela-app .ela-skip:focus{opacity:1;pointer-events:auto}
 .ela-builder-rule{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:16px;font-size:13px;font-weight:650}.ela-builder-rule>span:not([aria-hidden]){padding:5px 9px;border-radius:5px}
+/* Checked words remain readable while feedback is open. */
+.ela-options:disabled button,.ela-pair fieldset:disabled button,.ela-build-slots button:disabled{opacity:1}
+.ela-main:focus{outline:none}

@@ -1,0 +1,1 @@
+import{t as e}from"./index-D5_bRSVG.js";import{t}from"./Unit2StudyApp-DRsWZzmj.js";var n=e();function r(){return(0,n.jsx)(t,{entry:`guide`})}export{r as default};
