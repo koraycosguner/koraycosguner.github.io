@@ -1,0 +1,1 @@
+import{t as e}from"./index-C5gJwRNd.js";import{t}from"./ElaApp-Bw_zOp33.js";var n=e();function r(){return(0,n.jsx)(t,{entry:`level-1`})}export{r as default};

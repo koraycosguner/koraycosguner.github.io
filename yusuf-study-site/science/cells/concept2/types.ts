@@ -1,0 +1,9 @@
+export type PartId='wall'|'membrane'|'nucleus'|'cytoplasm'|'mitochondria'|'ribosomes'|'lysosomes'|'vacuole'|'chloroplasts'|'er'|'golgi';
+export type CellKind='animal'|'plant'|'prokaryote';
+export type Skill='labels'|'functions'|'analogies'|'comparison'|'cell-types';
+export type Mode='label'|'functions'|'analogies'|'compare'|'types'|'paragraphs'|'match'|'quest'|'test'|'quick'|'review'|'write';
+export type Part={id:PartId;name:string;job:string;detail:string;clue:string;analogy:string;reason:string;limit:string;scenario:string;color:string;cells:CellKind[]};
+export type Task={id:string;skill:Skill;kind:'choice'|'diagram-choice'|'diagram-pick'|'label'|'bank'|'sort'|'written';prompt:string;context?:string;cell?:CellKind;highlight?:PartId;targets?:PartId[];choices:{id:string;label:string}[];answer:string[];slots?:string[];segments?:string[];explanation:string;hint:string;part?:PartId};
+export type Evidence={session:number;task:string;mode:Mode;first:string[];text:string;assisted:boolean};
+export type Session={id:number;mode:Mode;ids:string[];index:number;selection:string[];text:string;hint:boolean;feedback:boolean;retry:boolean;complete:boolean};
+export type Saved={version:1;next:number;cell:CellKind;discovered:PartId[];drafts:Record<string,string>;session:Session|null;evidence:Evidence[];seen:string[]};

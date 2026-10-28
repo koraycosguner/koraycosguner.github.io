@@ -437,3 +437,43 @@ first two principles, so practice tests meaning rather than list positions. This
 lesson covers the Cell Theory/scientists portion, not the full Concept 1 unit map. See `CELLS_CONTENT_AUDIT.md`, `CELLS_MEDIA_NOTES.md`,
 and `CELLS_ACCEPTANCE_REPORT.md` for content boundaries, asset provenance and checks.
 This delivery is a feature-branch push only, with no live deployment.
+
+## Cell Lab Concept 2
+
+The new Cells landing page prioritizes **Cell Structure & Analogies** while retaining Concept 1. The root-mounted route is `/subjects/science/cells/concept-2/`; its GitHub Pages build lives at `/yusufs-quizzes/subjects/science/cells/concept-2/`.
+
+- Edit the core parts, questions, analogies and keys in `science/cells/concept2/content.ts`.
+- Edit original scalable diagrams and their anchored target coordinates in `CellDiagram.tsx`; keep `points` synchronized with the visible structures when changing geometry. The diagram uses the same SVG coordinate system for drawing, highlighting, numbered targets, and drops.
+- `learning.ts` handles first-response records, bank placement, fair scoring, fresh targeted review and save validation. Its separate storage key is `yusuf.science.cells.concept2.v1`.
+- `Concept2App.tsx`, `TaskView.tsx`, and `concept2.css` implement the learner flow. Drag actions have button-based tap and keyboard alternatives. Written analogies remain editable and are reviewed by a person, not automatically scored.
+- New entry routes are registered in both `app/subjects/science/cells/concept-2/` and `static-pages/`. The static URL transformer already covers the `science/` source tree. Use a relative suffix such as `${mode}/` when joining paths; a standalone `/` literal is rewritten by the Pages transformer.
+
+Run from `yusuf-study-site/` with Node 22.13+ and pnpm:
+
+```sh
+pnpm install --frozen-lockfile
+pnpm dev
+```
+
+Open the dev server's printed local address followed by `/subjects/science/cells/concept-2/`. To reproduce the GitHub Pages subpath preview:
+
+```sh
+pnpm build:pages
+pnpm preview:pages
+```
+
+Then open `http://localhost:4173/yusufs-quizzes/subjects/science/cells/concept-2/`. Reload after rebuilding the static preview.
+
+Verification:
+
+```sh
+pnpm typecheck
+pnpm test
+pnpm build
+pnpm test:production
+TEST_BASE_URL=http://localhost:4173 TEST_PATH_PREFIX=/yusufs-quizzes pnpm test:browser
+```
+
+The classroom originals and all extracted/rendered inspection files belong in the ignored `private-references/cells-concept2/` folder. Do not copy them to `public/` or the generated Pages directory. The restricted reading's PDF, answer key, audio and third-party illustrations are not distributed. The nine-part diagrams and activity wording are original. See `CONCEPT2_CONTENT_AUDIT.md` and `CONCEPT2_ACCEPTANCE_REPORT.md` for source qualifications and actual verification results.
+
+Delivery of this update is a feature-branch push. Publishing that branch to the live site is a separate action and is not part of this handoff.

@@ -1,6 +1,19 @@
 /** Static entry points; each gets its own index.html for direct links and refreshes. */
 export const pagesBase = '/yusufs-quizzes/';
 export const pageRoutes = [
+  '/subjects/science/cells/concept-2/',
+  '/subjects/science/cells/concept-2/explore/',
+  '/subjects/science/cells/concept-2/label/',
+  '/subjects/science/cells/concept-2/functions/',
+  '/subjects/science/cells/concept-2/analogies/',
+  '/subjects/science/cells/concept-2/compare/',
+  '/subjects/science/cells/concept-2/types/',
+  '/subjects/science/cells/concept-2/test/',
+  '/subjects/science/cells/concept-2/quick/',
+  '/subjects/science/cells/concept-2/quest/',
+  '/subjects/science/cells/concept-2/match/',
+  '/subjects/science/cells/concept-2/paragraphs/',
+  '/subjects/science/cells/concept-2/write/',
   '/quizzes/phrases-clauses/',
   '/quizzes/phrases-clauses/learn/',
   '/quizzes/phrases-clauses/level-1/',

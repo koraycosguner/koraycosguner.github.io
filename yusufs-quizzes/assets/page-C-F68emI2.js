@@ -1,0 +1,1 @@
+import{t as e}from"./index-C5gJwRNd.js";import{t}from"./CellsApp-DOcVzdVc.js";var n=e();function r(){return(0,n.jsx)(t,{entry:`worksheet`})}export{r as default};

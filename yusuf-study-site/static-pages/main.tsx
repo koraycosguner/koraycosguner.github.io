@@ -4,6 +4,19 @@ import {pagesBase} from './routes';
 import '../app/globals.css';
 
 const routes:Record<string,ComponentType>={
+  '/subjects/science/cells/concept-2/':lazy(()=>import('../app/subjects/science/cells/concept-2/page')),
+  '/subjects/science/cells/concept-2/explore/':lazy(()=>import('../app/subjects/science/cells/concept-2/explore/page')),
+  '/subjects/science/cells/concept-2/label/':lazy(()=>import('../app/subjects/science/cells/concept-2/label/page')),
+  '/subjects/science/cells/concept-2/functions/':lazy(()=>import('../app/subjects/science/cells/concept-2/functions/page')),
+  '/subjects/science/cells/concept-2/analogies/':lazy(()=>import('../app/subjects/science/cells/concept-2/analogies/page')),
+  '/subjects/science/cells/concept-2/compare/':lazy(()=>import('../app/subjects/science/cells/concept-2/compare/page')),
+  '/subjects/science/cells/concept-2/types/':lazy(()=>import('../app/subjects/science/cells/concept-2/types/page')),
+  '/subjects/science/cells/concept-2/test/':lazy(()=>import('../app/subjects/science/cells/concept-2/test/page')),
+  '/subjects/science/cells/concept-2/quick/':lazy(()=>import('../app/subjects/science/cells/concept-2/quick/page')),
+  '/subjects/science/cells/concept-2/quest/':lazy(()=>import('../app/subjects/science/cells/concept-2/quest/page')),
+  '/subjects/science/cells/concept-2/match/':lazy(()=>import('../app/subjects/science/cells/concept-2/match/page')),
+  '/subjects/science/cells/concept-2/paragraphs/':lazy(()=>import('../app/subjects/science/cells/concept-2/paragraphs/page')),
+  '/subjects/science/cells/concept-2/write/':lazy(()=>import('../app/subjects/science/cells/concept-2/write/page')),
   '/quizzes/phrases-clauses/':lazy(()=>import('../app/quizzes/phrases-clauses/page')),
   '/quizzes/phrases-clauses/learn/':lazy(()=>import('../app/quizzes/phrases-clauses/learn/page')),
   '/quizzes/phrases-clauses/level-1/':lazy(()=>import('../app/quizzes/phrases-clauses/level-1/page')),
@@ -60,6 +73,7 @@ let path=window.location.pathname.slice(pagesBase.length-1).replace(/\/index\.ht
 if(!path.endsWith('/'))path+='/';
 const Page=routes[path];
 if(path.includes('/phrases-clauses/'))document.title='Phrases vs. Clauses · Yusuf’s Sentence Studio';
+else if(path.includes('/concept-2/'))document.title='Cell Structure & Analogies · Yusuf’s Cell Lab';
 else if(path.includes('/cells/'))document.title='Cell Theory & Scientists · Yusuf’s Study Club';
 else if(path.includes('/unit-3/'))document.title='Spanish Unit 3 · Yusuf’s Study Club';
 else if(path.includes('spanish'))document.title='Spanish · Yusuf’s Study Club';

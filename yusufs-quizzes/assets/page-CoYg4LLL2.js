@@ -1,1 +1,0 @@
-import{t as e}from"./index-fvNIv0h3.js";import{t}from"./ProficiencyApp-DCY_9xgF.js";var n=e();function r(){return(0,n.jsx)(t,{entry:`test`})}export{r as default};
