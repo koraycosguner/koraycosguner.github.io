@@ -31,8 +31,8 @@ test('production build includes Sentence Studio, all thirteen teaching scenes an
  const app=await readFile(new URL('../ela/ElaApp.tsx',import.meta.url),'utf8');assert.doesNotMatch(app,/private-references|codex-clipboard|fetch\(/);
 });
 
-test('production build includes the Concept 2 Cell Lab and all thirteen entry routes without private source assets',async()=>{
- for(const route of ['', 'explore/','label/','functions/','analogies/','compare/','types/','test/','quick/','quest/','match/','paragraphs/','write/'])await access(new URL('../app/subjects/science/cells/concept-2/'+route+'page.tsx',import.meta.url));
+test('production build includes the Concept 2 Cell Lab and all fifteen entry routes without private source assets',async()=>{
+ for(const route of ['', 'explore/','school/','systems/','label/','functions/','analogies/','compare/','types/','test/','quick/','quest/','match/','paragraphs/','write/'])await access(new URL('../app/subjects/science/cells/concept-2/'+route+'page.tsx',import.meta.url));
  const diagram=await readFile(new URL('../science/cells/concept2/CellDiagram.tsx',import.meta.url),'utf8');assert.match(diagram,/onDrop/);assert.match(diagram,/onKeyDown/);assert.match(diagram,/Plant|plant/);
  const app=await readFile(new URL('../science/cells/concept2/Concept2App.tsx',import.meta.url),'utf8');assert.doesNotMatch(app,/private-references|shared-pasteboard|fetch\(|sendBeacon/);
  const {readdir}=await import('node:fs/promises');const files=await readdir(new URL('../dist/client',import.meta.url),{recursive:true});assert.ok(!files.some(file=>/Kaiser|017 -|private-reference|\.pptx$/i.test(String(file))));

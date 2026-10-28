@@ -104,3 +104,5 @@ The supplied worksheet photographs are private teaching sources, not web assets.
 ## Cell Lab Concept 2
 
 The plant, animal, and prokaryotic cell models in `science/cells/concept2/CellDiagram.tsx` are original editable SVG illustrations authored for this project. No classroom slide illustration, commercial reading illustration, Genially asset, source PDF, audio, or original reference document is used in public assets. Organelle positions, highlighting, and target markers are code-native and share the SVG coordinate system. The classroom originals and rendered inspection sheets stay in the ignored private-reference folder. Scientific and classroom source boundaries are recorded in `CONCEPT2_CONTENT_AUDIT.md`.
+
+The October 28 Cell Lab extension adds original native SVG school rooms, familiar comparison icons, and expanded cell structures in `SchoolScene.tsx` and `CellDiagram.tsx`. These are editable source illustrations, with no third-party image downloads or copied classroom diagrams.

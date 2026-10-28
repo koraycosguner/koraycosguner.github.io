@@ -442,7 +442,7 @@ This delivery is a feature-branch push only, with no live deployment.
 
 The new Cells landing page prioritizes **Cell Structure & Analogies** while retaining Concept 1. The root-mounted route is `/subjects/science/cells/concept-2/`; its GitHub Pages build lives at `/yusufs-quizzes/subjects/science/cells/concept-2/`.
 
-- Edit the core parts, questions, analogies and keys in `science/cells/concept2/content.ts`.
+- Edit the main parts, questions, analogies and keys in `science/cells/concept2/content.ts`; `expanded.ts` contains added organelle/reference descriptions. `SchoolScene.tsx` contains the original school floor plan and comparison illustrations. `legacy-labels.ts` preserves old labeling keys so existing saves can resume.
 - Edit original scalable diagrams and their anchored target coordinates in `CellDiagram.tsx`; keep `points` synchronized with the visible structures when changing geometry. The diagram uses the same SVG coordinate system for drawing, highlighting, numbered targets, and drops.
 - `learning.ts` handles first-response records, bank placement, fair scoring, fresh targeted review and save validation. Its separate storage key is `yusuf.science.cells.concept2.v1`.
 - `Concept2App.tsx`, `TaskView.tsx`, and `concept2.css` implement the learner flow. Drag actions have button-based tap and keyboard alternatives. Written analogies remain editable and are reviewed by a person, not automatically scored.
@@ -474,6 +474,6 @@ pnpm test:production
 TEST_BASE_URL=http://localhost:4173 TEST_PATH_PREFIX=/yusufs-quizzes pnpm test:browser
 ```
 
-The classroom originals and all extracted/rendered inspection files belong in the ignored `private-references/cells-concept2/` folder. Do not copy them to `public/` or the generated Pages directory. The restricted reading's PDF, answer key, audio and third-party illustrations are not distributed. The nine-part diagrams and activity wording are original. See `CONCEPT2_CONTENT_AUDIT.md` and `CONCEPT2_ACCEPTANCE_REPORT.md` for source qualifications and actual verification results.
+The classroom originals and all extracted/rendered inspection files belong in the ignored `private-references/cells-concept2/` folder. Do not copy them to `public/` or the generated Pages directory. The restricted reading's PDF, answer key, audio and third-party illustrations are not distributed. The diagrams and activity wording are original. The current module covers fourteen main structures plus six advanced reference structures, has separate school and systems routes, and starts new practice minors with 20 questions (18 objective + 2 human-reviewed writing responses). Earlier 27-question saves remain readable with their original scoring. See `CONCEPT2_CONTENT_AUDIT.md` and `CONCEPT2_ACCEPTANCE_REPORT.md` for source qualifications and actual verification results.
 
 Delivery of this update is a feature-branch push. Publishing that branch to the live site is a separate action and is not part of this handoff.

@@ -5,6 +5,8 @@ import '../app/globals.css';
 
 const routes:Record<string,ComponentType>={
   '/subjects/science/cells/concept-2/':lazy(()=>import('../app/subjects/science/cells/concept-2/page')),
+  '/subjects/science/cells/concept-2/school/':lazy(()=>import('../app/subjects/science/cells/concept-2/school/page')),
+  '/subjects/science/cells/concept-2/systems/':lazy(()=>import('../app/subjects/science/cells/concept-2/systems/page')),
   '/subjects/science/cells/concept-2/explore/':lazy(()=>import('../app/subjects/science/cells/concept-2/explore/page')),
   '/subjects/science/cells/concept-2/label/':lazy(()=>import('../app/subjects/science/cells/concept-2/label/page')),
   '/subjects/science/cells/concept-2/functions/':lazy(()=>import('../app/subjects/science/cells/concept-2/functions/page')),

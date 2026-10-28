@@ -1,64 +1,61 @@
-# Cell Lab Concept 2 acceptance report
+# Cell Lab expanded Concept 2 acceptance report
 
-Validated October 27, 2026. This is an extension of the existing source in `koraycosguner/koraycosguner.github.io`, on the new branch `feature/cells-structure-analogy`. It preserves unrelated repository work and all previously completed subjects. Delivery is a GitHub feature-branch push, with no production deployment or main-branch update.
+October 28, 2026. Repository: `koraycosguner/koraycosguner.github.io`. Feature branch: `feature/cell-organelle-analogy-lab`, based on the tested/pushed ELA audit revision `085d6e0` and the previous Cell Lab revision `8bd5329`. All existing subjects and unrelated repository work are preserved. This handoff requests a feature-branch push, with no live deployment or main-branch update.
 
-## Implemented requirements
+## Requirements and implemented behavior
 
-| Requirement | Result |
+| Requirement | Implementation |
 | --- | --- |
-| Clear Cells landing page prioritizing Concept 2 | Cells shelf opens Cell Structure & Analogies first, with Cell Theory & Scientists immediately accessible below. Science navigation leads to the same shelf. |
-| Interactive animal and plant models | Original scalable SVGs show recognizable organelles. Direct pointer selection, keyboard Enter/Space, and a named-button alternative reveal one short function at a time. The plant model has a separate wall and membrane, a large central vacuole, and chloroplasts with disk stacks. Mitochondria have inner folds and consistent orange coloring in both models. |
-| Nine core parts | Wall, membrane, nucleus, cytoplasm, mitochondria, ribosomes, lysosomes, vacuole, and chloroplasts have concise jobs, optional scientific detail, an analogy, a limitation, and practice. The typical animal diagram has seven of these, the photosynthetic plant diagram eight; this is a union of core vocabulary, not a claim that every cell has nine structures. |
-| Progressive labeling for both cells | Four guided parts, six expanded parts, full core labeling in groups of at most four, and identification without a word bank using three choices. A fifth optional extension includes ER and Golgi. |
-| Desktop drag and mobile placement | Native drag onto the actual SVG nucleus was exercised. Drops populate its numbered label slot and mark its target. Tap tile → numbered target and keyboard placement complete the same exercises. Word-bank paragraphs also support drag, moving, replacement, clearing, resetting, and checking. |
-| Accurate target alignment | Drawing, hit targets, numbered markers, and highlighting share one SVG coordinate system. Each guided target's accessible number is checked against its displayed number and expected structure. Direct clicks at visible structure coordinates were tested for every core part in each cell. |
-| Functions in both directions and context | 27 core function tasks ask for the job, identify a part from its job, and use a cell problem. Help, explanatory feedback, and unlimited retry remain available in practice. |
-| Analogy Lab | Nine models teach a functional comparison and “because” explanation. Three nine-item sets complete an analogy, identify the part from a comparison, and complete the shared-job explanation. Options shuffle between sessions. |
-| Flexible written analogies | Nine notebook prompts accept original comparisons. Large editable responses save locally, offer an optional frame, and use a four-part self-review checklist. No exact-match or keyword correctness grading. Submitted first responses remain separate from edited drafts. |
-| Visual Analogy Quest | Nine three-step challenges: select the structure, choose its function, and explain the comparison. All 27 steps complete successfully. |
-| Plant/animal sorting | All nine structures sort into Plant emphasis / Animal emphasis / Both using an overlapping-set visual. Vacuoles are in Both; lysosomes are emphasized in the animal diagram; chloroplasts represent photosynthetic plant cells. Scientific exceptions are explained. |
-| Prokaryotic/eukaryotic section | Original two-cell visual, short reading, and nine drag/click classifications cover nucleus, nucleoid, membrane-bound organelles, examples, and four shared structures. Eukaryotes may be unicellular or multicellular. |
-| Match That Part | Three shuffled function banks cover all nine parts, with click/tap placement and retry. |
-| Paragraph word banks | Three original passages cover cell jobs, photosynthetic plant cells, and analogies. All blanks, placement changes, resets, and completed keys were exercised. |
-| 10-minute review | Twelve screens: four labels, four function matches, three analogy choices, and one written response. No timer or penalties. New rounds vary examples and choices. |
-| Mixed practice test | 27 tasks with multiple choice, diagram identification, matching, word-bank completion, analogies, and typing. No hints or correctness before completion. First objective responses earn 24 possible points; three written responses are separate for human review. |
-| Separate skills and targeted review | Results show recognition/labeling, functions, analogies, plant/animal comparison, and cell-type counts. A separate 45-item pool offers unseen practice, including new analogy situations and alternative cell models where possible. Exhaustion is stated explicitly; practice does not overwrite the first test score or claim formal mastery. |
-| Gentle, accessible flow | One main task per screen, short explanations, visible progress, no countdown, no hearts or lives, no locked activities, and reduced-motion styling. Interactive targets have shape/name/number cues in addition to color. |
-| Saved progress | Separate browser key `yusuf.science.cells.concept2.v1`; exact activity, placements, responses, discoveries, and notebook drafts reload. Corrupt saves are preserved until explicit reset. Denied storage shows a notice and permits studying. Reset touches only Concept 2. |
-| Classroom verification | All three new originals inspected, including all 21 slides and the image-only comparison. Unfilled notes are not represented as an official answer key. Source ambiguities, biological qualifications, and scope are documented in `CONCEPT2_CONTENT_AUDIT.md`. |
-| Privacy and copyright | Originals, extracted text, rendered slides/pages, commercial PDF/key/audio, and third-party art stay private and ignored. No credentials or actual learner answers/grades are published. New diagrams and explanations are original. |
+| Five main activities | Explore, Label, Functions, Analogy Lab and Practice Test are the five main paths. Plant/animal comparison, cell types, school, systems, quest, matching, paragraphs and writing remain available as supporting activities. |
+| Fourteen main structures | All required structures have a job, location, recognizable appearance, comparison and limitation. Rough and smooth ER are distinct. Animal/plant diagrams contain twelve/thirteen main structures respectively. |
+| Advanced reference | Nucleolus, nuclear envelope, chromosomes/chromatin, amyloplasts, centrosome and peroxisomes have separate reference descriptions and optional drawing/labeling. These are presented one at a time in advanced label tasks. |
+| Accurate original diagrams | Native SVG models distinguish wall/membrane, large plant vacuole, chloroplast disk stacks, folded mitochondria, rough ER dots, smooth ER tubes, Golgi stacks, vesicles and support fibers. Geometry, keyboard targets, number markers and drops share coordinates. |
+| Progressive labeling | Four-part beginner bank; six intermediate structures; all main structures in groups of at most four; identification with three choices; advanced extra structures. Every level works for both models. Simultaneous numeric markers are checked for at least 48 SVG units between centers. |
+| Drag, touch and keyboard | Labels can be dragged onto actual structures, or selected then placed by number. Function, analogy, reason, paragraph and pathway banks use the same accessible placement behavior. Large HTML controls supplement small SVG details. |
+| Three short function modes | Fourteen questions each for organelle→function, function→organelle and sentence completion. A fourth mode gives fourteen cell problems. Repeating a selected mode preserves that mode rather than unexpectedly starting the entire bank. |
+| Four-step analogy teaching | Fourteen models show organelle → function → familiar comparison → shared reason. Original counterpart illustrations sit beside clipped cell details. Each comparison states a limitation. |
+| Flexible original writing | Fourteen prompts accept typed explanations. Three comparison ideas and a custom idea field support the first step; three shared-job suggestions support “because.” Help usage is recorded. Text remains editable; no exact-word/keyword scientific grader is used. |
+| Visual school model | Nine illustrated rooms/areas reveal one matched cell structure and shared job. Named controls and keyboard activation supplement pointer input. Phone selection scrolls and focuses its explanation; a return button brings the school areas back into view. |
+| Structures work together | Seven-step systems activity includes drag/tap protein-station ordering, why each station matters, nutrient entry, ATP production and waste recycling. Transport vesicles between ER and Golgi are explicitly acknowledged. |
+| Comparison and word banks | Fourteen plant/animal sorts, qualified lysosome/vacuole/chloroplast explanations, nine cell-type sorts, fifteen matching rounds and four paragraphs. The new paragraph includes the five requested protein/cell-job parts. |
+| Practice minor | Exactly twenty new questions: 5 function, 5 labels, 5 analogy, 3 comparison, 2 written. Eighteen objective points are separate from two human-reviewed responses. Active tests have no hints, models or correctness feedback. |
+| Targeted review | First answers are immutable. Separate skill counts lead to a 65-item unseen review pool. Exhaustion is reported; repeated practice is not described as mastery. |
+| Saved progress and compatibility | Same isolated local key. Prior 27-question tests retain their 24-point denominator/three writing responses. Earlier label snapshots keep their original keys. Drafts, incomplete sessions, corrupt-save preservation, denied storage and scoped reset are covered. |
+| Calm and accessible | One activity at a time, readable text, progress, help/retries, saved breaks, no timer/lives/XP, keyboard/focus styling, contrast cues beyond color, responsive layouts and no required drag-only step. |
+| Classroom evidence and privacy | Original Unit Map, inquiry presentation and notes were read. Additional earlier cell references remain private. Only original authored diagrams and educational content are included. Learner records remain local; no original documents, student grades, credentials or family data are added to public assets. |
 
-## Actual test results
+## Verification record
 
-- **TypeScript:** `pnpm typecheck` passed.
-- **Unit tests:** `pnpm test` — **221 passed, 0 failed**, including 26 Concept 2 content/engine cases. These include whole-test grading, first-response immutability, help records, bank movement, malformed-save rejection, score-inflation protection, complete save round-trips, all labeling levels, independent writing, and fresh review selection.
-- **Full browser regression:** **97 passed, 0 failed, 0 skipped, 0 flaky**, in 6.8 minutes. This includes 11 new Cell Lab cases and 86 existing cases across Cell Theory, ELA, Ecology navigation, Rikki-Tikki-Tavi, Spanish Units 2/3, the 3D classroom, audio fallback, stories, and saved progress.
-- **Final focused browser rerun:** after final wording, review-example, label-contrast, and skip-link changes, **11 passed, 0 failed**, in 1.3 minutes. It again completes all five labeling levels for both cells, every core function, all analogy directions, all 27 quest steps, the complete test and scoring/review, word banks, classifiers, local saves, and touch placement.
-- **Pages build:** `pnpm build:pages` passed, producing **58 direct-loadable routes**, including 13 new Concept 2 entry points. All new routes support direct loading and refresh. The tested output is synchronized to the repository's `yusufs-quizzes/` folder.
-- **Framework production build:** `pnpm build` passed at the final source snapshot.
-- **Production checks:** `pnpm test:production` — **5 passed, 0 failed**. Checks include all new source routes and private-source exclusion, alongside the existing subjects and media.
-- **Lint:** `pnpm lint` — **0 errors, 23 warnings**, all existing native-image recommendations. The new Cell Lab uses inline SVG rather than remote image assets.
-- **Responsive checks:** 320, 390, 768, and 1280 px. Representative home, explorers, label slots, paragraphs, cell-type comparison, bank questions, and written responses fit without horizontal scrolling. Tested answer, bank, slot, clear, and category controls are at least 44 × 44 px. Native touch emulation completes plant labeling. Small SVG parts also have larger named or numbered control alternatives.
-- **Visual inspection:** native in-app preview checked for animal/plant explorer layout and concise explanations; automated phone capture inspected for completed plant labeling. Original diagrams were compared with the teacher's rendered cell examples and comparison diagram. This is not a claim of physical mobile-device or Safari testing.
+The first upgrade browser run passed 10/12: a direct pointer test found the smooth ER target in an empty space, and a test still selected the old label-review button after the assessment order changed. The target/drawing and test locator were corrected. A subsequent coordinate check found the plant cytoplasm target touching a cytoskeleton fiber; it was moved to open cytoplasm. The final direct-pointer and all-level labeling rerun passed 2/2, including non-overlapping markers.
 
-The first command-line browser attempt was blocked by macOS's sandbox process-registration restrictions; rerunning with the required execution permission worked. The first working new browser run passed 10/11 and exposed a test clicking below the viewport. Scrolling the SVG into view corrected that test; the subsequent full 97-case run and final 11-case run pass. Development review also fixed Pages URL suffix joining, aligned neutral target names with visible target numbers, added real SVG drops, removed a two-blank analogy with interchangeable valid ordering, tightened save validation so extra answer records cannot inflate scores, retained full contrast for checked labels, distinguished placed words from checked correctness, and kept the skip link visually clipped until focused.
+Visual review identified a separate defect that the original no-horizontal-scroll assertion did not catch: a zoomed SVG could paint outside its viewport and overlap phone text. Clipping is now explicit in both school and analogy detail panels, with a browser regression assertion and final phone screenshot inspection. A small final learning-flow correction keeps a repeated function round in the selected short mode. New structures use distinct distractor functions to avoid confusing support/holding comparisons.
 
-Nonfatal inherited build warnings remain for the large Spanish/3D chunk and Vinext's static route classification. Both builds succeed. No production publication was attempted.
+### Final results
 
-## Files and editable areas
+- **Full browser regression: 99 passed, 0 failed, 0 skipped, 0 flaky**, in 7.2 minutes. Includes all Science, ELA, Ecology navigation, Spanish Units 2/3, classroom, stories, audio fallback, Rikki-Tikki-Tavi, Social Sciences and Pages routing checks.
+- **Final focused Cell Lab browser rerun: 12 passed, 0 failed, 0 skipped, 0 flaky**, in 1.6 minutes, after the final clipping, school explanation, mode-repeat and new-part distractor corrections. This covers both models and all five labeling levels, actual structure clicks, real drag/drop, function modes, all analogy directions, all 42 quest steps, the full twenty-question test, assisted own writing, systems ordering, school interaction, local saves, storage fallback and reset isolation.
+- **Unit suite: 223 passed, 0 failed**, including the expanded content/engine and legacy-save compatibility checks. TypeScript passed.
+- **Pages build and framework production build:** both passed at the final source snapshot. Pages has **60 direct-loadable study routes**, including fifteen Concept 2 entry points.
+- **Production checks: 5 passed, 0 failed**, including all fifteen Concept 2 route sources and exclusion of private sources, with the existing subjects retained.
+- **Lint: 0 errors, 23 existing native-image warnings.** Inherited build notices about the large Spanish/3D bundle and framework static classification remain nonfatal.
+- **Responsive verification:** 320, 390, 768 and 1280 px, with no horizontal overflow and tested HTML answer/placement controls at least 44×44 px. School selection focuses/scrolls to its explanation on a phone. Detail SVG clipping has a specific computed-style assertion.
+- **Visual inspection:** desktop and 390 px school screenshots, the corrected clipped mitochondrion detail, mobile plant labeling, the ELA home, embedded-clause explanation and written-response checklist were inspected. The final phone school capture is clear, with its picture and explanation in separate bounds.
+- **Privacy/build integrity:** all 198 generated files match the tested Pages output byte-for-byte. The three retained primary classroom originals match their recorded hashes. Those files and four teacher worksheet photographs are excluded by original-byte hashes from public output and remain ignored/untracked.
 
-- `science/cells/concept2/`: content, task/save types, learning engine, original SVG diagrams, activity renderer, application, and styling.
-- `app/subjects/science/cells/concept-2/`: 13 entry routes for the lab and individual activities.
-- `app/subjects/science/cells/page.tsx` and `app/subjects/science/page.tsx`: updated Cells navigation and subject copy.
-- `static-pages/main.tsx`, `static-pages/routes.ts`, and generated `../yusufs-quizzes/`: Pages routing, titles, and tested static output. Content-hash asset replacements and updated route shells are normal generated changes.
-- `tests/concept2-content.test.ts`, `tests/concept2-learning.test.ts`, `tests/browser/concept2.spec.ts`, and `tests/rendered-html.test.mjs`: new content, interaction, grading, privacy, and build checks.
-- `package.json`, `eslint.config.mjs`: new tests and browser-local save hydration handling, consistent with the existing subjects. No dependency additions or lockfile changes.
-- `README.md`, `ASSET_LICENSES.md`, this report, and `CONCEPT2_CONTENT_AUDIT.md`: setup, edit instructions, provenance, and verification.
+The complete run preceded the final Cell Lab-only corrections listed above; the final twelve-case rerun covers those changes. No other subject implementation changed after the complete run. Local JSON reports/logs and screenshots remain untracked. No production publication or main-branch update was attempted.
 
-## Preview and remaining boundaries
+## Files and local setup
 
-The tested local preview was `http://127.0.0.1:4177/yusufs-quizzes/subjects/science/cells/concept-2/`. To restart a preview from the source folder, run `pnpm build:pages` and `pnpm preview:pages`, then open `http://localhost:4173/yusufs-quizzes/subjects/science/cells/concept-2/`. The README also describes the framework development server.
+- Content/types/save engine/application: `science/cells/concept2/`.
+- `expanded.ts`: additional main and advanced reference descriptions.
+- `CellDiagram.tsx`, `SchoolScene.tsx`, `concept2.css`: original cell geometry, counterpart illustrations, school model and responsive styling.
+- `legacy-labels.ts`: old authored labeling snapshots retained for save compatibility.
+- New source routes: `app/subjects/science/cells/concept-2/school/` and `systems/`, registered in both static route files. There are fifteen Concept 2 entries and sixty study-site routes in total.
+- Content/learning/browser tests and production route checks cover the added requirements. `CONCEPT2_CONTENT_AUDIT.md`, README and asset provenance record sources, limitations and editing guidance.
+- Tested static assets are synchronized to repository `yusufs-quizzes/` only after the final build.
 
-All requested implementation features are present. Written responses require a person to review scientific validity, as intended. This focused assessment preparation does not cover every extended organelle or topic in the full Cells unit. No separate Genially file/link was supplied, so exact fidelity to that example could not be checked; the written interaction requirements are implemented with original assets. Classroom originals and optional inspections remain local and private.
+From `yusuf-study-site`, use Node 22.13+ and pnpm. Run `pnpm install --frozen-lockfile`, `pnpm build:pages`, and `pnpm preview:pages`; then open `http://localhost:4173/yusufs-quizzes/subjects/science/cells/concept-2/`. The development server is available with `pnpm dev`. The local QA preview used port 4177 and is stopped at delivery.
 
-The branch commit is reported in the delivery message after pushing and verifying it against the remote. The public main-branch website remains unchanged under this handoff's explicit no-deployment instruction.
+## Remaining boundaries
+
+Writing requires human/self-review. Practice scores are not official school grades or an exact copy of the teacher's assessment. The diagrams are simplified, not-to-scale models; advanced reference features do not occur in every real cell. Browser verification uses Chromium and touch emulation, not physical-device or Safari certification. Original source files remain private. No live publication is included under the latest briefs' explicit instruction.

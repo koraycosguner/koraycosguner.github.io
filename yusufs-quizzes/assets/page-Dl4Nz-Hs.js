@@ -1,0 +1,1 @@
+import{t as e}from"./index-DUU0lB43.js";import{t}from"./ElaApp-DKXG-vzU.js";var n=e();function r(){return(0,n.jsx)(t,{entry:`test`})}export{r as default};

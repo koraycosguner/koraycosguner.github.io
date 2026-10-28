@@ -1,1 +1,0 @@
-import{t as e}from"./index-D5_bRSVG.js";import{t}from"./Concept2App-B6VqL4Y3.js";var n=e();function r(){return(0,n.jsx)(t,{entry:`explore`})}export{r as default};

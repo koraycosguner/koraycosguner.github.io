@@ -1,0 +1,1 @@
+import{t as e}from"./index-DUU0lB43.js";import{t}from"./Concept2App-DYz4Wz5N.js";var n=e();function r(){return(0,n.jsx)(t,{entry:`types`})}export{r as default};

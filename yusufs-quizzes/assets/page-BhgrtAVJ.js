@@ -1,0 +1,1 @@
+import{t as e}from"./index-DUU0lB43.js";import{t}from"./StoryApp-DjPG7vb4.js";var n=e();function r(){return(0,n.jsx)(t,{checkpoint:!0})}export{r as default};

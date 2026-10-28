@@ -4,8 +4,8 @@ import {cellParts,partById} from './content';
 import type {CellKind,PartId} from './types';
 
 export const points:Record<'animal'|'plant',Record<PartId,[number,number]>>={
- animal:{wall:[50,100],membrane:[81,225],nucleus:[250,190],cytoplasm:[349,97],mitochondria:[478,137],ribosomes:[444,272],lysosomes:[505,316],vacuole:[161,309],er:[339,236],golgi:[456,215],chloroplasts:[0,0]},
- plant:{wall:[66,126],membrane:[85,226],nucleus:[183,157],cytoplasm:[137,251],mitochondria:[172,325],ribosomes:[258,371],lysosomes:[0,0],vacuole:[365,238],chloroplasts:[518,118],er:[226,233],golgi:[489,226]}
+ animal:{wall:[50,100],membrane:[81,225],nucleus:[250,190],cytoplasm:[349,97],mitochondria:[478,137],ribosomes:[444,272],lysosomes:[505,316],vacuole:[161,309],er:[339,236],golgi:[456,215],chloroplasts:[0,0],'rough-er':[355,219],'smooth-er':[306,292],vesicles:[528,227],cytoskeleton:[210,366],nucleolus:[246,194],'nuclear-envelope':[250,124],chromosomes:[263,164],amyloplasts:[0,0],centrosome:[167,224],peroxisomes:[550,166]},
+ plant:{wall:[66,126],membrane:[85,226],nucleus:[183,157],cytoplasm:[268,85],mitochondria:[158,333],ribosomes:[258,371],lysosomes:[0,0],vacuole:[365,238],chloroplasts:[518,118],er:[184,263],golgi:[530,225],'rough-er':[200,246],'smooth-er':[260,309],vesicles:[552,289],cytoskeleton:[367,380],nucleolus:[179,161],'nuclear-envelope':[183,91],chromosomes:[196,131],amyloplasts:[132,275],centrosome:[0,0],peroxisomes:[569,175]}
 };
 const animalEdge='M80 233C62 149 129 70 229 58C335 31 382 70 433 66C535 54 610 120 603 212C627 293 557 379 460 399C363 427 329 389 249 409C148 428 75 350 80 233Z';
 function Mito({x,y,rotate=0}:{x:number;y:number;rotate?:number}){return <g transform={`translate(${x} ${y}) rotate(${rotate})`}><path d="M-47-8C-39-33-8-36 23-25C58-12 56 17 32 27C10 36-8 13-26 17C-46 20-56 6-47-8Z" fill="#f2a65e" stroke="#a75228" strokeWidth="4"/><path d="M-34-7Q-16-28-12-5T10-3T31 0Q42 15 25 16" fill="none" stroke="#a75228" strokeWidth="4" strokeLinecap="round"/></g>}
@@ -14,8 +14,10 @@ function Ribosomes({x,y}:{x:number;y:number}){return <g transform={`translate(${
 function ER({x,y}:{x:number;y:number}){return <g transform={`translate(${x} ${y})`}><path d="M-22-41Q42-48 38-27Q-5-25-20-13Q43-25 44-5Q11-1-18 12Q52-3 44 19Q25 28-17 34" fill="none" stroke="#729fbf" strokeWidth="15" strokeLinecap="round"/><path d="M-22-41Q42-48 38-27Q-5-25-20-13Q43-25 44-5Q11-1-18 12Q52-3 44 19Q25 28-17 34" fill="none" stroke="#436f90" strokeWidth="2"/>{[[-12,-42],[7,-43],[30,-32],[-12,-14],[16,-17],[36,-6],[-6,8],[23,5]].map(([cx,cy],i)=><circle key={i} cx={cx} cy={cy} r="3" fill="#3a526c"/>)}</g>}
 function Golgi({x,y}:{x:number;y:number}){return <g transform={`translate(${x} ${y})`}>{[-18,-6,6,18].map((y,i)=><path key={y} d={`M${-29+i*3} ${y}Q0 ${y-18} ${29-i*3} ${y}`} fill="none" stroke="#b66b70" strokeWidth="8" strokeLinecap="round"/>)}<circle cx="38" cy="-15" r="6" fill="#e5a6aa"/><circle cx="-37" cy="14" r="5" fill="#e5a6aa"/></g>}
 
-export default function CellDiagram({cell='animal',selected,targets,onSelect,neutral=false,extended=false,staticOnly=false,placed=[]}:{cell?:CellKind;selected?:PartId;targets?:PartId[];onSelect?:(id:PartId,dragged?:string)=>void;placed?:PartId[];neutral?:boolean;extended?:boolean;staticOnly?:boolean}){
+export default function CellDiagram({cell='animal',selected,targets,onSelect,neutral=false,extended=false,staticOnly=false,placed=[],zoom=false}:{cell?:CellKind;selected?:PartId;targets?:PartId[];onSelect?:(id:PartId,dragged?:string)=>void;placed?:PartId[];neutral?:boolean;extended?:boolean;staticOnly?:boolean;zoom?:boolean}){
  const uid=useId().replaceAll(':',''),plant=cell==='plant',available=cellParts(cell,extended);
+ const center=selected?points[plant?'plant':'animal'][selected]:null;
+ const viewBox=zoom&&center&&selected&&!['wall','membrane','cytoplasm','cytoskeleton'].includes(selected)?`${center[0]-100} ${center[1]-100} 200 200`:'0 0 680 460';
  const title=`${cell==='prokaryote'?'Prokaryotic':plant?'Photosynthetic plant':'Animal'} cell model`;
  function group(id:PartId,children:ReactNode){
   const index=available.findIndex(p=>p.id===id),target=targets?.indexOf(id)??-1;
@@ -23,24 +25,35 @@ export default function CellDiagram({cell='animal',selected,targets,onSelect,neu
   const selectable=!staticOnly&&!!onSelect&&(!targets||target>=0);
   return <g key={id} className="c2-organelle" data-part={id} data-active={selected===id} role={selectable?'button':undefined} tabIndex={selectable?0:undefined} aria-label={selectable?(neutral?`Structure ${(target>=0?target:index)+1}`:partById[id].name):undefined} aria-pressed={selectable?selected===id:undefined} onClick={selectable?()=>onSelect(id):undefined} onDragOver={selectable?e=>e.preventDefault():undefined} onDrop={selectable?e=>{e.preventDefault();onSelect(id,e.dataTransfer.getData('text/plain'))}:undefined} onKeyDown={selectable?e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();onSelect(id)}}:undefined}>
    {children}
+   {selectable&&['rough-er','smooth-er','vesicles','cytoskeleton','nucleolus','chromosomes','peroxisomes','centrosome'].includes(id)&&<circle cx={x} cy={y} r={id==='nucleolus'||id==='chromosomes'?14:22} fill="transparent"/>}
    {selected===id&&<circle className="c2-halo" cx={x} cy={y} r={id==='nucleus'?78:37} fill="none" stroke="#1c4248" strokeWidth="3" strokeDasharray="6 5" pointerEvents="none"/>}
    {target>=0&&<g className="c2-number" pointerEvents="none"><circle cx={x} cy={y} r="24" fill={placed.includes(id)?'#d4e8c5':'#fffdf3'} stroke="#173f46" strokeWidth="2"/><text x={x} y={y+8} textAnchor="middle" fill="#173f46" fontSize="24" fontWeight="800">{target+1}</text></g>}
   </g>;
  }
  if(cell==='prokaryote')return <figure className="c2-cell-figure"><svg viewBox="0 0 680 450" className="c2-cell-svg" role="img" aria-labelledby={`${uid}-title ${uid}-desc`}><title id={`${uid}-title`}>{title}</title><desc id={`${uid}-desc`}>A bacterium with a membrane, cytoplasm, ribosomes, and DNA in a nucleoid region. It has no nucleus.</desc><rect x="75" y="105" width="520" height="240" rx="120" fill="#c6dca3" stroke="#527940" strokeWidth="13"/><rect x="89" y="119" width="492" height="212" rx="106" fill="#f5e8b7" stroke="#157e81" strokeWidth="5"/><path d="M235 175Q355 120 410 175T300 230T390 280Q275 320 250 250T235 175M280 162Q290 245 366 282M231 233L403 195" stroke="#8661b5" strokeWidth="6" fill="none"/><Ribosomes x={171} y={217}/><Ribosomes x={477} y={220}/><text x="340" y="392" textAnchor="middle" fontSize="22" fill="#1c4248">DNA in a nucleoid region</text><path d="M340 358V295" stroke="#8661b5" strokeWidth="3"/></svg><figcaption>Prokaryotic model · No nucleus · Not to scale</figcaption></figure>;
- return <figure className="c2-cell-figure"><svg viewBox="0 0 680 460" className="c2-cell-svg" role="group" aria-labelledby={`${uid}-title`}><title id={`${uid}-title`}>{title}</title>
+ return <figure className="c2-cell-figure"><svg viewBox={viewBox} className="c2-cell-svg" role="group" aria-labelledby={`${uid}-title`}><title id={`${uid}-title`}>{title}</title>
   <defs><radialGradient id={`${uid}-gel`}><stop offset="0" stopColor="#fff6d8"/><stop offset="1" stopColor="#f1dfad"/></radialGradient><radialGradient id={`${uid}-nucleus`} cx="35%" cy="30%"><stop stopColor="#d5b7ec"/><stop offset="1" stopColor="#9a77c1"/></radialGradient></defs>
   <ellipse cx="344" cy="418" rx="245" ry="15" fill="#234b4110"/>
   {plant?group('wall',<rect x="65" y="45" width="550" height="370" rx="55" fill="#bdd49b" stroke="#567d3c" strokeWidth="15"/>):null}
   {group('cytoplasm',plant?<rect x="87" y="66" width="506" height="328" rx="39" fill={`url(#${uid}-gel)`}/>:<path d={animalEdge} fill={`url(#${uid}-gel)`}/>)}
   {group('membrane',plant?<rect x="83" y="62" width="514" height="336" rx="43" fill="none" stroke="#17828a" strokeWidth="7"/>:<path d={animalEdge} fill="none" stroke="#17828a" strokeWidth="9"/>)}
+  {group('cytoskeleton',<g fill="none" stroke="#9b822f" strokeWidth="3" opacity=".8">{plant?<><path d="M120 370Q300 389 557 367M367 380L368 398M116 101Q137 215 115 326M578 93Q558 207 576 361"/></>:<><path d="M126 178Q110 307 210 366Q368 417 551 326M128 335Q213 345 210 366L236 400M367 73Q506 70 567 140"/></>}</g>)}
   {group('vacuole',plant?<path d="M300 105Q380 85 439 113Q477 172 456 301Q439 356 334 351Q288 328 284 266Q264 170 300 105Z" fill="#b1e1ed" stroke="#428faf" strokeWidth="4"/>:<path d="M123 287Q147 269 181 280Q207 291 194 324Q174 346 139 333Q116 320 123 287Z" fill="#b1e1ed" stroke="#428faf" strokeWidth="4"/>)}
   {group('nucleus',<g transform={`translate(${plant?183:250} ${plant?157:190})`}><circle r="66" fill={`url(#${uid}-nucleus)`} stroke="#76539d" strokeWidth="5"/><circle r="58" fill="none" stroke="#e9d5f3" strokeWidth="2"/><path d="M-42-12Q-6-42 16-14T39 17M-29 32Q-3-3 25 30M-28-29Q-8 5 30-29" fill="none" stroke="#76539d" strokeWidth="3"/><circle cx="-4" cy="4" r="19" fill="#67477e"/>{[-48,0,48].map((x,i)=><circle key={i} cx={x} cy={i===1?-65:43} r="4" fill="#67477e"/>)}</g>)}
-  {extended&&group('er',<ER x={plant?226:339} y={plant?233:236}/>)}
-  {extended&&group('golgi',<Golgi x={plant?489:456} y={plant?226:215}/>)}
-  {group('mitochondria',<><Mito x={plant?172:478} y={plant?325:137} rotate={plant?-20:20}/>{!plant&&<Mito x={395} y={343} rotate={-13}/>}</>)}
+  {group('rough-er',<ER x={plant?184:339} y={plant?263:236}/>)}
+  {group('smooth-er',<g transform={`translate(${plant?242:332} ${plant?301:314})`}><path d="M-26-22Q8-39 26-20T18 8Q-4 17-25 0M-1-31Q-17-5 3 18T30 29M-13 18Q-31 28-22 38" fill="none" stroke="#4a9f9b" strokeWidth="12" strokeLinecap="round"/><path d="M-26-22Q8-39 26-20T18 8Q-4 17-25 0M-1-31Q-17-5 3 18T30 29" fill="none" stroke="#276c6a" strokeWidth="2"/></g>)}
+  {targets?.includes('er')&&group('er',<circle cx={plant?184:339} cy={plant?263:236} r="36" fill="transparent"/>)}
+  {group('golgi',<Golgi x={plant?530:456} y={plant?225:215}/>)}
+  {group('vesicles',<g transform={`translate(${plant?540:536} ${plant?279:235})`}>{[[-8,-8],[12,10],[-16,17]].map(([cx,cy],i)=><circle key={i} cx={cx} cy={cy} r={i===0?10:7} fill="#f2d780" stroke="#9a7926" strokeWidth="3"/>)}</g>)}
+  {group('mitochondria',<><Mito x={plant?158:478} y={plant?333:137} rotate={plant?-20:20}/>{!plant&&<Mito x={395} y={343} rotate={-13}/>}</>)}
   {group('ribosomes',<Ribosomes x={plant?258:444} y={plant?371:272}/>)}
   {!plant&&group('lysosomes',<g><circle cx="505" cy="316" r="23" fill="#edabc6" stroke="#ad4f79" strokeWidth="3"/>{[[497,307],[515,313],[503,325],[512,328],[491,316]].map(([cx,cy],i)=><circle key={i} cx={cx} cy={cy} r="3" fill="#ad4f79"/>)}</g>)}
+  {extended&&group('nuclear-envelope',<g transform={`translate(${plant?183:250} ${plant?157:190})`}><circle r="66" fill="none" stroke="#76539d" strokeWidth="6"/><circle r="58" fill="none" stroke="#e9d5f3" strokeWidth="2"/>{[-48,0,48].map((x,i)=><circle key={i} cx={x} cy={i===1?-65:43} r="4" fill="#67477e"/>)}</g>)}
+  {extended&&group('chromosomes',<g transform={`translate(${plant?183:250} ${plant?157:190})`}><path d="M-42-12Q-6-42 16-14T39 17M-29 32Q-3-3 25 30M-28-29Q-8 5 30-29" fill="none" stroke="#76539d" strokeWidth="4"/></g>)}
+  {extended&&group('nucleolus',<circle cx={plant?179:246} cy={plant?161:194} r="19" fill="#67477e"/>)}
+  {extended&&group('peroxisomes',<g transform={`translate(${plant?569:550} ${plant?175:166})`}><circle r="17" fill="#b9d8c9" stroke="#4a8c78" strokeWidth="3"/><path d="M-7-8L7 8M-7 8L7-8M-9 0H9" stroke="#4a8c78" strokeWidth="3"/></g>)}
+  {extended&&!plant&&group('centrosome',<g transform="translate(167 224)"><rect x="-22" y="-6" width="34" height="14" rx="4" fill="#e9b07c" stroke="#a9683b" strokeWidth="3"/><rect x="3" y="-20" width="14" height="34" rx="4" fill="#e9b07c" stroke="#a9683b" strokeWidth="3"/><path d="M-14-4V6M-5-4V6M7-13H15M7-4H15" stroke="#a9683b" strokeWidth="2"/></g>)}
+  {extended&&plant&&group('amyloplasts',<g transform="translate(132 275)"><ellipse rx="30" ry="24" fill="#f3e8d5" stroke="#b4936b" strokeWidth="3"/>{[18,12,6].map(r=><ellipse key={r} cx="-4" rx={r} ry={r*.8} fill="none" stroke="#b4936b" strokeWidth="2"/>)}</g>)}
   {plant&&group('chloroplasts',<><Chloro x={518} y={118} rotate={-24}/><Chloro x={520} y={337} rotate={21}/></>)}
- </svg><figcaption>{plant?'Photosynthetic plant':'Animal'} cell · Simplified cutaway · Not to scale</figcaption></figure>;
+ </svg><figcaption>{plant?'Photosynthetic plant':'Animal'} cell · Simplified cutaway · Positions vary · Not to scale</figcaption></figure>;
 }

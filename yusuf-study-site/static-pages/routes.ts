@@ -3,6 +3,8 @@ export const pagesBase = '/yusufs-quizzes/';
 export const pageRoutes = [
   '/subjects/science/cells/concept-2/',
   '/subjects/science/cells/concept-2/explore/',
+  '/subjects/science/cells/concept-2/school/',
+  '/subjects/science/cells/concept-2/systems/',
   '/subjects/science/cells/concept-2/label/',
   '/subjects/science/cells/concept-2/functions/',
   '/subjects/science/cells/concept-2/analogies/',

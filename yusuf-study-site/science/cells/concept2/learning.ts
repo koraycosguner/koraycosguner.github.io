@@ -1,18 +1,19 @@
-import {analogySets,cellParts,compareIds,core,functionIds,labelSets,matchIds,paragraphIds,partById,questIds,reviewIds,skills,taskById,testIds,typeIds,writeIds} from './content.ts';
+import {analogySets,cellParts,compareIds,core,functionIds,functionSets,labelSets,legacyLabelIds,legacyTestIds,matchIds,paragraphIds,partById,questIds,reviewIds,skills,taskById,testIds,systemIds,typeIds,writeIds} from './content.ts';
 import type {CellKind,Mode,PartId,Saved,Skill,Task} from './types.ts';
 export const KEY='yusuf.science.cells.concept2.v1';
 export const LIMIT=12000;
-const modes:Mode[]=['label','functions','analogies','compare','types','paragraphs','match','quest','test','quick','review','write'];
+const modes:Mode[]=['label','functions','analogies','compare','types','paragraphs','match','quest','test','quick','review','write','systems'];
 export const fresh=():Saved=>({version:1,next:1,cell:'animal',discovered:[],drafts:{},session:null,evidence:[],seen:[]});
 export const current=(s:Saved)=>s.session&&!s.session.complete?taskById.get(s.session.ids[s.session.index]):undefined;
 export function shuffle<T>(input:T[],seed:number):T[]{let n=seed>>>0;const a=[...input];for(let i=a.length-1;i>0;i--){n=(Math.imul(n,1664525)+1013904223)>>>0;const j=n%(i+1);[a[i],a[j]]=[a[j],a[i]]}return a}
 const equal=(a:string[],b:string[])=>a.length===b.length&&a.every((x,i)=>x===b[i]);
 export const correct=(t:Task,selection:string[])=>equal(t.answer,selection);
 export const discover=(s:Saved,id:PartId):Saved=>s.discovered.includes(id)?s:{...s,discovered:[...s.discovered,id]};
-export function start(s:Saved,mode:Mode,options:{cell?:CellKind;level?:number;set?:keyof typeof analogySets;part?:PartId;skill?:Skill}={}):Saved{
+export function start(s:Saved,mode:Mode,options:{cell?:CellKind;level?:number;set?:keyof typeof analogySets;part?:PartId;skill?:Skill;functionSet?:keyof typeof functionSets}={}):Saved{
  let ids:string[]=[];
  if(mode==='label')ids=labelSets[`${options.cell==='plant'?'plant':'animal'}-${options.level??1}`]??[];
- if(mode==='functions')ids=options.part?functionIds.filter(id=>taskById.get(id)?.part===options.part):functionIds;
+ if(mode==='functions')ids=options.part?functionIds.filter(id=>taskById.get(id)?.part===options.part):options.functionSet?functionSets[options.functionSet]:functionIds;
+ if(mode==='systems')ids=systemIds;
  if(mode==='analogies')ids=analogySets[options.set??'guided'];
  if(mode==='write')ids=writeIds;
  if(mode==='compare')ids=compareIds;
@@ -55,7 +56,7 @@ export function canSubmit(s:Saved):boolean{
  const t=current(s),ss=s.session;return !!(t&&ss&&!ss.feedback&&(t.kind==='written'?ss.text.trim().length>0:validSelection(t,ss.selection,true)));
 }
 function advance(s:Saved):Saved{
- const ss=s.session!;const index=ss.index+1,id=ss.ids[index];return {...s,session:{...ss,index,selection:[],text:s.drafts[id]??'',feedback:false,hint:false,retry:false,complete:index>=ss.ids.length},seen:[...new Set([...s.seen,...(id?[id]:[])])]};
+ const ss=s.session!;const index=ss.index+1,id=ss.ids[index];return {...s,session:{...ss,index,selection:[],text:ss.mode==='test'?'':s.drafts[id]??'',feedback:false,hint:false,retry:false,complete:index>=ss.ids.length},seen:[...new Set([...s.seen,...(id?[id]:[])])]};
 }
 export function submit(s:Saved):Saved{
  const ss=s.session,t=current(s);if(!ss||!t||!canSubmit(s))return s;
@@ -76,7 +77,7 @@ export function weakSkills(s:Saved):Skill[]{
  return (Object.keys(skills) as Skill[]).filter(skill=>rows.some(e=>{const t=taskById.get(e.task)!;return t.kind!=='written'&&t.skill===skill&&(!correct(t,e.first)||e.assisted)}));
 }
 function allowed(id:string,mode:Mode):boolean{
- const pools:Record<Mode,string[]>={label:Object.values(labelSets).flat(),functions:functionIds,analogies:Object.values(analogySets).flat(),compare:compareIds,types:typeIds,paragraphs:paragraphIds,match:matchIds,quest:questIds,test:testIds,write:writeIds,review:reviewIds,quick:[...reviewIds,...functionIds,...writeIds,...Object.values(analogySets).flat()]};
+ const pools:Record<Mode,string[]>={label:[...Object.values(labelSets).flat(),...legacyLabelIds],functions:functionIds,analogies:Object.values(analogySets).flat(),compare:compareIds,types:typeIds,paragraphs:paragraphIds,match:matchIds,quest:questIds,test:[...testIds,...legacyTestIds],systems:systemIds,write:writeIds,review:reviewIds,quick:[...reviewIds,...functionIds,...writeIds,...Object.values(analogySets).flat()]};
  return !!pools[mode]?.includes(id);
 }
 function record(v:unknown):v is Record<string,unknown>{return !!v&&typeof v==='object'&&!Array.isArray(v)}
@@ -95,8 +96,8 @@ export function parse(raw:string|null):Saved{
  }
  if(v.session!==null){
   const ss=v.session;
-  if(!record(ss)||!positive(ss.id)||ss.id>=v.next||!modes.includes(ss.mode as Mode)||!Array.isArray(ss.ids)||ss.ids.length>50||new Set(ss.ids).size!==ss.ids.length||!ss.ids.every(id=>typeof id==='string'&&taskById.has(id)&&allowed(id,ss.mode as Mode))||!Number.isInteger(ss.index)||Number(ss.index)<0||Number(ss.index)>ss.ids.length||typeof ss.complete!=='boolean'||ss.complete!==(ss.index===ss.ids.length)||typeof ss.feedback!=='boolean'||typeof ss.retry!=='boolean'||typeof ss.hint!=='boolean'||typeof ss.text!=='string'||ss.text.length>LIMIT)throw Error('Invalid session');
-  if(ss.mode==='test'&&(!equal(ss.ids as string[],testIds)||ss.hint||ss.feedback||ss.retry))throw Error('Invalid test');
+  if(!record(ss)||!positive(ss.id)||ss.id>=v.next||!modes.includes(ss.mode as Mode)||!Array.isArray(ss.ids)||ss.ids.length>200||new Set(ss.ids).size!==ss.ids.length||!ss.ids.every(id=>typeof id==='string'&&taskById.has(id)&&allowed(id,ss.mode as Mode))||!Number.isInteger(ss.index)||Number(ss.index)<0||Number(ss.index)>ss.ids.length||typeof ss.complete!=='boolean'||ss.complete!==(ss.index===ss.ids.length)||typeof ss.feedback!=='boolean'||typeof ss.retry!=='boolean'||typeof ss.hint!=='boolean'||typeof ss.text!=='string'||ss.text.length>LIMIT)throw Error('Invalid session');
+  if(ss.mode==='test'&&((!equal(ss.ids as string[],testIds)&&!equal(ss.ids as string[],legacyTestIds))||ss.hint||ss.feedback||ss.retry))throw Error('Invalid test');
   if(!ss.complete&&!validSelection(taskById.get(ss.ids[ss.index as number] as string)!,ss.selection))throw Error('Invalid selection');
   const own=(v.evidence as Record<string,unknown>[]).filter(e=>e.session===ss.id);
   if(own.some(e=>e.mode!==ss.mode||!(ss.ids as string[]).includes(e.task as string)))throw Error('Invalid session answers');

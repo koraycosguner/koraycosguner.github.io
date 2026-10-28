@@ -1,10 +1,10 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readdir,readFile} from 'node:fs/promises';
-import {analogySets,cellParts,compareIds,core,functionIds,labelSets,matchIds,paragraphIds,parts,questIds,reviewIds,taskById,tasks,testIds,typeIds,writeIds} from '../science/cells/concept2/content.ts';
+import {analogySets,cellParts,compareIds,core,functionIds,labelSets,legacyTestIds,functionSets,systemIds,matchIds,paragraphIds,parts,questIds,reviewIds,taskById,tasks,testIds,typeIds,writeIds} from '../science/cells/concept2/content.ts';
 
-test('nine class parts have distinct functions, functional analogies, clues and careful details',()=>{
- assert.deepEqual(core.map(p=>p.id),['wall','membrane','nucleus','cytoplasm','mitochondria','ribosomes','lysosomes','vacuole','chloroplasts']);
+test('fourteen main cell parts have distinct functions, functional analogies, clues and careful details',()=>{
+ assert.deepEqual(core.map(p=>p.id),['wall','membrane','nucleus','cytoplasm','mitochondria','ribosomes','lysosomes','vacuole','chloroplasts','golgi','rough-er','smooth-er','vesicles','cytoskeleton']);
  for(const p of parts)for(const field of ['name','job','detail','analogy','reason','limit','clue','scenario'] as const)assert.ok(p[field],`${p.id} ${field}`);
  const by=(id:string)=>parts.find(p=>p.id===id)!;
  assert.match(by('mitochondria').job,/ATP/);assert.match(by('ribosomes').job,/proteins/);assert.match(by('membrane').job,/enters and leaves/);assert.match(by('nucleus').job,/DNA/);assert.match(by('wall').job,/shape, support, and protection/);assert.match(by('cytoplasm').job,/Jelly-like/);assert.match(by('lysosomes').job,/Break down/);assert.match(by('vacuole').job,/Stores/);assert.match(by('chloroplasts').job,/photosynthesis/);
@@ -23,33 +23,33 @@ test('every question key resolves to unique actual choices and diagram targets a
   if(['choice','diagram-choice'].includes(t.kind))assert.equal(t.choices.length,3,t.id);
  }
 });
-test('plant and animal exercises cover the correct parts at four levels, with separate optional ER/Golgi',()=>{
+test('both cells cover beginner, intermediate, full, identification and advanced structures',()=>{
  for(const cell of ['animal','plant'] as const){
   assert.equal(taskById.get(labelSets[`${cell}-1`][0])!.answer.length,4);
   assert.equal(labelSets[`${cell}-2`].flatMap(id=>taskById.get(id)!.answer).length,6);
   assert.deepEqual(labelSets[`${cell}-3`].flatMap(id=>taskById.get(id)!.answer),cellParts(cell).map(p=>p.id));
   assert.ok(labelSets[`${cell}-3`].every(id=>taskById.get(id)!.answer.length<=4));
   assert.ok(labelSets[`${cell}-4`].every(id=>taskById.get(id)!.kind==='diagram-choice'));
-  const extended=labelSets[`${cell}-5`].flatMap(id=>taskById.get(id)!.answer);assert.ok(extended.includes('er')&&extended.includes('golgi'));
+  const extended=labelSets[`${cell}-5`].flatMap(id=>taskById.get(id)!.answer);assert.ok(extended.includes('nucleolus')&&extended.includes('nuclear-envelope')&&extended.includes('chromosomes')&&extended.includes('peroxisomes'));assert.ok(labelSets[`${cell}-5`].every(id=>taskById.get(id)!.answer.length===1));
  }
  assert.ok(!cellParts('animal').some(p=>p.id==='wall'||p.id==='chloroplasts'));
  assert.ok(!cellParts('plant').some(p=>p.id==='lysosomes'));
 });
-test('all nine functions and all three analogy directions are practiced, with flexible writing',()=>{
- assert.equal(functionIds.length,27);assert.equal(writeIds.length,9);
- for(const p of core){assert.equal(functionIds.filter(id=>taskById.get(id)!.part===p.id).length,3);for(const set of Object.values(analogySets))assert.ok(set.some(id=>taskById.get(id)!.part===p.id));}
- assert.equal(questIds.length,27);assert.equal(matchIds.flatMap(id=>taskById.get(id)!.answer).length,9);
+test('all fourteen functions and all three analogy directions are practiced, with flexible writing',()=>{
+ assert.equal(functionIds.length,56);assert.equal(writeIds.length,14);
+ for(const p of core){assert.equal(functionIds.filter(id=>taskById.get(id)!.part===p.id).length,4);for(const set of Object.values(analogySets))assert.ok(set.some(id=>taskById.get(id)!.part===p.id));}
+ assert.equal(questIds.length,42);assert.equal(matchIds.flatMap(id=>taskById.get(id)!.answer).length,42);for(const ids of Object.values(functionSets))assert.equal(ids.length,14);
 });
-test('test has 27 questions, 24 objective points and 3 human-reviewed explanations across five skills',()=>{
- const bank=testIds.map(id=>taskById.get(id)!);assert.equal(bank.length,27);assert.equal(bank.filter(t=>t.kind==='written').length,3);assert.equal(bank.filter(t=>t.kind==='diagram-choice').length,6);
- assert.deepEqual(Object.fromEntries(['labels','functions','analogies','comparison','cell-types'].map(skill=>[skill,bank.filter(t=>t.skill===skill&&t.kind!=='written').length])),{labels:6,functions:7,analogies:6,comparison:3,'cell-types':2});
- assert.ok(bank.some(t=>t.kind==='bank'&&t.slots)&&bank.some(t=>t.kind==='bank'&&t.segments));
+test('minor has twenty questions: five functions, five labels, five analogies, three comparisons and two writing',()=>{
+ const bank=testIds.map(id=>taskById.get(id)!);assert.equal(bank.length,20);assert.equal(bank.filter(t=>t.kind==='written').length,2);assert.equal(bank.filter(t=>t.kind==='diagram-choice').length,5);
+ assert.deepEqual(Object.fromEntries(['labels','functions','analogies','comparison','cell-types'].map(skill=>[skill,bank.filter(t=>t.skill===skill&&t.kind!=='written').length])),{labels:5,functions:5,analogies:5,comparison:3,'cell-types':0});
+ assert.equal(legacyTestIds.length,27);assert.ok(legacyTestIds.every(id=>taskById.has(id)));
  assert.equal(new Set(testIds).size,testIds.length);
 });
 test('classification keys honor classroom emphasis and biological exceptions',()=>{
  const answer=(id:string)=>taskById.get(id)!.answer;
  for(const p of core)assert.deepEqual(answer(`compare-${p.id}`),[p.id==='wall'||p.id==='chloroplasts'?'plant':p.id==='lysosomes'?'animal':'both']);
- assert.equal(compareIds.length,9);assert.equal(typeIds.length,9);
+ assert.equal(compareIds.length,14);assert.equal(typeIds.length,9);
  for(const id of ['dna','membrane','cytoplasm','ribosomes'])assert.deepEqual(answer(`type-${id}`),['both']);
  assert.deepEqual(answer('type-nucleoid'),['pro']);assert.deepEqual(answer('type-nucleus'),['euk']);
  assert.match(taskById.get('type-groups')!.explanation,/single-celled or multicellular/);
@@ -73,4 +73,11 @@ test('review changes analogy situations and uses the other cell model for shared
  for(const id of ['membrane','nucleus','mitochondria','ribosomes'])assert.equal(taskById.get(`review-label-${id}`)!.cell,'plant');
  assert.equal(taskById.get('review-label-vacuole')!.cell,'animal');
  const original=taskById.get('test-analogy-membrane')!,fresh=taskById.get('review-analogy-membrane')!;assert.match(fresh.prompt,/park entrance/);assert.doesNotMatch(fresh.prompt,/security gate/);assert.deepEqual(fresh.answer,original.answer);
+});
+
+
+test('the six advanced Unit Map structures and the protein pathway are accurate and separately scaffolded',()=>{
+ for(const id of ['nucleolus','nuclear-envelope','chromosomes','amyloplasts','centrosome','peroxisomes']){const p=parts.find(p=>p.id===id)!;assert.ok(p.location);assert.ok(!core.includes(p));}
+ assert.match(parts.find(p=>p.id==='rough-er')!.job,/proteins/);assert.match(parts.find(p=>p.id==='smooth-er')!.job,/lipids/);assert.match(parts.find(p=>p.id==='chromosomes')!.detail,/not its everyday form/);
+ const t=taskById.get(systemIds[0])!;assert.deepEqual(t.answer,['ribosomes','rough-er','golgi','vesicles']);assert.match(t.explanation,/transport vesicles carry it to the Golgi/);assert.equal(systemIds.length,7);
 });

@@ -1,0 +1,1 @@
+import{t as e}from"./index-DUU0lB43.js";import{t}from"./Unit2StudyApp-Del3Q8MO.js";var n=e();function r(){return(0,n.jsx)(t,{entry:`learn`})}export{r as default};

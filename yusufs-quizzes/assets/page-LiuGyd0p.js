@@ -1,1 +1,0 @@
-import{t as e}from"./index-D5_bRSVG.js";import{t}from"./StoryApp-siQg8tmt.js";var n=e();function r(){return(0,n.jsx)(t,{checkpoint:!0})}export{r as default};
