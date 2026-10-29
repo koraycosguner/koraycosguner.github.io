@@ -550,7 +550,7 @@
                 </div>`,
             'independent-t': `
                 <div class="data-shape-hint">
-                    <strong>Expected data:</strong> One numeric column + one grouping column with <strong>exactly 2 levels</strong>. Each row is one independent observation.
+                    <strong>Expected data:</strong> One numeric column + one grouping column with <strong>2 levels</strong> (if it has more, pick the two groups to compare). Each row is one independent observation.
                     <pre>Group  Score
 A      75
 A      82
@@ -670,8 +670,21 @@ F       Like</pre>
                                 <select id="cfg-x">${selectOpts(numericCols())}</select>
                             </div>
                             <div class="form-group">
-                                <label for="cfg-g">Grouping Variable <span class="field-hint">(must have exactly 2 groups)</span></label>
+                                <label for="cfg-g">Grouping Variable <span class="field-hint">(2 groups, or pick 2 below)</span></label>
                                 <select id="cfg-g">${selectOpts(groupingCols())}</select>
+                            </div>
+                        </div>
+                        <div id="cfg-pick" style="display:none;">
+                            <p class="field-hint" style="margin:0 0 0.5rem;">This grouping variable has more than 2 groups. Pick the two groups to compare; rows in the other groups are left out.</p>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="cfg-g1">Group 1</label>
+                                    <select id="cfg-g1"></select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="cfg-g2">Group 2</label>
+                                    <select id="cfg-g2"></select>
+                                </div>
                             </div>
                         </div>
                         <div class="form-group">
@@ -726,6 +739,26 @@ F       Like</pre>
             // Wire up change listeners on all selects/inputs to update Run state
             c.querySelectorAll('select, input').forEach(el => el.addEventListener('change', updateRunEnabled));
             c.querySelectorAll('input').forEach(el => el.addEventListener('input', updateRunEnabled));
+            if (selectedTest === 'independent-t') { $('cfg-g').addEventListener('change', updateGroupPick); updateGroupPick(); }
+        }
+
+        // Independent t-test on a grouping variable with more than 2 groups: the user picks the two
+        // groups to compare (as with SPSS "Define Groups"), and rows in the other groups are left out.
+        function updateGroupPick() {
+            const box = $('cfg-pick'), g = $('cfg-g') ? $('cfg-g').value : '';
+            if (!box) return;
+            const vals = g ? uniqueValues(g) : [];
+            if (vals.length <= 2) {
+                box.style.display = 'none'; $('cfg-g1').innerHTML = ''; $('cfg-g2').innerHTML = '';
+            } else {
+                const allNum = vals.every(v => v.trim() !== '' && isFinite(Number(v)));
+                vals.sort(allNum ? (a, b) => Number(a) - Number(b) : (a, b) => String(a).localeCompare(String(b)));
+                const opts = '<option value="">-- Select group --</option>' +
+                    vals.map(v => `<option value="${escapeHtml(v)}">${escapeHtml(v)}</option>`).join('');
+                $('cfg-g1').innerHTML = opts; $('cfg-g2').innerHTML = opts;
+                box.style.display = 'block';
+            }
+            updateRunEnabled();
         }
 
         // 2026-10-07: the tail choice, significance level and confidence level were removed at the
@@ -746,6 +779,8 @@ F       Like</pre>
                 case 'independent-t':
                 case 'anova':
                     ok = $('cfg-x') && $('cfg-x').value && $('cfg-g') && $('cfg-g').value && $('cfg-x').value !== $('cfg-g').value;
+                    if (ok && selectedTest === 'independent-t' && $('cfg-pick') && $('cfg-pick').style.display !== 'none')
+                        ok = $('cfg-g1').value !== '' && $('cfg-g2').value !== '' && $('cfg-g1').value !== $('cfg-g2').value;
                     break;
                 case 'chi-square':
                     ok = $('cfg-x') && $('cfg-x').value && $('cfg-y') && $('cfg-y').value && $('cfg-x').value !== $('cfg-y').value;
@@ -869,9 +904,17 @@ paste0(.json, "\\n---\\n", .summary_text)`;
                         const x = $('cfg-x').value, g = $('cfg-g').value;
                         const varEq = document.querySelector('input[name="varEq"]:checked').value;
                         const varEqR = varEq === 'pooled' ? 'TRUE' : 'FALSE';
+                        // More than 2 groups: keep only the two picked groups, Group 1 first
+                        const pick = $('cfg-pick') && $('cfg-pick').style.display !== 'none';
+                        const g1 = pick ? $('cfg-g1').value : '', g2 = pick ? $('cfg-g2').value : '';
+                        const keepR = pick ? `
+.graw = data[["${rEsc(g)}"]]; .pick = c("${rEsc(g1)}", "${rEsc(g2)}")
+if (is.numeric(.graw)) .pick = as.character(as.numeric(.pick))
+.gchr = as.character(.graw)
+ok = !is.na(.x) & !is.na(.graw) & .gchr %in% .pick; .x = .x[ok]; .g = factor(.gchr[ok], levels = .pick)` : `
+ok = !is.na(.x) & !is.na(.g); .x = .x[ok]; .g = .g[ok]`;
                         rCode += `
-.x = suppressWarnings(as.numeric(data[["${rEsc(x)}"]])); .g = as.factor(data[["${rEsc(g)}"]])
-ok = !is.na(.x) & !is.na(.g); .x = .x[ok]; .g = .g[ok]
+.x = suppressWarnings(as.numeric(data[["${rEsc(x)}"]])); .g = as.factor(data[["${rEsc(g)}"]])${keepR}
 if (length(levels(.g)) != 2) stop("Grouping variable must have exactly 2 unique levels (got ", length(levels(.g)), ")")
 .fit = t.test(.x ~ .g, var.equal = ${varEqR}, alternative = "${alt}", conf.level = ${conf})
 .lvls = levels(.g)
@@ -883,7 +926,7 @@ if (length(levels(.g)) != 2) stop("Grouping variable must have exactly 2 unique 
                ',"g1":"', .jesc(.lvls[1]), '","g2":"', .jesc(.lvls[2]), '"}:END')
 .summary_text = paste(capture.output(print(.fit)), collapse="\\n")
 paste0(.json, "\\n---\\n", .summary_text)`;
-                        metaJson = { x, g, varEq, alt, conf, label: `Independent t-test: ${x} by ${g}` };
+                        metaJson = { x, g, varEq, alt, conf, label: `Independent t-test: ${x} by ${g}` + (pick ? ` (${g1} vs. ${g2})` : '') };
                         break;
                     }
                     case 'anova': {

@@ -1955,7 +1955,8 @@ for (col in names(data)) {
         function renderCoefTable() {
             // Null-safe formatter: est/se/p can be null when R returns a non-finite
             // value (e.g. NA standard error from a near-singular Hessian).
-            const num = (x, d = 4) => (x === null || x === undefined || !isFinite(x)) ? 'NA' : x.toFixed(d);
+            const num = (x, d = 4) => (x === null || x === undefined || !isFinite(x)) ? 'NA' :
+                (x !== 0 && Math.abs(x) < 0.001) ? smallNumber(x) : x.toFixed(d);
             const tbody = lastResult.coefs.map(c => {
                 const sigClass = (c.p !== null && isFinite(c.p)) ? (c.p < 0.05 ? 'coef-sig' : (c.p < 0.10 ? '' : 'coef-insig')) : '';
                 return `<tr>
@@ -2035,10 +2036,12 @@ for (col in names(data)) {
             const buildUtility = (alt) => {
                 const terms = [];
                 const push = (coefVal, label) => {
-                    const v = round4(coefVal);
+                    // below 0.001, four decimals would round the term away (e.g. Balance at -0.0000023)
+                    const v = Math.abs(coefVal) >= 0.001 ? round4(coefVal) : coefVal;
                     if (v === 0) return;
                     const sign = v >= 0 && terms.length > 0 ? ' + ' : (v < 0 ? ' - ' : '');
-                    terms.push(label === null ? `${sign}${Math.abs(v)}` : `${sign}${Math.abs(v)} * ${label}`);
+                    const mag = Math.abs(v) >= 0.001 ? `${Math.abs(v)}` : smallNumber(Math.abs(v));
+                    terms.push(label === null ? `${sign}${mag}` : `${sign}${mag} * ${label}`);
                 };
                 // Intercept: the reference alternative is fixed to 0.
                 if (interceptType === 'alt_specific' && alt !== ref) {
@@ -2304,6 +2307,12 @@ for (col in names(data)) {
         // UTILITIES
         // ============================================================
         function round4(x) { return Math.round(x * 10000) / 10000; }
+        // Four significant digits for |n| < 0.001 (e.g. -0.000002260), in plain notation
+        // down to 1e-6 and in scientific notation below that; matches Analytics Tool 4
+        function smallNumber(n) {
+            if (Math.abs(n) < 1e-6) return n.toExponential(3);
+            return n.toPrecision(4);
+        }
         function escapeRegex(s) { return String(s).replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }
         function escapeHtml(s)  { return String(s).replace(/[&<>"']/g, ch => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch])); }
         // Display helper: strips underscores from column names for compact UI
