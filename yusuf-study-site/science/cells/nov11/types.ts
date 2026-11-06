@@ -1,0 +1,6 @@
+export type Skill='theory'|'microscope'|'parts'|'diffusion'|'routes'|'osmosis'|'bulk'|'energy'|'levels';
+export type Visual={kind:'diffusion';left:number;right:number;leftVolume?:number;rightVolume?:number;blocked?:boolean}|{kind:'osmosis';inside:number;outside:number;plant?:boolean}|{kind:'route';route:'simple'|'facilitated'|'active'}|{kind:'bulk';process:'endo'|'exo'}|{kind:'energy';process:'photo'|'resp'}|{kind:'cell';cell:'animal'|'plant';target:string}|{kind:'timeline'}|{kind:'levels'};
+export type Question={id:string;skill:Skill;prompt:string;context?:string;kind:'choice'|'order'|'written';choices:string[];answer:string[];explanation:string;hint:string;visual?:Visual;rubric?:string[]};
+export type Lesson={id:Skill;title:string;summary:string;facts:string[];example:string;visual:Visual;questions:Question[]};
+export type Attempt={id:number;mode:'practice'|'review'|'test';ids:string[];index:number;draft:string[];text:string;help:boolean;feedback:boolean;retry:boolean;submitted:boolean;answers:Record<string,{selection:string[];text:string;help:boolean}>};
+export type Saved={version:1;next:number;lesson:Skill;slide:number;session:Attempt|null;history:Attempt[];sheets:Record<string,string>};

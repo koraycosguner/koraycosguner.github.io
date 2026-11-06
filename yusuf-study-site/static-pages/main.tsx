@@ -4,6 +4,12 @@ import {pagesBase} from './routes';
 import '../app/globals.css';
 
 const routes:Record<string,ComponentType>={
+  '/subjects/science/cells/concept-3/':lazy(()=>import('../app/subjects/science/cells/concept-3/page')),
+  '/subjects/science/cells/concept-3/transport-lab/':lazy(()=>import('../app/subjects/science/cells/concept-3/transport-lab/page')),
+  '/subjects/science/cells/concept-3/study-sheets/':lazy(()=>import('../app/subjects/science/cells/concept-3/study-sheets/page')),
+  '/subjects/science/cells/practice-major/':lazy(()=>import('../app/subjects/science/cells/practice-major/page')),
+  '/subjects/science/cells/practice-major/answer-key/':lazy(()=>import('../app/subjects/science/cells/practice-major/answer-key/page')),
+
   '/subjects/science/cells/concept-2/':lazy(()=>import('../app/subjects/science/cells/concept-2/page')),
   '/subjects/science/cells/concept-2/school/':lazy(()=>import('../app/subjects/science/cells/concept-2/school/page')),
   '/subjects/science/cells/concept-2/systems/':lazy(()=>import('../app/subjects/science/cells/concept-2/systems/page')),
@@ -76,6 +82,7 @@ if(!path.endsWith('/'))path+='/';
 const Page=routes[path];
 if(path.includes('/phrases-clauses/'))document.title='Phrases vs. Clauses · Yusuf’s Sentence Studio';
 else if(path.includes('/concept-2/'))document.title='Cell Structure & Analogies · Yusuf’s Cell Lab';
+else if(path.includes('/concept-3/')||path.includes('/practice-major/'))document.title='Cell Quest · Cells Major Preparation';
 else if(path.includes('/cells/'))document.title='Cell Theory & Scientists · Yusuf’s Study Club';
 else if(path.includes('/unit-3/'))document.title='Spanish Unit 3 · Yusuf’s Study Club';
 else if(path.includes('spanish'))document.title='Spanish · Yusuf’s Study Club';

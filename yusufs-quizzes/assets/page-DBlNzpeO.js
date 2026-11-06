@@ -1,0 +1,1 @@
+import{t as e}from"./index-BlqiSWK4.js";import{t}from"./Concept2App-CiNO_orM.js";var n=e();function r(){return(0,n.jsx)(t,{entry:`match`})}export{r as default};

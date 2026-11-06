@@ -1,0 +1,1 @@
+import{t as e}from"./index-BlqiSWK4.js";import{t}from"./TutorCenter-BXkh2bA7.js";var n=e();function r(){return(0,n.jsx)(t,{entry:`listening`})}export{r as default};

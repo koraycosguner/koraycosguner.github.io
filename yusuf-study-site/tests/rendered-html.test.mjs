@@ -37,3 +37,9 @@ test('production build includes the Concept 2 Cell Lab and all fifteen entry rou
  const app=await readFile(new URL('../science/cells/concept2/Concept2App.tsx',import.meta.url),'utf8');assert.doesNotMatch(app,/private-references|shared-pasteboard|fetch\(|sendBeacon/);
  const {readdir}=await import('node:fs/promises');const files=await readdir(new URL('../dist/client',import.meta.url),{recursive:true});assert.ok(!files.some(file=>/Kaiser|017 -|private-reference|\.pptx$/i.test(String(file))));
 });
+
+test('Cells Major routes, editable transport models and local-only save engine are included without source packages',async()=>{
+ for(const route of ['concept-3/','concept-3/transport-lab/','concept-3/study-sheets/','practice-major/','practice-major/answer-key/'])await access(new URL('../app/subjects/science/cells/'+route+'page.tsx',import.meta.url));
+ const {readdir}=await import('node:fs/promises');const files=await readdir(new URL('../dist/client',import.meta.url),{recursive:true});assert.ok(!files.some(file=>/Nov11_.*\.zip|Webb_Bridge_Source_Files|Yusuf_Cells_Major_.*\.(pdf|docx)|Cell Theory Inquiry|Unit Map Cells/.test(String(file))));
+ const app=await readFile(new URL('../science/cells/nov11/Nov11App.tsx',import.meta.url),'utf8');assert.doesNotMatch(app,/fetch\(|sendBeacon|private-handoff|shared-pasteboard/);assert.match(app,/localStorage\.setItem/);
+});

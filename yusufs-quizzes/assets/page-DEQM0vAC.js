@@ -1,0 +1,1 @@
+import{t as e}from"./index-BlqiSWK4.js";import{t}from"./Unit3App-imDDMQOA.js";var n=e();function r(){return(0,n.jsx)(t,{entry:`home`})}export{r as default};

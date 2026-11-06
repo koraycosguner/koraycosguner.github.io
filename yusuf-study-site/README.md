@@ -477,3 +477,15 @@ TEST_BASE_URL=http://localhost:4173 TEST_PATH_PREFIX=/yusufs-quizzes pnpm test:b
 The classroom originals and all extracted/rendered inspection files belong in the ignored `private-references/cells-concept2/` folder. Do not copy them to `public/` or the generated Pages directory. The restricted reading's PDF, answer key, audio and third-party illustrations are not distributed. The diagrams and activity wording are original. The current module covers fourteen main structures plus six advanced reference structures, has separate school and systems routes, and starts new practice minors with 20 questions (18 objective + 2 human-reviewed writing responses). Earlier 27-question saves remain readable with their original scoring. See `CONCEPT2_CONTENT_AUDIT.md` and `CONCEPT2_ACCEPTANCE_REPORT.md` for source qualifications and actual verification results.
 
 Delivery of this update is a feature-branch push. Publishing that branch to the live site is a separate action and is not part of this handoff.
+
+## November Cells Major / Concept 3
+
+- Start: `/subjects/science/cells/concept-3/`.
+- Direct Transport Lab: `/subjects/science/cells/concept-3/transport-lab/`.
+- Typable/printable notes: `/subjects/science/cells/concept-3/study-sheets/`.
+- Adapted 43-item major: `/subjects/science/cells/practice-major/`.
+- Separate key: `/subjects/science/cells/practice-major/answer-key/` (hidden while a test is unfinished).
+
+Edit `science/cells/nov11/content.ts` for lessons and question banks, `Visual.tsx` for the original diagrams, `learning.ts` for saving/scoring and `nov11.css` for appearance. The existing Concept 1 and Concept 2 modules remain independent. New learner records use only `yusuf.science.cells.nov11.v1` in local storage. Original November packages stay private.
+
+Use the existing Node/pnpm setup: `pnpm install --frozen-lockfile`, `pnpm dev` for editing, or `pnpm build:pages` then `pnpm preview:pages` for the GitHub Pages build. The preview opens at `http://localhost:4173/yusufs-quizzes/`. Tests: `pnpm test`, `pnpm typecheck`, `pnpm test:browser`. The build writes all direct route entry files under `pages-dist/yusufs-quizzes/`; synchronize that entire generated directory to repository `yusufs-quizzes/` before publishing. See `NOV11_CELLS_CONTENT_AUDIT.md` for source conflicts, adapted assessment numbering and remaining limitations.

@@ -1,0 +1,1 @@
+import{t as e}from"./index-BlqiSWK4.js";import{t}from"./ProficiencyApp-B0RmBF5a.js";var n=e();function r(){return(0,n.jsx)(t,{entry:`prep`})}export{r as default};

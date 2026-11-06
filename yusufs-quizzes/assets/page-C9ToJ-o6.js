@@ -1,0 +1,1 @@
+import{t as e}from"./index-BlqiSWK4.js";import{t}from"./Unit2StudyApp-vcpSZ9ar.js";var n=e();function r(){return(0,n.jsx)(t,{entry:`story`})}export{r as default};
