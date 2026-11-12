@@ -225,8 +225,9 @@
 
         .var-row {
             display: flex;
+            flex-wrap: wrap;
             align-items: center;
-            gap: 0.75rem;
+            gap: 0.3rem 0.75rem;
             padding: 0.35rem 0.5rem;
             border-radius: 4px;
             transition: background 0.2s;
@@ -234,6 +235,41 @@
 
         .var-row:hover {
             background: rgba(153, 0, 0, 0.05);
+        }
+
+        /* Base (reference) level picker for a Factor variable: its own line, right-aligned
+           under the transformation select, so every row's select stays in one column */
+        .iv-base-wrap {
+            display: flex;
+            flex-basis: 100%;
+            justify-content: flex-end;
+            align-items: center;
+            gap: 0.35rem;
+            font-size: 0.8rem;
+            color: var(--text-light);
+        }
+
+        .iv-base-wrap[hidden] {
+            display: none;
+        }
+
+        /* Phones: a slightly smaller transformation select (it is 140px wide for "Factor (dummies)")
+           and tighter row spacing leave the variable name about as much room as before, so the
+           checkbox stays on the same line as the name */
+        @media (max-width: 480px) {
+            .var-row { gap: 0.3rem 0.5rem; padding: 0.35rem 0.25rem; }
+            .var-row .iv-transform { width: 128px !important; font-size: 0.8rem !important; }
+        }
+
+        /* A select pushed onto its own line by a very long name stays right-aligned */
+        .var-row .iv-transform { margin-left: auto; }
+
+        .iv-base-wrap select {
+            width: 110px;
+            padding: 0.25rem;
+            font-size: 0.85rem;
+            border-radius: 4px;
+            border: 1px solid var(--border);
         }
 
         .indep-var-log:disabled {
@@ -1036,7 +1072,7 @@
 
                 <div class="form-group">
                     <label>Independent Variables (X)</label>
-                    <p style="font-size: 0.85rem; color: var(--text-light); margin-bottom: 0.5rem;">Select variables and choose transformation: Linear, ln(X), ln(X + 1), or X + X² (quadratic)</p>
+                    <p style="font-size: 0.85rem; color: var(--text-light); margin-bottom: 0.5rem;">Select variables and choose transformation: Linear, ln(X), ln(X + 1), X + X² (quadratic), or Factor (dummies). For a Factor, choose the base level that the dummies are compared with.</p>
                     <div class="checkbox-group" id="independentVars"></div>
                 </div>
 
@@ -1065,6 +1101,7 @@
                 <div class="coef-table-container">
                     <table class="coef-table" id="coefTable"></table>
                 </div>
+                <p id="baseLevelNote" style="display: none; font-size: 0.85rem; color: var(--text-light); margin-top: 0.5rem;"></p>
                 <p class="copy-hint">Select the table and copy (Ctrl+C / Cmd+C) to paste into Excel.</p>
                 <div style="margin-top: 0.75rem; display: flex; gap: 0.75rem; align-items: center; flex-wrap: wrap;">
                     <label for="coefCsvDecimals" style="font-size: 0.9rem; color: var(--text-dark);">Decimals:</label>
@@ -1185,6 +1222,7 @@
         let lastBatchPredictionHeaders = null; // Column order for download CSV
         let lastUploadedFileName = 'your_data.csv'; // Name of the uploaded file for the R script header
         let lastAnalysisData = null; // Data subset (filtered or full) captured at fit time for prediction defaults
+        let lastFactorInfo = {}; // Per Factor IV: { levels (R order, base first), base, kind, mode } from the last fit
 
         // DOM Elements
         const loadingOverlay = document.getElementById('loadingOverlay');
@@ -1278,6 +1316,178 @@
             return v;
         }
 
+        // ---------- Factor (categorical) helpers ----------
+
+        // An R string literal (used for column names and level names in generated R code).
+        function rString(s) {
+            return '"' + String(s).replace(/\\/g, '\\\\').replace(/"/g, '\\"').replace(/\n/g, '\\n') + '"';
+        }
+
+        // R accessor for a data column: data$Income, or data[["My Var"]] for non-syntactic names.
+        function rColumn(name) {
+            return /^[a-zA-Z_][a-zA-Z0-9_]*$/.test(name) ? `data$${name}` : `data[[${rString(name)}]]`;
+        }
+
+        // String order of R's sort() in WebR, whose collation locale is C (code point order).
+        function rCollate(a, b) {
+            const A = Array.from(a), B = Array.from(b);
+            const n = Math.min(A.length, B.length);
+            for (let i = 0; i < n; i++) {
+                const d = A[i].codePointAt(0) - B[i].codePointAt(0);
+                if (d !== 0) return d;
+            }
+            return A.length - B.length;
+        }
+
+        // as.character() of an R double: up to 15 significant digits, fixed notation unless
+        // scientific is shorter (so 4 -> "4", 2.5 -> "2.5", 1e5 -> "1e+05", 0.0001 -> "1e-04").
+        function rNumToString(n) {
+            if (Number.isNaN(n)) return 'NaN';
+            if (!Number.isFinite(n)) return n > 0 ? 'Inf' : '-Inf';
+            if (n === 0) return '0';
+            const [mant, expStr] = Math.abs(n).toExponential(14).split('e');
+            const ex = parseInt(expStr, 10);
+            const digits = mant.replace('.', '').replace(/0+$/, '') || '0';
+            const sign = n < 0 ? '-' : '';
+            const sci = sign + digits[0] + (digits.length > 1 ? '.' + digits.slice(1) : '')
+                + 'e' + (ex < 0 ? '-' : '+') + String(Math.abs(ex)).padStart(2, '0');
+            let fixed;
+            if (ex >= 0) {
+                const intPart = digits.length > ex + 1 ? digits.slice(0, ex + 1) : digits.padEnd(ex + 1, '0');
+                const frac = digits.slice(ex + 1);
+                fixed = sign + intPart + (frac ? '.' + frac : '');
+            } else {
+                fixed = sign + '0.' + '0'.repeat(-ex - 1) + digits;
+            }
+            return fixed.length <= sci.length ? fixed : sci;
+        }
+
+        const R_LOGICAL_TRUE = /^(T|TRUE|true|True)$/;
+        const R_LOGICAL_FALSE = /^(F|FALSE|false|False)$/;
+
+        // How R stores a column after read.csv() and the tool's numeric conversion:
+        // 'numeric' (all non-missing values are numbers), 'logical' (TRUE/FALSE, which the
+        // conversion turns into 0/1) or 'character'. Cached per loaded dataset.
+        function rColumnKind(colName) {
+            if (!csvData.rKinds) csvData.rKinds = {};
+            if (csvData.rKinds[colName]) return csvData.rKinds[colName];
+            const vals = csvData.data
+                .map(r => (r[colName] === undefined || r[colName] === null) ? '' : String(r[colName]).trim())
+                .filter(v => v !== '' && v !== 'NA');
+            let kind = 'character';
+            if (vals.length > 0 && vals.every(v => R_LOGICAL_TRUE.test(v) || R_LOGICAL_FALSE.test(v))) kind = 'logical';
+            else if (vals.length > 0 && vals.every(v => Number.isFinite(Number(v)))) kind = 'numeric';
+            csvData.rKinds[colName] = kind;
+            return kind;
+        }
+
+        // The R level name of one raw cell, or null when R reads the cell as missing (NA).
+        // In a character column an empty cell is the level "" (read.csv keeps it as text).
+        function rLevelKey(raw, kind) {
+            const s = (raw === undefined || raw === null) ? '' : String(raw).trim();
+            if (s === 'NA') return null;
+            if (kind === 'character') return s;
+            if (s === '') return null;
+            if (kind === 'logical') {
+                if (R_LOGICAL_TRUE.test(s)) return '1';
+                if (R_LOGICAL_FALSE.test(s)) return '0';
+            }
+            const n = Number(s);
+            return Number.isFinite(n) ? rNumToString(n) : s;
+        }
+
+        // Levels of factor(column) in R's default order (numbers ascending, text in C order);
+        // the first one is R's default base level.
+        function rFactorLevels(colName, data) {
+            const kind = rColumnKind(colName);
+            const keys = new Set();
+            data.forEach(r => {
+                const k = rLevelKey(r[colName], kind);
+                if (k !== null) keys.add(k);
+            });
+            const levels = Array.from(keys);
+            if (kind === 'character') levels.sort(rCollate);
+            else levels.sort((a, b) => Number(a) - Number(b));
+            return levels;
+        }
+
+        // Most frequent level (ignoring missing and blank cells), restricted to the given levels.
+        // Ties are broken as the tool always has: the counts live in a plain object and the
+        // first key in its iteration order wins (whole numbers ascending, then other values in
+        // the order they first appear in the data).
+        function factorMode(colName, data, levels) {
+            const kind = rColumnKind(colName);
+            const counts = Object.create(null);
+            data.forEach(r => {
+                const k = rLevelKey(r[colName], kind);
+                if (k === null || k === '' || !levels.includes(k)) return;
+                counts[k] = (counts[k] || 0) + 1;
+            });
+            let mode = null, best = 0;
+            for (const k in counts) {
+                if (counts[k] > best) { best = counts[k]; mode = k; }
+            }
+            return mode !== null ? mode : levels[0];
+        }
+
+        // How a level is shown in dropdowns, notes and messages. "" is a blank cell in the data;
+        // a TRUE/FALSE column is 1/0 inside the tool's R session but reads as TRUE/FALSE.
+        function levelLabel(level, kind) {
+            if (kind === 'logical') {
+                if (level === '1') return 'TRUE';
+                if (level === '0') return 'FALSE';
+            }
+            return level === '' ? '(blank)' : level;
+        }
+
+        // A level as desktop R names it after read.csv(): TRUE/FALSE columns stay logical there,
+        // so their levels are "TRUE"/"FALSE" rather than the "1"/"0" of the tool's R session.
+        function scriptLevel(level, kind) {
+            return kind === 'logical' ? levelLabel(level, kind) : level;
+        }
+
+        // Levels of a fitted factor for the prediction dropdown. Text columns keep the order and
+        // the preselected value the tool has always used (values in the order they first appear
+        // in the fit data, first one selected); numeric columns treated as categories list their
+        // values in ascending order with the mode selected. Blank cells are not offered: as in a
+        // batch file, a blank means "missing" for a prediction.
+        function predictionLevels(info, colName, data, numericFactor) {
+            const usable = info.levels.filter(l => l !== '');
+            if (numericFactor) {
+                const levels = usable.slice().sort((a, b) => Number(a) - Number(b));
+                return { levels, selected: levels.includes(info.mode) ? info.mode : levels[0] };
+            }
+            const seen = new Set();
+            data.forEach(r => {
+                const k = rLevelKey(r[colName], info.kind);
+                if (k !== null && k !== '' && usable.includes(k)) seen.add(k);
+            });
+            const levels = [...seen, ...usable.filter(l => !seen.has(l))];
+            return { levels, selected: levels[0] };
+        }
+
+        // Coefficient of one dummy (0 for the base level or a level without a coefficient).
+        function factorCoef(coefLookup, name, level, base) {
+            if (level === base) return 0;
+            return coefLookup[`factor(${wrapVarName(name)})${level}`]
+                || coefLookup[`factor(\`${name}\`)${level}`]
+                || coefLookup[`factor(${name})${level}`] || 0;
+        }
+
+        // Match a raw cell to a level of the fitted factor: exact String(value).trim() first,
+        // then the value as R would read it (e.g. "2.0" in a numeric column is level "2").
+        // A blank or NA cell is missing (the caller fills the fit-data mode, as the tool always
+        // has), even when the fit data had blank text cells.
+        function matchFactorLevel(info, raw) {
+            const s = (raw === undefined || raw === null) ? '' : String(raw).trim();
+            if (s === '' || s === 'NA') return { missing: true };
+            if (info.levels.includes(s)) return { level: s };
+            const k = rLevelKey(raw, info.kind);
+            if (k === null || k === '') return { missing: true };
+            if (info.levels.includes(k)) return { level: k };
+            return { unseen: true, value: s };
+        }
+
         // Candidate coefficient names R may use for an interaction term (either factor order).
         function interactionCoefNames(int) {
             const t1 = transformTermForR(int.var1, int.transform1);
@@ -1300,7 +1510,7 @@
 
             data.forEach(row => {
                 html += '<tr>';
-                html += `<td>${escapeHtml(row.Variable)}</td>`;
+                html += `<td>${escapeHtml(displayCoefName(row.Variable))}</td>`;
                 html += `<td>${formatNumber(row.Estimate)}</td>`;
                 html += `<td>${formatNumber(row['Std. Error'])}</td>`;
                 // Handle both p-value column names
@@ -1341,17 +1551,24 @@
 
         // Parse CSV with a small state machine that understands quoted fields
         // (commas and newlines inside quotes, and "" as an escaped quote).
-        // Returns { headers, data, skipped } where skipped counts malformed rows.
+        // Returns { headers, data, skipped, rowNumbers } where skipped counts malformed rows and
+        // rowNumbers[i] is the file line of data[i], counted from the line below the header
+        // (skipped blank or malformed lines still count, so messages point at the right line).
         function parseCSV(text) {
             // Split into records, respecting quotes, and split each record into fields.
             const records = [];
+            const recordLines = []; // 0-based file line on which each record starts
             let field = '';
             let record = [];
             let inQuotes = false;
             let sawAny = false;
+            let line = 0;
+            let recordStart = 0;
 
             const pushField = () => { record.push(field); field = ''; };
-            const pushRecord = () => { pushField(); records.push(record); record = []; };
+            const pushRecord = () => {
+                pushField(); records.push(record); recordLines.push(recordStart); record = [];
+            };
 
             for (let i = 0; i < text.length; i++) {
                 const ch = text[i];
@@ -1360,6 +1577,7 @@
                         if (text[i + 1] === '"') { field += '"'; i++; }
                         else { inQuotes = false; }
                     } else {
+                        if (ch === '\n' || (ch === '\r' && text[i + 1] !== '\n')) line++;
                         field += ch;
                     }
                 } else {
@@ -1372,9 +1590,10 @@
                     } else if (ch === '\n') {
                         pushRecord();
                         sawAny = false;
+                        recordStart = ++line;
                     } else if (ch === '\r') {
                         // Ignore carriage returns; handle \r\n and lone \r as line breaks.
-                        if (text[i + 1] !== '\n') { pushRecord(); sawAny = false; }
+                        if (text[i + 1] !== '\n') { pushRecord(); sawAny = false; recordStart = ++line; }
                     } else {
                         field += ch;
                         sawAny = true;
@@ -1393,10 +1612,11 @@
                 else break;
             }
 
-            if (records.length === 0) return { headers: [], data: [], skipped: 0 };
+            if (records.length === 0) return { headers: [], data: [], skipped: 0, rowNumbers: [] };
 
             const headers = records[0].map(h => h.trim());
             const data = [];
+            const rowNumbers = [];
             let skipped = 0;
 
             for (let i = 1; i < records.length; i++) {
@@ -1409,12 +1629,13 @@
                         row[h] = values[j].trim();
                     });
                     data.push(row);
+                    rowNumbers.push(recordLines[i] - recordLines[1] + 1);
                 } else {
                     skipped++;
                 }
             }
 
-            return { headers, data, skipped };
+            return { headers, data, skipped, rowNumbers };
         }
 
         // Check if a column is numeric
@@ -1509,7 +1730,8 @@
                     ? `<option value="linear">Linear</option>
                        <option value="log">ln(X)</option>
                        <option value="log1p">ln(X+1)</option>
-                       <option value="quadratic">X + X²</option>`
+                       <option value="quadratic">X + X²</option>
+                       <option value="factor">Factor (dummies)</option>`
                     : `<option value="factor">Factor</option>`;
 
                 const safeH = escapeHtml(h);
@@ -1519,9 +1741,13 @@
                             <input type="checkbox" value="${safeH}" class="indep-var">
                             ${safeH} ${typeIndicator}
                         </label>
-                        <select class="iv-transform" data-var="${safeH}" aria-label="Transformation for ${safeH}" style="width: 110px; padding: 0.25rem; font-size: 0.85rem; border-radius: 4px; border: 1px solid var(--border);" disabled>
+                        <select class="iv-transform" data-var="${safeH}" aria-label="Transformation for ${safeH}" style="width: 140px; padding: 0.25rem; font-size: 0.85rem; border-radius: 4px; border: 1px solid var(--border);" disabled>
                             ${transformOptions}
                         </select>
+                        <span class="iv-base-wrap" hidden>
+                            Base
+                            <select class="iv-base" aria-label="Base level for ${safeH}" title="Base (reference) level: the dummies compare each other level with this one"></select>
+                        </span>
                     </div>
                 `;
             });
@@ -1529,11 +1755,27 @@
             // Enable/disable transform dropdown based on variable selection
             independentVars.querySelectorAll('.indep-var').forEach(cb => {
                 cb.addEventListener('change', (e) => {
-                    const transformSelect = e.target.closest('.var-row').querySelector('.iv-transform');
+                    const varRow = e.target.closest('.var-row');
+                    const transformSelect = varRow.querySelector('.iv-transform');
                     transformSelect.disabled = !e.target.checked;
                     if (!e.target.checked) {
-                        const varRow = e.target.closest('.var-row');
                         transformSelect.value = varRow.dataset.type === 'numeric' ? 'linear' : 'factor';
+                    }
+                    syncBaseUI(varRow);
+                });
+            });
+
+            // Choosing Factor (dummies) for a numeric column shows its Base dropdown.
+            independentVars.querySelectorAll('.iv-transform').forEach(sel => {
+                sel.addEventListener('change', (e) => {
+                    const varRow = e.target.closest('.var-row');
+                    syncBaseUI(varRow);
+                    if (e.target.value === 'factor' && varRow.dataset.type === 'numeric') {
+                        const n = varRow.querySelector('.iv-base').options.length;
+                        const name = varRow.querySelector('.indep-var').value;
+                        if (n > 20) {
+                            showStatus(`"${name}" has ${n} distinct values, so Factor (dummies) adds ${n - 1} dummy variables.`, 'info');
+                        }
                     }
                 });
             });
@@ -1548,6 +1790,29 @@
 
             // Initialize interaction terms
             initInteractionUI(headers, columnTypes);
+        }
+
+        // Show the Base dropdown only for a checked variable whose transformation is Factor.
+        // Its levels are filled on first use, in R's order; the default (first) level is
+        // R's own default base, so leaving it alone changes nothing in the R code.
+        function syncBaseUI(varRow) {
+            const cb = varRow.querySelector('.indep-var');
+            const transform = varRow.querySelector('.iv-transform').value;
+            const wrap = varRow.querySelector('.iv-base-wrap');
+            const sel = varRow.querySelector('.iv-base');
+            if (!wrap || !sel) return;
+            const show = cb.checked && !cb.disabled && transform === 'factor';
+            if (show && !sel.dataset.built) {
+                const levels = rFactorLevels(cb.value, csvData.data);
+                const kind = rColumnKind(cb.value);
+                sel.innerHTML = levels.map(l => `<option value="${escapeHtml(l)}">${escapeHtml(levelLabel(l, kind))}</option>`).join('');
+                sel.dataset.default = levels.length ? levels[0] : '';
+                sel.dataset.built = '1';
+                sel.value = sel.dataset.default;
+            }
+            // Unchecking resets the base, just as it resets the transformation.
+            if (!cb.checked && sel.dataset.built) sel.value = sel.dataset.default;
+            wrap.hidden = !show;
         }
 
         // Initialize interaction terms UI
@@ -1571,10 +1836,15 @@
             };
         }
 
-        // Currently checked numeric independent variables (excluding the dependent variable).
+        // Currently checked numeric independent variables (excluding the dependent variable
+        // and numeric columns set to Factor (dummies), which are categories, not numbers).
         function getSelectedNumericIVs() {
             const dv = dependentVar.value;
             return Array.from(document.querySelectorAll('.indep-var:checked'))
+                .filter(cb => {
+                    const t = cb.closest('.var-row').querySelector('.iv-transform');
+                    return !t || t.value !== 'factor';
+                })
                 .map(cb => cb.value)
                 .filter(name => name !== dv && csvData && csvData.columnTypes[name] === 'numeric');
         }
@@ -1681,6 +1951,9 @@
             lastDvTransform = null;
             lastRScript = '';
             lastAnalysisData = null;
+            lastFactorInfo = {};
+            const baseNote = document.getElementById('baseLevelNote');
+            if (baseNote) { baseNote.textContent = ''; baseNote.style.display = 'none'; }
             lastUploadedFileName = 'your_data.csv';
 
             // Clear interaction terms
@@ -1880,6 +2153,7 @@
                     checkbox.disabled = false;
                     row.style.opacity = '1';
                 }
+                syncBaseUI(row);
             });
 
             updateRunButton();
@@ -1898,10 +2172,19 @@
                 .map(cb => {
                     const varRow = cb.closest('.var-row');
                     const transformSelect = varRow.querySelector('.iv-transform');
-                    return {
+                    const iv = {
                         name: cb.value,
                         transform: transformSelect ? transformSelect.value : 'linear'
                     };
+                    if (iv.transform === 'factor') {
+                        // Base level chosen in the Base dropdown; baseIsDefault means R's own default.
+                        syncBaseUI(varRow);
+                        const baseSelect = varRow.querySelector('.iv-base');
+                        iv.numericFactor = varRow.dataset.type === 'numeric';
+                        iv.base = baseSelect && baseSelect.dataset.built ? baseSelect.value : null;
+                        iv.baseIsDefault = !baseSelect || !baseSelect.dataset.built || baseSelect.value === baseSelect.dataset.default;
+                    }
+                    return iv;
                 })
                 .filter(v => v.name !== depVar);
 
@@ -1959,6 +2242,37 @@
                 if (bad.length > 0) {
                     showStatus(`An interaction uses variable(s) not selected as independent variables: ${bad.join(', ')}. Select them above, or remove the interaction.`, 'error');
                     return;
+                }
+                const asFactor = [int.var1, int.var2].filter(n => indepVarsData.some(v => v.name === n && v.transform === 'factor'));
+                if (asFactor.length > 0) {
+                    showStatus(`An interaction uses ${asFactor.join(', ')}, which is set to Factor (dummies). Interactions use numeric variables only: change its transformation, or remove the interaction.`, 'error');
+                    return;
+                }
+            }
+
+            // Factor checks use the rows R will fit: rows with a missing value in any model
+            // variable are dropped, and with them any level that occurs only in those rows.
+            const factorIVsToCheck = indepVarsData.filter(v => v.transform === 'factor');
+            if (factorIVsToCheck.length > 0) {
+                const modelVars = [depVar, ...indepVarsData.map(v => v.name)];
+                interactionsForValidation.forEach(int => modelVars.push(int.var1, int.var2));
+                const kinds = {};
+                modelVars.forEach(n => { kinds[n] = rColumnKind(n); });
+                const modelRows = validationData.filter(r => modelVars.every(n => rLevelKey(r[n], kinds[n]) !== null));
+                for (const v of factorIVsToCheck) {
+                    const present = rFactorLevels(v.name, modelRows);
+                    const kind = kinds[v.name];
+                    // A factor needs two or more levels (R stops with a "contrasts" error otherwise).
+                    if (present.length < 2) {
+                        const only = present.length === 1 ? ` (${levelLabel(present[0], kind)})` : '';
+                        showStatus(`"${v.name}" has only ${present.length === 1 ? 'one level' : 'no values'}${only} in the rows being analyzed (a filter or missing values may have removed the others). A factor needs at least two levels: uncheck "${v.name}" or change the filter.`, 'error');
+                        return;
+                    }
+                    // A chosen base level must occur in those rows (a filter can remove it).
+                    if (!v.baseIsDefault && v.base !== null && !present.includes(v.base)) {
+                        showStatus(`The base level "${levelLabel(v.base, kind)}" of "${v.name}" does not occur in the rows being analyzed (a filter or missing values may have removed it). Choose another base level.`, 'error');
+                        return;
+                    }
                 }
             }
 
@@ -2029,6 +2343,28 @@
 
                 // Clean formula for display
                 const formulaDisplay = formula.replace(/`/g, '');
+
+                // Factor variables with a non-default base level, and numeric columns treated as
+                // categories, are prepared before fitting. The formula term stays factor(v), so
+                // coefficient names keep the form factor(v)Level. Nothing is added when every
+                // factor keeps R's default base, so that R code is unchanged.
+                // The downloaded script names a TRUE/FALSE column's base "TRUE"/"FALSE", as desktop
+                // R reads that column as logical (the tool's own session sees it as 1/0).
+                const factorPrepVars = indepVarsData
+                    .filter(v => v.transform === 'factor' && v.base !== null && v.base !== undefined
+                        && (v.numericFactor || !v.baseIsDefault));
+                const factorPrepLine = (v, forScript) => v.baseIsDefault
+                    ? `${rColumn(v.name)} = factor(${rColumn(v.name)})`
+                    : `${rColumn(v.name)} = relevel(factor(${rColumn(v.name)}), ref = ${rString(forScript ? scriptLevel(v.base, rColumnKind(v.name)) : v.base)})`;
+                const factorPrepLines = factorPrepVars.map(v => factorPrepLine(v, false));
+                const factorPrepScriptLines = factorPrepVars.map(v => factorPrepLine(v, true));
+                const factorPrepComment = '# Categorical variables (factors) and their base (reference) levels';
+                const factorPrepR = factorPrepLines.length
+                    ? `\n                    ${factorPrepComment}\n                    ${factorPrepLines.join('\n                    ')}\n`
+                    : '';
+                const factorPrepScript = factorPrepScriptLines.length
+                    ? `\n${factorPrepComment}\n${factorPrepScriptLines.join('\n')}\n`
+                    : '';
 
                 // Model type labels
                 const modelLabels = {
@@ -2134,7 +2470,7 @@ data = data[${filterConditions.join(' & ')}, ]
 
 # Load data
 data = read.csv("${fileName}")
-${filterRCode}
+${filterRCode}${factorPrepScript}
 # Fit model
 model = ${modelCallMultiLine}
 
@@ -2150,6 +2486,17 @@ summary(model)
                     : `cat("Null Deviance:", model$null.deviance, "on", model$df.null, "df\\n")
                         cat("Residual Deviance:", model$deviance, "on", model$df.residual, "df\\n")`;
 
+                // R code that puts one coefficient name into the JSON. A factor level holding a
+                // quote, backslash, tab or line break needs full escaping; otherwise the original
+                // line is kept, so the R code of ordinary data is unchanged.
+                const levelsNeedEscape = indepVarsData.some(v => v.transform === 'factor'
+                    && rFactorLevels(v.name, analysisData).some(l => /["\\\n\r\t]/.test(l)));
+                const coefNameR = levelsNeedEscape
+                    ? `# Escape the name for JSON (a level holds a quote, backslash, tab or line break)
+                        var_name = rownames(coef_summary)[i]
+                        for (esc in list(c('\\\\', '\\\\\\\\'), c('"', '\\\\"'), c('\\n', '\\\\n'), c('\\r', '\\\\r'), c('\\t', '\\\\t'))) var_name = gsub(esc[1], esc[2], var_name, fixed = TRUE)`
+                    : `var_name = gsub('"', '\\\\"', rownames(coef_summary)[i])`;
+
                 const rCode = `
                     # Read data
                     csv_text = "${csvEscaped}"
@@ -2162,7 +2509,7 @@ summary(model)
                             data[[col]] = num_val
                         }
                     }
-
+${factorPrepR}
                     # Fit model
                     model = ${modelCall}
 
@@ -2171,7 +2518,7 @@ summary(model)
                     coef_rows = c()
                     col_names = colnames(coef_summary)
                     for (i in 1:nrow(coef_summary)) {
-                        var_name = gsub('"', '\\\\"', rownames(coef_summary)[i])
+                        ${coefNameR}
                         vals = coef_summary[i, ]
                         row_json = paste0('{"Variable":"', var_name, '"')
                         for (j in 1:length(col_names)) {
@@ -2235,7 +2582,10 @@ summary(model)
                 if (coefMatch) {
                     try {
                         const coefData = JSON.parse(coefMatch[1]);
+                        // Levels of each Factor variable as R used them in this fit (base first).
+                        lastFactorInfo = await buildFactorInfo(indepVarsData, analysisData);
                         renderCoefTable(coefData, isLinear);
+                        renderBaseLevelNote(indepVarsData);
                         // Store for predictions
                         lastModelCoefs = coefData;
                         lastModelType = family;
@@ -2471,14 +2821,87 @@ summary(model)
             const factorMatch = clean.match(/^factor\((`?[^)`]+`?)\)(.*)$/);
             if (factorMatch) {
                 const baseVar = factorMatch[1].replace(/`/g, '');
-                const level = factorMatch[2];
-                clean = baseVar + level;
+                const kind = csvData && csvData.headers && csvData.headers.includes(baseVar) ? rColumnKind(baseVar) : 'character';
+                // A blank cell reads as "(blank)" and a TRUE/FALSE level as TRUE/FALSE.
+                const level = levelLabel(factorMatch[2], kind);
+                // A level starting with a sign (Z-1 would read as "Z minus 1"), or a number
+                // glued to a name ending in a digit (Q3 level 1 would read as "Q31"), is
+                // shown in brackets: Z[-1], Q3[1].
+                const ambiguous = /^[-+]/.test(level) || (/[0-9]$/.test(baseVar) && /^[0-9.]/.test(level));
+                // A level that already names its variable (Income_Lessthan50K in the column
+                // Income) is shown on its own, not as "IncomeIncome_Lessthan50K".
+                const selfNamed = level.startsWith(baseVar + '_') && level.length > baseVar.length + 1;
+                clean = selfNamed ? level : baseVar + (ambiguous ? `[${level}]` : level);
             }
             // Remove backticks
             clean = clean.replace(/`/g, '');
             // Replace log() with ln() for clearer notation
             clean = clean.replace(/\blog\(/g, 'ln(');
             return clean;
+        }
+
+        // Coefficient name for the results table: dummies read like the equation
+        // ("factor(Gender)Male" -> "GenderMale"); other names are shown as R prints them.
+        function displayCoefName(varName) {
+            return /^factor\(/.test(varName) ? cleanVarName(varName) : varName;
+        }
+
+        // Levels of each Factor variable in the fit just run, base level first. They come
+        // from R (model$xlevels), so they are exactly the levels the coefficients refer to;
+        // if that query fails they are rebuilt from the analysis data.
+        async function buildFactorInfo(indepVarsData, analysisData) {
+            const factors = indepVarsData.filter(v => v.transform === 'factor');
+            const info = {};
+            if (factors.length === 0) return info;
+            let byTerm = {};
+            try {
+                const res = await webR.evalR('local({ xl = model$xlevels; out = character(0); for (n in names(xl)) out = c(out, n, as.character(length(xl[[n]])), xl[[n]]); out })');
+                const js = await res.toJs();
+                const vals = (js && js.values) || [];
+                for (let i = 0; i + 1 < vals.length;) {
+                    const k = parseInt(vals[i + 1], 10);
+                    if (!(k >= 0)) break;
+                    byTerm[vals[i]] = vals.slice(i + 2, i + 2 + k).map(l => l === null ? 'NA' : String(l));
+                    i += 2 + k;
+                }
+            } catch (e) {
+                console.warn('Could not read factor levels from R; using the data instead.', e);
+                byTerm = {};
+            }
+            factors.forEach(v => {
+                let levels = byTerm[`factor(${wrapVarName(v.name)})`];
+                if (!levels || levels.length === 0) {
+                    levels = rFactorLevels(v.name, analysisData);
+                    if (!v.baseIsDefault && levels.includes(v.base)) {
+                        levels = [v.base, ...levels.filter(l => l !== v.base)];
+                    }
+                }
+                info[v.name] = {
+                    levels,
+                    base: levels[0],
+                    kind: rColumnKind(v.name),
+                    numericFactor: !!v.numericFactor,
+                    mode: factorMode(v.name, analysisData, levels)
+                };
+            });
+            return info;
+        }
+
+        // One line under the coefficient table naming each factor's base level.
+        function renderBaseLevelNote(indepVarsData) {
+            const el = document.getElementById('baseLevelNote');
+            if (!el) return;
+            const parts = indepVarsData
+                .filter(v => v.transform === 'factor' && lastFactorInfo[v.name])
+                .map(v => `${v.name} = ${levelLabel(lastFactorInfo[v.name].base, lastFactorInfo[v.name].kind)}`);
+            if (parts.length === 0) {
+                el.textContent = '';
+                el.style.display = 'none';
+                return;
+            }
+            el.textContent = `Base (reference) level${parts.length > 1 ? 's' : ''}: ${parts.join('; ')}. `
+                + 'Each dummy compares its level with the base, which has no row of its own.';
+            el.style.display = 'block';
         }
 
         // Get the p-value column name from coefficient data
@@ -2996,26 +3419,6 @@ summary(model)
         // END DATA FILTER FUNCTIONALITY
         // =====================================================
 
-        // Get mode (most frequent value) for categorical column
-        function calculateMode(colName, data = csvData.data) {
-            const counts = {};
-            data.forEach(row => {
-                const val = row[colName];
-                if (val !== '' && val !== null && val !== undefined) {
-                    counts[val] = (counts[val] || 0) + 1;
-                }
-            });
-            let maxCount = 0;
-            let mode = '';
-            for (const val in counts) {
-                if (counts[val] > maxCount) {
-                    maxCount = counts[val];
-                    mode = val;
-                }
-            }
-            return mode;
-        }
-
         // Setup prediction UI
         function setupPredictionUI(indepVarsData, modelType) {
             const predictionInputs = document.getElementById('predictionInputs');
@@ -3029,7 +3432,7 @@ summary(model)
             const predData = lastAnalysisData || csvData.data;
 
             indepVarsData.forEach(iv => {
-                const isNumeric = csvData.columnTypes[iv.name] === 'numeric';
+                const isNumeric = iv.transform !== 'factor';
                 const safeName = escapeHtml(iv.name);
                 const inputId = `pred_${iv.name}`;
 
@@ -3053,14 +3456,21 @@ summary(model)
                         </div>
                     `;
                 } else {
-                    // Categorical - dropdown with unique values (from the fit-time data)
-                    const uniqueVals = [...new Set(predData.map(row => row[iv.name]))].filter(v => v !== '' && v !== undefined && v !== null);
-                    const mode = calculateMode(iv.name, predData);
-                    let options = uniqueVals.map(v => `<option value="${escapeHtml(v)}">${escapeHtml(v)}</option>`).join('');
+                    // Factor (text, or a numeric column treated as categories): a dropdown of the
+                    // levels in the fit, the base level marked (see predictionLevels for the
+                    // order and the preselected level).
+                    let info = lastFactorInfo[iv.name];
+                    if (!info) {
+                        const levels = rFactorLevels(iv.name, predData);
+                        info = { levels, base: null, kind: rColumnKind(iv.name), mode: factorMode(iv.name, predData, levels) };
+                    }
+                    const mode = info.mode !== null && info.mode !== undefined ? info.mode : '';
+                    const pick = predictionLevels(info, iv.name, predData, !!iv.numericFactor);
+                    const options = pick.levels.map(l => `<option value="${escapeHtml(l)}"${l === pick.selected ? ' selected' : ''}>${escapeHtml(levelLabel(l, info.kind))}${l === info.base ? ' (base)' : ''}</option>`).join('');
 
                     predictionInputs.innerHTML += `
                         <div class="prediction-input-group">
-                            <label for="${escapeHtml(inputId)}">${safeName} (mode: ${escapeHtml(mode)})</label>
+                            <label for="${escapeHtml(inputId)}">${safeName} (mode: ${escapeHtml(levelLabel(mode, info.kind))})</label>
                             <select id="${escapeHtml(inputId)}" data-var="${safeName}" data-transform="factor" data-mode="${escapeHtml(mode)}">
                                 ${options}
                             </select>
@@ -3118,7 +3528,7 @@ summary(model)
             };
             const predProblems = [];
             lastIndepVarsData.forEach(iv => {
-                if (csvData.columnTypes[iv.name] !== 'numeric') return;
+                if (iv.transform === 'factor' || csvData.columnTypes[iv.name] !== 'numeric') return;
                 if (iv.transform !== 'log' && iv.transform !== 'log1p') return;
                 const v = readPredVal(iv.name);
                 if (isNaN(v)) return;
@@ -3149,7 +3559,7 @@ summary(model)
                 const input = document.getElementById(`pred_${iv.name}`);
                 if (!input) return;
 
-                const isNumeric = csvData.columnTypes[iv.name] === 'numeric';
+                const isNumeric = iv.transform !== 'factor';
 
                 if (isNumeric) {
                     let val = parseFloat(input.value);
@@ -3181,14 +3591,16 @@ summary(model)
                         xBeta += coef * val;
                     }
                 } else {
-                    // Factor variable - find the matching coefficient
+                    // Factor variable: add the chosen level's dummy coefficient (R names it
+                    // factor(VarName)Level); the base level adds nothing.
                     const selectedVal = input.value;
-                    lastPredictionValues[iv.name] = `"${selectedVal}"`;
-                    // R creates dummy variables like factor(VarName)Value
-                    const coefName = `factor(\`${iv.name}\`)${selectedVal}`;
-                    const coefNameAlt = `factor(${iv.name})${selectedVal}`;
-                    const coef = coefLookup[coefName] || coefLookup[coefNameAlt] || 0;
-                    xBeta += coef;
+                    const info = lastFactorInfo[iv.name];
+                    // For the R script (desktop read.csv): a numeric column keeps its number, a
+                    // TRUE/FALSE column is written "TRUE"/"FALSE", text is quoted.
+                    const kind = info ? info.kind : 'character';
+                    lastPredictionValues[iv.name] = kind === 'numeric' && Number.isFinite(Number(selectedVal)) && selectedVal !== ''
+                        ? selectedVal : rString(scriptLevel(selectedVal, kind));
+                    xBeta += factorCoef(coefLookup, iv.name, selectedVal, info ? info.base : null);
                 }
             });
 
@@ -3346,12 +3758,13 @@ ${predictCall}
         // Compute a single prediction for one uploaded row, given an already-built
         // coefLookup and the intercept. Mirrors the single-row handler's math so
         // predictions stay consistent between the two paths.
-        function computeBatchPrediction(row, coefLookup, intercept) {
+        // factorLevels maps each Factor IV to this row's level, already matched and checked.
+        function computeBatchPrediction(row, coefLookup, intercept, factorLevels) {
             let xBeta = intercept;
             const rowValues = {}; // for interaction terms
 
             for (const iv of lastIndepVarsData) {
-                const isNumeric = csvData.columnTypes[iv.name] === 'numeric';
+                const isNumeric = iv.transform !== 'factor';
                 const rawVal = row[iv.name];
 
                 if (isNumeric) {
@@ -3377,12 +3790,11 @@ ${predictCall}
                         xBeta += coef * val;
                     }
                 } else {
-                    const selectedVal = (rawVal !== undefined && rawVal !== '' && rawVal !== null)
-                        ? rawVal : calculateMode(iv.name, lastAnalysisData || csvData.data);
-                    rowValues[iv.name] = selectedVal;
-                    const coef = coefLookup[`factor(\`${iv.name}\`)${selectedVal}`]
-                        || coefLookup[`factor(${iv.name})${selectedVal}`] || 0;
-                    xBeta += coef;
+                    // Factor: match the level by name, never multiply the cell as a number.
+                    const level = factorLevels[iv.name];
+                    const info = lastFactorInfo[iv.name];
+                    rowValues[iv.name] = level;
+                    xBeta += factorCoef(coefLookup, iv.name, level, info ? info.base : null);
                 }
             }
 
@@ -3443,11 +3855,12 @@ ${predictCall}
 
             const reader = new FileReader();
             reader.onload = (e) => {
-                let headers, rows;
+                let headers, rows, rowNumbers;
                 try {
                     const parsed = parseCSV(e.target.result);
                     headers = parsed.headers;
                     rows = parsed.data;
+                    rowNumbers = parsed.rowNumbers || [];
                 } catch (err) {
                     statusEl.style.color = 'var(--iu-crimson)';
                     statusEl.textContent = 'Could not parse CSV: ' + err.message;
@@ -3477,9 +3890,65 @@ ${predictCall}
                 const coefLookup = {};
                 adjustedCoefs.forEach(r => { coefLookup[r.Variable] = r.adjustedEstimate; });
 
+                // Match every Factor cell to a level of the fitted model before scoring. A value
+                // the model was not fit on stops the batch; a blank cell takes the fit-data mode.
+                const factorIVs = lastIndepVarsData.filter(iv => iv.transform === 'factor');
+                const unseen = {};   // name -> { values: Set, rows: [], levels }
+                const filled = {};   // name -> count of blank cells filled with the mode
+                const infos = {};
+                factorIVs.forEach(iv => {
+                    let info = lastFactorInfo[iv.name];
+                    if (!info) {
+                        const fitData = lastAnalysisData || csvData.data;
+                        const levels = rFactorLevels(iv.name, fitData);
+                        info = { levels, base: levels[0], kind: rColumnKind(iv.name), mode: factorMode(iv.name, fitData, levels) };
+                    }
+                    infos[iv.name] = info;
+                });
+                const rowLevels = rows.map((row, i) => {
+                    const levels = {};
+                    factorIVs.forEach(iv => {
+                        const info = infos[iv.name];
+                        const m = matchFactorLevel(info, row[iv.name]);
+                        if (m.level !== undefined) {
+                            levels[iv.name] = m.level;
+                        } else if (m.missing) {
+                            levels[iv.name] = info.mode;
+                            filled[iv.name] = (filled[iv.name] || 0) + 1;
+                        } else {
+                            if (!unseen[iv.name]) {
+                                // Fit levels in their natural order for the message (numbers ascending).
+                                const sorted = info.levels.slice().sort(info.kind === 'character' ? rCollate : (a, b) => Number(a) - Number(b));
+                                unseen[iv.name] = { values: new Set(), rows: [], levels: sorted, kind: info.kind };
+                            }
+                            unseen[iv.name].values.add(m.value);
+                            unseen[iv.name].rows.push(rowNumbers[i] !== undefined ? rowNumbers[i] : i + 1);
+                        }
+                    });
+                    return levels;
+                });
+                const unseenNames = Object.keys(unseen);
+                if (unseenNames.length > 0) {
+                    const parts = unseenNames.map(name => {
+                        const u = unseen[name];
+                        const vals = Array.from(u.values);
+                        const shownVals = vals.slice(0, 5).map(v => `"${v}"`).join(', ') + (vals.length > 5 ? `, and ${vals.length - 5} more` : '');
+                        const shownRows = u.rows.slice(0, 5).join(', ') + (u.rows.length > 5 ? `, ... (${u.rows.length} rows in all)` : '');
+                        const fitLevels = u.levels.slice(0, 12).map(l => levelLabel(l, u.kind)).join(', ') + (u.levels.length > 12 ? ', ...' : '');
+                        return `"${name}" has value${vals.length === 1 ? '' : 's'} ${shownVals} in row${u.rows.length === 1 ? '' : 's'} ${shownRows}, but the model was fit on the levels ${fitLevels}.`;
+                    });
+                    statusEl.style.color = 'var(--iu-crimson)';
+                    statusEl.textContent = 'No predictions were made. ' + parts.join(' ')
+                        + ' Fix or remove those rows, or refit the model on data that includes these levels. (Row 1 is the first row below the header.)';
+                    previewEl.style.display = 'none';
+                    lastBatchPredictionRows = null;
+                    lastBatchPredictionHeaders = null;
+                    return;
+                }
+
                 const predColName = batchPredictionColumnName();
-                const outRows = rows.map(row => {
-                    const pred = computeBatchPrediction(row, coefLookup, intercept);
+                const outRows = rows.map((row, i) => {
+                    const pred = computeBatchPrediction(row, coefLookup, intercept, rowLevels[i]);
                     return { ...row, [predColName]: isFinite(pred) ? pred.toFixed(6) : '' };
                 });
 
@@ -3505,8 +3974,11 @@ ${predictCall}
                 const sigNote = currentSignificanceLevel === 'all'
                     ? 'using coefficients at any p-value'
                     : `using only coefficients with p-value < ${currentSignificanceLevel}`;
+                const filledNames = Object.keys(filled);
+                const filledNote = filledNames.length === 0 ? '' : ' Blank or NA cells were filled with the mode of the fit data: '
+                    + filledNames.map(name => `${name} (${filled[name]} row${filled[name] === 1 ? '' : 's'}, ${levelLabel(infos[name].mode, infos[name].kind)})`).join('; ') + '.';
                 document.getElementById('batchPredictSummary').textContent =
-                    `Scored ${outRows.length} row${outRows.length === 1 ? '' : 's'} (${sigNote}). Showing first ${preview.length}.`;
+                    `Scored ${outRows.length} row${outRows.length === 1 ? '' : 's'} (${sigNote}). Showing first ${preview.length}.${filledNote}`;
 
                 statusEl.style.color = 'var(--text-light)';
                 statusEl.textContent = '';
