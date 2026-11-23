@@ -194,8 +194,14 @@
     color: var(--text-dark);
   }
 
-  /* Chart */
-  .chart-wrap { position: relative; height: 320px; }
+  /* Charts: three plots on one price axis */
+  .charts-3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1.25rem; }
+  .charts-3 > div { min-width: 0; }
+  .chart-sub { display: flex; align-items: center; gap: 0.5rem; font-size: 0.85rem; font-weight: 600; color: var(--text-dark); margin-bottom: 0.25rem; }
+  .chart-sub .sw { width: 16px; height: 3px; border-radius: 2px; display: inline-block; }
+  .chart-sub .unit { font-weight: 500; color: var(--text-light); }
+  .chart-wrap { position: relative; height: 250px; }
+  .chart-note { font-size: 0.8rem; color: var(--text-light); margin-top: 0.75rem; }
 
   /* Footer */
   footer {
@@ -215,7 +221,8 @@
     .controls-grid { grid-template-columns: 1fr 1fr; }
     .result-row { grid-template-columns: 1fr; }
     .metrics-row { grid-template-columns: repeat(2, 1fr); }
-    .chart-wrap { height: 260px; }
+    .charts-3 { grid-template-columns: minmax(0, 1fr); gap: 1rem; }
+    .chart-wrap { height: 220px; }
   }
 </style>
     <link rel="icon" type="image/jpeg" href="KCFavicon.jpg">
@@ -306,7 +313,21 @@
 
       <div class="card">
         <div class="card-title">Demand, Revenue & Profit</div>
-        <div class="chart-wrap"><canvas id="mainChart"></canvas></div>
+        <div class="charts-3">
+          <div>
+            <div class="chart-sub"><span class="sw" style="background:#f59e0b"></span>Demand <span class="unit">units/hr</span></div>
+            <div class="chart-wrap"><canvas id="demandChart" role="img" aria-label="Demand: units per hour against price, ending where sales reach zero"></canvas></div>
+          </div>
+          <div>
+            <div class="chart-sub"><span class="sw" style="background:#2563eb"></span>Revenue <span class="unit">$/hr</span></div>
+            <div class="chart-wrap"><canvas id="revenueChart" role="img" aria-label="Revenue per hour against price, with its top marked"></canvas></div>
+          </div>
+          <div>
+            <div class="chart-sub"><span class="sw" style="background:#16a34a"></span>Profit <span class="unit">$/hr</span></div>
+            <div class="chart-wrap"><canvas id="profitChart" role="img" aria-label="Profit per hour against price, with its top marked"></canvas></div>
+          </div>
+        </div>
+        <div class="chart-note">Dots: units sold at the profit-maximizing price, the revenue top, and the profit top. Each curve ends where demand reaches zero.</div>
       </div>
     </div>
   </div>
@@ -387,133 +408,94 @@ function update() {
   document.getElementById('mProfit').textContent = '$' + s.piProf.toFixed(0);
   document.getElementById('mMargin').textContent = (s.lerner * 100).toFixed(0) + '%';
 
-  drawChart(s);
+  drawCharts(s);
 }
 
-// ===== CHART =====
-var mainChart;
+// ===== CHARTS =====
+// Three plots on one price axis. Each curve stops at the choke price, where demand reaches zero;
+// profit starts at the unit cost, where it is zero. Revenue and profit share one dollar scale.
+var charts = {};
+var SERIES = {
+  demand:  { id: 'demandChart',  color: '#f59e0b', fill: 'rgba(245,158,11,0.08)', name: 'Demand',
+             fmt: function (v) { return v.toFixed(1) + ' units'; }, tick: function (v) { return v; } },
+  revenue: { id: 'revenueChart', color: '#2563eb', fill: 'rgba(37,99,235,0.06)',  name: 'Revenue',
+             fmt: function (v) { return '$' + v.toFixed(2); }, tick: function (v) { return '$' + v; } },
+  profit:  { id: 'profitChart',  color: '#16a34a', fill: 'rgba(22,163,74,0.08)',  name: 'Profit',
+             fmt: function (v) { return '$' + v.toFixed(2); }, tick: function (v) { return '$' + v; } }
+};
 
-function drawChart(s) {
-  var A = s.A, B = s.B;
-  var pMax = Math.min(s.pChoke + 0.5, 16);
-  var pMin = Math.max(cost * 0.3, 0.5);
-  var steps = 120;
-  var prices = [];
-  for (var i = 0; i <= steps; i++) prices.push(pMin + (pMax - pMin) * i / steps);
+function curve(f, from, to) {
+  var pts = [], n = 120;
+  for (var i = 0; i <= n; i++) { var p = from + (to - from) * i / n; pts.push({ x: p, y: Math.max(0, f(p)) }); }
+  return pts;
+}
 
-  var demand = prices.map(function(p) { return Math.max(0, A + B * p); });
-  var revenue = prices.map(function(p) { return p * Math.max(0, A + B * p); });
-  var profit = prices.map(function(p) { return (p - cost) * Math.max(0, A + B * p); });
-  var labels = prices.map(function(p) { return p.toFixed(2); });
-
-  if (mainChart) mainChart.destroy();
-  mainChart = new Chart(document.getElementById('mainChart'), {
+function makeChart(key) {
+  var s = SERIES[key];
+  return new Chart(document.getElementById(s.id), {
     type: 'line',
-    data: {
-      labels: labels,
-      datasets: [
-        {
-          label: 'Demand (units/hr)',
-          data: demand,
-          borderColor: '#f59e0b',
-          backgroundColor: 'rgba(245,158,11,0.05)',
-          borderWidth: 2.5,
-          pointRadius: 0,
-          tension: 0.1,
-          yAxisID: 'y',
-          fill: true
-        },
-        {
-          label: 'Revenue ($/hr)',
-          data: revenue,
-          borderColor: '#2563eb',
-          borderWidth: 2,
-          pointRadius: 0,
-          tension: 0.1,
-          yAxisID: 'y2',
-          borderDash: [6, 3]
-        },
-        {
-          label: 'Profit ($/hr)',
-          data: profit,
-          borderColor: '#16a34a',
-          backgroundColor: 'rgba(22,163,74,0.05)',
-          borderWidth: 2.5,
-          pointRadius: 0,
-          tension: 0.1,
-          yAxisID: 'y2',
-          fill: true
-        }
-      ]
-    },
+    data: { datasets: [
+      { data: [], borderColor: s.color, backgroundColor: s.fill, borderWidth: 2.5, pointRadius: 0, pointHoverRadius: 4, fill: 'origin', tension: 0 },
+      { data: [], borderColor: '#ffffff', backgroundColor: s.color, borderWidth: 2, pointRadius: 6, pointHoverRadius: 7, showLine: false }
+    ] },
     options: {
       responsive: true,
       maintainAspectRatio: false,
-      interaction: { intersect: false, mode: 'index' },
+      animation: false,
+      interaction: { intersect: false, mode: 'nearest', axis: 'x' },
       plugins: {
-        legend: {
-          position: 'top',
-          labels: {
-            color: '#64748b',
-            font: { family: "'Outfit'", size: 12, weight: '500' },
-            boxWidth: 14,
-            padding: 16
-          }
-        },
+        legend: { display: false },
         tooltip: {
-          backgroundColor: '#ffffff',
-          titleColor: '#1e293b',
-          bodyColor: '#1e293b',
-          borderColor: '#e2e8f0',
-          borderWidth: 1,
-          titleFont: { family: "'Outfit'", size: 13, weight: '600' },
-          bodyFont: { family: "'Outfit'", size: 12 },
-          padding: 10,
+          backgroundColor: '#ffffff', titleColor: '#1e293b', bodyColor: '#1e293b', borderColor: '#e2e8f0', borderWidth: 1,
+          titleFont: { family: "'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif", size: 13, weight: '600' }, bodyFont: { family: "'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif", size: 12 }, padding: 10,
+          displayColors: false,
           callbacks: {
-            title: function(ctx) { return 'Price: $' + (+ctx[0].label).toFixed(2); },
-            label: function(ctx) {
-              var v = ctx.parsed.y;
-              if (ctx.datasetIndex === 0) return '  Demand: ' + v.toFixed(1) + ' units';
-              return '  ' + ctx.dataset.label.split(' (')[0] + ': $' + v.toFixed(2);
-            }
+            title: function (ctx) { return 'Price: $' + ctx[0].parsed.x.toFixed(2); },
+            label: function (ctx) { return s.name + ': ' + s.fmt(ctx.parsed.y); }
           }
         }
       },
       scales: {
         x: {
-          title: { display: true, text: 'Price ($)', color: '#64748b', font: { family: "'Outfit'", size: 13, weight: '500' } },
-          ticks: {
-            color: '#94a3b8',
-            font: { size: 11 },
-            maxTicksLimit: 10,
-            callback: function(val) { return '$' + (+this.getLabelForValue(val)).toFixed(0); }
-          },
+          type: 'linear', min: 0,
+          title: { display: true, text: 'Price ($)', color: '#64748b', font: { family: "'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif", size: 12, weight: '500' } },
+          ticks: { color: '#94a3b8', font: { size: 11 }, stepSize: 2, callback: function (v) { return '$' + v; } },
           grid: { color: '#f1f5f9' }
         },
         y: {
-          position: 'left',
-          title: { display: true, text: 'Units / hr', color: '#f59e0b', font: { family: "'Outfit'", size: 12, weight: '500' } },
-          ticks: { color: '#94a3b8', font: { size: 11 } },
-          grid: { color: '#f1f5f9' },
-          min: 0
-        },
-        y2: {
-          position: 'right',
-          title: { display: true, text: '$ / hr', color: '#2563eb', font: { family: "'Outfit'", size: 12, weight: '500' } },
-          ticks: {
-            color: '#94a3b8',
-            font: { size: 11 },
-            callback: function(v) { return '$' + v.toFixed(0); }
-          },
-          grid: { display: false }
+          min: 0,
+          ticks: { color: '#94a3b8', font: { size: 11 }, callback: s.tick },
+          grid: { color: '#f1f5f9' }
         }
       }
     }
   });
 }
 
+function drawCharts(s) {
+  var A = s.A, B = s.B, c = cost, choke = s.pChoke;
+  var xMax = Math.ceil(choke);
+  var dMax = Math.ceil(A * 1.05 / 25) * 25;
+  var moneyMax = Math.ceil(s.revAtRev * 1.08 / 100) * 100;
+  function set(key, pts, mark, yMax, step) {
+    if (!charts[key]) charts[key] = makeChart(key);
+    var ch = charts[key];
+    ch.data.datasets[0].data = pts;
+    ch.data.datasets[1].data = [mark];
+    ch.options.scales.x.max = xMax;
+    ch.options.scales.y.max = yMax;
+    ch.options.scales.y.ticks.stepSize = step;
+    ch.update();
+  }
+  set('demand', curve(function (p) { return A + B * p; }, 0, choke), { x: s.pProf, y: s.qProf }, dMax, 25);
+  set('revenue', curve(function (p) { return p * (A + B * p); }, 0, choke), { x: s.pRev, y: s.revAtRev }, moneyMax, 100);
+  set('profit', curve(function (p) { return (p - c) * (A + B * p); }, c, choke), { x: s.pProf, y: s.piProf }, moneyMax, 100);
+}
+
 // ===== INIT =====
 update();
+// redraw once the web font arrives, so the chart text matches the page
+if (document.fonts && document.fonts.ready) document.fonts.ready.then(update);
 </script>
 </body>
 </html>
