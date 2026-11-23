@@ -1019,8 +1019,7 @@ design   = optFederov(~ ., data = full_profiles,
                       nTrials = ${nt}, approximate = FALSE, nullify = 1)
 profiles = design$design                          # the chosen profiles
 profiles = profiles[do.call(order, profiles), ]   # sort the rows for readability
-profiles
-design$Dea   # D-efficiency of the chosen design (0 to 1; higher is better)`;
+profiles`;
             }
 
             const tail = `# 5. Save the profiles to a CSV file
@@ -1132,7 +1131,6 @@ ${tail}`;
             }
 
             box.innerHTML = '<h4>Design diagnostics</h4>' +
-                `<div class="diag-eff">${effHtml}</div>` +
                 '<div class="balance-attr" style="margin-bottom:0.5rem;">Level balance (how many profiles carry each level):</div>' +
                 balHtml;
         }
@@ -1303,6 +1301,34 @@ ${tail}`;
         attrs = EXAMPLE.map(e => ({ name: e.name, levelsText: e.levelsText }));
         renderAttrTable();
         afterEdit();
+
+        // Class attributes from a link: conjoint-design.html?data=<name> loads data/m303/<name>_Attributes.txt
+        // (one "Name: level, level, ..." line per attribute) into the paste box and fills the rows once signed in.
+        // The sign-in redirect drops the query string, so the name rides along in sessionStorage.
+        (function () {
+            let d = new URLSearchParams(location.search).get('data');
+            try {
+                if (d) sessionStorage.setItem('classDataCD', JSON.stringify({ d }));
+                else ({ d } = JSON.parse(sessionStorage.getItem('classDataCD') || '{}'));
+            } catch (e) {}
+            if (!d || !/^[A-Za-z0-9_-]{1,60}$/.test(d)) return;
+            const whenSignedIn = (cb) => {
+                const m = document.getElementById('main-content');
+                if (!m || m.style.display === 'block') return cb();
+                const iv = setInterval(() => { if (m.style.display === 'block') { clearInterval(iv); cb(); } }, 200);
+            };
+            whenSignedIn(() => {
+                try { sessionStorage.removeItem('classDataCD'); } catch (e) {}
+                fetch('data/m303/' + d + '_Attributes.txt', { cache: 'no-cache' })
+                    .then(r => { if (!r.ok) throw new Error(r.status); return r.text(); })
+                    .then(text => { $('bulkInput').value = text.trim(); $('bulkFillBtn').click(); })
+                    .catch(() => {
+                        const err = $('bulkError');
+                        err.textContent = 'Could not load the class attributes "' + d + '". Paste them instead.';
+                        err.classList.add('visible');
+                    });
+            });
+        })();
     </script>
 
     <!-- Firebase auth -->

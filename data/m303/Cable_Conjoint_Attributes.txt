@@ -1,0 +1,6 @@
+Number of Channels: No TV, 100, 200, 300
+Movie Channels: None, HBO, HBO+ShowTime
+DVR: None, SD DVR, HD DVR
+Price: 30, 60, 90, 120, 150, 200
+High-Speed Internet: None, 100 Mbps, 300 Mbps
+Phone Service: None, 200 Mins, Unlimited
